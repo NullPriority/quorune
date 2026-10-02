@@ -365,6 +365,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     "cr-119-life": ("life.change.effect",),
     "cr-121-drawing-a-card": ("zone.draw.library_to_hand",),
     _query.PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC: (_query.PUBLIC_QUERY_AMOUNT_CAPABILITY,),
+    "declared-effect-amount": ("quantity_expression.declared_effect_amount",),
     FIXED_LIBRARY_SELECTION_MECHANIC: ("library.select.fixed_controller",),
     PARTNER_WITH_SEARCH_MECHANIC_ID: ("library.search.partner_with_named_to_hand",),
     "scry": ("library.scry.fixed_controller",),
@@ -435,6 +436,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
 }
 _SHAPE_GATED_MECHANICS = frozenset(
     {
+        "declared-effect-amount",
         "cr-121-drawing-a-card",
         "cr-119-life",
         "scry",
@@ -1236,7 +1238,7 @@ def capability_dependencies_for_node(
     all_operations = _nested_effect_operations(effects)
     if (shape_context := _query.public_query_amount_shape_context(effects, mechanics)) is None: return ()
     shape_effects, shape_mechanics = shape_context
-    dependencies: set[str] = set()
+    dependencies: set[str] = _query.declared_amount_dependencies(mechanics)
     dependencies.update(
         fixed_alternative_additional_cost_node_capabilities(
             cost_schema=cost_schema

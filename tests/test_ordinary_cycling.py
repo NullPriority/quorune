@@ -122,7 +122,10 @@ class OrdinaryCyclingCompilerTests(unittest.TestCase):
         self.assertEqual("ordinary-cycling-activation-v1", node.template_id)
         self.assertEqual("hand", node.active_zone)
         self.assertEqual("activate", node.event)
-        self.assertEqual(("activation.cycling.hand",), node.capability_dependencies)
+        self.assertEqual(
+            ("activation.cycling.hand", "zone.draw.library_to_hand"),
+            node.capability_dependencies,
+        )
         self.assertTrue(node.cost["discard_source"])
         self.assertEqual(2, node.cost["mana"]["GENERIC"])
         self.assertEqual(1, node.cost["mana"]["U"])
@@ -180,7 +183,10 @@ class OrdinaryCyclingCompilerTests(unittest.TestCase):
         assert program is not None
         self.assertEqual("trusted", program.trust_level)
         self.assertEqual("hand", program.active_zone)
-        self.assertEqual(["activation.cycling.hand"], program.capability_dependencies)
+        self.assertEqual(
+            ["activation.cycling.hand", "zone.draw.library_to_hand"],
+            program.capability_dependencies,
+        )
         self.assertEqual(1, result["runtime_handlers_promoted"])
 
     def test_ordinary_cycling_compiler_mutant_is_killed(self):

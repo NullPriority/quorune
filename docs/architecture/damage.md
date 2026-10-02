@@ -47,6 +47,12 @@ overlapping groups before creating proposals. Every recipient then enters one
 rollback, and replay behavior cannot diverge from single-target or combat
 damage.
 
+The affected-set owner accepts a nonnegative resolved integer. A zero amount
+delegates to the same canonical no-damage boundary: it produces no replacement
+or prevention choice, damage result, or damage-trigger history. Literal compiler
+grammar remains independently bounded; declared amounts require their own
+capability rather than broadening that grammar.
+
 Preparation discovers applicable runtime components against the current
 event, validates the affected player or permanent controller, records any
 replacement choices, and rediscoveries after each transformation. Redirection

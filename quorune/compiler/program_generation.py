@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections import Counter
-from dataclasses import asdict
+from dataclasses import asdict, replace
 import hashlib
 from typing import Any, Iterable, Mapping
 
@@ -16,6 +16,7 @@ from ..rules.capabilities import (
     capability_dependencies_for_node,
 )
 from .modal_program_closure import is_closed_fixed_modal_program
+from .declared_effect_amounts import is_closed_declared_amount_program
 from .public_query_effect_amounts import (
     PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC,
     public_query_amount_program_is_closed,
@@ -1256,6 +1257,7 @@ def _is_closed_fixed_public_zone_move_set_program(
 def _closed_effect_recognizers():
     return (
         is_closed_fixed_modal_program,
+        _is_closed_declared_amount_program,
         _is_closed_public_query_amount_program,
         _is_closed_fixed_creature_power_damage_program,
         _is_closed_fixed_damage_program,
@@ -1310,6 +1312,12 @@ def _closed_effect_recognizers():
         _is_closed_fixed_public_zone_move_set_program,
         _is_closed_targeted_tap_state_program,
     )
+
+
+def _is_closed_declared_amount_program(program: SemanticProgram) -> bool:
+    return is_closed_declared_amount_program(program, required_dependencies=capability_dependencies_for_node(
+        effects=program.effects, target_schema=program.target_schema,
+        mechanic_ids=program.coverage, cost_schema=program.cost_schema), is_fixed_program=_is_closed_effect_program)
 
 
 def _is_closed_public_query_amount_program(program: SemanticProgram) -> bool:

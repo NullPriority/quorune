@@ -154,6 +154,7 @@
       "test_commander_damage_identity",
       "test_damage_prevention_aftermath",
       "test_damage_prevention_creation",
+      "test_declared_effect_amounts",
       "test_devoid_characteristics",
       "test_fixed_activation_tap_costs",
       "test_fixed_alternative_additional_costs",

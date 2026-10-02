@@ -425,8 +425,10 @@ class FixedMillRuntimeTests(unittest.TestCase):
         with self.assertRaisesRegex(GameRuleError, "library top changed"):
             commit_mill(engine, plan)
         self.assertEqual(before, authoritative_state_hash(engine.state))
-        with self.assertRaises(ValueError):
-            MillCardsIntent("A", "B", 0, "malformed fixed Mill")
+        for count in (True, -1, "2"):
+            with self.subTest(count=count), self.assertRaises(ValueError):
+                MillCardsIntent("A", "B", count, "malformed fixed Mill")
+        self.assertEqual(0,MillCardsIntent("A","B",0,"zero Mill").count)
         self.assertEqual(before, authoritative_state_hash(engine.state))
 
     def test_target_mill_revalidates_and_zone_replacement_preserves_actual_result(self):

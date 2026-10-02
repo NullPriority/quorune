@@ -34,8 +34,8 @@ class MillRequest:
             raise GameRuleError(
                 "Mill requests require an actor, player, and reason"
             )
-        if type(self.count) is not int or self.count <= 0:
-            raise GameRuleError("Mill requests require a positive fixed count")
+        if type(self.count) is not int or self.count < 0:
+            raise GameRuleError("Mill requests require a nonnegative fixed count")
 
 
 @dataclass(frozen=True, slots=True)
@@ -101,7 +101,7 @@ class MillResult:
         cards = tuple(self.cards)
         if (
             type(self.requested_count) is not int
-            or self.requested_count <= 0
+            or self.requested_count < 0
             or len(cards) > self.requested_count
             or any(not isinstance(card, MilledCardResult) for card in cards)
         ):
@@ -123,7 +123,7 @@ def prepare_mill(host: MillHost, request: MillRequest) -> MillPlan:
     host._require_seat(request.actor, in_game=True)
     host._require_seat(request.player, in_game=True)
     library = host.state.players[request.player].zones["library"]
-    object_ids = tuple(reversed(library[-request.count :]))
+    object_ids = tuple(reversed(library[-request.count :])) if request.count else ()
     return MillPlan(
         request=request,
         top_first=tuple(
@@ -161,6 +161,8 @@ def commit_mill(host: MillHost, plan: MillPlan) -> MillResult:
     """Commit one validated simultaneous library-to-graveyard instruction."""
 
     object_ids = _validate_plan(host, plan)
+    if plan.request.count == 0:
+        return MillResult(player=plan.request.player, requested_count=0, cards=())
     moved: Sequence[CardInstance] = (
         ZoneTransitionOwner(host).move_cards_simultaneously(
             [(object_id, "graveyard") for object_id in object_ids],

@@ -13,6 +13,11 @@ from ..query_effect_amount_model import (
 from ..rules.source_references import SourceReferenceSpec
 from .query_characteristic_templates import query_characteristic_quantity
 from .fixed_target_effect_sequences import FixedSourceCharacteristicsTemplate
+from .declared_effect_amounts import (
+    DECLARED_EFFECT_AMOUNT_MECHANIC,
+    declared_amount_shape_context,
+    declared_amount_dependencies,
+)
 
 
 PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC = "public-query-effect-amount"
@@ -492,6 +497,8 @@ def _fixed_shape_effects(
                 continue
             try:
                 spec = PublicQueryAmountSpec.from_dict(value)
+                if spec.schema_version != 1:
+                    return None
             except PublicQueryAmountError:
                 return None
             effect[field] = -1 if spec.coefficient < 0 else 1
@@ -543,6 +550,8 @@ def public_query_amount_shape_context(
 ) -> tuple[tuple[Mapping[str, Any], ...], set[str]] | None:
     """Return fixed-value inputs for existing capability shape owners."""
 
+    if DECLARED_EFFECT_AMOUNT_MECHANIC in mechanics:
+        return declared_amount_shape_context(effects, mechanics)
     if PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC not in mechanics:
         return tuple(effects), set(mechanics)
     projected = _fixed_shape_effects(effects)

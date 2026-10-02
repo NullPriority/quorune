@@ -9,6 +9,7 @@ import re
 from typing import Any, Callable, Mapping, Sequence
 
 from ..util import stable_json
+from .declared_effect_amounts import contains_declared_effect_amount
 
 
 FIXED_CHOOSE_ONE_MODAL_MECHANIC = "fixed-choose-one-modal-spell"
@@ -204,6 +205,7 @@ def fixed_choose_one_modal_spell_template(
         template_id is None
         or not effects
         or not mechanics
+        or contains_declared_effect_amount(effects)
         or target_schema is not None
         and "modes" in target_schema
         for template_id, effects, target_schema, mechanics in compiled
@@ -268,6 +270,7 @@ def fixed_nonrepeating_modal_template(
         template_id is None
         or not effects
         or not mechanics
+        or contains_declared_effect_amount(effects)
         or target_schema is not None
         and ("groups" in target_schema or "modes" in target_schema)
         for template_id, effects, target_schema, mechanics in compiled

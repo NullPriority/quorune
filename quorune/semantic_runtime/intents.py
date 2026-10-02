@@ -90,8 +90,8 @@ class MillCardsIntent:
             raise ValueError(
                 "Mill intents require an actor, player, and reason"
             )
-        if type(self.count) is not int or self.count <= 0:
-            raise ValueError("Mill intents require a positive fixed count")
+        if type(self.count) is not int or self.count < 0:
+            raise ValueError("Mill intents require a nonnegative fixed count")
 
 
 @dataclass(frozen=True, slots=True)
@@ -442,9 +442,9 @@ class DealFixedDamageSetIntent:
             raise ValueError(
                 "Fixed damage-set intents require actor, source, and reason"
             )
-        if type(self.amount) is not int or self.amount <= 0:
+        if type(self.amount) is not int or self.amount < 0:
             raise ValueError(
-                "Fixed damage-set intent amount must be a positive integer"
+                "Fixed damage-set intent amount must be a nonnegative integer"
             )
         if not isinstance(self.spec, FixedDamageSetSpec):
             raise ValueError(

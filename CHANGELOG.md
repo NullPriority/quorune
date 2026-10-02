@@ -11,6 +11,12 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Bind ordinary announced spell-cost X and complete public count definitions
+  to existing typed numeric result owners without changing target or payment
+  authority. Explicit public definitions retain one instruction-time value
+  across sibling results and replacement resumption; zero damage and Mill
+  remain no-ops, and unsupported nested declarations remain residual.
+
 - Promote already admitted public-query spell and activation amounts through
   their canonical fixed-effect shape and complete capability closure, so normal
   action execution does not leave supported quantities provisional.

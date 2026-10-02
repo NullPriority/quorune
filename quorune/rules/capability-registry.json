@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 162,
+  "registry_version": 163,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -1318,18 +1318,18 @@
     },
     {
       "id": "zone.mill.fixed",
-      "version": 1,
+      "version": 2,
       "official_rules": ["400.7", "701.17", "701.17a", "701.17b", "701.17c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
-        "summary": "Compile and resolve one mandatory positive fixed-count Mill instruction for the controller, one target player, or one target opponent through an immutable current-library-top plan and the canonical simultaneous zone-transition owner.",
-        "inputs": ["one capability-shaped fixed Mill effect", "active actor and affected player", "positive fixed count", "exact current library top identities", "current destination replacements and normalized zone-trigger sources"],
-        "outputs": ["one immutable Mill plan", "as-many-as-possible result for a short library", "one simultaneous replacement-aware library-to-graveyard batch", "actual destination and new-incarnation results", "privacy-safe public journal", "exact replay"],
-        "exclusions": ["Mill as a cost or optional action", "zero, variable, multiplied, half-library, or state-derived counts", "each-player, each-opponent, any-number-of-targets, or repeated Mill", "linked cards-milled-this-way consumers under CR 701.17c-d", "graveyard-order-sensitive interactions while CR 404.3 remains blocked", "private face-down or hidden-destination result consumers"]
+        "summary": "Resolve one mandatory nonnegative Mill instruction through an immutable current-library-top plan and the canonical simultaneous zone-transition owner; declared amounts require their separate numeric capability.",
+        "inputs": ["one capability-shaped Mill effect", "active actor and affected player", "nonnegative resolved integer count", "exact current library top identities", "current destination replacements and normalized zone-trigger sources"],
+        "outputs": ["one immutable Mill plan", "zero-count no-op without library mutation or a Mill event", "as-many-as-possible result for a short library", "one simultaneous replacement-aware library-to-graveyard batch", "actual destination and new-incarnation results", "privacy-safe public journal", "exact replay"],
+        "exclusions": ["Mill as a cost or optional action", "unowned variable, multiplied, half-library, or state-derived counts", "each-player, each-opponent, any-number-of-targets, or repeated Mill", "linked cards-milled-this-way consumers under CR 701.17c-d", "graveyard-order-sensitive interactions while CR 404.3 remains blocked", "private face-down or hidden-destination result consumers"]
       },
       "dependencies": ["trigger.event.normalized_zone_change", "trigger.placement.apnap", "zone.change.destination_replacement"],
       "implementation_components": ["quorune.milling.MillRequest", "quorune.milling.MillPlan", "quorune.milling.MillResult", "quorune.compiler.mill_templates.fixed_mill_effect_template", "quorune.semantic_runtime.generic.MillHandler", "quorune.semantic_runtime.intents.MillCardsIntent", "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously"],
-      "positive_tests": ["test_fixed_mill_compiles_across_spell_trigger_and_activation", "test_mill_commits_top_first_and_as_many_as_possible"],
+      "positive_tests": ["test_fixed_mill_compiles_across_spell_trigger_and_activation", "test_mill_commits_top_first_and_as_many_as_possible", "test_real_zero_mill_and_scry_consume_price_without_library_mutation"],
       "negative_tests": ["test_dynamic_optional_group_and_linked_mill_remain_residual", "test_stale_plan_and_malformed_intent_fail_before_mutation"],
       "interaction_tests": ["test_target_mill_revalidates_and_zone_replacement_preserves_actual_result"],
       "multiplayer_tests": ["test_four_player_target_mill_is_public_privacy_safe_and_replays"],
@@ -3450,12 +3450,39 @@
       "status": "trusted"
     },
     {
+      "id": "quantity_expression.declared_effect_amount",
+      "version": 1,
+      "official_rules": ["107.3a", "107.3b", "601.2b", "608.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Bind a signed ordinary announced spell-cost X or one explicitly scoped public X definition to closed numeric result slots without changing the existing target, payment, or result owners.",
+        "inputs": ["one source-spanned instruction", "ordinary printed spell mana cost with one or more X symbols, or one complete public object-count definition", "canonical persisted stack X and locked controller", "explicit declaration identity scoped by its Oracle node", "invariant existing fixed operation, target schema, and dependency shapes"],
+        "outputs": ["unchanged canonical cost choice and payment", "signed typed resolution amount", "one public definition value retained across sibling results and replacement resumption", "zero, copy-controller, and principal-correct behavior", "separate values for independent declaration scopes"],
+        "exclusions": ["undefined X, X-dependent target domains, and X-dependent target cardinalities", "variable activation costs, source or linked characteristics, arithmetic, division, and unrepresented quantities", "cost X defined by Oracle rather than announced through the supported cost owner", "hybrid, Phyrexian, snow, restricted, and otherwise nonordinary X mana costs", "nested declaration programs or independently unsupported effects, qualifications, and siblings"]
+      },
+      "dependencies": [],
+      "implementation_components": ["quorune.compiler.declared_effect_amounts.declared_effect_amount_template", "quorune.compiler.declared_effect_amounts.declared_amount_shape_context", "quorune.compiler.effect_template_composition.reviewed_effect_template_composition", "quorune.compiler.program_generation._is_closed_declared_amount_program", "quorune.query_effect_amount_model.CastXAmountSpec", "quorune.query_effect_amount_model.PublicQueryAmountSpec", "quorune.query_effect_amount_model.scope_declared_amount_bindings", "quorune.semantic_runtime.query_effect_amounts.resolve_cast_x_amount", "quorune.semantic_runtime.query_effect_amounts.resolve_public_query_amount", "quorune.semantic_runtime.values.resolve_semantic_value"],
+      "positive_tests": ["test_announced_spell_x_uses_existing_result_families", "test_public_definition_can_bind_multiple_result_slots"],
+      "negative_tests": ["test_undefined_x_dynamic_targets_and_open_definitions_remain_residual", "test_amount_versions_and_cast_values_reject_malformed_inputs", "test_declaration_source_scopes_and_cache_signatures_cannot_alias", "test_declared_amount_capability_and_result_dependencies_cannot_be_omitted", "test_nested_modal_declarations_remain_residual_until_instruction_scopes_are_owned"],
+      "interaction_tests": ["test_explicit_public_binding_is_frozen_and_independent_expressions_are_not"],
+      "multiplayer_tests": ["test_real_announced_x_offer_payment_rollback_privacy_and_replay"],
+      "privacy_tests": ["test_real_announced_x_offer_payment_rollback_privacy_and_replay"],
+      "replay_tests": ["test_real_announced_x_offer_payment_rollback_privacy_and_replay", "test_real_public_definition_is_frozen_before_draw_and_replays", "test_actual_v233_numeric_result_record_is_explicitly_incompatible_not_reinterpreted"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "This primitive has no unconditional dependency; each emitted node separately requires its actual cost, query, target, and result owners.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Focused implementation mutations omit the instruction cache or discard the signed cast coefficient; assertions on repeated public reads and negative cast amounts kill both mutants.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
       "id": "quantity_expression.public_query_effect_amount",
-      "version": 2,
+      "version": 3,
       "official_rules": ["608.2h", "611.2c", "613.1d", "613.1e", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
-        "summary": "Resolve one fixed coefficient over a current public object-query count at instruction execution, then feed the resulting integer to an existing typed life, damage, draw, token, or temporary power/toughness owner.",
+        "summary": "Resolve one fixed coefficient over a current public object-query count at instruction execution, then feed the integer to an existing typed result owner. Schema-1 expressions read independently; schema-2 declarations retain one instruction-scoped value and require the declared-amount capability.",
         "inputs": ["one standalone source-spanned effect instruction", "stack object's locked controller", "controller or global battlefield, graveyard, or identity-free hand count", "cycle-safe layer-5 types, subtypes, supertypes, colors, colorlessness, and token state", "fixed signed coefficient", "existing fixed effect operation and target schema", "source-self or direct-target temporary power/toughness result, optionally beside fixed supported keywords"],
         "outputs": ["one deterministic resolution-time integer", "unchanged typed life, damage, draw, token, or layer-7c characteristic instruction", "current layer-5 characteristic query", "copy-controller-correct and multiplayer-correct result", "current direct-target revalidation and granted-ability applicability", "hidden-identity-free hand count"],
         "exclusions": ["source-counter, attachment-derived, opponent-relative, source-excluding, ability-presence, combat-state, tapped-state, hidden-identity, and later-layer quantities", "linked-result, this-way, chosen, modal, optional, conditional, aggregate-set, multiple-target, and unsupported compound sequences", "dynamic targets, coefficients, token definitions, arithmetic, comparisons, greatest values, devotion, mana-symbol counts, party, and distinct-value counts", "base-setting, type, color, control, copy, name, text, variable-duration, dynamic-keyword, text-changed, and independently unsupported quoted or granted abilities"]
@@ -6664,18 +6691,18 @@
     },
     {
       "id": "damage.batch.fixed_set",
-      "version": 2,
+      "version": 3,
       "official_rules": ["120.1", "120.2", "120.4", "608.2c", "616.1"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
-        "summary": "Snapshot a closed public player/permanent recipient set, including controller, characteristic, combat-state, and source-exclusion predicates, then commit one positive amount to every current recipient as one canonical simultaneous damage batch.",
-        "inputs": ["positive fixed damage amount", "typed ordered recipient groups", "effective public battlefield characteristics and state", "optional source logical reference", "optional targeted player's controller scope", "current APNAP player order"],
-        "outputs": ["immutable deduplicated affected-set snapshot", "one canonical replacement-aware damage batch", "stable per-recipient event identities"],
-        "exclusions": ["variable or divided amounts", "chosen, linked-result, history-derived, and dynamic-characteristic predicates", "additive affected groups that cannot be identity-deduplicated", "multiple independent damage instructions", "linked life, draw, scry, or conditional riders", "unpreventable wording"]
+        "summary": "Snapshot a closed public player/permanent recipient set, then delegate one nonnegative resolved amount to the canonical simultaneous damage owner. Zero deals no damage and creates no damage replacement, prevention, or result event.",
+        "inputs": ["nonnegative resolved integer damage amount", "typed ordered recipient groups", "effective public battlefield characteristics and state", "optional source logical reference", "optional targeted player's controller scope", "current APNAP player order"],
+        "outputs": ["immutable deduplicated affected-set snapshot", "one canonical replacement-aware damage batch for positive amounts", "zero-count no-op", "stable per-recipient event identities"],
+        "exclusions": ["unowned variable or divided amounts", "chosen, linked-result, history-derived, and dynamic-characteristic predicates", "additive affected groups that cannot be identity-deduplicated", "multiple independent damage instructions", "linked life, draw, scry, or conditional riders", "unpreventable wording"]
       },
       "dependencies": ["damage.amount.positive"],
       "implementation_components": ["quorune.fixed_damage_set_model.FixedDamageSetSpec", "quorune.fixed_damage_set.snapshot_fixed_damage_set", "quorune.fixed_damage_set.resolve_fixed_damage_set", "quorune.rules.damage_capability_shapes.fixed_damage_node_capabilities", "quorune.semantic_runtime.fixed_damage_set_handlers.FixedDamageSetHandler"],
-      "positive_tests": ["test_fixed_set_snapshot_is_immutable_canonical_and_deduplicated", "test_source_exclusion_is_typed_backward_compatible_and_applied", "test_closed_mass_damage_grammar_lowers_typed_queries_and_spans", "test_compiled_mass_damage_resolves_one_canonical_batch"],
+      "positive_tests": ["test_fixed_set_snapshot_is_immutable_canonical_and_deduplicated", "test_source_exclusion_is_typed_backward_compatible_and_applied", "test_closed_mass_damage_grammar_lowers_typed_queries_and_spans", "test_compiled_mass_damage_resolves_one_canonical_batch", "test_real_zero_cast_amounts_are_paid_no_ops_across_result_owners"],
       "negative_tests": ["test_fixed_set_handler_rejects_malformed_or_unrepresented_groups", "test_unsupported_mass_damage_wording_remains_residual"],
       "interaction_tests": ["test_fixed_set_damage_uses_effective_types_and_replacement_order", "test_public_predicate_set_excludes_source_and_negative_keyword"],
       "multiplayer_tests": ["test_compiled_mass_damage_resolves_one_canonical_batch"],

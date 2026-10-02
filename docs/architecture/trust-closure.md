@@ -70,6 +70,12 @@ handler schema/event drift, untrusted closure, or a fingerprint mismatch fail
 closed. The global inventories are metadata aggregations; family registries
 remain the execution owners.
 
+An activation-catalogue carrier with no resolution effects is structural
+discovery metadata, not a hidden legacy rules program. Binding validates its
+registered closed descriptor and schema/event identity without inventing a
+behavioral capability closure. Any attached resolution effect still requires
+its actual registered capabilities; a catalogue identity cannot excuse it.
+
 New Game Record v3 manifests pin capability registry/evidence, semantic-handler,
 runtime-component, CardProgram, and CardProgram-trust fingerprints. A command
 that resolves a semantic program also records a compact binding fingerprint and

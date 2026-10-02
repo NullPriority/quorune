@@ -9,6 +9,10 @@ from ..semantic_runtime import (
     runtime_component_registry_fingerprint,
 )
 from ..util import stable_json
+from ..semantic_runtime.activated_abilities import (
+    is_structural_activated_ability_catalog_program,
+    activated_abilities_from_descriptors,
+)
 
 
 def _hash(value: Any) -> str:
@@ -57,6 +61,12 @@ def bind_semantic_program_runtime(
     declared = set(program.capability_dependencies)
     for dependency in sorted(required - declared):
         blockers.add(f"capability:undeclared_runtime_dependency:{dependency}")
+    structural_catalog = is_structural_activated_ability_catalog_program(program)
+    if structural_catalog:
+        try:
+            activated_abilities_from_descriptors(program.handlers)
+        except (TypeError, ValueError) as exc:
+            blockers.add(f"runtime_handler:invalid_catalog:{exc}")
     closure = program.capability_closure
     current_closure: Mapping[str, Any] | None = None
     if declared:
@@ -106,7 +116,7 @@ def bind_semantic_program_runtime(
         ),
         "compatibility_path": compatibility,
         "blockers": sorted(blockers),
-        "strict": not blockers and closure is not None,
+        "strict": not blockers and (closure is not None or structural_catalog),
     }
     result["fingerprint"] = _hash(result)
     return result
