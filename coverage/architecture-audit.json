@@ -1112,36 +1112,36 @@
           "classification": "rules_value",
           "file": "quorune/cast_lifecycles.py",
           "flow_id": "card-identity-flow:2f2ef7285f148b7841fd",
-          "line": 1001,
+          "line": 1005,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 1001,
+          "source_line": 1005,
           "symbol": "_complete_rebound_resolution"
         },
         {
           "classification": "rules_value",
           "file": "quorune/cast_lifecycles.py",
           "flow_id": "card-identity-flow:91824f59a309cb559c9b",
-          "line": 1009,
+          "line": 1013,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 1009,
+          "source_line": 1013,
           "symbol": "_complete_rebound_resolution"
         },
         {
           "classification": "rules_value",
           "file": "quorune/cast_lifecycles.py",
           "flow_id": "card-identity-flow:73825ad55622d76f9248",
-          "line": 1077,
+          "line": 1081,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 1077,
+          "source_line": 1081,
           "symbol": "_complete_blitz_resolution"
         },
         {
@@ -12346,12 +12346,12 @@
     },
     "interaction_assurance_baseline": {
       "applicable_high_risk_pairs": 327,
-      "applicable_piece_pairs": 91651,
+      "applicable_piece_pairs": 91889,
       "available": true,
       "covered_high_risk_pairs": 327,
       "covered_piece_pairs": 997,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "d192b58270582b3f13f17791d6d0813dc03acf5f6ac06162352c7b60ee726a27",
+      "source_fingerprint": "03a6bfd3a13221b3db3be8476c1568a22ad8c992aeaf65712dce0ca6f953869d",
       "uncovered_high_risk_pairs": 0
     },
     "migration_queue": [],
@@ -12740,7 +12740,7 @@
           "visibility": "private"
         }
       ],
-      "logical_lines": 235742,
+      "logical_lines": 235745,
       "methods": {
         "dunder": 589,
         "private": 946,
@@ -13011,8 +13011,8 @@
           "file": "quorune/cast_lifecycles.py",
           "functions_and_methods": 36,
           "language": "python",
-          "logical_lines": 1187,
-          "physical_lines": 1272
+          "logical_lines": 1192,
+          "physical_lines": 1277
         },
         {
           "file": "quorune/semantic_choices/payments.py",
@@ -14184,6 +14184,13 @@
           "physical_lines": 396
         },
         {
+          "file": "quorune/compiler/cast_lifecycle_nodes.py",
+          "functions_and_methods": 6,
+          "language": "python",
+          "logical_lines": 364,
+          "physical_lines": 385
+        },
+        {
           "file": "quorune/aura/runtime.py",
           "functions_and_methods": 16,
           "language": "python",
@@ -14203,13 +14210,6 @@
           "language": "python",
           "logical_lines": 362,
           "physical_lines": 385
-        },
-        {
-          "file": "quorune/compiler/cast_lifecycle_nodes.py",
-          "functions_and_methods": 6,
-          "language": "python",
-          "logical_lines": 362,
-          "physical_lines": 383
         },
         {
           "file": "quorune/creature_power_damage.py",
@@ -16004,13 +16004,6 @@
           "physical_lines": 132
         },
         {
-          "file": "quorune/semantic_runtime/cast_lifecycles.py",
-          "functions_and_methods": 3,
-          "language": "python",
-          "logical_lines": 116,
-          "physical_lines": 129
-        },
-        {
           "file": "quorune/compiler/fixed_source_effect_sequences.py",
           "functions_and_methods": 3,
           "language": "python",
@@ -16072,6 +16065,13 @@
           "language": "python",
           "logical_lines": 112,
           "physical_lines": 130
+        },
+        {
+          "file": "quorune/semantic_runtime/cast_lifecycles.py",
+          "functions_and_methods": 3,
+          "language": "python",
+          "logical_lines": 112,
+          "physical_lines": 125
         },
         {
           "file": "quorune/activation_usage.py",
@@ -18096,7 +18096,7 @@
           "physical_lines": 1590
         }
       ],
-      "physical_lines": 257494,
+      "physical_lines": 257497,
       "python_file_count": 697,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -32393,7 +32393,7 @@
     "compiler_module": "quorune/oracle_ir.py",
     "compiler_module_logical_lines": 1473,
     "compiler_module_physical_lines": 1533,
-    "compiler_version": "oracle-ir-v235",
+    "compiler_version": "oracle-ir-v236",
     "current_ir": "OracleCardIR lowered to canonical CardProgram V2 with a derived SemanticProgram compatibility index",
     "full_oracle": {
       "current_snapshot_complete": false,
@@ -32672,20 +32672,20 @@
         "class_counts": {
           "interaction": 712,
           "multiplayer": 339,
-          "mutation": 348,
-          "negative": 617,
-          "positive": 669,
+          "mutation": 349,
+          "negative": 618,
+          "positive": 670,
           "privacy": 299,
           "property": 15,
-          "replay": 417,
+          "replay": 418,
           "rollback": 81
         },
-        "declaration_count": 3497,
-        "declaration_source_fingerprint": "fa03c1649f9a37c91db919a9e0e12b38fb67c88116814f9fea407a08058afed0",
-        "fingerprint": "f5c0888d06527fa59655a723115b5d832eb1a7b4c1ea5033529f348790fd8631",
-        "registry_fingerprint": "61e63717cf84f5589bcdda2449bf7d2bdff27b81bcfb8f370c73693a7f6457d8"
+        "declaration_count": 3501,
+        "declaration_source_fingerprint": "39e1993ee51e0f11e493e9f3c52de780c1fa30ebcbf072ce9e298d629c8dbcbb",
+        "fingerprint": "078615c699b333b93a6e91a6f6200826e06c9706237cd378d5bfbff367af2116",
+        "registry_fingerprint": "763a0fa93ff99605c1bbbb3316689006951881469590b4c08b12390392fd4f45"
       },
-      "fingerprint": "61e63717cf84f5589bcdda2449bf7d2bdff27b81bcfb8f370c73693a7f6457d8",
+      "fingerprint": "763a0fa93ff99605c1bbbb3316689006951881469590b4c08b12390392fd4f45",
       "implementation_mutation_status_counts": {
         "killed": 298,
         "not_run": 4
@@ -32695,7 +32695,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "registry_version": 163,
+      "registry_version": 164,
       "schema_version": 1,
       "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
       "status_counts": {
@@ -32799,7 +32799,7 @@
             "quorune/compiler/attached_granted_ability_nodes.py:27",
             "quorune/compiler/bestow_nodes.py:12",
             "quorune/compiler/cascade_nodes.py:6",
-            "quorune/compiler/cast_lifecycle_nodes.py:22",
+            "quorune/compiler/cast_lifecycle_nodes.py:23",
             "quorune/compiler/casting_payment_keyword_nodes.py:24",
             "quorune/compiler/characteristic_definition_nodes.py:19",
             "quorune/compiler/class_context_nodes.py:28",
@@ -32886,7 +32886,7 @@
             "quorune/compiler/attached_granted_ability_nodes.py:16",
             "quorune/compiler/bestow_nodes.py:10",
             "quorune/compiler/cascade_nodes.py:3",
-            "quorune/compiler/cast_lifecycle_nodes.py:20",
+            "quorune/compiler/cast_lifecycle_nodes.py:21",
             "quorune/compiler/casting_payment_keyword_nodes.py:16",
             "quorune/compiler/characteristic_definition_nodes.py:6",
             "quorune/compiler/closed_static_nodes.py:5",
@@ -33024,7 +33024,7 @@
         "contract_fingerprint": "785a9d775fa100cedfaf1caecbf7d631fd6ff5b4cf9cde964a5aeb841a3f7037",
         "exact_cards_with_template": 678,
         "exact_nodes": 860,
-        "fingerprint": "1ba5649828f7a39e847165d31bf9d2fce1b96ba69e012cc24ccec46dcf7f7a92",
+        "fingerprint": "c953a90f88ae524f4c57edb3928ccece8188797f3df55d7b79b46f14a0398acb",
         "grammar_source_fingerprint": "8549d1e525f738eb577674c7c7427fc7142cc7eb8173a562d59d0e182e25a1ec",
         "identity_fingerprint": "3accdd312c991ea4485d59ed44854d2fae184945d115f696f121c790d0729608",
         "present": true,
@@ -33036,7 +33036,7 @@
         "contract_fingerprint": "785a9d775fa100cedfaf1caecbf7d631fd6ff5b4cf9cde964a5aeb841a3f7037",
         "exact_cards_with_template": 698,
         "exact_nodes": 890,
-        "fingerprint": "40f51d39ba1252b3a0f5ba7c1ff1709ab935a1a910c5d152e2019b20dd8f3ca2",
+        "fingerprint": "5f345ef28d47238294e8f938f3ca3760df8766417cf7219a5927c6416e30abb7",
         "grammar_source_fingerprint": "8549d1e525f738eb577674c7c7427fc7142cc7eb8173a562d59d0e182e25a1ec",
         "identity_fingerprint": "3d9eab1a2bbed0026b3dbccd457b4e39ab27a155a3976cdafdc24a380fc59f19",
         "present": true,
@@ -33055,7 +33055,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "92c3c0d7f2c058bd5968cd89026bf6349ba89b2ea15eff4fbd26c2a10b2b1f0b",
+      "fingerprint": "5f5971d4fad2fe3fb558a71be684e37eb7248ce85a5513eaa31c8876fd86298b",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -33885,7 +33885,7 @@
       "playwright_e2e_journeys": 11
     },
     "mutation_testing": {
-      "capability_mutation_declarations": 348,
+      "capability_mutation_declarations": 349,
       "configured_tools": [],
       "focused_executable_suite": true,
       "mutation_score": null
@@ -33913,14 +33913,14 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 4426,
-      "discovered_total": 7735,
+      "conventional_ast_cases": 4432,
+      "discovered_total": 7741,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 243,
         "fuzz_named": 1,
         "privacy_or_projection_named": 79,
-        "replay_named": 361,
+        "replay_named": 362,
         "server_named": 33
       },
       "reconciles": true,
