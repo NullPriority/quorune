@@ -14,6 +14,8 @@ maintenance: "hand-maintained"
 - Align fixed-cast lifecycle compiler declarations with the existing shared
   runtime handler's full capability contract. Preserve canonical cast offers,
   payment and resolution, and add a real Buyback action-and-replay witness.
+  Source preflight validates semantic-transition metadata through its existing
+  canonical parser before cloud generation or PR evidence publication.
 
 - Bind ordinary announced spell-cost X and complete public count definitions
   to existing typed numeric result owners without changing target or payment

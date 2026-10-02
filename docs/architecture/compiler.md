@@ -1043,8 +1043,8 @@ through one typed cast-lifecycle owner. Every descriptor declares both public
 and zone-cast capabilities required by the registered shared handler, plus its
 kind-specific cost or combat dependencies. This conservative descriptor
 contract does not grant a new casting permission or bypass current-ability
-validation; unavailable dependencies keep admission fail-closed. Dash contributes an
-alternative cost whenever the canonical casting owner already authorizes the
+validation; unavailable dependencies keep admission fail-closed. Dash contributes
+an alternative cost whenever the canonical casting owner already authorizes the
 card's current zone, including a designated commander in the command zone; the
 ordinary total-cost owner adds commander tax. Warp remains hand-only. Suspend
 contributes a timing-gated hand special action rather than a cast: it pays only

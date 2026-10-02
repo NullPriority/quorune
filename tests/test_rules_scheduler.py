@@ -300,6 +300,45 @@ def _with_large_ability_compiler_harvest(inputs):
     return updated
 
 
+class RulesSchedulerSourcePolicyTests(unittest.TestCase):
+    def test_pre_corpus_policy_validation_rejects_invalid_transition_metadata(self):
+        from scripts import update_rules_scheduler
+
+        catalog = _json("platform/rules-subsystems.json")
+        declaration = {
+            "transition_id": "fixture-non-harvest-source-policy",
+            "compiler_version": "oracle-ir-v129",
+            "bundle_id": None,
+            "candidate_ids": [],
+            "family_ids": [],
+            "capability_ids": [],
+            "expected_complete_card_gain": None,
+            "non_harvest_reason": "Correct an existing runtime declaration without harvesting grammar.",
+        }
+        catalog["work_selection"]["semantic_transition_declaration"] = declaration
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "platform" / "rules-subsystems.json"
+            source.parent.mkdir()
+            source.write_text(json.dumps(catalog), encoding="utf-8")
+            with mock.patch.object(update_rules_scheduler, "ROOT", root), mock.patch(
+                "sys.argv", ["update_rules_scheduler.py", "--validate-policy"]
+            ):
+                self.assertEqual(0, update_rules_scheduler.main())
+                for field in ("candidate_ids", "family_ids", "capability_ids"):
+                    with self.subTest(field=field):
+                        invalid = deepcopy(catalog)
+                        invalid["work_selection"]["semantic_transition_declaration"][field] = [
+                            "unexpected-harvest-identity"
+                        ]
+                        source.write_text(json.dumps(invalid), encoding="utf-8")
+                        with self.assertRaisesRegex(
+                            HarvestOutcomeHistoryError,
+                            "must identify one harvest",
+                        ):
+                            update_rules_scheduler.main()
+
+
 class RulesSchedulerTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
