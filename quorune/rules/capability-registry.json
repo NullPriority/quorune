@@ -7879,7 +7879,7 @@
     },
     {
       "id": "effect.choice.optional_fixed_mana_payment",
-      "version": 2,
+      "version": 3,
       "official_rules": ["109.5", "118.12", "603.5", "608.2c", "608.2d", "609.1"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
@@ -7890,7 +7890,7 @@
       },
       "dependencies": [],
       "implementation_components": ["quorune.compiler.optional_payment_templates.FixedOptionalManaPaymentTemplate", "quorune.compiler.fixed_effect_payment_templates.fixed_effect_payment_template", "quorune.fixed_effect_payment.FixedEffectPaymentSpec", "quorune.rules.fixed_effect_clause_shapes.fixed_optional_mana_payment_node_capabilities", "quorune.rules.fixed_effect_payment_shapes.fixed_effect_payment_node_capabilities", "quorune.semantic_choices.payments.FixedEffectOptionalPaymentHandler", "quorune.semantic_choices.fixed_effect_payment.prepare_fixed_effect_payment", "quorune.semantic_choices.fixed_effect_payment.complete_fixed_effect_payment", "quorune.semantic_choices.counter_coordination.continue_semantic_completion", "quorune.semantic_choices.intent_host.SemanticChoiceIntentHostMixin.pay_mana_cost_intent", "quorune.semantic_runtime.intents.PayManaCostIntent", "quorune.semantic_runtime.intents.PayLifeIntent", "quorune.semantic_runtime.intents.MoveObjectsSimultaneouslyIntent", "CommanderEngine._continue_resolution"],
-      "positive_tests": ["test_fixed_payment_composes_across_normalized_trigger_families", "test_lifecrafters_bestiary_is_an_exact_real_card_witness", "test_pay_decline_unpayable_and_stale_affordability_are_atomic", "test_fixed_resolution_payments_share_cost_result_and_carrier_owners"],
+      "positive_tests": ["test_fixed_payment_composes_across_normalized_trigger_families", "test_lifecrafters_bestiary_is_an_exact_real_card_witness", "test_pay_decline_unpayable_and_stale_affordability_are_atomic", "test_fixed_resolution_payments_share_cost_result_and_carrier_owners", "test_two_card_payment_published_form_and_command_cardinalities_agree"],
       "negative_tests": ["test_nonfixed_nested_and_nonexact_forms_remain_residual", "test_compiler_shape_and_handler_mutants_fail_closed", "test_runtime_wrapper_rejects_wrong_actor_extra_fields_and_nesting", "test_fixed_resolution_payment_rejects_partial_nested_and_linked_grammar"],
       "interaction_tests": ["test_real_card_payment_is_private_commits_before_draw_and_replays", "test_payment_replacement_choice_resumes_once_after_save_load_and_replays", "test_trusted_life_activation_and_declined_prefix_preserve_cost_scope"],
       "multiplayer_tests": ["test_real_card_payment_is_private_commits_before_draw_and_replays", "test_trusted_discard_spell_uses_real_cast_private_payment_and_pre_action_replay"],

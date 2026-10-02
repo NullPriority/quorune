@@ -4,6 +4,15 @@
     {
       "evidence_class": "interaction",
       "assurance_kind": "pair_derived",
+      "test_id": "test_two_card_payment_decline_insufficient_stale_and_replaced_branches",
+      "piece_ids": ["capability.choice.affected_player.fixed_discard", "capability.effect.choice.optional_fixed_mana_payment", "capability.zone.change.destination_replacement"],
+      "capability_ids": ["choice.affected_player.fixed_discard", "effect.choice.optional_fixed_mana_payment", "zone.change.destination_replacement"],
+      "interaction_order": 3,
+      "assertion": "The trusted two-card optional cost retains complete-group payment across competing graveyard destination replacements and pending save/load; selected objects remain uncommitted until choices complete, then exactly one draw consequence occurs and command replay matches."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
       "test_id": "test_payment_replacement_choice_resumes_once_after_save_load_and_replays",
       "piece_ids": ["capability.choice.affected_player.fixed_discard", "capability.effect.choice.optional_fixed_mana_payment", "capability.zone.change.destination_replacement"],
       "capability_ids": ["choice.affected_player.fixed_discard", "effect.choice.optional_fixed_mana_payment", "zone.change.destination_replacement"],

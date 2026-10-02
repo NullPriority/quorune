@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "d4bf5edd88c78e38550684e0e64d81e8c1790382ea648e95c0d07310830ab2d6",
-  "declaration_source_fingerprint": "b89b7d43aa974457d277c3e543ab63169eeedc917533ee6b48396a6502c49e36",
+  "registry_fingerprint": "cff94f7b2b1c8f28da9597eea22d42b5332eacb555d517a3a9073e40e9cb3a1e",
+  "declaration_source_fingerprint": "bf70459e28ce937ca4436da41b0c674d7b67d71004898867719f85240956c083",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -43612,6 +43612,25 @@
     },
     {
       "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedResolutionPaymentActionTests.test_two_card_payment_decline_insufficient_stale_and_replaced_branches",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual trusted two-card payment offers decline only with insufficient resources, preserves mandatory prefix scope on decline, rejects new logical incarnations and resumes a replacement-adjusted group once after save/load; all branches replay exactly."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentIntegrationTests.test_real_card_payment_is_private_commits_before_draw_and_replays",
       "official_rule_ids": [
@@ -43875,6 +43894,25 @@
         "commander_review"
       ],
       "applicability_note": "Compile Lifecrafter's Bestiary as one complete exact real card by composing its existing upkeep scry with the new cast-trigger payment wrapper."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedResolutionPaymentActionTests.test_two_card_payment_published_form_and_command_cardinalities_agree",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Real trusted cast projects a form validated by the actual TypeScript client; only zero or two distinct cards are legal, invalid command submissions roll back, two cards enter one simultaneous move and exactly one consequence executes after pending save/load with pre-action replay."
     },
     {
       "capability_id": "effect.choice.optional_fixed_mana_payment",
@@ -72103,5 +72141,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "969aaa2297f825019a2b7f2b4d0a81af0beeea73cca5f0e16247f716ea474263"
+  "fingerprint": "f32f93ab616171c94d4ad8efb1fb79aa37de077995b976f42087deace367de3a"
 }

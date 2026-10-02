@@ -15,6 +15,29 @@ function form(fields: ChoiceForm["fields"]): ChoiceForm {
   return { v: 1, fields, submit_label: "Submit" };
 }
 
+test("fixed optional costs permit decline or complete payment, not the intervening range", () => {
+  const payment = form([{
+    name: "cards", label: "Cards", control: "refs", required: false,
+    minimum: 0, maximum: 2, allowed_cardinalities: [0, 2], distinct: true,
+    options: [{ value: "A01", label: "First" }, { value: "A02", label: "Second" }, { value: "A03", label: "Third" }],
+  }]);
+  assert.deepEqual(validateChoices(payment, { cards: [] }), []);
+  assert.notDeepEqual(validateChoices(payment, { cards: ["A01"] }), []);
+  assert.deepEqual(validateChoices(payment, { cards: ["A01", "A02"] }), []);
+  assert.notDeepEqual(validateChoices(payment, { cards: ["A01", "A01"] }), []);
+  assert.notDeepEqual(validateChoices(payment, { cards: ["A01", "A02", "A03"] }), []);
+  const insufficient = form([{ ...payment.fields[0], maximum: 0, allowed_cardinalities: [0] }]);
+  assert.deepEqual(validateChoices(insufficient, { cards: [] }), []);
+  assert.notDeepEqual(validateChoices(insufficient, { cards: ["A01"] }), []);
+  for (const malformed of [[], [false, 2], "0,2"]) {
+    const invalid = form([{ ...payment.fields[0], allowed_cardinalities: malformed }]);
+    assert.notDeepEqual(validateChoices(invalid, { cards: [] }), []);
+  }
+  const { allowed_cardinalities: _allowed, ...ordinaryField } = payment.fields[0];
+  const ordinary = form([ordinaryField]);
+  assert.deepEqual(validateChoices(ordinary, { cards: ["A01"] }), []);
+});
+
 test("private mulligan-bottom refs require exactly the server count", () => {
   const bottom = form([
     {

@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Align optional complete-card payments with published disjoint selection counts
+  so the client offers decline or full payment and cannot advertise underpayment.
+
 - Compile fixed resolution-time mana, life, discard and sacrifice payments with
   independently typed conditional results through the existing optional-payment
   choice and resumable cost owners. Preserve full payment, private selection,

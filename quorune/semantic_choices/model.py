@@ -112,6 +112,7 @@ class ObjectChoice:
     controller_relation: str = "any"
     predicates: FrozenMap = field(default_factory=FrozenMap)
     schema_extras: FrozenMap = field(default_factory=FrozenMap)
+    allowed_cardinalities: tuple[int, ...] | None = None
 
     def __post_init__(self) -> None:
         _string(self.field_name, field_name="object field_name")
@@ -131,6 +132,19 @@ class ObjectChoice:
             raise SemanticChoiceError(
                 "An optional object choice must have a zero minimum"
             )
+        if self.allowed_cardinalities is not None:
+            counts = self.allowed_cardinalities
+            if (
+                not isinstance(counts, tuple)
+                or not counts
+                or any(type(count) is not int for count in counts)
+                or counts != tuple(sorted(set(counts)))
+                or counts[0] != self.minimum
+                or counts[-1] != self.maximum
+            ):
+                raise SemanticChoiceError(
+                    "Object choice cardinalities must be sorted unique integers spanning its bounds"
+                )
         if self.visibility not in {"public", "actor_private"}:
             raise SemanticChoiceError("Unknown object-choice visibility")
         if not isinstance(self.predicates, FrozenMap):
@@ -157,6 +171,8 @@ class ObjectChoice:
             )
         if self.optional:
             result["optional"] = True
+        if self.allowed_cardinalities is not None:
+            result["allowed_cardinalities"] = list(self.allowed_cardinalities)
         result.update(thaw_value(self.schema_extras))
         return result
 

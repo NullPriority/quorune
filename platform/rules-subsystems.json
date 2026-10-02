@@ -4662,8 +4662,8 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v238-fixed-resolution-payment",
-      "compiler_version": "oracle-ir-v238",
+      "transition_id": "oracle-ir-v239-fixed-resolution-payment",
+      "compiler_version": "oracle-ir-v239",
       "bundle_id": "bundle:fixed-resolution-payment",
       "candidate_ids": ["bundle:fixed-resolution-payment"],
       "family_ids": ["effect_clause:ordered-effect-composition", "event_binding:intervening-if-and-reflexive-trigger-grammar", "target_or_choice:conditional-effect"],

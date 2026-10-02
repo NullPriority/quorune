@@ -14,6 +14,14 @@ from scripts.change_impact import (
 
 
 class ChangeImpactTests(unittest.TestCase):
+    def test_optional_payment_cardinality_selects_client_and_owner_contracts(self):
+        expected={'test_choice_forms','test_fixed_optional_mana_payment_triggers','test_semantic_choice_model'}
+        for owner in ('quorune/semantic_choices/model.py','quorune/semantic_choices/fixed_effect_payment.py','quorune/choice_forms.py','web/src/choices.ts'):
+            with self.subTest(owner=owner):
+                plan=classify_changes([owner])
+                self.assertLessEqual(expected,set(plan.test_modules))
+                self.assertTrue(plan.browser_full)
+
     def test_payment_composition_selects_optional_wrapper_consumers(self):
         for owner in ('quorune/compiler/fixed_effect_payment_templates.py', 'quorune/fixed_effect_payment.py', 'quorune/semantic_choices/fixed_effect_payment.py'):
             with self.subTest(owner=owner):

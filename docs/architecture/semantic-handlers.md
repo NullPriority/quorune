@@ -50,6 +50,9 @@ descriptor. It uses the ordinary private/public object choice and resource
 affordability snapshot, pins selected zone incarnations, and returns only
 canonical full-payment intents before prepending independently represented
 consequences. A redirected discard or sacrifice still pays the chosen cost;
+optional object costs publish disjoint permitted cardinalities, so decline and
+full payment are the only executable alternatives rather than an inclusive
+selection range. Omitted cardinality metadata retains existing range choices.
 checkpoint replacement resumption reconstructs the same intent and runs the
 result once. Decline changes no cost/result state, and a mandatory sibling
 outside the descriptor remains outside its choice. Historical v1 payment

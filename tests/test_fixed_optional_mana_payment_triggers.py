@@ -400,6 +400,20 @@ class FixedOptionalManaPaymentCompilerTests(unittest.TestCase):
 
 
 class FixedOptionalManaPaymentChoiceTests(unittest.TestCase):
+    def test_two_card_payment_publication_mutant_is_killed(self):
+        from quorune.semantic_choices.model import ObjectChoice
+        original=ObjectChoice.choice_schema
+        def omit_cardinality(choice):
+            return {key:value for key,value in original(choice).items()if key!='allowed_cardinalities'}
+        payment=FixedEffectPaymentSpec('discard',amount=2,predicate=ObjectQuerySpec(zones=('hand',),owner='A',known_to_actor=True))
+        rows=tuple(ObjectQueryResult(object_id=ref,ref=ref,printed_name='Generic card',owner='A',controller='A',zone='hand',logical_object_id=ref+':1')for ref in ('FIRST','SECOND'))
+        query=SnapshotSemanticChoiceQuery(seat_order=('A','B'),active_order=('A','B'),object_rows=rows)
+        effect={'op':OPTIONAL_MANA_PAYMENT_OPERATION,'schema_version':2,'player':'A','payment':payment.to_dict(),'effects':[{'op':'draw','player':'A','count':1,'private':True}]}
+        with mock.patch.object(ObjectChoice,'choice_schema',omit_cardinality):
+            prepared=payment_handler().prepare(effect,payment_context(query=query))
+            with self.assertRaises(KeyError):
+                self.assertEqual([0,2],prepared.request.choice.choice_schema()['allowed_cardinalities'])
+
     def test_v2_sacrifice_uses_current_controller_and_closed_characteristics(self):
         from dataclasses import replace
         row = ObjectQueryResult(
@@ -692,6 +706,123 @@ class FixedOptionalManaPaymentIntegrationTests(unittest.TestCase):
 
 
 class FixedResolutionPaymentActionTests(unittest.TestCase):
+    def test_two_card_payment_published_form_and_command_cardinalities_agree(self):
+        import json
+        import shutil
+        import subprocess
+        from common import ROOT
+        from quorune.record import authoritative_state_hash
+        session = self.session(2381181210)
+        engine = session.engine
+        spell = self.add(engine, 'Generic Payment Prefix Spell', zone='hand', ref='TWO-CARD-PAYMENT')
+        first = self.add(engine, 'Generic Payment Plains', zone='hand', ref='TWO-CARD-FIRST')
+        second = self.add(engine, 'Generic Payment Plains', zone='hand', ref='TWO-CARD-SECOND')
+        third = self.add(engine, 'Generic Payment Plains', zone='hand', ref='TWO-CARD-EXCESS')
+        action = self.ready(session, spell, {'W': 1})
+        session.initial_checkpoint=checkpoint_envelope(engine.state)
+        session.commands.clear();session.decisions.clear()
+        cast = session.act('pilot:A', {'action_id': action['id'], 'pay': 'auto'})
+        self.assertTrue(cast.ok, cast.summary)
+        self.resolve(session)
+        packet = session.packet('pilot:A', full=True)
+        choice = next(row for row in packet['decision']['legal_actions'] if row['id'] == 'choose')
+        form = choice['form']
+        self.assertEqual([0,2],choice['choice_schema']['allowed_cardinalities'])
+        for seat in ('B','C','D'):
+            self.assertIsNone(session.packet(f'pilot:{seat}',full=True)['decision'])
+        node = shutil.which('node')
+        self.assertIsNotNone(node, 'The client/form witness requires the repository Node runtime')
+        validator = "import {validateChoices} from './web/src/choices.ts'; let data=''; for await (const chunk of process.stdin) data+=chunk; const {form,values}=JSON.parse(data); process.stdout.write(JSON.stringify(validateChoices(form,values)));"
+        client_results = {}
+        for refs in ([], [first.ref], [first.ref, second.ref], [first.ref, second.ref, third.ref]):
+            client = subprocess.run(
+                [node, '--experimental-strip-types', '--input-type=module', '-e', validator],
+                cwd=ROOT, input=json.dumps({'form': form, 'values': {'cards': refs}}),
+                text=True, encoding='utf-8', stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=20,
+            )
+            self.assertEqual(0, client.returncode, client.stderr)
+            client_results[len(refs)] = json.loads(client.stdout)
+        self.assertFalse(client_results[0])
+        self.assertFalse(client_results[2])
+        self.assertTrue(client_results[3])
+        before = authoritative_state_hash(engine.state)
+        rejected = session.act('pilot:A', {'action_id': 'choose', 'cards': [first.ref]})
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before, authoritative_state_hash(engine.state))
+        excess=session.act('pilot:A',{'action_id':'choose','cards':[first.ref,second.ref,third.ref]})
+        self.assertFalse(excess.ok);self.assertEqual(before,authoritative_state_hash(engine.state))
+        # This assertion distinguishes the publication defect from underpayment
+        # acceptance: authoritative completion already rejects one card.
+        self.assertTrue(client_results[1], 'The published form must reject incomplete two-card payment')
+        from quorune.session import CommanderSession
+        with tempfile.TemporaryDirectory()as directory:
+            path=Path(directory)/'pending-two-card-payment';session.save(path)
+            session=CommanderSession.load(self.db,path)
+        engine=session.engine
+        self.assertEqual([0,2],session.packet('pilot:A',full=True)['decision']['legal_actions'][0]['form']['fields'][0]['allowed_cardinalities'])
+        hand_before=len(engine.state.players['A'].zones['hand'])
+        with mock.patch.object(engine,'_move_cards_simultaneously',wraps=engine._move_cards_simultaneously)as movement:
+            paid=session.act('pilot:A',{'action_id':'choose','cards':[first.ref,second.ref]})
+        self.assertTrue(paid.ok,paid.summary)
+        self.assertTrue(any({object_id for object_id,_destination in call.args[0]}=={first.object_id,second.object_id}for call in movement.call_args_list))
+        self.assertEqual('graveyard',engine.state.cards[first.object_id].zone)
+        self.assertEqual('graveyard',engine.state.cards[second.object_id].zone)
+        self.assertEqual(hand_before+1,len(engine.state.players['A'].zones['hand']))
+        self.replay(session)
+
+    def test_two_card_payment_decline_insufficient_stale_and_replaced_branches(self):
+        from quorune.record import authoritative_state_hash
+        from quorune.session import CommanderSession
+        for branch in ('insufficient','decline','stale','replacement'):
+            with self.subTest(branch=branch):
+                session=self.session(2381181220+len(branch));engine=session.engine
+                spell=self.add(engine,'Generic Payment Prefix Spell',zone='hand',ref='BRANCH-PAYMENT')
+                keep=1 if branch=='insufficient'else 2
+                for object_id in tuple(engine.state.players['A'].zones['hand']):
+                    engine.move_card(object_id,'library',reason='Constructed minimal hand')
+                cards=[self.add(engine,'Generic Payment Plains',zone='hand',ref=f'BRANCH-CARD-{index}')for index in range(keep)]
+                # Minimal hand setup moved the added spell too; restore it through
+                # the canonical zone owner rather than editing its zone field.
+                engine.move_card(spell.object_id,'hand',reason='Constructed payment spell')
+                if branch=='replacement':
+                    self.add(engine,'Generic Payment Destination Replacement',seat='B',ref='BRANCH-REPLACEMENT-ONE')
+                    self.add(engine,'Generic Payment Competing Replacement',seat='C',ref='BRANCH-REPLACEMENT-TWO')
+                action=self.ready(session,spell,{'W':1})
+                session.initial_checkpoint=checkpoint_envelope(engine.state);session.commands.clear();session.decisions.clear()
+                self.assertTrue(session.act('pilot:A',{'action_id':action['id'],'pay':'auto'}).ok);self.resolve(session)
+                projected=session.packet('pilot:A',full=True)['decision']['legal_actions'][0]
+                expected=[0]if branch=='insufficient'else[0,2]
+                self.assertEqual(expected,projected['choice_schema']['allowed_cardinalities'])
+                if branch=='stale':
+                    engine.move_card(cards[0].object_id,'graveyard',reason='Constructed departure')
+                    engine.move_card(cards[0].object_id,'hand',reason='Constructed new incarnation')
+                    session.initial_checkpoint=checkpoint_envelope(engine.state);session.commands.clear();session.decisions.clear()
+                    before=authoritative_state_hash(engine.state)
+                    bad=session.act('pilot:A',{'action_id':'choose','cards':[card.ref for card in cards]})
+                    self.assertFalse(bad.ok);self.assertEqual(before,authoritative_state_hash(engine.state))
+                hand_before=len(engine.state.players['A'].zones['hand'])
+                if branch!='replacement':
+                    declined=session.act('pilot:A',{'action_id':'choose','cards':[]})
+                    self.assertTrue(declined.ok,declined.summary)
+                    self.assertEqual(hand_before,len(engine.state.players['A'].zones['hand']))
+                else:
+                    chosen=session.act('pilot:A',{'action_id':'choose','cards':[card.ref for card in cards]})
+                    self.assertTrue(chosen.ok,chosen.summary)
+                    self.assertIn('replacement',engine.state.pending_decision.kind)
+                    self.assertTrue(all(engine.state.cards[card.object_id].zone=='hand'for card in cards))
+                    with tempfile.TemporaryDirectory()as directory:
+                        path=Path(directory)/'two-card-replacement';session.save(path);session=CommanderSession.load(self.db,path)
+                    engine=session.engine
+                    for _ in range(8):
+                        if not engine.state.pending_decision or 'replacement'not in engine.state.pending_decision.kind:break
+                        decision=session.packet('pilot:A',full=True)['decision']
+                        result=session.act('pilot:A',{'action_id':'choose','replacement':decision['ctx']['options'][0]['id']})
+                        self.assertTrue(result.ok,result.summary)
+                    self.assertTrue(all(engine.state.cards[card.object_id].zone=='exile'for card in cards))
+                    self.assertEqual(hand_before+1,len(engine.state.players['A'].zones['hand']))
+                    self.assertEqual(2,sum(sum(engine.state.cards[card.object_id].counters.values())for card in cards))
+                self.replay(session)
+
     @classmethod
     def setUpClass(cls):
         from common import ROOT

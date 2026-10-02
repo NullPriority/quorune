@@ -212,6 +212,10 @@ def _field(
             field["minimum"] = int(minimum)
         if maximum is not None:
             field["maximum"] = int(maximum)
+        if value.get("allowed_cardinalities") is not None:
+            field["allowed_cardinalities"] = list(value["allowed_cardinalities"])
+            if value.get("distinct") is not None:
+                field["distinct"] = bool(value["distinct"])
         if value.get("order") is not None:
             field["ordered"] = True
             field["order"] = str(value["order"])
