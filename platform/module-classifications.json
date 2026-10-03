@@ -2868,6 +2868,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/linked_exile_return_templates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/madness_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -5072,6 +5087,34 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/linked_exile_return.py",
+      "layer": "rules",
+      "owning_subsystem": "zones_and_object_identity",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "read_only",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/linked_exile_return_model.py",
+      "layer": "rules",
+      "owning_subsystem": "legacy_rules",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/madness.py",
       "layer": "rules",
       "owning_subsystem": "legacy_rules",
@@ -6950,6 +6993,20 @@
     },
     {
       "file": "quorune/rules/library_surveillance.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/rules/linked_exile_return_shapes.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
       "allowed_dependency_layers": [
@@ -10194,5 +10251,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "564474a201dd1dd39016fe1ab4cf78bd8ec879b71377bc9171f921ce24d805cc"
+  "fingerprint": "093738becf6e8c4e2f34c52dea6b7046a62da363081c7ed2b56addfdeedd5af9"
 }

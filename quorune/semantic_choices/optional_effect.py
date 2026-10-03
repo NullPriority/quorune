@@ -7,6 +7,7 @@ from typing import Any, Mapping, Sequence
 
 from ..compiler.optional_effect_templates import OPTIONAL_EFFECT_OPERATION
 from ..replacement.immutable import FrozenMap, freeze_value
+from ..linked_exile_return_model import validate_linked_instruction
 from ..semantic_runtime import SemanticNodeError, default_semantic_interpreter
 from .context import SemanticChoiceContext, SemanticChoiceQuery
 from .model import (
@@ -79,10 +80,24 @@ def _validated_effects(
             "Optional effect must be issued to its active controller"
         )
     values = effect.get("effects")
+    linked_pair = (
+        isinstance(values, Sequence) and not isinstance(values, (str, bytes))
+        and len(values) == 2 and all(isinstance(value, Mapping) for value in values)
+        and values[0].get("phase") == "exile" and values[1].get("phase") == "return"
+        and values[0].get("op") == "linked_exile_return" and values[1].get("op") == "linked_exile_return"
+        and values[0].get("binding_id") == values[1].get("binding_id")
+        and values[0].get("spec") == values[1].get("spec")
+    )
+    if linked_pair:
+        try:
+            for value in values:
+                validate_linked_instruction(value)
+        except ValueError as exc:
+            raise SemanticChoiceError(str(exc)) from exc
     if (
         not isinstance(values, Sequence)
         or isinstance(values, (str, bytes))
-        or len(values) != 1
+        or (len(values) != 1 and not linked_pair)
         or any(not isinstance(value, Mapping) for value in values)
     ):
         raise SemanticChoiceError(

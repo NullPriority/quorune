@@ -260,6 +260,7 @@
       "test_fixed_target_effect_sequences",
       "test_fixed_target_reanimation",
       "test_game_actor",
+      "test_linked_exile_return",
       "test_native_v3_slice",
       "test_persist_undying_rules",
       "test_prevention_immediate_sequencing",

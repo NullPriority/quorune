@@ -248,6 +248,8 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/casting_cost_host.py",
         "quorune/permanent_exile.py",
         "quorune/public_zone_moves.py",
+        "quorune/linked_exile_return.py",
+        "quorune/linked_exile_return_model.py",
         "quorune/public_tap_state_sets.py",
         "quorune/public_alternative_costs.py",
         "quorune/permanent_designations.py",
@@ -590,6 +592,7 @@ def _owner(relative: str, layer: str) -> str:
     if relative in {
         "quorune/commander_zones.py",
         "quorune/public_zone_moves.py",
+        "quorune/linked_exile_return.py",
     }:
         return "zones_and_object_identity"
     if relative == "quorune/permanent_designations.py":

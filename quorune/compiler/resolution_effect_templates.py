@@ -10,6 +10,7 @@ from .affected_player_sacrifice_templates import (
     fixed_affected_player_sacrifice_effect_template,
 )
 from .fixed_attachment_templates import fixed_source_attachment_effect_template
+from .linked_exile_return_templates import linked_exile_return_effect_template
 from .amass_templates import fixed_amass_effect_template
 from .bolster_templates import fixed_bolster_effect_template
 from .counter_placement_group_templates import (
@@ -118,6 +119,9 @@ def typed_resolution_effect_template(
 ) -> CompiledEffectTemplate | None:
     """Lower closed typed resolution-effect families."""
 
+    linked_return = linked_exile_return_effect_template(text, card_name=card_name, source_is_permanent=source_is_permanent)
+    if linked_return is not None:
+        return linked_return
 
     fixed_counter_controller_sequence = (
         fixed_counter_controller_effect_sequence_template(

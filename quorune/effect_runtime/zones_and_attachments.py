@@ -27,6 +27,7 @@ from ..impulse_access_model import (
 from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
 from ..model import CardInstance
 from ..milling import mill_cards, MillRequest
+from ..linked_exile_return import resolve_linked_exile_return, return_linked_exiled_objects
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..targets import TargetGroup
 from ..util import unique_preserving_order
@@ -1385,6 +1386,8 @@ def _apply_exile_top_library_card(
 
 
 HANDLERS = {
+    'linked_exile_return': resolve_linked_exile_return,
+    'return_linked_exiled_objects': return_linked_exiled_objects,
     'prepare_graveyard_creature_aura': _apply_prepare_graveyard_creature_aura,
     'reanimate_attached_creature_aura': _apply_reanimate_attached_creature_aura,
     'attach': _apply_attach,

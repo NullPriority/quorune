@@ -374,6 +374,11 @@
       ]
     },
     {
+      "id": "linked-exile-return-contract",
+      "patterns": ["quorune/compiler/linked_exile_return_templates.py", "quorune/linked_exile_return.py", "quorune/linked_exile_return_model.py", "quorune/rules/linked_exile_return_shapes.py", "tests/fixtures/linked-exile-return-cards.json"],
+      "test_modules": ["test_linked_exile_return", "test_fixed_target_reanimation", "test_zone_trigger_events", "test_delayed_triggers", "test_card_program_trust", "test_fixed_optional_effect_choices", "test_rules_scheduler"]
+    },
+    {
       "id": "fixed-single-object-reanimation-contract",
       "patterns": [
         "quorune/compiler/reanimation_templates.py",

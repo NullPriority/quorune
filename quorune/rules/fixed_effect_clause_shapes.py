@@ -21,6 +21,7 @@ from .counter_removal_capabilities import (
     fixed_counter_removal_node_capabilities,
 )
 from .fixed_controller_effect_shapes import fixed_life_node_capabilities
+from .linked_exile_return_shapes import linked_exile_return_node_capabilities
 from .fixed_resolution_characteristic_shapes import (
     fixed_resolution_characteristic_set_node_capabilities,
 )
@@ -87,6 +88,7 @@ FIXED_EFFECT_CLAUSE_SEQUENCE_CAPABILITY = (
 )
 
 _COMPONENT_RESOLVERS = (
+    linked_exile_return_node_capabilities,
     all_counter_removal_node_capabilities,
     fixed_affected_player_discard_node_capabilities,
     fixed_affected_player_sacrifice_node_capabilities,
@@ -278,6 +280,16 @@ def fixed_optional_effect_node_capabilities(
     ):
         return ()
     nested = wrapper.get("effects")
+    linked = (
+        linked_exile_return_node_capabilities(
+            effects=nested, target_schema=target_schema,
+            mechanic_ids=mechanics - {FIXED_OPTIONAL_EFFECT_MECHANIC},
+        )
+        if isinstance(nested, (list, tuple)) and all(isinstance(value, Mapping) for value in nested)
+        else ()
+    )
+    if linked:
+        return tuple(sorted({FIXED_OPTIONAL_EFFECT_CAPABILITY, *linked}))
     if (
         not isinstance(nested, (list, tuple))
         or len(nested) != 1

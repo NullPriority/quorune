@@ -3,6 +3,8 @@ from __future__ import annotations
 """Capability closure for fixed public-origin zone-move effects."""
 
 from typing import Any, Iterable, Mapping, Sequence
+from .linked_exile_return_shapes import linked_exile_return_node_capabilities
+from ..linked_exile_return_model import LINKED_EXILE_RETURN_CAPABILITY, LINKED_EXILE_RETURN_MECHANIC
 
 from ..affected_permanents import (
     AffectedPermanentSetError,
@@ -132,6 +134,8 @@ def fixed_owner_zone_move_covered_mechanics(
 ) -> tuple[str, ...]:
     supplied = set(capability_ids)
     covered: set[str] = set()
+    if LINKED_EXILE_RETURN_CAPABILITY in supplied:
+        covered.update((LINKED_EXILE_RETURN_MECHANIC, "cr-115-targets"))
     if FIXED_OWNER_ZONE_MOVE_CAPABILITY in supplied:
         covered.update(
             {
@@ -208,6 +212,9 @@ def fixed_owner_zone_move_node_capabilities(
     """Recognize the closed owner-destination single-object move family."""
 
     mechanics = {str(value).casefold() for value in mechanic_ids}
+    linked = linked_exile_return_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
+    if linked:
+        return linked
     if FIXED_OWNER_ZONE_MOVE_MECHANIC not in mechanics or len(effects) != 1:
         return ()
     effect = effects[0]

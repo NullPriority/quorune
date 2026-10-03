@@ -34,6 +34,15 @@ source hashes, residuals, and capability closure into the canonical artifact.
 The local card database is a compiler input; the engine does not query it while
 performing a transition.
 
+`compiler/linked_exile_return_templates.py` lowers a closed battlefield exile
+followed by an immediate return or next-end-step return. It shares direct
+permanent predicates, optional resolution choices, modal scoping, and ordinary
+activated/triggered shells. The paired instruction carries one binding, fixed
+owner-or-resolver control, tapped state, represented entry counters, and an
+optional immediate fixed keyword grant. Exiled tokens cannot return. Conditional
+outcomes, transformed or face-down returns, source-departure banishment,
+attachment restoration, and unsupported riders remain residual.
+
 `compiler/fixed_target_effect_sequences.py` owns the closed cross-sentence
 target-threading grammar. It is the only compiler authority for represented
 fixed counter plus until-end-of-turn characteristic sequences: one clause

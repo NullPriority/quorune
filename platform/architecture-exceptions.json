@@ -2,6 +2,22 @@
   "schema_version": 1,
   "exceptions": [
     {
+      "exception_id": "ARCH-EXC-0055",
+      "adr": "docs/adr/0104-typed-linked-exile-return.md",
+      "artifact": "platform/architecture-guard-baseline.json",
+      "allowance_fingerprint": "1e528c96178ca09cf1867b108edd4247b5b302b5970a5c564c85412367736545",
+      "exact_allowance": "The existing exact structural baseline plus only linked_exile_return and return_linked_exiled_objects, their generic rules/model classifications and the registered paired instruction compiler boundary.",
+      "rationale": "The broad linked exile/return harvest shares canonical zone, replacement, entry-counter, layer, delayed-trigger, target, privacy and replay owners. The coordinator stores a closed resolving-stack binding but introduces no direct GameState mutation, engine growth, runtime Oracle interpretation or fixed-card identity dispatch.",
+      "owner": "rules architecture maintainers",
+      "maximum_scope": "Only the two exact registered operations and their source-spanned typed data; existing engine, write, identity and oversized-symbol ceilings may not increase.",
+      "removal_condition": "Remove this exception when generic operation inventories no longer require exact baseline review; retain its operations only while strict descriptor, incarnation, prospective-entry replacement and deterministic resumption tests remain enforced.",
+      "target_milestone": "capability-closed linked zone lifecycle ownership",
+      "replay_implications": "Current paired instructions and delayed identities are pinned in the existing Game Record; incompatible historical trust provenance remains fail-closed rather than reinterpreted.",
+      "privacy_implications": "Only public selected objects are tracked; delayed metadata does not expose hidden libraries, hands or private replacement authority.",
+      "security_implications": "Malformed bindings, unsupported grammar, stale objects and changed continuation data fail before committed mutation through canonical owners.",
+      "tests": ["tests.test_linked_exile_return.LinkedExileReturnCompilerTests.test_closed_descriptor_has_exact_capability_shape", "tests.test_linked_exile_return.LinkedExileReturnRuntimeContractTests.test_identity_guard_mutant_is_killed", "tests.test_linked_exile_return.LinkedExileReturnActionTests.test_trusted_counter_entry_replacement_choice_checkpoint_resumes_return_only", "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound"]
+    },
+    {
       "exception_id": "ARCH-EXC-0001",
       "adr": "docs/adr/0012-damage-transaction-and-static-prevention.md",
       "artifact": "platform/architecture-guard-baseline.json",
