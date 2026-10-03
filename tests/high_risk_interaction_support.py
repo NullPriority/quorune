@@ -532,7 +532,7 @@ _WITNESSES = {
     "madness-target-predicate": _Witness(
         "Generic Madness Target Predicate Fixture",
         "Instant",
-        "Exile target creature you control, then return that card to the "
+        "Exile target creature with the chosen name, then return that card to the "
         "battlefield under its owner's control.\nMadness {B}",
         "{2}{B}",
         ("Madness",),
@@ -576,10 +576,10 @@ _WITNESSES = {
         "player or planeswalker.\nDraw a card.",
         "{3}{U}{R}",
     ),
-    "blur": _Witness(
-        "Blur",
+    "blink-draw-target-predicate": _Witness(
+        "Generic Blink Draw Target Predicate Fixture",
         "Instant",
-        "Exile target creature you control, then return that card to the "
+        "Exile target creature with the chosen name, then return that card to the "
         "battlefield under its owner's control.\nDraw a card.",
         "{2}{U}",
     ),
@@ -1571,7 +1571,7 @@ _bind("dauthi-voidwalker", ZONE_AND_CHOICE_PAIRS[0])
 _bind("sphinxs-insight", ZONE_AND_CHOICE_PAIRS[1])
 _bind("electrolyze", ZONE_AND_CHOICE_PAIRS[2], ZONE_AND_CHOICE_PAIRS[4])
 _bind("cunning-strike", ZONE_AND_CHOICE_PAIRS[3])
-_bind("blur", ZONE_AND_CHOICE_PAIRS[5])
+_bind("blink-draw-target-predicate", ZONE_AND_CHOICE_PAIRS[5])
 _bind("madblind-mountain", ZONE_AND_CHOICE_PAIRS[6])
 _bind("bretagard-stronghold", ZONE_AND_CHOICE_PAIRS[7])
 _bind("ebony-fly", ZONE_AND_CHOICE_PAIRS[8])

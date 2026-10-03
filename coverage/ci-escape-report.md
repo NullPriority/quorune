@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "b98e1e6002558853929b443fe0f1198c9236d0dbf1556f0bc2d3723470c66a56"
+verified: "ffd8ac7af89962f3e56c7dbf52a284c5d084a9aa00ff68671f7eca2b95f98fc1"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -15,8 +15,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 - Observation window: 2026-08-25T03:52:06Z through 2026-08-25T20:56:41Z
 - Observed population: tracked recent pull requests (n=4)
-- Escapes: 68
-- Deterministic escapes: 62
+- Escapes: 69
+- Deterministic escapes: 63
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: null
@@ -29,6 +29,7 @@ This report classifies observed deterministic failures that escaped the local qu
 
 | ID | Run | Category | Impact edge | Resolution |
 |---|---:|---|---|---|
+| `ci-20261003-69` | [37115857103](https://github.com/NullPriority/quorune/actions/runs/37115857103) | `missing_affected_test` | `added` | The exact two-pair reproduction failed on unchanged production in 47.527 seconds. Replace the negative carriers with constructed chosen-name target predicates, preserve the promoted Madness/draw blink forms as positive compiler and runtime-binding controls, and select high-risk interaction assurance for the linked-lifecycle source paths. Both focused tests pass in 48.669 seconds. No boundary assertion, production semantics, or completed corpus result changed. |
 | `ci-20261003-68` | [37110420467](https://github.com/NullPriority/quorune/actions/runs/37110420467) | `missing_affected_test` | `added` | Retain the leaf-parser negative control, convert the promoted whole-card instruction to an explicit positive witness, and protect unsupported transformed return with a constructed counterexample. Both exact tests pass in 1.248 seconds. Add targeted-exile and rules-corpus integration consumers to the linked-lifecycle impact edge. The rules-corpus and generated jobs fail only on the deliberately unfinalized new cohort inventory and are repaired by the registered downstream finalizer; compiler semantics and the one successful census remain unchanged. |
 | `ci-20260804-01` | [30916877307](https://github.com/NullPriority/quorune/actions/runs/30916877307) | `missing_affected_test` | `added` | The fixture was made portable and the compiler family remains explicitly routed to compiler-cardprogram and generated validation. |
 | `ci-20260804-02` | [30918937537](https://github.com/NullPriority/quorune/actions/runs/30918937537) | `generated_artifact_drift` | `added` | Platform and coverage sources now select their exact generated freshness checks through the path policy. |
