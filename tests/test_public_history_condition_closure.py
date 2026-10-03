@@ -216,7 +216,7 @@ class PublicHistoryTrustedActionTests(unittest.TestCase):
         session.state.players["A"].mana_pool["G"]=5
         return session
 
-    def add(self,session,name,ref,*,owner="A",controller=None,zone="hand"):
+    def add(self,session,name,ref,*,owner="A",controller=None,zone="hand",trusted=True):
         row=self.db.lookup(name);controller=controller or owner
         card=CardInstance(object_id="history:"+ref,ref=ref,oracle_id=row.oracle_id,
             printed_name=row.name,owner=owner,controller=controller,zone=zone,
@@ -227,7 +227,8 @@ class PublicHistoryTrustedActionTests(unittest.TestCase):
         session.state.players[container].zones[zone].append(card.object_id)
         programs=session.engine.semantics.programs_for_oracle(card.oracle_id)
         self.assertTrue(programs)
-        self.assertTrue(all(session.engine.semantic_program_is_current_trusted(p) for p in programs))
+        if trusted:
+            self.assertTrue(all(session.engine.semantic_program_is_current_trusted(p) for p in programs))
         return card
 
     def seal(self,session):
@@ -402,6 +403,31 @@ class PublicHistoryTrustedActionTests(unittest.TestCase):
         self.assertEqual(before_a+1,len([e for e in session.state.events if e.code=="card.draw" and e.actor=="A"]))
         self.assertEqual(before_b,len([e for e in session.state.events if e.code=="card.draw" and e.actor=="B"]))
         self.replay(session)
+
+    def test_exact_history_counter_trigger_cannot_admit_unrepresented_entry_replacement(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        session=self.session(24300010)
+        session.state.config.semantic_policy="trusted_only"
+        card=self.add(session,"Generic History Unrepresented Entry Replacement","UNREPRESENTED",trusted=False)
+        row=self.db.by_oracle_id(card.oracle_id)
+        ir=compile_oracle_card(row,capability_registry=load_default_capability_registry(),capability_profile="commander_review")
+        self.assertTrue(any(n.exact and "counter.producer.fixed_permanent_set_effect" in n.capability_dependencies
+                            for f in ir.faces for n in f.nodes))
+        self.assertTrue(ir.material_residuals)
+        program=compile_best_available_card_program(self.db,row,semantic_registry=session.engine.semantics,
+            capability_registry=load_default_capability_registry(),capability_profile="commander_review")
+        binding=bind_card_program_runtime(program,capability_registry=load_default_capability_registry(),profile="commander_review")
+        self.assertFalse(binding["strict_capability_ready"])
+        self.assertFalse(binding["compatible_ready"])
+        before=authoritative_state_hash(session.state)
+        # Whole-card admission is not ordinary permanent cast legality. The
+        # latter remains core rules even when an independent ability is
+        # unsupported; never assert a nonexistent legality restriction.
+        self.assertEqual("unresolved",binding["trust_basis"])
+        self.assertTrue(binding["blockers"])
+        self.assertEqual(before,authoritative_state_hash(session.state))
+        self.assertEqual("hand",session.state.cards[card.object_id].zone)
 
 
 if __name__ == "__main__":

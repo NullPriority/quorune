@@ -3,6 +3,24 @@
   "declarations": [
     {
       "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_exact_history_counter_trigger_cannot_admit_unrepresented_entry_replacement",
+      "piece_ids": ["capability.counter.producer.fixed_permanent_set_effect", "residual.replacement.replacement-applicability"],
+      "capability_ids": ["counter.producer.fixed_permanent_set_effect"],
+      "interaction_order": 2,
+      "assertion": "A constructed generic permanent retains its exact history-gated permanent-set counter trigger, but an independent unrepresented entry replacement keeps strict and compatible whole-card runtime admission unavailable. The actual binding is evaluated without forced trust and does not mutate state. This is admission rejection evidence, not supported replacement execution or an ordinary cast-legality restriction."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_exact_history_counter_trigger_cannot_admit_unrepresented_entry_replacement",
+      "piece_ids": ["capability.counter.producer.fixed_permanent_set_effect", "residual.replacement.self-replacement-and-prevention-ordering"],
+      "capability_ids": ["counter.producer.fixed_permanent_set_effect"],
+      "interaction_order": 2,
+      "assertion": "The exact generic public-history counter trigger does not erase an unsupported entry-replacement sibling. The canonical complete CardProgram remains unresolved with nonempty runtime binding blockers at strict and compatible admission, retaining source residuals and object state. No successful replacement composition is claimed."
+    },
+    {
+      "evidence_class": "interaction",
       "assurance_kind": "pair_derived",
       "test_id": "test_trusted_stack_payment_pay_decline_projection_and_exact_replay",
       "piece_ids": ["capability.effect.choice.optional_fixed_mana_payment", "capability.stack.counter.controller_payment", "capability.stack.counter.effect"],
