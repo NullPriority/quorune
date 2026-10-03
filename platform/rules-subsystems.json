@@ -387,7 +387,7 @@
           "expected_downstream_closure": "The same tracked two-zone lifecycle closes spells, activations, entry/action triggers and modal carriers without inferring identity from a reused physical card or final zone.",
           "explicit_exclusions": ["conditional outcomes, optional-return, payment and attachment restoration riders", "linked source-departure banishment", "transformed and face-down returns", "unrepresented entry, target, event, cost and sibling grammar"],
           "measurement_status": "generated_probe",
-          "measurement_probe_id": "linked-exile-return-existing-owner-v1"
+          "measurement_probe_id": "linked-exile-return-existing-owner-v2"
         },
         {
           "bundle_id": "bundle:public-history-condition-closure",

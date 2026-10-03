@@ -10,6 +10,18 @@
   "repository": "NullPriority/quorune",
   "escapes": [
     {
+      "id": "ci-20261003-68",
+      "run_id": 37110420467,
+      "head_sha": "494f10a9aaf863adc4af44dbb319725c64fb257c",
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "summary": "The linked exile/return compiler promoted a whole-card blink instruction that the old targeted-exile integration inventory still classified as unsupported. The scalar exile leaf correctly continues to reject the linked instruction.",
+      "failed_surfaces": ["PR / Python / impact-functional-02"],
+      "regressions": ["test_targeted_exile_effect_clauses.TargetedExileCompilerTests.test_whole_card_blink_is_supported_while_scalar_exile_leaf_rejects_it", "test_targeted_exile_effect_clauses.TargetedExileCompilerTests.test_unsupported_exile_variants_remain_material_residuals"],
+      "impact_edge_status": "added",
+      "resolution": "Retain the leaf-parser negative control, convert the promoted whole-card instruction to an explicit positive witness, and protect unsupported transformed return with a constructed counterexample. Both exact tests pass in 1.248 seconds. Add targeted-exile and rules-corpus integration consumers to the linked-lifecycle impact edge. The rules-corpus and generated jobs fail only on the deliberately unfinalized new cohort inventory and are repaired by the registered downstream finalizer; compiler semantics and the one successful census remain unchanged."
+    },
+    {
       "id": "ci-20260804-01",
       "run_id": 30916877307,
       "head_sha": "7c0b09bd8c5ead149827513af1d4045ce38208c0",

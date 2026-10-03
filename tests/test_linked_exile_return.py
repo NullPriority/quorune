@@ -40,6 +40,22 @@ def record(text: str, *, type_line: str = "Instant") -> CardRecord:
 
 
 class LinkedExileReturnCompilerTests(unittest.TestCase):
+    def test_cohort_measurement_counts_net_exact_nodes_not_promoted_carriers(self):
+        from scripts.work_selection_cohort_measurements import _bound_effect_program_measurement
+        frontier={"cards":[{"oracle_id":"fixture:composition","oracle_ir_status":"partial","abilities":[
+            {"face_id":"front","ability_id":"old","status":"exact","residuals":[]},
+            {"face_id":"front","ability_id":"first","status":"unresolved","residuals":[{}]},
+            {"face_id":"front","ability_id":"second","status":"unresolved","residuals":[{}]},
+        ]}]}
+        nodes=tuple(SimpleNamespace(node_id=identity,exact=True,capability_dependencies=("zone.linked_exile_return.fixed",)) for identity in ("first","second"))
+        ir=SimpleNamespace(status="partial",faces=(SimpleNamespace(face_id="front",nodes=nodes),))
+        with patch("scripts.work_selection_cohort_measurements.compile_oracle_card",return_value=ir):
+            measurement=_bound_effect_program_measurement(frontier=frontier,bundle_id="bundle:fixture",probe_id="linked-exile-return-existing-owner-v2",
+                cards_by_oracle_id={"fixture:composition":SimpleNamespace(oracle_text="Exile target creature, then return it to the battlefield.")},
+                coverage={"minimum_complete_card_gain":50,"minimum_exact_ability_gain":100,"minimum_material_residual_reduction":100},cohort_fingerprint="fixture",database=object())
+        self.assertEqual(1,measurement["exact_ability_gain"])
+        self.assertEqual(2,measurement["material_residual_reduction"])
+
     def test_closed_descriptor_has_exact_capability_shape(self):
         compiled = linked_exile_return_effect_template("Exile target creature, then return that card to the battlefield under its owner's control.", card_name="Generic")
         self.assertIsNotNone(compiled)
@@ -196,6 +212,27 @@ class LinkedExileReturnIntegratedCompilerTests(unittest.TestCase):
 
 
 class LinkedExileReturnActionTests(unittest.TestCase):
+    def test_exact_blink_does_not_admit_unsupported_target_siblings(self):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.semantics import SemanticRegistry
+        registry=load_default_capability_registry()
+        for sibling in (
+            "{W}: Two target creatures with different names each get +1/+1 until end of turn.",
+            "{W}: Target creature with the chosen name gains flying until end of turn.",
+        ):
+            with self.subTest(sibling=sibling):
+                card=record("{W}: Exile this creature, then return it to the battlefield.\n"+sibling,type_line="Creature — Test")
+                ir=compile_oracle_card(card,capability_registry=registry,capability_profile="commander_review")
+                self.assertTrue(any(node.exact and "zone.linked_exile_return.fixed" in node.capability_dependencies for face in ir.faces for node in face.nodes))
+                self.assertTrue(ir.material_residuals)
+                program=compile_best_available_card_program(self.db,card,semantic_registry=SemanticRegistry(),capability_registry=registry,capability_profile="commander_review")
+                binding=bind_card_program_runtime(program,capability_registry=registry,profile="commander_review")
+                self.assertFalse(binding["strict_capability_ready"])
+                self.assertFalse(binding["compatible_ready"])
+                self.assertEqual("unresolved",binding["trust_basis"])
+                self.assertTrue(binding["blockers"])
+
     @classmethod
     def setUpClass(cls):
         cls.temporary = tempfile.TemporaryDirectory()
@@ -468,6 +505,43 @@ class LinkedExileReturnActionTests(unittest.TestCase):
         self.cast(session,keyword,[victim.ref]);self.finish(session)
         self.assertIn("First Strike",session.engine._effective_card_data(session.state.cards[victim.object_id])["keywords"])
         self.assertEqual(new_identity,session.state.cards[source.object_id].logical_object_id)
+        self.replay(session)
+
+    def test_trusted_zero_target_token_and_immediate_commander_blink(self):
+        session=self.session(24400008);self.register(session)
+        empty=self.add(session,"Generic Group Blink","EMPTY")
+        token_spell=self.add(session,"Generic Immediate Blink","TOKEN-BLINK")
+        commander_spell=self.add(session,"Generic Immediate Blink","COMMANDER-BLINK")
+        token=self.add(session,"Generic Blink Victim","TOKEN",zone="battlefield")
+        token.is_token=True;token.object_kind="token"
+        commander=next(card for card in session.state.cards.values() if card.owner=="A" and card.zone=="command")
+        session.engine.move_card(commander.object_id,"battlefield",controller="A",reason="generic checkpoint fixture")
+        self.seal(session)
+        self.cast(session,empty,());self.finish(session)
+        self.assertEqual("graveyard",session.state.cards[empty.object_id].zone)
+        self.cast(session,token_spell,[token.ref]);self.finish(session)
+        self.assertNotEqual("battlefield",session.state.cards[token.object_id].zone)
+        old=session.state.cards[commander.object_id].logical_object_id
+        self.cast(session,commander_spell,[commander.ref]);self.finish(session)
+        returned=session.state.cards[commander.object_id]
+        self.assertEqual("battlefield",returned.zone)
+        self.assertTrue(returned.is_commander)
+        self.assertNotEqual(old,returned.logical_object_id)
+        self.assertEqual(0,len([decision for decision in session.decisions if decision.get("kind")=="commander.zone"]))
+        self.replay(session)
+
+    def test_trusted_group_blink_commits_two_simultaneous_movements(self):
+        session=self.session(24400009);self.register(session)
+        first=self.add(session,"Generic Blink Victim","GROUP-FIRST",zone="battlefield")
+        second=self.add(session,"Generic Blink Victim","GROUP-SECOND",owner="B",controller="A",zone="battlefield")
+        spell=self.add(session,"Generic Group Blink","GROUP-BLINK")
+        self.seal(session);self.cast(session,spell,[first.ref,second.ref]);self.finish(session)
+        first=session.state.cards[first.object_id];second=session.state.cards[second.object_id]
+        self.assertEqual(("A","B"),(first.controller,second.controller))
+        self.assertEqual(2,first.zone_change_counter);self.assertEqual(2,second.zone_change_counter)
+        self.assertEqual(first.zone_timestamp,second.zone_timestamp)
+        departures=[event for event in session.state.turn_history.events if event.kind=="permanent_left"]
+        self.assertEqual({first.logical_object_id.rsplit("@",1)[0],second.logical_object_id.rsplit("@",1)[0]}, {event.object_incarnation.rsplit("@",1)[0] for event in departures})
         self.replay(session)
 
 

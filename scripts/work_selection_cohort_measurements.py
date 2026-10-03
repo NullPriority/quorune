@@ -215,7 +215,7 @@ _PROBE_DECLARED_EFFECT_AMOUNT = "declared-effect-amount-existing-owner-v1"
 _PROBE_FIXED_ANIMATION = "fixed-resolution-animation-existing-owner-v1"
 _PROBE_FIXED_EFFECT_PAYMENT = "fixed-resolution-payment-existing-owner-v1"
 _PROBE_STACK_CONTROLLER_PAYMENT = "stack-controller-payment-existing-owner-v1"
-_PROBE_LINKED_EXILE_RETURN = "linked-exile-return-existing-owner-v1"
+_PROBE_LINKED_EXILE_RETURN = "linked-exile-return-existing-owner-v2"
 _PROBE_QUALIFIED_ZONE_EVENT = "qualified-zone-event-query-existing-owner-v1"
 _PROBE_FIXED_CONTROLLED_CHARACTERISTIC = (
     "fixed-controlled-characteristic-effect-existing-owner-v1"
@@ -8158,7 +8158,11 @@ def _bound_effect_program_measurement(
         }
         if not promoted:
             continue
-        abilities += len(promoted)
+        abilities += (
+            sum(node.exact for face in compiled.faces for node in face.nodes)
+            - sum(ability.get("status") == "exact" for ability in previous.values())
+            if probe_id == _PROBE_LINKED_EXILE_RETURN else len(promoted)
+        )
         residuals += sum(len(a.get("residuals", ())) for identity, a in previous.items() if identity in promoted)
         remaining[oracle_id] = sum(a.get("status") != "exact" and identity not in promoted
                                   for identity, a in previous.items())

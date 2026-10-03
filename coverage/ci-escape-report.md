@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "93c2387f1bdf4252158441c6799c8a80b615de9ff0065e4b44a9b2e1040e9571"
+verified: "b98e1e6002558853929b443fe0f1198c9236d0dbf1556f0bc2d3723470c66a56"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -15,8 +15,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 - Observation window: 2026-08-25T03:52:06Z through 2026-08-25T20:56:41Z
 - Observed population: tracked recent pull requests (n=4)
-- Escapes: 67
-- Deterministic escapes: 61
+- Escapes: 68
+- Deterministic escapes: 62
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: null
@@ -29,6 +29,7 @@ This report classifies observed deterministic failures that escaped the local qu
 
 | ID | Run | Category | Impact edge | Resolution |
 |---|---:|---|---|---|
+| `ci-20261003-68` | [37110420467](https://github.com/NullPriority/quorune/actions/runs/37110420467) | `missing_affected_test` | `added` | Retain the leaf-parser negative control, convert the promoted whole-card instruction to an explicit positive witness, and protect unsupported transformed return with a constructed counterexample. Both exact tests pass in 1.248 seconds. Add targeted-exile and rules-corpus integration consumers to the linked-lifecycle impact edge. The rules-corpus and generated jobs fail only on the deliberately unfinalized new cohort inventory and are repaired by the registered downstream finalizer; compiler semantics and the one successful census remain unchanged. |
 | `ci-20260804-01` | [30916877307](https://github.com/NullPriority/quorune/actions/runs/30916877307) | `missing_affected_test` | `added` | The fixture was made portable and the compiler family remains explicitly routed to compiler-cardprogram and generated validation. |
 | `ci-20260804-02` | [30918937537](https://github.com/NullPriority/quorune/actions/runs/30918937537) | `generated_artifact_drift` | `added` | Platform and coverage sources now select their exact generated freshness checks through the path policy. |
 | `ci-20260804-03` | [30930608139](https://github.com/NullPriority/quorune/actions/runs/30930608139) | `source_correctness` | `added` | Protection, compiler, damage, and continuous-effect paths now select every affected functional shard through explicit rules. |
