@@ -12443,7 +12443,7 @@
       "covered_high_risk_pairs": 334,
       "covered_piece_pairs": 1031,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "32da24f176e28d7b388d587a433c2ba1cdc206581ec400356ecfdb5a6b6c3d48",
+      "source_fingerprint": "26c44c560dd4af9e40b4542b3a9f56704c2bba828a3d0bfd488067b82b3cb8b5",
       "uncovered_high_risk_pairs": 0
     },
     "migration_queue": [],
@@ -12832,7 +12832,7 @@
           "visibility": "private"
         }
       ],
-      "logical_lines": 237625,
+      "logical_lines": 237663,
       "methods": {
         "dunder": 595,
         "private": 949,
@@ -15333,6 +15333,13 @@
           "physical_lines": 203
         },
         {
+          "file": "quorune/scalar_effect_amounts.py",
+          "functions_and_methods": 10,
+          "language": "python",
+          "logical_lines": 185,
+          "physical_lines": 210
+        },
+        {
           "file": "quorune/compiler/cumulative_upkeep_nodes.py",
           "functions_and_methods": 2,
           "language": "python",
@@ -15751,13 +15758,6 @@
           "language": "python",
           "logical_lines": 148,
           "physical_lines": 161
-        },
-        {
-          "file": "quorune/scalar_effect_amounts.py",
-          "functions_and_methods": 9,
-          "language": "python",
-          "logical_lines": 147,
-          "physical_lines": 167
         },
         {
           "file": "quorune/compiler/hand_entry_templates.py",
@@ -18300,7 +18300,7 @@
           "physical_lines": 1590
         }
       ],
-      "physical_lines": 259619,
+      "physical_lines": 259662,
       "python_file_count": 713,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -18318,7 +18318,7 @@
           "web/src"
         ]
       },
-      "top_level_functions": 3539,
+      "top_level_functions": 3540,
       "web_file_count": 16
     },
     "runtime_oracle_text_access": {
@@ -32261,7 +32261,7 @@
         ],
         "oversized_symbol_count": 0,
         "oversized_symbols": [],
-        "primary_test_count": 204,
+        "primary_test_count": 205,
         "primary_tests": [
           "test_ability_word_event_triggers",
           "test_aerial_blocking",
@@ -32925,7 +32925,7 @@
     "compiler_module": "quorune/oracle_ir.py",
     "compiler_module_logical_lines": 1476,
     "compiler_module_physical_lines": 1536,
-    "compiler_version": "oracle-ir-v245",
+    "compiler_version": "oracle-ir-v246",
     "current_ir": "OracleCardIR lowered to canonical CardProgram V2 with a derived SemanticProgram compatibility index",
     "full_oracle": {
       "current_snapshot_complete": false,
@@ -33202,22 +33202,22 @@
       "effective_date": "2026-08-07",
       "evidence": {
         "class_counts": {
-          "interaction": 733,
+          "interaction": 735,
           "multiplayer": 345,
-          "mutation": 356,
-          "negative": 629,
-          "positive": 683,
+          "mutation": 357,
+          "negative": 630,
+          "positive": 684,
           "privacy": 306,
           "property": 15,
-          "replay": 429,
+          "replay": 432,
           "rollback": 86
         },
-        "declaration_count": 3582,
-        "declaration_source_fingerprint": "db3ce30c929199a79b8eb77664eed96380ca1a558fbea9dd7eda3c29e1dcee20",
-        "fingerprint": "1116d71f73c21d77843d812050ca77a1ba2d759a18074c83378fea6f6d09b991",
-        "registry_fingerprint": "0eb1f346136fa587bebc12b0ba30902eb3bd619b3b7029aaf743ea90e0977815"
+        "declaration_count": 3590,
+        "declaration_source_fingerprint": "196cd78dfedb80fd0a62337eb770a73c24ff8ea2ba1bee7b710c688c839c0276",
+        "fingerprint": "810fc2e4f391415ece4b10043dc4e7a33b24992781a6a117b2393d525072a341",
+        "registry_fingerprint": "3d871258c34f922f7a683dfbf57ad80e87de59a78c4514387b7bf0c76f8ad27b"
       },
-      "fingerprint": "0eb1f346136fa587bebc12b0ba30902eb3bd619b3b7029aaf743ea90e0977815",
+      "fingerprint": "3d871258c34f922f7a683dfbf57ad80e87de59a78c4514387b7bf0c76f8ad27b",
       "implementation_mutation_status_counts": {
         "killed": 301,
         "not_run": 4
@@ -33227,7 +33227,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "registry_version": 170,
+      "registry_version": 171,
       "schema_version": 1,
       "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
       "status_counts": {
@@ -33556,7 +33556,7 @@
         "contract_fingerprint": "785a9d775fa100cedfaf1caecbf7d631fd6ff5b4cf9cde964a5aeb841a3f7037",
         "exact_cards_with_template": 688,
         "exact_nodes": 873,
-        "fingerprint": "bf167aacf0fddf32d4060c90f0213dff837e1d2f2b6800999fea413cecff3b14",
+        "fingerprint": "83695d28c3e51a8b11eb96836ef26c1e98ec7934505acd6d9c84478b9bbf7c96",
         "grammar_source_fingerprint": "d2b88442c377ccab3a46672ee3cb43f0132b2985feeeadf211702d373d4ee42f",
         "identity_fingerprint": "8865428eaa52bed5027d16173591cf19902bb74be7cc380a2275a416d4b383b4",
         "present": true,
@@ -33568,7 +33568,7 @@
         "contract_fingerprint": "785a9d775fa100cedfaf1caecbf7d631fd6ff5b4cf9cde964a5aeb841a3f7037",
         "exact_cards_with_template": 709,
         "exact_nodes": 904,
-        "fingerprint": "374e8bb5408d97e74ab47e0abc2c38098d78c56fbe9a28d53923f9d5043deed6",
+        "fingerprint": "3741aa5afa06c161bdf727cbfeae2af2cbb342fea7417006f6d3ae33b0dac52b",
         "grammar_source_fingerprint": "d2b88442c377ccab3a46672ee3cb43f0132b2985feeeadf211702d373d4ee42f",
         "identity_fingerprint": "0d116a723c4eb9c94b08dfac811bef4a58e064b2ba64121ef7bf5417bb1bb253",
         "present": true,
@@ -33587,7 +33587,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "6c58db03b7cd2bedf59fd6fc1cd9057376e3f8a771715fab2279c669d15e47c6",
+      "fingerprint": "ed75fdbd2f11b6a2094f8a22cf2621152d8d3624d30376c9f636264818bb481d",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -34417,7 +34417,7 @@
       "playwright_e2e_journeys": 11
     },
     "mutation_testing": {
-      "capability_mutation_declarations": 356,
+      "capability_mutation_declarations": 357,
       "configured_tools": [],
       "focused_executable_suite": true,
       "mutation_score": null
@@ -34445,14 +34445,14 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 4567,
-      "discovered_total": 7876,
+      "conventional_ast_cases": 4578,
+      "discovered_total": 7887,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 246,
         "fuzz_named": 1,
         "privacy_or_projection_named": 83,
-        "replay_named": 378,
+        "replay_named": 381,
         "server_named": 33
       },
       "reconciles": true,
