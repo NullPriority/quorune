@@ -321,8 +321,18 @@ creature subtypes retain distinct query axes. Normal and token entry producers
 record the current transition before trigger discovery, and attack history seals
 effective type and subtype membership plus the attacked object class while
 counting distinct attacking logical objects. Schema-v3 public facts remain a
-historical compatibility form whose attack quantity counts recorded attack
-occurrences.
+  historical compatibility form whose attack quantity counts recorded attack
+  occurrences.
+  The same descriptor also represents any creature death, the controller's
+  attack or permanent departure, an opponent's life loss, and fixed total
+  life-gained/lost thresholds this turn. These are sealed historical facts,
+  not current object counts. Departures use the previous controller and
+  incarnation after committed replacement-adjusted movement; prevented
+  movement supplies no fact. New games enable departure recording explicitly,
+  while older journals leave that fact unavailable. Intervening-if triggers
+  evaluate the shared descriptor at occurrence and again under their locked
+  trigger controller at resolution. Descend remains a distinct unsupported
+  all-zone permanent-card history domain.
 Most-common or tied comparisons, dynamic amounts, top-library, chosen,
 hidden-identity, city blessing, dungeon, initiative, speed, sticker, crime,
 dice, open arithmetic, otherwise branches, per-opponent aggregate, unowned

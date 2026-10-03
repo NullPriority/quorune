@@ -85,6 +85,15 @@ marker remain in the historical no-history mode so later replay does not add
 control-acquisition or upkeep timestamps that were absent from their command
 hashes.
 
+Battlefield-departure look-back history has an additive
+`turn_history.departure_history_version` marker. New games set it to one;
+the record format binds the same version to the initial checkpoint. Absence
+preserves the older journal's event hashes and makes departure predicates
+unavailable rather than treating the incomplete history as known empty.
+Turn rollover and checkpoint hydration preserve the chosen mode. A historical
+record with incompatible runtime trust provenance is explicitly rejected,
+not silently recompiled with new predicates.
+
 Regeneration shields use the same additive compatibility rule. A positive
 `CardInstance.regeneration_shields` value is authoritative public
 logical-object state; zero is omitted so historical Game Record v3 card payloads

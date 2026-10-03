@@ -161,6 +161,8 @@ class _FixedPublicStateSnapshotResolver:
         controller = source.controller
         history = getattr(self.state, "turn_history", None)
         turn_sequence = max(0, int(getattr(self.state, "turn_sequence", 0)))
+        if history is None or history.schema_version != 1 or history.turn_sequence != turn_sequence:
+            return None
 
         def events(kind: str) -> tuple[Any, ...]:
             return current_turn_history_events(
@@ -168,6 +170,20 @@ class _FixedPublicStateSnapshotResolver:
                 turn_sequence=turn_sequence,
                 kind=kind,
             )
+
+        if fact is FixedPublicStateFact.ANY_CREATURE_DIED_THIS_TURN:
+            return len(events("creature_died"))
+        if fact is FixedPublicStateFact.CONTROLLER_ATTACKED_THIS_TURN:
+            return sum(event.actor == controller for event in events("creature_attacked"))
+        if fact is FixedPublicStateFact.CONTROLLER_PERMANENT_LEFT_THIS_TURN:
+            if history.departure_history_version != 1:
+                return None
+            return sum(event.actor == controller for event in events("permanent_left"))
+        if fact is FixedPublicStateFact.OPPONENT_LOST_LIFE_THIS_TURN:
+            opponents = {seat for seat, player in self.state.players.items()
+                         if seat != controller and player.in_game}
+            return sum(event.amount for event in events("player_lost_life")
+                       if event.target in opponents)
 
         if fact in {
             FixedPublicStateFact.CONTROLLER_LIFE_GAINED_THIS_TURN,

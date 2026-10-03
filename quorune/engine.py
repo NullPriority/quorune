@@ -234,7 +234,7 @@ from .model import (
     YieldPolicy,
 )
 from .turn_history import (
-    opponent_was_dealt_damage_this_turn,
+    opponent_was_dealt_damage_this_turn, reset_turn_history,
     record_creature_attack_history,
 )
 from .object_query import exact_numeric_characteristic
@@ -606,7 +606,7 @@ class CommanderEngine(
         if history is None:
             return
         if history.turn_sequence != self.state.turn_sequence:
-            history = TurnHistory(turn_sequence=self.state.turn_sequence)
+            history = reset_turn_history(history, self.state.turn_sequence)
             self.state.turn_history = history
         history.events.append(
             TurnHistoryEvent(

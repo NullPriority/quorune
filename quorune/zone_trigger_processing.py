@@ -208,6 +208,16 @@ def record_zone_change_history(
             types=previous_types,
         )
     moved = occurrence.origin != occurrence.destination
+    history = getattr(getattr(host, "state", None), "turn_history", None)
+    if (
+        moved and occurrence.origin == "battlefield"
+        and getattr(history, "departure_history_version", None) == 1
+    ):
+        host._record_turn_history(
+            "permanent_left", actor=occurrence.previous_controller,
+            object_incarnation=occurrence.previous_logical_object_id,
+            types=previous_types,
+        )
     if (
         moved
         and occurrence.origin == "hand"

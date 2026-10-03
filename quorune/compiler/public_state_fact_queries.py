@@ -16,6 +16,7 @@ from ..continuous_conditions import (
 from ..creature_subtypes import canonical_creature_subtype_surface
 from ..rules.source_references import SourceReferenceSpec
 from ..object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
+from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 
 
 _NUMBERS = {
@@ -236,6 +237,34 @@ def _fixed_scalar_fact(
     return _condition(parsed[0], amount=parsed[1]) if parsed is not None else None
 
 
+def _fixed_history_fact(normalized: str) -> FixedPublicStateConditionSpec | None:
+    facts = {
+        "a creature died this turn": FixedPublicStateFact.ANY_CREATURE_DIED_THIS_TURN,
+        "you attacked this turn": FixedPublicStateFact.CONTROLLER_ATTACKED_THIS_TURN,
+        "a permanent left the battlefield under your control this turn": FixedPublicStateFact.CONTROLLER_PERMANENT_LEFT_THIS_TURN,
+        "a permanent you controlled left the battlefield this turn": FixedPublicStateFact.CONTROLLER_PERMANENT_LEFT_THIS_TURN,
+        "an opponent lost life this turn": FixedPublicStateFact.OPPONENT_LOST_LIFE_THIS_TURN,
+    }
+    fact = facts.get(normalized.casefold())
+    if fact is not None:
+        return _condition(fact)
+    life = re.fullmatch(
+        rf"you (?P<verb>gained|lost) (?P<amount>{FIXED_COUNT_PATTERN}|[0-9]+) or more life this turn",
+        normalized, re.IGNORECASE,
+    )
+    if life is None:
+        return None
+    amount = fixed_number(life.group("amount"))
+    if amount is None or amount <= 0:
+        return None
+    return _condition(
+        FixedPublicStateFact.CONTROLLER_LIFE_GAINED_THIS_TURN
+        if life.group("verb").casefold() == "gained"
+        else FixedPublicStateFact.CONTROLLER_LIFE_LOST_THIS_TURN,
+        amount=amount,
+    )
+
+
 def fixed_public_fact_condition(
     text: str,
     *,
@@ -264,6 +293,9 @@ def fixed_public_fact_condition(
     scalar = _fixed_scalar_fact(normalized)
     if scalar is not None:
         return scalar
+    history = _fixed_history_fact(normalized)
+    if history is not None:
+        return history
     above_start = re.fullmatch(
         r"you have at least (?P<amount>[0-9]+) life more than your starting "
         r"life total",

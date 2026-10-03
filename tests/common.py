@@ -147,7 +147,8 @@ def set_fixture_turn(engine, turn_sequence: int) -> None:
     engine.state.turn_sequence = int(turn_sequence)
     if engine.state.turn_history is not None:
         engine.state.turn_history = TurnHistory(
-            turn_sequence=engine.state.turn_sequence
+            turn_sequence=engine.state.turn_sequence,
+            departure_history_version=engine.state.turn_history.departure_history_version,
         )
 
 

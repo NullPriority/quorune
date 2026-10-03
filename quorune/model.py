@@ -57,6 +57,7 @@ TurnHistoryEventKind = Literal[
     "player_lost_life",
     "permanent_damaged",
     "permanent_entered",
+    "permanent_left",
 ]
 
 
@@ -105,12 +106,20 @@ class TurnHistory:
     previous_turn_sequence: int | None = None
     previous_active_player: str | None = None
     previous_spell_cast_counts: dict[str, int] = field(default_factory=dict)
+    # Absent preserves pre-extension event hashes; new games enable complete
+    # committed battlefield-departure recording explicitly.
+    departure_history_version: int | None = None
 
     def __post_init__(self) -> None:
         if self.schema_version != 1 or type(self.schema_version) is not int:
             raise ValueError("Unsupported turn-history schema version")
         if type(self.turn_sequence) is not int or self.turn_sequence < 0:
             raise ValueError("Turn-history sequence must be nonnegative")
+        if self.departure_history_version is not None and (
+            type(self.departure_history_version) is not int
+            or self.departure_history_version != 1
+        ):
+            raise ValueError("Unsupported departure-history version")
         if not isinstance(self.events, list) or any(
             not isinstance(event, TurnHistoryEvent) for event in self.events
         ):
@@ -148,6 +157,8 @@ class TurnHistory:
             "schema_version": self.schema_version,
             "turn_sequence": self.turn_sequence,
             "events": [event.to_dict() for event in self.events],
+            **({"departure_history_version": self.departure_history_version}
+               if self.departure_history_version is not None else {}),
             **(
                 {
                     "previous_turn": {
@@ -176,6 +187,7 @@ class TurnHistory:
             raise ValueError("Previous-turn spell history has unknown fields")
         return cls(
             schema_version=int(data.get("schema_version", 1)),
+            departure_history_version=data.get("departure_history_version"),
             turn_sequence=int(data.get("turn_sequence", 0)),
             events=[
                 TurnHistoryEvent.from_dict(event)

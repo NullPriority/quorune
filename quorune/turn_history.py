@@ -9,6 +9,12 @@ from typing import Any
 from .model import TurnHistory, TurnHistoryEvent, TurnHistoryEventKind
 
 
+def reset_turn_history(history: TurnHistory, turn_sequence: int) -> TurnHistory:
+    """Start an empty current-turn journal without changing its event mode."""
+    return TurnHistory(turn_sequence=turn_sequence,
+                       departure_history_version=history.departure_history_version)
+
+
 def roll_turn_history(
     history: TurnHistory | None,
     *,
@@ -35,7 +41,8 @@ def roll_turn_history(
         or history.turn_sequence != next_turn_sequence - 1
         or history.turn_sequence < 1
     ):
-        return TurnHistory(turn_sequence=next_turn_sequence)
+        return TurnHistory(turn_sequence=next_turn_sequence,
+                           departure_history_version=history.departure_history_version)
     counts = Counter(
         event.actor
         for event in history.events
@@ -43,6 +50,7 @@ def roll_turn_history(
     )
     return TurnHistory(
         turn_sequence=next_turn_sequence,
+        departure_history_version=history.departure_history_version,
         previous_turn_sequence=history.turn_sequence,
         previous_active_player=previous_active_player,
         previous_spell_cast_counts=dict(sorted(counts.items())),
@@ -129,4 +137,5 @@ __all__ = [
     "previous_turn_spell_cast_counts",
     "record_creature_attack_history",
     "roll_turn_history",
+    "reset_turn_history",
 ]

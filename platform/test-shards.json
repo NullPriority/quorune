@@ -167,6 +167,7 @@
       "test_mentor_rules",
       "test_mill_rules",
       "test_optional_draw_choices",
+      "test_public_history_condition_closure",
       "test_public_query_action_registration",
       "test_public_query_effect_amounts",
       "test_targeting_v070",
