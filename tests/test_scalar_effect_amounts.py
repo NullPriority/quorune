@@ -81,6 +81,27 @@ class ScalarEffectAmountCompilerTests(unittest.TestCase):
                 self.assertNotEqual("exact", self.compile(text, type_line="Instant").status)
         self.assertNotEqual("exact", self.compile("When this creature enters, tap up to one target creature. You gain life equal to that creature's power.").status)
 
+    def test_scalar_target_corpus_assurance_preserves_exact_source_and_shape(self):
+        from quorune.compiler.target_effect_corpus_assurance import TargetEffectCorpusCollector
+        from dataclasses import replace
+        for text, type_line in (
+            ("{G}: Target creature gets +X/+X until end of turn, where X is this creature's power.", "Creature — Goblin"),
+            ("Target creature gets +X/+X until end of turn, where X is its power.", "Instant"),
+        ):
+            with self.subTest(text=text):
+                record=scalar_record(text,type_line=type_line)
+                ir=self.compile(text,type_line=type_line)
+                self.assertEqual("exact",ir.status)
+                collector=TargetEffectCorpusCollector()
+                collector.observe(record,ir)
+                # Altering the producer after lowering must still be rejected.
+                node=ir.faces[0].nodes[0]
+                changed=deepcopy(node.effects)
+                changed[0]["power"]["characteristic"]="toughness"
+                bad_face=replace(ir.faces[0],nodes=(replace(node,effects=changed),))
+                with self.assertRaises(ValueError):
+                    TargetEffectCorpusCollector().observe(record,replace(ir,faces=(bad_face,)))
+
 
 class ScalarEffectAmountValueTests(unittest.TestCase):
     def host_and_item(self, power=2):

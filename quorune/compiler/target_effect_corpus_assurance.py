@@ -44,7 +44,7 @@ if TYPE_CHECKING:
 
 
 ASSURANCE_SCHEMA_VERSION = 1
-ASSURANCE_ALGORITHM_VERSION = "fixed-target-corpus-assurance-v8"
+ASSURANCE_ALGORITHM_VERSION = "fixed-target-corpus-assurance-v9"
 STANDALONE_TEMPLATE_ID = (
     "fixed-target-characteristics-until-end-of-turn-v1"
 )
@@ -489,6 +489,8 @@ def grammar_source_fingerprint() -> str:
         rejected_target_effect_contracts,
         _without_parenthetical_reminder,
         _resolution_body,
+        _compiled_template,
+        _required_capabilities,
     )
     payload = {
         "algorithm_version": ASSURANCE_ALGORITHM_VERSION,
@@ -572,7 +574,11 @@ def _compiled_template(
         body,
         card_name=card_name,
     )
-    return sequence.compiled() if sequence is not None else None
+    if sequence is not None:
+        return sequence.compiled()
+    from .scalar_effect_amounts import scalar_effect_amount_template
+    return scalar_effect_amount_template(body, source_name=card_name,
+        compile_fixed=lambda text: _compiled_template(text, card_name=card_name) or (None, (), None, ()))
 
 
 def _clause_count(body: str, template_id: str) -> int:
@@ -625,11 +631,17 @@ def _required_capabilities(
         if target_template_id == STANDALONE_TEMPLATE_ID
         else fixed_target_effect_sequence_node_capabilities
     )
-    return resolver(
-        effects=node.effects,
+    from .public_query_effect_amounts import public_query_amount_shape_context, declared_amount_dependencies
+    context = public_query_amount_shape_context(node.effects, set(node.mechanics))
+    if context is None:
+        return ()
+    fixed_effects, fixed_mechanics = context
+    fixed = resolver(
+        effects=fixed_effects,
         target_schema=node.target_schema,
-        mechanic_ids=node.mechanics,
+        mechanic_ids=fixed_mechanics,
     )
+    return tuple(sorted(set(fixed) | declared_amount_dependencies(set(node.mechanics)))) if fixed else ()
 
 
 def _observation(
@@ -652,6 +664,8 @@ def _observation(
             f"{record.oracle_id}:{face_id}:{node.node_id}"
         )
     template_id, effects, target_schema, mechanics = compiled
+    from ..query_effect_amount_model import scope_declared_amount_bindings
+    effects = scope_declared_amount_bindings(effects, f"{face_id}:{node.node_id}")
     if stable_json(effects) != stable_json(node.effects) or stable_json(
         target_schema
     ) != stable_json(node.target_schema):

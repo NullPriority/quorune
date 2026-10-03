@@ -381,7 +381,7 @@
     {
       "id": "scalar-effect-amount-contract",
       "patterns": ["quorune/scalar_effect_amount_model.py", "quorune/scalar_effect_amounts.py", "quorune/compiler/scalar_effect_amounts.py", "tests/fixtures/scalar-effect-amount-cards.json"],
-      "test_modules": ["test_scalar_effect_amounts", "test_declared_effect_amounts", "test_public_query_effect_amounts", "test_public_query_action_registration", "test_oracle_ir", "test_fixed_source_characteristic_effects", "test_high_risk_interaction_assurance", "test_card_program_trust", "test_zone_trigger_events", "test_fixed_creature_power_damage", "test_rules_scheduler"]
+      "test_modules": ["test_scalar_effect_amounts", "test_declared_effect_amounts", "test_public_query_effect_amounts", "test_public_query_action_registration", "test_oracle_ir", "test_fixed_target_effect_sequences", "test_fixed_source_characteristic_effects", "test_high_risk_interaction_assurance", "test_card_program_trust", "test_zone_trigger_events", "test_fixed_creature_power_damage", "test_rules_scheduler"]
     },
     {
       "id": "fixed-single-object-reanimation-contract",

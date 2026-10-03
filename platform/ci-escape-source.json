@@ -10,6 +10,18 @@
   "repository": "NullPriority/quorune",
   "escapes": [
     {
+      "id": "ci-20261003-70",
+      "run_id": 37129199130,
+      "head_sha": "0882cf37ee627fe34dd12296325127281caf1a8c",
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "summary": "The scalar amount compiler preserved an existing target-modifier template, but the corpus target-effect assurance owner independently re-parsed only fixed numeric source and rejected the promoted scalar carrier before completing a census.",
+      "failed_surfaces": ["Generated cloud / Compiler corpus"],
+      "regressions": ["test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_scalar_target_corpus_assurance_preserves_exact_source_and_shape"],
+      "impact_edge_status": "added",
+      "resolution": "Both generic source-derived and target-derived cases failed against unchanged assurance in 1.147 seconds. The existing collector now consumes the closed scalar source grammar, applies canonical Oracle-node declaration scope, and validates scalar projection plus every fixed result capability. The same regression passes in 1.144 seconds and a changed characteristic producer still fails. Add the fixed-target corpus consumer to the existing family impact edge. Runtime/compiler lowering is unchanged; the failed 33-second attempt produced no completed corpus result."
+    },
+    {
       "id": "ci-20261003-69",
       "run_id": 37115857103,
       "head_sha": "fb4a5d96e598bf72d28857189e116b30a10645fc",
