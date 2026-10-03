@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 170,
+  "registry_version": 171,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -3463,16 +3463,16 @@
       "dependencies": [],
       "implementation_components": ["quorune.scalar_effect_amount_model.ScalarEffectAmountSpec", "quorune.scalar_effect_amounts.resolve_scalar_effect_amount", "quorune.scalar_effect_amounts.pin_scalar_characteristic_departures", "quorune.compiler.scalar_effect_amounts.scalar_effect_amount_template", "quorune.compiler.scalar_effect_amounts.scalar_amount_shape_context", "quorune.semantic_runtime.values.resolve_semantic_value"],
       "positive_tests": ["test_current_then_immediate_departure_lki_never_reads_new_incarnation", "test_referenced_and_sealed_quantities_lower_through_existing_results"],
-      "negative_tests": ["test_malformed_descriptor_and_unavailable_characteristics_fail_closed", "test_open_ambiguous_and_cost_quantities_stay_residual"],
-      "interaction_tests": ["test_declaration_freezes_once_but_independent_reads_remain_live", "test_committed_event_amount_is_not_current_life_or_damage_request"],
+      "negative_tests": ["test_malformed_descriptor_and_unavailable_characteristics_fail_closed", "test_open_ambiguous_and_cost_quantities_stay_residual", "test_own_phased_reference_remains_explicitly_unavailable"],
+      "interaction_tests": ["test_declaration_freezes_once_but_independent_reads_remain_live", "test_committed_event_amount_is_not_current_life_or_damage_request", "test_departure_pin_does_not_read_or_cache_unrelated_references", "test_unrelated_phased_scalar_does_not_reject_actual_destroy_and_replays"],
       "multiplayer_tests": ["test_trusted_scalar_actions_controller_privacy_and_replay"],
       "privacy_tests": ["test_trusted_scalar_actions_controller_privacy_and_replay"],
-      "replay_tests": ["test_trusted_scalar_actions_controller_privacy_and_replay", "test_trusted_scalar_source_departure_reentry_and_replay"],
+      "replay_tests": ["test_trusted_scalar_actions_controller_privacy_and_replay", "test_trusted_scalar_source_departure_reentry_and_replay", "test_unrelated_phased_scalar_preserves_actual_single_return_and_replay", "test_unrelated_phased_scalar_preserves_actual_group_blink_and_replay"],
       "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
       "dependency_fail_closed_status": "not_applicable",
       "dependency_fail_closed_rationale": "No unconditional result owner exists for the primitive; emitted nodes retain every target, characteristic, event, history and actual result dependency.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "The focused new-incarnation characteristic-read mutant fails the independently expected immediate-departure LKI assertion.",
+      "implementation_mutation_rationale": "The new-incarnation characteristic-read mutant fails the immediate-departure LKI assertion; falsely identifying an unrelated departing object as the scalar reference exposes the independently prohibited future evaluation.",
       "blockers": [],
       "status": "trusted"
     },
