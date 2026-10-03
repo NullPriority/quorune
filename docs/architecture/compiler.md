@@ -370,6 +370,20 @@ modal or repeated choices, linked or conditional results, multiple effects in
 one optional body, and bodies without an independently exact typed owner remain
 source-spanned residuals.
 
+`compiler/counter_templates.py` also owns a closed target-controller payment
+leaf over the existing stack-target vocabulary. A fixed ordinary mana vector
+or one generic announced cast-X component is resolved through the existing
+payment choice, scalar and counter owners. The payer is the target's current
+controller, while the countering controller remains the resolving source's
+controller. Payment and decline preserve independently typed mandatory siblings;
+target invalidation, counter prohibitions and countered-spell destinations
+remain owned by the canonical target and stack-counter boundaries. The same
+leaf is shared by spell, activated, normalized-trigger, granted and composition
+contexts. Nonmana, nonordinary, repeated, chosen or text-defined costs,
+fixed-plus-X generic costs, variable activation X, multiple targets and linked
+counter-result instructions remain residual. No counter-placement grammar is
+expanded by this family.
+
 `compiler/optional_payment_templates.py` owns the historical triggered clause
 `you may pay <cost>. If you do, <effect>` when the cost is one positive fixed
 ordinary generic, colored, or colorless mana vector and the body is one

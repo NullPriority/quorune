@@ -23210,6 +23210,486 @@
       "applicability_note": "Fail a stale logical target continuation before the replacement-aware counter and later persistent keyword result can partially mutate state."
     },
     {
+      "capability_id": "stack.counter.controller_payment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_targeted_counter_effect_clauses.StackControllerPaymentActionTests.test_stack_payment_canonical_spell_copy_preserves_announced_x",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "117.1d",
+        "118.12",
+        "118.12a",
+        "603.3a",
+        "608.2b",
+        "608.2d",
+        "608.2g",
+        "701.6a",
+        "701.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The canonical copy owner preserves announced X and independent payment windows; this diagnoses the copy boundary, not new copy Oracle grammar."
+    },
+    {
+      "capability_id": "stack.counter.controller_payment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_targeted_counter_effect_clauses.StackControllerPaymentActionTests.test_trusted_stack_payment_activation_and_entry_trigger_owners",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "117.1d",
+        "118.12",
+        "118.12a",
+        "603.3a",
+        "608.2b",
+        "608.2d",
+        "608.2g",
+        "701.6a",
+        "701.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Real offered activation and Flash entry trigger reuse canonical target placement, payment and counter consequences with replay."
+    },
+    {
+      "capability_id": "stack.counter.controller_payment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_targeted_counter_effect_clauses.StackControllerPaymentActionTests.test_trusted_stack_payment_cast_x_zero_and_canonical_mana_sources",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "117.1d",
+        "118.12",
+        "118.12a",
+        "603.3a",
+        "608.2b",
+        "608.2d",
+        "608.2g",
+        "701.6a",
+        "701.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Real cast-X and mana-source payment preserve cost-owner authority, zero and positive X, full payment and exact replay."
+    },
+    {
+      "capability_id": "stack.counter.controller_payment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_targeted_counter_effect_clauses.StackControllerPaymentActionTests.test_trusted_stack_payment_current_controller_and_vanished_target_boundaries",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "117.1d",
+        "118.12",
+        "118.12a",
+        "603.3a",
+        "608.2b",
+        "608.2d",
+        "608.2g",
+        "701.6a",
+        "701.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit minimal-state diagnostics over real casts prove current-controller choice and no stale-target charge; replay begins before subsequent commands, without claiming an unsupported control-change producer."
+    },
+    {
+      "capability_id": "stack.counter.controller_payment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_targeted_counter_effect_clauses.StackControllerPaymentActionTests.test_trusted_stack_payment_uncounterable_target_retains_legal_decline",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "117.1d",
+        "118.12",
+        "118.12a",
+        "603.3a",
+        "608.2b",
+        "608.2d",
+        "608.2g",
+        "701.6a",
+        "701.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A represented intrinsic counter prohibition remains authoritative after a legal decline; the targeted spell still resolves and replays."
+    },
+    {
+      "capability_id": "stack.counter.controller_payment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_targeted_counter_effect_clauses.StackControllerPaymentChoiceIsolationTests.test_counter_payment_cast_x_uses_the_existing_scalar_owner",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "117.1d",
+        "118.12",
+        "118.12a",
+        "603.3a",
+        "608.2b",
+        "608.2d",
+        "608.2g",
+        "701.6a",
+        "701.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Consume the canonical announced-X scalar through the existing semantic value owner, including zero; this is a value-boundary witness rather than a gameplay acceptance claim."
+    },
+    {
+      "capability_id": "stack.counter.controller_payment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_targeted_counter_effect_clauses.StackControllerPaymentChoiceIsolationTests.test_counter_payment_intents_keep_payer_and_countering_controller_distinct",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "117.1d",
+        "118.12",
+        "118.12a",
+        "603.3a",
+        "608.2b",
+        "608.2d",
+        "608.2g",
+        "701.6a",
+        "701.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The existing completion owner emits payment for the targeted object's controller but attributes a declined counter to the resolving source controller."
+    },
+    {
+      "capability_id": "stack.counter.controller_payment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_targeted_counter_effect_clauses.StackControllerPaymentChoiceIsolationTests.test_counter_payment_rejects_changed_controller_and_continuation_cost",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "117.1d",
+        "118.12",
+        "118.12a",
+        "603.3a",
+        "608.2b",
+        "608.2d",
+        "608.2g",
+        "701.6a",
+        "701.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject changed payer, vanished target, stored cost and countering-controller identities at the existing immutable completion boundary."
+    },
+    {
+      "capability_id": "stack.counter.controller_payment",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_targeted_counter_effect_clauses.StackControllerPaymentActionTests.test_trusted_stack_payment_pay_decline_projection_and_exact_replay",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "117.1d",
+        "118.12",
+        "118.12a",
+        "603.3a",
+        "608.2b",
+        "608.2d",
+        "608.2g",
+        "701.6a",
+        "701.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A four-player actual registered cast and response place the payment choice with the targeted stack object's controller, not the resolving controller."
+    },
+    {
+      "capability_id": "stack.counter.controller_payment",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_targeted_counter_effect_clauses.StackControllerPaymentChoiceIsolationTests.test_counter_payment_wrong_countering_controller_mutant_is_killed",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "117.1d",
+        "118.12",
+        "118.12a",
+        "603.3a",
+        "608.2b",
+        "608.2d",
+        "608.2g",
+        "701.6a",
+        "701.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Execute and kill an attribution mutation in the existing counter-intent producer; the real action witness separately establishes payment and consequences."
+    },
+    {
+      "capability_id": "stack.counter.controller_payment",
+      "evidence_class": "negative",
+      "test_id": "tests.test_targeted_counter_effect_clauses.StackControllerPaymentCompilerTests.test_controller_payment_cost_mutants_and_cast_x_are_strict",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "117.1d",
+        "118.12",
+        "118.12a",
+        "603.3a",
+        "608.2b",
+        "608.2d",
+        "608.2g",
+        "701.6a",
+        "701.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject changed references, open or malformed cost fields, Boolean and negative amounts, negative coefficients and non-generic announced X."
+    },
+    {
+      "capability_id": "stack.counter.controller_payment",
+      "evidence_class": "negative",
+      "test_id": "tests.test_targeted_counter_effect_clauses.StackControllerPaymentCompilerTests.test_controller_payment_missing_or_blocked_capability_withholds_trust",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "117.1d",
+        "118.12",
+        "118.12a",
+        "603.3a",
+        "608.2b",
+        "608.2d",
+        "608.2g",
+        "701.6a",
+        "701.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Lowered payment grammar cannot receive exact trust while its required capability is missing or blocked."
+    },
+    {
+      "capability_id": "stack.counter.controller_payment",
+      "evidence_class": "negative",
+      "test_id": "tests.test_targeted_counter_effect_clauses.StackControllerPaymentCompilerTests.test_resolved_controller_payment_rejects_unknown_private_fields",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "117.1d",
+        "118.12",
+        "118.12a",
+        "603.3a",
+        "608.2b",
+        "608.2d",
+        "608.2g",
+        "701.6a",
+        "701.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unknown private fields cannot enter the resolved v2 cost descriptor; only declared continuation metadata is permitted."
+    },
+    {
+      "capability_id": "stack.counter.controller_payment",
+      "evidence_class": "positive",
+      "test_id": "tests.test_targeted_counter_effect_clauses.StackControllerPaymentActionTests.test_trusted_stack_payment_pay_decline_projection_and_exact_replay",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "117.1d",
+        "118.12",
+        "118.12a",
+        "603.3a",
+        "608.2b",
+        "608.2d",
+        "608.2g",
+        "701.6a",
+        "701.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual trusted offered casts and accepted costs yield full-payment survival or a canonical declined counter, with independently verified final zones."
+    },
+    {
+      "capability_id": "stack.counter.controller_payment",
+      "evidence_class": "positive",
+      "test_id": "tests.test_targeted_counter_effect_clauses.StackControllerPaymentCompilerTests.test_fixed_controller_payment_compiles_across_spell_trigger_and_activation",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "117.1d",
+        "118.12",
+        "118.12a",
+        "603.3a",
+        "608.2b",
+        "608.2d",
+        "608.2g",
+        "701.6a",
+        "701.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The same closed target-controller payment leaf preserves its target and payer identities across spell, entry-trigger and activated grammar."
+    },
+    {
+      "capability_id": "stack.counter.controller_payment",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_targeted_counter_effect_clauses.StackControllerPaymentActionTests.test_trusted_stack_payment_pay_decline_projection_and_exact_replay",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "117.1d",
+        "118.12",
+        "118.12a",
+        "603.3a",
+        "608.2b",
+        "608.2d",
+        "608.2g",
+        "701.6a",
+        "701.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Only the payer receives the payment decision and private affordability; other principals receive no hidden hand reference or private response."
+    },
+    {
+      "capability_id": "stack.counter.controller_payment",
+      "evidence_class": "replay",
+      "test_id": "tests.test_targeted_counter_effect_clauses.StackControllerPaymentActionTests.test_stack_payment_historical_record_rejects_silent_reinterpretation",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "117.1d",
+        "118.12",
+        "118.12a",
+        "603.3a",
+        "608.2b",
+        "608.2d",
+        "608.2g",
+        "701.6a",
+        "701.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A genuine archived payment record is rejected before state loading at the existing runtime-trust boundary; isolated v1 counter payload execution is a separate preservation claim."
+    },
+    {
+      "capability_id": "stack.counter.controller_payment",
+      "evidence_class": "replay",
+      "test_id": "tests.test_targeted_counter_effect_clauses.StackControllerPaymentActionTests.test_trusted_stack_payment_pay_decline_projection_and_exact_replay",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "117.1d",
+        "118.12",
+        "118.12a",
+        "603.3a",
+        "608.2b",
+        "608.2d",
+        "608.2g",
+        "701.6a",
+        "701.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Checkpoint, save/load and exact replay from before the actual cast preserve the pending choice and each completed payment branch."
+    },
+    {
+      "capability_id": "stack.counter.controller_payment",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_targeted_counter_effect_clauses.StackControllerPaymentActionTests.test_trusted_stack_payment_pay_decline_projection_and_exact_replay",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "117.1d",
+        "118.12",
+        "118.12a",
+        "603.3a",
+        "608.2b",
+        "608.2d",
+        "608.2g",
+        "701.6a",
+        "701.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unauthorized principals and malformed Boolean choices fail without changing the authoritative state or consuming the valid pending choice."
+    },
+    {
+      "capability_id": "stack.counter.controller_payment",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_targeted_counter_effect_clauses.StackControllerPaymentActionTests.test_trusted_stack_payment_stale_affordability_and_mandatory_sibling",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "117.1d",
+        "118.12",
+        "118.12a",
+        "603.3a",
+        "608.2b",
+        "608.2d",
+        "608.2g",
+        "701.6a",
+        "701.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Stale affordability rejects payment without authoritative mutation, while decline executes an independently mandatory draw once."
+    },
+    {
       "capability_id": "stack.counter.effect",
       "evidence_class": "interaction",
       "test_id": "tests.test_stack_counter_rules.StackCounterRuleTests.test_counter_destination_replacement_emits_only_pre_counter_event",

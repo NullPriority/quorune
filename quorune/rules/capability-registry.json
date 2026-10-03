@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 166,
+  "registry_version": 167,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -5741,6 +5741,33 @@
       "dependency_fail_closed_rationale": "The sequence owner requires target revalidation and canonical replacement-aware counter placement. Each recognized node shape separately declares its actual until-end-of-turn or zone-object continuous-effect capability, so unrelated duration families are not transitively required.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Focused compiler mutations suppress each closed sequence production and prove that the same source span returns to a material residual; shape mutations also reject wrong target identities, malformed exact amounts, and untyped persistent grants.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "stack.counter.controller_payment",
+      "version": 1,
+      "official_rules": ["107.3a", "107.3b", "117.1d", "118.12", "118.12a", "603.3a", "608.2b", "608.2d", "608.2g", "701.6a", "701.6b"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Compile a closed target-controller mana payment that conditionally delegates a currently legal stack target to the existing counter owner, using fixed ordinary mana or the spell's canonically announced X.",
+        "inputs": ["one closed stack target schema", "complete ordinary mana vector", "canonical spell cost-X context when represented", "current target controller", "immutable payment continuation and resolving controller"],
+        "outputs": ["private full-payment-or-decline choice", "canonical payer mana intent or canonical counter intent", "distinct payer and countering controller", "resumable unchanged remaining instructions"],
+        "exclusions": ["nonmana, hybrid, Phyrexian and repeated payment", "state-derived or text-defined cost X", "fixed-plus-X generic payment", "multiple targets", "reflexive or linked counter-result instructions", "unsupported target predicates and independently unsupported siblings"]
+      },
+      "dependencies": ["stack.counter.effect", "target.revalidate_resolution", "effect.choice.optional_fixed_mana_payment"],
+      "implementation_components": ["quorune.rules.stack_controller_payment_cost.StackControllerPaymentCost", "quorune.compiler.counter_templates.TargetedControllerPaymentTemplate", "quorune.compiler.counter_templates.targeted_controller_payment_template", "quorune.rules.stack_controller_payment_shapes.stack_controller_payment_node_capabilities", "quorune.semantic_choices.payments.OptionalPaymentHandler", "quorune.semantic_choices.payments._controller_payment_requirements", "quorune.semantic_choices.intent_host.SemanticChoiceIntentHostMixin.pay_mana_cost_intent", "quorune.semantic_runtime.intents.CounterStackIntent", "quorune.stack_counter.counter_stack_item"],
+      "positive_tests": ["test_fixed_controller_payment_compiles_across_spell_trigger_and_activation", "test_trusted_stack_payment_pay_decline_projection_and_exact_replay"],
+      "negative_tests": ["test_controller_payment_cost_mutants_and_cast_x_are_strict", "test_controller_payment_missing_or_blocked_capability_withholds_trust"],
+      "interaction_tests": ["test_counter_payment_intents_keep_payer_and_countering_controller_distinct", "test_counter_payment_cast_x_uses_the_existing_scalar_owner", "test_counter_payment_rejects_changed_controller_and_continuation_cost", "test_trusted_stack_payment_cast_x_zero_and_canonical_mana_sources", "test_trusted_stack_payment_activation_and_entry_trigger_owners", "test_trusted_stack_payment_uncounterable_target_retains_legal_decline", "test_trusted_stack_payment_current_controller_and_vanished_target_boundaries", "test_stack_payment_canonical_spell_copy_preserves_announced_x"],
+      "multiplayer_tests": ["test_trusted_stack_payment_pay_decline_projection_and_exact_replay"],
+      "privacy_tests": ["test_trusted_stack_payment_pay_decline_projection_and_exact_replay"],
+      "replay_tests": ["test_trusted_stack_payment_pay_decline_projection_and_exact_replay", "test_stack_payment_historical_record_rejects_silent_reinterpretation"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Missing or blocked controller-payment capability keeps otherwise lowerable cost and target descriptors untrusted; result and payment owners remain separately required.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "test_counter_payment_wrong_countering_controller_mutant_is_killed executes the existing completion owner with the payer incorrectly attributed as countering controller and rejects the resulting intent.",
       "blockers": [],
       "status": "trusted"
     },

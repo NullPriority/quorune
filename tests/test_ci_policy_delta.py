@@ -24,13 +24,21 @@ class CiPolicyDeltaTests(unittest.TestCase):
             )
         )
         additive = deepcopy(base)
-        additive["path_rules"][0].setdefault("test_modules", []).append(
+        additive_rule = next(
+            rule for rule in additive["path_rules"]
+            if rule["id"] == "changed-python-test"
+        )
+        additive_rule.setdefault("test_modules", []).append(
             "test_ci_policy_delta"
         )
         self.assertTrue(compare_change_impact_policy(base, additive).additive)
 
         removed = deepcopy(additive)
-        removed["path_rules"][0]["test_modules"] = []
+        removed_rule = next(
+            rule for rule in removed["path_rules"]
+            if rule["id"] == "changed-python-test"
+        )
+        removed_rule["test_modules"] = []
         delta = compare_change_impact_policy(additive, removed)
         self.assertFalse(delta.additive)
         self.assertIn(

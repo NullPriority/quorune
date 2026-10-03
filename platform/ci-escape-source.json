@@ -977,6 +977,59 @@
       "regressions": ["test_rules_scheduler.RulesSchedulerTests.test_corrected_unlanded_transition_replaces_superseded_receipt", "test_rules_scheduler.RulesSchedulerTests.test_unmerged_harvest_compiler_revision_retains_original_frontier_identity"],
       "impact_edge_status": "not_applicable",
       "resolution": "Match the same unlanded transition, bundle and candidate identities independently of the superseded compiler version, while requiring the corrected declaration compiler to match its new head receipt and retaining durable-main base and landed-entry guards. The changed-compiler regression fails on unchanged owner by returning no replacement, then passes with malformed corrected-head version rejection. Preserve the original base-frontier identity. Existing scheduler impact selection already covers these tests; corrected corpus and frontier content keys remain identical and are reused."
+    },
+    {
+      "id": "ci-20261003-65",
+      "run_id": 37081568937,
+      "head_sha": "88ad916cb79b22c6c93ce989b4b149b68a787943",
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "summary": "The direct resolution compiler tuple captured callables during the stack-payment harvest, while temporary-interaction, public-zone and two return-family mutations still patched module variables and no longer removed their live compiler routes.",
+      "failed_surfaces": [
+        "PR / Windows / functional-09",
+        "PR / Python / functional-09",
+        "PR / Windows / functional-10",
+        "PR / Python / functional-10",
+        "PR / Windows / functional-06",
+        "PR / Python / functional-06"
+      ],
+      "regressions": [
+        "test_temporary_target_interactions.TemporaryTargetInteractionCompilerTests.test_temporary_interaction_dependencies_and_compiler_mutation",
+        "test_fixed_public_zone_moves.FixedPublicZoneMoveCompilerTests.test_public_zone_move_dependencies_and_shape_mutations_fail_closed",
+        "test_targeted_graveyard_return_effect_clauses.TargetedOwnGraveyardReturnCompilerTests.test_compiler_mutant_is_killed",
+        "test_targeted_return_to_hand_effect_clauses.TargetedReturnToHandCompilerTests.test_expanded_target_compiler_mutant_is_killed"
+      ],
+      "impact_edge_status": "added",
+      "resolution": "Use one shared test helper that removes and verifies exactly one live direct compiler route, preserving all dependency and residual assertions. The unchanged temporary mutation fails in 4.096 seconds, public-zone mutation in 6.016 seconds, and original checkpoint return mutations in 2.380 seconds; all four corrected tests pass in 12.382 seconds. Add the direct-resolution source and all affected consumers to the stack-payment impact edge. This changes only tests and selection evidence; preserve the verified frozen semantic census key and reuse it downstream."
+    },
+    {
+      "id": "ci-20261003-66",
+      "run_id": 37081568937,
+      "head_sha": "88ad916cb79b22c6c93ce989b4b149b68a787943",
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "summary": "The shared target-controller payment production made Flusterstorm and Hindering Touch's Oracle bodies exact, while the existing real-Storm integration test still pinned their previous residual status.",
+      "failed_surfaces": [
+        "PR / Windows / functional-11",
+        "PR / Python / functional-11"
+      ],
+      "regressions": [
+        "test_storm_rules.StormCompilerTests.test_all_real_storm_cards_lower_typed_stack_trigger"
+      ],
+      "impact_edge_status": "added",
+      "resolution": "The unchanged exact integration regression fails locally in 46.850 seconds on exactly those two names. The corrected exact test passes in 46.747 seconds. Update the independently supported Oracle exact set and assert one exact typed v2 counter-payment node for each while retaining all Storm event, span, handler and capability assertions. Add the direct-resolution/counter source impact edge selecting Storm consumers. Keep Flusterstorm's mixed trust basis separate from capability-closed card gain; no production or census input changes."
+    },
+    {
+      "id": "ci-20261003-67",
+      "run_id": 37081568937,
+      "head_sha": "88ad916cb79b22c6c93ce989b4b149b68a787943",
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "summary": "The policy-delta mutation selected the first path rule by position while its expected diagnostic named changed-python-test. Adding the stack-payment impact edge exposed the mismatched test binding.",
+      "failed_surfaces": ["PR / Windows / generated-validation"],
+      "regressions": ["test_ci_policy_delta.CiPolicyDeltaTests.test_impact_policy_accepts_only_monotonic_selection_evidence"],
+      "impact_edge_status": "added",
+      "resolution": "The unchanged test fails in 0.004 seconds with the new first rule ID. Bind additive and removal mutations to the stable changed-python-test ID, preserving the exact rejection reason and all policy assertions; the corrected test passes in 0.006 seconds. Add this consumer to the same harvest impact edge. No policy algorithm or semantic census input changes."
     }
   ],
   "recent_pull_requests": [

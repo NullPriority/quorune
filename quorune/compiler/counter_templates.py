@@ -5,6 +5,11 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Mapping
 
+from ..query_effect_amount_model import CastXAmountSpec
+from ..replacement.immutable import FrozenMap
+from ..rules.stack_controller_payment_cost import StackControllerPaymentCost, STACK_CONTROLLER_PAYMENT_MECHANIC
+from ..util import mana_cost_to_vector
+
 from .direct_target import (
     compiled_direct_target,
     direct_target_effect,
@@ -172,9 +177,51 @@ def is_intrinsically_uncounterable_spell(text: str) -> bool:
     )
 
 
+@dataclass(frozen=True, slots=True)
+class TargetedControllerPaymentTemplate:
+    counter: TargetedCounterEffectTemplate
+    payment: StackControllerPaymentCost
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.counter, TargetedCounterEffectTemplate) or not isinstance(self.payment, StackControllerPaymentCost):
+            raise ValueError("Controller payment requires closed target and cost values")
+
+    def compiled(self):
+        return (
+            f"counter-controller-payment-{direct_target_slug(self.counter.target.value)}-v2",
+            ({"op": "counter_unless_pay", "schema_version": 2,
+              "stack": "$target.0", "player": "$target.current_controller.0",
+              "cost": self.payment.to_dict()},),
+            self.counter.target_schema,
+            (*self.counter.mechanics, STACK_CONTROLLER_PAYMENT_MECHANIC),
+        )
+
+
+def targeted_controller_payment_template(text: str, *, cast_x_available: bool = False) -> TargetedControllerPaymentTemplate | None:
+    if type(cast_x_available) is not bool:
+        raise ValueError("Announced-X availability must be a strict Boolean")
+    match = re.fullmatch(
+        r"(?P<body>Counter target .+?) unless its controller pays "
+        r"(?P<cost>(?:\{(?:[0-9]+|[WUBRGCX])\})+)\.?", text.strip(), re.I,
+    )
+    if match is None:
+        return None
+    counter = targeted_counter_effect_template(match["body"] + ".")
+    if counter is None:
+        return None
+    requirements, symbols = mana_cost_to_vector(match["cost"])
+    if symbols:
+        if not cast_x_available or tuple(symbols) != ("X",) or requirements["GENERIC"]:
+            return None
+        requirements["GENERIC"] = CastXAmountSpec().to_dict()
+    return TargetedControllerPaymentTemplate(counter, StackControllerPaymentCost(FrozenMap(requirements)))
+
+
 __all__ = [
     "CounterTarget",
     "TargetedCounterEffectTemplate",
+    "TargetedControllerPaymentTemplate",
     "is_intrinsically_uncounterable_spell",
     "targeted_counter_effect_template",
+    "targeted_controller_payment_template",
 ]

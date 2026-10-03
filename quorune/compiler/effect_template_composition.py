@@ -13,6 +13,7 @@ from .declared_effect_amounts import declared_effect_amount_template
 from .fixed_resolution_characteristics import fixed_resolution_characteristics_effect_template
 from .fixed_effect_payment_templates import fixed_effect_payment_template,fixed_effect_payment_with_mandatory_prefix
 from .optional_payment_templates import fixed_optional_mana_payment_template
+from .counter_templates import targeted_controller_payment_template
 
 
 CompiledEffectTemplate = tuple[
@@ -34,6 +35,9 @@ def reviewed_contextual_effect_template(
     """Bind source context before composing the same closed leaf owners."""
 
     def atomic_with_characteristics(body: str) -> CompiledEffectTemplate:
+        controller_payment = targeted_controller_payment_template(body, cast_x_available=cast_x_available)
+        if controller_payment is not None:
+            return controller_payment.compiled()
         current = compile_atomic(body, card_name=card_name, **source_context)
         if current[0] is not None:
             return current

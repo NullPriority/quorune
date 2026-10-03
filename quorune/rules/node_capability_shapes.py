@@ -581,6 +581,10 @@ def targeted_counter_node_capabilities(
 ) -> tuple[str, ...]:
     """Return capabilities only for the closed direct stack-counter grammar."""
 
+    if len(effects) == 1 and effects[0].get("op") == "counter_unless_pay":
+        from .stack_controller_payment_shapes import stack_controller_payment_node_capabilities
+        return stack_controller_payment_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
+
     mechanics = {str(value).casefold() for value in mechanic_ids}
     if (
         not {"counter", "cr-115-targets"}.issubset(mechanics)
@@ -599,6 +603,14 @@ def targeted_counter_node_capabilities(
         "stack.counter.effect",
         "target.revalidate_resolution",
     )
+
+
+def stack_counter_covered_mechanics(supplied: set[str]) -> set[str]:
+    from .stack_controller_payment_cost import STACK_CONTROLLER_PAYMENT_CAPABILITY, STACK_CONTROLLER_PAYMENT_MECHANIC
+    covered = {"counter"} if "stack.counter.effect" in supplied else set()
+    if STACK_CONTROLLER_PAYMENT_CAPABILITY in supplied:
+        covered.add(STACK_CONTROLLER_PAYMENT_MECHANIC)
+    return covered
 
 
 def fixed_counter_placement_node_capabilities(

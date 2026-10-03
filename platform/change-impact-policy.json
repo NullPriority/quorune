@@ -85,6 +85,31 @@
   ],
   "path_rules": [
     {
+      "id": "stack-controller-payment-contract",
+      "patterns": [
+        "quorune/rules/stack_controller_payment_cost.py",
+        "quorune/rules/stack_controller_payment_shapes.py",
+        "quorune/compiler/counter_templates.py",
+        "quorune/compiler/resolution_effect_templates.py",
+        "quorune/semantic_choices/payments.py",
+        "tests/fixtures/stack-controller-payment-cards.json"
+      ],
+      "test_modules": [
+        "test_targeted_counter_effect_clauses",
+        "test_stack_counter_rules",
+        "test_semantic_choice_characterization",
+        "test_fixed_optional_mana_payment_triggers",
+        "test_declared_effect_amounts",
+        "test_temporary_target_interactions",
+        "test_fixed_public_zone_moves",
+        "test_targeted_graveyard_return_effect_clauses",
+        "test_targeted_return_to_hand_effect_clauses",
+        "test_storm_rules",
+        "test_ci_policy_delta",
+        "test_card_program_trust"
+      ]
+    },
+    {
       "id": "changed-python-test",
       "patterns": [
         "tests/test_*.py"

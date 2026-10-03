@@ -73,6 +73,7 @@ from .node_capability_shapes import (
     fixed_bolster_node_capabilities,
     fixed_amass_node_capabilities,
     targeted_counter_node_capabilities,
+    stack_counter_covered_mechanics,
     targeted_destruction_node_capabilities,
     targeted_exile_node_capabilities,
     targeted_return_to_hand_node_capabilities,
@@ -1477,8 +1478,7 @@ def capability_covered_mechanics(
         )
     covered.update(fixed_owner_zone_move_covered_mechanics(supplied)); covered.update(fixed_target_reanimation_covered_mechanics(supplied))
     covered.update(_return_to_hand_covered_mechanics(supplied))
-    if "stack.counter.effect" in supplied:
-        covered.add("counter")
+    covered.update(stack_counter_covered_mechanics(supplied))
     covered.update(_shape_gated_covered_mechanics(supplied))
     if supplied.intersection(
         {
