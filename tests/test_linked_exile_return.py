@@ -40,6 +40,46 @@ def record(text: str, *, type_line: str = "Instant") -> CardRecord:
 
 
 class LinkedExileReturnCompilerTests(unittest.TestCase):
+    def test_optional_cardinality_and_source_exclusion_are_independent(self):
+        registry = load_default_capability_registry()
+        for subject, maximum, optional, excluded in (
+            ("up to one target creature you control", 1, True, False),
+            ("another target creature you control", 1, False, True),
+            ("up to one other target creature you control", 1, True, True),
+            ("up to two other target creatures you control", 2, True, True),
+        ):
+            with self.subTest(subject=subject):
+                reference = "those cards" if maximum > 1 else "that card"
+                card = record(
+                    "{W}: Exile " + subject + ", then return " + reference + " to the battlefield.",
+                    type_line="Creature — Test",
+                )
+                ir = compile_oracle_card(card, capability_registry=registry, capability_profile="commander_review")
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                schema = ir.faces[0].nodes[0].target_schema
+                self.assertEqual(excluded, bool(schema.get("source_exclusion")), schema)
+                self.assertEqual(maximum, schema.get("up_to" if optional else "count"), schema)
+                self.assertNotIn("count" if optional else "up_to", schema)
+
+    def test_optional_qualifier_erasure_compiler_mutant_is_killed(self):
+        import quorune.compiler.resolution_effect_templates as owner
+
+        original = owner.linked_exile_return_effect_template
+
+        def erase_optional_qualifier(text, **kwargs):
+            return original(text.replace("up to one other target", "another target"), **kwargs)
+
+        registry = load_default_capability_registry()
+        card = record(
+            "{W}: Exile up to one other target creature you control, then return that card to the battlefield.",
+            type_line="Creature — Test",
+        )
+        with patch.object(owner, "linked_exile_return_effect_template", erase_optional_qualifier):
+            ir = compile_oracle_card(card, capability_registry=registry, capability_profile="commander_review")
+        self.assertEqual("exact", ir.status)
+        with self.assertRaises(AssertionError):
+            self.assertEqual(1, ir.faces[0].nodes[0].target_schema.get("up_to"))
+
     def test_cohort_measurement_counts_net_exact_nodes_not_promoted_carriers(self):
         from scripts.work_selection_cohort_measurements import _bound_effect_program_measurement
         frontier={"cards":[{"oracle_id":"fixture:composition","oracle_ir_status":"partial","abilities":[
@@ -212,6 +252,70 @@ class LinkedExileReturnIntegratedCompilerTests(unittest.TestCase):
 
 
 class LinkedExileReturnActionTests(unittest.TestCase):
+    def optional_other_fixture(self, seed, *, eligible, extra_other=False):
+        session = self.session(seed)
+        register_generated_programs(
+            self.db, session.engine.semantics,
+            tuple(card for card in self.db.iter_cards() if card.oracle_text),
+            trust_level="provisional", capability_registry=load_default_capability_registry(),
+            capability_profile="commander_review", promote_exact_runtime_handlers=True,
+            promote_exact_trigger_programs=True, promote_exact_effect_programs=True,
+            promote_exact_capability_declarations=True,
+        )
+        source = self.add(session, "Generic Optional Other Blink", "OPTIONAL-SOURCE", zone="battlefield")
+        victim = self.add(session, "Generic Blink Victim", "OPTIONAL-VICTIM", zone="battlefield") if eligible else None
+        if extra_other:
+            self.add(session, "Generic Blink Victim", "OPTIONAL-EXTRA", zone="battlefield")
+        for program in session.engine.semantics.programs_for_oracle(source.oracle_id):
+            self.assertTrue(session.engine.semantic_program_is_current_trusted(program))
+        self.seal(session)
+        decision = session.packet("pilot:A", full=True)["decision"]
+        actions = [action for action in decision["ctx"]["legal"]["actions"]
+                   if action.get("source") == source.ref and action["id"].startswith("activate:")]
+        self.assertEqual(1, len(actions), "An up-to-one activation remains offered without an eligible target")
+        return session, source, victim, actions[0]
+
+    def optional_other_zero_targets(self, seed, *, eligible):
+        session, source, victim, action = self.optional_other_fixture(seed, eligible=eligible)
+        original = victim.logical_object_id if victim else None
+        self.assertEqual(1, action["target_schema"]["up_to"])
+        result = session.act("pilot:A", {"action_id": action["id"], "targets": [], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        # No target was selected; there is no later optional-effect decline.
+        self.assertEqual([], session.state.stack[-1].targets)
+        self.finish(session)
+        if victim:
+            self.assertEqual(original, session.state.cards[victim.object_id].logical_object_id)
+        self.assertEqual("battlefield", session.state.cards[source.object_id].zone)
+        self.assertEqual(7, session.state.players["A"].mana_pool["W"])
+        self.replay(session)
+
+    def test_optional_other_zero_targets_with_eligible_object_and_replay(self):
+        self.optional_other_zero_targets(24700201, eligible=True)
+
+    def test_optional_other_zero_targets_without_eligible_object_and_replay(self):
+        self.optional_other_zero_targets(24700202, eligible=False)
+
+    def test_optional_other_one_target_illegal_source_excess_rollback_and_replay(self):
+        session, source, victim, action = self.optional_other_fixture(
+            24700203, eligible=True, extra_other=True,
+        )
+        extra = next(card for card in session.state.cards.values() if card.ref == "OPTIONAL-EXTRA")
+        for refs in ([source.ref], [victim.ref, extra.ref]):
+            before = authoritative_state_hash(session.state)
+            result = session.act("pilot:A", {"action_id": action["id"], "targets": refs, "pay": "auto"})
+            self.assertFalse(result.ok)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+        original = victim.logical_object_id
+        result = session.act("pilot:A", {"action_id": action["id"], "targets": [victim.ref], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.finish(session)
+        returned = session.state.cards[victim.object_id]
+        self.assertNotEqual(original, returned.logical_object_id)
+        self.assertEqual("battlefield", returned.zone)
+        self.assertEqual(2, returned.zone_change_counter)
+        self.replay(session)
+
     def test_exact_blink_does_not_admit_unsupported_target_siblings(self):
         from quorune.card_programs.adapters import compile_best_available_card_program
         from quorune.card_programs import bind_card_program_runtime

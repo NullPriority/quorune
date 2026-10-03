@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "3d871258c34f922f7a683dfbf57ad80e87de59a78c4514387b7bf0c76f8ad27b",
-  "declaration_source_fingerprint": "196cd78dfedb80fd0a62337eb770a73c24ff8ea2ba1bee7b710c688c839c0276",
+  "registry_fingerprint": "6547a89a034b6c33c25b43e48c3b5ef52519983a21cd909aa74b42be786ead13",
+  "declaration_source_fingerprint": "d2962d2bf6005174609748799bbaba47d1bb326842442826a52e9cb55055c4ea",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -72217,6 +72217,29 @@
     {
       "capability_id": "zone.linked_exile_return.fixed",
       "evidence_class": "mutation",
+      "test_id": "tests.test_linked_exile_return.LinkedExileReturnCompilerTests.test_optional_qualifier_erasure_compiler_mutant_is_killed",
+      "official_rule_ids": [
+        "111.8",
+        "115.1a",
+        "400.7",
+        "400.7j",
+        "603.7b",
+        "603.7c",
+        "603.7d",
+        "603.7e",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Restoring qualifier-erasing synonym normalization yields a mandatory count and fails the independently expected up-to-one schema through the live compiler route."
+    },
+    {
+      "capability_id": "zone.linked_exile_return.fixed",
+      "evidence_class": "mutation",
       "test_id": "tests.test_linked_exile_return.LinkedExileReturnRuntimeContractTests.test_identity_guard_mutant_is_killed",
       "official_rule_ids": [
         "111.8",
@@ -72236,6 +72259,29 @@
         "commander_review"
       ],
       "applicability_note": "Removing the exiled incarnation guard violates the independently expected no-return result."
+    },
+    {
+      "capability_id": "zone.linked_exile_return.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_linked_exile_return.LinkedExileReturnActionTests.test_optional_other_one_target_illegal_source_excess_rollback_and_replay",
+      "official_rule_ids": [
+        "111.8",
+        "115.1a",
+        "400.7",
+        "400.7j",
+        "603.7b",
+        "603.7c",
+        "603.7d",
+        "603.7e",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual source-self and two-legal-other submissions are rejected without mutation; one other object remains legal and returns as a new incarnation."
     },
     {
       "capability_id": "zone.linked_exile_return.fixed",
@@ -72263,6 +72309,52 @@
     {
       "capability_id": "zone.linked_exile_return.fixed",
       "evidence_class": "positive",
+      "test_id": "tests.test_linked_exile_return.LinkedExileReturnActionTests.test_optional_other_zero_targets_with_eligible_object_and_replay",
+      "official_rule_ids": [
+        "111.8",
+        "115.1a",
+        "400.7",
+        "400.7j",
+        "603.7b",
+        "603.7c",
+        "603.7d",
+        "603.7e",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A provisionally registered, exact-promoted trusted activation selects zero targets despite an eligible other creature, pays its cost and resolves without movement or an optional-effect decline."
+    },
+    {
+      "capability_id": "zone.linked_exile_return.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_linked_exile_return.LinkedExileReturnActionTests.test_optional_other_zero_targets_without_eligible_object_and_replay",
+      "official_rule_ids": [
+        "111.8",
+        "115.1a",
+        "400.7",
+        "400.7j",
+        "603.7b",
+        "603.7c",
+        "603.7d",
+        "603.7e",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "With no eligible other object the activation is still actually offered and accepts zero targets through canonical command validation and payment."
+    },
+    {
+      "capability_id": "zone.linked_exile_return.fixed",
+      "evidence_class": "positive",
       "test_id": "tests.test_linked_exile_return.LinkedExileReturnActionTests.test_trusted_immediate_blink_offer_payment_owner_privacy_and_replay",
       "official_rule_ids": [
         "111.8",
@@ -72282,6 +72374,29 @@
         "commander_review"
       ],
       "applicability_note": "Actual registered trusted cast, payment and owner-controlled new-incarnation return."
+    },
+    {
+      "capability_id": "zone.linked_exile_return.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_linked_exile_return.LinkedExileReturnCompilerTests.test_optional_cardinality_and_source_exclusion_are_independent",
+      "official_rule_ids": [
+        "111.8",
+        "115.1a",
+        "400.7",
+        "400.7j",
+        "603.7b",
+        "603.7c",
+        "603.7d",
+        "603.7e",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual full-card compiler schemas retain up-to-one, mandatory another, up-to-one-other and up-to-two-other cardinality and source-exclusion distinctions independently."
     },
     {
       "capability_id": "zone.linked_exile_return.fixed",
@@ -72305,6 +72420,75 @@
         "commander_review"
       ],
       "applicability_note": "Public movement does not publish hidden library ordering or another principal's drawn-card identity."
+    },
+    {
+      "capability_id": "zone.linked_exile_return.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_linked_exile_return.LinkedExileReturnActionTests.test_optional_other_one_target_illegal_source_excess_rollback_and_replay",
+      "official_rule_ids": [
+        "111.8",
+        "115.1a",
+        "400.7",
+        "400.7j",
+        "603.7b",
+        "603.7c",
+        "603.7d",
+        "603.7e",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Save/load and pre-action exact replay preserve the legal selected other object, its two zone transitions and new incarnation while rejected source/excess submissions do not mutate state."
+    },
+    {
+      "capability_id": "zone.linked_exile_return.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_linked_exile_return.LinkedExileReturnActionTests.test_optional_other_zero_targets_with_eligible_object_and_replay",
+      "official_rule_ids": [
+        "111.8",
+        "115.1a",
+        "400.7",
+        "400.7j",
+        "603.7b",
+        "603.7c",
+        "603.7d",
+        "603.7e",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The zero-target cast/activation command and unchanged eligible object's incarnation survive save/load and exact replay from before payment."
+    },
+    {
+      "capability_id": "zone.linked_exile_return.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_linked_exile_return.LinkedExileReturnActionTests.test_optional_other_zero_targets_without_eligible_object_and_replay",
+      "official_rule_ids": [
+        "111.8",
+        "115.1a",
+        "400.7",
+        "400.7j",
+        "603.7b",
+        "603.7c",
+        "603.7d",
+        "603.7e",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An offered activation with no eligible target resolves legally, consumes its real payment and reproduces its zero-target outcome after load and exact command replay."
     },
     {
       "capability_id": "zone.linked_exile_return.fixed",
@@ -73494,5 +73678,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "810fc2e4f391415ece4b10043dc4e7a33b24992781a6a117b2393d525072a341"
+  "fingerprint": "bb9cccec77d030c359d11c0b0b2b80b909882ae437170c405cad7a5df36d8024"
 }

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 171,
+  "registry_version": 172,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -5352,12 +5352,12 @@
       },
       "dependencies": ["target.revalidate_resolution", "zone.change.destination_replacement", "trigger.placement.apnap"],
       "implementation_components": ["quorune.compiler.linked_exile_return_templates.linked_exile_return_effect_template", "quorune.rules.linked_exile_return_shapes.linked_exile_return_node_capabilities", "quorune.linked_exile_return.resolve_linked_exile_return", "quorune.linked_exile_return.return_linked_exiled_objects", "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously", "quorune.trigger_processing.schedule_delayed_trigger"],
-      "positive_tests": ["test_committed_exile_identity_and_return_incarnation_are_distinct", "test_trusted_immediate_blink_offer_payment_owner_privacy_and_replay"],
-      "negative_tests": ["test_closed_descriptor_has_exact_capability_shape", "test_stale_exiled_incarnations_and_tokens_do_not_return"],
+      "positive_tests": ["test_committed_exile_identity_and_return_incarnation_are_distinct", "test_trusted_immediate_blink_offer_payment_owner_privacy_and_replay", "test_optional_cardinality_and_source_exclusion_are_independent", "test_optional_other_zero_targets_with_eligible_object_and_replay", "test_optional_other_zero_targets_without_eligible_object_and_replay"],
+      "negative_tests": ["test_closed_descriptor_has_exact_capability_shape", "test_stale_exiled_incarnations_and_tokens_do_not_return", "test_optional_other_one_target_illegal_source_excess_rollback_and_replay"],
       "interaction_tests": ["test_trusted_immediate_blink_offer_payment_owner_privacy_and_replay", "test_trusted_counter_entry_replacement_choice_checkpoint_resumes_return_only", "test_trusted_group_partial_illegal_target_replays", "test_trusted_self_activation_and_optional_entry_decline"],
       "multiplayer_tests": ["test_trusted_immediate_blink_offer_payment_owner_privacy_and_replay"],
       "privacy_tests": ["test_trusted_immediate_blink_offer_payment_owner_privacy_and_replay"],
-      "replay_tests": ["test_trusted_immediate_blink_offer_payment_owner_privacy_and_replay", "test_trusted_delayed_blink_save_load_then_returns_once_and_replays", "test_trusted_counter_entry_replacement_choice_checkpoint_resumes_return_only", "test_trusted_self_old_activation_ignores_absent_source_and_keyword_grants"],
+      "replay_tests": ["test_trusted_immediate_blink_offer_payment_owner_privacy_and_replay", "test_trusted_delayed_blink_save_load_then_returns_once_and_replays", "test_trusted_counter_entry_replacement_choice_checkpoint_resumes_return_only", "test_trusted_self_old_activation_ignores_absent_source_and_keyword_grants", "test_optional_other_zero_targets_with_eligible_object_and_replay", "test_optional_other_zero_targets_without_eligible_object_and_replay", "test_optional_other_one_target_illegal_source_excess_rollback_and_replay"],
       "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "The focused dependency test blocks each declared owner and asserts its exact status blocker.",

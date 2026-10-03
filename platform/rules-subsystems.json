@@ -4763,13 +4763,13 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v246-scalar-departure-relevance",
-      "compiler_version": "oracle-ir-v246",
+      "transition_id": "oracle-ir-v247-optional-other-blink-cardinality",
+      "compiler_version": "oracle-ir-v247",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
-      "non_harvest_reason": "Correct the demonstrated scalar lifecycle boundary: unrelated movements must not evaluate or cache pending characteristic results. Preserve relevant immediate LKI, incarnation filtering, rollback and eventual unsupported applicability through existing owners without adding card grammar or phasing support.",
+      "non_harvest_reason": "Preserve the independently declared optional target count and source exclusion in the existing linked-exile compiler. Correct demonstrated zero-target offer and command rejection without widening grammar, changing mandatory another-target behavior, adding a target owner, or forcing a support gain.",
       "expected_complete_card_gain": null
     },
     "forecast_corrections": [
