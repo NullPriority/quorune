@@ -20,7 +20,7 @@ from .fixed_effect_payment_templates import is_closed_fixed_effect_payment_progr
 from ..rules.stack_controller_payment_shapes import is_closed_stack_controller_payment_program
 from .declared_effect_amounts import is_closed_declared_amount_program
 from .public_query_effect_amounts import (
-    PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC,
+    AMOUNT_MECHANIC_CAPABILITIES,
     public_query_amount_program_is_closed,
 )
 from .prevention_templates import is_closed_fixed_prevention_program
@@ -1327,7 +1327,7 @@ def _is_closed_declared_amount_program(program: SemanticProgram) -> bool:
 def _is_closed_public_query_amount_program(program: SemanticProgram) -> bool:
     """Refine existing fixed effect shapes without treating a scalar as prose."""
 
-    if PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC not in program.coverage:
+    if not set(AMOUNT_MECHANIC_CAPABILITIES).intersection(program.coverage):
         return False
     return public_query_amount_program_is_closed(
         program,

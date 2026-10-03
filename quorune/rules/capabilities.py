@@ -365,7 +365,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     "cr-101-the-magic-golden-rules": ("life.change.effect",),
     "cr-119-life": ("life.change.effect",),
     "cr-121-drawing-a-card": ("zone.draw.library_to_hand",),
-    _query.PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC: (_query.PUBLIC_QUERY_AMOUNT_CAPABILITY,),
+    **_query.AMOUNT_MECHANIC_CAPABILITIES,
     "declared-effect-amount": ("quantity_expression.declared_effect_amount",),
     FIXED_LIBRARY_SELECTION_MECHANIC: ("library.select.fixed_controller",),
     PARTNER_WITH_SEARCH_MECHANIC_ID: ("library.search.partner_with_named_to_hand",),

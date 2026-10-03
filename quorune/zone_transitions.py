@@ -36,6 +36,7 @@ from .life_state import (
 from .kicker import KICKER_ANNOTATION
 from .model import CardInstance, GameState, StackItem
 from .relative_power_target import pin_host_relative_power_source_departures
+from .scalar_effect_amounts import pin_scalar_characteristic_departures
 from .station import pin_host_station_departures
 from .semantic_runtime import (
     PreparedZoneChange,
@@ -101,6 +102,7 @@ class ZoneTransitionOwner:
             for item in self.state.stack
         )
         try:
+            pin_scalar_characteristic_departures(self.host, cards, error_type=StateInvariantError)
             pin_host_relative_power_source_departures(
                 self.host,
                 cards,

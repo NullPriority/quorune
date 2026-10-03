@@ -124,7 +124,7 @@ def declared_effect_amount_template(
 
 def contains_declared_effect_amount(value: Any) -> bool:
     if isinstance(value, Mapping):
-        return value.get("kind") == CAST_X_AMOUNT_KIND or (
+        return (value.get("kind") == "scalar_effect_amount" and value.get("binding_id") is not None) or value.get("kind") == CAST_X_AMOUNT_KIND or (
             value.get("kind") == PUBLIC_QUERY_AMOUNT_KIND and value.get("schema_version") == 2
         ) or any(contains_declared_effect_amount(child) for child in value.values())
     return isinstance(value, (list,tuple)) and any(contains_declared_effect_amount(child) for child in value)
@@ -150,7 +150,8 @@ def scope_declared_card_faces(faces: Sequence[Any]) -> tuple[Any, ...]:
 
 
 def declared_amount_dependencies(mechanics: set[str]) -> set[str]:
-    return {DECLARED_AMOUNT_CAPABILITY} if DECLARED_EFFECT_AMOUNT_MECHANIC in mechanics else set()
+    from ..scalar_effect_amount_model import SCALAR_AMOUNT_CAPABILITY, SCALAR_AMOUNT_MECHANIC
+    return ({DECLARED_AMOUNT_CAPABILITY} if DECLARED_EFFECT_AMOUNT_MECHANIC in mechanics else set()) | ({SCALAR_AMOUNT_CAPABILITY} if SCALAR_AMOUNT_MECHANIC in mechanics else set())
 
 
 def is_closed_declared_amount_program(program: Any, *, required_dependencies: Sequence[str],

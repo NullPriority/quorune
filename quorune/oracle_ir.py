@@ -169,7 +169,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v244"
+ORACLE_COMPILER_VERSION = "oracle-ir-v245"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -867,7 +867,10 @@ def _trigger_node(
         recognized = True
     elif trigger:
         event_phrase = trigger.group("event").casefold()
-        source_bound_effect = source_self_contextual_effect_template(
+        from .compiler.scalar_effect_amounts import scalar_effect_amount_template
+        source_bound_effect = scalar_effect_amount_template(trigger.group("body"), source_name=card_name,
+            event={"enters":"permanent.enter", "dies":"creature.dies", "leaves the battlefield":"permanent.leave"}[event_phrase],
+            source_event=True, compile_fixed=lambda text: effect_template(text, card_name=card_name)) or source_self_contextual_effect_template(
             trigger.group("body"),
             card_name=card_name,
             event_phrase=event_phrase,

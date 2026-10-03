@@ -1349,6 +1349,19 @@ later-layer quantities, linked, chosen, optional, modal, conditional,
 aggregate-set, multiple-target, variable-duration, unsupported quoted or
 granted, and open-arithmetic forms remain source-spanned residuals.
 
+`compiler/scalar_effect_amounts.py` extends the existing numeric result
+projection with complete referenced-characteristic, committed-event, and
+represented current-turn definitions. Its fixed-value differential proof
+retains the operation, target schema, and dependency owner; only result slots
+receive scalar data. Explicit source references, singleton direct battlefield
+targets, and represented zone-event objects remain distinct origins. Ambiguous
+pronouns, optional target references, X-dependent targets or costs, aggregate
+extrema, chosen facts, and independently unsupported bodies remain residual.
+Declarations receive Oracle-node-scoped identities; separate declarations
+cannot share a cached value. Ordinary negative result amounts use zero before
+the printed result sign, while known zero and unavailable information remain
+different outcomes. Doubling/base-setting exceptions are outside this grammar.
+
 Public event-effect triggers compile only when one closed normalized carrier
 and one independently exact typed body compose through the shared event-effect
 owner. Zone events consume transaction-sealed owner, prior controller, type,

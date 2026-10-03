@@ -247,7 +247,8 @@ def _creature_power_damage_context(
             status="unavailable",
             reason="creature_power_source_unavailable",
         )
-    return (
+    from ...scalar_effect_amounts import scalar_source_context
+    return scalar_source_context(host, source, program.effects) | (
         {CREATURE_POWER_DAMAGE_LKI_CONTEXT: source_lki}
         if source_lki is not None
         else {}

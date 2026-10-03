@@ -95,6 +95,20 @@ exact replay preserve the choice and remaining instructions. Historical v1
 payload execution remains separate; incompatible archived records are
 rejected by the existing runtime-trust provenance boundary.
 
+Scalar effect quantities reuse the value resolver before their unchanged
+operation handlers run. Referenced characteristics use current information for
+the same logical object in its expected public zone, otherwise its immediate
+departure LKI. The canonical zone batch's existing characteristic checkpoint
+pins pending references before any member moves; source activation costs and
+departure triggers seed the same stack-context snapshots. Committed trigger
+amounts retain the normalized result event, not a later total or replacement
+request. Public-history quantities read the current canonical journal for the
+stack object's locked controller. Explicit declarations cache one value across
+sibling results and resumption; independent instructions still read separately.
+Malformed continuations, unavailable characteristics, and unrepresented history
+fail closed. No new mutation owner, zone event, history registry, or runtime
+Oracle interpretation participates in this path.
+
 Behavior that participates in later events—replacements, prevention, static
 effects, and other persistent descriptors—belongs to
 [runtime components](runtime-components.md), not this boundary. Family-specific
