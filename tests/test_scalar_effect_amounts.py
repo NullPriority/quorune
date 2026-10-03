@@ -19,7 +19,7 @@ import tempfile
 from quorune.carddb import CardRecord
 from quorune.oracle_ir import compile_oracle_card
 from quorune.rules.capabilities import load_default_capability_registry
-from quorune.scalar_effect_amount_model import ScalarAmountOrigin, ScalarEffectAmountSpec
+from quorune.scalar_effect_amount_model import SCALAR_REFERENCE_CONTEXT, ScalarAmountOrigin, ScalarEffectAmountSpec
 from quorune.scalar_effect_amounts import resolve_scalar_effect_amount, scalar_source_context, pin_scalar_characteristic_departures
 from quorune.query_effect_amount_model import PublicQueryAmountError
 from quorune.carddb import CardDatabase
@@ -118,6 +118,147 @@ class ScalarEffectAmountValueTests(unittest.TestCase):
         item.context.update(scalar_source_context(host,card,effects))
         return host, item, card, data, spec
 
+    def reference_fixture(self, origin):
+        host, item, card, data, _ = self.host_and_item()
+        card.zone_change_counter = 0
+        spec = ScalarEffectAmountSpec(origin, characteristic="power")
+        effects = ({"op": "gain_life", "amount": spec.to_dict()},)
+        host.semantics = SimpleNamespace(get=lambda _key: SimpleNamespace(effects=effects))
+        if origin is ScalarAmountOrigin.TARGET:
+            item.targets = [card.ref]
+            item.context = {"target_snapshots": {card.ref: {"zone_change_counter": 0}}}
+        elif origin is ScalarAmountOrigin.EVENT_OBJECT:
+            item.context = {"event_context": {
+                "card": card.ref, "card_object_identity": card.logical_object_id,
+                "power": 2, "toughness": 3, "mana_value": 3.0,
+            }}
+        return host, item, card, data, spec
+
+    def test_departure_pin_does_not_read_or_cache_unrelated_references(self):
+        for origin in (ScalarAmountOrigin.SOURCE, ScalarAmountOrigin.TARGET, ScalarAmountOrigin.EVENT_OBJECT):
+            for group_size in (0, 1, 2):
+                with self.subTest(origin=origin.value, group_size=group_size):
+                    host, item, source, _, _ = self.reference_fixture(origin)
+                    source.phased_out = True
+                    unrelated = [SimpleNamespace(
+                        object_id=f"other-{index}", ref=f"OTHER-{index}",
+                        logical_object_id=f"other-{index}:1", zone="battlefield",
+                    ) for index in range(group_size)]
+                    host.state.cards.update((card.object_id, card) for card in unrelated)
+                    before = deepcopy(item.context)
+                    with mock.patch.object(host, "_effective_card_data") as evaluate:
+                        pin_scalar_characteristic_departures(host, unrelated)
+                    evaluate.assert_not_called()
+                    self.assertEqual(before, item.context)
+
+    def test_relevant_departures_pin_immediate_lki_for_each_reference_origin(self):
+        for origin in (ScalarAmountOrigin.SOURCE, ScalarAmountOrigin.TARGET, ScalarAmountOrigin.EVENT_OBJECT):
+            with self.subTest(origin=origin.value):
+                host, item, source, data, spec = self.reference_fixture(origin)
+                data["power"] = "5"
+                pin_scalar_characteristic_departures(host, [source])
+                source.zone = "graveyard"
+                source.logical_object_id = "source:2"
+                source.zone_change_counter = 1
+                data["power"] = "99"
+                self.assertEqual(5, resolve_scalar_effect_amount(host, spec.to_dict(), item))
+
+    def test_departed_and_reentered_references_do_not_pin_new_incarnations(self):
+        for origin in (ScalarAmountOrigin.SOURCE, ScalarAmountOrigin.TARGET, ScalarAmountOrigin.EVENT_OBJECT):
+            for zone in ("graveyard", "battlefield"):
+                with self.subTest(origin=origin.value, zone=zone):
+                    host, item, source, _, spec = self.reference_fixture(origin)
+                    # Capture the old incarnation, then construct its later state.
+                    self.assertEqual(2, resolve_scalar_effect_amount(host, spec.to_dict(), item))
+                    source.zone = zone
+                    source.logical_object_id = "source:2"
+                    source.zone_change_counter = 1
+                    before = deepcopy(item.context)
+                    with mock.patch.object(host, "_effective_card_data") as evaluate:
+                        pin_scalar_characteristic_departures(host, [source])
+                    evaluate.assert_not_called()
+                    self.assertEqual(before, item.context)
+
+    def test_multiple_pending_items_only_update_the_departing_reference(self):
+        host, relevant, source, data, spec = self.reference_fixture(ScalarAmountOrigin.SOURCE)
+        data["power"] = "5"
+        unrelated_source = SimpleNamespace(
+            object_id="unrelated-source", ref="UNRELATED-SOURCE", logical_object_id="unrelated:1",
+            zone="battlefield", phased_out=True, annotations={}, counters={},
+        )
+        unrelated = SimpleNamespace(
+            controller="B", ref="UNRELATED-STACK", source_object_id=unrelated_source.object_id,
+            card_object_id=None, targets=[], semantic_key="program",
+            context={"source_logical_object_id": unrelated_source.logical_object_id},
+        )
+        host.state.cards[unrelated_source.object_id] = unrelated_source
+        host.state.stack.append(unrelated)
+        before = deepcopy(unrelated.context)
+        pin_scalar_characteristic_departures(host, [source])
+        self.assertEqual(before, unrelated.context)
+        self.assertEqual(5, relevant.context[SCALAR_REFERENCE_CONTEXT]["source"]["power"])
+
+    def test_zone_owner_restores_all_contexts_after_relevant_pin_failure(self):
+        from quorune.errors import StateInvariantError
+        from quorune.zone_transitions import ZoneTransitionOwner
+
+        host, item, source, data, _ = self.reference_fixture(ScalarAmountOrigin.SOURCE)
+        data["power"] = "5"
+        malformed = SimpleNamespace(
+            controller="A", ref="MALFORMED-STACK", source_object_id=source.object_id,
+            card_object_id=None, targets=[], semantic_key="program",
+            context={"source_logical_object_id": source.logical_object_id, SCALAR_REFERENCE_CONTEXT: []},
+        )
+        host.state.stack.append(malformed)
+        before = [deepcopy(pending.context) for pending in host.state.stack]
+        with self.assertRaisesRegex(StateInvariantError, "continuation is malformed"):
+            ZoneTransitionOwner(host).pin_characteristic_departures([source])
+        self.assertEqual(before, [pending.context for pending in host.state.stack])
+
+    def test_simultaneous_relevant_references_use_the_complete_pre_event_state(self):
+        host, first, source, _, _ = self.reference_fixture(ScalarAmountOrigin.SOURCE)
+        second_source = SimpleNamespace(
+            object_id="second-source", ref="SECOND-SOURCE", logical_object_id="second:1",
+            zone="battlefield", phased_out=False, annotations={}, counters={},
+        )
+        second = SimpleNamespace(
+            controller="B", ref="SECOND-STACK", source_object_id=second_source.object_id,
+            card_object_id=None, targets=[], semantic_key="program",
+            context={"source_logical_object_id": second_source.logical_object_id},
+        )
+        host.state.cards[second_source.object_id] = second_source
+        host.state.stack.append(second)
+
+        def current_characteristics(card):
+            self.assertTrue(all(member.zone == "battlefield" for member in (source, second_source)))
+            return {"type_line": "Creature — Goblin", "power": "5" if card is source else "7",
+                    "toughness": "3", "mana_value": 3.0}
+
+        host._effective_card_data = current_characteristics
+        pin_scalar_characteristic_departures(host, [source, second_source])
+        self.assertEqual(5, first.context[SCALAR_REFERENCE_CONTEXT]["source"]["power"])
+        self.assertEqual(7, second.context[SCALAR_REFERENCE_CONTEXT]["source"]["power"])
+
+    def test_unrelated_departure_relevance_mutant_is_killed(self):
+        host, item, source, _, _ = self.reference_fixture(ScalarAmountOrigin.SOURCE)
+        source.phased_out = True
+        unrelated = SimpleNamespace(
+            object_id="unrelated", ref="UNRELATED", logical_object_id="unrelated:1", zone="battlefield",
+        )
+        host.state.cards[unrelated.object_id] = unrelated
+        with mock.patch("quorune.scalar_effect_amounts._reference_identity",
+                        return_value=(unrelated.object_id, unrelated.logical_object_id, "battlefield")):
+            with self.assertRaisesRegex(PublicQueryAmountError, "phased out"):
+                pin_scalar_characteristic_departures(host, [unrelated])
+
+    def test_own_phased_reference_remains_explicitly_unavailable(self):
+        for origin in (ScalarAmountOrigin.SOURCE, ScalarAmountOrigin.TARGET, ScalarAmountOrigin.EVENT_OBJECT):
+            with self.subTest(origin=origin.value):
+                host, item, source, _, spec = self.reference_fixture(origin)
+                source.phased_out = True
+                with self.assertRaisesRegex(PublicQueryAmountError, "phased out"):
+                    resolve_scalar_effect_amount(host, spec.to_dict(), item)
+
     def test_current_then_immediate_departure_lki_never_reads_new_incarnation(self):
         host,item,card,data,spec = self.host_and_item()
         data["power"]="5"
@@ -212,6 +353,87 @@ class ScalarEffectAmountActionTests(unittest.TestCase):
             if action.get("source")==source.ref and action["id"].startswith("activate:"))
         result = session.act("pilot:A",{"action_id":action["id"],"targets":list(targets),"pay":"auto"})
         self.assertTrue(result.ok,result.summary)
+
+    def test_unrelated_phased_scalar_does_not_reject_actual_destroy_and_replays(self):
+        """Real commands from a constructed checkpoint, not a phasing action.
+
+        Phasing transitions remain unsupported. The pending ability is created
+        through its actual registered activation before the checkpoint setup.
+        Only the later, unrelated movement is claimed as supported behavior.
+        """
+        session = self.session(24500120)
+        self.register(session)
+        source = self.add(session, "Generic Scalar Source Life", "UNRELATED-SCALAR", zone="battlefield")
+        victim = self.add(session, "Generic Blink Victim", "UNRELATED-VICTIM", zone="battlefield")
+        spell = self.add(session, "Generic Blink Destroy", "UNRELATED-DESTROY")
+        self.activate(session, source)
+        self.assertEqual(1, len(session.state.stack))
+        source.phased_out = True
+        # The checkpoint explicitly contains this constructed phasing state;
+        # no unrecorded mutation occurs after the unrelated action starts.
+        self.seal(session)
+        scalar_context = deepcopy(session.state.stack[0].context)
+        self.cast(session, spell, [victim.ref])
+        for _ in range(20):
+            if session.state.cards[victim.object_id].zone == "graveyard":
+                break
+            session.engine.pump()
+            principal = session.pending_principals()[0]
+            decision = session.packet(principal, full=True)["decision"]
+            self.assertEqual("priority", decision["kind"])
+            result = session.act(principal, {"action_id": "pass"})
+            self.assertTrue(result.ok, result.summary)
+        self.assertEqual("graveyard", session.state.cards[victim.object_id].zone)
+        self.assertEqual("graveyard", session.state.cards[spell.object_id].zone)
+        self.assertEqual(1, len(session.state.stack))
+        self.assertEqual(scalar_context, session.state.stack[0].context)
+        self.assertTrue(session.state.cards[source.object_id].phased_out)
+        self.assertIsNone(session.engine._semantic_pause_annotation())
+        self.replay(session)
+
+    def _unrelated_scalar_movement_checkpoint(self, seed, spell_name, victim_count):
+        """Create a real pending activation plus labeled unsupported-state setup."""
+        session = self.session(seed)
+        self.register(session)
+        source = self.add(session, "Generic Scalar Source Life", "PENDING-SCALAR", zone="battlefield")
+        victims = [self.add(session, "Generic Blink Victim", f"MOVING-{index}", zone="battlefield")
+                   for index in range(victim_count)]
+        spell = self.add(session, spell_name, "MOVEMENT-SPELL")
+        self.activate(session, source)
+        source.phased_out = True
+        self.seal(session)
+        context = deepcopy(session.state.stack[0].context)
+        self.cast(session, spell, [card.ref for card in victims])
+        for _ in range(20):
+            if len(session.state.stack) == 1:
+                break
+            session.engine.pump()
+            principal = session.pending_principals()[0]
+            result = session.act(principal, {"action_id": "pass"})
+            self.assertTrue(result.ok, result.summary)
+        self.assertEqual(1, len(session.state.stack))
+        self.assertEqual(context, session.state.stack[0].context)
+        self.assertTrue(session.state.cards[source.object_id].phased_out)
+        self.assertEqual("graveyard", session.state.cards[spell.object_id].zone)
+        self.assertIsNone(session.engine._semantic_pause_annotation())
+        return session, victims
+
+    def test_unrelated_phased_scalar_preserves_actual_single_return_and_replay(self):
+        session, victims = self._unrelated_scalar_movement_checkpoint(
+            24500121, "Generic Blink Bounce", 1,
+        )
+        self.assertEqual("hand", session.state.cards[victims[0].object_id].zone)
+        self.replay(session)
+
+    def test_unrelated_phased_scalar_preserves_actual_group_blink_and_replay(self):
+        session, victims = self._unrelated_scalar_movement_checkpoint(
+            24500122, "Generic Group Blink", 2,
+        )
+        for victim in victims:
+            current = session.state.cards[victim.object_id]
+            self.assertEqual("battlefield", current.zone)
+            self.assertEqual(2, current.zone_change_counter)
+        self.replay(session)
 
     def finish_with_targets(self, session, chosen="B"):
         for _ in range(50):

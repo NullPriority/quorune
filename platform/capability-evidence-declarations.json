@@ -22363,10 +22363,26 @@
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
       "evidence_class": "interaction",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountActionTests.test_unrelated_phased_scalar_does_not_reject_actual_destroy_and_replays",
+      "official_rule_ids": ["107.1b", "107.2", "107.3c", "113.7a", "400.7", "608.2h", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Actual registered activation and destruction commands move an unrelated permanent without evaluating a future scalar. The pre-action checkpoint explicitly constructs a phased state; this is not a trusted phasing-action claim."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "interaction",
       "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountValueTests.test_declaration_freezes_once_but_independent_reads_remain_live",
       "official_rule_ids": ["107.1b", "107.2", "107.3c", "113.7a", "400.7", "608.2h", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "One declared value is reused while independent instructions retain separate information reads."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountValueTests.test_departure_pin_does_not_read_or_cache_unrelated_references",
+      "official_rule_ids": ["107.1b", "107.2", "107.3c", "113.7a", "400.7", "608.2h", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Source, singleton-target and normalized event-object references remain untouched for empty, single and grouped unrelated departure sets; numeric evaluation and cache mutation are independently forbidden."
     },
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
@@ -22386,6 +22402,14 @@
     },
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountValueTests.test_unrelated_departure_relevance_mutant_is_killed",
+      "official_rule_ids": ["107.1b", "107.2", "107.3c", "113.7a", "400.7", "608.2h", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "A mutant that falsely binds an unrelated departure to the future scalar exposes the prohibited phased-reference evaluation."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
       "evidence_class": "negative",
       "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountValueTests.test_malformed_descriptor_and_unavailable_characteristics_fail_closed",
       "official_rule_ids": ["107.1b", "107.2", "107.3c", "113.7a", "400.7", "608.2h", "613.4c"],
@@ -22394,11 +22418,27 @@
     },
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountValueTests.test_own_phased_reference_remains_explicitly_unavailable",
+      "official_rule_ids": ["107.1b", "107.2", "107.3c", "113.7a", "400.7", "608.2h", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "The scalar's own source, target or event-object read still rejects unavailable phased information; relevance filtering does not invent phasing support or substitute zero."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
       "evidence_class": "positive",
       "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountValueTests.test_current_then_immediate_departure_lki_never_reads_new_incarnation",
       "official_rule_ids": ["107.1b", "107.2", "107.3c", "113.7a", "400.7", "608.2h", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Current referenced values remain live until departure; immediate departure LKI belongs to the old logical incarnation."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountValueTests.test_relevant_departures_pin_immediate_lki_for_each_reference_origin",
+      "official_rule_ids": ["107.1b", "107.2", "107.3c", "113.7a", "400.7", "608.2h", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Each reference origin pins the current five-power value immediately before its relevant departure and never uses the new incarnation's ninety-nine-power value."
     },
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
@@ -22415,6 +22455,30 @@
       "official_rule_ids": ["107.1b", "107.2", "107.3c", "113.7a", "400.7", "608.2h", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "The old source incarnation's LKI survives a real blink response and exact pre-action replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountActionTests.test_unrelated_phased_scalar_does_not_reject_actual_destroy_and_replays",
+      "official_rule_ids": ["107.1b", "107.2", "107.3c", "113.7a", "400.7", "608.2h", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Save/load and exact commands from the constructed pre-action checkpoint retain the pending future scalar while the independent destruction consequence completes."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountActionTests.test_unrelated_phased_scalar_preserves_actual_group_blink_and_replay",
+      "official_rule_ids": ["107.1b", "107.2", "107.3c", "113.7a", "400.7", "608.2h", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Two unrelated targets complete the represented simultaneous blink instruction, return with new incarnations, and replay while the phased pending scalar's context remains unchanged."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountActionTests.test_unrelated_phased_scalar_preserves_actual_single_return_and_replay",
+      "official_rule_ids": ["107.1b", "107.2", "107.3c", "113.7a", "400.7", "608.2h", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "An actual return-to-owner-hand command uses the single-object zone owner successfully from a constructed pre-action checkpoint and reproduces the exact resulting state on load and replay."
     },
     {
       "capability_id": "replacement.kicker.fixed_entry",

@@ -92,10 +92,49 @@ def _reference(host, item, spec):
     return initial
 
 
+def _reference_identity(host, item, spec):
+    """Locate a pending reference without evaluating or caching its value."""
+    key = "source" if spec.origin is ScalarAmountOrigin.SOURCE else spec.origin.value
+    snapshots = item.context.get(SCALAR_REFERENCE_CONTEXT)
+    initial = snapshots.get(key) if isinstance(snapshots, Mapping) else None
+    if isinstance(initial, Mapping):
+        identity = initial.get("object_id"), initial.get("logical_object_id"), initial.get("zone")
+        return identity if all(type(value) is str and value for value in identity) else None
+
+    if spec.origin is ScalarAmountOrigin.SOURCE:
+        object_id = item.source_object_id or item.card_object_id or ""
+        card = host.state.cards.get(object_id)
+        expected_identity = item.context.get("source_logical_object_id")
+        if card is None or card.logical_object_id != expected_identity:
+            return None
+        return card.object_id, expected_identity, card.zone
+
+    if spec.origin is ScalarAmountOrigin.TARGET:
+        if len(item.targets) != 1 or item.targets[0] is None:
+            return None
+        ref = item.targets[0]
+        target_snapshots = item.context.get("target_snapshots")
+        target = target_snapshots.get(ref) if isinstance(target_snapshots, Mapping) else None
+        card = _current_card(host, ref)
+        if not isinstance(target, Mapping) or card is None or card.zone_change_counter != target.get("zone_change_counter"):
+            return None
+        return card.object_id, card.logical_object_id, "battlefield"
+
+    context = item.context.get("event_context", item.context)
+    if not isinstance(context, Mapping):
+        return None
+    card = _current_card(host, context.get("card"))
+    if card is None:
+        return None
+    return card.object_id, context.get("card_object_identity"), "battlefield"
+
+
 def pin_scalar_characteristic_departures(host, cards: Sequence[Any], *, error_type=PublicQueryAmountError):
     """Use the existing zone batch's predeparture checkpoint for pending reads."""
     try:
-        by_ref = {card.ref: card for card in cards if card.zone == "battlefield"}
+        departing = {card.object_id: card for card in cards if card.zone == "battlefield"}
+        if not departing:
+            return
         updates = []
         for item in host.state.stack:
             program = host.semantics.get(item.semantic_key) if item.semantic_key else None
@@ -105,12 +144,16 @@ def pin_scalar_characteristic_departures(host, cards: Sequence[Any], *, error_ty
             selected = [spec for spec in specs if spec.origin in {
                 ScalarAmountOrigin.SOURCE, ScalarAmountOrigin.TARGET, ScalarAmountOrigin.EVENT_OBJECT}]
             for spec in selected:
-                snapshot = _reference(host, item, spec)
-                card = by_ref.get(snapshot["ref"])
-                if card is None or card.logical_object_id != snapshot["logical_object_id"]:
+                identity = _reference_identity(host, item, spec)
+                if identity is None:
                     continue
+                object_id, logical_object_id, zone = identity
+                card = departing.get(object_id)
+                if card is None or zone != "battlefield" or card.logical_object_id != logical_object_id:
+                    continue
+                snapshot = _reference(host, item, spec)
                 key = "source" if spec.origin is ScalarAmountOrigin.SOURCE else spec.origin.value
-                updates.append((item, key, _snapshot(host, card)))
+                updates.append((item, key, snapshot))
         for item, key, value in updates:
             item.context.setdefault(SCALAR_REFERENCE_CONTEXT, {})[key] = value
     except (KeyError, TypeError, ValueError) as exc:

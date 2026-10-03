@@ -4763,20 +4763,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v245-typed-scalar-effect-quantities",
-      "compiler_version": "oracle-ir-v245",
-      "bundle_id": "bundle:typed-scalar-effect-quantities",
-      "candidate_ids": [
-        "bundle:typed-scalar-effect-quantities"
-      ],
-      "family_ids": [
-        "activated_effect:life-change", "effect_clause:life-change", "effect_clause:ordered-effect-composition", "event_binding:normalized-event-binding"
-      ],
-      "capability_ids": [
-        "quantity_expression.scalar_effect_amount"
-      ],
-      "non_harvest_reason": null,
-      "measurement_id": "measurement:typed-scalar-effect-quantities"
+      "transition_id": "oracle-ir-v246-scalar-departure-relevance",
+      "compiler_version": "oracle-ir-v246",
+      "bundle_id": null,
+      "candidate_ids": [],
+      "family_ids": [],
+      "capability_ids": [],
+      "non_harvest_reason": "Correct the demonstrated scalar lifecycle boundary: unrelated movements must not evaluate or cache pending characteristic results. Preserve relevant immediate LKI, incarnation filtering, rollback and eventual unsupported applicability through existing owners without adding card grammar or phasing support.",
+      "expected_complete_card_gain": null
     },
     "forecast_corrections": [
       {

@@ -99,7 +99,7 @@ Scalar effect quantities reuse the value resolver before their unchanged
 operation handlers run. Referenced characteristics use current information for
 the same logical object in its expected public zone, otherwise its immediate
 departure LKI. The canonical zone batch's existing characteristic checkpoint
-pins pending references before any member moves; source activation costs and
+pins relevant pending references before any member moves; source activation costs and
 departure triggers seed the same stack-context snapshots. Committed trigger
 amounts retain the normalized result event, not a later total or replacement
 request. Public-history quantities read the current canonical journal for the
@@ -108,6 +108,14 @@ sibling results and resumption; independent instructions still read separately.
 Malformed continuations, unavailable characteristics, and unrepresented history
 fail closed. No new mutation owner, zone event, history registry, or runtime
 Oracle interpretation participates in this path.
+
+Departure relevance is determined from object identity, expected incarnation,
+and public zone before a pending characteristic is evaluated. Empty departure
+groups and unrelated references neither read values nor initialize continuation
+caches. A pending reference's own availability check remains authoritative when
+its instruction resolves; unavailable phasing interactions do not reject an
+unrelated earlier movement. Relevant failures still restore all stack contexts
+through the canonical zone owner's transaction boundary.
 
 Behavior that participates in later events—replacements, prevention, static
 effects, and other persistent descriptors—belongs to
