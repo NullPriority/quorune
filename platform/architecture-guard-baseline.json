@@ -1581,9 +1581,9 @@
     "physical_lines": 7450
   },
   "exception_binding": {
-    "adr": "docs/adr/0079-typed-fixed-public-zone-moves.md",
-    "allowance_fingerprint": "3a975ab193aada03114316329da2ea4cb24edc20e3bd84186aedce0911f3c520",
-    "exception_id": "ARCH-EXC-0054"
+    "adr": "docs/adr/0104-typed-linked-exile-return.md",
+    "allowance_fingerprint": "1e528c96178ca09cf1867b108edd4247b5b302b5970a5c564c85412367736545",
+    "exception_id": "ARCH-EXC-0055"
   },
   "legacy_card_specific_operations": [
     "daretti_exchange",
@@ -1677,7 +1677,7 @@
     },
     {
       "file": "quorune/compiler/resolution_effect_templates.py",
-      "logical_lines": 159,
+      "logical_lines": 155,
       "symbol": "typed_resolution_effect_template"
     },
     {
@@ -1910,6 +1910,7 @@
     "grant_uncounterable_hexproof_from_colors_until_end",
     "grant_zone_object_keyword",
     "life",
+    "linked_exile_return",
     "look_reorder_top",
     "look_top",
     "lose_life",
@@ -1951,6 +1952,7 @@
     "retarget_stack_item",
     "return_graveyard_card_to_owner_hand",
     "return_graveyard_targets_to_owner_hand",
+    "return_linked_exiled_objects",
     "return_permanent_targets_to_owner_hand",
     "return_transformed",
     "reveal_top_permanent",

@@ -21,6 +21,7 @@ from .attachments import (
 )
 from .aura import commit_aura_zone_move, preflight_aura_zone_move
 from .entry_counters import (
+    EffectEntryCounter,
     capture_prospective_entry_characteristics,
     mark_intrinsic_entry_counters_initialized,
     prospective_battle_entry_protector,
@@ -836,6 +837,7 @@ class ZoneTransitionOwner:
         log: bool = False,
         tapped: bool | None = None,
         destination_controllers: Mapping[str, str] | None = None,
+        effect_entry_counters: Mapping[str, Sequence[EffectEntryCounter]] | None = None,
         replacement_selections: Sequence[str | None | Mapping[str, Any]] = (),
         transition_kinds: Mapping[str, ZoneTransitionKind] | None = None,
     ) -> list[CardInstance]:
@@ -880,6 +882,7 @@ class ZoneTransitionOwner:
                 if destination == "battlefield" and object_id in controllers
             },
             entry_characteristics=entry_characteristics,
+            effect_entry_counters=effect_entry_counters,
             sources=sources,
             source_zones=source_snapshot.source_zones,
             selections=tuple(replacement_selections),

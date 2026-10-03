@@ -36,14 +36,28 @@ stable inventory. A handler may request a narrowly defined continuation for a
 choice or replacement-aware transaction, but it may not retain mutable state
 or commit around the canonical owner. Rollback must leave no partial mutation.
 
-The fixed optional-effect choice handler accepts exactly one already represented
-atomic instruction for the resolving controller. It exposes only apply or
+The fixed optional-effect choice handler accepts one already represented atomic
+instruction or one validated linked exile/return phase pair for the resolving
+controller. It exposes only apply or
 decline, commits nothing before the response, and on acceptance prepends the
 unchanged typed instruction so its existing semantic or choice owner performs
 all validation and mutation. The wrapper rejects unknown operations, changed
 chooser identity, extra fields, and nested optional wrappers. Specialized
 optional choices such as fixed counter placement retain their historical
 operation and replay identity rather than being rewritten through this owner.
+
+The linked exile/return coordinator delegates both simultaneous movements to
+the existing zone owner. Exile commits and records only resulting exiled card
+incarnations on the resolving stack item. Return or delayed-trigger creation
+is a separate instruction, so a prospective-entry replacement choice resumes
+only the uncommitted return. Delayed return uses one ordinary controller-locked
+trigger with the exact exiled identities; departure and reentry invalidate
+those identities. Entry counters use the canonical nested replacement tree,
+and immediate keyword riders use the ordinary incarnation-locked layer journal.
+No state-based action runs between an immediate exile and return. In particular,
+Commander exile-to-command choice happens after immediate blink finishes, but
+may remove a delayed-return card from exile. Old records retain their pinned
+trust provenance; this new grammar does not reinterpret historical records.
 
 The existing optional-payment choice also accepts a closed v2 fixed-cost
 descriptor. It uses the ordinary private/public object choice and resource

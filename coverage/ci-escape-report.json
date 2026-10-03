@@ -4,6 +4,40 @@
       "category": "missing_affected_test",
       "deterministic": true,
       "failed_surfaces": [
+        "PR / Generated and architecture"
+      ],
+      "head_sha": "fb4a5d96e598bf72d28857189e116b30a10645fc",
+      "id": "ci-20261003-69",
+      "impact_edge_status": "added",
+      "regressions": [
+        "test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_blink_promotion_preserves_unsupported_predicate_boundaries",
+        "test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_promoted_blink_madness_and_draw_programs_are_capability_ready"
+      ],
+      "resolution": "The exact two-pair reproduction failed on unchanged production in 47.527 seconds. Replace the negative carriers with constructed chosen-name target predicates, preserve the promoted Madness/draw blink forms as positive compiler and runtime-binding controls, and select high-risk interaction assurance for the linked-lifecycle source paths. Both focused tests pass in 48.669 seconds. No boundary assertion, production semantics, or completed corpus result changed.",
+      "run_id": 37115857103,
+      "summary": "Two fail-closed target-predicate witnesses used the newly supported linked blink wording. The aggregate boundary and Madness subset therefore observed exact programs instead of their required residual predicates."
+    },
+    {
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "failed_surfaces": [
+        "PR / Python / impact-functional-02"
+      ],
+      "head_sha": "494f10a9aaf863adc4af44dbb319725c64fb257c",
+      "id": "ci-20261003-68",
+      "impact_edge_status": "added",
+      "regressions": [
+        "test_targeted_exile_effect_clauses.TargetedExileCompilerTests.test_whole_card_blink_is_supported_while_scalar_exile_leaf_rejects_it",
+        "test_targeted_exile_effect_clauses.TargetedExileCompilerTests.test_unsupported_exile_variants_remain_material_residuals"
+      ],
+      "resolution": "Retain the leaf-parser negative control, convert the promoted whole-card instruction to an explicit positive witness, and protect unsupported transformed return with a constructed counterexample. Both exact tests pass in 1.248 seconds. Add targeted-exile and rules-corpus integration consumers to the linked-lifecycle impact edge. The rules-corpus and generated jobs fail only on the deliberately unfinalized new cohort inventory and are repaired by the registered downstream finalizer; compiler semantics and the one successful census remain unchanged.",
+      "run_id": 37110420467,
+      "summary": "The linked exile/return compiler promoted a whole-card blink instruction that the old targeted-exile integration inventory still classified as unsupported. The scalar exile leaf correctly continues to reject the linked instruction."
+    },
+    {
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "failed_surfaces": [
         "compiler-cardprogram",
         "generated-validation"
       ],
@@ -1223,7 +1257,7 @@
   ],
   "repository": "NullPriority/quorune",
   "schema_version": 2,
-  "source_fingerprint": "93c2387f1bdf4252158441c6799c8a80b615de9ff0065e4b44a9b2e1040e9571",
+  "source_fingerprint": "ffd8ac7af89962f3e56c7dbf52a284c5d084a9aa00ff68671f7eca2b95f98fc1",
   "summary": {
     "average_critical_path_seconds": 181.25,
     "average_pushes_per_merged_pr": null,
@@ -1233,12 +1267,12 @@
       "flaky_test": 7,
       "generated_artifact_drift": 8,
       "infrastructure": 1,
-      "missing_affected_test": 27,
+      "missing_affected_test": 29,
       "source_correctness": 19
     },
     "current_missing_impact_edges": [],
-    "deterministic_escape_count": 61,
-    "escape_count": 67,
+    "deterministic_escape_count": 63,
+    "escape_count": 69,
     "eventual_final_head_certification_pass_rate": 1.0,
     "eventual_final_head_certification_sample_size": 4,
     "first_eligible_head_certification_pass_rate": null,

@@ -5,6 +5,7 @@ from typing import Any, Mapping
 
 from ..effect_contracts import EffectFamilyContract, effect_operation_contracts
 from ..replacement.immutable import FrozenMap
+from ..linked_exile_return_model import LINKED_EXILE_RETURN_CAPABILITY, LINKED_EXILE_RETURN_OPERATION, LINKED_RETURN_OPERATION, validate_linked_instruction
 from .context import ReadOnlyHandlerContext, SemanticNodeError
 from .intents import DomainEffectIntent, IntentPlan
 
@@ -46,6 +47,11 @@ class DomainEffectHandler:
                 "Semantic programs cannot supply authoritative runtime source context"
             )
         runtime_effect = dict(effect)
+        if operation == LINKED_EXILE_RETURN_OPERATION:
+            try:
+                validate_linked_instruction(effect)
+            except ValueError as exc:
+                raise SemanticNodeError(str(exc)) from exc
         if context.source is not None:
             runtime_effect["_runtime_source"] = context.source.to_dict()
         return IntentPlan(
@@ -63,7 +69,7 @@ class DomainEffectHandler:
 
 
 DOMAIN_EFFECT_HANDLERS = tuple(
-    DomainEffectHandler(operation=operation, contract=contract)
+    DomainEffectHandler(operation=operation, contract=contract, capability_dependencies=(LINKED_EXILE_RETURN_CAPABILITY,) if operation in {LINKED_EXILE_RETURN_OPERATION, LINKED_RETURN_OPERATION} else ())
     for operation, contract in effect_operation_contracts()
     if operation not in {"bounce", "destroy", "mill"}
 )

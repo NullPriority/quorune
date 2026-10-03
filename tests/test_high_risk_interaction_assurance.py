@@ -36,6 +36,7 @@ from high_risk_interaction_support import (
     TOKEN_AND_DAMAGE_PREVENTION_PAIR,
     TEMPORARY_TARGET_AND_REPLACEMENT_PAIRS,
     TYPED_ATTACHMENT_AND_CONTINUOUS_PAIRS,
+    ZONE_AND_CHOICE_PAIRS,
     assert_high_risk_boundary_pairs,
 )
 from quorune.carddb import CardDatabase
@@ -58,6 +59,55 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
             ALL_HIGH_RISK_BOUNDARY_PAIRS,
             database=self.db,
         )
+
+    def test_blink_promotion_preserves_unsupported_predicate_boundaries(self):
+        assert_high_risk_boundary_pairs(
+            self,
+            (MADNESS_AND_CHOICE_PAIRS[4], ZONE_AND_CHOICE_PAIRS[5]),
+            database=self.db,
+        )
+
+    def test_promoted_blink_madness_and_draw_programs_are_capability_ready(self):
+        from dataclasses import replace
+        from high_risk_interaction_support import _record
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.capabilities import load_default_capability_registry
+        from quorune.semantics import SemanticRegistry
+
+        registry = load_default_capability_registry()
+        for key in ("madness-target-predicate", "blink-draw-target-predicate"):
+            with self.subTest(key=key):
+                record = _record(key)
+                record = replace(
+                    record,
+                    oracle_text=record.oracle_text.replace(
+                        "with the chosen name", "you control"
+                    ),
+                )
+                ir = compile_oracle_card(
+                    record,
+                    capability_registry=registry,
+                    capability_profile="commander_review",
+                )
+                self.assertEqual("exact", ir.status)
+                self.assertFalse(ir.material_residuals)
+                program = compile_best_available_card_program(
+                    self.db,
+                    record,
+                    semantic_registry=SemanticRegistry(),
+                    capability_registry=registry,
+                    capability_profile="commander_review",
+                )
+                binding = bind_card_program_runtime(
+                    program,
+                    capability_registry=registry,
+                    profile="commander_review",
+                )
+                self.assertTrue(binding["strict_capability_ready"])
+                self.assertTrue(binding["compatible_ready"])
+                self.assertFalse(binding["blockers"])
 
     def test_cost_modifier_with_residual_prevention_fails_closed(
         self,

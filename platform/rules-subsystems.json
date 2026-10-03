@@ -374,6 +374,22 @@
       },
       "candidate_bundles": [
         {
+          "bundle_id": "bundle:linked-exile-return-lifecycle",
+          "member_family_ids": ["activated_effect:exile", "effect_clause:exile", "effect_clause:ordered-effect-composition", "event_binding:intervening-if-and-reflexive-trigger-grammar", "event_binding:normalized-event-binding"],
+          "canonical_owner_ids": ["capability:zone.linked_exile_return.fixed", "component:quorune.compiler.linked_exile_return_templates.linked_exile_return_effect_template", "component:quorune.linked_exile_return.resolve_linked_exile_return", "component:quorune.trigger_processing.schedule_delayed_trigger", "component:quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously"],
+          "source_contexts": ["activated", "modal", "spell", "triggered"],
+          "normalized_literal_parameters": ["committed-exiled-incarnation", "fixed-owner-or-resolver-controller", "immediate-or-next-end-step"],
+          "shared_dependencies": ["target.revalidate_resolution", "trigger.placement.apnap", "zone.change.destination_replacement"],
+          "shared_grammar": "one source or homogeneous target-set exile followed by identity-pinned immediate or next-end-step return through canonical zone, replacement, entry and delayed-trigger owners",
+          "estimated_implementation_hours": 4,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "The same tracked two-zone lifecycle closes spells, activations, entry/action triggers and modal carriers without inferring identity from a reused physical card or final zone.",
+          "explicit_exclusions": ["conditional outcomes, optional-return, payment and attachment restoration riders", "linked source-departure banishment", "transformed and face-down returns", "unrepresented entry, target, event, cost and sibling grammar"],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "linked-exile-return-existing-owner-v2"
+        },
+        {
           "bundle_id": "bundle:public-history-condition-closure",
           "member_family_ids": ["event_binding:intervening-if-and-reflexive-trigger-grammar", "event_binding:normalized-event-binding"],
           "canonical_owner_ids": ["capability:continuous.characteristics.fixed_public_state", "capability:trigger.condition.fixed_public_state", "component:quorune.card_programs.runtime.fixed_public_state_condition_matches", "component:quorune.compiler.public_state_fact_queries.fixed_public_fact_condition", "component:quorune.turn_history.current_turn_history_events", "component:quorune.zone_trigger_processing.record_zone_change_history"],
@@ -4731,22 +4747,20 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v243-public-history-condition-closure",
-      "compiler_version": "oracle-ir-v243",
-      "bundle_id": "bundle:public-history-condition-closure",
+      "transition_id": "oracle-ir-v244-linked-exile-return-lifecycle",
+      "compiler_version": "oracle-ir-v244",
+      "bundle_id": "bundle:linked-exile-return-lifecycle",
       "candidate_ids": [
-        "bundle:public-history-condition-closure"
+        "bundle:linked-exile-return-lifecycle"
       ],
       "family_ids": [
-        "event_binding:intervening-if-and-reflexive-trigger-grammar",
-        "event_binding:normalized-event-binding"
+        "activated_effect:exile", "effect_clause:exile", "effect_clause:ordered-effect-composition", "event_binding:intervening-if-and-reflexive-trigger-grammar", "event_binding:normalized-event-binding"
       ],
       "capability_ids": [
-        "continuous.characteristics.fixed_public_state",
-        "trigger.condition.fixed_public_state"
+        "zone.linked_exile_return.fixed"
       ],
       "non_harvest_reason": null,
-      "measurement_id": "measurement:public-history-condition-closure"
+      "measurement_id": "measurement:linked-exile-return-lifecycle"
     },
     "forecast_corrections": [
       {

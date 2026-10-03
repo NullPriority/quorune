@@ -3,6 +3,33 @@
   "declarations": [
     {
       "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_trusted_group_partial_illegal_target_replays",
+      "piece_ids": ["capability.target.revalidate_resolution", "capability.zone.linked_exile_return.fixed"],
+      "capability_ids": ["target.revalidate_resolution", "zone.linked_exile_return.fixed"],
+      "interaction_order": 2,
+      "assertion": "An actual trusted offered group blink is interrupted by an actual destroy spell: the departed target is skipped, the remaining legal creature exiles and returns, movement counts and controller consequences are asserted, and exact pre-action command replay matches."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_exact_blink_does_not_admit_unsupported_target_siblings",
+      "piece_ids": ["capability.zone.linked_exile_return.fixed", "residual.target_or_choice.multiple-targets"],
+      "capability_ids": ["zone.linked_exile_return.fixed"],
+      "interaction_order": 2,
+      "assertion": "A constructed generic permanent has an exact compiler-backed blink activation, but its independent heterogeneous multiple-target characteristic instruction remains residual. Canonical whole-card strict and compatible runtime admission remain unavailable without forcing trust. This is not an ordinary permanent cast-legality restriction or successful execution of the unsupported sibling."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_exact_blink_does_not_admit_unsupported_target_siblings",
+      "piece_ids": ["capability.zone.linked_exile_return.fixed", "residual.target_or_choice.target-predicate"],
+      "capability_ids": ["zone.linked_exile_return.fixed"],
+      "interaction_order": 2,
+      "assertion": "An exact generic source blink does not erase an independent unrepresented chosen-name target predicate. Source residuals and nonempty binding blockers prevent both strict and compatible whole-card admission; no supported chosen-name targeting or universal gameplay correctness is claimed."
+    },
+    {
+      "evidence_class": "interaction",
       "assurance_kind": "fail_closed_runtime_admission",
       "test_id": "test_exact_history_counter_trigger_cannot_admit_unrepresented_entry_replacement",
       "piece_ids": ["capability.counter.producer.fixed_permanent_set_effect", "residual.replacement.replacement-applicability"],

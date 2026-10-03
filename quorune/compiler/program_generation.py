@@ -1343,6 +1343,9 @@ def _is_closed_public_query_amount_program(program: SemanticProgram) -> bool:
 def _is_closed_effect_program(program: SemanticProgram) -> bool:
     """Return whether a reviewed capability-shaped effect owns execution."""
 
+    from ..rules.linked_exile_return_shapes import linked_exile_return_node_capabilities
+    if _node_capabilities_close_program(program, linked_exile_return_node_capabilities):
+        return True
     if is_closed_composed_spell_effect_program(
         program,
         component_recognizers=_closed_effect_recognizers(),

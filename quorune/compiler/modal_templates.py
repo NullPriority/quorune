@@ -10,6 +10,7 @@ from typing import Any, Callable, Mapping, Sequence
 
 from ..util import stable_json
 from .declared_effect_amounts import contains_declared_effect_amount
+from .linked_exile_return_templates import scope_linked_return_bindings
 
 
 FIXED_CHOOSE_ONE_MODAL_MECHANIC = "fixed-choose-one-modal-spell"
@@ -221,7 +222,7 @@ def fixed_choose_one_modal_spell_template(
         definition = deepcopy(dict(target_schema or {}))
         if target_schema is None:
             definition["groups"] = []
-        definition["effects"] = [deepcopy(dict(effect)) for effect in effects]
+        definition["effects"] = scope_linked_return_bindings([deepcopy(dict(effect)) for effect in effects], f"mode_{index}")
         definition["mechanics"] = list(mechanics)
         modes[f"mode_{index}"] = definition
         mechanic_ids.extend(mechanics)
@@ -291,7 +292,7 @@ def fixed_nonrepeating_modal_template(
             groups.append(group)
         modes[mode_id] = {
             "groups": groups,
-            "effects": [deepcopy(dict(effect)) for effect in effects],
+            "effects": scope_linked_return_bindings([deepcopy(dict(effect)) for effect in effects], mode_id),
             "mechanics": list(mechanics),
         }
         mechanic_ids.extend(mechanics)

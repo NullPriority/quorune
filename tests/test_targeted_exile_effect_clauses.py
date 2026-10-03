@@ -211,12 +211,20 @@ class TargetedExileCompilerTests(unittest.TestCase):
     def test_unsupported_exile_variants_remain_material_residuals(self):
         for text in (
             "Exile target creature or Spacecraft.",
-            "Exile target creature, then return it to the battlefield.",
+            "Exile target creature, then return it to the battlefield transformed.",
         ):
             with self.subTest(text=text):
                 ir = self.compile(text)
                 self.assertNotEqual("exact", ir.status)
                 self.assertTrue(ir.material_residuals)
+
+    def test_whole_card_blink_is_supported_while_scalar_exile_leaf_rejects_it(self):
+        text="Exile target creature, then return it to the battlefield."
+        self.assertIsNone(targeted_exile_effect_template(text))
+        ir=self.compile(text)
+        self.assertEqual("exact",ir.status)
+        self.assertEqual(["exile","return"],[effect["phase"] for effect in ir.faces[0].nodes[0].effects])
+        self.assertIn("zone.linked_exile_return.fixed",ir.faces[0].nodes[0].capability_dependencies)
 
     def test_targeted_exile_shape_mutants_fail_closed(self):
         template = TargetedExileEffectTemplate(

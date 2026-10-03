@@ -52,6 +52,8 @@ EFFECT_FAMILY_CONTRACTS = (
                 "exile_graveyard",
                 "exile_opponent_graveyards",
                 "exile_top_library_card",
+                "linked_exile_return",
+                "return_linked_exiled_objects",
                 "mill",
                 "modify_all_matching_permanents_until_end_of_turn",
                 "move",
