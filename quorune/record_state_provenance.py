@@ -24,6 +24,9 @@ def format_state_versions(state: Any) -> dict[str, int]:
         "control_history_version": serialized_control_history_version(
             state.control_history_version
         ),
+        "departure_history_version": (
+            getattr(getattr(state, "turn_history", None), "departure_history_version", None) or 0
+        ),
     }
 
 
@@ -39,6 +42,13 @@ def validate_state_versions(
     validate_control_history_provenance(
         manifest, state.control_history_version
     )
+    format_value = manifest.get("format")
+    if not isinstance(format_value, Mapping):
+        raise ValueError("Record format provenance is malformed")
+    declared = format_value.get("departure_history_version", 0)
+    current = getattr(getattr(state, "turn_history", None), "departure_history_version", None) or 0
+    if type(declared) is not int or declared not in {0, 1} or declared != current:
+        raise ValueError("Departure-history provenance does not match the initial checkpoint")
 
 
 __all__ = ["format_state_versions", "validate_state_versions"]

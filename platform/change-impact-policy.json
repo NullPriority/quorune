@@ -110,6 +110,31 @@
       ]
     },
     {
+      "id": "public-history-condition-contract",
+      "patterns": [
+        "quorune/compiler/public_state_fact_queries.py",
+        "quorune/continuous_conditions.py",
+        "quorune/card_programs/runtime.py",
+        "quorune/model.py",
+        "quorune/turn_history.py",
+        "quorune/zone_trigger_processing.py",
+        "quorune/record_state_provenance.py",
+        "tests/fixtures/public-history-condition-cards.json"
+      ],
+      "test_modules": [
+        "test_public_history_condition_closure",
+        "test_fixed_public_state_characteristics",
+        "test_fixed_counter_zone_triggers",
+        "test_zone_trigger_events",
+        "test_turn_history_rules",
+        "test_game_record_v3",
+        "test_spell_history_transformations",
+        "test_card_program_trust",
+        "test_rules_scheduler",
+        "test_ci_policy_delta"
+      ]
+    },
+    {
       "id": "changed-python-test",
       "patterns": [
         "tests/test_*.py"

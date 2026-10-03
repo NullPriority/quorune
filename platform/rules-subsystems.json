@@ -374,6 +374,22 @@
       },
       "candidate_bundles": [
         {
+          "bundle_id": "bundle:public-history-condition-closure",
+          "member_family_ids": ["event_binding:intervening-if-and-reflexive-trigger-grammar", "event_binding:normalized-event-binding"],
+          "canonical_owner_ids": ["capability:continuous.characteristics.fixed_public_state", "capability:trigger.condition.fixed_public_state", "component:quorune.card_programs.runtime.fixed_public_state_condition_matches", "component:quorune.compiler.public_state_fact_queries.fixed_public_fact_condition", "component:quorune.turn_history.current_turn_history_events", "component:quorune.zone_trigger_processing.record_zone_change_history"],
+          "source_contexts": ["static", "triggered"],
+          "normalized_literal_parameters": ["event-time-actor-and-incarnation", "fixed-life-total-threshold", "locked-trigger-controller", "versioned-departure-history"],
+          "shared_dependencies": ["continuous.characteristics.fixed_public_state", "trigger.condition.fixed_public_state", "trigger.event.normalized_zone_change", "trigger.placement.apnap"],
+          "shared_grammar": "one fully consumed closed current-turn death, attack, departure or life predicate over the canonical sealed history, shared by existing static and intervening-trigger consumers with independently exact result owners",
+          "estimated_implementation_hours": 4,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Public historical conditions fan into existing entry, step and action-trigger result families without adding another event or rules registry.",
+          "explicit_exclusions": ["Descend and graveyard-from-anywhere permanent-card history", "incomplete or unversioned departure history", "independently unsupported event, effect or sibling grammar", "kicked, cast-payment, chosen, negative, dynamic, mixed and otherwise conditions"],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "public-intervening-if-trigger-closure-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:commander-pairing-keywords",
           "member_family_ids": [
             "keyword_dependency:choose-a-background",
@@ -4715,28 +4731,22 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v242-stack-controller-payment",
-      "compiler_version": "oracle-ir-v242",
-      "bundle_id": "bundle:stack-controller-payment",
+      "transition_id": "oracle-ir-v243-public-history-condition-closure",
+      "compiler_version": "oracle-ir-v243",
+      "bundle_id": "bundle:public-history-condition-closure",
       "candidate_ids": [
-        "bundle:stack-controller-payment"
+        "bundle:public-history-condition-closure"
       ],
       "family_ids": [
-        "activated_effect:counter",
-        "effect_clause:counter",
-        "effect_clause:ordered-effect-composition",
         "event_binding:intervening-if-and-reflexive-trigger-grammar",
-        "event_binding:normalized-event-binding",
-        "quantity_expression:dynamic-quantity",
-        "reference_binding:linked-result-reference",
-        "target_or_choice:conditional-effect",
-        "target_or_choice:target-predicate"
+        "event_binding:normalized-event-binding"
       ],
       "capability_ids": [
-        "stack.counter.controller_payment"
+        "continuous.characteristics.fixed_public_state",
+        "trigger.condition.fixed_public_state"
       ],
       "non_harvest_reason": null,
-      "measurement_id": "measurement:stack-controller-payment"
+      "measurement_id": "measurement:public-history-condition-closure"
     },
     "forecast_corrections": [
       {

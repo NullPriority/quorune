@@ -87,6 +87,10 @@ class FixedPublicStateFact(StrEnum):
     CONTROLLER_CREATURES_DIED_THIS_TURN = (
         "controller_creatures_died_this_turn"
     )
+    ANY_CREATURE_DIED_THIS_TURN = "any_creature_died_this_turn"
+    CONTROLLER_ATTACKED_THIS_TURN = "controller_attacked_this_turn"
+    CONTROLLER_PERMANENT_LEFT_THIS_TURN = "controller_permanent_left_this_turn"
+    OPPONENT_LOST_LIFE_THIS_TURN = "opponent_lost_life_this_turn"
     CONTROLLER_ATTACKED_WITH_SUBTYPE_THIS_TURN = (
         "controller_attacked_with_subtype_this_turn"
     )
@@ -233,6 +237,13 @@ def _validate_public_fact_fields(
         raise FixedPublicStateConditionError(
             "Public-fact conditions require schema version 3 or 4"
         )
+    if schema_version == 3 and fact in {
+        FixedPublicStateFact.ANY_CREATURE_DIED_THIS_TURN,
+        FixedPublicStateFact.CONTROLLER_ATTACKED_THIS_TURN,
+        FixedPublicStateFact.CONTROLLER_PERMANENT_LEFT_THIS_TURN,
+        FixedPublicStateFact.OPPONENT_LOST_LIFE_THIS_TURN,
+    }:
+        raise FixedPublicStateConditionError("New history facts require current schema version 4")
     parameter_fact = FixedPublicStateFact.CONTROLLER_ATTACKED_WITH_SUBTYPE_THIS_TURN
     if fact is parameter_fact:
         if (

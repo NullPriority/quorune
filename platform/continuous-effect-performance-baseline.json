@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "source_sha256": "85a4dad54317e86ce68f1f1c94d1c2eee08b8c77179a3fe978b6f145e7793f6c",
+  "source_sha256": "635cf724dc442a1ee211483cee2f92677ccb56a9ebc03edd99dc95a8f37ebe89",
   "latency_policy": "Latency is recorded for observation only. CI gates deterministic work counters, semantic assertions, and source freshness.",
   "scenarios": [
     {
@@ -24,7 +24,7 @@
         "linear_object_scans": true,
         "one_lookup_per_inspected_object": true
       },
-      "recorded_latency_ms": 1151.917
+      "recorded_latency_ms": 1121.02
     },
     {
       "name": "four_players_ten_permanents",
@@ -47,7 +47,7 @@
         "linear_object_scans": true,
         "one_lookup_per_inspected_object": true
       },
-      "recorded_latency_ms": 2.04
+      "recorded_latency_ms": 2.095
     },
     {
       "name": "multiple_component_sources",
@@ -70,7 +70,7 @@
         "linear_object_scans": true,
         "one_lookup_per_inspected_object": true
       },
-      "recorded_latency_ms": 3.258
+      "recorded_latency_ms": 3.224
     },
     {
       "name": "repeated_characteristic_queries",
@@ -93,7 +93,7 @@
         "linear_object_scans": true,
         "one_lookup_per_inspected_object": true
       },
-      "recorded_latency_ms": 81.469
+      "recorded_latency_ms": 83.669
     },
     {
       "name": "earlier_layer_subtype_change",
@@ -104,7 +104,7 @@
         "ordered_type_before_anthem": true,
         "anthem_applied": true
       },
-      "recorded_latency_ms": 0.126
+      "recorded_latency_ms": 0.127
     }
   ]
 }

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 167,
+  "registry_version": 168,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -3262,7 +3262,7 @@
     },
     {
       "id": "continuous.characteristics.fixed_public_state",
-      "version": 6,
+      "version": 7,
       "official_rules": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
@@ -6151,7 +6151,7 @@
     },
     {
       "id": "trigger.condition.fixed_public_state",
-      "version": 2,
+      "version": 3,
       "official_rules": ["109.5", "603.4", "608.2a"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
@@ -6162,8 +6162,8 @@
       },
       "dependencies": ["state_query.permanent.public_state_predicate"],
       "implementation_components": ["quorune.continuous_conditions.FixedPublicStateConditionSpec", "quorune.compiler.public_state_fact_queries.fixed_public_fact_condition", "quorune.compiler.public_state_queries.fixed_public_state_condition", "quorune.compiler.fixed_counter_trigger_nodes.FixedCounterTriggerBinding", "quorune.card_programs.runtime.fixed_public_state_condition_matches", "quorune.turn_history.current_turn_history_events", "quorune.zone_trigger_processing.dispatch_zone_change_occurrence", "quorune.trigger_discovery.semantic_event_condition_matches", "quorune.trigger_discovery.semantic_intervening_condition_matches"],
-      "positive_tests": ["test_public_state_intervening_if_contract_matrix", "test_intervening_public_facts_preserve_numeric_and_subtype_meaning"],
-      "negative_tests": ["test_public_state_intervening_if_contract_matrix", "test_public_state_intervening_if_dependency_and_parser_fail_closed"],
+      "positive_tests": ["test_public_state_intervening_if_contract_matrix", "test_intervening_public_facts_preserve_numeric_and_subtype_meaning", "test_shared_history_conditions_compile_with_exact_thresholds", "test_history_facts_use_sealed_actor_and_target_not_current_objects"],
+      "negative_tests": ["test_public_state_intervening_if_contract_matrix", "test_public_state_intervening_if_dependency_and_parser_fail_closed", "test_unrepresented_history_conditions_remain_residual", "test_absent_history_is_unavailable_not_known_empty", "test_no_qualifying_entry_history_draws_nothing"],
       "interaction_tests": ["test_public_state_intervening_condition_rechecks_locked_controller_and_replays", "test_source_state_intervening_condition_and_current_ability_fail_closed", "test_public_entry_threshold_replays_actions_and_full_draw", "test_public_death_threshold_counts_causing_event_before_trigger", "test_public_attack_subtype_threshold_executes_compiled_consequence"],
       "multiplayer_tests": ["test_public_state_intervening_condition_rechecks_locked_controller_and_replays"],
       "privacy_tests": ["test_public_state_intervening_condition_rechecks_locked_controller_and_replays"],

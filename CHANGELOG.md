@@ -11,6 +11,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Compile shared public look-back conditions for attacks, deaths, permanent
+  departures and fixed life thresholds through existing static and trigger
+  owners, with explicit versioned departure history and exact replay.
+
 - Compile target-controller counter-unless-mana-payment instructions with fixed
   ordinary or canonically announced X costs through existing payment, target,
   scalar, counter and replay owners across spell and ability contexts.

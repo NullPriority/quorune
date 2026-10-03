@@ -2,7 +2,7 @@
 title: "Reusable rules piece matrix"
 status: "generated"
 authoritative_source: "coverage/reusable-piece-matrix.json.gz"
-verified: "d05ec9aadaf46ce7a4716077f4c80de70c894697bfab17df387f269a5e5295a0"
+verified: "f3e42ef4bd3a9fb8f2be5f2040da2c45f9a3e75fb8c45fdd52e56d251c817b74"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -19,11 +19,11 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 - Ontology: `reusable-pieces-v1`
 - Pieces: 2,841
 - Cards indexed: 31,623
-- Material abilities classified: 59,377
+- Material abilities classified: 59,376
 - Unclassified material spans: 0
 - Mapped pinned rules: 1,073 / 3,309
-- Applicable piece pairs: 93,976
-- Covered piece pairs: 1,015
+- Applicable piece pairs: 94,126
+- Covered piece pairs: 1,017
 
 ## Ontology classes
 
@@ -67,7 +67,7 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 
 | Piece | Class | Residuals | Sole blockers | Expected cards | Runtime | Assurance |
 |---|---|---:|---:|---:|---|---|
-| `residual.continuous_layer.continuous-effect-layers-and-dependencies` | `continuous_effects` | 4,066 | 1,848 | 1,848 | `absent` | `untested` |
+| `residual.continuous_layer.continuous-effect-layers-and-dependencies` | `continuous_effects` | 4,064 | 1,850 | 1,850 | `absent` | `untested` |
 | `residual.effect_clause.unparsed-clause-grammar` | `one_shot_effects` | 1,867 | 178 | 178 | `absent` | `untested` |
 | `residual.activated_effect.unparsed-clause-grammar` | `one_shot_effects` | 1,415 | 134 | 134 | `absent` | `untested` |
 | `residual.effect_clause.typed-spell-additional-cost-clause` | `one_shot_effects` | 106 | 22 | 22 | `absent` | `untested` |
@@ -77,8 +77,8 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 | `residual.activated_effect.create-token` | `one_shot_effects` | 266 | 13 | 13 | `absent` | `untested` |
 | `residual.mechanic_dependency.fading-remaining-lifecycle` | `keyword_mechanics` | 17 | 11 | 11 | `absent` | `untested` |
 | `residual.keyword_dependency.umbra-armor` | `keyword_mechanics` | 15 | 11 | 11 | `absent` | `untested` |
+| `residual.keyword_dependency.extort` | `keyword_mechanics` | 18 | 10 | 10 | `absent` | `untested` |
 | `residual.activated_effect.life-change` | `one_shot_effects` | 175 | 9 | 9 | `absent` | `untested` |
-| `residual.keyword_dependency.extort` | `keyword_mechanics` | 18 | 9 | 9 | `absent` | `untested` |
 | `residual.keyword_dependency.assist` | `keyword_mechanics` | 16 | 9 | 9 | `absent` | `untested` |
 | `residual.keyword_dependency.learn` | `keyword_mechanics` | 13 | 9 | 9 | `absent` | `untested` |
 | `residual.keyword_dependency.enlist` | `keyword_mechanics` | 12 | 9 | 9 | `absent` | `untested` |
