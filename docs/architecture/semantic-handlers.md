@@ -59,6 +59,13 @@ Commander exile-to-command choice happens after immediate blink finishes, but
 may remove a delayed-return card from exile. Old records retain their pinned
 trust provenance; this new grammar does not reinterpret historical records.
 
+Linked target cardinality is independent of source exclusion. The compiler
+captures an up-to bound and an other-object qualifier before canonicalizing
+the subject. Selecting zero targets remains legal with or without eligible
+objects and is not a later optional-effect decline. Mandatory another-target
+instructions still require their target, and offers and commands share the
+same typed target schema.
+
 The existing optional-payment choice also accepts a closed v2 fixed-cost
 descriptor. It uses the ordinary private/public object choice and resource
 affordability snapshot, pins selected zone incarnations, and returns only

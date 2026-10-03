@@ -64,7 +64,8 @@ def linked_exile_return_effect_template(text: str, *, card_name: str,
         if source_is_permanent is not True or match["reference"].casefold() not in {"it", "that card"}:
             return None
     else:
-        subject = re.sub(r"up to one other target", "another target", subject, flags=re.I)
+        # Cardinality and source exclusion are independent qualifiers. Capture
+        # both before canonicalizing an "other" subject to "another target".
         cardinality = re.fullmatch(r"(?P<count>up to (?:one|two|three|four|five|six)|two|three|four|five|six|any number of) (?P<other>other )?target (?P<quality>.+)", subject, re.I)
         if cardinality:
             count_word = cardinality["count"].casefold()
