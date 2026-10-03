@@ -113,8 +113,18 @@ class TemporaryTargetInteractionCompilerTests(unittest.TestCase):
             self.assertIn(CAPABILITY, ir.faces[0].nodes[0].capability_dependencies)
 
     def test_temporary_interaction_exclusions_and_shape_mutations(self):
+        scalar = "Target creature gets +X/+X until end of turn, where X is its power."
+        # The fixed leaf still rejects this grammar; the shared scalar owner
+        # now supplies the complete quantity definition to the existing result.
+        self.assertIsNone(temporary_target_interaction_effect_template(scalar))
+        scalar_ir = self.compile(scalar)
+        self.assertEqual("exact", scalar_ir.status, scalar_ir.material_residuals)
+        self.assertIn(
+            "quantity_expression.scalar_effect_amount",
+            scalar_ir.faces[0].nodes[0].capability_dependencies,
+        )
         excluded = (
-            "Target creature gets +X/+X until end of turn, where X is its power.",
+            "Target creature gets +X/+X until end of turn, where X is the chosen creature's power.",
             "Target creature gains protection from the card type of your choice until end of turn.",
             "Target creature gains your choice of flying or banding until end of turn.",
             "Target creature gets +2/+2 until end of turn. If you attacked this turn, it also gains trample until end of turn.",

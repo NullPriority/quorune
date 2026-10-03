@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "ffd8ac7af89962f3e56c7dbf52a284c5d084a9aa00ff68671f7eca2b95f98fc1"
+verified: "120aef4ad1000f83b986bb7728b994e8ea53ddb754ffdecb64626adcb9587ed6"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -15,8 +15,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 - Observation window: 2026-08-25T03:52:06Z through 2026-08-25T20:56:41Z
 - Observed population: tracked recent pull requests (n=4)
-- Escapes: 69
-- Deterministic escapes: 63
+- Escapes: 71
+- Deterministic escapes: 65
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: null
@@ -29,6 +29,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 | ID | Run | Category | Impact edge | Resolution |
 |---|---:|---|---|---|
+| `ci-20261003-71` | [37130709952](https://github.com/NullPriority/quorune/actions/runs/37130709952) | `missing_affected_test` | `added` | The unchanged exact regression fails in 1.199 seconds on only the newly admitted target-power definition. Preserve the fixed leaf's rejection, assert exact whole-card lowering with the scalar capability, and use an unsupported chosen-reference definition as the residual contrast. The corrected exact test passes in 1.301 seconds; all shape mutations and neighboring exclusions remain intact. Add the temporary-target consumer to the scalar impact edge. This is a stale behavioral expectation, not a runtime defect; preserve the completed semantic census and reuse it downstream. |
+| `ci-20261003-70` | [37129199130](https://github.com/NullPriority/quorune/actions/runs/37129199130) | `missing_affected_test` | `added` | Both generic source-derived and target-derived cases failed against unchanged assurance in 1.147 seconds. The existing collector now consumes the closed scalar source grammar, applies canonical Oracle-node declaration scope, and validates scalar projection plus every fixed result capability. The same regression passes in 1.144 seconds and a changed characteristic producer still fails. Add the fixed-target corpus consumer to the existing family impact edge. Runtime/compiler lowering is unchanged; the failed 33-second attempt produced no completed corpus result. |
 | `ci-20261003-69` | [37115857103](https://github.com/NullPriority/quorune/actions/runs/37115857103) | `missing_affected_test` | `added` | The exact two-pair reproduction failed on unchanged production in 47.527 seconds. Replace the negative carriers with constructed chosen-name target predicates, preserve the promoted Madness/draw blink forms as positive compiler and runtime-binding controls, and select high-risk interaction assurance for the linked-lifecycle source paths. Both focused tests pass in 48.669 seconds. No boundary assertion, production semantics, or completed corpus result changed. |
 | `ci-20261003-68` | [37110420467](https://github.com/NullPriority/quorune/actions/runs/37110420467) | `missing_affected_test` | `added` | Retain the leaf-parser negative control, convert the promoted whole-card instruction to an explicit positive witness, and protect unsupported transformed return with a constructed counterexample. Both exact tests pass in 1.248 seconds. Add targeted-exile and rules-corpus integration consumers to the linked-lifecycle impact edge. The rules-corpus and generated jobs fail only on the deliberately unfinalized new cohort inventory and are repaired by the registered downstream finalizer; compiler semantics and the one successful census remain unchanged. |
 | `ci-20260804-01` | [30916877307](https://github.com/NullPriority/quorune/actions/runs/30916877307) | `missing_affected_test` | `added` | The fixture was made portable and the compiler family remains explicitly routed to compiler-cardprogram and generated validation. |

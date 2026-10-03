@@ -10,6 +10,18 @@
   "repository": "NullPriority/quorune",
   "escapes": [
     {
+      "id": "ci-20261003-71",
+      "run_id": 37130709952,
+      "head_sha": "3f8ca310476383f88c0c1437413ed1589ceff0f9",
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "summary": "The scalar harvest deliberately admitted a target-power X definition, but the temporary-target integration exclusions still expected that complete card to remain residual.",
+      "failed_surfaces": ["PR / Python / impact-functional-09"],
+      "regressions": ["test_temporary_target_interactions.TemporaryTargetInteractionCompilerTests.test_temporary_interaction_exclusions_and_shape_mutations"],
+      "impact_edge_status": "added",
+      "resolution": "The unchanged exact regression fails in 1.199 seconds on only the newly admitted target-power definition. Preserve the fixed leaf's rejection, assert exact whole-card lowering with the scalar capability, and use an unsupported chosen-reference definition as the residual contrast. The corrected exact test passes in 1.301 seconds; all shape mutations and neighboring exclusions remain intact. Add the temporary-target consumer to the scalar impact edge. This is a stale behavioral expectation, not a runtime defect; preserve the completed semantic census and reuse it downstream."
+    },
+    {
       "id": "ci-20261003-70",
       "run_id": 37129199130,
       "head_sha": "0882cf37ee627fe34dd12296325127281caf1a8c",

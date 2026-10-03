@@ -4,6 +4,105 @@
     {
       "evidence_class": "interaction",
       "assurance_kind": "runtime_composition",
+      "test_id": "test_trusted_scalar_actions_controller_privacy_and_replay",
+      "piece_ids": ["capability.continuous.resolution.fixed_characteristics_until_end_of_turn", "capability.quantity_expression.scalar_effect_amount"],
+      "capability_ids": ["continuous.resolution.fixed_characteristics_until_end_of_turn", "quantity_expression.scalar_effect_amount"],
+      "interaction_order": 2,
+      "assertion": "Actual registered trusted activation and cast commands resolve source and target power quantities through the existing characteristic result owner, with payment, illegal-land-target rollback and pre-action exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_trusted_scalar_actions_controller_privacy_and_replay",
+      "piece_ids": ["capability.continuous.resolution.fixed_source_characteristics_until_end_of_turn", "capability.quantity_expression.scalar_effect_amount"],
+      "capability_ids": ["continuous.resolution.fixed_source_characteristics_until_end_of_turn", "quantity_expression.scalar_effect_amount"],
+      "interaction_order": 2,
+      "assertion": "An actual offered source-self activation reads its current power and applies the modifier through the existing logical-object-aware source characteristic owner; command replay reproduces the result."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_trusted_scalar_actions_controller_privacy_and_replay",
+      "piece_ids": ["capability.quantity_expression.scalar_effect_amount", "capability.target.revalidate_resolution"],
+      "capability_ids": ["quantity_expression.scalar_effect_amount", "target.revalidate_resolution"],
+      "interaction_order": 2,
+      "assertion": "An actual trusted scalar modifier cast accepts its creature target and rejects a land submission without mutation through the existing target authority; the accepted command sequence replays exactly."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_trusted_scalar_source_departure_reentry_and_replay",
+      "piece_ids": ["capability.quantity_expression.scalar_effect_amount", "capability.zone.linked_exile_return.fixed"],
+      "capability_ids": ["quantity_expression.scalar_effect_amount", "zone.linked_exile_return.fixed"],
+      "interaction_order": 2,
+      "assertion": "A real response first changes the old source's power to four, then an actual trusted linked blink gives it a new incarnation with power two; the pending activation gains four from immediate-departure LKI, including exact pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_trusted_committed_damage_amount_after_prevention_and_replay",
+      "piece_ids": ["capability.damage.prevention.persistent_amount", "capability.quantity_expression.scalar_effect_amount"],
+      "capability_ids": ["damage.prevention.persistent_amount", "quantity_expression.scalar_effect_amount"],
+      "interaction_order": 2,
+      "assertion": "An actual prevention spell prevents two of four requested damage; the scalar trigger uses the two damage actually committed, rather than the request, and produces exactly two tokens with exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_trusted_committed_damage_amount_after_prevention_and_replay",
+      "piece_ids": ["capability.quantity_expression.scalar_effect_amount", "capability.trigger.event.normalized_damage"],
+      "capability_ids": ["quantity_expression.scalar_effect_amount", "trigger.event.normalized_damage"],
+      "interaction_order": 2,
+      "assertion": "The normalized damage occurrence seals the two damage actually dealt after prevention; the registered trigger's scalar token quantity consumes that event amount and the entire offered-action sequence replays exactly."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_trusted_committed_damage_amount_after_prevention_and_replay",
+      "piece_ids": ["capability.quantity_expression.scalar_effect_amount", "capability.token.creation.fixed_definition"],
+      "capability_ids": ["quantity_expression.scalar_effect_amount", "token.creation.fixed_definition"],
+      "interaction_order": 2,
+      "assertion": "The committed damage quantity becomes the existing fixed-definition token result's amount; actual prevention and damage casts yield exactly two battlefield tokens and two marked damage, with exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_trusted_zone_event_object_then_live_current_characteristics_replay",
+      "piece_ids": ["capability.quantity_expression.scalar_effect_amount", "capability.trigger.event.normalized_zone_change"],
+      "capability_ids": ["quantity_expression.scalar_effect_amount", "trigger.event.normalized_zone_change"],
+      "interaction_order": 2,
+      "assertion": "After an actual creature cast creates its entry trigger, a real response changes toughness from three to five; the trigger reads the same live incarnation's five rather than freezing entry characteristics, and the commands replay exactly."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_trusted_life_event_and_public_history_receiver_not_life_total",
+      "piece_ids": ["capability.life.change.effect", "capability.quantity_expression.scalar_effect_amount"],
+      "capability_ids": ["life.change.effect", "quantity_expression.scalar_effect_amount"],
+      "interaction_order": 2,
+      "assertion": "Actual trusted activation commands gain two life, make a separately selected opponent lose that committed two, then make another opponent lose the represented current-turn gain of two rather than any player's life total, with exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_trusted_life_event_and_public_history_receiver_not_life_total",
+      "piece_ids": ["capability.quantity_expression.scalar_effect_amount", "capability.trigger.event.normalized_life_gain"],
+      "capability_ids": ["quantity_expression.scalar_effect_amount", "trigger.event.normalized_life_gain"],
+      "interaction_order": 2,
+      "assertion": "The actual two-life gain produces a normalized life-gain trigger whose separately selected opponent loses exactly the committed event amount; a subsequent current-turn-history activation and the full command sequence replay preserve distinct recipients."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_trusted_self_death_reads_departure_characteristics_and_replays",
+      "piece_ids": ["capability.quantity_expression.scalar_effect_amount", "capability.zone.draw.library_to_hand"],
+      "capability_ids": ["quantity_expression.scalar_effect_amount", "zone.draw.library_to_hand"],
+      "interaction_order": 2,
+      "assertion": "Actual growth and destruction spells make the registered self-death trigger draw four cards using departure power, not the graveyard incarnation's two, through the existing private draw owner; pre-action command replay matches."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
       "test_id": "test_trusted_group_partial_illegal_target_replays",
       "piece_ids": ["capability.target.revalidate_resolution", "capability.zone.linked_exile_return.fixed"],
       "capability_ids": ["target.revalidate_resolution", "zone.linked_exile_return.fixed"],
