@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import asdict
+from contextlib import contextmanager
 import hashlib
 import os
 from pathlib import Path
@@ -17,6 +18,20 @@ from quorune.util import stable_json
 
 ROOT = Path(__file__).resolve().parents[1]
 DB_PATH = Path(os.environ.get("MTG_CARD_DB", ROOT / "data" / "scryfall-20260728-compact.sqlite3"))
+
+
+@contextmanager
+def without_direct_resolution_compiler(name: str):
+    """Remove a live leaf route, not an alias captured before patching."""
+    from unittest.mock import patch
+    from quorune.compiler import resolution_effect_templates as owner
+    compiler = getattr(owner, name)
+    routes = owner._DIRECT_RESOLUTION_EFFECT_COMPILERS
+    remaining = tuple(route for route in routes if route is not compiler)
+    if len(remaining) != len(routes)-1:
+        raise AssertionError(f"Expected one live direct compiler route for {name}")
+    with patch.object(owner, "_DIRECT_RESOLUTION_EFFECT_COMPILERS", remaining):
+        yield
 
 
 def load_assets():

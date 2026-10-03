@@ -117,6 +117,13 @@ class StormCompilerTests(unittest.TestCase):
                 program_count += len(programs)
                 if ir.status == "exact":
                     exact_cards.add(name)
+                if name in {"Flusterstorm", "Hindering Touch"}:
+                    payment_nodes = [value for face in ir.faces for value in face.nodes
+                        if "stack.counter.controller_payment" in value.capability_dependencies]
+                    self.assertEqual(1, len(payment_nodes))
+                    self.assertTrue(payment_nodes[0].exact)
+                    self.assertEqual("counter_unless_pay", payment_nodes[0].effects[0]["op"])
+                    self.assertEqual(2, payment_nodes[0].effects[0]["schema_version"])
 
         self.assertEqual(33, program_count)
         self.assertEqual(
@@ -127,8 +134,10 @@ class StormCompilerTests(unittest.TestCase):
                 "Chatterstorm",
                 "Dragonstorm",
                 "Empty the Warrens",
+                "Flusterstorm",
                 "Grapeshot",
                 "Haze of Rage",
+                "Hindering Touch",
                 "Hunting Pack",
                 "Radstorm",
                 "Reaping the Graves",

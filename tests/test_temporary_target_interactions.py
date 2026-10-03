@@ -168,7 +168,8 @@ class TemporaryTargetInteractionCompilerTests(unittest.TestCase):
             registry = CapabilityRegistry(raw)
             registry.mark_evidence_verified(self.registry.evidence_fingerprint)
             self.assertNotEqual("exact", self.compile(text, registry=registry).status)
-        with patch("quorune.compiler.resolution_effect_templates.temporary_target_interaction_effect_template", return_value=None):
+        from common import without_direct_resolution_compiler
+        with without_direct_resolution_compiler("temporary_target_interaction_effect_template"):
             self.assertNotEqual("exact", self.compile(text).status)
 
 

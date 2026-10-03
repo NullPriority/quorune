@@ -378,11 +378,8 @@ class TargetedReturnToHandCompilerTests(unittest.TestCase):
             "owner's hand."
         )
         self.assertEqual("exact", self.compile(text).status)
-        with patch(
-            "quorune.compiler.resolution_effect_templates."
-            "targeted_return_to_hand_effect_template",
-            return_value=None,
-        ):
+        from common import without_direct_resolution_compiler
+        with without_direct_resolution_compiler("targeted_return_to_hand_effect_template"):
             mutated = self.compile(text)
         self.assertNotEqual("exact", mutated.status)
         self.assertTrue(mutated.material_residuals)

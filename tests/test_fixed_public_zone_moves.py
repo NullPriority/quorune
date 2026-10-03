@@ -778,11 +778,8 @@ class FixedPublicZoneMoveCompilerTests(unittest.TestCase):
                 }:
                     self.assertNotEqual("exact", mass.status)
 
-        with patch(
-            "quorune.compiler.resolution_effect_templates."
-            "public_zone_move_effect_template",
-            return_value=None,
-        ):
+        from common import without_direct_resolution_compiler
+        with without_direct_resolution_compiler("public_zone_move_effect_template"):
             self.assertNotEqual(
                 "exact",
                 self.compile("Exile all creatures.").status,
