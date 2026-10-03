@@ -11,6 +11,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Compile target-controller counter-unless-mana-payment instructions with fixed
+  ordinary or canonically announced X costs through existing payment, target,
+  scalar, counter and replay owners across spell and ability contexts.
+
 - Preserve unspecified creature subtypes during fixed animation, remove only
   subtype sets correlated with lost card types, and retain the distinct
   artifact-creature and explicitly retained-type behavior.

@@ -4574,6 +4574,59 @@
           "measurement_probe_id": "declared-effect-amount-existing-owner-v1"
         },
         {
+          "bundle_id": "bundle:stack-controller-payment",
+          "member_family_ids": [
+            "activated_effect:counter",
+            "effect_clause:counter",
+            "effect_clause:ordered-effect-composition",
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding",
+            "quantity_expression:dynamic-quantity",
+            "reference_binding:linked-result-reference",
+            "target_or_choice:conditional-effect",
+            "target_or_choice:target-predicate"
+          ],
+          "canonical_owner_ids": [
+            "capability:stack.counter.controller_payment",
+            "component:quorune.compiler.counter_templates.targeted_controller_payment_template",
+            "component:quorune.rules.stack_controller_payment_cost.StackControllerPaymentCost",
+            "component:quorune.semantic_choices.payments.OptionalPaymentHandler",
+            "component:quorune.semantic_runtime.query_effect_amounts.resolve_cast_x_amount",
+            "component:quorune.stack_counter.counter_stack_item"
+          ],
+          "source_contexts": [
+            "activated",
+            "modal",
+            "spell",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "announced-cast-X-or-complete-fixed-ordinary-mana-vector",
+            "current-target-controller",
+            "existing-closed-stack-target-domain",
+            "full-payment-or-decline",
+            "separate-countering-controller"
+          ],
+          "shared_dependencies": [
+            "effect.choice.optional_fixed_mana_payment",
+            "stack.counter.effect",
+            "target.revalidate_resolution"
+          ],
+          "shared_grammar": "one complete counter-unless-target-controller-pays instruction over an existing closed stack target and ordinary fixed or canonically announced cast-X mana cost, shared by spell, triggered, activated, granted and composition consumers without parallel payment or counter ownership",
+          "estimated_implementation_hours": 4,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Harvest the currently measured shared stack-payment cohort across existing target and payment owners; preserve independent mandatory siblings, actual current-controller choice, cast-X zero, private projection, canonical counter attribution and exact replay.",
+          "explicit_exclusions": [
+            "dynamic, chosen or text-defined payment quantities and variable activation X",
+            "fixed-plus-X generic mana, nonordinary, nonmana and repeated costs",
+            "independently unsupported sibling, keyword, result or source-control-changing grammar",
+            "multiple targets, reflexive and linked counter-result instructions"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "stack-controller-payment-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:fixed-resolution-payment",
           "member_family_ids": ["effect_clause:ordered-effect-composition", "event_binding:intervening-if-and-reflexive-trigger-grammar", "target_or_choice:conditional-effect"],
           "canonical_owner_ids": [
@@ -4662,14 +4715,28 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v241-unspecified-animation-subtypes",
-      "compiler_version": "oracle-ir-v241",
-      "bundle_id": null,
-      "candidate_ids": [],
-      "family_ids": [],
-      "capability_ids": [],
-      "non_harvest_reason": "Correct the confirmed fixed-animation subtype erasure by preserving absent creature-subtype instructions while removing subtypes of lost card types and retaining the existing artifact-creature and explicit-retention distinctions; no grammar expansion or harvest gain is claimed.",
-      "expected_complete_card_gain": null
+      "transition_id": "oracle-ir-v242-stack-controller-payment",
+      "compiler_version": "oracle-ir-v242",
+      "bundle_id": "bundle:stack-controller-payment",
+      "candidate_ids": [
+        "bundle:stack-controller-payment"
+      ],
+      "family_ids": [
+        "activated_effect:counter",
+        "effect_clause:counter",
+        "effect_clause:ordered-effect-composition",
+        "event_binding:intervening-if-and-reflexive-trigger-grammar",
+        "event_binding:normalized-event-binding",
+        "quantity_expression:dynamic-quantity",
+        "reference_binding:linked-result-reference",
+        "target_or_choice:conditional-effect",
+        "target_or_choice:target-predicate"
+      ],
+      "capability_ids": [
+        "stack.counter.controller_payment"
+      ],
+      "non_harvest_reason": null,
+      "measurement_id": "measurement:stack-controller-payment"
     },
     "forecast_corrections": [
       {

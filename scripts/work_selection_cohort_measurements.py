@@ -214,6 +214,7 @@ _PROBE_BOUND_EFFECT_PROGRAM = "bound-effect-program-existing-owner-v1"
 _PROBE_DECLARED_EFFECT_AMOUNT = "declared-effect-amount-existing-owner-v1"
 _PROBE_FIXED_ANIMATION = "fixed-resolution-animation-existing-owner-v1"
 _PROBE_FIXED_EFFECT_PAYMENT = "fixed-resolution-payment-existing-owner-v1"
+_PROBE_STACK_CONTROLLER_PAYMENT = "stack-controller-payment-existing-owner-v1"
 _PROBE_QUALIFIED_ZONE_EVENT = "qualified-zone-event-query-existing-owner-v1"
 _PROBE_FIXED_CONTROLLED_CHARACTERISTIC = (
     "fixed-controlled-characteristic-effect-existing-owner-v1"
@@ -572,6 +573,7 @@ _PROBE_IDS = {
     _PROBE_DECLARED_EFFECT_AMOUNT,
     _PROBE_FIXED_ANIMATION,
     _PROBE_FIXED_EFFECT_PAYMENT,
+    _PROBE_STACK_CONTROLLER_PAYMENT,
     _PROBE_QUALIFIED_ZONE_EVENT,
     _PROBE_OPTIONAL_EFFECT,
     _PROBE_OPTIONAL_MANA_PAYMENT,
@@ -1217,6 +1219,8 @@ def _matches_probe(
     card_record: Any | None = None,
     ability: Mapping[str, Any] | None = None,
 ) -> bool:
+    if probe_id == _PROBE_STACK_CONTROLLER_PAYMENT:
+        return bool(re.search(r"counter target .+? unless .+? pays", source, re.I))
     if probe_id == _PROBE_FIXED_ANIMATION:
         return 'until end of turn' in source.casefold() and any(word in source.casefold() for word in ('become','base power'))
     if probe_id == _PROBE_FIXED_EFFECT_PAYMENT:
@@ -5320,7 +5324,7 @@ def _measurement(
             f"Unknown cohort measurement probe: {probe_id}"
         )
     if probe_id in {_PROBE_BOUND_EFFECT_PROGRAM, _PROBE_QUALIFIED_ZONE_EVENT,
-                    _PROBE_DECLARED_EFFECT_AMOUNT, _PROBE_FIXED_ANIMATION, _PROBE_FIXED_EFFECT_PAYMENT}:
+                    _PROBE_DECLARED_EFFECT_AMOUNT, _PROBE_FIXED_ANIMATION, _PROBE_FIXED_EFFECT_PAYMENT, _PROBE_STACK_CONTROLLER_PAYMENT}:
         return _bound_effect_program_measurement(
             frontier=frontier, bundle_id=bundle_id, probe_id=probe_id,
             cards_by_oracle_id=cards_by_oracle_id, coverage=coverage,
@@ -8124,6 +8128,7 @@ def _bound_effect_program_measurement(
         _PROBE_DECLARED_EFFECT_AMOUNT: "quantity_expression.declared_effect_amount",
         _PROBE_FIXED_ANIMATION: "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
         _PROBE_FIXED_EFFECT_PAYMENT: "effect.choice.optional_fixed_mana_payment",
+        _PROBE_STACK_CONTROLLER_PAYMENT: "stack.counter.controller_payment",
     }[probe_id]
     abilities = residuals = 0
     remaining: dict[str, int] = {}

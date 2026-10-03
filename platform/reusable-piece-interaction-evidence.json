@@ -4,6 +4,42 @@
     {
       "evidence_class": "interaction",
       "assurance_kind": "pair_derived",
+      "test_id": "test_trusted_stack_payment_pay_decline_projection_and_exact_replay",
+      "piece_ids": ["capability.effect.choice.optional_fixed_mana_payment", "capability.stack.counter.controller_payment", "capability.stack.counter.effect"],
+      "capability_ids": ["effect.choice.optional_fixed_mana_payment", "stack.counter.controller_payment", "stack.counter.effect"],
+      "interaction_order": 3,
+      "assertion": "Actual trusted offered casts and responses yield payer-private full payment or canonical decline-counter consequences with the resolving controller as countering actor; malformed/unauthorized responses roll back, pending and final states save/load, and exact pre-action replay matches."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "test_trusted_stack_payment_cast_x_zero_and_canonical_mana_sources",
+      "piece_ids": ["capability.mana.intrinsic.basic_land_type", "capability.quantity_expression.declared_effect_amount", "capability.stack.counter.controller_payment"],
+      "capability_ids": ["mana.intrinsic.basic_land_type", "quantity_expression.declared_effect_amount", "stack.counter.controller_payment"],
+      "interaction_order": 3,
+      "assertion": "Actual counter casts preserve announced X at zero and three, and a payer without floating resources can pay through three real basic-land mana sources under the canonical mana owner; successful full consequences and exact pre-action replay are asserted."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_trusted_stack_payment_uncounterable_target_retains_legal_decline",
+      "piece_ids": ["capability.stack.counter.controller_payment", "capability.stack.counter.prohibition.intrinsic"],
+      "capability_ids": ["stack.counter.controller_payment", "stack.counter.prohibition.intrinsic"],
+      "interaction_order": 2,
+      "assertion": "The legal target-controller payment choice permits decline against a truly registered uncounterable spell; the canonical counter prohibition preserves its resolution and draw, with exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "test_trusted_stack_payment_activation_and_entry_trigger_owners",
+      "piece_ids": ["capability.stack.counter.controller_payment", "capability.trigger.event.normalized_zone_change", "capability.trigger.placement.apnap"],
+      "capability_ids": ["stack.counter.controller_payment", "trigger.event.normalized_zone_change", "trigger.placement.apnap"],
+      "interaction_order": 3,
+      "assertion": "A real offered activation and a real Flash creature cast create their payment instruction through existing activation and entry-trigger owners; trigger targets are chosen at placement, the payer is the target controller, and full consequences replay from pre-action checkpoints."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
       "test_id": "test_two_card_payment_decline_insufficient_stale_and_replaced_branches",
       "piece_ids": ["capability.choice.affected_player.fixed_discard", "capability.effect.choice.optional_fixed_mana_payment", "capability.zone.change.destination_replacement"],
       "capability_ids": ["choice.affected_player.fixed_discard", "effect.choice.optional_fixed_mana_payment", "zone.change.destination_replacement"],

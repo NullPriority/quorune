@@ -27,7 +27,7 @@ from .counter_removal_templates import (
     all_counter_removal_effect_template,
     fixed_counter_removal_effect_template,
 )
-from .counter_templates import targeted_counter_effect_template
+from .counter_templates import targeted_counter_effect_template, targeted_controller_payment_template
 from .creature_power_damage_templates import (
     fixed_creature_power_damage_effect_template,
 )
@@ -97,6 +97,17 @@ def _attachment_or_owner_zone_move(
     )
 
 
+_DIRECT_RESOLUTION_EFFECT_COMPILERS = (
+    fixed_target_reanimation_effect_template, public_zone_move_effect_template, temporary_target_interaction_effect_template,
+    destruction_effect_template,
+    targeted_exile_effect_template,
+    targeted_return_to_hand_effect_template,
+    targeted_own_graveyard_return_to_hand_effect_template,
+    targeted_counter_effect_template,
+    targeted_controller_payment_template,
+)
+
+
 def typed_resolution_effect_template(
     text: str,
     *,
@@ -106,6 +117,7 @@ def typed_resolution_effect_template(
     source_attachment_relation: AttachmentReferenceKind | None = None,
 ) -> CompiledEffectTemplate | None:
     """Lower closed typed resolution-effect families."""
+
 
     fixed_counter_controller_sequence = (
         fixed_counter_controller_effect_sequence_template(
@@ -245,14 +257,7 @@ def typed_resolution_effect_template(
     )
     if fixed_target_sequence is not None:
         return fixed_target_sequence.compiled()
-    for compiler in (
-        fixed_target_reanimation_effect_template, public_zone_move_effect_template, temporary_target_interaction_effect_template,
-        destruction_effect_template,
-        targeted_exile_effect_template,
-        targeted_return_to_hand_effect_template,
-        targeted_own_graveyard_return_to_hand_effect_template,
-        targeted_counter_effect_template,
-    ):
+    for compiler in _DIRECT_RESOLUTION_EFFECT_COMPILERS:
         compiled = compiler(text)
         if compiled is not None:
             return compiled.compiled()

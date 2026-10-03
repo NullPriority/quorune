@@ -5128,6 +5128,43 @@ class RulesSchedulerTests(unittest.TestCase):
         self.assertEqual(1, measured["exact_ability_gain"])
         self.assertEqual(1, measured["material_residual_reduction"])
 
+    def test_stack_controller_payment_measurement_requires_original_program_closure(self):
+        from dataclasses import replace
+        record = CardRecord(
+            oracle_id="stack-payment-measurement-fixture", name="Generic Stack Payment Measurement",
+            mana_cost="{U}", mana_value=1, type_line="Instant",
+            oracle_text="Counter target spell unless its controller pays {3}.",
+            power=None, toughness=None, loyalty=None, defense=None, colors=("U",),
+            color_identity=("U",), keywords=(), produced_mana=(), layout="normal",
+            released_at="2026-01-01", legalities={"commander":"legal"}, faces=(), raw={},
+        )
+        class Database:
+            def rulings(self, _oracle_id):
+                return ()
+        family = "effect_clause:counter"
+        def measured(current):
+            return build_work_selection_cohort_measurements(
+                frontier={"cards":[{"oracle_id":record.oracle_id,"oracle_ir_status":"unresolved",
+                    "minimum_known_blocker_set":[family],"abilities":[{"face_id":"front",
+                        "ability_id":"front:n1","source_line":1,"status":"unresolved",
+                        "residuals":[{"family_ids":[family]}]}]}]},
+                bundle_policies=[{"bundle_id":"bundle:stack-controller-payment",
+                    "member_family_ids":[family],"measurement_probe_id":"stack-controller-payment-existing-owner-v1"}],
+                cards_by_oracle_id={record.oracle_id:current},
+                coverage={"minimum_complete_card_gain":1,"minimum_exact_ability_gain":1,"minimum_material_residual_reduction":1},
+                cohort_fingerprints={"bundle:stack-controller-payment":"0"*64},database=Database(),
+            )["measurements"][0]
+        positive = measured(record)
+        self.assertEqual(1, positive["complete_card_gain"])
+        self.assertEqual(1, positive["exact_ability_gain"])
+        self.assertEqual("bounded_executable", positive["decision"])
+        self.assertFalse(positive["grants_gameplay_trust"])
+        residual = measured(replace(record, oracle_text=record.oracle_text+"\nThe moon remembers the next spell."))
+        self.assertEqual(0, residual["complete_card_gain"])
+        self.assertEqual("retired_below_harvest_floor", residual["decision"])
+        unsupported = measured(replace(record, oracle_text="Counter target spell unless its controller discards a card."))
+        self.assertEqual(0, unsupported["complete_card_gain"])
+
     def test_public_static_action_legality_probe_is_closed(self):
         probe_id = "public-static-action-legality-existing-owner-v1"
         for source in (

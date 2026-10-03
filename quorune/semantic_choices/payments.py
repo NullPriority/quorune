@@ -7,6 +7,7 @@ from ..compiler.optional_payment_templates import (
     OPTIONAL_MANA_PAYMENT_OPERATION,
 )
 from ..replacement.immutable import FrozenMap, freeze_value
+from ..rules.stack_controller_payment_cost import resolved_stack_controller_payment_cost
 from ..semantic_runtime.intents import (
     CounterStackIntent,
     EliminatePlayersIntent,
@@ -95,8 +96,14 @@ def _current_pay_or_sacrifice_source(
 def _completion_requirements(
     mode: str,
     effect: Mapping[str, Any],
+    *, query: SemanticChoiceQuery | None = None, countering_controller: str | None = None,
 ) -> dict[str, int]:
     value = effect.get("_requirements", FrozenMap())
+    if mode == "counter" and "schema_version" in effect:
+        requirements = _controller_payment_requirements(effect, query, str(effect.get("_choice_actor") or ""))
+        if dict(value) != requirements or not countering_controller or effect.get("_countering_controller") != countering_controller:
+            raise SemanticChoiceError("Controller payment continuation identity changed")
+        return requirements
     if mode == "effect":
         return _strict_fixed_mana_requirements(
             value,
@@ -121,6 +128,17 @@ def _payment_choice(response: Mapping[str, Any]) -> bool:
     if type(value) is not bool:
         raise SemanticChoiceError("Optional payment choice must be boolean")
     return value
+
+
+def _controller_payment_requirements(effect: Mapping[str, Any], query: SemanticChoiceQuery | None, actor: str) -> dict[str, int]:
+    try:
+        requirements = resolved_stack_controller_payment_cost(effect)
+    except (TypeError, ValueError, KeyError) as exc:
+        raise SemanticChoiceError(str(exc)) from exc
+    target = query.stack_object(effect["stack"]) if query is not None else None
+    if target is None or target.controller != actor or effect["player"] != actor or actor not in query.active_seats:
+        raise SemanticChoiceError("The target-controller payment identity is no longer current")
+    return requirements
 
 
 def _validated_paid_effects(
@@ -299,6 +317,8 @@ class OptionalPaymentHandler:
         effect: Mapping[str, Any],
         context: SemanticChoiceContext,
     ) -> tuple[dict[str, int], str | None, int | None]:
+        if self.mode == "counter" and "schema_version" in effect:
+            return _controller_payment_requirements(effect, context.query, context.actor), None, None
         if self.mode == "effect":
             _validate_optional_effect_payment(
                 effect,
@@ -563,6 +583,7 @@ class OptionalPaymentHandler:
                 **dict(effect),
                 "_choice_actor": context.actor,
                 "_requirements": requirements,
+                **({"_countering_controller": context.stack_controller} if self.mode == "counter" and "schema_version" in effect else {}),
                 "_source_ref": source_ref,
                 "_source_logical_object_id": (
                     context.source_logical_object_id
@@ -666,7 +687,7 @@ class OptionalPaymentHandler:
             return self._complete_cumulative_life(
                 effect, response, query, actor
             )
-        requirements = _completion_requirements(self.mode, effect)
+        requirements = _completion_requirements(self.mode, effect, query=query, countering_controller=continuation.semantic_frame.controller)
         pay = _payment_choice(response)
         if pay and not query.cost_is_affordable(actor, requirements):
             raise SemanticChoiceError(
@@ -744,7 +765,7 @@ class OptionalPaymentHandler:
                         actor=actor,
                         stack_ref=target,
                         reason=label,
-                        countered_by=actor,
+                        countered_by=(effect["_countering_controller"] if effect.get("schema_version") == 2 else actor),
                     ),
                 )
             )
@@ -1147,6 +1168,11 @@ PAYMENT_CHOICE_HANDLERS = (
         mode="counter",
         prompt="Pay the stated cost to prevent the spell from being countered.",
         default_cost=FrozenMap(),
+        capability_dependencies=("stack.counter.controller_payment",),
+        test_modules=("tests.test_targeted_counter_effect_clauses", "tests.test_stack_counter_rules", "tests.test_semantic_choice_characterization"),
+        continuation_fields=("player", "cost", "source", "stack", "beneficiary", "stage",
+            "_choice_actor", "_requirements", "_source_ref", "_source_logical_object_id", "_stack_label",
+            "schema_version", "_countering_controller"),
     ),
     OptionalPaymentHandler(
         operation="cumulative_upkeep",

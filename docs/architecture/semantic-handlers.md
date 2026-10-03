@@ -70,6 +70,17 @@ a closed life-intent identity and resumes only that uncommitted intent. The
 continuation decoder rejects unknown intent kinds and changed identity, and
 exact replay reissues the same semantic response and replacement selection.
 
+The existing counter-unless-payment choice additionally accepts a closed v2
+controller-payment descriptor. It locks the current target's controller for
+the private choice, validates the complete mana vector and current target at
+completion, and keeps the countering source controller separate from the
+payer. Canonical mana intents perform payment; canonical counter intents
+perform decline consequences. Announced X is resolved by the existing scalar
+owner before preparing the choice, including zero. Current save/load and
+exact replay preserve the choice and remaining instructions. Historical v1
+payload execution remains separate; incompatible archived records are
+rejected by the existing runtime-trust provenance boundary.
+
 Behavior that participates in later events—replacements, prevention, static
 effects, and other persistent descriptors—belongs to
 [runtime components](runtime-components.md), not this boundary. Family-specific
