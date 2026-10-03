@@ -22361,6 +22361,62 @@
       "applicability_note": "Save, load, and exactly replay the typed query descriptor, locked controller, resolved amount, and final authoritative state."
     },
     {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountValueTests.test_declaration_freezes_once_but_independent_reads_remain_live",
+      "official_rule_ids": ["107.1b", "107.2", "107.3c", "113.7a", "400.7", "608.2h", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "One declared value is reused while independent instructions retain separate information reads."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountActionTests.test_trusted_scalar_actions_controller_privacy_and_replay",
+      "official_rule_ids": ["107.1b", "107.2", "107.3c", "113.7a", "400.7", "608.2h", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Actual trusted actions use the normal four-seat offered-action and committed-result paths."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountValueTests.test_reentered_current_object_mutation_is_killed",
+      "official_rule_ids": ["107.1b", "107.2", "107.3c", "113.7a", "400.7", "608.2h", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Reading a new incarnation instead of the expected old incarnation's LKI fails the independent five-power result."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountValueTests.test_malformed_descriptor_and_unavailable_characteristics_fail_closed",
+      "official_rule_ids": ["107.1b", "107.2", "107.3c", "113.7a", "400.7", "608.2h", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Malformed Boolean/numeric origins and unsupported characteristic values are not treated as known zero."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountValueTests.test_current_then_immediate_departure_lki_never_reads_new_incarnation",
+      "official_rule_ids": ["107.1b", "107.2", "107.3c", "113.7a", "400.7", "608.2h", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Current referenced values remain live until departure; immediate departure LKI belongs to the old logical incarnation."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountActionTests.test_trusted_scalar_actions_controller_privacy_and_replay",
+      "official_rule_ids": ["107.1b", "107.2", "107.3c", "113.7a", "400.7", "608.2h", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Each principal receives the ordinary projection, never an authoritative checkpoint."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountActionTests.test_trusted_scalar_source_departure_reentry_and_replay",
+      "official_rule_ids": ["107.1b", "107.2", "107.3c", "113.7a", "400.7", "608.2h", "613.4c"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "The old source incarnation's LKI survives a real blink response and exact pre-action replay."
+    },
+    {
       "capability_id": "replacement.kicker.fixed_entry",
       "evidence_class": "interaction",
       "test_id": "tests.test_kicker_rules.FixedKickerRuntimeTests.test_kicked_counter_replacement_is_nested_and_replays",

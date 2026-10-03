@@ -18,9 +18,13 @@ from .declared_effect_amounts import (
     declared_amount_shape_context,
     declared_amount_dependencies,
 )
+from .scalar_effect_amounts import scalar_amount_shape_context
+from ..scalar_effect_amount_model import SCALAR_AMOUNT_MECHANIC, SCALAR_AMOUNT_CAPABILITY
 
 
 PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC = "public-query-effect-amount"
+AMOUNT_MECHANIC_CAPABILITIES = {PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC: (PUBLIC_QUERY_AMOUNT_CAPABILITY,),
+                               SCALAR_AMOUNT_MECHANIC: (SCALAR_AMOUNT_CAPABILITY,)}
 
 CompiledEffectTemplate = tuple[
     str | None,
@@ -520,7 +524,7 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
     from ..rules.fixed_controller_effect_shapes import fixed_life_node_capabilities
     from ..rules.token_creation_capability_shapes import fixed_token_creation_node_capabilities
 
-    if PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC not in program.coverage:
+    if not {PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC, SCALAR_AMOUNT_MECHANIC}.intersection(program.coverage):
         return False
     context = public_query_amount_shape_context(program.effects, set(program.coverage))
     if context is None:
@@ -528,7 +532,7 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
     effects, mechanics = context
     required = set(required_dependencies)
     if (
-        PUBLIC_QUERY_AMOUNT_CAPABILITY not in required
+        (SCALAR_AMOUNT_CAPABILITY if SCALAR_AMOUNT_MECHANIC in program.coverage else PUBLIC_QUERY_AMOUNT_CAPABILITY) not in required
         or not required.issubset(program.capability_dependencies)
     ):
         return False
@@ -550,6 +554,8 @@ def public_query_amount_shape_context(
 ) -> tuple[tuple[Mapping[str, Any], ...], set[str]] | None:
     """Return fixed-value inputs for existing capability shape owners."""
 
+    if SCALAR_AMOUNT_MECHANIC in mechanics:
+        return scalar_amount_shape_context(effects, mechanics)
     if DECLARED_EFFECT_AMOUNT_MECHANIC in mechanics:
         return declared_amount_shape_context(effects, mechanics)
     if PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC not in mechanics:

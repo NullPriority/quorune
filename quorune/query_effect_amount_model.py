@@ -161,6 +161,9 @@ class CastXAmountSpec:
 def scope_declared_amount_bindings(value: Any, source_scope: str) -> Any:
     """Give separate Oracle nodes separate declarations, even for identical prose."""
     if isinstance(value, Mapping):
+        if value.get("kind") == "scalar_effect_amount":
+            from .scalar_effect_amount_model import scope_scalar_amount_bindings
+            return scope_scalar_amount_bindings(value, source_scope)
         if value.get("kind") == PUBLIC_QUERY_AMOUNT_KIND and value.get("schema_version") == 2:
             spec = PublicQueryAmountSpec.from_dict(value)
             return replace(spec, binding_id=f"{source_scope}:{spec.binding_id}").to_dict()

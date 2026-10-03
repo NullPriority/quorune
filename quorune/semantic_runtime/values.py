@@ -18,6 +18,8 @@ from ..query_effect_amount_model import (
 from .context import SemanticNodeError
 from .explore import explore_source_controller
 from .query_effect_amounts import resolve_public_query_amount, resolve_cast_x_amount
+from ..scalar_effect_amount_model import SCALAR_AMOUNT_KIND
+from ..scalar_effect_amounts import resolve_scalar_effect_amount
 
 
 _INDEX_GROUP = "index"
@@ -98,6 +100,11 @@ def resolve_semantic_value(
     if isinstance(value, Mapping) and value.get("kind") == CAST_X_AMOUNT_KIND:
         try:
             return resolve_cast_x_amount(value, item)
+        except PublicQueryAmountError as exc:
+            raise SemanticNodeError(str(exc)) from exc
+    if isinstance(value, Mapping) and value.get("kind") == SCALAR_AMOUNT_KIND:
+        try:
+            return resolve_scalar_effect_amount(host, value, item)
         except PublicQueryAmountError as exc:
             raise SemanticNodeError(str(exc)) from exc
     if isinstance(value, dict):

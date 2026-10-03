@@ -10,6 +10,7 @@ from .bound_effect_programs import bound_effect_program_template
 from .fixed_effect_clause_sequences import fixed_effect_clause_sequence_template
 from .public_query_effect_amounts import public_query_effect_amount_template
 from .declared_effect_amounts import declared_effect_amount_template
+from .scalar_effect_amounts import scalar_effect_amount_template
 from .fixed_resolution_characteristics import fixed_resolution_characteristics_effect_template
 from .fixed_effect_payment_templates import fixed_effect_payment_template,fixed_effect_payment_with_mandatory_prefix
 from .optional_payment_templates import fixed_optional_mana_payment_template
@@ -90,6 +91,12 @@ def reviewed_effect_template_composition(
     if query_amount is not None:
         return query_amount
     if allow_declarations:
+        scalar = scalar_effect_amount_template(text, source_name=source_name,
+            compile_fixed=lambda body: reviewed_effect_template_composition(
+                body, source_name=source_name, compile_atomic=compile_atomic,
+                compile_fixed=compile_fixed, allow_declarations=False))
+        if scalar is not None:
+            return scalar
         declared = declared_effect_amount_template(
             text, source_name=source_name, cast_x_available=cast_x_available,
             forbid_public_x=forbid_public_x,

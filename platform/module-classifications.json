@@ -3348,6 +3348,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/scalar_effect_amounts.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/scry_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -7471,6 +7486,32 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/scalar_effect_amount_model.py",
+      "layer": "domain",
+      "owning_subsystem": "legacy_domain",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/scalar_effect_amounts.py",
+      "layer": "rules",
+      "owning_subsystem": "legacy_rules",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/selection/__init__.py",
       "layer": "rules",
       "owning_subsystem": "search_target_and_choice",
@@ -10251,5 +10292,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "093738becf6e8c4e2f34c52dea6b7046a62da363081c7ed2b56addfdeedd5af9"
+  "fingerprint": "0f3ab86d246173152ac4b5c55db70c23e1eba675559855b5d9b67f8f27278af9"
 }

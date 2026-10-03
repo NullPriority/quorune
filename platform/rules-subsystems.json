@@ -374,6 +374,22 @@
       },
       "candidate_bundles": [
         {
+          "bundle_id": "bundle:typed-scalar-effect-quantities",
+          "member_family_ids": ["activated_effect:life-change", "effect_clause:life-change", "effect_clause:ordered-effect-composition", "event_binding:normalized-event-binding"],
+          "canonical_owner_ids": ["capability:quantity_expression.scalar_effect_amount", "component:quorune.compiler.scalar_effect_amounts.scalar_effect_amount_template", "component:quorune.scalar_effect_amounts.resolve_scalar_effect_amount", "component:quorune.zone_transitions.ZoneTransitionOwner.pin_characteristic_departures"],
+          "source_contexts": ["activated", "spell", "triggered"],
+          "normalized_literal_parameters": ["committed-event-amount", "explicit-reference-origin", "instruction-scoped-declaration", "resolution-current-or-departure-lki"],
+          "shared_dependencies": ["target.revalidate_resolution", "trigger.placement.apnap", "zone.change.destination_replacement"],
+          "shared_grammar": "complete scalar characteristic, committed-event and represented current-turn definitions projected only onto existing fixed numeric result slots with unchanged targets and owners",
+          "estimated_implementation_hours": 4,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "One scalar boundary serves source, target and event references across spell, activated and triggered result families without another query, event or mutation registry.",
+          "explicit_exclusions": ["X-dependent costs, targets or cardinalities", "ambiguous and optional target references", "chosen facts, extrema, division and open arithmetic", "nested declaration scopes and independently unsupported bodies or siblings", "unavailable characteristics or history"],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "typed-scalar-effect-amount-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:linked-exile-return-lifecycle",
           "member_family_ids": ["activated_effect:exile", "effect_clause:exile", "effect_clause:ordered-effect-composition", "event_binding:intervening-if-and-reflexive-trigger-grammar", "event_binding:normalized-event-binding"],
           "canonical_owner_ids": ["capability:zone.linked_exile_return.fixed", "component:quorune.compiler.linked_exile_return_templates.linked_exile_return_effect_template", "component:quorune.linked_exile_return.resolve_linked_exile_return", "component:quorune.trigger_processing.schedule_delayed_trigger", "component:quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously"],
@@ -4747,20 +4763,20 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v244-linked-exile-return-lifecycle",
-      "compiler_version": "oracle-ir-v244",
-      "bundle_id": "bundle:linked-exile-return-lifecycle",
+      "transition_id": "oracle-ir-v245-typed-scalar-effect-quantities",
+      "compiler_version": "oracle-ir-v245",
+      "bundle_id": "bundle:typed-scalar-effect-quantities",
       "candidate_ids": [
-        "bundle:linked-exile-return-lifecycle"
+        "bundle:typed-scalar-effect-quantities"
       ],
       "family_ids": [
-        "activated_effect:exile", "effect_clause:exile", "effect_clause:ordered-effect-composition", "event_binding:intervening-if-and-reflexive-trigger-grammar", "event_binding:normalized-event-binding"
+        "activated_effect:life-change", "effect_clause:life-change", "effect_clause:ordered-effect-composition", "event_binding:normalized-event-binding"
       ],
       "capability_ids": [
-        "zone.linked_exile_return.fixed"
+        "quantity_expression.scalar_effect_amount"
       ],
       "non_harvest_reason": null,
-      "measurement_id": "measurement:linked-exile-return-lifecycle"
+      "measurement_id": "measurement:typed-scalar-effect-quantities"
     },
     "forecast_corrections": [
       {

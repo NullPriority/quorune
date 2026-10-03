@@ -1219,6 +1219,12 @@ def _binding_effect_template(
     ],
     bool,
 ]:
+    from .scalar_effect_amounts import scalar_effect_amount_template
+    scalar = scalar_effect_amount_template(body, source_name=card_name,
+        event=binding.event.value, source_event=binding.variant.startswith("source_"),
+        compile_fixed=lambda text: effect_template(text, card_name=card_name))
+    if scalar is not None:
+        return scalar, False
     specialized = fixed_source_combat_growth_effect_template(
         body,
         event=binding.event.value,

@@ -1043,6 +1043,8 @@ def _semantic_trigger_context(
     )
     if source_lki is not None:
         stack_context[CREATURE_POWER_DAMAGE_LKI_CONTEXT] = source_lki
+    from .scalar_effect_amounts import scalar_source_context
+    stack_context.update(scalar_source_context(host, source, program.effects, characteristics=source_characteristics))
     return stack_context
 
 
