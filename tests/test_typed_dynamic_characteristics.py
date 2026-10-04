@@ -4,6 +4,15 @@ from pathlib import Path
 import tempfile
 import unittest
 from unittest import mock
+from types import SimpleNamespace
+from dataclasses import replace
+from quorune.oracle_ir import compile_oracle_card
+from quorune.characteristic_evaluation import type_parts
+from quorune.characteristic_fragments import CharacteristicQuantitySpec, CharacteristicFragmentError
+from quorune.compiler.query_characteristic_templates import query_characteristic_quantity, query_characteristic_value, query_power_toughness_definition_handler
+from quorune.continuous_effects import Layer
+from quorune.dynamic_characteristics import query_characteristic_count
+from quorune.model import CardInstance
 
 from common import keep_all, load_assets, make_session
 from quorune.card_programs import compile_card_program
@@ -76,6 +85,189 @@ def _permanent(text: str, *, suffix: int, name: str) -> CardRecord:
         faces=(),
         raw={},
     )
+
+
+class PublicCollectionReductionTests(unittest.TestCase):
+    """Independent CR 202.3/205.2/305.6/613 layer-safe expectation table."""
+
+    def host(self, rows):
+        state = SimpleNamespace(cards={}, players={seat: SimpleNamespace(in_game=True, zones={zone: [] for zone in ("battlefield", "graveyard", "hand")}) for seat in "AB"})
+        values = {}
+        layers = []
+        for index, (type_line, mana_value, colors, zone, token, phased) in enumerate(rows):
+            card = CardInstance(str(index), f"P{index}", "fixture", "Generic Object", "A", "A", zone)
+            card.is_token = token
+            card.phased_out = phased
+            state.cards[card.object_id] = card
+            state.players["A"].zones[zone].append(card.object_id)
+            values[card.object_id] = {"type_line": type_line, "mana_value": mana_value, "colors": colors, "keywords": [], "power": "2", "toughness": "2"}
+        def effective(card, *, maximum_layer, _enforce_static_component_applicability=True):
+            layers.append(maximum_layer)
+            return values[card.object_id]
+        return SimpleNamespace(state=state, _effective_card_data=effective, _type_parts=type_parts), values, layers
+
+    def count(self, text, host):
+        quantity = query_characteristic_quantity(text, source_name="Generic Source", definition_extensions=True)
+        self.assertIsNotNone(quantity, text)
+        return query_characteristic_count(host, SimpleNamespace(controller="A", ref="SOURCE"), quantity)
+
+    def test_basic_type_union_uses_current_land_domain_and_all_five_names(self):
+        host, values, layers = self.host([
+            ("Basic Land — Forest", 0, [], "battlefield", False, False),
+            ("Snow Land — Forest Island", 0, [], "battlefield", False, False),
+            ("Land — Desert", 0, [], "battlefield", False, False),
+            ("Land — Plains", 0, [], "battlefield", False, True),
+        ])
+        self.assertEqual(2, self.count("basic land types among lands you control", host))
+        values["1"]["type_line"] = "Artifact"
+        self.assertEqual(1, self.count("basic land types among lands you control", host))
+        self.assertTrue(all(layer is Layer.COLOR for layer in layers))
+        for subtype in ("Plains", "Island", "Swamp", "Mountain", "Forest"):
+            with self.subTest(subtype=subtype):
+                one, _, _ = self.host([(f"Land — {subtype}", 0, [], "battlefield", False, False)] * 2)
+                self.assertEqual(1, self.count("basic land types among lands you control", one))
+
+    def test_graveyard_card_type_union_is_not_objects_subtypes_or_tokens(self):
+        host, _, _ = self.host([
+            ("Legendary Artifact Creature — Human", 3, [], "graveyard", False, False),
+            ("Kindred Enchantment — Goblin", 2, [], "graveyard", False, False),
+            ("Artifact Creature — Human", 3, [], "graveyard", False, False),
+            ("Instant", 1, [], "graveyard", True, False),
+        ])
+        self.assertEqual(4, self.count("card types among cards in your graveyard", host))
+
+    def test_distinct_colors_and_mana_value_reductions_are_not_object_counts(self):
+        host, _, layers = self.host([
+            ("Creature", 2, ["W", "U"], "battlefield", False, False),
+            ("Artifact Creature", 5, ["U", "R"], "battlefield", False, False),
+            ("Artifact", 9, [], "battlefield", False, False),
+        ])
+        self.assertEqual(3, self.count("colors among permanents you control", host))
+        self.assertEqual(5, self.count("greatest mana value among creatures you control", host))
+        self.assertEqual(7, self.count("total mana value of creatures you control", host))
+        self.assertTrue(all(layer is Layer.COLOR for layer in layers))
+
+    def test_empty_collection_differs_from_unavailable_mana_value(self):
+        host, _, _ = self.host([])
+        self.assertEqual(0, self.count("greatest mana value among creatures you control", host))
+        for invalid in (None, True, "5", 1.5):
+            with self.subTest(invalid=invalid):
+                malformed, _, _ = self.host([("Creature", invalid, [], "battlefield", False, False)])
+                with self.assertRaises(ValueError):
+                    self.count("greatest mana value among creatures you control", malformed)
+
+    def test_collection_unavailable_member_is_not_a_known_empty_set(self):
+        host, _, _ = self.host([])
+        host.state.players["A"].zones["battlefield"].append("missing")
+        with self.assertRaisesRegex(ValueError, "collection member is unavailable"):
+            self.count("greatest mana value among creatures you control", host)
+
+    def test_versioned_codec_keeps_legacy_counts_and_closed_exclusions(self):
+        legacy = query_characteristic_quantity("creatures you control", source_name="Generic Source").to_dict()
+        self.assertEqual(1, legacy["schema_version"])
+        self.assertNotIn("reduction", legacy)
+        self.assertEqual(legacy, CharacteristicQuantitySpec.from_dict(legacy).to_dict())
+        quantity = query_characteristic_quantity("basic land types among lands you control", source_name="Generic Source")
+        self.assertIsNotNone(quantity)
+        encoded = quantity.to_dict()
+        self.assertEqual(2, encoded["schema_version"])
+        self.assertEqual(encoded, CharacteristicQuantitySpec.from_dict(encoded).to_dict())
+        with self.assertRaises(CharacteristicFragmentError):
+            CharacteristicQuantitySpec.from_dict({**encoded, "reduction": "callback"})
+        for excluded in ("greatest power among creatures you control", "colors among cards in your hand", "card types among cards in your hand", "card types among cards of a chosen player"):
+            self.assertIsNone(query_characteristic_quantity(excluded, source_name="Generic Source"))
+
+    def test_whole_card_collection_values_flow_to_existing_fixed_result_owners(self):
+        registry = load_default_capability_registry()
+        cases = (
+            ("Draw cards equal to the greatest mana value among permanents you control.", "Sorcery"),
+            ("You gain life equal to the total mana value of creature cards in your graveyard.", "Sorcery"),
+            ("Collection Source deals damage to any target equal to the number of basic land types among lands you control.", "Sorcery"),
+            ("Draw X cards, where X is the number of card types among cards in your graveyard.", "Sorcery"),
+            ("Create a 1/1 white Soldier creature token for each basic land type among lands you control.", "Sorcery"),
+            ("Target creature gets +X/+X until end of turn, where X is the number of lands you control plus 1.", "Sorcery"),
+            ("Collection Source's power is equal to the greatest mana value among creatures you control.", "Creature — Test"),
+        )
+        for index, (text, type_line) in enumerate(cases):
+            with self.subTest(text=text):
+                card = replace(_permanent(text, suffix=129_009_000 + index, name="Collection Source"), type_line=type_line)
+                ir = compile_oracle_card(card, capability_registry=registry, capability_profile="commander_review")
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                self.assertEqual(1, len(ir.faces[0].nodes))
+
+    def test_fixed_affine_value_retains_multiplier_offset_and_distinctness(self):
+        host, _, _ = self.host([("Land — Forest Island", 0, [], "battlefield", False, False)] * 2)
+        for text, expected in (("one plus the number of lands you control", 3),
+                               ("twice the number of lands you control", 4),
+                               ("the number of basic land types among lands you control plus 1", 3)):
+            with self.subTest(text=text):
+                quantity = query_characteristic_value(text, source_name="Generic Source")
+                self.assertIsNotNone(quantity)
+                self.assertEqual(expected, query_characteristic_count(host, SimpleNamespace(controller="A", ref="SOURCE"), quantity))
+        for excluded in ("the number of lands you control plus the number of creatures you control plus the number of artifacts you control",
+                         "half the number of lands you control", "the number of chosen creatures"):
+            self.assertIsNone(query_characteristic_value(excluded, source_name="Generic Source"))
+
+    def test_power_and_toughness_share_one_quantity_without_losing_toughness_offset(self):
+        text = "Generic Source's power is equal to the number of card types among cards in all graveyards and its toughness is equal to that number plus 1."
+        lowered = query_power_toughness_definition_handler(text, source_name="Generic Source")
+        self.assertIsNotNone(lowered)
+        fragment = lowered[1]["fragment"]["value"]
+        self.assertTrue(fragment["define_power"])
+        self.assertTrue(fragment["define_toughness"])
+        self.assertEqual(0, fragment["power_adjustment"])
+        self.assertEqual(1, fragment["toughness_adjustment"])
+
+    def test_two_closed_quantifiers_add_without_becoming_a_union(self):
+        host, _, layers = self.host([("Artifact Creature — Elf", 3, [], "battlefield", False, False),
+                                     ("Creature — Elf", 2, [], "graveyard", False, False)])
+        text = "the number of artifacts you control plus the number of creatures you control"
+        quantity = query_characteristic_value(text, source_name="Generic Source")
+        self.assertIsNotNone(quantity)
+        self.assertEqual(2, query_characteristic_count(host, SimpleNamespace(controller="A", ref="SOURCE"), quantity))
+        across = query_characteristic_value("the number of Elves you control plus the number of Elf cards in your graveyard", source_name="Generic Source")
+        self.assertIsNotNone(across)
+        self.assertEqual(2, query_characteristic_count(host, SimpleNamespace(controller="A", ref="SOURCE"), across))
+        host.state.cards["1"].is_token = True
+        self.assertEqual(1, query_characteristic_count(host, SimpleNamespace(controller="A", ref="SOURCE"), across))
+        host.state.cards["1"].is_token = False
+        host.state.cards["1"].object_kind = "card_copy"
+        self.assertEqual(1, query_characteristic_count(host, SimpleNamespace(controller="A", ref="SOURCE"), across))
+        self.assertTrue(all(layer is Layer.COLOR for layer in layers))
+        self.assertEqual(across.to_dict(), CharacteristicQuantitySpec.from_dict(across.to_dict()).to_dict())
+        self.assertIsNone(query_characteristic_value("the number of artifacts you control plus the number of creatures you control plus the number of lands you control", source_name="Generic Source"))
+
+    def test_colored_mana_symbols_use_current_cost_not_color_or_mana_value(self):
+        host, values, layers = self.host([("Artifact", 8, [], "battlefield", False, False),
+                                         ("Creature", 2, ["R"], "battlefield", False, False)])
+        values["0"]["mana_cost"] = "{2}{R/U}{2/R}{R/P}{U/B}"
+        values["1"]["mana_cost"] = "{2}"
+        quantity = query_characteristic_quantity("red mana symbols in the mana costs of permanents you control", source_name="Generic Source")
+        self.assertIsNotNone(quantity)
+        self.assertEqual(3, query_characteristic_count(host, SimpleNamespace(controller="A", ref="SOURCE"), quantity))
+        self.assertTrue(all(layer is Layer.COLOR for layer in layers))
+        self.assertIsNone(query_characteristic_value("your devotion to red", source_name="Generic Source"))
+        self.assertIsNone(query_characteristic_quantity("red mana symbols in the mana costs of cards in your hand", source_name="Generic Source"))
+
+    def test_extended_quantity_codecs_reject_forged_parameters_and_nested_sums(self):
+        count = query_characteristic_value("one plus the number of lands you control", source_name="Generic Source").to_dict()
+        for field, invalid in (("multiplier", True), ("multiplier", 0), ("offset", False), ("offset", -1), ("mana_colors", ["R"])):
+            with self.subTest(field=field, invalid=invalid):
+                with self.assertRaises(CharacteristicFragmentError):
+                    CharacteristicQuantitySpec.from_dict({**count, field: invalid})
+        added = query_characteristic_value("the number of lands you control plus the number of creatures you control", source_name="Generic Source").to_dict()
+        for terms in ([], [count], [added, count], [count, count, count]):
+            with self.subTest(terms=terms):
+                with self.assertRaises(CharacteristicFragmentError):
+                    CharacteristicQuantitySpec.from_dict({**added, "terms": terms})
+
+    def test_collection_object_count_mutant_is_killed(self):
+        host, _, _ = self.host([("Land — Forest", 0, [], "battlefield", False, False)] * 2)
+        text = "basic land types among lands you control"
+        self.assertEqual(1, self.count(text, host))
+        with mock.patch("quorune.dynamic_characteristics.reduce_public_quantity", side_effect=lambda rows, reduction, **kwargs: len(rows)):
+            with self.assertRaises(AssertionError):
+                self.assertEqual(1, self.count(text, host))
 
 
 class TypedDynamicCharacteristicCompilerTests(unittest.TestCase):
@@ -157,6 +349,12 @@ class TypedDynamicCharacteristicCompilerTests(unittest.TestCase):
                 KEYWORD_GRANT_HANDLER,
                 "trigger.keyword.ward.fixed_generic",
             ),
+            (
+                "Generic Distinct Color Modifier",
+                "This creature gets +1/+1 for each color among permanents you control.",
+                QUERY_HANDLER,
+                "continuous.characteristics.query_count_modifier",
+            ),
         )
         for index, (name, text, handler_id, capability_id) in enumerate(cases):
             with self.subTest(name=name):
@@ -180,7 +378,7 @@ class TypedDynamicCharacteristicCompilerTests(unittest.TestCase):
         unsupported = (
             "Multicolored creatures you control have protection from red.",
             "This creature has haste as long as you have exactly 10 life.",
-            "This creature gets +1/+1 for each color among permanents you control.",
+            "This creature gets +1/+1 for each color among cards in your hand.",
             "This creature gets +2/+2 if there are three land cards in your graveyard.",
         )
         for index, text in enumerate(unsupported):

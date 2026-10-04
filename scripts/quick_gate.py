@@ -147,6 +147,38 @@ def build_plan(
                 ),
             )
         )
+        if "test_fixed_counter_event_triggers" in selected_modules:
+            steps.append(QuickStep(
+                "target-corpus-carrier-contract",
+                (python, "-m", "unittest", "discover", "-s", "tests",
+                 "-p", "test_fixed_counter_event_triggers.py", "-k",
+                 "test_tap_state_target_body_is_accepted_by_corpus_assurance"),
+            ))
+        if "test_capability_implementation_mutations" in selected_modules:
+            steps.append(QuickStep(
+                "mutation-patch-target-integrity",
+                (python, "-m", "unittest", "discover", "-s", "tests",
+                 "-p", "test_capability_implementation_mutations.py", "-k",
+                 "test_literal_patch_targets_resolve_before_mutation_execution"),
+            ))
+        quantity_sources = {
+            "quorune/compiler/collection_quantity_templates.py",
+            "quorune/compiler/query_characteristic_templates.py",
+        }
+        if quantity_sources.intersection(paths):
+            for module, test in (
+                ("test_typed_dynamic_characteristics", "test_versioned_codec_keeps_legacy_counts_and_closed_exclusions"),
+                ("test_typed_dynamic_characteristics", "test_closed_characteristic_families_compile_exact_and_near_misses_remain_residual"),
+                ("test_typed_query_self_characteristics", "test_query_characteristic_grammar_keeps_ambiguous_families_residual"),
+                ("test_query_power_toughness_definitions", "test_query_power_toughness_definition_grammar_keeps_open_families_residual"),
+                ("test_fixed_public_state_characteristics", "test_public_condition_closure_compiles_typed_queries_and_facts"),
+                ("test_declared_effect_amounts", "test_undefined_x_dynamic_targets_and_open_definitions_remain_residual"),
+            ):
+                steps.append(QuickStep(
+                    "quantity-boundary-" + test,
+                    (python, "-m", "unittest", "discover", "-s", "tests",
+                     "-p", module + ".py", "-k", test),
+                ))
     if phase == "normal" and "compact-ci-dependencies" in impact.checks:
         steps.append(
             QuickStep(

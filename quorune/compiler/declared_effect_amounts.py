@@ -14,7 +14,7 @@ from ..query_effect_amount_model import (
     CastXAmountSpec, PublicQueryAmountError, PublicQueryAmountSpec,
     DECLARED_AMOUNT_CAPABILITY, scope_declared_amount_bindings,
 )
-from .query_characteristic_templates import query_characteristic_quantity
+from .query_characteristic_templates import query_characteristic_value
 from ..util import mana_cost_to_vector
 
 
@@ -22,7 +22,7 @@ DECLARED_EFFECT_AMOUNT_MECHANIC = "declared-effect-amount"
 CompiledEffectTemplate = tuple[str | None, tuple[Mapping[str, Any], ...], Mapping[str, Any] | None, tuple[str, ...]]
 EffectCompiler = Callable[[str], CompiledEffectTemplate]
 _DEFINITION = re.compile(
-    r"(?P<body>.+?), where X is (?:equal to )?the number of (?P<quantity>.+?)\.?$",
+    r"(?P<body>.+?), where X is (?:equal to )?(?P<quantity>.+?)\.?$",
     re.IGNORECASE,
 )
 _X = re.compile(r"\bX\b")
@@ -69,7 +69,7 @@ def declared_effect_amount_template(
         # This definition belongs to one instruction, not arbitrary statements.
         if "." in body or len(re.findall(r"\bwhere X\b", normalized, re.I)) != 1:
             return None
-        quantity = query_characteristic_quantity(definition["quantity"], source_name=source_name, definition_extensions=True)
+        quantity = query_characteristic_value(definition["quantity"], source_name=source_name)
         if quantity is None:
             return None
         try:

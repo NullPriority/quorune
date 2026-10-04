@@ -53,6 +53,14 @@ def _query_is_layer_five_closed(query: ObjectQuerySpec) -> bool:
     return True
 
 
+def _quantity_is_public_amount_closed(quantity: CharacteristicQuantitySpec) -> bool:
+    if quantity.schema_version == 3:
+        return all(_quantity_is_public_amount_closed(term) for term in quantity.terms)
+    return (quantity.scope in _ALLOWED_SCOPES and quantity.query is not None
+            and not quantity.exclude_source and not quantity.exclude_attached_object
+            and _query_is_layer_five_closed(quantity.query))
+
+
 @dataclass(frozen=True, slots=True)
 class PublicQueryAmountSpec:
     """One signed coefficient over a current public object-query count."""
@@ -83,13 +91,7 @@ class PublicQueryAmountSpec:
             raise PublicQueryAmountError(
                 "Public query effect amount requires a typed quantity"
             )
-        if (
-            self.quantity.scope not in _ALLOWED_SCOPES
-            or self.quantity.query is None
-            or self.quantity.exclude_source
-            or self.quantity.exclude_attached_object
-            or not _query_is_layer_five_closed(self.quantity.query)
-        ):
+        if not _quantity_is_public_amount_closed(self.quantity):
             raise PublicQueryAmountError(
                 "Public query effect amount requires a cycle-safe public zone query"
             )

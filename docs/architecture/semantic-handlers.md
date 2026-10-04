@@ -124,6 +124,15 @@ its instruction resolves; unavailable phasing interactions do not reject an
 unrelated earlier movement. Relevant failures still restore all stack contexts
 through the canonical zone owner's transaction boundary.
 
+Public collection amounts retain the existing fixed draw, life, damage, token
+and characteristic result owners. Closed current quantities use the same
+cycle-safe characteristic boundary as static modifiers and definitions. A
+fixed token instruction "for each" lowers its quantity without widening the
+token definition or inferring a linked-result set. Declared values keep one
+instruction-scoped value across suspension; independent instructions still
+read separately. Unsupported quantities and unavailable matched values fail
+closed before mutation.
+
 Tap-state occurrences are emitted only for actual committed state changes.
 The canonical tap owner seals object incarnation, controller, characteristics,
 and attack-declaration cause. Explicit simultaneous instructions and costs

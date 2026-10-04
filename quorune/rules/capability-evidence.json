@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "5742b95a61e888e9f60c8ee5221d42378774cbfdda487c0633ed2764b8e84ad2",
-  "declaration_source_fingerprint": "98b7cb066fb36114d3c6682e87f04129c57d3d0b6c383a16ceca4b87b04037ea",
+  "registry_fingerprint": "48710c0edc73581b1af95cf7e6b569a0796657d77315678f3a6c15a686a37dd6",
+  "declaration_source_fingerprint": "1f78aebed6b7c71a23e4813a44f1e8ff2d32a43afcb76566fc17c64abc5cbcbf",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -24235,6 +24235,26 @@
     {
       "capability_id": "continuous.characteristics.query_count_modifier",
       "evidence_class": "interaction",
+      "test_id": "tests.test_public_query_effect_amounts.PublicCollectionQuantityActionTests.test_trusted_domain_resolution_reads_current_membership_and_rolls_back_bad_target",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An actual land-return response changes the pending public quantity from three distinct basic types to one, and rejected target submission preserves authoritative state."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "interaction",
       "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicCompilerTests.test_query_ability_removal_sibling_withholds_runtime_admission",
       "official_rule_ids": [
         "604.1",
@@ -24315,6 +24335,26 @@
     {
       "capability_id": "continuous.characteristics.query_count_modifier",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_query_effect_amounts.PublicCollectionQuantityActionTests.test_trusted_collection_draw_activation_characteristics_privacy_and_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Four-player trusted command witnesses keep controller-relative and all-graveyard quantities distinct."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicRuntimeTests.test_query_quantities_recompute_controller_correct_characteristics",
       "official_rule_ids": [
         "604.1",
@@ -24335,6 +24375,26 @@
     {
       "capability_id": "continuous.characteristics.query_count_modifier",
       "evidence_class": "mutation",
+      "test_id": "tests.test_typed_dynamic_characteristics.PublicCollectionReductionTests.test_collection_object_count_mutant_is_killed",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Kill replacement of the distinct public reduction with raw object count while preserving the shared layer-safe quantity owner."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "mutation",
       "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicCompilerTests.test_query_characteristic_compiler_mutant_is_killed",
       "official_rule_ids": [
         "604.1",
@@ -24351,6 +24411,26 @@
         "commander_review"
       ],
       "applicability_note": "Kill removal of the typed query-characteristic compiler owner by requiring its exact handler at the source span."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "negative",
+      "test_id": "tests.test_typed_dynamic_characteristics.PublicCollectionReductionTests.test_extended_quantity_codecs_reject_forged_parameters_and_nested_sums",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed versioned codecs reject Boolean arithmetic, unknown parameters, and nested or unbounded sum operands."
     },
     {
       "capability_id": "continuous.characteristics.query_count_modifier",
@@ -24415,6 +24495,26 @@
     {
       "capability_id": "continuous.characteristics.query_count_modifier",
       "evidence_class": "positive",
+      "test_id": "tests.test_public_query_effect_amounts.PublicCollectionQuantityActionTests.test_trusted_collection_draw_activation_characteristics_privacy_and_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Real trusted casts and activations consume current maximum and distinct-type quantities; live CDA and static modifiers use the same counted land-type set."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "positive",
       "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicCompilerTests.test_query_characteristic_grammar_compiles_closed_fragments",
       "official_rule_ids": [
         "604.1",
@@ -24475,6 +24575,26 @@
     {
       "capability_id": "continuous.characteristics.query_count_modifier",
       "evidence_class": "privacy",
+      "test_id": "tests.test_public_query_effect_amounts.PublicCollectionQuantityActionTests.test_trusted_collection_draw_activation_characteristics_privacy_and_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Other seats do not receive the private card reference drawn from the quantified result."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "privacy",
       "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicRuntimeTests.test_query_hand_count_projects_and_replays_without_hidden_identity",
       "official_rule_ids": [
         "604.1",
@@ -24495,6 +24615,26 @@
     {
       "capability_id": "continuous.characteristics.query_count_modifier",
       "evidence_class": "replay",
+      "test_id": "tests.test_public_query_effect_amounts.PublicCollectionQuantityActionTests.test_trusted_collection_draw_activation_characteristics_privacy_and_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Save/load and exact pre-action command replay retain versioned quantities, paired CDA offsets and full resulting consequences."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "replay",
       "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicRuntimeTests.test_query_hand_count_projects_and_replays_without_hidden_identity",
       "official_rule_ids": [
         "604.1",
@@ -24511,6 +24651,23 @@
         "commander_review"
       ],
       "applicability_note": "Pin the typed hand-size fragment and hidden zone membership into a checkpoint, then replay the following multiplayer priority commands exactly."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_query_effect_amounts.PublicCollectionQuantityActionTests.test_trusted_domain_resolution_reads_current_membership_and_rolls_back_bad_target",
+      "official_rule_ids": [
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An actual land-return response changes the pending public quantity from three distinct basic types to one, and rejected target submission preserves authoritative state."
     },
     {
       "capability_id": "continuous.characteristics.query_power_toughness_definition",
@@ -24566,6 +24723,23 @@
     {
       "capability_id": "continuous.characteristics.query_power_toughness_definition",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_query_effect_amounts.PublicCollectionQuantityActionTests.test_trusted_collection_draw_activation_characteristics_privacy_and_replay",
+      "official_rule_ids": [
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Four-player trusted command witnesses keep controller-relative and all-graveyard quantities distinct."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_query_power_toughness_definitions.QueryPowerToughnessDefinitionRuntimeTests.test_query_definition_copy_and_control_change_use_current_source",
       "official_rule_ids": [
         "604.3",
@@ -24596,6 +24770,23 @@
         "commander_review"
       ],
       "applicability_note": "Kill removal of the all-zone typed definition compiler production at its exact source span."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_typed_dynamic_characteristics.PublicCollectionReductionTests.test_collection_object_count_mutant_is_killed",
+      "official_rule_ids": [
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Kill replacement of the distinct public reduction with raw object count while preserving the shared layer-safe quantity owner."
     },
     {
       "capability_id": "continuous.characteristics.query_power_toughness_definition",
@@ -24630,6 +24821,40 @@
         "commander_review"
       ],
       "applicability_note": "Keep summed, distinct, chosen, tapped, linked, arithmetic, and color-cardinality quantities residual."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_typed_dynamic_characteristics.PublicCollectionReductionTests.test_extended_quantity_codecs_reject_forged_parameters_and_nested_sums",
+      "official_rule_ids": [
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed versioned codecs reject Boolean arithmetic, unknown parameters, and nested or unbounded sum operands."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_query_effect_amounts.PublicCollectionQuantityActionTests.test_trusted_collection_draw_activation_characteristics_privacy_and_replay",
+      "official_rule_ids": [
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Real trusted casts and activations consume current maximum and distinct-type quantities; live CDA and static modifiers use the same counted land-type set."
     },
     {
       "capability_id": "continuous.characteristics.query_power_toughness_definition",
@@ -24668,6 +24893,23 @@
     {
       "capability_id": "continuous.characteristics.query_power_toughness_definition",
       "evidence_class": "privacy",
+      "test_id": "tests.test_public_query_effect_amounts.PublicCollectionQuantityActionTests.test_trusted_collection_draw_activation_characteristics_privacy_and_replay",
+      "official_rule_ids": [
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Other seats do not receive the private card reference drawn from the quantified result."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "privacy",
       "test_id": "tests.test_query_power_toughness_definitions.QueryPowerToughnessDefinitionRuntimeTests.test_query_definition_hand_count_projects_without_hidden_identity",
       "official_rule_ids": [
         "604.3",
@@ -24681,6 +24923,23 @@
         "commander_review"
       ],
       "applicability_note": "Consume only raw controller hand size and keep every hidden card identity out of opponent projection."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_query_effect_amounts.PublicCollectionQuantityActionTests.test_trusted_collection_draw_activation_characteristics_privacy_and_replay",
+      "official_rule_ids": [
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Save/load and exact pre-action command replay retain versioned quantities, paired CDA offsets and full resulting consequences."
     },
     {
       "capability_id": "continuous.characteristics.query_power_toughness_definition",
@@ -53421,6 +53680,24 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "interaction",
+      "test_id": "tests.test_public_query_effect_amounts.PublicCollectionQuantityActionTests.test_trusted_domain_resolution_reads_current_membership_and_rolls_back_bad_target",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An actual land-return response changes the pending public quantity from three distinct basic types to one, and rejected target submission preserves authoritative state."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "interaction",
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountRuntimeTests.test_query_amounts_delegate_to_draw_and_token_owners",
       "official_rule_ids": [
         "608.2h",
@@ -53547,6 +53824,24 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_query_effect_amounts.PublicCollectionQuantityActionTests.test_trusted_collection_draw_activation_characteristics_privacy_and_replay",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Four-player trusted command witnesses keep controller-relative and all-graveyard quantities distinct."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryCharacteristicActionTests.test_trusted_query_scaled_activation_uses_real_action_path_and_replays",
       "official_rule_ids": [
         "608.2h",
@@ -53615,6 +53910,24 @@
         "commander_review"
       ],
       "applicability_note": "Replace the resolution-time quantity result and prove the locked-controller behavioral result detects the survivor."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_typed_dynamic_characteristics.PublicCollectionReductionTests.test_collection_object_count_mutant_is_killed",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Kill replacement of the distinct public reduction with raw object count while preserving the shared layer-safe quantity owner."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
@@ -53726,6 +54039,24 @@
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_typed_dynamic_characteristics.PublicCollectionReductionTests.test_extended_quantity_codecs_reject_forged_parameters_and_nested_sums",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed versioned codecs reject Boolean arithmetic, unknown parameters, and nested or unbounded sum operands."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "positive",
       "test_id": "tests.test_public_query_action_registration.PublicQueryActionRegistrationTests.test_existing_query_source_self_activation_is_trusted_and_replays",
       "official_rule_ids": [
@@ -53759,6 +54090,42 @@
         "commander_review"
       ],
       "applicability_note": "Existing draw, life, damage, token and temporary characteristic scalars reach the canonical effect-program admission boundary rather than fixed-integer-only recognizers."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_query_effect_amounts.PublicCollectionQuantityActionTests.test_trusted_collection_draw_activation_characteristics_privacy_and_replay",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Real trusted casts and activations consume current maximum and distinct-type quantities; live CDA and static modifiers use the same counted land-type set."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_query_effect_amounts.PublicCollectionQuantityActionTests.test_trusted_domain_tokens_and_chroma_cost_symbols_resolve_and_replay",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual trusted fixed-token and life spells distinguish three basic types from two lands and three colored hybrid mana symbols from colors or mana value; save/load and pre-action replay preserve results."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
@@ -53813,6 +54180,24 @@
         "commander_review"
       ],
       "applicability_note": "Only the acting principal receives the authoritative action decision; quantities do not expose other players' hidden identities."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_public_query_effect_amounts.PublicCollectionQuantityActionTests.test_trusted_collection_draw_activation_characteristics_privacy_and_replay",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Other seats do not receive the private card reference drawn from the quantified result."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
@@ -53903,6 +54288,42 @@
         "commander_review"
       ],
       "applicability_note": "A checkpoint before the offered spell reproduces payment, stack execution and exact draw consequences through the real Game Record path."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_query_effect_amounts.PublicCollectionQuantityActionTests.test_trusted_collection_draw_activation_characteristics_privacy_and_replay",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Save/load and exact pre-action command replay retain versioned quantities, paired CDA offsets and full resulting consequences."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_query_effect_amounts.PublicCollectionQuantityActionTests.test_trusted_domain_tokens_and_chroma_cost_symbols_resolve_and_replay",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual trusted fixed-token and life spells distinguish three basic types from two lands and three colored hybrid mana symbols from colors or mana value; save/load and pre-action replay preserve results."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
@@ -73871,5 +74292,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "b5d229758d4d4153e7d6d98da08e6ca329dd0b36e2a4050d65c091dcd20ad64a"
+  "fingerprint": "52bfe7cb30ab92a001656c2f57b727f8e886ef0e481504fe9749b16364182d8b"
 }

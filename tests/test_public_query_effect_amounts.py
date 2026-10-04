@@ -1398,5 +1398,131 @@ class PublicQueryCharacteristicActionTests(unittest.TestCase):
         self.assertNotIn("vigilance", engine._combat_keywords(target))
 
 
+class PublicCollectionQuantityActionTests(unittest.TestCase):
+    """Real offered commands with canonical exact promotion, never trust mocks."""
+
+    from test_linked_exile_return import LinkedExileReturnActionTests as _helpers
+    session = _helpers.session
+    add = _helpers.add
+    seal = _helpers.seal
+    cast = _helpers.cast
+    finish = _helpers.finish
+    replay = _helpers.replay
+
+    @classmethod
+    def setUpClass(cls):
+        from quorune.deck import DeckDefinition, DeckEntry
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "collection-quantity.sqlite3"
+        build_fixture_database([ROOT / "tests/fixtures/linked-exile-return-cards.json",
+                                ROOT / "tests/fixtures/public-collection-quantity-cards.json"], path)
+        cls.db = CardDatabase(path)
+        cls.deck = DeckDefinition("Generic collection", [DeckEntry("Generic Blink Commander", 1, "commander"),
+            DeckEntry("Generic Blink Plains", 15)], ["Generic Blink Commander"])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    def register(self, session):
+        register_generated_programs(
+            self.db, session.engine.semantics,
+            tuple(card for card in self.db.iter_cards() if card.oracle_text),
+            trust_level="provisional", capability_registry=load_default_capability_registry(),
+            capability_profile="commander_review", promote_exact_runtime_handlers=True,
+            promote_exact_trigger_programs=True, promote_exact_effect_programs=True,
+            promote_exact_capability_declarations=True,
+        )
+        for name in ("Generic Collection Maximum Draw", "Generic Collection Domain Definition", "Generic Collection Pair Definition", "Generic Collection Self Modifier", "Generic Collection Card Type Draw"):
+            programs = session.engine.semantics.programs_for_oracle(self.db.lookup(name).oracle_id)
+            self.assertTrue(programs)
+            self.assertTrue(all(session.engine.semantic_program_is_current_trusted(program) for program in programs))
+
+    def test_trusted_collection_draw_activation_characteristics_privacy_and_replay(self):
+        session = self.session(24900601)
+        self.register(session)
+        definition = self.add(session, "Generic Collection Domain Definition", "DOMAIN", zone="battlefield")
+        self.add(session, "Generic Blink Plains", "PLAIN", zone="battlefield")
+        self.add(session, "Generic Collection Dual Land", "DUAL", zone="battlefield")
+        self.add(session, "Generic Collection Body", "BODY", zone="battlefield")
+        self.add(session, "Generic Collection Body", "GRAVE", zone="graveyard")
+        self.add(session, "Generic Collection Body", "GRAVE_B", owner="B", zone="graveyard")
+        paired = self.add(session, "Generic Collection Pair Definition", "PAIRED", zone="battlefield")
+        modifier = self.add(session, "Generic Collection Self Modifier", "MODIFIER", zone="battlefield")
+        activation = self.add(session, "Generic Collection Card Type Draw", "DRAW_SOURCE", zone="battlefield")
+        spell = self.add(session, "Generic Collection Maximum Draw", "MAX_DRAW")
+        self.seal(session)
+        self.assertEqual(3, session.engine._numeric_stat(definition.object_id, "power"))
+        self.assertEqual((4, 5), (session.engine._numeric_stat(modifier.object_id, "power"), session.engine._numeric_stat(modifier.object_id, "toughness")))
+        self.assertEqual((2, 3), (session.engine._numeric_stat(paired.object_id, "power"), session.engine._numeric_stat(paired.object_id, "toughness")))
+        before = len(session.state.players["A"].zones["hand"])
+        self.cast(session, spell, [])
+        self.finish(session)
+        self.assertEqual(before + 4, len(session.state.players["A"].zones["hand"]))
+        self.assertEqual((3, 4), (session.engine._numeric_stat(paired.object_id, "power"), session.engine._numeric_stat(paired.object_id, "toughness")))
+        drawn = session.state.cards[session.state.players["A"].zones["hand"][-1]]
+        for seat in "BCD":
+            self.assertNotIn(drawn.ref, json.dumps(session.packet(f"pilot:{seat}", full=True)))
+        decision = session.packet("pilot:A", full=True)["decision"]
+        action = next(value for value in decision["ctx"]["legal"]["actions"]
+                      if value.get("source") == activation.ref and value["id"].startswith("activate:"))
+        before = len(session.state.players["A"].zones["hand"])
+        result = session.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.finish(session)
+        self.assertEqual(before + 3, len(session.state.players["A"].zones["hand"]))
+        self.replay(session)
+
+    def test_trusted_domain_resolution_reads_current_membership_and_rolls_back_bad_target(self):
+        session = self.session(24900602)
+        self.register(session)
+        self.add(session, "Generic Blink Plains", "PLAIN", zone="battlefield")
+        dual = self.add(session, "Generic Collection Dual Land", "DUAL", zone="battlefield")
+        damage = self.add(session, "Generic Collection Domain Damage", "DOMAIN_DAMAGE")
+        returning = self.add(session, "Generic Collection Land Return", "RETURN")
+        definition = self.add(session, "Generic Collection Domain Definition", "DOMAIN", zone="battlefield")
+        self.seal(session)
+        before_life = session.state.players["B"].life
+        decision = session.packet("pilot:A", full=True)["decision"]
+        action = next(value for value in decision["ctx"]["legal"]["actions"] if value["id"] == "cast:" + damage.ref)
+        before_hash = authoritative_state_hash(session.state)
+        rejected = session.act("pilot:A", {"action_id": action["id"], "targets": ["missing-object"], "pay": "auto"})
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before_hash, authoritative_state_hash(session.state))
+        self.cast(session, damage, ["B"])
+        self.cast(session, returning, [dual.ref])
+        self.finish(session)
+        self.assertEqual("hand", session.state.cards[dual.object_id].zone)
+        self.assertEqual(1, session.engine._numeric_stat(definition.object_id, "power"))
+        self.assertEqual(before_life - 1, session.state.players["B"].life)
+        self.replay(session)
+
+    def test_trusted_domain_tokens_and_chroma_cost_symbols_resolve_and_replay(self):
+        session = self.session(24900603)
+        self.register(session)
+        self.add(session, "Generic Blink Plains", "PLAIN", zone="battlefield")
+        self.add(session, "Generic Collection Dual Land", "DUAL", zone="battlefield")
+        self.add(session, "Generic Collection Chroma Body", "HYBRID", zone="battlefield")
+        token_spell = self.add(session, "Generic Collection Domain Tokens", "TOKENS")
+        life_spell = self.add(session, "Generic Collection Chroma Life", "CHROMA")
+        self.seal(session)
+        before_life = session.state.players["A"].life
+        self.cast(session, token_spell, [])
+        self.finish(session)
+        tokens = [card for card in session.state.cards.values()
+                  if card.is_token and card.zone == "battlefield"]
+        self.assertEqual(3, len(tokens), "Three basic types, not two lands")
+        self.assertTrue(all(card.controller == "A" for card in tokens))
+        self.assertTrue(all(session.engine._numeric_stat(card.object_id, "power") == 1
+                            and session.engine._numeric_stat(card.object_id, "toughness") == 1
+                            for card in tokens))
+        self.cast(session, life_spell, [])
+        self.finish(session)
+        self.assertEqual(before_life + 3, session.state.players["A"].life,
+                         "Three red hybrid symbols, not colors or mana value")
+        self.replay(session)
+
+
 if __name__ == "__main__":
     unittest.main()

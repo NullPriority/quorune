@@ -374,6 +374,22 @@
       },
       "candidate_bundles": [
         {
+          "bundle_id": "bundle:public-collection-quantity-reductions",
+          "member_family_ids": ["continuous_layer:continuous-effect-layers-and-dependencies", "quantity_expression:dynamic-quantity"],
+          "canonical_owner_ids": ["capability:continuous.characteristics.query_count_modifier", "capability:continuous.characteristics.query_power_toughness_definition", "capability:quantity_expression.public_query_effect_amount", "component:quorune.compiler.collection_quantity_templates.collection_quantity", "component:quorune.dynamic_characteristics.query_characteristic_count", "component:quorune.public_quantity_reductions.reduce_public_quantity"],
+          "source_contexts": ["activated", "spell", "static", "triggered"],
+          "normalized_literal_parameters": ["card-domain", "closed-leaf-sum", "current-layer-five-membership", "fixed-affine-value", "independent-characteristic-offset", "public-collection-reduction"],
+          "shared_dependencies": ["continuous.characteristics.query_count_modifier", "continuous.characteristics.query_power_toughness_definition", "quantity_expression.public_query_effect_amount"],
+          "shared_grammar": "Closed distinct basic-land-type, graveyard card-type, color, mana-value and colored-mana-symbol quantities with fixed affine values or two independent public leaf counts, shared by existing static and fixed-result owners.",
+          "estimated_implementation_hours": 5,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "One typed quantity boundary fans into characteristic definitions, self modifiers, draw, life, damage and fixed-token results without another query or mutation registry.",
+          "explicit_exclusions": ["Devotion and unavailable characteristic boundaries", "hidden characteristic collections and higher-layer aggregates", "independently unsupported carriers, results or siblings", "negative, chosen, linked, nested or open arithmetic"],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "public-collection-quantity-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:normalized-tap-state-event-closure",
           "member_family_ids": ["event_binding:intervening-if-and-reflexive-trigger-grammar", "event_binding:normalized-event-binding"],
           "canonical_owner_ids": ["capability:trigger.event.normalized_public_action", "component:quorune.compiler.tap_state_event_bindings.tap_state_event_binding_spec", "component:quorune.tap_state.dispatch_tap_state_occurrence"],
@@ -4779,14 +4795,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v248-normalized-tap-state-event-closure",
-      "compiler_version": "oracle-ir-v248",
-      "bundle_id": "bundle:normalized-tap-state-event-closure",
-      "candidate_ids": ["bundle:normalized-tap-state-event-closure"],
-      "family_ids": ["event_binding:intervening-if-and-reflexive-trigger-grammar", "event_binding:normalized-event-binding"],
-      "capability_ids": ["trigger.event.normalized_public_action"],
+      "transition_id": "oracle-ir-v249-public-collection-quantity-reductions",
+      "compiler_version": "oracle-ir-v249",
+      "bundle_id": "bundle:public-collection-quantity-reductions",
+      "candidate_ids": ["bundle:public-collection-quantity-reductions"],
+      "family_ids": ["continuous_layer:continuous-effect-layers-and-dependencies", "quantity_expression:dynamic-quantity"],
+      "capability_ids": ["continuous.characteristics.query_count_modifier", "continuous.characteristics.query_power_toughness_definition", "quantity_expression.public_query_effect_amount"],
       "non_harvest_reason": null,
-      "measurement_id": "measurement:normalized-tap-state-event-closure"
+      "measurement_id": "measurement:public-collection-quantity-reductions"
     },
     "forecast_corrections": [
       {

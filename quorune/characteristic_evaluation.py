@@ -464,10 +464,10 @@ def _query_characteristic_effects(
                     "Characteristic quantity resolvers must return a nonnegative integer"
                 )
             operations = tuple(
-                ContinuousOperation(operation, count)
-                for enabled, operation in (
-                    (fragment.define_power, "set_power"),
-                    (fragment.define_toughness, "set_toughness"),
+                ContinuousOperation(operation, count + adjustment)
+                for enabled, operation, adjustment in (
+                    (fragment.define_power, "set_power", fragment.power_adjustment),
+                    (fragment.define_toughness, "set_toughness", fragment.toughness_adjustment),
                 )
                 if enabled
             )

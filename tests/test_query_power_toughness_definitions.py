@@ -170,12 +170,12 @@ class QueryPowerToughnessDefinitionCompilerTests(unittest.TestCase):
 
     def test_query_power_toughness_definition_grammar_keeps_open_families_residual(self):
         rejected = (
-            "Definition Source's power and toughness are each equal to the number of Forests you control plus the number of Elves you control.",
-            "Definition Source's power is equal to the number of card types among cards in all graveyards.",
+            "Definition Source's power and toughness are each equal to the number of Forests you control plus the number of Elves you control plus the number of artifacts you control.",
+            "Definition Source's power is equal to the number of card types among cards in the chosen player's graveyard.",
             "Definition Source's power is equal to the number of tapped creatures you control.",
             "Definition Source's power is equal to the number of cards in the chosen player's hand.",
-            "Definition Source's power is equal to the number of creatures you control plus 1.",
-            "Definition Source's power and toughness are each equal to the number of colors among permanents you control.",
+            "Definition Source's power is equal to the number of creatures you control minus 1.",
+            "Definition Source's power and toughness are each equal to the number of colors among cards in your hand.",
             "Definition Source's power is equal to the number of cards exiled with it.",
         )
         for text in rejected:
@@ -198,6 +198,30 @@ class QueryPowerToughnessDefinitionCompilerTests(unittest.TestCase):
                     )
                 )
                 self.assertTrue(program.residuals)
+
+    def test_collection_definitions_promote_only_closed_former_exclusions(self):
+        admitted = (
+            "Definition Source's power and toughness are each equal to the number of Forests you control plus the number of Elves you control.",
+            "Definition Source's power is equal to the number of card types among cards in all graveyards.",
+            "Definition Source's power is equal to the number of creatures you control plus 1.",
+            "Definition Source's power and toughness are each equal to the number of colors among permanents you control.",
+        )
+        for text in admitted:
+            with self.subTest(text=text):
+                lowered = query_power_toughness_definition_handler(
+                    text, source_name="Definition Source"
+                )
+                self.assertIsNotNone(lowered)
+                program = self.compile(
+                    permanent(text, suffix=129_001_000),
+                    trust_level="provisional",
+                )
+                self.assertFalse(program.residuals)
+                self.assertTrue(any(
+                    descriptor.get("handler_id") == HANDLER_ID
+                    for ability in program.abilities
+                    for descriptor in ability.handlers
+                ))
 
     def test_query_power_toughness_definition_descriptors_fail_closed(self):
         valid = definition_fragment(

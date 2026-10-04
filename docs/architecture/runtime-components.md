@@ -285,6 +285,16 @@ state predicate. Declaration restrictions consume the same snapshot for their
 closed public conditions; they do not add a combat-local query registry. No
 runtime Oracle parser or parallel applicability registry is involved.
 
+The same quantity boundary supports versioned distinct basic land types,
+graveyard card types, colors, maximum/total mana value and colored mana-symbol
+counts. It reads current copy/type/color data only through layer 5. Exactly two
+leaf quantities may be added without conflating them with a union; fixed
+positive multipliers and nonnegative offsets remain explicit. Paired all-zone
+power/toughness definitions retain independent field offsets. Legacy count and
+definition payloads retain their existing codecs. Devotion and its modifiers,
+hidden characteristic reads, power/toughness aggregates and open or nested
+arithmetic remain unsupported rather than using an incorrect boundary.
+
 `continuous.attached.fixed-characteristics.v1` keeps one reciprocal live
 attachment relation while lowering its closed operations into layers 4, 5, 6,
 7b, and 7c. It supports fixed or typed public-query power/toughness, base

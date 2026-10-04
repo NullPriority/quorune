@@ -236,11 +236,11 @@ class TypedQuerySelfCharacteristicCompilerTests(unittest.TestCase):
 
     def test_query_characteristic_grammar_keeps_ambiguous_families_residual(self):
         excluded = (
-            "Domain — This creature gets +1/+1 for each basic land type among lands you control.",
-            "This creature gets +1/+1 for each card type among cards in your graveyard.",
+            "Domain — This creature gets +1/+1 for each basic land type among lands in the chosen player's graveyard.",
+            "This creature gets +1/+1 for each card type among cards in your hand.",
             "This creature gets +1/+1 for each creature named Query Source you control.",
             "This creature gets +1/+1 for each creature you control with flying.",
-            "This creature gets +1/+1 for each color among permanents you control.",
+            "This creature gets +1/+1 for each color among permanents with the chosen name.",
             "This creature gets +1/+1 for each artifact you control and has flying.",
             "{2}: This creature gets +1/+1 for each artifact you control.",
         )
@@ -263,6 +263,21 @@ class TypedQuerySelfCharacteristicCompilerTests(unittest.TestCase):
                         for descriptor in ability.handlers
                     )
                 )
+
+    def test_collection_self_modifiers_promote_closed_former_exclusions(self):
+        for text, reduction in (
+            ("Domain — This creature gets +1/+1 for each basic land type among lands you control.", "distinct_basic_land_types"),
+            ("This creature gets +1/+1 for each card type among cards in your graveyard.", "distinct_card_types"),
+            ("This creature gets +1/+1 for each color among permanents you control.", "distinct_colors"),
+        ):
+            with self.subTest(text=text):
+                lowered = query_self_characteristics_handler(text, source_name="Query Source")
+                self.assertIsNotNone(lowered)
+                quantity = lowered[1]["fragment"]["value"]["quantity"]
+                self.assertEqual(2, quantity["schema_version"])
+                self.assertEqual(reduction, quantity["reduction"])
+                program = self.compile(permanent(text, suffix=122_001_100), trust_level="provisional")
+                self.assertFalse(program.residuals)
 
     def test_query_gated_prefix_and_keyword_only_grammar_is_closed(self):
         cases = (
