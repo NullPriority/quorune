@@ -44,6 +44,18 @@ def occurrence(**changes) -> ZoneChangeOccurrence:
 
 
 class ZoneTriggerEventModelTests(unittest.TestCase):
+    def test_copiable_event_snapshots_use_entry_or_departure_incarnation(self):
+        entered = normalized_zone_trigger_events(occurrence(
+            previous_copy_snapshot={"marker":"before"}, current_copy_snapshot={"marker":"after"}))
+        for event in entered:
+            self.assertEqual("object-1:1", event.context["card_object_identity"])
+            self.assertEqual("after", event.context["copiable_snapshot"]["marker"])
+        departed = normalized_zone_trigger_events(occurrence(origin="battlefield", destination="graveyard",
+            previous_copy_snapshot={"marker":"before"}, current_copy_snapshot=None))
+        for event in departed:
+            self.assertEqual("object-1:0", event.context["card_object_identity"])
+            self.assertEqual("before", event.context["copiable_snapshot"]["marker"])
+
     def test_library_position_normalization_is_owned_by_zone_transitions(self):
         self.assertIsNone(normalized_library_position("graveyard", True))
         self.assertEqual("top", normalized_library_position("library", " TOP "))

@@ -3,6 +3,24 @@
   "declarations": [
     {
       "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_copy_recipe_with_unsupported_replacement_fails_closed_at_runtime_admission",
+      "piece_ids": ["capability.token.creation.fixed_copy", "residual.replacement.replacement-applicability"],
+      "capability_ids": ["token.creation.fixed_copy"],
+      "interaction_order": 2,
+      "assertion": "A generic artifact has an exact token-copy activation beside an unsupported skip-step replacement. Actual CardProgram construction and runtime binding reject the unresolved whole-card composition; this is not successful gameplay support for the replacement."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_copy_recipe_with_unsupported_replacement_fails_closed_at_runtime_admission",
+      "piece_ids": ["capability.token.creation.fixed_copy", "residual.replacement.self-replacement-and-prevention-ordering"],
+      "capability_ids": ["token.creation.fixed_copy"],
+      "interaction_order": 2,
+      "assertion": "The same generic compiled carrier reaches the canonical runtime admission boundary and retains explicit replacement-ordering residuals rather than executing the approximation."
+    },
+    {
+      "evidence_class": "interaction",
       "assurance_kind": "runtime_composition",
       "test_id": "test_trusted_tap_cost_and_untap_effect_dispatch_and_replay",
       "piece_ids": ["capability.permanent.untap.effect", "capability.trigger.event.normalized_public_action"],

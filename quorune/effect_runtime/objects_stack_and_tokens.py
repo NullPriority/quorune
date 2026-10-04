@@ -331,6 +331,9 @@ def _apply_create_token(
     reason: str,
 ) -> Any:
     op = operation
+    if "copy_spec" in effect:
+        from ..token_copy_runtime import apply_copy_recipe
+        return apply_copy_recipe(host, effect, actor=actor, reason=reason)
     copy_source = effect.get("copy_of")
     token_name = (
         str(effect["name"])

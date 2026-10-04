@@ -374,6 +374,22 @@
       },
       "candidate_bundles": [
         {
+          "bundle_id": "bundle:copiable-token-production-recipes",
+          "member_family_ids": ["activated_effect:create-token", "effect_clause:create-token", "event_binding:normalized-event-binding", "keyword_dependency:populate"],
+          "canonical_owner_ids": ["capability:token.creation.fixed_copy", "component:quorune.compiler.token_copy_templates.token_copy_recipe_template", "component:quorune.token_copy_references.pin_copy_characteristic_departures", "component:quorune.token_creation.create_tokens"],
+          "source_contexts": ["activated", "spell", "triggered"],
+          "normalized_literal_parameters": ["copiable-fixed-exceptions", "fixed-quantity", "independent-aftercare", "populate-choice", "source-target-event-incarnation"],
+          "shared_dependencies": ["target.revalidate_resolution", "trigger.placement.apnap", "zone.change.destination_replacement"],
+          "shared_grammar": "Fixed token-copy recipes and normal Populate through current-or-immediate-LKI references, typed copiable exceptions and the existing choice, creation and delayed zone owners.",
+          "estimated_implementation_hours": 5,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "One copy recipe boundary serves spells, activations and normalized public triggers without another copy or replacement engine.",
+          "explicit_exclusions": ["attacking copies, variable or optional quantities", "linked, hidden, graveyard and spell copy sources", "unavailable characteristic boundaries", "unrepresented copy exceptions and independent unsupported siblings"],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "copiable-token-recipes-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:public-collection-quantity-reductions",
           "member_family_ids": ["continuous_layer:continuous-effect-layers-and-dependencies", "quantity_expression:dynamic-quantity"],
           "canonical_owner_ids": ["capability:continuous.characteristics.query_count_modifier", "capability:continuous.characteristics.query_power_toughness_definition", "capability:quantity_expression.public_query_effect_amount", "component:quorune.compiler.collection_quantity_templates.collection_quantity", "component:quorune.dynamic_characteristics.query_characteristic_count", "component:quorune.public_quantity_reductions.reduce_public_quantity"],
@@ -4795,14 +4811,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v250-copiable-token-copy-replacement-subject",
-      "compiler_version": "oracle-ir-v250",
-      "bundle_id": null,
-      "candidate_ids": [],
-      "family_ids": [],
-      "capability_ids": [],
-      "non_harvest_reason": "Correct the confirmed token-copy creation replacement subject to use copiable types and subtypes rather than noncopy current characteristics, preserving the existing compiler grammar and mutation owners.",
-      "expected_complete_card_gain": null
+      "transition_id": "oracle-ir-v251-copiable-token-production-recipes",
+      "compiler_version": "oracle-ir-v251",
+      "bundle_id": "bundle:copiable-token-production-recipes",
+      "candidate_ids": ["bundle:copiable-token-production-recipes"],
+      "family_ids": ["activated_effect:create-token", "effect_clause:create-token", "event_binding:normalized-event-binding", "keyword_dependency:populate"],
+      "capability_ids": ["token.creation.fixed_copy"],
+      "non_harvest_reason": null,
+      "measurement_id": "measurement:copiable-token-production-recipes"
     },
     "forecast_corrections": [
       {

@@ -1221,6 +1221,10 @@ def _binding_effect_template(
         compile_fixed=lambda text: effect_template(text, card_name=card_name))
     if scalar is not None:
         return scalar, False
+    from .token_copy_templates import token_copy_recipe_template
+    copy_recipe = token_copy_recipe_template(body, source_name=card_name, source_is_permanent=True, event=binding.event.value)
+    if copy_recipe is not None:
+        return copy_recipe.compiled(), False
     specialized = fixed_source_combat_growth_effect_template(
         body,
         event=binding.event.value,

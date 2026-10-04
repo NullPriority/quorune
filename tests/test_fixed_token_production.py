@@ -340,13 +340,22 @@ class FixedTokenProductionTests(unittest.TestCase):
             },
         )
 
+        for index, text in enumerate((
+            "Create a token that's a copy of target creature you control.",
+            "Create a token that's a copy of target creature, except it has haste.",
+        )):
+            with self.subTest(promoted_copy=text):
+                compiled = self.compile(compiler_record("Generic Promoted Copy", text, 1110897 + index))
+                self.assertEqual("exact", compiled.status, compiled.material_residuals)
+                self.assertIn(FIXED_TOKEN_COPY_CAPABILITY_ID, compiled.faces[0].nodes[0].capability_dependencies)
+
         unsupported = (
             "Investigate X times.",
             "Afterlife 0",
             "Afterlife X",
-            "Create a token that's a copy of target creature you control.",
+            "Create a token that's a copy of the chosen creature you control.",
             "Create a token that's a copy of this creature.",
-            "Create a token that's a copy of target creature, except it has haste.",
+            "Create a token that's a copy of target creature, except it has an unrepresented ability.",
             "Create a 1/1 red Warrior creature token tapped and attacking.",
             "Create a Wicked Role token attached to target creature.",
             "Create an Incubator token.",

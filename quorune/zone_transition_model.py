@@ -101,6 +101,7 @@ class ZoneDepartureSnapshot:
     attachments: tuple[str, ...]
     attached_to: str | None
     trigger_sources: DepartureTriggerSnapshot
+    copy_snapshot: Mapping[str, Any] | None = None
     cast_option: str | None = None
 
 

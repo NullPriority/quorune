@@ -217,6 +217,7 @@ _PROBE_FIXED_EFFECT_PAYMENT = "fixed-resolution-payment-existing-owner-v1"
 _PROBE_STACK_CONTROLLER_PAYMENT = "stack-controller-payment-existing-owner-v1"
 _PROBE_LINKED_EXILE_RETURN = "linked-exile-return-existing-owner-v2"
 _PROBE_SCALAR_EFFECT_AMOUNT = "typed-scalar-effect-amount-existing-owner-v1"
+_PROBE_TOKEN_COPY_RECIPE = "copiable-token-recipes-existing-owner-v1"
 _PROBE_TAP_STATE_EVENT = "normalized-tap-state-event-existing-owner-v1"
 _PROBE_PUBLIC_COLLECTION_QUANTITY = "public-collection-quantity-existing-owner-v1"
 _PROBE_QUALIFIED_ZONE_EVENT = "qualified-zone-event-query-existing-owner-v1"
@@ -580,6 +581,7 @@ _PROBE_IDS = {
     _PROBE_STACK_CONTROLLER_PAYMENT,
     _PROBE_LINKED_EXILE_RETURN,
     _PROBE_SCALAR_EFFECT_AMOUNT,
+    _PROBE_TOKEN_COPY_RECIPE,
     _PROBE_TAP_STATE_EVENT,
     _PROBE_PUBLIC_COLLECTION_QUANTITY,
     _PROBE_QUALIFIED_ZONE_EVENT,
@@ -1227,6 +1229,9 @@ def _matches_probe(
     card_record: Any | None = None,
     ability: Mapping[str, Any] | None = None,
 ) -> bool:
+    if probe_id == _PROBE_TOKEN_COPY_RECIPE:
+        texts = (source, *(str(face.get("oracle_text") or "") for face in card_record.faces)) if card_record is not None else (source,)
+        return any(re.search(r"create .+?tokens?.+?(?:copy|copies) of|\bpopulate\b", text, re.I) for text in texts)
     if probe_id == _PROBE_PUBLIC_COLLECTION_QUANTITY:
         texts = (source, *(str(face.get("oracle_text") or "") for face in card_record.faces)) if card_record is not None else (source,)
         pattern = r"basic land types? among|card types? among cards|colors? among|mana symbols in the mana costs of|(?:greatest|highest|total) mana value (?:of|among)|(?:one|two|three|four|five|[0-9]+) plus the number of|(?:twice|[0-9]+ times) the number of|the number of .+? plus (?:[0-9]+|the number of)|toughness is equal to that number plus"
@@ -5342,7 +5347,7 @@ def _measurement(
             f"Unknown cohort measurement probe: {probe_id}"
         )
     if probe_id in {_PROBE_BOUND_EFFECT_PROGRAM, _PROBE_QUALIFIED_ZONE_EVENT,
-                    _PROBE_DECLARED_EFFECT_AMOUNT, _PROBE_FIXED_ANIMATION, _PROBE_FIXED_EFFECT_PAYMENT, _PROBE_STACK_CONTROLLER_PAYMENT, _PROBE_LINKED_EXILE_RETURN, _PROBE_SCALAR_EFFECT_AMOUNT, _PROBE_TAP_STATE_EVENT, _PROBE_PUBLIC_COLLECTION_QUANTITY}:
+                    _PROBE_DECLARED_EFFECT_AMOUNT, _PROBE_FIXED_ANIMATION, _PROBE_FIXED_EFFECT_PAYMENT, _PROBE_STACK_CONTROLLER_PAYMENT, _PROBE_LINKED_EXILE_RETURN, _PROBE_SCALAR_EFFECT_AMOUNT, _PROBE_TOKEN_COPY_RECIPE, _PROBE_TAP_STATE_EVENT, _PROBE_PUBLIC_COLLECTION_QUANTITY}:
         return _bound_effect_program_measurement(
             frontier=frontier, bundle_id=bundle_id, probe_id=probe_id,
             cards_by_oracle_id=cards_by_oracle_id, coverage=coverage,
@@ -8149,6 +8154,7 @@ def _bound_effect_program_measurement(
         _PROBE_STACK_CONTROLLER_PAYMENT: "stack.counter.controller_payment",
         _PROBE_LINKED_EXILE_RETURN: "zone.linked_exile_return.fixed",
         _PROBE_SCALAR_EFFECT_AMOUNT: "quantity_expression.scalar_effect_amount",
+        _PROBE_TOKEN_COPY_RECIPE: "token.creation.fixed_copy",
         _PROBE_TAP_STATE_EVENT: "trigger.event.normalized_public_action",
         _PROBE_PUBLIC_COLLECTION_QUANTITY: None,
     }[probe_id]
@@ -8183,7 +8189,7 @@ def _bound_effect_program_measurement(
         abilities += (
             sum(node.exact for face in compiled.faces for node in face.nodes)
             - sum(ability.get("status") == "exact" for ability in previous.values())
-            if probe_id in {_PROBE_LINKED_EXILE_RETURN, _PROBE_SCALAR_EFFECT_AMOUNT} else len(promoted)
+            if probe_id in {_PROBE_LINKED_EXILE_RETURN, _PROBE_SCALAR_EFFECT_AMOUNT, _PROBE_TOKEN_COPY_RECIPE} else len(promoted)
         )
         residuals += sum(len(a.get("residuals", ())) for identity, a in previous.items() if identity in promoted)
         remaining[oracle_id] = sum(a.get("status") != "exact" and identity not in promoted

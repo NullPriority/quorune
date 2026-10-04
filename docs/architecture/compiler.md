@@ -1023,11 +1023,19 @@ and the exact can't-block or can't-be-blocked token sentences lower to the
 shared typed characteristic and declaration fragments rather than executable
 display text. The same owner lowers canonical fixed Investigate, fixed
 Afterlife through permanent-graveyard LKI, one current-target copy token, and
-one source-independent next-end-step creation. Every form reaches the existing
-replacement-aware `token_creation.py` transaction. Dynamic quantities,
-Incubate, Roles, attached or attacking tokens, source-LKI or modified copies,
+one source-independent next-end-step creation. `compiler/token_copy_templates.py`
+adds fixed copy recipes referencing the source, one qualified public permanent
+target, or a represented zone-event object. Copiable fixed exceptions retain
+nonlegendary, base-stat, color, subtype, card-type and keyword distinctions.
+Quoted granted abilities use the existing typed-token child programs; recurring
+copied cleanup is not converted to an independent delayed trigger. Normal
+Populate uses the existing token-copy choice owner without the historical
+Haste-and-sacrifice rider. Every form reaches the existing replacement-aware
+`token_creation.py` transaction. Incubate, Roles, attached or attacking tokens,
+linked, chosen, hidden, graveyard or spell copy origins, face-down copy values,
 arbitrary quoted abilities, unsupported keywords, other delayed times, and
-compound or conditional instructions remain source-spanned residuals.
+independently unsupported compound or conditional instructions remain
+source-spanned residuals or explicit unsupported-interaction boundaries.
 
 ## Invariants
 

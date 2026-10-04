@@ -138,8 +138,17 @@ subtypes, or the explicit copiable snapshot already supplied by its producer.
 The replacement subject therefore describes the token that will enter, not
 ordinary animation or type-changing effects currently applied to the source.
 The existing token transaction still owns replacement ordering, copied-value
-materialization, entry preparation and commit; this boundary adds no copy
-grammar or mutation path.
+materialization, entry preparation and commit. Fixed copy recipes bind source,
+target or normalized event-object identity before current-or-immediate-LKI
+reads; unrelated departures never inspect pending copy instructions. Fixed
+exceptions become copiable values, while separately granted Haste uses the
+existing incarnation-pinned continuous-effect owner with its stated duration.
+Independent next-end-step cleanup records actual created incarnations and uses
+one filtered simultaneous sacrifice or exile through the zone transaction.
+Copied recurring abilities remain ordinary typed granted triggers. Populate
+chooses only a currently controlled creature token, including the known-empty
+case, through the existing choice and token owners. Historical descriptor
+readability does not establish historical execution compatibility.
 
 Tap-state occurrences are emitted only for actual committed state changes.
 The canonical tap owner seals object incarnation, controller, characteristics,

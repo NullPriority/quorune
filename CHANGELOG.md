@@ -11,6 +11,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Compile fixed token-copy recipes and normal Populate through the existing
+  choice and token owners, preserving copiable exceptions, immediate departure
+  information, independent keyword duration, and incarnation-pinned cleanup.
+
 - Compile shared public look-back conditions for attacks, deaths, permanent
   departures and fixed life thresholds through existing static and trigger
   owners, with explicit versioned departure history and exact replay.

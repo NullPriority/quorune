@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "12e5deaf9cbef80e95b967cc9060c207b5ca520f5dc4ecfdbe04adea2dc1e365",
-  "declaration_source_fingerprint": "24440bff05e89a64017e467ece2b5d3a93d092249a2a148cf0829957eaa3c417",
+  "registry_fingerprint": "72b5e8aa4b949d0a636fe68a5dfbda0a67feb45de4d1819fd43c263a463c5094",
+  "declaration_source_fingerprint": "5baa0541e3f072c3c545d6f254619b60da3007713f8e4e1dab4f2083956e53f9",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -62290,6 +62290,48 @@
     {
       "capability_id": "token.creation.fixed_copy",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_trusted_recipe_copied_cleanup_ability_triggers_and_replays",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "608.2b",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Copied quoted cleanup is a recurring granted trigger, not independent delayed aftercare; actual cast, end-step execution and replay preserve that distinction."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_trusted_recipe_self_sacrifice_uses_immediate_copy_lki_and_replays",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "608.2b",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual activation pays source sacrifice and copies its immediate predeparture values rather than the later incarnation."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_copy_and_delayed_tokens_revalidate_and_replay",
       "official_rule_ids": [
         "111.2",
@@ -62374,6 +62416,27 @@
     {
       "capability_id": "token.creation.fixed_copy",
       "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_token_creation_effects.TokenCopyRecipeModelTests.test_copy_exception_mutation_cannot_discard_fixed_stats",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "608.2b",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The same fixed-stat witness passes the canonical copy owner and fails the inspected characteristic-exception mutation."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "mutation",
       "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_token_production_grammar_and_capability_mutants_fail_closed",
       "official_rule_ids": [
         "111.2",
@@ -62412,6 +62475,27 @@
         "commander_review"
       ],
       "applicability_note": "A trusted type-changing spell does not make its nonartifact source's copied token eligible for an artifact-only additional-token replacement."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_token_creation_effects.TokenCopyRecipeModelTests.test_copy_recipe_codec_rejects_unknown_fields_booleans_and_open_values",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "608.2b",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed recipe codec rejects open reference, exception, lifecycle and malformed fixed-stat vocabulary."
     },
     {
       "capability_id": "token.creation.fixed_copy",
@@ -62458,6 +62542,27 @@
     {
       "capability_id": "token.creation.fixed_copy",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_trusted_recipe_fixed_characteristics_exclusion_rollback_and_replay",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "608.2b",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual trusted cast retains the fixed copiable exception, qualified targets, illegal-command rollback and pre-action replay."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_compiler_lowers_investigate_afterlife_and_extended_token_definitions",
       "official_rule_ids": [
         "111.2",
@@ -62500,6 +62605,27 @@
     {
       "capability_id": "token.creation.fixed_copy",
       "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_trusted_populate_selects_controlled_creature_token_and_replays_choice",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "608.2b",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Populate cast uses one controller-bound creature-token choice, four-seat projection, save/load, invalid-choice rollback and replay."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "privacy",
       "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_token_replacement_order_rollback_and_privacy",
       "official_rule_ids": [
         "111.2",
@@ -62538,6 +62664,27 @@
         "commander_review"
       ],
       "applicability_note": "Checkpoint and reload during the actual replacement choice, reject an invalid selection atomically, then exactly replay from before the copy action without duplicate tokens."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_trusted_recipe_entry_event_copies_new_incarnation_and_replays",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "608.2b",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Real creature cast discovers a normalized entry-object copy and exactly replays from the pre-action checkpoint."
     },
     {
       "capability_id": "token.creation.fixed_copy",
@@ -74460,5 +74607,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "48c2dd0f27ea7c4dea93ede59e0eceeab6cfcb55ca0bf3aaaa784c42c21850f3"
+  "fingerprint": "090611d0163dd2eebad997e9698f3050a6266a23b87072efb2c4c71d58e70f67"
 }

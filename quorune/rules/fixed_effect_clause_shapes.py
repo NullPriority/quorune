@@ -188,6 +188,8 @@ def closed_effect_component_capabilities(
                     if isinstance(keyword, str)
                 ),
             }
+            if len(effects) == 1 and ("copy_spec" in effects[0] or effects[0].get("op") == "populate"):
+                component_mechanics = mechanics
         elif resolver is self_regeneration_node_capabilities:
             component_mechanics = {
                 "regenerate",

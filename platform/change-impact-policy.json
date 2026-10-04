@@ -767,6 +767,10 @@
     {
       "id": "fixed-token-production-contract",
       "patterns": [
+        "quorune/token_copy_*.py",
+        "quorune/zone_object_cleanup.py",
+        "quorune/compiler/token_copy_templates.py",
+        "tests/fixtures/token-copy-recipe-cards.json",
         "quorune/token_creation.py",
         "tests/fixtures/token-copy-boundary-cards.json",
         "quorune/fixed_token_production.py",

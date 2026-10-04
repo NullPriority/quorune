@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 175,
+  "registry_version": 176,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -1669,17 +1669,17 @@
     },
     {
       "id": "token.creation.fixed_copy",
-      "version": 2,
+      "version": 3,
       "official_rules": ["111.2", "111.12", "115.1a", "608.2b", "707.2", "707.9", "614.16", "616.1"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
-          "summary": "Create one token copying one resolution-legal targeted battlefield permanent through the canonical replacement-aware token transaction. Creation-replacement subjects use the same copiable characteristic boundary as token materialization, excluding ordinary type-changing effects on the source.",
-        "inputs": ["one current legal target creature or artifact, creature, or land", "current copiable characteristics", "resolving controller"],
-        "outputs": ["one copied token object", "ordinary token replacement ordering and entry events", "target revalidation and exact replay"],
-        "exclusions": ["source or nontarget LKI copies", "multiple targets", "token-copy modifications", "temporary keywords or delayed exile", "linked, chosen, graveyard, stack, spell, and card copies", "optional or variable quantities"]
+        "summary": "Create a fixed copy-token group or Populate through the canonical choice and replacement-aware token transaction. Typed exceptions are copiable; separate keyword grants and delayed cleanup retain their distinct duration and incarnation boundaries.",
+        "inputs": ["one qualified current legal target, source, normalized zone-event object, or controlled creature-token choice", "current or immediate-departure copiable characteristics", "fixed quantity from one through five and closed copy exceptions", "resolving controller"],
+        "outputs": ["copied token group and ordinary replacement ordering and entry events", "copiable typed exceptions and granted child abilities", "independent incarnation-pinned keyword grants and grouped delayed sacrifice or exile", "target and choice revalidation, exact replay"],
+        "exclusions": ["multiple or optional targets", "variable or optional quantities", "linked, hidden, graveyard, stack, spell and card copy origins", "attacking copies and unrepresented exceptions", "unavailable characteristic boundaries"]
       },
       "dependencies": ["target.revalidate_resolution"],
-      "implementation_components": ["quorune.compiler.token_templates.fixed_token_creation_effect_template", "quorune.rules.token_creation_capability_shapes.fixed_token_creation_node_capabilities", "quorune.effect_runtime.objects_stack_and_tokens._apply_create_token", "quorune.token_creation.create_tokens"],
+      "implementation_components": ["quorune.compiler.token_templates.fixed_token_creation_effect_template", "quorune.compiler.token_copy_templates.token_copy_recipe_template", "quorune.token_copy_recipes.TokenCopyRecipeSpec", "quorune.token_copy_references.pin_copy_characteristic_departures", "quorune.token_copy_runtime.apply_copy_recipe", "quorune.token_copy_runtime.finish_copy_aftercare", "quorune.semantic_choices.token_and_copy.TokenCopyChoiceHandler", "quorune.rules.token_creation_capability_shapes.fixed_token_creation_node_capabilities", "quorune.effect_runtime.objects_stack_and_tokens._apply_create_token", "quorune.token_creation.create_tokens"],
       "positive_tests": ["test_compiler_lowers_investigate_afterlife_and_extended_token_definitions", "test_copy_and_delayed_tokens_revalidate_and_replay"],
       "negative_tests": ["test_token_production_grammar_and_capability_mutants_fail_closed"],
       "interaction_tests": ["test_copy_and_delayed_tokens_revalidate_and_replay", "test_token_replacement_order_rollback_and_privacy"],

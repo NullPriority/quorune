@@ -1045,6 +1045,8 @@ def _semantic_trigger_context(
         stack_context[CREATURE_POWER_DAMAGE_LKI_CONTEXT] = source_lki
     from .scalar_effect_amounts import scalar_source_context
     stack_context.update(scalar_source_context(host, source, program.effects, characteristics=source_characteristics))
+    from .token_copy_references import copy_source_context
+    stack_context.update(copy_source_context(host, source, program.effects))
     return stack_context
 
 
