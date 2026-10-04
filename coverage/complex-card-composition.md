@@ -2,7 +2,7 @@
 title: "Complex card composition benchmark"
 status: "generated"
 authoritative_source: "coverage/complex-card-composition.json"
-verified: "b2f3c4d1fe6a46297ebb2f2a6aa5ab72d7bd4822781b5566ee2a07b824051d0c"
+verified: "2f786b360a25e629096a593075a26e0b7c96222d8f2642ca5ab4ef2ad65deb48"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -37,6 +37,7 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | The Legend of Kuruk // Avatar Kuruk | 204 | 28 | 6 | 6 | 11 | 5 | `blocked` |
 | The Fall of Lord Konda // Fragment of Konda | 203 | 27 | 8 | 6 | 6 | 6 | `blocked` |
 | Hidetsugu Consumes All // Vessel of the All-Consuming | 202 | 23 | 7 | 7 | 8 | 10 | `blocked` |
+| Fable of the Mirror-Breaker // Reflection of Kiki-Jiki | 201 | 23 | 8 | 5 | 6 | 13 | `blocked` |
 | The Restoration of Eiganjo // Architect of Restoration | 200 | 27 | 7 | 6 | 6 | 7 | `blocked` |
 | Will Kenrith | 200 | 23 | 5 | 6 | 6 | 23 | `blocked` |
 | Cleric Class | 199 | 26 | 6 | 8 | 5 | 12 | `blocked` |
@@ -62,5 +63,4 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Invasion of Zendikar // Awakened Skyclave | 181 | 21 | 5 | 5 | 6 | 18 | `blocked` |
 | Michiko's Reign of Truth // Portrait of Michiko | 181 | 22 | 7 | 5 | 7 | 6 | `blocked` |
 | Tribute to Horobi // Echo of Death's Wail | 181 | 20 | 7 | 6 | 8 | 6 | `blocked` |
-| Huatli, Poet of Unity // Roar of the Fifth People | 180 | 29 | 6 | 6 | 6 | 1 | `blocked` |
 | Animate Dead | 110 | 13 | 4 | 3 | 2 | 5 | `blocked` |
