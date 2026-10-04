@@ -638,6 +638,11 @@ def _execute_tap_state_intent(
         except PublicTapStateSetError as exc:
             raise SemanticNodeError(str(exc)) from exc
         return intent.actor, result
+    cards = tuple(
+        next(card for card in sink.state.cards.values() if card.ref == object_ref)
+        for object_ref in intent.object_refs
+    )
+    prior_states = {card.object_id: card.tapped for card in cards}
     result = tuple(
         tap_state.set_permanent_tapped(
             sink,
@@ -645,8 +650,13 @@ def _execute_tap_state_intent(
             actor=intent.actor,
             tapped=intent.tapped,
             reason=intent.reason,
+            semantic_events=False,
         )
         for object_ref in intent.object_refs
+    )
+    tap_state.dispatch_tap_state_group(
+        sink, (card for card in cards if card.tapped != prior_states[card.object_id]),
+        tapped=intent.tapped, reason=intent.reason,
     )
     return intent.actor, result
 

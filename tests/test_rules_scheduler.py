@@ -5442,10 +5442,18 @@ class RulesSchedulerTests(unittest.TestCase):
                 ability=ability,
             )
         )
-        self.assertFalse(
+        self.assertTrue(
             _matches_probe(
                 action_probe,
                 "Whenever this creature becomes tapped, draw a card.",
+                card_record=creature,
+                ability=ability,
+            )
+        )
+        self.assertFalse(
+            _matches_probe(
+                action_probe,
+                "Whenever this creature becomes tapped for the first time each turn, draw a card.",
                 card_record=creature,
                 ability=ability,
             )

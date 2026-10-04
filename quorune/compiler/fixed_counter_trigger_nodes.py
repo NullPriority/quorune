@@ -16,13 +16,6 @@ from ..rules.capabilities import CapabilityRegistry
 from .dependency_gate import dependency_gate
 from .modal_templates import FIXED_NONREPEATING_MODAL_MECHANIC
 from .ir_model import OracleNode, OracleResidual, SourceSpan, append_residual
-from .fixed_public_event_trigger_bindings import fixed_public_event_binding_spec
-from .fixed_public_action_event_bindings import (
-    fixed_public_action_event_binding_spec,
-)
-from .fixed_public_multi_event_bindings import (
-    fixed_public_multi_event_binding_spec,
-)
 from .fixed_source_combat_growth import (
     FIXED_SOURCE_COMBAT_GROWTH_TEMPLATE_IDS,
     fixed_source_combat_growth_effect_template,
@@ -43,6 +36,10 @@ from .spell_cast_predicates import (
 )
 from .public_state_queries import fixed_public_state_condition
 from .qualified_zone_event_bindings import QUALIFIED_ZONE_VARIANT, qualified_public_zone_event_binding_spec, public_binding_from_spec
+from .tap_state_event_bindings import (
+    TAP_STATE_EVENT_VARIANT, TAP_STATE_EVENT_VARIANTS,
+    public_trigger_binding_spec, tap_state_bound_result,
+)
 
 
 FIXED_COUNTER_EVENT_TRIGGER_MECHANIC = "fixed-counter-event-trigger"
@@ -93,6 +90,7 @@ FIXED_COUNTER_EVENT_TRIGGER_TEMPLATE_IDS = frozenset(
         "fixed-counter-constellation-entry-trigger-v1",
         "fixed-counter-battalion-attack-trigger-v1",
         "fixed-counter-public-state-source-zone-trigger-v1",
+        "fixed-counter-tap-state-trigger-v1",
     }
 )
 FIXED_TYPED_EVENT_EFFECT_TRIGGER_TEMPLATE_IDS = frozenset(
@@ -128,6 +126,8 @@ _ABILITY_WORD_PUBLIC_EVENT_VARIANTS = frozenset(
 )
 PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
     {
+        TAP_STATE_EVENT_VARIANT,
+        "source_" + TAP_STATE_EVENT_VARIANT,
         "controller_attack_batch",
         "controller_attack_batch_at_least_2",
         "controller_attack_batch_at_least_3",
@@ -224,7 +224,7 @@ _ALL_PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
         *MULTI_EVENT_BINDING_CLOSURE_VARIANTS,
     }
 )
-_NONCOUNTER_PUBLIC_EVENT_VARIANTS = _ALL_PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS
+_NONCOUNTER_PUBLIC_EVENT_VARIANTS = _ALL_PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS - TAP_STATE_EVENT_VARIANTS
 _ONE_OR_MORE_PUBLIC_EVENT_VARIANTS = frozenset(
     {
         "controller_attack_batch",
@@ -345,6 +345,8 @@ class FixedCounterTriggerEvent(str, Enum):
     OPPONENT_CARD_DRAW = "card.drawn"
     SPELL_CAST_OR_COPY = "spell.cast_or_copy"
     CLASS_LEVEL_CHANGED = "permanent.class_level_changed.self"
+    PERMANENT_TAPPED = "permanent.tap"
+    PERMANENT_UNTAPPED = "permanent.untap"
 
 
 class FixedCounterZoneController(str, Enum):
@@ -1044,16 +1046,7 @@ def _public_trigger_binding(
     *,
     card_name: str | None,
 ) -> FixedCounterTriggerBinding | None:
-    spec = fixed_public_event_binding_spec(
-        material_line,
-        card_name=card_name,
-    ) or fixed_public_action_event_binding_spec(
-        material_line,
-        card_name=card_name,
-    ) or fixed_public_multi_event_binding_spec(
-        material_line,
-        card_name=card_name,
-    )
+    spec = public_trigger_binding_spec(material_line, card_name=card_name)
     if spec is None:
         return None
     return public_binding_from_spec(spec, binding_type=FixedCounterTriggerBinding, event_type=FixedCounterTriggerEvent)
@@ -1219,6 +1212,9 @@ def _binding_effect_template(
     ],
     bool,
 ]:
+    event_result = tap_state_bound_result(binding, body, effect_template=effect_template, card_name=card_name)
+    if event_result is not None:
+        return event_result
     from .scalar_effect_amounts import scalar_effect_amount_template
     scalar = scalar_effect_amount_template(body, source_name=card_name,
         event=binding.event.value, source_event=binding.variant.startswith("source_"),

@@ -217,6 +217,7 @@ _PROBE_FIXED_EFFECT_PAYMENT = "fixed-resolution-payment-existing-owner-v1"
 _PROBE_STACK_CONTROLLER_PAYMENT = "stack-controller-payment-existing-owner-v1"
 _PROBE_LINKED_EXILE_RETURN = "linked-exile-return-existing-owner-v2"
 _PROBE_SCALAR_EFFECT_AMOUNT = "typed-scalar-effect-amount-existing-owner-v1"
+_PROBE_TAP_STATE_EVENT = "normalized-tap-state-event-existing-owner-v1"
 _PROBE_QUALIFIED_ZONE_EVENT = "qualified-zone-event-query-existing-owner-v1"
 _PROBE_FIXED_CONTROLLED_CHARACTERISTIC = (
     "fixed-controlled-characteristic-effect-existing-owner-v1"
@@ -578,6 +579,7 @@ _PROBE_IDS = {
     _PROBE_STACK_CONTROLLER_PAYMENT,
     _PROBE_LINKED_EXILE_RETURN,
     _PROBE_SCALAR_EFFECT_AMOUNT,
+    _PROBE_TAP_STATE_EVENT,
     _PROBE_QUALIFIED_ZONE_EVENT,
     _PROBE_OPTIONAL_EFFECT,
     _PROBE_OPTIONAL_MANA_PAYMENT,
@@ -1223,6 +1225,8 @@ def _matches_probe(
     card_record: Any | None = None,
     ability: Mapping[str, Any] | None = None,
 ) -> bool:
+    if probe_id == _PROBE_TAP_STATE_EVENT:
+        return bool(re.search(r"becomes (?:tapped|untapped)", source, re.IGNORECASE))
     if probe_id == _PROBE_SCALAR_EFFECT_AMOUNT:
         return any(term in source.casefold() for term in ("that much", "that many", "power", "toughness", "mana value", "where x"))
     if probe_id == _PROBE_LINKED_EXILE_RETURN:
@@ -5332,7 +5336,7 @@ def _measurement(
             f"Unknown cohort measurement probe: {probe_id}"
         )
     if probe_id in {_PROBE_BOUND_EFFECT_PROGRAM, _PROBE_QUALIFIED_ZONE_EVENT,
-                    _PROBE_DECLARED_EFFECT_AMOUNT, _PROBE_FIXED_ANIMATION, _PROBE_FIXED_EFFECT_PAYMENT, _PROBE_STACK_CONTROLLER_PAYMENT, _PROBE_LINKED_EXILE_RETURN, _PROBE_SCALAR_EFFECT_AMOUNT}:
+                    _PROBE_DECLARED_EFFECT_AMOUNT, _PROBE_FIXED_ANIMATION, _PROBE_FIXED_EFFECT_PAYMENT, _PROBE_STACK_CONTROLLER_PAYMENT, _PROBE_LINKED_EXILE_RETURN, _PROBE_SCALAR_EFFECT_AMOUNT, _PROBE_TAP_STATE_EVENT}:
         return _bound_effect_program_measurement(
             frontier=frontier, bundle_id=bundle_id, probe_id=probe_id,
             cards_by_oracle_id=cards_by_oracle_id, coverage=coverage,
@@ -8139,6 +8143,7 @@ def _bound_effect_program_measurement(
         _PROBE_STACK_CONTROLLER_PAYMENT: "stack.counter.controller_payment",
         _PROBE_LINKED_EXILE_RETURN: "zone.linked_exile_return.fixed",
         _PROBE_SCALAR_EFFECT_AMOUNT: "quantity_expression.scalar_effect_amount",
+        _PROBE_TAP_STATE_EVENT: "trigger.event.normalized_public_action",
     }[probe_id]
     abilities = residuals = 0
     remaining: dict[str, int] = {}

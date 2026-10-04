@@ -94,6 +94,14 @@ Turn rollover and checkpoint hydration preserve the chosen mode. A historical
 record with incompatible runtime trust provenance is explicitly rejected,
 not silently recompiled with new predicates.
 
+Tap-state events use an additive `tap_state_event_version` marker. New games
+pin its version in checkpoint and record format. Absence preserves historical
+untap-step event contexts and does not emit the expanded tap-state vocabulary.
+Current replay requires the marker and runtime trust provenance to agree;
+readable descriptors do not independently establish historical execution.
+Records pinned to the prior runtime trust identity are explicitly rejected by
+the existing manifest-provenance check rather than silently reinterpreted.
+
 Regeneration shields use the same additive compatibility rule. A positive
 `CardInstance.regeneration_shields` value is authoritative public
 logical-object state; zero is omitted so historical Game Record v3 card payloads

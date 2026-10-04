@@ -27,6 +27,7 @@ def format_state_versions(state: Any) -> dict[str, int]:
         "departure_history_version": (
             getattr(getattr(state, "turn_history", None), "departure_history_version", None) or 0
         ),
+        **({"tap_state_event_version": state.tap_state_event_version} if state.tap_state_event_version is not None else {}),
     }
 
 
@@ -49,6 +50,9 @@ def validate_state_versions(
     current = getattr(getattr(state, "turn_history", None), "departure_history_version", None) or 0
     if type(declared) is not int or declared not in {0, 1} or declared != current:
         raise ValueError("Departure-history provenance does not match the initial checkpoint")
+    tap_version = format_value.get("tap_state_event_version", 0)
+    if type(tap_version) is not int or tap_version not in {0, 1} or tap_version != (state.tap_state_event_version or 0):
+        raise ValueError("Tap-state event provenance does not match the initial checkpoint")
 
 
 __all__ = ["format_state_versions", "validate_state_versions"]

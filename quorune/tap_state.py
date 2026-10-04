@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Iterable, Protocol
+from typing import Any, Iterable, Mapping, Protocol
 
 from .counter_removal import (
     commit_counter_removals,
@@ -46,6 +46,12 @@ class TapStateHost(Protocol):
     ) -> Any: ...
 
     def _effective_card_data(self, card: Any) -> dict[str, Any]: ...
+
+    def _dispatch_semantic_event(
+        self, event: str, context: Mapping[str, Any], **kwargs: Any,
+    ) -> Any: ...
+
+    def _semantic_event_sources(self, *, zones: set[str] | None = None) -> list[Any]: ...
 
     def _type_parts(
         self, type_line: str
@@ -106,6 +112,16 @@ def tap_declared_attackers(
         if should_tap:
             card.tapped = True
             tapped_refs.append(card.ref)
+    pending: list[Any] = []
+    for card, should_tap in prepared:
+        if should_tap:
+            dispatch_tap_state_occurrence(
+                host, card, tapped=True, reason="attack declaration",
+                declared_attacker=True, trigger_batch=pending,
+            )
+    if pending:
+        from .trigger_processing import enqueue_trigger_batch
+        enqueue_trigger_batch(host, pending)
     return tapped_refs
 
 
@@ -176,6 +192,8 @@ def set_permanent_tapped(
     logical_object_id: str | None = None,
     revert: bool = False,
     log: bool = True,
+    semantic_events: bool = True,
+    untap_cost: bool = False,
 ) -> str:
     """Commit one validated tap-state intent through authoritative state."""
 
@@ -203,7 +221,7 @@ def set_permanent_tapped(
     if tapped:
         changed = not card.tapped
         card.tapped = True
-    elif revert:
+    elif revert or untap_cost:
         changed = card.tapped
         card.tapped = False
     else:
@@ -213,6 +231,8 @@ def set_permanent_tapped(
             actor=actor,
             reason=reason,
         )
+    if changed and not revert and semantic_events:
+        dispatch_tap_state_occurrence(host, card, tapped=tapped, reason=reason)
     if changed and log:
         operation = "tap" if tapped else "untap"
         host._log(
@@ -224,6 +244,83 @@ def set_permanent_tapped(
             changed_objects=[card.object_id],
         )
     return card.ref
+
+
+def dispatch_tap_state_occurrence(
+    host: TapStateHost, card: Any, *, tapped: bool, reason: str,
+    declared_attacker: bool = False, trigger_batch: list[Any] | None = None,
+) -> None:
+    """Publish an actual committed transition through the shared trigger owner.
+
+    Entry state and rollback do not call this boundary. Coordinated groups
+    commit every member before invoking it so discovery sees the whole event.
+    """
+
+    version = getattr(host.state, "tap_state_event_version", None)
+    if version is None:
+        return
+    if type(version) is not int or version != 1:
+        raise TapStateError("Unsupported tap-state occurrence version")
+    context = tap_state_occurrence_context(
+        host, card, reason=reason, declared_attacker=declared_attacker,
+    )
+    from .trigger_processing import collect_trigger_items, enqueue_trigger_batch
+    pending = collect_trigger_items(
+        host, "permanent.tap" if tapped else "permanent.untap", context,
+        sources=sorted(host._semantic_event_sources(), key=lambda source: source.object_id),
+    )
+    if trigger_batch is not None:
+        trigger_batch.extend(pending)
+    elif pending:
+        enqueue_trigger_batch(host, pending)
+
+
+def tap_state_occurrence_context(
+    host: TapStateHost, card: Any, *, reason: str, declared_attacker: bool = False,
+) -> dict[str, Any]:
+    """Seal one committed member for semantic and delayed trigger collectors."""
+    data = host._effective_card_data(card)
+    types, subtypes, supertypes = host._type_parts(str(data.get("type_line") or ""))
+    return {
+        "card": card.ref,
+        "card_object_id": card.object_id,
+        "card_object_identity": card.logical_object_id,
+        "controller": card.controller,
+        "owner": card.owner,
+        "types": sorted(types),
+        "subtypes": sorted(subtypes),
+        "supertypes": sorted(supertypes),
+        "colors": list(data.get("colors", ())),
+        "keywords": list(data.get("keywords", ())),
+        "token": card.is_token,
+        "active_player": host.state.active_player,
+        "player": host.state.active_player,
+        "phase": host.state.phase,
+        "step": host.state.step,
+        "declared_attacker": declared_attacker,
+        REASON_FIELD: reason,
+    }
+def dispatch_tapped_cost_group(
+    host: TapStateHost, cards: Iterable[Any], *, reason: str,
+) -> None:
+    """Discover a simultaneous tap cost only after its full group commits."""
+
+    dispatch_tap_state_group(host, cards, tapped=True, reason=reason)
+
+
+def dispatch_tap_state_group(
+    host: TapStateHost, cards: Iterable[Any], *, tapped: bool, reason: str,
+) -> None:
+    """Announce an explicitly simultaneous instruction's committed members."""
+
+    pending: list[Any] = []
+    for card in sorted(cards, key=lambda value: value.object_id):
+        dispatch_tap_state_occurrence(
+            host, card, tapped=tapped, reason=reason, trigger_batch=pending,
+        )
+    if pending:
+        from .trigger_processing import enqueue_trigger_batch
+        enqueue_trigger_batch(host, pending)
 
 
 def untap_all_creatures(
@@ -245,6 +342,15 @@ def untap_all_creatures(
             ):
                 changed.append(object_id)
     if changed:
+        pending: list[Any] = []
+        for object_id in changed:
+            dispatch_tap_state_occurrence(
+                host, host.state.cards[object_id], tapped=False,
+                reason=reason, trigger_batch=pending,
+            )
+        if pending:
+            from .trigger_processing import enqueue_trigger_batch
+            enqueue_trigger_batch(host, pending)
         host._log(
             actor,
             "permanent.untap",

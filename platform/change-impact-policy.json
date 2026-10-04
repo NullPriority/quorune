@@ -379,6 +379,11 @@
       "test_modules": ["test_linked_exile_return", "test_targeted_exile_effect_clauses", "test_high_risk_interaction_assurance", "test_oracle_ir", "test_fixed_target_reanimation", "test_zone_trigger_events", "test_delayed_triggers", "test_card_program_trust", "test_fixed_optional_effect_choices", "test_rules_scheduler"]
     },
     {
+      "id": "normalized-tap-state-event-contract",
+      "patterns": ["quorune/compiler/tap_state_event_bindings.py", "quorune/rules/tap_state_event_capability_shapes.py", "quorune/tap_state.py", "quorune/public_tap_state_sets.py", "quorune/untap_step_coordination.py", "tests/fixtures/linked-exile-return-cards.json"],
+      "test_modules": ["test_linked_exile_return", "test_fixed_counter_event_triggers", "test_targeted_tap_state_effect_clauses", "test_untap_step_rules", "test_typed_untap_step_participation", "test_declare_attackers_rules", "test_fixed_activation_tap_costs", "test_ordinary_crew", "test_mana_abilities", "test_game_record_v3", "test_card_program_trust", "test_rules_scheduler", "test_high_risk_interaction_assurance"]
+    },
+    {
       "id": "scalar-effect-amount-contract",
       "patterns": ["quorune/scalar_effect_amount_model.py", "quorune/scalar_effect_amounts.py", "quorune/compiler/scalar_effect_amounts.py", "tests/fixtures/scalar-effect-amount-cards.json"],
       "test_modules": ["test_scalar_effect_amounts", "test_declared_effect_amounts", "test_public_query_effect_amounts", "test_public_query_action_registration", "test_oracle_ir", "test_fixed_target_effect_sequences", "test_fixed_source_characteristic_effects", "test_temporary_target_interactions", "test_high_risk_interaction_assurance", "test_card_program_trust", "test_zone_trigger_events", "test_fixed_creature_power_damage", "test_mentor_rules", "test_station_rules", "test_targeted_return_to_hand_effect_clauses", "test_delayed_triggers", "test_rules_scheduler"]
