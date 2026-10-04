@@ -1089,6 +1089,8 @@ def _record_and_dispatch_token_creation(
         types = set(characteristic_facts["types"])
         context = {
             "card": card.ref,
+            "card_object_identity": card.logical_object_id,
+            "copiable_snapshot": token_copy_snapshot(host, card),
             "controller": controller,
             "owner": controller,
             "from": "outside",
@@ -1205,6 +1207,8 @@ def _commit_resolved_token_specs(
         creation_timestamp=creation_timestamp,
         prepared_counters=prepared_counters,
     )
+    from .token_copy_runtime import finish_copy_aftercare
+    finish_copy_aftercare(host, controller, created)
     _record_and_dispatch_token_creation(
         host,
         controller,

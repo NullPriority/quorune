@@ -331,6 +331,7 @@ _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
     "offer_draw",
     "offer_optional_effect", "offer_optional_mana_payment",
     "proliferate",
+    "populate",
     "regenerate",
     REANIMATE_OPERATION,
     "place_counters",

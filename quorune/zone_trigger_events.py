@@ -173,6 +173,8 @@ class ZoneChangeOccurrence:
     card_object: bool
     previous_characteristics: FrozenMap
     current_characteristics: FrozenMap
+    previous_copy_snapshot: Mapping[str, Any] | None = None
+    current_copy_snapshot: Mapping[str, Any] | None = None
     previous_attachments: tuple[str, ...] = ()
     previous_attached_to: str | None = None
     tapped: bool = False
@@ -241,6 +243,12 @@ class ZoneChangeOccurrence:
                         f"zone_occurrence.{field} is not canonical"
                     ) from exc
                 object.__setattr__(self, field, value)
+        for field in ("previous_copy_snapshot", "current_copy_snapshot"):
+            value = getattr(self, field)
+            if value is not None:
+                if not isinstance(value, Mapping):
+                    raise ZoneTriggerEventError("Copiable occurrence snapshot must be an object")
+                object.__setattr__(self, field, FrozenMap(value))
         if not isinstance(self.previous_attachments, tuple):
             object.__setattr__(
                 self,
@@ -294,6 +302,10 @@ class ZoneChangeOccurrence:
             result["read_ahead_chapter"] = self.read_ahead_chapter
         if self.cast_option is not None:
             result["cast_option"] = self.cast_option
+        if self.previous_copy_snapshot is not None:
+            result["previous_copy_snapshot"] = thaw_value(self.previous_copy_snapshot)
+        if self.current_copy_snapshot is not None:
+            result["current_copy_snapshot"] = thaw_value(self.current_copy_snapshot)
         return result
 
     @property
@@ -402,6 +414,7 @@ def normalized_zone_trigger_events(
         "attachments": list(occurrence.previous_attachments),
         "attached_to": occurrence.previous_attached_to,
         **previous_facts,
+        **({"copiable_snapshot": dict(occurrence.previous_copy_snapshot)} if occurrence.previous_copy_snapshot is not None else {}),
     }
     if occurrence.cast_option is not None:
         common["cast_option"] = occurrence.cast_option
@@ -478,6 +491,8 @@ def normalized_zone_trigger_events(
                 occurrence.current_characteristics.get("mana_value", 0) or 0
             ),
             "tapped": occurrence.tapped,
+            "card_object_identity": occurrence.current_logical_object_id,
+            **({"copiable_snapshot": dict(occurrence.current_copy_snapshot)} if occurrence.current_copy_snapshot is not None else {}),
         }
         result.append(
             NormalizedZoneTriggerEvent(

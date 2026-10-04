@@ -344,6 +344,53 @@ def _fixed_copy_token_capabilities(
     )
 
 
+def _copy_recipe_capabilities(effect, target_schema, mechanics):
+    from ..token_copy_recipes import TokenCopyRecipeSpec
+    from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES
+    from .permanent_predicate_capability_shapes import direct_permanent_target_schema_is_closed, direct_target_predicate_capabilities
+    fields = {"op", "controller", "quantity", "copy_spec"}
+    if set(effect) not in (fields, fields | {"tapped"}) or effect.get("op") != "create_token" or effect.get("controller") != "$controller":
+        return ()
+    if type(effect.get("quantity")) is not int or not 1 <= effect["quantity"] <= 5 or type(effect.get("tapped", False)) is not bool:
+        return ()
+    try:
+        recipe = TokenCopyRecipeSpec.from_dict(effect["copy_spec"])
+    except (TypeError, ValueError):
+        return ()
+    if recipe.origin == "target":
+        if not direct_permanent_target_schema_is_closed(target_schema) or target_schema.get("count") != 1:
+            return ()
+    elif target_schema is not None:
+        return ()
+    required = {_TOKEN_MECHANIC, FIXED_TOKEN_PRODUCTION_MECHANIC_ID, "fixed-token-copy", "cr-707-copying-objects"}
+    if not required.issubset(mechanics):
+        return ()
+    if set(recipe.temporary_keywords) - {"Haste"}:
+        return ()
+    dependencies = {FIXED_TOKEN_COPY_CAPABILITY_ID}
+    if recipe.origin == "target":
+        dependencies.add("target.revalidate_resolution")
+        dependencies.update(direct_target_predicate_capabilities(target_schema))
+    for keyword in (*recipe.exception.add_keywords, *recipe.temporary_keywords):
+        dependencies.update(FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES[keyword])
+    if recipe.temporary_keywords:
+        dependencies.add("continuous.resolution.fixed_keyword_zone_object" if recipe.keyword_duration == "zone_object"
+                         else "continuous.resolution.fixed_characteristics_until_end_of_turn")
+    if recipe.cleanup != "none":
+        dependencies.add("trigger.placement.apnap")
+    fragments = recipe.exception.add_ability_fragments
+    if bool(fragments) != (TYPED_TOKEN_ABILITY_MECHANIC_ID in mechanics):
+        return ()
+    if fragments:
+        for fragment in canonical_ability_fragments(fragments):
+            if not isinstance(fragment, (GrantedActivatedAbilitySpec, GrantedTriggeredAbilitySpec)):
+                return ()
+            if ":token:" not in fragment.ability_id or not fragment.semantic_key.endswith(f":{fragment.ability_id}"):
+                return ()
+        dependencies.add(TYPED_TOKEN_ABILITY_CAPABILITY_ID)
+    return tuple(sorted(dependencies))
+
+
 def _fixed_delayed_token_capabilities(
     effect: Mapping[str, Any],
     mechanic_ids: set[str],
@@ -420,10 +467,15 @@ def fixed_token_creation_node_capabilities(
         return ()
     effect = effects[0]
     mechanics = set(mechanic_ids)
+    if dict(effect) == {"op":"populate"} and target_schema is None:
+        required = {_TOKEN_MECHANIC, FIXED_TOKEN_PRODUCTION_MECHANIC_ID, "fixed-token-copy", "cr-707-copying-objects"}
+        return (FIXED_TOKEN_COPY_CAPABILITY_ID,) if required.issubset(mechanics) else ()
     if effect.get("op") == "delayed_trigger":
         if target_schema is not None:
             return ()
         return _fixed_delayed_token_capabilities(effect, mechanics)
+    if effect.get("copy_spec") is not None:
+        return _copy_recipe_capabilities(effect, target_schema, mechanics)
     if effect.get("copy_of") is not None:
         capabilities = _fixed_copy_token_capabilities(
             effect,

@@ -91,7 +91,7 @@ from .dependency_gate import (
     keyword_dependency_gate,
 )
 from .day_night_nodes import day_night_keyword_node
-from .token_production_keyword_nodes import fixed_afterlife_keyword_node
+from .token_production_keyword_nodes import fixed_afterlife_keyword_node, fixed_populate_keyword_node
 from ..fixed_token_production import AFTERLIFE_MECHANIC_ID
 from .devoid_characteristics import DEVOID_MECHANIC_ID
 from .ir_model import (
@@ -350,6 +350,9 @@ def closed_special_keyword_node(
     afterlife = fixed_afterlife_keyword_node(**values)
     if afterlife is not None:
         return afterlife
+    populate = fixed_populate_keyword_node(**values)
+    if populate is not None:
+        return populate
     characteristic_definition = characteristic_definition_keyword_node(
         **values,
     )

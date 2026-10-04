@@ -54,6 +54,7 @@ def _token_ability_shell(text: str) -> tuple[str, tuple[str, ...]] | None:
         return None
     shell = _POSTPOSED.sub(".", normalized)
     shell = _AND_QUOTED.sub("", shell)
+    shell = re.sub(r' except (?:(?:it|the token) has|(?:it|the token) gains) "[^\"]+"', "", shell, flags=re.I)
     shell = _WITH_QUOTED.sub("", shell)
     shell = re.sub(r"\s+\.", ".", shell).strip()
     if shell == normalized or '"' in shell:
@@ -102,6 +103,10 @@ def _with_token_fragments(
     if isinstance(value, Mapping):
         result = {str(key): copy.deepcopy(child) for key, child in value.items()}
         if result.get("op") == "create_token":
+            if "copy_spec" in result:
+                recipe = result["copy_spec"]
+                recipe["exception"]["add_ability_fragments"] = [copy.deepcopy(dict(fragment)) for fragment in fragments]
+                return result, 1
             characteristics = dict(result.get("characteristics") or {})
             characteristics["ability_fragments"] = [
                 *copy.deepcopy(list(characteristics.get("ability_fragments") or ())),
@@ -261,6 +266,7 @@ def _inner_node(
     trusted_mechanics: frozenset[str],
     capability_registry: CapabilityRegistry,
     capability_profile: str,
+    copy_recipe: bool = False,
 ) -> tuple[OracleNode, str] | None:
     compiled_text = _compile_token_ability_text(
         quoted, type_line=token_type_line
@@ -270,6 +276,11 @@ def _inner_node(
     effect_template, trigger_effect_template = grant_effect_templates(
         True, token_types, None
     )
+    cleanup = (_copiable_cleanup_child(node_id=node_id, text=compiled_text, span=span,
+        source_name="Created Token", capability_registry=capability_registry, capability_profile=capability_profile)
+        if copy_recipe else None)
+    if cleanup is not None:
+        return cleanup, compiled_text
     node = compile_inner(
         node_id=node_id,
         line=compiled_text,
@@ -319,6 +330,32 @@ def _inner_node(
     return node, compiled_text
 
 
+def _copiable_cleanup_child(*, node_id: str, text: str, span: SourceSpan, source_name: str,
+                           capability_registry: CapabilityRegistry, capability_profile: str) -> OracleNode | None:
+    """Keep a copied recurring ability distinct from delayed aftercare."""
+    from .fixed_counter_trigger_nodes import fixed_counter_trigger_binding
+    binding = fixed_counter_trigger_binding(text, card_name=source_name)
+    if binding is None or binding.event.value != "step.begin":
+        return None
+    move = re.fullmatch(r"(?P<verb>sacrifice|exile) this (?:creature|permanent)\.?", binding.body, re.I)
+    if move is None:
+        return None
+    sacrifice = move["verb"].casefold() == "sacrifice"
+    effect = {"op":"move_if_in_zone", "card":"$source.zone_object", "from":"battlefield",
+        "destination":"graveyard" if sacrifice else "exile",
+        **({"transition_kind":"sacrifice", "required_controller":"$controller"} if sacrifice else {})}
+    dependencies = ("token.creation.fixed_copy", "trigger.placement.apnap", *binding.public_capabilities)
+    closure = capability_registry.closure(dependencies, profile=capability_profile)
+    if not closure.trusted or closure.blockers:
+        return None
+    return OracleNode(node_id=node_id, kind="triggered_ability", text=text, span=span,
+        active_zone=binding.active_zone, event=binding.event.value, event_condition=binding.event_condition,
+        lowerable=True, exact=True, template_id="copiable-token-cleanup-trigger-v1", effects=(effect,),
+        mechanics=("cr-603-handling-triggered-abilities", "fixed-token-copy", *binding.event_mechanics),
+        capability_dependencies=tuple(sorted(dependencies)),
+        capability_closure=closure.reachable, capability_profile=closure.profile, capability_fingerprint=closure.fingerprint)
+
+
 def _token_fragments_and_children(
     *,
     quoted_abilities: tuple[str, ...],
@@ -333,6 +370,7 @@ def _token_fragments_and_children(
     trusted_mechanics: frozenset[str],
     capability_registry: CapabilityRegistry,
     capability_profile: str,
+    copy_recipe: bool = False,
 ) -> tuple[list[Mapping[str, Any]], list[OracleNode], list[str]] | None:
     from .attached_granted_ability_nodes import attached_granted_ability_plan
 
@@ -359,6 +397,7 @@ def _token_fragments_and_children(
             trusted_mechanics=trusted_mechanics,
             capability_registry=capability_registry,
             capability_profile=capability_profile,
+            copy_recipe=copy_recipe,
         )
         if compiled is None:
             return None
@@ -507,13 +546,27 @@ def typed_token_ability_nodes(
         for outer in outer_nodes
         for effect in _created_token_effects(outer.effects)
     )
-    if len(created) != 1 or not isinstance(
-        created[0].get("characteristics"), Mapping
-    ):
+    if len(created) != 1:
+        return None
+    characteristics = created[0].get("characteristics")
+    if "copy_spec" in created[0]:
+        # Only abilities inside the copy exception become copiable. Separate
+        # ability grants need their own duration-aware result owner.
+        copy_exception = material_line.split(", except ", 1)
+        if len(copy_exception) != 2 or any(match.start() < material_line.index(", except ")
+            for match in _QUOTED.finditer(material_line)) or re.search(r"\. (?:It|They|That token|Those tokens) (?:has|have|gains?) ", copy_exception[1], re.I):
+            return None
+        # Token child compilation assumes a creature. Keep wider copy domains
+        # residual rather than assigning that type to an arbitrary permanent.
+        subject = re.search(r"(?:copy|copies) of ([^,.]+)", shell, re.I)
+        if subject is None or re.search(r"\bcreature\b", subject[1], re.I) is None:
+            return None
+        characteristics = {"type_line": "Token Creature", "keywords": []}
+    if not isinstance(characteristics, Mapping):
         return None
     compiled = _token_fragments_and_children(
         quoted_abilities=quoted_abilities,
-        characteristics=created[0]["characteristics"],
+        characteristics=characteristics,
         oracle_id=record.oracle_id,
         face_id=face_id,
         node_id=node_id,
@@ -524,6 +577,7 @@ def typed_token_ability_nodes(
         trusted_mechanics=trusted_mechanics,
         capability_registry=capability_registry,
         capability_profile=capability_profile,
+        copy_recipe="copy_spec" in created[0],
     )
     if compiled is None:
         return None

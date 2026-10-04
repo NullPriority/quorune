@@ -15,6 +15,7 @@ from .fixed_resolution_characteristics import fixed_resolution_characteristics_e
 from .fixed_effect_payment_templates import fixed_effect_payment_template,fixed_effect_payment_with_mandatory_prefix
 from .optional_payment_templates import fixed_optional_mana_payment_template
 from .counter_templates import targeted_controller_payment_template
+from .token_copy_templates import token_copy_recipe_template
 
 
 CompiledEffectTemplate = tuple[
@@ -42,6 +43,10 @@ def reviewed_contextual_effect_template(
         current = compile_atomic(body, card_name=card_name, **source_context)
         if current[0] is not None:
             return current
+        copy_recipe = token_copy_recipe_template(body, source_name=card_name,
+            source_is_permanent=source_context.get("source_is_permanent"))
+        if copy_recipe is not None:
+            return copy_recipe.compiled()
         return fixed_resolution_characteristics_effect_template(
             body,
             source_name=card_name,

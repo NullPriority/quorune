@@ -13,6 +13,7 @@ import random
 from typing import Any, Iterable, Mapping, Sequence
 
 from . import control_history
+from .token_creation import token_copy_snapshot
 from .attachments import (
     attach_objects,
     attachment_target_ref,
@@ -103,6 +104,8 @@ class ZoneTransitionOwner:
         )
         try:
             pin_scalar_characteristic_departures(self.host, cards, error_type=StateInvariantError)
+            from .token_copy_references import pin_copy_characteristic_departures
+            pin_copy_characteristic_departures(self.host, cards, error_type=StateInvariantError)
             pin_host_relative_power_source_departures(
                 self.host,
                 cards,
@@ -439,6 +442,8 @@ class ZoneTransitionOwner:
                 semantic_events=semantic_events,
                 origin=card.zone,
             ),
+            copy_snapshot=(token_copy_snapshot(self.host, card)
+                           if semantic_events and card.zone == "battlefield" else None),
             cast_option=(
                 "kicked"
                 if card.annotations.get(KICKER_ANNOTATION) is True
@@ -822,6 +827,9 @@ class ZoneTransitionOwner:
             card_object=card.is_card_object,
             previous_characteristics=departure.characteristics,
             current_characteristics=self.host._effective_card_data(card),
+            previous_copy_snapshot=departure.copy_snapshot,
+            current_copy_snapshot=(token_copy_snapshot(self.host, card)
+                                   if card.zone == "battlefield" else None),
             previous_attachments=departure.attachments,
             previous_attached_to=departure.attached_to,
             tapped=card.tapped,

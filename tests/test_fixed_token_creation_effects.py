@@ -1700,6 +1700,249 @@ class FixedTokenCreationRuntimeTests(unittest.TestCase):
         )
 
 
+class TokenCopyRecipeModelTests(unittest.TestCase):
+    def test_copy_exception_mutation_cannot_discard_fixed_stats(self):
+        import inspect
+        from quorune import token_copy_recipes as owner
+        source = inspect.getsource(owner.apply_copy_exception)
+        expression = 'result["power"], result["toughness"] = str(exception.power), str(exception.toughness)'
+        self.assertEqual(1, source.count(expression))
+        namespace = dict(vars(owner))
+        exec(source.replace(expression, 'result["power"], result["toughness"] = "99", "99"'), namespace)
+        fixture = {"type_line":"Creature — Elf", "keywords":[], "ability_fragments":[]}
+        exception = owner.TokenCopyExceptionSpec(power=1, toughness=1)
+        def witness(apply):
+            result = apply(fixture, exception)
+            self.assertEqual(("1", "1"), (result["power"], result["toughness"]))
+        witness(owner.apply_copy_exception)
+        with self.assertRaises(AssertionError):
+            witness(namespace["apply_copy_exception"])
+
+    def test_populate_shared_spell_trigger_and_activation_compiler_closure(self):
+        registry = load_default_capability_registry()
+        cases = (("Populate.", "Instant"),
+            ("{W}: Populate.", "Creature — Elf"),
+            ("At the beginning of your upkeep, populate.", "Enchantment"),
+            ("Create a 1/1 white Bird creature token with flying, then populate.", "Instant"))
+        for text, type_line in cases:
+            with self.subTest(text=text):
+                ir = compile_oracle_card(token_record("Generic Populate", text, 25100812, type_line=type_line),
+                    capability_registry=registry, capability_profile="commander_review")
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                self.assertTrue(any("token.creation.fixed_copy" in node.capability_dependencies for face in ir.faces for node in face.nodes))
+
+    def test_populate_reuses_choice_owner_without_legacy_haste_or_cleanup(self):
+        from types import SimpleNamespace
+        from quorune.semantic_choices.token_and_copy import TOKEN_AND_COPY_CHOICE_HANDLERS
+        from quorune.replacement.immutable import FrozenMap
+        handler = next(value for value in TOKEN_AND_COPY_CHOICE_HANDLERS if value.operation == "populate")
+        row = SimpleNamespace(ref="TOKEN", logical_object_id="token:1", token=True, controller="A", types=("creature",), printed_name="Generic Token")
+        query = SimpleNamespace(object=lambda ref, zones:row)
+        continuation = SimpleNamespace(effect=FrozenMap({"_choice_actor":"A", "_legal_refs":["TOKEN"], "_stack_label":"Populate", "_object_identities":{"TOKEN":"token:1"}}), stack_ref="STACK")
+        intent = handler.complete(continuation, {"card":"TOKEN"}, query).intents[0]
+        self.assertEqual("TOKEN", intent.copy_of)
+        self.assertEqual((), intent.temporary_keywords)
+        self.assertFalse(intent.sacrifice_at_end_step)
+        legacy = next(value for value in TOKEN_AND_COPY_CHOICE_HANDLERS if value.operation == "populate_with_haste")
+        old = legacy.complete(continuation, {"card":"TOKEN"}, query).intents[0]
+        self.assertEqual(("Haste",), old.temporary_keywords)
+        self.assertTrue(old.sacrifice_at_end_step)
+        row.logical_object_id = "token:2"
+        with self.assertRaisesRegex(ValueError, "incarnation changed"):
+            handler.complete(continuation, {"card":"TOKEN"}, query)
+        empty_context = SimpleNamespace(actor="A", query=SimpleNamespace(objects=lambda **kw:()))
+        empty = handler.prepare({"op":"populate"}, empty_context)
+        self.assertIsNone(empty.request)
+        self.assertIsNotNone(empty.auto_continue)
+
+    def test_copy_exception_granted_cleanup_is_an_ordinary_copiable_trigger(self):
+        registry = load_default_capability_registry()
+        for verb in ("sacrifice", "exile"):
+            text = 'Create a token that\'s a copy of target creature, except it has haste and "At the beginning of the end step, ' + verb + ' this token."'
+            ir = compile_oracle_card(token_record("Generic Copy Grant", text, 25100811),
+                capability_registry=registry, capability_profile="commander_review")
+            self.assertEqual("exact", ir.status, ir.material_residuals)
+            outer, child = ir.faces[0].nodes
+            self.assertEqual("granted_triggered_ability", child.kind)
+            recipe = outer.effects[0]["copy_spec"]
+            self.assertEqual("none", recipe["cleanup"])
+            self.assertEqual("granted_triggered", recipe["exception"]["add_ability_fragments"][0]["kind"])
+            self.assertEqual("$source.zone_object", child.effects[0]["card"])
+        separate = 'Create a token that\'s a copy of target creature. It has "When this token dies, draw a card."'
+        ir = compile_oracle_card(token_record("Generic Separate Copy Grant", separate, 25100813),
+            capability_registry=registry, capability_profile="commander_review")
+        self.assertNotEqual("exact", ir.status)
+
+    def test_copy_recipe_compiler_capability_contract_matrix(self):
+        from quorune.compiler.token_copy_templates import token_copy_recipe_template
+        from quorune.rules.token_creation_capability_shapes import fixed_token_creation_node_capabilities
+        cases = (
+            ("Create a token that's a copy of target artifact.", "token.creation.fixed_copy"),
+            ("Create a token that's a copy of target non-Frog creature, except it's a 1/1 green Frog.", "target.permanent.characteristic_predicate"),
+            ("Create two tokens that are copies of this creature.", "token.creation.fixed_copy"),
+            ("Create a token that's a copy of target creature you control, except it has haste.", "combat.attack.haste"),
+        )
+        for text, required in cases:
+            with self.subTest(text=text):
+                template = token_copy_recipe_template(text, source_name="Generic Source", source_is_permanent=True)
+                capabilities = fixed_token_creation_node_capabilities(effects=(template.effect,),
+                    target_schema=template.target_schema, mechanic_ids=set(template.mechanics))
+                self.assertIn(required, capabilities)
+                for quantity in (True, 0, 6):
+                    self.assertEqual((), fixed_token_creation_node_capabilities(
+                        effects=({**template.effect, "quantity":quantity},), target_schema=template.target_schema,
+                        mechanic_ids=set(template.mechanics)))
+
+    def test_fixed_subtype_override_removes_its_definition_not_other_abilities(self):
+        from quorune.ability_fragments import AllCreatureTypesCharacteristicDefinitionSpec, ColorlessCharacteristicDefinitionSpec, ability_fragment_to_dict
+        from quorune.token_copy_recipes import TokenCopyExceptionSpec, apply_copy_exception
+        source = {"type_line":"Creature — Shapeshifter", "colors":[], "keywords":["Changeling", "Devoid", "Flying"],
+            "ability_fragments":[ability_fragment_to_dict(AllCreatureTypesCharacteristicDefinitionSpec()),
+                                 ability_fragment_to_dict(ColorlessCharacteristicDefinitionSpec())]}
+        changed = apply_copy_exception(source, TokenCopyExceptionSpec(creature_subtypes=("frog",), colors=("G",)))
+        self.assertEqual("Creature — Frog", changed["type_line"])
+        self.assertEqual([], changed["ability_fragments"])
+        self.assertEqual(["Flying"], changed["keywords"])
+        additive = apply_copy_exception(source, TokenCopyExceptionSpec(add_subtypes=("frog",)))
+        self.assertEqual(source["ability_fragments"], additive["ability_fragments"])
+
+    def test_departure_pinner_reads_only_matching_incarnations(self):
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        from quorune.token_copy_recipes import TokenCopyRecipeSpec
+        from quorune.token_copy_references import COPY_REFERENCE_CONTEXT, pin_copy_characteristic_departures
+        source = SimpleNamespace(object_id="source", logical_object_id="source:1", ref="SOURCE",
+            zone="battlefield", phased_out=True)
+        other = SimpleNamespace(object_id="other", logical_object_id="other:1", ref="OTHER",
+            zone="battlefield", phased_out=False)
+        items = []
+        for card in (source, other):
+            items.append(SimpleNamespace(source_object_id=card.object_id, card_object_id=None,
+                semantic_key="recipe", context={"source_logical_object_id": card.logical_object_id}))
+        effect = {"op": "create_token", "copy_spec": TokenCopyRecipeSpec(origin="source").to_dict()}
+        host = SimpleNamespace(state=SimpleNamespace(cards={c.object_id:c for c in (source, other)}, stack=items),
+            semantics=SimpleNamespace(get=lambda key:SimpleNamespace(effects=(effect,))))
+        with patch("quorune.token_copy_references._snapshot", side_effect=lambda h,c:{"logical_object_id":c.logical_object_id}) as read:
+            pin_copy_characteristic_departures(host, [])
+            read.assert_not_called()
+            pin_copy_characteristic_departures(host, [other])
+            self.assertEqual([other], [call.args[1] for call in read.call_args_list])
+        self.assertNotIn(COPY_REFERENCE_CONTEXT, items[0].context)
+        self.assertEqual("other:1", items[1].context[COPY_REFERENCE_CONTEXT]["source"]["logical_object_id"])
+        source.logical_object_id = "source:2"
+        with patch("quorune.token_copy_references._snapshot") as read:
+            pin_copy_characteristic_departures(host, [source])
+            read.assert_not_called()
+
+    def test_copy_reference_scanning_visits_payments_not_future_ability_metadata(self):
+        from quorune.token_copy_recipes import TokenCopyRecipeSpec
+        from quorune.token_copy_references import copy_recipes
+        recipe = TokenCopyRecipeSpec(origin="source")
+        instruction = {"op":"create_token", "copy_spec":recipe.to_dict()}
+        self.assertEqual((recipe,), copy_recipes(({"op":"offer_optional_mana_payment", "effects":[instruction]},)))
+        self.assertEqual((), copy_recipes(({"op":"create_token", "characteristics":{"effects":[instruction]}},)))
+
+    def test_copy_references_read_current_then_immediate_lki_not_reentry(self):
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        from quorune.token_copy_recipes import TokenCopyRecipeSpec
+        from quorune.token_copy_references import copy_reference_snapshot, pin_copy_characteristic_departures
+        for origin in ("source", "target", "event_object"):
+            with self.subTest(origin=origin):
+                card = SimpleNamespace(object_id="object", logical_object_id="object:1", ref="OBJECT",
+                    zone="battlefield", zone_change_counter=0, phased_out=False)
+                recipe = TokenCopyRecipeSpec(origin=origin)
+                context = {"source_logical_object_id":"object:1", "target_snapshots":{"OBJECT":{"zone_change_counter":0}},
+                    "event_context":{"card":"OBJECT", "card_object_identity":"object:1"}}
+                item = SimpleNamespace(source_object_id="object", card_object_id=None, targets=["OBJECT"], context=context, semantic_key="recipe")
+                host = SimpleNamespace(state=SimpleNamespace(cards={"object":card}, stack=[item]),
+                    semantics=SimpleNamespace(get=lambda key:SimpleNamespace(effects=({"op":"create_token", "copy_spec":recipe.to_dict()},))))
+                def snapshot(h, c):
+                    return {"object_id":c.object_id, "logical_object_id":c.logical_object_id, "ref":c.ref,
+                        "zone":c.zone, "snapshot":{"power":"7"}}
+                with patch("quorune.token_copy_references._snapshot", side_effect=snapshot):
+                    self.assertEqual("7", copy_reference_snapshot(host, item, recipe)["snapshot"]["power"])
+                    pin_copy_characteristic_departures(host, [card])
+                card.logical_object_id = "object:2"
+                card.zone_change_counter = 1
+                with patch("quorune.token_copy_references._snapshot") as current:
+                    self.assertEqual("7", copy_reference_snapshot(host, item, recipe)["snapshot"]["power"])
+                    pin_copy_characteristic_departures(host, [card])
+                    current.assert_not_called()
+
+    def test_copy_recipe_grammar_retains_reference_exception_and_lifecycle(self):
+        from quorune.compiler.token_copy_templates import token_copy_recipe_template
+        cases = (
+            ("Create a token that's a copy of target artifact.", "target", "none"),
+            ("Create a token that's a copy of this creature.", "source", "none"),
+            ("Create a token that's a copy of target non-Frog creature, except it's a 1/1 green Frog.", "target", "none"),
+            ("Create a token that's a copy of target creature you control, except it isn't legendary. It gains haste. Sacrifice it at the beginning of the next end step.", "target", "sacrifice_next_end_step"),
+            ("Create a token that's a copy of another target creature you control, except it's an artifact in addition to its other types.", "target", "none"),
+        )
+        for text, origin, cleanup in cases:
+            with self.subTest(text=text):
+                compiled = token_copy_recipe_template(text, source_name="Generic Source", source_is_permanent=True)
+                self.assertIsNotNone(compiled)
+                recipe = compiled.effect["copy_spec"]
+                self.assertEqual(origin, recipe["origin"])
+                self.assertEqual(cleanup, recipe["cleanup"])
+        for text in (
+            "Create a token that's a copy of the chosen creature.",
+            "Create a token that's a copy of target creature, except it has an unrepresented ability.",
+            "Create a token that's a copy of target creature. If it dies, draw a card.",
+            "Create a token that's a copy of target creature, except it enters with X counters.",
+        ):
+            self.assertIsNone(token_copy_recipe_template(text, source_name="Generic Source", source_is_permanent=True))
+        for suffix, duration in (("It gains haste.", "zone_object"), ("It gains haste until end of turn.", "until_end_of_turn")):
+            compiled = token_copy_recipe_template("Create a token that's a copy of target creature. " + suffix,
+                source_name="Generic Source", source_is_permanent=True)
+            self.assertEqual(duration, compiled.effect["copy_spec"]["keyword_duration"])
+            self.assertEqual([], compiled.effect["copy_spec"]["exception"]["add_keywords"])
+
+    def test_fixed_copy_exception_is_copiable_without_inheriting_source_status(self):
+        from quorune.token_copy_recipes import TokenCopyExceptionSpec, apply_copy_exception
+        source = {"name": "Generic Original", "type_line": "Legendary Artifact Creature — Elf",
+                  "colors": ["U"], "power": "4", "toughness": "5", "keywords": ["Flying"],
+                  "ability_fragments": []}
+        exception = TokenCopyExceptionSpec(remove_legendary=True, power=1, toughness=1,
+            colors=("G",), creature_subtypes=("frog",), add_keywords=("Haste",))
+        result = apply_copy_exception(source, exception)
+        self.assertEqual("Artifact Creature — Frog", result["type_line"])
+        self.assertEqual(("1", "1", ["G"]), (result["power"], result["toughness"], result["colors"]))
+        self.assertEqual(["Flying", "Haste"], result["keywords"])
+        self.assertEqual("Legendary Artifact Creature — Elf", source["type_line"])
+
+    def test_fixed_base_override_removes_only_its_characteristic_definition(self):
+        from quorune.token_copy_recipes import TokenCopyExceptionSpec, apply_copy_exception
+        from quorune.characteristic_fragments import CharacteristicQuantityScope, CharacteristicQuantitySpec, QueryPowerToughnessDefinitionSpec
+        from quorune.object_predicate import ObjectQuerySpec
+        from quorune.ability_fragments import ability_fragment_to_dict
+        definition = ability_fragment_to_dict(QueryPowerToughnessDefinitionSpec(
+            quantity=CharacteristicQuantitySpec(scope=CharacteristicQuantityScope.CONTROLLER_ZONE,
+                query=ObjectQuerySpec(zones=("battlefield",), types_all=("artifact",))),
+            define_power=True, define_toughness=True))
+        source = {"type_line": "Creature — Elf", "power": "*", "toughness": "*", "colors": [],
+                  "keywords": ["Flying"], "ability_fragments": [definition]}
+        result = apply_copy_exception(source, TokenCopyExceptionSpec(power=7, toughness=7))
+        self.assertEqual([], result["ability_fragments"])
+        self.assertEqual(["Flying"], result["keywords"])
+        additive = apply_copy_exception(source, TokenCopyExceptionSpec(add_card_types=("artifact",)))
+        self.assertEqual([definition], additive["ability_fragments"])
+
+    def test_copy_recipe_codec_rejects_unknown_fields_booleans_and_open_values(self):
+        from quorune.token_copy_recipes import TokenCopyExceptionSpec, TokenCopyRecipeSpec
+        valid = TokenCopyRecipeSpec(origin="target", exception=TokenCopyExceptionSpec(remove_legendary=True)).to_dict()
+        self.assertEqual(valid, TokenCopyRecipeSpec.from_dict(valid).to_dict())
+        for bad in ({**valid, "extra": 1}, {**valid, "origin": "secret"},
+                    {**valid, "cleanup": "repeat_every_end_step"}):
+            with self.assertRaises(ValueError):
+                TokenCopyRecipeSpec.from_dict(bad)
+        for kwargs in ({"power": True, "toughness": 1}, {"power": 1},
+                       {"creature_subtypes": ("unrepresented-type",)}, {"add_keywords": ("unknown",)}):
+            with self.assertRaises(ValueError):
+                TokenCopyExceptionSpec(**kwargs)
+
+
 class TokenCopyCopiableBoundaryActionTests(unittest.TestCase):
     """CR 707.2: replacement subjects describe the copy, not layer-4 animation."""
 
@@ -1710,6 +1953,20 @@ class TokenCopyCopiableBoundaryActionTests(unittest.TestCase):
     cast = _helpers.cast
     finish = _helpers.finish
     replay = _helpers.replay
+    def advance(self, session, phase, step):
+        for _ in range(120):
+            if (session.state.phase, session.state.step) == (phase, step):
+                return
+            session.engine.pump()
+            principal = session.pending_principals()[0]
+            decision = session.packet(principal, full=True)["decision"]
+            action = ({"action_id": "pass"} if decision["kind"] == "priority"
+                      else {"action_id": "attack", "attackers": []} if decision["kind"] == "combat.attackers"
+                      else {"action_id": "block", "blocks": []} if decision["kind"] == "combat.blockers" else None)
+            self.assertIsNotNone(action, decision["kind"])
+            result = session.act(principal, action)
+            self.assertTrue(result.ok, result.summary)
+        self.fail("Copy recipe game did not reach the expected phase")
 
     @classmethod
     def setUpClass(cls):
@@ -1722,6 +1979,7 @@ class TokenCopyCopiableBoundaryActionTests(unittest.TestCase):
         build_fixture_database([
             root / "tests/fixtures/linked-exile-return-cards.json",
             root / "tests/fixtures/token-copy-boundary-cards.json",
+            root / "tests/fixtures/token-copy-recipe-cards.json",
         ], path)
         cls.db = CardDatabase(path)
         cls.deck = DeckDefinition("Generic copy boundary", [
@@ -1798,6 +2056,159 @@ class TokenCopyCopiableBoundaryActionTests(unittest.TestCase):
         self.copy_after_animation(seed=25000702, subject_name="Generic Copiable Creature",
             expected_tokens=1, current_artifact=True, copied_artifact=False,
             animation_spell_name="Generic Artifact Creature Animation")
+
+    def test_trusted_recipe_fixed_characteristics_exclusion_rollback_and_replay(self):
+        session = self.session(25100801)
+        self.register(session)
+        original = self.add(session, "Generic Recipe Original", "ORIGINAL", zone="battlefield")
+        illegal = self.add(session, "Generic Copiable Creature", "FROG", zone="battlefield")
+        spell = self.add(session, "Generic Recipe Fixed Frog", "COPY")
+        self.seal(session)
+        action = next(row for row in session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                      if row["id"] == "cast:" + spell.ref)
+        self.assertIn(original.ref, action["target_schema"]["legal_refs"])
+        self.assertNotIn(illegal.ref, action["target_schema"]["legal_refs"])
+        before = authoritative_state_hash(session.state)
+        bad = session.act("pilot:A", {"action_id": action["id"], "targets": [illegal.ref], "pay": "auto"})
+        self.assertFalse(bad.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self.cast(session, spell, [original.ref])
+        self.finish(session)
+        copies = [card for card in session.state.cards.values() if card.is_token and card.zone == "battlefield"]
+        self.assertEqual(1, len(copies))
+        data = session.engine._effective_card_data(copies[0])
+        self.assertEqual("Artifact Creature — Frog", data["type_line"])
+        self.assertEqual(("1", "1", ["G"]), (data["power"], data["toughness"], data["colors"]))
+        self.assertIn("Flying", data["keywords"])
+        self.replay(session)
+
+    def test_trusted_recipe_self_sacrifice_uses_immediate_copy_lki_and_replays(self):
+        session = self.session(25100802)
+        self.register(session)
+        source = self.add(session, "Generic Recipe Self Copy", "SOURCE", zone="battlefield")
+        self.seal(session)
+        action = next(row for row in session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                      if row.get("source") == source.ref and row["id"].startswith("activate:"))
+        result = session.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        self.finish(session)
+        copies = [card for card in session.state.cards.values() if card.is_token and card.zone == "battlefield"]
+        self.assertEqual(1, len(copies))
+        self.assertEqual((2, 3), (session.engine._numeric_stat(copies[0].object_id, "power"),
+                                 session.engine._numeric_stat(copies[0].object_id, "toughness")))
+        self.replay(session)
+
+    def test_trusted_recipe_entry_event_copies_new_incarnation_and_replays(self):
+        session = self.session(25100804)
+        self.register(session)
+        self.add(session, "Generic Recipe Entry Observer", "OBSERVER", zone="battlefield")
+        original = self.add(session, "Generic Copiable Creature", "ORIGINAL")
+        self.seal(session)
+        previous_identity = original.logical_object_id
+        self.cast(session, original, [])
+        self.finish(session)
+        self.assertNotEqual(previous_identity, original.logical_object_id)
+        tokens = [card for card in session.state.cards.values() if card.is_token and card.zone == "battlefield"]
+        self.assertEqual(1, len(tokens))
+        self.assertEqual(original.object_id, tokens[0].annotations["copied_from"])
+        self.assertEqual(session.engine._copyable_characteristics(original), session.engine._copyable_characteristics(tokens[0]))
+        self.replay(session)
+
+    def test_trusted_recipe_copied_cleanup_ability_triggers_and_replays(self):
+        session = self.session(25100805)
+        self.register(session)
+        original = self.add(session, "Generic Copiable Creature", "ORIGINAL", zone="battlefield")
+        spell = self.add(session, "Generic Recipe Copiable Cleanup", "COPY")
+        self.seal(session)
+        self.cast(session, spell, [original.ref])
+        self.finish(session)
+        tokens = [card for card in session.state.cards.values() if card.is_token and card.zone == "battlefield"]
+        self.assertEqual(1, len(tokens))
+        self.assertIn("Haste", session.engine._copyable_characteristics(tokens[0])["keywords"])
+        self.assertTrue(session.engine._copyable_characteristics(tokens[0])["ability_fragments"])
+        self.assertFalse(any(trigger.label == "Copied token cleanup" for trigger in session.state.delayed_triggers))
+        self.advance(session, "ending", "end_step")
+        self.finish(session)
+        self.assertEqual("outside", session.state.cards[tokens[0].object_id].zone)
+        self.replay(session)
+
+    def test_trusted_populate_selects_controlled_creature_token_and_replays_choice(self):
+        from quorune.session import CommanderSession
+        session = self.session(25100806)
+        self.register(session)
+        original = self.add(session, "Generic Copiable Creature", "ORIGINAL", zone="battlefield")
+        copied_ref = session.engine.create_token("A", name="", copy_of=original.ref, reason="generic Populate starting state")[0]
+        opponent_ref = session.engine.create_token("B", name="", copy_of=original.ref, reason="opponent token starting state")[0]
+        noncreature_ref = session.engine.create_token("A", name="Clue", reason="noncreature token starting state")[0]
+        spell = self.add(session, "Generic Recipe Populate", "POPULATE")
+        self.seal(session)
+        self.cast(session, spell, [])
+        for _ in range(12):
+            principal = session.pending_principals()[0]
+            decision = session.packet(principal, full=True)["decision"]
+            if decision["kind"] != "priority":
+                break
+            self.assertTrue(session.act(principal, {"action_id":"pass"}).ok)
+        self.assertEqual("populate", decision["ctx"]["operation"])
+        self.assertEqual([copied_ref], decision["ctx"]["options"])
+        for seat in "BCD":
+            self.assertIsNone(session.packet(f"pilot:{seat}", full=True)["decision"])
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "choice"
+            session.save(path)
+            restored = CommanderSession.load(self.db, path)
+        self.assertEqual(authoritative_state_hash(session.state), authoritative_state_hash(restored.state))
+        for ref in (original.ref, opponent_ref, noncreature_ref, "missing"):
+            before = authoritative_state_hash(restored.state)
+            result = restored.act("pilot:A", {"action_id":"choose", "card":ref})
+            self.assertFalse(result.ok)
+            self.assertEqual(before, authoritative_state_hash(restored.state))
+        self.assertTrue(restored.act("pilot:A", {"action_id":"choose", "card":copied_ref}).ok)
+        self.finish(restored)
+        copies = [card for card in restored.state.cards.values() if card.is_token and card.controller == "A"
+                  and "creature" in restored.engine._type_parts(restored.engine._effective_card_data(card)["type_line"])[0]]
+        self.assertEqual(2, len(copies))
+        self.assertFalse(any(card.temporary_keywords for card in copies))
+        self.assertFalse(any(trigger.active for trigger in restored.state.delayed_triggers))
+        self.replay(restored)
+
+    def test_trusted_recipe_group_cleanup_is_incarnation_and_controller_limited(self):
+        session = self.session(25100803)
+        self.register(session)
+        original = self.add(session, "Generic Recipe Original", "ORIGINAL", zone="battlefield")
+        spell = self.add(session, "Generic Recipe Temporary Copies", "COPIES")
+        self.seal(session)
+        self.cast(session, spell, [original.ref])
+        self.finish(session)
+        tokens = [card for card in session.state.cards.values() if card.is_token and card.zone == "battlefield"]
+        self.assertEqual(2, len(tokens))
+        self.assertTrue(all("haste" in session.engine._combat_keywords(card) for card in tokens))
+        self.assertTrue(all("Haste" not in session.engine._copyable_characteristics(card)["keywords"] for card in tokens))
+        self.assertTrue(all(effect.duration.value == "zone_object" for effect in session.state.continuous_effects))
+        self.assertEqual(1, sum(trigger.active and trigger.label == "Copied token cleanup" for trigger in session.state.delayed_triggers))
+        self.replay(session)
+        session.engine.change_control(tokens[0].object_id, "B", reason="bounded cleanup controller diagnostic")
+        old_identity = tokens[1].logical_object_id
+        session.engine.move_card(tokens[1].object_id, "exile", semantic_events=True)
+        self.assertNotEqual(old_identity, tokens[1].logical_object_id)
+        self.advance(session, "ending", "end_step")
+        self.finish(session)
+        self.assertEqual("battlefield", session.state.cards[tokens[0].object_id].zone)
+        self.assertEqual("B", session.state.cards[tokens[0].object_id].controller)
+
+
+    def test_trusted_populate_known_empty_finishes_without_choice_and_replays(self):
+        session = self.session(25100807)
+        self.register(session)
+        self.add(session, "Generic Copiable Creature", "NONTOKEN", zone="battlefield")
+        spell = self.add(session, "Generic Recipe Populate", "POPULATE")
+        self.seal(session)
+        self.cast(session, spell, [])
+        self.finish(session)
+        self.assertFalse(any(card.is_token for card in session.state.cards.values()))
+        self.assertEqual("graveyard", session.state.cards[spell.object_id].zone)
+        self.replay(session)
 
     def test_copy_replacement_choice_preserves_creator_projection_rollback_and_checkpoint(self):
         from quorune.session import CommanderSession

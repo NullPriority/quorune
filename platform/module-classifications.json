@@ -3648,6 +3648,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/token_copy_templates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/token_production_keyword_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -9826,6 +9841,48 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/token_copy_recipes.py",
+      "layer": "rules",
+      "owning_subsystem": "legacy_rules",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/token_copy_references.py",
+      "layer": "rules",
+      "owning_subsystem": "legacy_rules",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/token_copy_runtime.py",
+      "layer": "rules",
+      "owning_subsystem": "legacy_rules",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/token_creation.py",
       "layer": "rules",
       "owning_subsystem": "token_creation",
@@ -10122,6 +10179,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/zone_object_cleanup.py",
+      "layer": "rules",
+      "owning_subsystem": "legacy_rules",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/zone_object_keyword_grants.py",
       "layer": "rules",
       "owning_subsystem": "continuous_effects",
@@ -10350,5 +10421,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "7297f56564592ced1bedb79c40c6356e0c845c405309c36b4e1c1bfe24c31759"
+  "fingerprint": "4f4bb04f9ad817208d0ec2023be33dcddc18234593a280f72ab48d760c705eea"
 }

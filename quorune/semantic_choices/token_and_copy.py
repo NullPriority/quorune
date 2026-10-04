@@ -226,6 +226,8 @@ class TokenCopyChoiceHandler:
                     "_choice_actor": context.actor,
                     "_legal_refs": refs,
                     "_stack_label": context.stack_label,
+                    **({"_object_identities": {row.ref:row.logical_object_id for row in options}}
+                       if self.operation == "populate" else {}),
                 }
             ),
         )
@@ -247,6 +249,8 @@ class TokenCopyChoiceHandler:
         row = query.object(selected, zones=("battlefield",))
         if row is None or row.controller != actor or not row.token:
             raise SemanticChoiceError("Token-copy choice requires a token")
+        if self.operation == "populate" and row.logical_object_id != effect.get("_object_identities", {}).get(selected):
+            raise SemanticChoiceError("Populate token incarnation changed")
         label = str(effect["_stack_label"])
         if self.mode == "populate":
             if "creature" not in row.types:
@@ -257,8 +261,8 @@ class TokenCopyChoiceHandler:
                 name=row.printed_name,
                 quantity=1,
                 copy_of=row.ref,
-                temporary_keywords=("Haste",),
-                sacrifice_at_end_step=True,
+                temporary_keywords=("Haste",) if self.operation == "populate_with_haste" else (),
+                sacrifice_at_end_step=self.operation == "populate_with_haste",
                 reason=label,
             )
         else:
@@ -274,6 +278,15 @@ class TokenCopyChoiceHandler:
 
 TOKEN_AND_COPY_CHOICE_HANDLERS = (
     FabricateChoiceHandler(),
+    TokenCopyChoiceHandler(
+        operation="populate",
+        handler_id="choice.token.populate.v1",
+        mode="populate",
+        capability_dependencies=("token.creation.fixed_copy",),
+        rule_references=("CR 701.36a", "CR 707.2"),
+        continuation_fields=("_choice_actor", "_legal_refs", "_stack_label", "_object_identities"),
+        test_modules=("tests.test_fixed_token_creation_effects",),
+    ),
     TokenCopyChoiceHandler(
         operation="populate_with_haste",
         handler_id="choice.token.populate-haste.v1",

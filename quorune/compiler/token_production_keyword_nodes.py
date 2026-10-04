@@ -110,4 +110,24 @@ def fixed_afterlife_keyword_node(
     )
 
 
-__all__ = ["fixed_afterlife_keyword_node"]
+def fixed_populate_keyword_node(*, node_id: str, line: str, material_line: str, span: SourceSpan,
+                               mechanics: tuple[str, ...], capability_registry: CapabilityRegistry | None,
+                               capability_profile: str, **_unused: object) -> OracleNode | None:
+    from .token_copy_templates import token_copy_recipe_template
+    from .dependency_gate import dependency_gate
+    if mechanics != ("populate",):
+        return None
+    template = token_copy_recipe_template(material_line, source_name="Generic Source")
+    if template is None:
+        return None
+    gate = dependency_gate(mechanics=template.mechanics, effects=(template.effect,), target_schema=None,
+        trusted_mechanics=frozenset(), capability_registry=capability_registry, capability_profile=capability_profile)
+    if gate.blockers or gate.closure is None:
+        return None
+    return OracleNode(node_id=node_id, kind="spell_ability", text=line, span=span, active_zone="stack",
+        event="resolve", lowerable=True, exact=True, template_id=template.template_id, effects=(template.effect,),
+        mechanics=template.mechanics, capability_dependencies=gate.capabilities, capability_closure=gate.closure.reachable,
+        capability_profile=gate.closure.profile, capability_fingerprint=gate.closure.fingerprint)
+
+
+__all__ = ["fixed_afterlife_keyword_node", "fixed_populate_keyword_node"]

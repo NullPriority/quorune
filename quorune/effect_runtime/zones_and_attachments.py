@@ -5,7 +5,7 @@ from typing import Any, Mapping, Sequence
 
 from ..attachments import attach_objects
 from ..aura import legal_aura_target_refs
-from ..combat_entry_activations import resolve_encore_cleanup_group
+from ..zone_object_cleanup import resolve_zone_object_cleanup_group
 from ..continuous_effects import ContinuousOperation, Layer
 from ..continuous_effect_state import (
     ContinuousEffectStateError,
@@ -121,7 +121,7 @@ def _apply_move_if_in_zone(
     reason: str,
 ) -> Any:
     if "cards" in effect:
-        return resolve_encore_cleanup_group(
+        return resolve_zone_object_cleanup_group(
             host,
             effect,
             actor=actor,
