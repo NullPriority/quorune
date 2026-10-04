@@ -11,6 +11,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Preserve a newer indefinite control instruction when an older temporary
+  control effect expires, including the same-controller case, through the
+  existing control and cleanup owners.
+
 - Compile fixed token-copy recipes and normal Populate through the existing
   choice and token owners, preserving copiable exceptions, immediate departure
   information, independent keyword duration, and incarnation-pinned cleanup.

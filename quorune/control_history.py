@@ -104,12 +104,17 @@ def record_control_change(
     *,
     previous_controller: str,
 ) -> None:
-    """Record a committed control change without perturbing legacy replay."""
+    """Record acquisition and invalidate an obsolete temporary restoration."""
 
     if not isinstance(previous_controller, str) or not previous_controller:
         raise ControlHistoryError(
             "Control changes require the previous controller"
         )
+    # The canonical direct control change is indefinite. An older temporary
+    # restoration cannot supersede it, even if the controller does not change.
+    temporary = permanent.annotations.get("until_end_of_turn")
+    if isinstance(temporary, dict):
+        temporary.pop("control_previous", None)
     if previous_controller != permanent.controller:
         expire_control_change_continuous_effects(state, permanent)
     history_version = getattr(state, "control_history_version", None)

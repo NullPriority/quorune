@@ -4811,14 +4811,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v251-copiable-token-production-recipes",
-      "compiler_version": "oracle-ir-v251",
-      "bundle_id": "bundle:copiable-token-production-recipes",
-      "candidate_ids": ["bundle:copiable-token-production-recipes"],
-      "family_ids": ["activated_effect:create-token", "effect_clause:create-token", "event_binding:normalized-event-binding", "keyword_dependency:populate"],
-      "capability_ids": ["token.creation.fixed_copy"],
-      "non_harvest_reason": null,
-      "measurement_id": "measurement:copiable-token-production-recipes"
+      "transition_id": "oracle-ir-v252-temporary-control-cleanup-boundary",
+      "compiler_version": "oracle-ir-v252",
+      "bundle_id": null,
+      "candidate_ids": [],
+      "family_ids": [],
+      "capability_ids": [],
+      "non_harvest_reason": "Correct the confirmed existing temporary-control restoration boundary so cleanup cannot overwrite a newer indefinite control instruction, without expanding printed control grammar or capability trust.",
+      "expected_complete_card_gain": null
     },
     "forecast_corrections": [
       {

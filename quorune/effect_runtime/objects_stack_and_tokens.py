@@ -683,12 +683,15 @@ def _apply_change_control_until_end_of_turn(
         "until_end_of_turn",
         {},
     )
-    until_end.setdefault("control_previous", card.controller)
+    restoration_controller = until_end.get("control_previous", card.controller)
     host.change_control(
         card.object_id,
         new_controller,
         reason=reason,
     )
+    # Record the explicitly temporary duration after the shared control owner
+    # has invalidated any earlier direct-change restoration.
+    until_end["control_previous"] = restoration_controller
     return card.ref
 
 
