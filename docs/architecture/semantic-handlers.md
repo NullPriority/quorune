@@ -133,6 +133,14 @@ instruction-scoped value across suspension; independent instructions still
 read separately. Unsupported quantities and unavailable matched values fail
 closed before mutation.
 
+Token-copy creation replacements inspect the source's copiable types and
+subtypes, or the explicit copiable snapshot already supplied by its producer.
+The replacement subject therefore describes the token that will enter, not
+ordinary animation or type-changing effects currently applied to the source.
+The existing token transaction still owns replacement ordering, copied-value
+materialization, entry preparation and commit; this boundary adds no copy
+grammar or mutation path.
+
 Tap-state occurrences are emitted only for actual committed state changes.
 The canonical tap owner seals object incarnation, controller, characteristics,
 and attack-declaration cause. Explicit simultaneous instructions and costs

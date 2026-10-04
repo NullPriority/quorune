@@ -1700,5 +1700,186 @@ class FixedTokenCreationRuntimeTests(unittest.TestCase):
         )
 
 
+class TokenCopyCopiableBoundaryActionTests(unittest.TestCase):
+    """CR 707.2: replacement subjects describe the copy, not layer-4 animation."""
+
+    from test_linked_exile_return import LinkedExileReturnActionTests as _helpers
+    session = _helpers.session
+    add = _helpers.add
+    seal = _helpers.seal
+    cast = _helpers.cast
+    finish = _helpers.finish
+    replay = _helpers.replay
+
+    @classmethod
+    def setUpClass(cls):
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition, DeckEntry
+        from scripts.build_test_database import build_fixture_database
+        cls.temporary = tempfile.TemporaryDirectory()
+        root = Path(__file__).resolve().parents[1]
+        path = Path(cls.temporary.name) / "copy-boundary.sqlite3"
+        build_fixture_database([
+            root / "tests/fixtures/linked-exile-return-cards.json",
+            root / "tests/fixtures/token-copy-boundary-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.deck = DeckDefinition("Generic copy boundary", [
+            DeckEntry("Generic Blink Commander", 1, "commander"),
+            DeckEntry("Generic Blink Plains", 15),
+        ], ["Generic Blink Commander"])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    def register(self, session):
+        records = tuple(card for card in self.db.iter_cards() if card.oracle_text)
+        registry = load_default_capability_registry()
+        for record in records:
+            ir = compile_oracle_card(record, capability_registry=registry,
+                                     capability_profile="commander_review")
+            self.assertEqual("exact", ir.status, (record.name, ir.material_residuals))
+        register_generated_programs(
+            self.db, session.engine.semantics, records,
+            trust_level="provisional", capability_registry=registry,
+            capability_profile="commander_review",
+            promote_exact_runtime_handlers=True, promote_exact_trigger_programs=True,
+            promote_exact_effect_programs=True, promote_exact_capability_declarations=True,
+        )
+        for record in records:
+            programs = session.engine.semantics.programs_for_oracle(record.oracle_id)
+            self.assertTrue(programs, record.name)
+            self.assertTrue(all(session.engine.semantic_program_is_current_trusted(p)
+                                for p in programs), record.name)
+
+    def copy_after_animation(self, *, seed, subject_name, expected_tokens,
+                             current_artifact, copied_artifact, animation_spell_name=None):
+        session = self.session(seed)
+        self.register(session)
+        source = self.add(session, subject_name, "SUBJECT", zone="battlefield")
+        self.add(session, "Generic Artifact Token Map Bonus", "BONUS", zone="battlefield")
+        spell = self.add(session, "Generic Copy Creature Spell", "COPY")
+        animation = self.add(session, animation_spell_name, "ANIMATION") if animation_spell_name else None
+        self.seal(session)
+        if animation is not None:
+            self.cast(session, animation, [source.ref])
+        else:
+            action = next(row for row in session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                          if row.get("source") == source.ref and row["id"].startswith("activate:"))
+            result = session.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+            self.assertTrue(result.ok, result.summary)
+        self.finish(session)
+        current = session.engine._type_parts(session.engine._effective_card_data(source)["type_line"])[0]
+        self.assertIn("creature", current)
+        self.assertEqual(current_artifact, "artifact" in current)
+        self.assertEqual(copied_artifact, "artifact" in session.engine._type_parts(
+            session.engine._copyable_characteristics(source)["type_line"])[0])
+        self.cast(session, spell, [source.ref])
+        self.finish(session)
+        tokens = [card for card in session.state.cards.values()
+                  if card.is_token and card.zone == "battlefield"]
+        copies = [card for card in tokens if card.annotations.get("copied_from") == source.object_id]
+        self.assertEqual(1, len(copies))
+        copied_types = session.engine._type_parts(session.engine._effective_card_data(copies[0])["type_line"])[0]
+        self.assertEqual(copied_artifact, "artifact" in copied_types)
+        self.assertEqual(expected_tokens, len(tokens),
+                         "Artifact-only additional tokens follow the copy's copiable type")
+        for seat in "BCD":
+            self.assertIsNone(session.packet(f"pilot:{seat}", full=True)["decision"])
+        self.replay(session)
+
+    def test_actual_copy_of_nonartifact_animation_retains_artifact_replacement_and_replays(self):
+        self.copy_after_animation(seed=25000701, subject_name="Generic Copiable Artifact",
+            expected_tokens=2, current_artifact=False, copied_artifact=True)
+
+    def test_actual_copy_does_not_inherit_temporary_artifact_replacement_and_replays(self):
+        self.copy_after_animation(seed=25000702, subject_name="Generic Copiable Creature",
+            expected_tokens=1, current_artifact=True, copied_artifact=False,
+            animation_spell_name="Generic Artifact Creature Animation")
+
+    def test_copy_replacement_choice_preserves_creator_projection_rollback_and_checkpoint(self):
+        from quorune.session import CommanderSession
+        session = self.session(25000703)
+        self.register(session)
+        source = self.add(session, "Generic Copiable Artifact Creature", "SUBJECT", owner="B", zone="battlefield")
+        self.add(session, "Generic Artifact Token Map Bonus", "MAP", zone="battlefield")
+        self.add(session, "Generic Artifact Token Food Bonus", "FOOD", zone="battlefield")
+        self.add(session, "Generic Artifact Token Map Bonus", "OTHER-SEAT", owner="B", zone="battlefield")
+        spell = self.add(session, "Generic Copy Creature Spell", "COPY")
+        self.seal(session)
+        before = authoritative_state_hash(session.state)
+        rejected = session.act("pilot:A", {"action_id": "cast:" + spell.ref,
+                                          "targets": ["missing"], "pay": "auto"})
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self.cast(session, spell, [source.ref])
+        for _ in range(12):
+            decision = session.packet("pilot:A", full=True)["decision"]
+            if decision and decision["kind"] == "replacement.order":
+                break
+            principal = session.pending_principals()[0]
+            result = session.act(principal, {"action_id": "pass"})
+            self.assertTrue(result.ok, result.summary)
+        else:
+            self.fail("Copy creation did not expose competing artifact replacements")
+        self.assertFalse(any(card.is_token for card in session.state.cards.values()),
+                         "No token is committed before replacement selection")
+        for seat in "BCD":
+            self.assertIsNone(session.packet(f"pilot:{seat}", full=True)["decision"])
+        packet = session.packet("pilot:A", full=True)["decision"]
+        self.assertNotIn("replacement_effects", json.dumps(packet))
+        self.assertNotIn("replacement_batch", json.dumps(packet))
+        with tempfile.TemporaryDirectory() as directory:
+            session.save(Path(directory) / "choice")
+            restored = CommanderSession.load(self.db, Path(directory) / "choice")
+        self.assertEqual(authoritative_state_hash(session.state), authoritative_state_hash(restored.state))
+        before = authoritative_state_hash(restored.state)
+        rejected = restored.act("pilot:A", {"action_id": "choose", "replacement": "unknown"})
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before, authoritative_state_hash(restored.state))
+        option = restored.packet("pilot:A", full=True)["decision"]["ctx"]["options"][0]["id"]
+        result = restored.act("pilot:A", {"action_id": "choose", "replacement": option})
+        self.assertTrue(result.ok, result.summary)
+        self.finish(restored)
+        tokens = [card for card in restored.state.cards.values() if card.is_token and card.zone == "battlefield"]
+        self.assertEqual(3, len(tokens))
+        self.assertTrue(all(card.owner == "A" and card.controller == "A" for card in tokens))
+        self.assertEqual(1, sum(card.annotations.get("copied_from") == source.object_id for card in tokens))
+        self.replay(restored)
+        archive = getattr(self, "archive_output", None)
+        if archive is not None:
+            restored.save(archive)
+
+
+class TokenCopyCopiableSubjectOwnerTests(unittest.TestCase):
+    def test_copiable_subject_and_explicit_snapshot_kill_effective_type_mutation(self):
+        import inspect
+        from types import SimpleNamespace
+        from quorune.characteristic_evaluation import type_parts
+        from quorune import token_creation as owner
+        host = SimpleNamespace(
+            state=SimpleNamespace(cards={}, players={"A": SimpleNamespace(zones={"battlefield": []})}),
+            _resolve_object=lambda *args, **kwargs: object(),
+            _copyable_characteristics=lambda source: {"type_line": "Artifact — Treasure"},
+            _effective_card_data=lambda source: {"type_line": "Creature — Frog"},
+            _type_parts=type_parts,
+        )
+        args = dict(name="", quantity=1, copy_of="SOURCE", characteristics=None)
+        self.assertEqual(({"artifact"}, {"treasure"}), owner._creation_subject(host, "A", **args)[:2])
+        snapshot = {"characteristics": {"type_line": "Enchantment — Aura"}}
+        with patch.object(host, "_resolve_object", side_effect=AssertionError("Explicit snapshot must not read live source")):
+            self.assertEqual(({"enchantment"}, {"aura"}), owner._creation_subject(host, "A", **args, copy_snapshot=snapshot)[:2])
+        source = inspect.getsource(owner._creation_subject)
+        expression = "host._copyable_characteristics(copied_source)"
+        self.assertEqual(1, source.count(expression))
+        namespace = dict(vars(owner))
+        exec(compile(source.replace(expression, "host._effective_card_data(copied_source)"),
+                     "<wrong-copy-replacement-characteristic-boundary>", "exec"), namespace)
+        with self.assertRaises(AssertionError):
+            self.assertEqual({"artifact"}, namespace["_creation_subject"](host, "A", **args)[0])
+
+
 if __name__ == "__main__":
     unittest.main()
