@@ -2,7 +2,7 @@
 title: "Reusable rules piece matrix"
 status: "generated"
 authoritative_source: "coverage/reusable-piece-matrix.json.gz"
-verified: "d46f0ff6b9499074c4b53dc80b986303cf29519a0e80a9c8d94f86b115c82f87"
+verified: "57d7d091c453dbd87f834a41c40ac1905d62a2c2bacd166eb1d9267973e31e53"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -17,13 +17,13 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 
 - Profile: `commander_review`
 - Ontology: `reusable-pieces-v1`
-- Pieces: 2,853
+- Pieces: 2,858
 - Cards indexed: 31,623
-- Material abilities classified: 59,364
+- Material abilities classified: 59,361
 - Unclassified material spans: 0
-- Mapped pinned rules: 1,080 / 3,309
-- Applicable piece pairs: 95,417
-- Covered piece pairs: 1,031
+- Mapped pinned rules: 1,081 / 3,309
+- Applicable piece pairs: 95,804
+- Covered piece pairs: 1,035
 
 ## Ontology classes
 
@@ -33,11 +33,11 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 | `card_forms` — Card types and specialized forms | 8 |
 | `choices_continuations` — Modes, targets, choices, and continuations | 14 |
 | `combat` — Combat | 26 |
-| `compiler_cardprogram` — Compiler and CardProgram pieces | 1,592 |
+| `compiler_cardprogram` — Compiler and CardProgram pieces | 1,595 |
 | `continuous_effects` — Static abilities and continuous effects | 54 |
 | `costs_mana` — Costs and mana | 9 |
 | `events_mutations` — Typed events and mutations | 121 |
-| `keyword_mechanics` — Keyword actions and keyword abilities | 610 |
+| `keyword_mechanics` — Keyword actions and keyword abilities | 612 |
 | `multiplayer_commander` — Multiplayer, Commander, and profile pieces | 5 |
 | `object_identity` — Object identity and lifetime | 40 |
 | `one_shot_effects` — One-shot semantic effects | 196 |
@@ -67,9 +67,9 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 
 | Piece | Class | Residuals | Sole blockers | Expected cards | Runtime | Assurance |
 |---|---|---:|---:|---:|---|---|
-| `residual.continuous_layer.continuous-effect-layers-and-dependencies` | `continuous_effects` | 4,052 | 1,862 | 1,862 | `absent` | `untested` |
+| `residual.continuous_layer.continuous-effect-layers-and-dependencies` | `continuous_effects` | 4,047 | 1,866 | 1,866 | `absent` | `untested` |
 | `residual.effect_clause.unparsed-clause-grammar` | `one_shot_effects` | 1,862 | 178 | 178 | `absent` | `untested` |
-| `residual.activated_effect.unparsed-clause-grammar` | `one_shot_effects` | 1,406 | 135 | 135 | `absent` | `untested` |
+| `residual.activated_effect.unparsed-clause-grammar` | `one_shot_effects` | 1,406 | 136 | 136 | `absent` | `untested` |
 | `residual.effect_clause.typed-spell-additional-cost-clause` | `one_shot_effects` | 106 | 22 | 22 | `absent` | `untested` |
 | `residual.keyword_dependency.banding` | `keyword_mechanics` | 24 | 19 | 19 | `absent` | `untested` |
 | `residual.keyword_dependency.start-your-engines` | `keyword_mechanics` | 40 | 16 | 16 | `absent` | `untested` |

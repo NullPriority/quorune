@@ -127,7 +127,8 @@ class PublicHistoryConditionRuntimeContractTests(unittest.TestCase):
         for invalid in (True, 0, 2, "1"):
             with self.subTest(invalid=invalid), self.assertRaises(ValueError):
                 TurnHistory(departure_history_version=invalid)
-        state = SimpleNamespace(turn_history=history, commander_damage_identity_version=2, control_history_version=1)
+        state = SimpleNamespace(turn_history=history, commander_damage_identity_version=2,
+                                control_history_version=1, tap_state_event_version=None)
         versions = format_state_versions(state)
         self.assertEqual(1, versions["departure_history_version"])
         validate_state_versions({"format":versions},state)

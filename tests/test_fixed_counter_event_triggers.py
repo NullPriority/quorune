@@ -2889,8 +2889,9 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                 )
 
     def test_public_action_event_suffixes_remain_fail_closed(self):
+        self.assertEqual("exact", self.compile("Whenever this creature becomes tapped, draw a card.", type_line="Creature — Advisor").status)
         cases = (
-            "Whenever this creature becomes tapped, draw a card.",
+            "Whenever this creature becomes tapped for the first time each turn, draw a card.",
             "Whenever you cycle or discard a card, draw a card.",
             "Whenever you discard a card for the first time each turn, draw a card.",
             "Whenever you sacrifice one or more Foods, draw a card.",
@@ -2946,7 +2947,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                 self.assertTrue(ir.material_residuals)
 
         with patch(
-            "quorune.compiler.fixed_counter_trigger_nodes."
+            "quorune.compiler.fixed_public_action_event_bindings."
             "fixed_public_action_event_binding_spec",
             return_value=None,
         ):
@@ -3138,7 +3139,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
         self.assertNotEqual("exact", ir.status)
         self.assertTrue(ir.material_residuals)
         with patch(
-            "quorune.compiler.fixed_counter_trigger_nodes."
+            "quorune.compiler.fixed_public_multi_event_bindings."
             "fixed_public_multi_event_binding_spec",
             return_value=None,
         ):
@@ -3283,6 +3284,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                 self.assertFalse(ir.material_residuals)
 
     def test_public_event_near_misses_remain_material(self):
+        self.assertEqual("exact", self.compile("Whenever a creature you control becomes tapped, you may gain 1 life.", type_line="Creature — Fixture").status)
         cases = (
             "Whenever an opponent discards one or more cards, you may draw a card.",
             "Whenever you sacrifice a green creature, you may gain 2 life.",
@@ -3300,7 +3302,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             "Whenever one or more creatures you control attack, you may draw a card.",
             "Whenever a creature you control becomes the target of a spell, you "
             "may draw a card.",
-            "Whenever a creature you control becomes tapped, you may gain 1 life.",
+            "Whenever a creature you control becomes tapped, you may gain 1 life. This ability triggers only once each turn.",
             "Whenever one or more +1/+1 counters are put on this creature, you "
             "may create a 1/1 green Squirrel creature token.",
             "When you cycle this card and when this creature dies, you may draw "
@@ -3399,7 +3401,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                 self.assertTrue(ir.material_residuals)
 
         with patch(
-            "quorune.compiler.fixed_counter_trigger_nodes."
+            "quorune.compiler.fixed_public_event_trigger_bindings."
             "fixed_public_event_binding_spec",
             return_value=None,
         ):
