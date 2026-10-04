@@ -90,6 +90,7 @@ FIXED_COUNTER_EVENT_TRIGGER_TEMPLATE_IDS = frozenset(
         "fixed-counter-constellation-entry-trigger-v1",
         "fixed-counter-battalion-attack-trigger-v1",
         "fixed-counter-public-state-source-zone-trigger-v1",
+        "fixed-counter-tap-state-trigger-v1",
     }
 )
 FIXED_TYPED_EVENT_EFFECT_TRIGGER_TEMPLATE_IDS = frozenset(

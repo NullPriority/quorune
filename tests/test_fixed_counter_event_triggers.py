@@ -276,6 +276,18 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
         self.assertIn("zone.mill.fixed", node.capability_dependencies)
         self.assertNotIn("target.revalidate_resolution", node.capability_dependencies)
 
+    def test_tap_state_target_body_is_accepted_by_corpus_assurance(self):
+        text = "Whenever this creature becomes tapped, another target creature you control gets +2/+2 until end of turn."
+        ir = self.compile(text, type_line="Creature — Test")
+        record = CardRecord(
+            oracle_id=ir.oracle_id, name="Compiler Fixture", mana_cost="{2}", mana_value=2,
+            type_line="Creature — Test", oracle_text=text, power="2", toughness="2",
+            loyalty=None, defense=None, colors=(), color_identity=(), keywords=(),
+            produced_mana=(), layout="normal", released_at="2026-01-01",
+            legalities={"commander": "legal"}, faces=(), raw={},
+        )
+        TargetEffectCorpusCollector().observe(record, ir)
+
     def test_tap_state_version_codec_and_record_provenance_are_explicit(self):
         from quorune.record_state_provenance import format_state_versions, validate_state_versions
         state = GameState(
