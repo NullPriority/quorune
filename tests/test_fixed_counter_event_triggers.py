@@ -62,7 +62,7 @@ from quorune.compiler.target_effect_corpus_assurance import (
 )
 from quorune.deck import DeckLoader
 from quorune.kicker import KICKER_CAST_OPTION_ID
-from quorune.model import CardInstance, CombatState
+from quorune.model import CardInstance, CombatState, GameConfig, GameState
 from quorune.object_predicate import ObjectQuerySpec
 from quorune.oracle_ir import (
     compile_oracle_card,
@@ -97,6 +97,9 @@ from quorune.semantic_choices.optional_counter_placement import (
 )
 from quorune.semantic_runtime import LifeChangeIntent
 from quorune.trigger_processing import collect_trigger_items, enqueue_trigger_batch
+from quorune.tap_state import dispatch_tapped_cost_group, set_permanent_tapped, tap_declared_attackers
+from quorune.rules.tap_state_event_capability_shapes import tap_state_event_player_node_capabilities
+from types import SimpleNamespace
 from scripts.build_test_database import build_fixture_database
 
 
@@ -173,6 +176,137 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             capability_registry=self.capabilities,
             capability_profile="commander_review",
         )
+
+    def test_tap_state_event_bindings_preserve_actual_transition_kind(self):
+        # CR 603.2e distinguishes becoming tapped/untapped from entering in
+        # that state. These bindings consume only the canonical transition.
+        cases = (
+            ("Whenever this creature becomes tapped, draw a card.", "permanent.tap"),
+            ("Inspired — Whenever this creature becomes untapped, draw a card.", "permanent.untap"),
+            ("Whenever a creature you control becomes tapped, draw a card.", "permanent.tap"),
+            ("Whenever enchanted creature becomes untapped, draw a card.", "permanent.untap"),
+        )
+        for text, event in cases:
+            with self.subTest(text=text):
+                material = text.removeprefix("Inspired — ")
+                binding = fixed_counter_trigger_binding(material, card_name="Compiler Fixture")
+                self.assertIsNotNone(binding)
+                self.assertEqual(event, binding.event.value)
+                self.assertEqual("battlefield", binding.active_zone)
+
+    def test_tap_state_owner_noop_undo_cost_and_sealed_source_order(self):
+        first = CardInstance("z-first", "P1", "fixture:first", "Generic Permanent", "A", "A", "battlefield")
+        second = CardInstance("a-second", "P2", "fixture:second", "Generic Observer", "B", "B", "battlefield")
+        events = []
+        host = SimpleNamespace(
+            state=SimpleNamespace(cards={first.object_id: first, second.object_id: second},
+                                  active_player="A", phase="precombat_main", step="main", tap_state_event_version=1, delayed_triggers=[]),
+            _effective_card_data=lambda card: {"type_line": "Creature — Goblin", "colors": [], "keywords": []},
+            _type_parts=lambda line: ({"creature"}, {"goblin"}, set()),
+            _semantic_event_sources=lambda: [first, second],
+            _semantic_pause_annotation=lambda: None,
+            _dispatch_semantic_event=lambda event, context, **kwargs: events.append((event, context, kwargs)),
+            _log=lambda *args, **kwargs: None,
+        )
+        set_permanent_tapped(host, first.ref, actor="A", tapped=True, reason="effect")
+        self.assertEqual("permanent.tap", events[0][0])
+        self.assertEqual([second.object_id, first.object_id], [card.object_id for card in events[0][2]["sources"]])
+        self.assertEqual(first.logical_object_id, events[0][1]["card_object_identity"])
+        self.assertEqual(["goblin"], events[0][1]["subtypes"])
+        set_permanent_tapped(host, first.ref, actor="A", tapped=True, reason="noop")
+        self.assertEqual(1, len(events))
+        set_permanent_tapped(host, first.ref, actor="A", tapped=False, reason="undo", revert=True)
+        self.assertEqual(1, len(events))
+        first.tapped = True
+        set_permanent_tapped(host, first.ref, actor="A", tapped=False, reason="untap cost", untap_cost=True)
+        self.assertEqual(["permanent.tap", "permanent.untap"], [event[0] for event in events])
+        host.state.tap_state_event_version = None
+        set_permanent_tapped(host, first.ref, actor="A", tapped=True, reason="historical owner mode")
+        self.assertEqual(2, len(events))
+
+    def test_tap_state_parser_exclusions_and_mutant_are_fail_closed(self):
+        for text in (
+            "Whenever this creature becomes tapped for the first time each turn, draw a card.",
+            "Whenever this creature becomes tapped, draw a card. This ability triggers only once each turn.",
+            "Whenever a creature with power 2 or less becomes tapped, draw a card.",
+        ):
+            with self.subTest(text=text):
+                self.assertTrue(self.compile(text, type_line="Creature — Test").material_residuals)
+        with patch("quorune.compiler.tap_state_event_bindings.tap_state_event_binding_spec", return_value=None):
+            self.assertIsNone(fixed_counter_trigger_binding("Whenever this creature becomes tapped, draw a card.", card_name="Compiler Fixture"))
+
+    def test_tap_state_group_observes_complete_commit_and_vigilance(self):
+        cards = [CardInstance(str(index), f"P{index}", "fixture", "Generic Creature", "A", "A", "battlefield") for index in range(2)]
+        observations = []
+        host = SimpleNamespace(
+            state=SimpleNamespace(cards={card.object_id: card for card in cards},
+                                  active_player="A", phase="combat", step="declare_attackers", tap_state_event_version=1, delayed_triggers=[]),
+            _effective_card_data=lambda card: {"type_line": "Creature", "keywords": ["Vigilance"] if card is cards[1] else []},
+            _type_parts=lambda line: ({"creature"}, set(), set()),
+            _semantic_event_sources=lambda: cards,
+            _semantic_pause_annotation=lambda: None,
+            _dispatch_semantic_event=lambda event, context, **kwargs: observations.append((event, context, tuple(card.tapped for card in cards))),
+            _log=lambda *args, **kwargs: None,
+        )
+        self.assertEqual([cards[0].ref], tap_declared_attackers(host, cards))
+        self.assertEqual((True, False), observations[0][2])
+        self.assertTrue(observations[0][1]["declared_attacker"])
+        observations.clear()
+        for card in cards:
+            card.tapped = True
+        dispatch_tapped_cost_group(host, reversed(cards), reason="group cost")
+        self.assertEqual(2, len(observations))
+        self.assertTrue(all(row[2] == (True, True) and not row[1]["declared_attacker"] for row in observations))
+
+    def test_event_controller_result_shapes_reject_unbound_and_targeted_forms(self):
+        effect = {"op": "mill", "player": "$context.controller", "count": 1}
+        arguments = {"target_schema": None, "mechanic_ids": ("tap-state-event-player-result", "mill")}
+        self.assertEqual(("zone.mill.fixed", "trigger.event.normalized_public_action"), tap_state_event_player_node_capabilities(effects=(effect,), **arguments))
+        for mutant in ({**effect, "count": True}, {**effect, "player": "$context.owner"}, {**effect, "unknown": 1}):
+            self.assertEqual((), tap_state_event_player_node_capabilities(effects=(mutant,), **arguments))
+        self.assertEqual((), tap_state_event_player_node_capabilities(effects=(effect,), target_schema={"count": 1}, mechanic_ids=arguments["mechanic_ids"]))
+
+    def test_tap_state_whole_card_contract_preserves_nontargeted_controller(self):
+        text = "Whenever a permanent becomes untapped, its controller mills a card."
+        ir = self.compile(text)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node = ir.faces[0].nodes[0]
+        self.assertIsNone(node.target_schema)
+        self.assertEqual("$context.controller", node.effects[0]["player"])
+        self.assertIn("zone.mill.fixed", node.capability_dependencies)
+        self.assertNotIn("target.revalidate_resolution", node.capability_dependencies)
+
+    def test_tap_state_version_codec_and_record_provenance_are_explicit(self):
+        from quorune.record_state_provenance import format_state_versions, validate_state_versions
+        state = GameState(
+            game_id="generic-version-witness", config=GameConfig(), players={}, cards={},
+            deck_names={}, commander_oracle_ids={}, turn_order=[], current_turn=None,
+            last_normal_turn_player=None,
+        )
+        legacy = state.to_dict()
+        self.assertNotIn("tap_state_event_version", legacy)
+        self.assertIsNone(GameState.from_dict(legacy).tap_state_event_version)
+        state.tap_state_event_version = 1
+        current = state.to_dict()
+        self.assertEqual(1, GameState.from_dict(current).tap_state_event_version)
+        manifest = {"format": format_state_versions(state)}
+        validate_state_versions(manifest, state)
+        manifest["format"]["tap_state_event_version"] = 0
+        with self.assertRaisesRegex(ValueError, "Tap-state event provenance"):
+            validate_state_versions(manifest, state)
+        for malformed in (True, 0, 2, "1"):
+            with self.subTest(malformed=malformed):
+                state.tap_state_event_version = malformed
+                with self.assertRaisesRegex(ValueError, "tap-state occurrence version"):
+                    state.to_dict()
+
+    def test_tap_state_prior_runtime_manifest_is_explicitly_incompatible(self):
+        from quorune.record_trust import _validate_runtime_trust_provenance, runtime_trust_provenance
+        current = runtime_trust_provenance()
+        previous = {**current, "capability_registry_fingerprint": "prior-runtime-content-identity"}
+        with self.assertRaisesRegex(ValueError, "Runtime trust provenance mismatch"):
+            _validate_runtime_trust_provenance(previous, context="record manifest")
+        _validate_runtime_trust_provenance(current, context="record manifest")
 
     def test_fixed_typed_event_effect_triggers_compile_closed_bodies(self):
         cases = (

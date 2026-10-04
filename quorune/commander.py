@@ -268,6 +268,7 @@ def initial_commander_state(
             COMMANDER_DAMAGE_IDENTITY_VERSION
         ),
         control_history_version=CONTROL_HISTORY_VERSION,
+        tap_state_event_version=1,
         turn_history=TurnHistory(departure_history_version=1),
         active_player=None,
         phase="setup",

@@ -11,7 +11,8 @@ from .affected_permanents import (
     select_affected_permanents,
 )
 from .object_query import ObjectQueryResult
-from .tap_state import set_permanent_tapped
+from .tap_state import dispatch_tap_state_occurrence, set_permanent_tapped
+from .trigger_processing import enqueue_trigger_batch
 
 
 class PublicTapStateSetError(ValueError):
@@ -123,6 +124,7 @@ def resolve_public_tap_state_set(
             raise PublicTapStateSetError(
                 "Public tap-state set became stale before commit"
             )
+    prior_states = {value.object_id: host.state.cards[value.object_id].tapped for value in snapshot}
     results = tuple(
         set_permanent_tapped(
             host,
@@ -131,9 +133,19 @@ def resolve_public_tap_state_set(
             tapped=tapped,
             reason=reason,
             logical_object_id=value.logical_object_id,
+            semantic_events=False,
         )
         for value in snapshot
     )
+    pending: list[Any] = []
+    for value in snapshot:
+        card = host.state.cards[value.object_id]
+        if card.tapped != prior_states[value.object_id]:
+            dispatch_tap_state_occurrence(
+                host, card, tapped=tapped, reason=reason, trigger_batch=pending,
+            )
+    if pending:
+        enqueue_trigger_batch(host, pending)
     host._log(
         actor,
         "effect.permanent.tap_state_set",

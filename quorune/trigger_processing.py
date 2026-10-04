@@ -366,6 +366,7 @@ def collect_trigger_items(
     context: Mapping[str, Any],
     *,
     held_triggers: Sequence[StackItem] = (),
+    sources: Sequence[CardInstance] | None = None,
 ) -> list[StackItem]:
     """Discover represented abilities into one ordinary occurrence type."""
 
@@ -374,6 +375,7 @@ def collect_trigger_items(
         event_kind,
         context,
         trigger_batch=triggered,
+        **({"sources": sources} if sources is not None else {}),
     )
     if host._semantic_pause_annotation() is not None:
         return triggered

@@ -872,6 +872,7 @@ class GameState:
     # ``None`` preserves historical Game Record v3 command hashes. New games
     # use version 1 upkeep-relative control-acquisition history.
     control_history_version: int | None = None
+    tap_state_event_version: int | None = None
     extra_turns: list[TurnEntry] = field(default_factory=list)
     active_player: str | None = None
     priority_player: str | None = None
@@ -930,11 +931,16 @@ class GameState:
         return [seat for seat in self.turn_order if self.players[seat].in_game]
 
     def to_dict(self) -> dict[str, Any]:
+        if self.tap_state_event_version is not None and (
+            type(self.tap_state_event_version) is not int or self.tap_state_event_version != 1
+        ):
+            raise ValueError("Unsupported tap-state occurrence version")
         return {
             "game_id": self.game_id,
             "config": self.config.to_dict(),
             "players": {seat: player.to_dict() for seat, player in self.players.items()},
             "cards": {object_id: card.to_dict() for object_id, card in self.cards.items()},
+            **({"tap_state_event_version": self.tap_state_event_version} if self.tap_state_event_version is not None else {}),
             "deck_names": dict(self.deck_names),
             "commander_oracle_ids": {
                 seat: list(ids) for seat, ids in self.commander_oracle_ids.items()
@@ -1023,6 +1029,7 @@ class GameState:
             config=GameConfig.from_dict(data["config"]),
             players={seat: PlayerState.from_dict(player) for seat, player in data["players"].items()},
             cards={oid: CardInstance.from_dict(card) for oid, card in data["cards"].items()},
+            tap_state_event_version=data.get("tap_state_event_version"),
             deck_names=dict(data["deck_names"]),
             commander_oracle_ids={seat: list(ids) for seat, ids in data["commander_oracle_ids"].items()},
             turn_order=list(data["turn_order"]),

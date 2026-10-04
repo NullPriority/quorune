@@ -3,6 +3,7 @@ from __future__ import annotations
 """CR 400.7j/603.7c: follow the exiled incarnation, never a reused card ID."""
 
 import unittest
+import json
 from copy import deepcopy
 from types import SimpleNamespace
 from unittest.mock import patch
@@ -252,6 +253,20 @@ class LinkedExileReturnIntegratedCompilerTests(unittest.TestCase):
 
 
 class LinkedExileReturnActionTests(unittest.TestCase):
+    def register_tap_fixtures(self, session):
+        register_generated_programs(
+            self.db, session.engine.semantics,
+            tuple(card for card in self.db.iter_cards() if card.oracle_text),
+            trust_level="provisional", capability_registry=load_default_capability_registry(),
+            capability_profile="commander_review", promote_exact_runtime_handlers=True,
+            promote_exact_trigger_programs=True, promote_exact_effect_programs=True,
+            promote_exact_capability_declarations=True,
+        )
+        for name in ("Generic Tap Transition Witness", "Generic Event Controller Mill Witness"):
+            programs = session.engine.semantics.programs_for_oracle(self.db.lookup(name).oracle_id)
+            self.assertTrue(programs)
+            self.assertTrue(all(session.engine.semantic_program_is_current_trusted(program) for program in programs))
+
     def optional_other_fixture(self, seed, *, eligible, extra_other=False):
         session = self.session(seed)
         register_generated_programs(
@@ -436,6 +451,63 @@ class LinkedExileReturnActionTests(unittest.TestCase):
             replay=replay_record(path,self.db,verify=True)
             self.assertTrue(replay["ok"],replay)
             self.assertEqual(expected,replay["final_state_hash"])
+
+    def test_trusted_tap_cost_and_untap_effect_dispatch_and_replay(self):
+        session = self.session(24800001)
+        self.register_tap_fixtures(session)
+        source = self.add(session, "Generic Tap Transition Witness", "TAP_SOURCE", zone="battlefield")
+        spell = self.add(session, "Generic Untap Transition Spell", "UNTAP")
+        self.add(session, "Generic Event Controller Mill Witness", "OBSERVER", controller="B", owner="B", zone="battlefield")
+        self.seal(session)
+        before_hand = len(session.state.players["A"].zones["hand"])
+        decision = session.packet("pilot:A", full=True)["decision"]
+        action = next(value for value in decision["ctx"]["legal"]["actions"]
+                      if value.get("source") == source.ref and value["id"].startswith("activate:"))
+        result = session.act("pilot:A", {"action_id": action["id"]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertTrue(source.tapped)
+        self.assertTrue(session.state.stack or session.state.pending_trigger_batches)
+        before_rejected = authoritative_state_hash(session.state)
+        rejected = session.act("pilot:A", {"action_id": action["id"]})
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before_rejected, authoritative_state_hash(session.state))
+        self.finish(session)
+        self.assertEqual(before_hand + 1, len(session.state.players["A"].zones["hand"]))
+        drawn_id = session.state.players["A"].zones["hand"][-1]
+        drawn = session.state.cards[drawn_id]
+        for seat in "BCD":
+            self.assertNotIn(drawn.oracle_id, json.dumps(session.packet(f"pilot:{seat}", full=True)))
+        before_life = session.state.players["A"].life
+        before_graveyard = len(session.state.players["A"].zones["graveyard"])
+        self.cast(session, spell, [source.ref])
+        self.finish(session)
+        self.assertFalse(source.tapped)
+        self.assertEqual(before_life + 2, session.state.players["A"].life)
+        self.assertEqual(before_graveyard + 2, len(session.state.players["A"].zones["graveyard"]))
+        self.replay(session)
+
+    def test_trusted_untap_step_holds_trigger_and_preserves_incarnation(self):
+        session = self.session(24800002)
+        self.register_tap_fixtures(session)
+        source = self.add(session, "Generic Tap Transition Witness", "UNTAP_STEP_SOURCE", zone="battlefield")
+        source.tapped = True
+        before_life = session.state.players["A"].life
+        from quorune.engine import TURN_STEPS
+        session.state.phase_index = TURN_STEPS.index(("ending", "cleanup"))
+        session.state.phase = "ending"
+        session.state.step = "cleanup"
+        self.seal(session)
+        # This direct boundary witness is distinct from the command witness
+        # above: the existing turn coordinator holds triggers through no-priority
+        # untap and places them only when upkeep supplies priority.
+        session.state.phase_index = TURN_STEPS.index(("beginning", "untap"))
+        session.engine._enter_step()
+        self.assertFalse(source.tapped)
+        self.assertEqual(("beginning", "upkeep"), (session.state.phase, session.state.step))
+        self.assertEqual(before_life, session.state.players["A"].life)
+        self.assertTrue(session.state.stack or session.state.pending_trigger_batches)
+        self.finish(session)
+        self.assertEqual(before_life + 2, session.state.players["A"].life)
 
     def test_trusted_immediate_blink_offer_payment_owner_privacy_and_replay(self):
         session=self.session(24400002)

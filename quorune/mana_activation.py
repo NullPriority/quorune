@@ -147,7 +147,8 @@ def complete_mana_activation(
         changed_players=[seat],
     )
     reversible = bool(
-        ability.tap_source
+        not host.state.pending_trigger_batches
+        and ability.tap_source
         and ability.activation_limit is None
         and not sum(ability.mana.values())
         and not ability.choices
