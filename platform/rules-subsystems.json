@@ -4795,14 +4795,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v249-public-collection-quantity-reductions",
-      "compiler_version": "oracle-ir-v249",
-      "bundle_id": "bundle:public-collection-quantity-reductions",
-      "candidate_ids": ["bundle:public-collection-quantity-reductions"],
-      "family_ids": ["continuous_layer:continuous-effect-layers-and-dependencies", "quantity_expression:dynamic-quantity"],
-      "capability_ids": ["continuous.characteristics.query_count_modifier", "continuous.characteristics.query_power_toughness_definition", "quantity_expression.public_query_effect_amount"],
-      "non_harvest_reason": null,
-      "measurement_id": "measurement:public-collection-quantity-reductions"
+      "transition_id": "oracle-ir-v250-copiable-token-copy-replacement-subject",
+      "compiler_version": "oracle-ir-v250",
+      "bundle_id": null,
+      "candidate_ids": [],
+      "family_ids": [],
+      "capability_ids": [],
+      "non_harvest_reason": "Correct the confirmed token-copy creation replacement subject to use copiable types and subtypes rather than noncopy current characteristics, preserving the existing compiler grammar and mutation owners.",
+      "expected_complete_card_gain": null
     },
     "forecast_corrections": [
       {

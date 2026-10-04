@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "48710c0edc73581b1af95cf7e6b569a0796657d77315678f3a6c15a686a37dd6",
-  "declaration_source_fingerprint": "1f78aebed6b7c71a23e4813a44f1e8ff2d32a43afcb76566fc17c64abc5cbcbf",
+  "registry_fingerprint": "12e5deaf9cbef80e95b967cc9060c207b5ca520f5dc4ecfdbe04adea2dc1e365",
+  "declaration_source_fingerprint": "24440bff05e89a64017e467ece2b5d3a93d092249a2a148cf0829957eaa3c417",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -62248,6 +62248,48 @@
     {
       "capability_id": "token.creation.fixed_copy",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_actual_copy_does_not_inherit_temporary_artifact_replacement_and_replays",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "608.2b",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Retain the contrasting false-positive replacement boundary for a creature temporarily made an artifact."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_actual_copy_of_nonartifact_animation_retains_artifact_replacement_and_replays",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "608.2b",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "CR 707.2 separates noncopy layer-4 characteristics from the creation replacement subject through the canonical copiable reader."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_copy_and_delayed_tokens_revalidate_and_replay",
       "official_rule_ids": [
         "111.2",
@@ -62265,6 +62307,27 @@
         "commander_review"
       ],
       "applicability_note": "Revalidate the target at resolution and copy its current copiable values through the canonical token transaction."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_copy_replacement_choice_preserves_creator_projection_rollback_and_checkpoint",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "608.2b",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The creator controls and owns the copy despite copying another player's permanent; only creator-scoped replacements apply."
     },
     {
       "capability_id": "token.creation.fixed_copy",
@@ -62290,6 +62353,27 @@
     {
       "capability_id": "token.creation.fixed_copy",
       "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_token_creation_effects.TokenCopyCopiableSubjectOwnerTests.test_copiable_subject_and_explicit_snapshot_kill_effective_type_mutation",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "608.2b",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Kill restoring the current-characteristic reader and preserve explicit-snapshot behavior without reading a live source."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "mutation",
       "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_token_production_grammar_and_capability_mutants_fail_closed",
       "official_rule_ids": [
         "111.2",
@@ -62307,6 +62391,27 @@
         "commander_review"
       ],
       "applicability_note": "Change the compiler-owned copy reference away from the selected target and require shape validation to reject it."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_actual_copy_does_not_inherit_temporary_artifact_replacement_and_replays",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "608.2b",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A trusted type-changing spell does not make its nonartifact source's copied token eligible for an artifact-only additional-token replacement."
     },
     {
       "capability_id": "token.creation.fixed_copy",
@@ -62332,6 +62437,27 @@
     {
       "capability_id": "token.creation.fixed_copy",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_actual_copy_of_nonartifact_animation_retains_artifact_replacement_and_replays",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "608.2b",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actually cast a trusted copy spell after a trusted artifact animation; artifact-only replacement discovery follows the copied artifact, not its current nonartifact source."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_compiler_lowers_investigate_afterlife_and_extended_token_definitions",
       "official_rule_ids": [
         "111.2",
@@ -62353,6 +62479,27 @@
     {
       "capability_id": "token.creation.fixed_copy",
       "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_copy_replacement_choice_preserves_creator_projection_rollback_and_checkpoint",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "608.2b",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Only the affected creator sees replacement options; internal replacement data stays outside four-player projection."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "privacy",
       "test_id": "tests.test_fixed_token_production.FixedTokenProductionTests.test_token_replacement_order_rollback_and_privacy",
       "official_rule_ids": [
         "111.2",
@@ -62370,6 +62517,27 @@
         "commander_review"
       ],
       "applicability_note": "Expose only public copy-token and replacement facts, not internal object identities."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_copy_replacement_choice_preserves_creator_projection_rollback_and_checkpoint",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "608.2b",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Checkpoint and reload during the actual replacement choice, reject an invalid selection atomically, then exactly replay from before the copy action without duplicate tokens."
     },
     {
       "capability_id": "token.creation.fixed_copy",
@@ -74292,5 +74460,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "52bfe7cb30ab92a001656c2f57b727f8e886ef0e481504fe9749b16364182d8b"
+  "fingerprint": "48c2dd0f27ea7c4dea93ede59e0eceeab6cfcb55ca0bf3aaaa784c42c21850f3"
 }

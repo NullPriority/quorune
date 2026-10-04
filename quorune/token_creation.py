@@ -427,7 +427,7 @@ def _creation_subject(
         copied_data = (
             dict(copy_snapshot.get("characteristics") or {})
             if copy_snapshot is not None
-            else host._effective_card_data(copied_source)
+            else host._copyable_characteristics(copied_source)
         )
         created_types, created_subtypes, _ = host._type_parts(
             str(copied_data.get("type_line") or "")

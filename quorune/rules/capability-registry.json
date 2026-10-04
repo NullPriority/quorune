@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 174,
+  "registry_version": 175,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -1669,11 +1669,11 @@
     },
     {
       "id": "token.creation.fixed_copy",
-      "version": 1,
+      "version": 2,
       "official_rules": ["111.2", "111.12", "115.1a", "608.2b", "707.2", "707.9", "614.16", "616.1"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
-        "summary": "Create one token copying one resolution-legal targeted battlefield permanent through the canonical replacement-aware token transaction.",
+          "summary": "Create one token copying one resolution-legal targeted battlefield permanent through the canonical replacement-aware token transaction. Creation-replacement subjects use the same copiable characteristic boundary as token materialization, excluding ordinary type-changing effects on the source.",
         "inputs": ["one current legal target creature or artifact, creature, or land", "current copiable characteristics", "resolving controller"],
         "outputs": ["one copied token object", "ordinary token replacement ordering and entry events", "target revalidation and exact replay"],
         "exclusions": ["source or nontarget LKI copies", "multiple targets", "token-copy modifications", "temporary keywords or delayed exile", "linked, chosen, graveyard, stack, spell, and card copies", "optional or variable quantities"]
