@@ -174,7 +174,7 @@ class PublicCollectionReductionTests(unittest.TestCase):
         self.assertEqual(encoded, CharacteristicQuantitySpec.from_dict(encoded).to_dict())
         with self.assertRaises(CharacteristicFragmentError):
             CharacteristicQuantitySpec.from_dict({**encoded, "reduction": "callback"})
-        for excluded in ("greatest power among creatures you control", "colors among cards in your hand", "card types among cards of a chosen player"):
+        for excluded in ("greatest power among creatures you control", "colors among cards in your hand", "card types among cards in your hand", "card types among cards of a chosen player"):
             self.assertIsNone(query_characteristic_quantity(excluded, source_name="Generic Source"))
 
     def test_whole_card_collection_values_flow_to_existing_fixed_result_owners(self):

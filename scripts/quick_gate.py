@@ -161,6 +161,22 @@ def build_plan(
                  "-p", "test_capability_implementation_mutations.py", "-k",
                  "test_literal_patch_targets_resolve_before_mutation_execution"),
             ))
+        quantity_sources = {
+            "quorune/compiler/collection_quantity_templates.py",
+            "quorune/compiler/query_characteristic_templates.py",
+        }
+        if quantity_sources.intersection(paths):
+            for module, test in (
+                ("test_typed_dynamic_characteristics", "test_versioned_codec_keeps_legacy_counts_and_closed_exclusions"),
+                ("test_typed_query_self_characteristics", "test_query_characteristic_grammar_keeps_ambiguous_families_residual"),
+                ("test_query_power_toughness_definitions", "test_query_power_toughness_definition_grammar_keeps_open_families_residual"),
+                ("test_fixed_public_state_characteristics", "test_public_condition_closure_compiles_typed_queries_and_facts"),
+            ):
+                steps.append(QuickStep(
+                    "quantity-boundary-" + module,
+                    (python, "-m", "unittest", "discover", "-s", "tests",
+                     "-p", module + ".py", "-k", test),
+                ))
     if phase == "normal" and "compact-ci-dependencies" in impact.checks:
         steps.append(
             QuickStep(

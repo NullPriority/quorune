@@ -127,6 +127,17 @@ class QuickGatePlanTests(unittest.TestCase):
         )
         self.assertNotIn("affected-tests", steps)
 
+    def test_pre_corpus_quantity_change_selects_exact_adjacent_boundaries(self):
+        plan = build_plan(
+            ("quorune/compiler/collection_quantity_templates.py",),
+            phase="pre-corpus",
+        )
+        boundaries = [step for step in plan["steps"]
+                      if step.name.startswith("quantity-boundary-")]
+        self.assertEqual(4, len(boundaries))
+        self.assertTrue(all("-k" in step.command for step in boundaries))
+        self.assertEqual((), plan["test_modules"])
+
     def test_pre_corpus_plan_runs_affected_manual_performance_contract(self):
         plan = build_plan(
             ("quorune/card_programs/runtime.py",),

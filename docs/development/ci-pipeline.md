@@ -173,7 +173,9 @@ matrix, but executes only runtime/compile validation, the generated manifest
 plan, compiler-identity sentinel and canonical semantic-transition policy
 validation before any census. When their owners are affected, the same phase
 also checks the exact target-corpus carrier contract and mutation patch-target
-integrity; it does not execute the broader behavioral inventory. Non-harvest declarations use the existing
+integrity. Shared quantity grammar changes select only the exact adjacent
+exclusion and public-condition contract witnesses, not their whole modules.
+This phase does not execute the broader behavioral inventory. Non-harvest declarations use the existing
 transition parser rather than a separate permissive metadata check. The workflow
 is not subscribed to `ready_for_review`, so moving an unchanged draft into review does
 not restart cloud generation.

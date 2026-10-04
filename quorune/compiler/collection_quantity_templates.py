@@ -44,12 +44,12 @@ def collection_quantity(value: str, *, compile_count) -> CharacteristicQuantityS
         return None
     if quantity.query is None:
         return None
-    if reduction is CharacteristicQuantityReduction.DISTINCT_CARD_TYPES or (
-        quantity.query is not None and quantity.query.zones == ("graveyard",)
-        and re.search(r"\bcards?\b", match.group("objects"), re.IGNORECASE)
-    ):
-        quantity = replace(quantity, query=replace(quantity.query, token=False))
     try:
+        if reduction is CharacteristicQuantityReduction.DISTINCT_CARD_TYPES or (
+            quantity.query.zones == ("graveyard",)
+            and re.search(r"\bcards?\b", match.group("objects"), re.IGNORECASE)
+        ):
+            quantity = replace(quantity, query=replace(quantity.query, token=False))
         mana_colors = ()
         if symbol is not None:
             color_symbols = {"white": "W", "blue": "U", "black": "B", "red": "R", "green": "G"}

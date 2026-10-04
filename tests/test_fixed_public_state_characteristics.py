@@ -476,6 +476,21 @@ class FixedPublicStateCharacteristicCompilerTests(unittest.TestCase):
                     capability_profile="commander_review",
                 )
                 self.assertEqual("exact", ir.status, ir.material_residuals)
+                if expected_fact == "controller_graveyard_distinct_card_types":
+                    # The leaf public-fact contract remains valid. Integrated
+                    # lowering now uses the shared collection quantity owner.
+                    leaf = fixed_public_state_characteristics_handler(text, source_name=record.name)
+                    self.assertEqual(expected_kind, leaf[1]["source_condition"]["kind"])
+                    self.assertEqual(expected_fact, leaf[1]["source_condition"]["fact"])
+                    default_continuous_effect_component_registry().validate(leaf[1])
+                    node = next(node for face in ir.faces for node in face.nodes
+                                if node.template_id == "continuous-self-query-characteristics-v1")
+                    value = node.handlers[0]["fragment"]["value"]
+                    self.assertEqual("fixed_if_threshold", value["calculation"])
+                    self.assertEqual(4, value["minimum_count"])
+                    self.assertEqual("distinct_card_types", value["quantity"]["reduction"])
+                    self.assertFalse(value["quantity"]["query"]["token"])
+                    continue
                 node = next(
                     node
                     for face in ir.faces
