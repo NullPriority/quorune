@@ -13,6 +13,7 @@ from .characteristic_fragments import (
 )
 from .continuous_effects import Layer
 from .object_query import object_matches_query, object_query_result
+from .public_quantity_reductions import reduce_public_quantity
 from .util import unique_preserving_order
 
 
@@ -43,6 +44,10 @@ def query_characteristic_count(
 ) -> int:
     """Resolve one closed public quantity through layer 5 only."""
 
+    if quantity.schema_version == 3:
+        return sum(query_characteristic_count(host, source, term,
+                   _enforce_static_component_applicability=_enforce_static_component_applicability)
+                   for term in quantity.terms) * quantity.multiplier + quantity.offset
     if quantity.scope is CharacteristicQuantityScope.SOURCE_COUNTER:
         assert quantity.counter_name is not None
         raw = source.counters.get(quantity.counter_name, 0)
@@ -78,11 +83,17 @@ def query_characteristic_count(
         # zone directly keeps hidden card characteristics outside this owner.
         return len(object_ids)
 
-    count = 0
+    matched = []
     for object_id in object_ids:
         if object_id not in host.state.cards:
+            if quantity.schema_version == 2:
+                raise ValueError("A public collection member is unavailable")
             continue
         candidate = host.state.cards[object_id]
+        if quantity.schema_version == 2 and candidate.phased_out:
+            continue
+        if quantity.schema_version == 2 and quantity.query.zones == ("graveyard",) and quantity.query.token is False and candidate.object_kind != "card":
+            continue
         if quantity.exclude_source and candidate.ref == source.ref:
             continue
         if (
@@ -104,7 +115,7 @@ def query_characteristic_count(
         )
         row = object_query_result(
             candidate,
-            effective,
+            effective if quantity.schema_version == 1 else {**effective, "mana_value": 0},
             type_parts=host._type_parts(
                 str(effective.get("type_line") or "")
             ),
@@ -112,8 +123,8 @@ def query_characteristic_count(
             attached_to_ref=attached.ref if attached is not None else None,
         )
         if object_matches_query(row, quantity.query):
-            count += 1
-    return count
+            matched.append((row, effective, candidate.object_kind if quantity.schema_version == 2 else ""))
+    return reduce_public_quantity(matched, quantity.reduction, mana_colors=quantity.mana_colors) * quantity.multiplier + quantity.offset
 
 
 def _has_card_type(

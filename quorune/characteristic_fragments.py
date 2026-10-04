@@ -35,6 +35,17 @@ class CharacteristicQuantityScope(str, Enum):
     SOURCE_COUNTER = "source_counter"
 
 
+class CharacteristicQuantityReduction(str, Enum):
+    OBJECT_COUNT = "object_count"
+    DISTINCT_BASIC_LAND_TYPES = "distinct_basic_land_types"
+    DISTINCT_CARD_TYPES = "distinct_card_types"
+    DISTINCT_COLORS = "distinct_colors"
+    MAXIMUM_MANA_VALUE = "maximum_mana_value"
+    TOTAL_MANA_VALUE = "total_mana_value"
+    SUM_QUANTITIES = "sum_quantities"
+    COLORED_MANA_SYMBOLS = "colored_mana_symbols"
+
+
 @dataclass(frozen=True, slots=True)
 class CharacteristicQuantitySpec:
     """One cycle-safe public quantity used by a later-layer modifier."""
@@ -45,12 +56,44 @@ class CharacteristicQuantitySpec:
     exclude_source: bool = False
     exclude_attached_object: bool = False
     schema_version: int = 1
+    reduction: CharacteristicQuantityReduction = CharacteristicQuantityReduction.OBJECT_COUNT
+    multiplier: int = 1
+    offset: int = 0
+    terms: tuple["CharacteristicQuantitySpec", ...] = ()
+    mana_colors: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version != 1:
+        self._validate_reduction_version()
+        self._validate_scope_and_exclusions()
+        if self.schema_version == 3:
+            self._validate_sum_terms()
+            return
+        if self.terms or self.reduction is CharacteristicQuantityReduction.SUM_QUANTITIES:
+            raise CharacteristicFragmentError("Only an explicit quantity-sum version carries terms")
+        if self.scope is CharacteristicQuantityScope.SOURCE_COUNTER:
+            self._validate_source_counter()
+            return
+        self._validate_object_query()
+
+    def _validate_reduction_version(self) -> None:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3}:
             raise CharacteristicFragmentError(
                 "Unsupported characteristic quantity schema version"
             )
+        if not isinstance(self.reduction, CharacteristicQuantityReduction) or (
+            self.schema_version == 1 and (self.reduction is not CharacteristicQuantityReduction.OBJECT_COUNT or self.multiplier != 1 or self.offset != 0)
+        ):
+            raise CharacteristicFragmentError("Characteristic reduction requires its explicit versioned vocabulary")
+        if type(self.multiplier) is not int or self.multiplier < 1 or type(self.offset) is not int or self.offset < 0:
+            raise CharacteristicFragmentError("Characteristic reduction arithmetic requires positive multiplier and nonnegative fixed offset")
+        if self.reduction is CharacteristicQuantityReduction.COLORED_MANA_SYMBOLS:
+            if len(self.mana_colors) != 1 or self.mana_colors[0] not in {"W", "U", "B", "R", "G"}:
+                raise CharacteristicFragmentError("Colored symbol reductions require one canonical mana color")
+            object.__setattr__(self, "mana_colors", tuple(self.mana_colors))
+        elif self.mana_colors:
+            raise CharacteristicFragmentError("Only colored symbol reductions carry mana colors")
+
+    def _validate_scope_and_exclusions(self) -> None:
         if not isinstance(self.scope, CharacteristicQuantityScope):
             raise CharacteristicFragmentError(
                 "Unsupported characteristic quantity scope"
@@ -67,23 +110,38 @@ class CharacteristicQuantitySpec:
             raise CharacteristicFragmentError(
                 "Characteristic quantities cannot exclude two relative objects"
             )
-        if self.scope is CharacteristicQuantityScope.SOURCE_COUNTER:
-            if (
-                type(self.counter_name) is not str
-                or not self.counter_name.strip()
-                or self.query is not None
-                or self.exclude_source
-                or self.exclude_attached_object
-            ):
-                raise CharacteristicFragmentError(
-                    "Source-counter quantities require only one counter name"
-                )
-            try:
-                counter_name = normalized_counter_name(self.counter_name)
-            except CounterStateError as exc:
-                raise CharacteristicFragmentError(str(exc)) from exc
-            object.__setattr__(self, "counter_name", counter_name)
-            return
+
+    def _validate_sum_terms(self) -> None:
+        invalid_leaf = any(
+            not isinstance(term, CharacteristicQuantitySpec)
+            or term.schema_version not in {1, 2}
+            or (term.query is not None and term.query.zones == ("hand",))
+            for term in self.terms
+        )
+        if (
+            self.reduction is not CharacteristicQuantityReduction.SUM_QUANTITIES
+            or self.scope is not CharacteristicQuantityScope.CONTROLLER_ZONE
+            or self.query is not None or self.counter_name is not None
+            or self.exclude_source or self.exclude_attached_object
+            or len(self.terms) != 2 or invalid_leaf
+        ):
+            raise CharacteristicFragmentError("Quantity sums require exactly two closed nonhidden leaf quantities")
+        object.__setattr__(self, "terms", tuple(self.terms))
+
+    def _validate_source_counter(self) -> None:
+        if (
+            type(self.counter_name) is not str or not self.counter_name.strip()
+            or self.query is not None or self.exclude_source
+            or self.exclude_attached_object or self.schema_version != 1
+        ):
+            raise CharacteristicFragmentError("Source-counter quantities require only one counter name")
+        try:
+            counter_name = normalized_counter_name(self.counter_name)
+        except CounterStateError as exc:
+            raise CharacteristicFragmentError(str(exc)) from exc
+        object.__setattr__(self, "counter_name", counter_name)
+
+    def _validate_object_query(self) -> None:
         if self.counter_name is not None or not isinstance(
             self.query, ObjectQuerySpec
         ):
@@ -91,6 +149,20 @@ class CharacteristicQuantitySpec:
                 "Object quantities require one typed object query"
             )
         query = self.query
+        if self.schema_version == 2 and (
+            query.zones == ("hand",) or query.state_predicate is not None
+            or query.tapped is not None or query.minimum_color_count is not None
+            or query.excluded_controllers
+        ):
+            raise CharacteristicFragmentError("Collection reductions require a closed layer-5 public query")
+        if self.reduction is CharacteristicQuantityReduction.DISTINCT_CARD_TYPES and (
+            query.zones != ("graveyard",) or query.token is not False
+        ):
+            raise CharacteristicFragmentError("Distinct graveyard card types require the card-only domain")
+        if self.reduction is CharacteristicQuantityReduction.DISTINCT_BASIC_LAND_TYPES and (
+            query.zones != ("battlefield",) or query.types_all != ("land",)
+        ):
+            raise CharacteristicFragmentError("Basic land type reduction requires current battlefield lands")
         if (
             len(query.zones) != 1
             or query.zones[0] not in {"battlefield", "graveyard", "hand"}
@@ -167,6 +239,9 @@ class CharacteristicQuantitySpec:
             "counter_name": self.counter_name,
             "exclude_source": self.exclude_source,
             "exclude_attached_object": self.exclude_attached_object,
+            **({"reduction": self.reduction.value, "multiplier": self.multiplier, "offset": self.offset,
+                "mana_colors": list(self.mana_colors)} if self.schema_version in {2, 3} else {}),
+            **({"terms": [term.to_dict() for term in self.terms]} if self.schema_version == 3 else {}),
         }
 
     @classmethod
@@ -184,12 +259,26 @@ class CharacteristicQuantitySpec:
         if not isinstance(value, Mapping) or frozenset(value) not in {
             frozenset(expected),
             frozenset(extended),
+            frozenset({*extended, "reduction", "multiplier", "offset", "mana_colors"}),
+            frozenset({*extended, "reduction", "multiplier", "offset", "mana_colors", "terms"}),
         }:
             raise CharacteristicFragmentError(
                 "Characteristic quantities have a closed schema"
             )
+        if (value.get("schema_version") in {2, 3}) != ("reduction" in value) or (value.get("schema_version") == 3) != ("terms" in value):
+            raise CharacteristicFragmentError("Characteristic reduction fields must match their version")
         try:
             scope = CharacteristicQuantityScope(value["scope"])
+            reduction = CharacteristicQuantityReduction(value.get("reduction", "object_count"))
+            raw_terms = value.get("terms", ())
+            if not isinstance(raw_terms, (tuple, list)):
+                raise TypeError("Quantity sum terms must be an array")
+            if raw_terms and (len(raw_terms) != 2 or any(not isinstance(term, Mapping) or term.get("schema_version") not in {1, 2} for term in raw_terms)):
+                raise ValueError("Quantity sums decode exactly two leaf terms")
+            terms = tuple(cls.from_dict(term) for term in raw_terms)
+            mana_colors = value.get("mana_colors", ())
+            if not isinstance(mana_colors, (list, tuple)):
+                raise TypeError("Quantity mana colors must be an array")
             query = (
                 ObjectQuerySpec.from_dict(value["query"])
                 if value["query"] is not None
@@ -208,6 +297,11 @@ class CharacteristicQuantitySpec:
             exclude_attached_object=value.get(
                 "exclude_attached_object", False
             ),
+            reduction=reduction,
+            multiplier=value.get("multiplier", 1),
+            offset=value.get("offset", 0),
+            terms=terms,
+            mana_colors=tuple(mana_colors),
         )
 
 
@@ -325,12 +419,18 @@ class QueryPowerToughnessDefinitionSpec:
     define_power: bool
     define_toughness: bool
     schema_version: int = 1
+    power_adjustment: int = 0
+    toughness_adjustment: int = 0
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version != 1:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2}:
             raise CharacteristicFragmentError(
                 "Unsupported query power/toughness definition schema version"
             )
+        if any(type(value) is not int or value < 0 for value in (self.power_adjustment, self.toughness_adjustment)) or (
+            self.schema_version == 1 and (self.power_adjustment or self.toughness_adjustment)
+        ):
+            raise CharacteristicFragmentError("Definition offsets require fixed nonnegative versioned integers")
         if not isinstance(self.quantity, CharacteristicQuantitySpec):
             raise CharacteristicFragmentError(
                 "Query power/toughness definitions require a typed quantity"
@@ -346,6 +446,8 @@ class QueryPowerToughnessDefinitionSpec:
             raise CharacteristicFragmentError(
                 "Query power/toughness definitions require at least one field"
             )
+        if (not self.define_power and self.power_adjustment) or (not self.define_toughness and self.toughness_adjustment):
+            raise CharacteristicFragmentError("Disabled definition fields cannot carry offsets")
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -353,6 +455,7 @@ class QueryPowerToughnessDefinitionSpec:
             "quantity": self.quantity.to_dict(),
             "define_power": self.define_power,
             "define_toughness": self.define_toughness,
+            **({"power_adjustment": self.power_adjustment, "toughness_adjustment": self.toughness_adjustment} if self.schema_version == 2 else {}),
         }
 
     @classmethod
@@ -366,7 +469,8 @@ class QueryPowerToughnessDefinitionSpec:
             "define_power",
             "define_toughness",
         }
-        if not isinstance(value, Mapping) or set(value) != expected:
+        extended = {*expected, "power_adjustment", "toughness_adjustment"}
+        if not isinstance(value, Mapping) or set(value) not in (expected, extended) or ((value.get("schema_version") == 2) != (set(value) == extended)):
             raise CharacteristicFragmentError(
                 "Query power/toughness definitions have a closed schema"
             )
@@ -381,6 +485,8 @@ class QueryPowerToughnessDefinitionSpec:
             quantity=quantity,
             define_power=value["define_power"],
             define_toughness=value["define_toughness"],
+            power_adjustment=value.get("power_adjustment", 0),
+            toughness_adjustment=value.get("toughness_adjustment", 0),
         )
 
 

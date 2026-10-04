@@ -106,12 +106,26 @@ class QuickGatePlanTests(unittest.TestCase):
         self.assertIn("capability-evidence-declarations", names)
         self.assertIn("rules-selection-policy", names)
         self.assertIn("change-impact-contract", names)
+        self.assertIn("mutation-patch-target-integrity", names)
         self.assertNotIn("generated-finalization", names)
         self.assertNotIn("compact-ci-dependencies", names)
         self.assertNotIn("build-test-database", names)
         self.assertNotIn("affected-tests", names)
         self.assertEqual((), plan["test_modules"])
         self.assertTrue(plan["deferred_test_modules"])
+
+    def test_pre_corpus_target_carrier_sentinel_is_owned_and_bounded(self):
+        plan = build_plan(
+            ("quorune/compiler/tap_state_event_bindings.py",),
+            phase="pre-corpus",
+        )
+        steps = {step.name: step.command for step in plan["steps"]}
+        self.assertIn("target-corpus-carrier-contract", steps)
+        self.assertEqual(
+            "test_tap_state_target_body_is_accepted_by_corpus_assurance",
+            steps["target-corpus-carrier-contract"][-1],
+        )
+        self.assertNotIn("affected-tests", steps)
 
     def test_pre_corpus_plan_runs_affected_manual_performance_contract(self):
         plan = build_plan(

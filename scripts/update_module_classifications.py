@@ -493,6 +493,7 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/declaration_rule_effects.py",
         "quorune/dynamic_characteristics.py",
         "quorune/characteristic_evaluation_host.py",
+        "quorune/public_quantity_reductions.py",
         "quorune/leveler_bands.py",
         "quorune/zone_object_keyword_model.py",
         "quorune/zone_object_keyword_grants.py",

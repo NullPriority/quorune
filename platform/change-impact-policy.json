@@ -930,6 +930,9 @@
     {
       "id": "typed-query-self-characteristic-contract",
       "patterns": [
+        "quorune/compiler/collection_quantity_templates.py",
+        "quorune/public_quantity_reductions.py",
+        "tests/fixtures/public-collection-quantity-cards.json",
         "quorune/ability_fragments.py",
         "quorune/ability_fragment_primitives.py",
         "quorune/characteristic_evaluation.py",
@@ -961,6 +964,9 @@
     {
       "id": "public-query-effect-amount-contract",
       "patterns": [
+        "quorune/compiler/collection_quantity_templates.py",
+        "quorune/public_quantity_reductions.py",
+        "tests/fixtures/public-collection-quantity-cards.json",
         "quorune/compiler/declared_effect_amounts.py",
         "quorune/compiler/program_generation.py",
         "quorune/compiler/effect_template_composition.py",

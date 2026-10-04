@@ -11,7 +11,7 @@ from ..query_effect_amount_model import (
     PublicQueryAmountSpec,
 )
 from ..rules.source_references import SourceReferenceSpec
-from .query_characteristic_templates import query_characteristic_quantity
+from .query_characteristic_templates import query_characteristic_quantity, query_characteristic_value
 from .fixed_target_effect_sequences import FixedSourceCharacteristicsTemplate
 from .declared_effect_amounts import (
     DECLARED_EFFECT_AMOUNT_MECHANIC,
@@ -35,6 +35,8 @@ CompiledEffectTemplate = tuple[
 FixedEffectCompiler = Callable[[str], CompiledEffectTemplate]
 
 _NUMBER_WORDS = {
+    "a": 1,
+    "an": 1,
     "one": 1,
     "two": 2,
     "three": 3,
@@ -47,7 +49,7 @@ _TRAILING_REMINDER = re.compile(
 _LIFE_PATTERNS = (
     re.compile(
         r"^(?P<subject>(?:you|target player|target opponent|each opponent) )?"
-        r"(?P<verb>gain|gains|lose|loses) life equal to the number of "
+        r"(?P<verb>gain|gains|lose|loses) life equal to "
         r"(?P<quantity>.+?)\.?$",
         re.IGNORECASE,
     ),
@@ -65,13 +67,18 @@ _DRAW_PATTERNS = (
         re.IGNORECASE,
     ),
     re.compile(
-        r"^Draw cards equal to the number of (?P<quantity>.+?)\.?$",
+        r"^Draw cards equal to (?P<quantity>.+?)\.?$",
         re.IGNORECASE,
     ),
 )
 _TOKEN_PATTERN = re.compile(
     r"^Create X (?P<definition>.+? tokens?), where X is the number of "
     r"(?P<quantity>.+?)\.?$",
+    re.IGNORECASE,
+)
+_TOKEN_FOR_EACH = re.compile(
+    r"^Create (?P<coefficient>a|an|one|two|three|four|five|[1-9]\d*) "
+    r"(?P<definition>.+? tokens?) for each (?P<quantity>.+?)\.?$",
     re.IGNORECASE,
 )
 _QUERY_CHARACTERISTIC_PATTERNS = (
@@ -125,11 +132,11 @@ def _damage_patterns(source_name: str) -> tuple[re.Pattern[str], ...]:
     return (
         re.compile(
             rf"^(?P<source>{subject}) deals damage (?P<recipient>.+?) "
-            r"equal to the number of (?P<quantity>.+?)\.?$",
+            r"equal to (?P<quantity>.+?)\.?$",
             re.IGNORECASE,
         ),
         re.compile(
-            rf"^(?P<source>{subject}) deals damage equal to the number of "
+            rf"^(?P<source>{subject}) deals damage equal to "
             r"(?P<quantity>.+?) to (?P<recipient>.+?)\.?$",
             re.IGNORECASE,
         ),
@@ -146,8 +153,8 @@ def _parsed_candidate(
     text: str,
     *,
     source_name: str,
-) -> tuple[str, str, int, str] | None:
-    for pattern in _LIFE_PATTERNS:
+) -> tuple[str, str, int, str, bool] | None:
+    for index, pattern in enumerate(_LIFE_PATTERNS):
         match = pattern.fullmatch(text)
         if match is not None:
             return (
@@ -155,8 +162,9 @@ def _parsed_candidate(
                 match.group("quantity"),
                 _coefficient(match.groupdict().get("coefficient")),
                 f"{match.group('subject') or ''}{match.group('verb')} 2 life.",
+                index == 0,
             )
-    for pattern in _damage_patterns(source_name):
+    for index, pattern in enumerate(_damage_patterns(source_name)):
         match = pattern.fullmatch(text)
         if match is not None:
             return (
@@ -165,12 +173,13 @@ def _parsed_candidate(
                 _coefficient(match.groupdict().get("coefficient")),
                 f"{match.group('source')} deals 2 damage "
                 f"{match.group('recipient')}.",
+                index < 2,
             )
-    for pattern in _DRAW_PATTERNS:
+    for index, pattern in enumerate(_DRAW_PATTERNS):
         match = pattern.fullmatch(text)
         if match is not None:
-            return "draw", match.group("quantity"), 1, "Draw two cards."
-    token = _TOKEN_PATTERN.fullmatch(text)
+            return "draw", match.group("quantity"), 1, "Draw two cards.", index == 1
+    token = _TOKEN_PATTERN.fullmatch(text) or _TOKEN_FOR_EACH.fullmatch(text)
     if token is not None:
         definition = re.sub(
             r" token$",
@@ -181,8 +190,9 @@ def _parsed_candidate(
         return (
             "token",
             token.group("quantity"),
-            1,
+            _coefficient(token.groupdict().get("coefficient")),
             f"Create two {definition}.",
+            False,
         )
     return None
 
@@ -369,11 +379,12 @@ def public_query_effect_amount_template(
             ),
         )
     assert candidate is not None
-    family, quantity_text, coefficient, fixed_text = candidate
-    quantity = query_characteristic_quantity(
-        quantity_text,
-        source_name=source_name,
-        definition_extensions=True,
+    family, quantity_text, coefficient, fixed_text, complete_value = candidate
+    quantity = (
+        query_characteristic_value(quantity_text, source_name=source_name)
+        if complete_value else query_characteristic_quantity(
+            quantity_text, source_name=source_name, definition_extensions=True,
+        )
     )
     if quantity is None:
         return None

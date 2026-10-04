@@ -1773,6 +1773,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/collection_quantity_templates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/combat_entry_activation_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -5630,6 +5645,20 @@
       "file": "quorune/public_alternative_costs.py",
       "layer": "rules",
       "owning_subsystem": "legacy_rules",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/public_quantity_reductions.py",
+      "layer": "rules",
+      "owning_subsystem": "continuous_effects",
       "allowed_dependency_layers": [
         "domain",
         "rules",
@@ -10321,5 +10350,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "8549644948f4eab98d1d0edc7ccf41f422392e6241fd7090de0778fe95208d94"
+  "fingerprint": "7297f56564592ced1bedb79c40c6356e0c845c405309c36b4e1c1bfe24c31759"
 }

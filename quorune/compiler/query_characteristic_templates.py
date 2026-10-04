@@ -20,6 +20,7 @@ from ..keyword_abilities import (
 from ..object_predicate import ObjectQuerySpec
 from ..rules.source_references import SourceReferenceSpec
 from .creature_subtypes import canonical_creature_subtype
+from .collection_quantity_templates import collection_quantity, fixed_quantity_arithmetic, additive_quantity, public_card_quantity
 
 
 _TRAILING_REMINDER = re.compile(r"\s+\([^()]*\)\.?$")
@@ -248,6 +249,13 @@ def query_characteristic_quantity(
     definition_extensions: bool = False,
 ) -> CharacteristicQuantitySpec | None:
     text = " ".join(value.strip().rstrip(".").split())
+    reduced = collection_quantity(
+        text, compile_count=lambda objects: query_characteristic_quantity(
+            objects, source_name=source_name, definition_extensions=definition_extensions,
+        ),
+    )
+    if reduced is not None:
+        return reduced
     source = SourceReferenceSpec(source_name).regex_pattern
     counter = re.fullmatch(
         rf"(?P<counter>[A-Za-z0-9+/-]+) counters? on "
@@ -350,6 +358,25 @@ def query_characteristic_quantity(
     return None
 
 
+def query_characteristic_value(value: str, *, source_name: str) -> CharacteristicQuantitySpec | None:
+    """A whole value definition, distinct from a bare object-count phrase."""
+    text = " ".join(value.strip().rstrip(".").split())
+    adjusted = fixed_quantity_arithmetic(text, compile_value=lambda base: _unadjusted_characteristic_value(base, source_name=source_name))
+    return adjusted if adjusted is not None else _unadjusted_characteristic_value(text, source_name=source_name)
+
+
+def _unadjusted_characteristic_value(text: str, *, source_name: str) -> CharacteristicQuantitySpec | None:
+    added = additive_quantity(text, compile_value=lambda base: _unadjusted_characteristic_value(base, source_name=source_name))
+    if added is not None:
+        return added
+    count = re.fullmatch(r"(?:the )?number of (?P<quantity>.+)", text, re.IGNORECASE)
+    if count is not None:
+        return query_characteristic_quantity(count.group("quantity"), source_name=source_name, definition_extensions=True)
+    if re.match(r"(?:the )?(?:greatest|highest|total) mana value\b", text, re.IGNORECASE):
+        return query_characteristic_quantity(text, source_name=source_name, definition_extensions=True)
+    return None
+
+
 def query_power_toughness_definition_handler(
     oracle_line: str,
     *,
@@ -364,28 +391,33 @@ def query_power_toughness_definition_handler(
     if ability_word is not None:
         text = ability_word.group("body").strip()
     subject = _self_subject_pattern(source_name)
-    match = re.fullmatch(
+    paired = re.fullmatch(
+        rf"{subject}'s power is equal to (?P<quantity>.+?) and (?:its|his|her) toughness is equal to (?:that number|the number) plus (?P<offset>[0-9]+)\.?$",
+        text, re.IGNORECASE,
+    )
+    match = paired or re.fullmatch(
         rf"{subject}'s (?:(?P<both>power and toughness are each)|"
-        r"(?P<power>power is)|(?P<toughness>toughness is)) equal to the "
-        r"number of (?P<quantity>.+?)\.?$",
+        r"(?P<power>power is)|(?P<toughness>toughness is)) equal to "
+        r"(?P<quantity>.+?)\.?$",
         text,
         re.IGNORECASE,
     )
     if match is None:
         return None
-    quantity = query_characteristic_quantity(
+    quantity = query_characteristic_value(
         match.group("quantity"),
         source_name=source_name,
-        definition_extensions=True,
     )
     if quantity is None:
         return None
+    if paired is not None:
+        quantity = public_card_quantity(quantity, match.group("quantity"))
     fragment = QueryPowerToughnessDefinitionSpec(
         quantity=quantity,
-        define_power=match.group("both") is not None
-        or match.group("power") is not None,
-        define_toughness=match.group("both") is not None
-        or match.group("toughness") is not None,
+        define_power=paired is not None or match.group("both") is not None or match.group("power") is not None,
+        define_toughness=paired is not None or match.group("both") is not None or match.group("toughness") is not None,
+        schema_version=2 if paired is not None else 1,
+        toughness_adjustment=int(paired.group("offset")) if paired is not None else 0,
     )
     return (
         "continuous-query-power-toughness-definition-v1",
@@ -670,6 +702,7 @@ def query_self_characteristics_handler(
 
 __all__ = [
     "query_characteristic_quantity",
+    "query_characteristic_value",
     "query_power_toughness_definition_handler",
     "query_self_characteristics_handler",
 ]

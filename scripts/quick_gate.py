@@ -147,6 +147,20 @@ def build_plan(
                 ),
             )
         )
+        if "test_fixed_counter_event_triggers" in selected_modules:
+            steps.append(QuickStep(
+                "target-corpus-carrier-contract",
+                (python, "-m", "unittest", "discover", "-s", "tests",
+                 "-p", "test_fixed_counter_event_triggers.py", "-k",
+                 "test_tap_state_target_body_is_accepted_by_corpus_assurance"),
+            ))
+        if "test_capability_implementation_mutations" in selected_modules:
+            steps.append(QuickStep(
+                "mutation-patch-target-integrity",
+                (python, "-m", "unittest", "discover", "-s", "tests",
+                 "-p", "test_capability_implementation_mutations.py", "-k",
+                 "test_literal_patch_targets_resolve_before_mutation_execution"),
+            ))
     if phase == "normal" and "compact-ci-dependencies" in impact.checks:
         steps.append(
             QuickStep(
