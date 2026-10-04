@@ -349,6 +349,12 @@ class TypedDynamicCharacteristicCompilerTests(unittest.TestCase):
                 KEYWORD_GRANT_HANDLER,
                 "trigger.keyword.ward.fixed_generic",
             ),
+            (
+                "Generic Distinct Color Modifier",
+                "This creature gets +1/+1 for each color among permanents you control.",
+                QUERY_HANDLER,
+                "continuous.characteristics.query_count_modifier",
+            ),
         )
         for index, (name, text, handler_id, capability_id) in enumerate(cases):
             with self.subTest(name=name):
@@ -372,7 +378,7 @@ class TypedDynamicCharacteristicCompilerTests(unittest.TestCase):
         unsupported = (
             "Multicolored creatures you control have protection from red.",
             "This creature has haste as long as you have exactly 10 life.",
-            "This creature gets +1/+1 for each color among permanents you control.",
+            "This creature gets +1/+1 for each color among cards in your hand.",
             "This creature gets +2/+2 if there are three land cards in your graveyard.",
         )
         for index, text in enumerate(unsupported):

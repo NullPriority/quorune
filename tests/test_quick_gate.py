@@ -134,7 +134,7 @@ class QuickGatePlanTests(unittest.TestCase):
         )
         boundaries = [step for step in plan["steps"]
                       if step.name.startswith("quantity-boundary-")]
-        self.assertEqual(4, len(boundaries))
+        self.assertEqual(6, len(boundaries))
         self.assertTrue(all("-k" in step.command for step in boundaries))
         self.assertEqual((), plan["test_modules"])
 

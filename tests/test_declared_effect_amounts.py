@@ -117,7 +117,7 @@ class DeclaredEffectAmountCompilerTests(unittest.TestCase):
             generic_spell("Draw X cards.", mana_cost="{2}{G}"),
             generic_spell("Destroy target creature with mana value X."),
             generic_spell("Return target creature card with mana value X or less from your graveyard to the battlefield."),
-            generic_spell("Draw X cards, where X is the number of creatures you control plus one.", mana_cost="{2}{G}"),
+            generic_spell("Draw X cards, where X is the number of creatures you control plus the chosen number.", mana_cost="{2}{G}"),
             generic_spell("Draw X cards, where X is the number of creatures with flying you control.", mana_cost="{2}{G}"),
             generic_spell("Draw X cards, where X is the number of cards in target player's hand.", mana_cost="{2}{G}"),
         ):
@@ -125,6 +125,17 @@ class DeclaredEffectAmountCompilerTests(unittest.TestCase):
                 compiled = self.compile(record)
                 self.assertNotEqual("exact", compiled.status)
                 self.assertTrue(compiled.material_residuals)
+
+    def test_closed_fixed_offset_declaration_retains_its_quantity(self):
+        compiled = self.compile(generic_spell(
+            "Draw X cards, where X is the number of creatures you control plus one.",
+            mana_cost="{2}{G}",
+        ))
+        self.assertEqual("exact", compiled.status, compiled.material_residuals)
+        amount = compiled.faces[0].nodes[0].effects[0]["count"]
+        self.assertEqual("public_query_effect_amount", amount["kind"])
+        self.assertEqual(1, amount["quantity"]["offset"])
+        self.assertEqual(["creature"], amount["quantity"]["query"]["types_all"])
 
     def test_nested_modal_declarations_remain_residual_until_instruction_scopes_are_owned(self):
         body = "You draw X cards and you lose X life, where X is the number of cards in your hand."

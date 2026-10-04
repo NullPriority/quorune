@@ -8732,7 +8732,7 @@
           "module": "quorune.replacement.immutable"
         },
         {
-          "fan_in": 111,
+          "fan_in": 112,
           "fan_out": 0,
           "module": "quorune.util"
         },
@@ -8773,13 +8773,13 @@
         },
         {
           "fan_in": 47,
-          "fan_out": 16,
-          "module": "quorune.semantic_runtime.intents"
-        },
-        {
-          "fan_in": 46,
           "fan_out": 2,
           "module": "quorune.object_query"
+        },
+        {
+          "fan_in": 47,
+          "fan_out": 16,
+          "module": "quorune.semantic_runtime.intents"
         },
         {
           "fan_in": 46,
@@ -8879,7 +8879,7 @@
           "module": "quorune.compiler.runtime_templates"
         }
       ],
-      "internal_edges": 3414,
+      "internal_edges": 3421,
       "modules": [
         {
           "fan_in": 2,
@@ -9172,7 +9172,7 @@
           "module": "quorune.characteristic_evaluation_host"
         },
         {
-          "fan_in": 12,
+          "fan_in": 14,
           "fan_out": 2,
           "module": "quorune.characteristic_fragments"
         },
@@ -9493,6 +9493,11 @@
         },
         {
           "fan_in": 1,
+          "fan_out": 2,
+          "module": "quorune.compiler.collection_quantity_templates"
+        },
+        {
+          "fan_in": 1,
           "fan_out": 6,
           "module": "quorune.compiler.combat_entry_activation_nodes"
         },
@@ -9717,7 +9722,7 @@
           "module": "quorune.compiler.fixed_library_selection_templates"
         },
         {
-          "fan_in": 24,
+          "fan_in": 25,
           "fan_out": 0,
           "module": "quorune.compiler.fixed_numbers"
         },
@@ -9983,7 +9988,7 @@
         },
         {
           "fan_in": 5,
-          "fan_out": 6,
+          "fan_out": 7,
           "module": "quorune.compiler.query_characteristic_templates"
         },
         {
@@ -10423,7 +10428,7 @@
         },
         {
           "fan_in": 3,
-          "fan_out": 5,
+          "fan_out": 6,
           "module": "quorune.dynamic_characteristics"
         },
         {
@@ -10752,7 +10757,7 @@
           "module": "quorune.object_predicate"
         },
         {
-          "fan_in": 46,
+          "fan_in": 47,
           "fan_out": 2,
           "module": "quorune.object_query"
         },
@@ -10830,6 +10835,11 @@
           "fan_in": 5,
           "fan_out": 6,
           "module": "quorune.public_alternative_costs"
+        },
+        {
+          "fan_in": 1,
+          "fan_out": 3,
+          "module": "quorune.public_quantity_reductions"
         },
         {
           "fan_in": 3,
@@ -12347,7 +12357,7 @@
           "module": "quorune.untap_step_coordination"
         },
         {
-          "fan_in": 111,
+          "fan_in": 112,
           "fan_out": 0,
           "module": "quorune.util"
         },
@@ -12460,12 +12470,12 @@
     },
     "interaction_assurance_baseline": {
       "applicable_high_risk_pairs": 334,
-      "applicable_piece_pairs": 95804,
+      "applicable_piece_pairs": 96045,
       "available": true,
       "covered_high_risk_pairs": 334,
       "covered_piece_pairs": 1035,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "ad778f4ac81af04a739f0ad0273e4e2a4cf162e7e7c7cfa858b9b945f9cdfbc6",
+      "source_fingerprint": "ef01dc934b6cb2b144c90b2a5b62eda3f9fe0c48d7152e87d023d803e3a4bdc2",
       "uncovered_high_risk_pairs": 0
     },
     "migration_queue": [],
@@ -12521,7 +12531,7 @@
       ]
     },
     "production": {
-      "file_count": 731,
+      "file_count": 733,
       "largest_functions_and_methods": [
         {
           "end_line": 1912,
@@ -12854,12 +12864,12 @@
           "visibility": "private"
         }
       ],
-      "logical_lines": 237946,
+      "logical_lines": 238248,
       "methods": {
         "dunder": 595,
-        "private": 951,
+        "private": 956,
         "public": 2256,
-        "total": 3802
+        "total": 3807
       },
       "modules": [
         {
@@ -13570,6 +13580,13 @@
           "physical_lines": 695
         },
         {
+          "file": "quorune/compiler/query_characteristic_templates.py",
+          "functions_and_methods": 13,
+          "language": "python",
+          "logical_lines": 657,
+          "physical_lines": 708
+        },
+        {
           "file": "quorune/semantic_runtime/action_permissions.py",
           "functions_and_methods": 25,
           "language": "python",
@@ -13619,18 +13636,18 @@
           "physical_lines": 668
         },
         {
+          "file": "quorune/characteristic_fragments.py",
+          "functions_and_methods": 26,
+          "language": "python",
+          "logical_lines": 636,
+          "physical_lines": 698
+        },
+        {
           "file": "quorune/characteristic_evaluation_host.py",
           "functions_and_methods": 13,
           "language": "python",
           "logical_lines": 629,
           "physical_lines": 669
-        },
-        {
-          "file": "quorune/compiler/query_characteristic_templates.py",
-          "functions_and_methods": 11,
-          "language": "python",
-          "logical_lines": 628,
-          "physical_lines": 675
         },
         {
           "file": "quorune/semantic_choices/attacking_tokens.py",
@@ -13794,6 +13811,13 @@
           "physical_lines": 586
         },
         {
+          "file": "quorune/compiler/public_query_effect_amounts.py",
+          "functions_and_methods": 11,
+          "language": "python",
+          "logical_lines": 546,
+          "physical_lines": 587
+        },
+        {
           "file": "quorune/enchant_spec.py",
           "functions_and_methods": 21,
           "language": "python",
@@ -13813,20 +13837,6 @@
           "language": "python",
           "logical_lines": 538,
           "physical_lines": 555
-        },
-        {
-          "file": "quorune/characteristic_fragments.py",
-          "functions_and_methods": 21,
-          "language": "python",
-          "logical_lines": 537,
-          "physical_lines": 592
-        },
-        {
-          "file": "quorune/compiler/public_query_effect_amounts.py",
-          "functions_and_methods": 11,
-          "language": "python",
-          "logical_lines": 535,
-          "physical_lines": 576
         },
         {
           "file": "quorune/semantic_runtime/activation_restrictions.py",
@@ -15166,6 +15176,13 @@
           "physical_lines": 227
         },
         {
+          "file": "quorune/dynamic_characteristics.py",
+          "functions_and_methods": 8,
+          "language": "python",
+          "logical_lines": 209,
+          "physical_lines": 235
+        },
+        {
           "file": "quorune/compiler/life_templates.py",
           "functions_and_methods": 4,
           "language": "python",
@@ -15241,13 +15258,6 @@
           "language": "python",
           "logical_lines": 198,
           "physical_lines": 227
-        },
-        {
-          "file": "quorune/dynamic_characteristics.py",
-          "functions_and_methods": 8,
-          "language": "python",
-          "logical_lines": 198,
-          "physical_lines": 224
         },
         {
           "file": "quorune/fixed_damage_set_model.py",
@@ -15580,10 +15590,10 @@
         },
         {
           "file": "quorune/query_effect_amount_model.py",
-          "functions_and_methods": 8,
+          "functions_and_methods": 9,
           "language": "python",
           "logical_lines": 158,
-          "physical_lines": 185
+          "physical_lines": 187
         },
         {
           "file": "quorune/semantic_choices/madness.py",
@@ -16510,6 +16520,13 @@
           "physical_lines": 113
         },
         {
+          "file": "quorune/compiler/collection_quantity_templates.py",
+          "functions_and_methods": 4,
+          "language": "python",
+          "logical_lines": 97,
+          "physical_lines": 108
+        },
+        {
           "file": "quorune/compiler/linked_exile_return_templates.py",
           "functions_and_methods": 2,
           "language": "python",
@@ -17250,6 +17267,13 @@
           "language": "python",
           "logical_lines": 56,
           "physical_lines": 65
+        },
+        {
+          "file": "quorune/public_quantity_reductions.py",
+          "functions_and_methods": 1,
+          "language": "python",
+          "logical_lines": 55,
+          "physical_lines": 60
         },
         {
           "file": "quorune/rules/mill_capability_shapes.py",
@@ -18336,8 +18360,8 @@
           "physical_lines": 1590
         }
       ],
-      "physical_lines": 259982,
-      "python_file_count": 715,
+      "physical_lines": 260313,
+      "python_file_count": 717,
       "review_thresholds": {
         "function_logical_lines_review": 150,
         "module_logical_lines_review": 1500
@@ -18354,7 +18378,7 @@
           "web/src"
         ]
       },
-      "top_level_functions": 3550,
+      "top_level_functions": 3558,
       "web_file_count": 16
     },
     "runtime_oracle_text_access": {
@@ -23847,7 +23871,7 @@
         {
           "condition": "effect.get(\"op\") == \"modify_stats_until_end_of_turn\"",
           "file": "quorune/compiler/public_query_effect_amounts.py",
-          "line": 266,
+          "line": 276,
           "string_literals": [
             "modify_stats_until_end_of_turn",
             "op"
@@ -23857,7 +23881,7 @@
         {
           "condition": "set(effect) != {\"op\", \"card\", \"power\", \"toughness\"} or any( type(effect.get(field)) is not int for field in (\"power\", \"toughness\") )",
           "file": "quorune/compiler/public_query_effect_amounts.py",
-          "line": 267,
+          "line": 277,
           "string_literals": [
             "card",
             "op",
@@ -23869,7 +23893,7 @@
         {
           "condition": "effect.get(\"op\") == \"grant_keyword_until_end_of_turn\"",
           "file": "quorune/compiler/public_query_effect_amounts.py",
-          "line": 272,
+          "line": 282,
           "string_literals": [
             "grant_keyword_until_end_of_turn",
             "op"
@@ -23879,7 +23903,7 @@
         {
           "condition": "set(effect) != {\"op\", \"card\", \"keyword\"} or type(effect[\"keyword\"]) is not str",
           "file": "quorune/compiler/public_query_effect_amounts.py",
-          "line": 273,
+          "line": 283,
           "string_literals": [
             "card",
             "keyword",
@@ -23890,7 +23914,7 @@
         {
           "condition": "effect.get(\"op\") in {\"modify_stats_until_end_of_turn\", \"apply_source_characteristics_until_end_of_turn\"}",
           "file": "quorune/compiler/public_query_effect_amounts.py",
-          "line": 350,
+          "line": 360,
           "string_literals": [
             "apply_source_characteristics_until_end_of_turn",
             "modify_stats_until_end_of_turn",
@@ -23901,7 +23925,7 @@
         {
           "condition": "value.get(\"op\") in {\"modify_stats_until_end_of_turn\", \"apply_source_characteristics_until_end_of_turn\"}",
           "file": "quorune/compiler/public_query_effect_amounts.py",
-          "line": 426,
+          "line": 437,
           "string_literals": [
             "apply_source_characteristics_until_end_of_turn",
             "modify_stats_until_end_of_turn",
@@ -23912,7 +23936,7 @@
         {
           "condition": "not 1 <= len(projected) <= 3 or len(modifiers) != 1 or len(references) != 1 or any( effect.get(\"op\") not in { \"grant_keyword_until_end_of_turn\", \"modify_stats_until_end_of_turn\", \"apply_source_characteristics_until_end_of_turn\", } for effec",
           "file": "quorune/compiler/public_query_effect_amounts.py",
-          "line": 469,
+          "line": 480,
           "string_literals": [
             "apply_source_characteristics_until_end_of_turn",
             "grant_keyword_until_end_of_turn",
@@ -23924,7 +23948,7 @@
         {
           "condition": "operation in {\"modify_stats_until_end_of_turn\", \"apply_source_characteristics_until_end_of_turn\"}",
           "file": "quorune/compiler/public_query_effect_amounts.py",
-          "line": 490,
+          "line": 501,
           "string_literals": [
             "apply_source_characteristics_until_end_of_turn",
             "modify_stats_until_end_of_turn"
@@ -29230,13 +29254,14 @@
           "quorune/dynamic_characteristics.py",
           "quorune/engine.py",
           "quorune/leveler_bands.py",
+          "quorune/public_quantity_reductions.py",
           "quorune/zone_object_keyword_grants.py",
           "quorune/zone_object_keyword_model.py",
           "quorune/zone_object_subtype_grants.py"
         ],
         "oversized_symbol_count": 0,
         "oversized_symbols": [],
-        "primary_test_count": 44,
+        "primary_test_count": 45,
         "primary_tests": [
           "test_ability_word_event_triggers",
           "test_attached_static_characteristics",
@@ -29281,6 +29306,7 @@
           "test_trigger_processing_owner",
           "test_typed_ability_fragments",
           "test_typed_activated_ability_catalog",
+          "test_typed_dynamic_characteristics",
           "test_typed_query_self_characteristics"
         ],
         "privacy_sensitivity": "not explicitly declared",
@@ -29325,7 +29351,7 @@
         "state_authority": {
           "classified_module_access": {
             "mutable_owner": 1,
-            "none": 6,
+            "none": 7,
             "read_only": 2
           },
           "direct_write_count": 0,
@@ -29929,6 +29955,7 @@
           "quorune/compiler/class_context_nodes.py",
           "quorune/compiler/closed_effect_programs.py",
           "quorune/compiler/closed_static_nodes.py",
+          "quorune/compiler/collection_quantity_templates.py",
           "quorune/compiler/combat_entry_activation_nodes.py",
           "quorune/compiler/combat_metadata_templates.py",
           "quorune/compiler/commander_pairing_nodes.py",
@@ -30316,7 +30343,7 @@
         "runtime_oracle_text_accesses": 19,
         "state_authority": {
           "classified_module_access": {
-            "none": 164
+            "none": 165
           },
           "direct_write_count": 0,
           "engine_direct_write_count": 0
@@ -32331,7 +32358,7 @@
         ],
         "oversized_symbol_count": 0,
         "oversized_symbols": [],
-        "primary_test_count": 205,
+        "primary_test_count": 206,
         "primary_tests": [
           "test_ability_word_event_triggers",
           "test_aerial_blocking",
@@ -32947,24 +32974,24 @@
     "card_program_v2_present": true,
     "commander_legal_oracle": {
       "current_snapshot_complete": false,
-      "exact_fraction": 0.381494,
-      "material_residuals": 26782,
+      "exact_fraction": 0.383582,
+      "material_residuals": 26682,
       "residual_kinds": {
         "cost": 867,
         "declaration_cost": 10,
         "declaration_restriction": 62,
         "dependency_contract": 605,
-        "effect": 3629,
+        "effect": 3616,
         "keyword_grammar": 72,
         "keyword_lifecycle": 48,
         "mana_ability": 429,
         "quantity_expression": 13,
         "replacement_effect": 1227,
-        "saga_chapter": 374,
+        "saga_chapter": 373,
         "spell_additional_cost": 120,
-        "spell_effect": 5646,
-        "static_ability": 4047,
-        "trigger": 9571,
+        "spell_effect": 5617,
+        "static_ability": 4008,
+        "trigger": 9553,
         "unsupported_crew_cost": 1,
         "unsupported_cumulative_upkeep_cost": 20,
         "unsupported_cycling_cost": 11,
@@ -32984,9 +33011,9 @@
         "scryfall_rulings_updated_at": "2026-08-06T09:00:37.813+00:00"
       },
       "status_counts": {
-        "exact": 12064,
-        "partial": 10392,
-        "unresolved": 9167
+        "exact": 12130,
+        "partial": 10383,
+        "unresolved": 9110
       },
       "template_count": 1583,
       "total_faces": 32431,
@@ -32995,28 +33022,28 @@
     "compiler_module": "quorune/oracle_ir.py",
     "compiler_module_logical_lines": 1476,
     "compiler_module_physical_lines": 1536,
-    "compiler_version": "oracle-ir-v248",
+    "compiler_version": "oracle-ir-v249",
     "current_ir": "OracleCardIR lowered to canonical CardProgram V2 with a derived SemanticProgram compatibility index",
     "full_oracle": {
       "current_snapshot_complete": false,
-      "exact_fraction": 0.398053,
-      "material_residuals": 33315,
+      "exact_fraction": 0.399814,
+      "material_residuals": 33209,
       "residual_kinds": {
         "cost": 1053,
         "declaration_cost": 11,
         "declaration_restriction": 76,
         "dependency_contract": 703,
-        "effect": 4214,
+        "effect": 4201,
         "keyword_grammar": 80,
         "keyword_lifecycle": 50,
         "mana_ability": 505,
         "quantity_expression": 15,
         "replacement_effect": 1443,
-        "saga_chapter": 417,
+        "saga_chapter": 416,
         "spell_additional_cost": 126,
-        "spell_effect": 7662,
-        "static_ability": 5147,
-        "trigger": 11729,
+        "spell_effect": 7633,
+        "static_ability": 5103,
+        "trigger": 11710,
         "unsupported_crew_cost": 1,
         "unsupported_cumulative_upkeep_cost": 21,
         "unsupported_cycling_cost": 11,
@@ -33037,9 +33064,9 @@
         "scryfall_rulings_updated_at": "2026-08-06T09:00:37.813+00:00"
       },
       "status_counts": {
-        "exact": 15374,
-        "partial": 11643,
-        "unresolved": 11606
+        "exact": 15442,
+        "partial": 11637,
+        "unresolved": 11544
       },
       "template_count": 1616,
       "total_faces": 41840,
@@ -33272,22 +33299,22 @@
       "effective_date": "2026-08-07",
       "evidence": {
         "class_counts": {
-          "interaction": 735,
-          "multiplayer": 345,
-          "mutation": 358,
-          "negative": 632,
-          "positive": 688,
-          "privacy": 307,
+          "interaction": 738,
+          "multiplayer": 348,
+          "mutation": 361,
+          "negative": 635,
+          "positive": 692,
+          "privacy": 310,
           "property": 15,
-          "replay": 436,
+          "replay": 440,
           "rollback": 86
         },
-        "declaration_count": 3602,
-        "declaration_source_fingerprint": "98b7cb066fb36114d3c6682e87f04129c57d3d0b6c383a16ceca4b87b04037ea",
-        "fingerprint": "b5d229758d4d4153e7d6d98da08e6ca329dd0b36e2a4050d65c091dcd20ad64a",
-        "registry_fingerprint": "5742b95a61e888e9f60c8ee5221d42378774cbfdda487c0633ed2764b8e84ad2"
+        "declaration_count": 3625,
+        "declaration_source_fingerprint": "1f78aebed6b7c71a23e4813a44f1e8ff2d32a43afcb76566fc17c64abc5cbcbf",
+        "fingerprint": "52bfe7cb30ab92a001656c2f57b727f8e886ef0e481504fe9749b16364182d8b",
+        "registry_fingerprint": "48710c0edc73581b1af95cf7e6b569a0796657d77315678f3a6c15a686a37dd6"
       },
-      "fingerprint": "5742b95a61e888e9f60c8ee5221d42378774cbfdda487c0633ed2764b8e84ad2",
+      "fingerprint": "48710c0edc73581b1af95cf7e6b569a0796657d77315678f3a6c15a686a37dd6",
       "implementation_mutation_status_counts": {
         "killed": 301,
         "not_run": 4
@@ -33297,7 +33324,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "registry_version": 173,
+      "registry_version": 174,
       "schema_version": 1,
       "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
       "status_counts": {
@@ -33626,7 +33653,7 @@
         "contract_fingerprint": "785a9d775fa100cedfaf1caecbf7d631fd6ff5b4cf9cde964a5aeb841a3f7037",
         "exact_cards_with_template": 693,
         "exact_nodes": 879,
-        "fingerprint": "7ce0cc63a0e96f277374df3d7f3db217a39e940d640ae42302889abc03c8f1ce",
+        "fingerprint": "a1a0bc4cbb313a191a8d07aa7491d3c8da0393acae072f7781b3c722e5f24aef",
         "grammar_source_fingerprint": "a7559e8a624023da1c2d4d8f637b906a2776414dac0391290a831fab397f710c",
         "identity_fingerprint": "0e56ae721d87d28d3628d3778ca7a9af913e2ad79f5837d1bdf939754b6a7350",
         "present": true,
@@ -33638,7 +33665,7 @@
         "contract_fingerprint": "785a9d775fa100cedfaf1caecbf7d631fd6ff5b4cf9cde964a5aeb841a3f7037",
         "exact_cards_with_template": 714,
         "exact_nodes": 910,
-        "fingerprint": "7f2505ddfd784c1ac6250ea887b057dfa0c79afd73e448f5c047aadfc4a9fa66",
+        "fingerprint": "be80dd42030f8b5ed64482fff78bc3453fed09a0fd3f9993028fe4e6ee148c19",
         "grammar_source_fingerprint": "a7559e8a624023da1c2d4d8f637b906a2776414dac0391290a831fab397f710c",
         "identity_fingerprint": "840fbaebe907674cafca6b6008b3e8b2b75da9eba1b2cf435355ba40452704f8",
         "present": true,
@@ -33657,7 +33684,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "142b8ce926efc02a0d4577d97842ebe9d8109d6774720ac60387a0bc654c7375",
+      "fingerprint": "47cdfdad33f6e0601b54f2c26292785923df629d8047f2f240f257e6d653809f",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -34487,7 +34514,7 @@
       "playwright_e2e_journeys": 11
     },
     "mutation_testing": {
-      "capability_mutation_declarations": 358,
+      "capability_mutation_declarations": 361,
       "configured_tools": [],
       "focused_executable_suite": true,
       "mutation_score": null
@@ -34515,14 +34542,14 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 4594,
-      "discovered_total": 7903,
+      "conventional_ast_cases": 4615,
+      "discovered_total": 7924,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 247,
         "fuzz_named": 1,
-        "privacy_or_projection_named": 83,
-        "replay_named": 385,
+        "privacy_or_projection_named": 84,
+        "replay_named": 387,
         "server_named": 33
       },
       "reconciles": true,
