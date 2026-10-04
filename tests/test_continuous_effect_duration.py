@@ -139,6 +139,52 @@ def locked_effect(
 
 
 class ContinuousEffectModelTests(unittest.TestCase):
+    def test_control_restoration_invalidation_mutant_is_killed(self):
+        import inspect
+        from types import SimpleNamespace
+        from quorune import control_history as owner
+        source = inspect.getsource(owner.record_control_change)
+        expression = 'temporary.pop("control_previous", None)'
+        self.assertEqual(1, source.count(expression))
+        namespace = dict(vars(owner))
+        exec(source.replace(expression, "pass"), namespace)
+        def witness(record):
+            card = SimpleNamespace(controller="C", annotations={"until_end_of_turn":{"control_previous":"A"}})
+            state = SimpleNamespace(players={"C":SimpleNamespace(turns_begun=0)}, control_history_version=None,
+                continuous_effects=None)
+            record(state, card, None, previous_controller="B")
+            self.assertEqual("C", card.annotations["until_end_of_turn"].get("control_previous", card.controller))
+        witness(owner.record_control_change)
+        with self.assertRaises(AssertionError):
+            witness(namespace["record_control_change"])
+
+    def test_temporary_control_restoration_tracks_the_latest_indefinite_boundary(self):
+        from types import SimpleNamespace
+        from quorune.control_history import record_control_change
+        from quorune.effect_runtime import dispatch_effect
+        for sequence, expected in (
+            (((True, "B"), (True, "C")), "A"),
+            (((True, "B"), (False, "C"), (True, "B")), "C"),
+            (((False, "B"), (True, "C")), "B"),
+            (((True, "B"), (False, "B")), "B"),
+        ):
+            with self.subTest(sequence=sequence):
+                card = SimpleNamespace(object_id="object", ref="OBJECT", zone="battlefield", controller="A",
+                    annotations={}, acquired_control_turn_count=0)
+                state = SimpleNamespace(players={seat:SimpleNamespace(turns_begun=0) for seat in "ABC"},
+                    control_history_version=None, continuous_effects=None)
+                def change(object_id, controller, **kwargs):
+                    previous = card.controller
+                    card.controller = controller
+                    record_control_change(state, card, None, previous_controller=previous)
+                host = SimpleNamespace(state=state, _resolve_object=lambda *args, **kwargs:card, change_control=change)
+                for temporary, controller in sequence:
+                    operation = "change_control_until_end_of_turn" if temporary else "change_control"
+                    dispatch_effect(host, {"op":operation, "card":card.ref, "controller":controller},
+                        actor=controller, operation=operation, reason="generic control boundary")
+                restoration = card.annotations.get("until_end_of_turn", {}).get("control_previous", card.controller)
+                self.assertEqual(expected, restoration)
+
     def test_type_parser_preserves_hyphenated_printed_subtypes(self):
         card_types, subtypes, supertypes = type_parts(
             "Artifact Creature — Assembly-Worker"
@@ -1143,6 +1189,115 @@ class ContinuousEffectModelTests(unittest.TestCase):
 
 
 class ContinuousEffectEngineTests(unittest.TestCase):
+    def test_actual_arbiter_control_commands_cleanup_rollback_projection_and_replay(self):
+        from quorune.record import authoritative_state_hash
+        from quorune.session import CommanderSession
+        from quorune.turn_step_owner import TURN_STEPS
+        session = self.session(25200102, players=4)
+        engine = session.engine
+        card = next(value for value in engine.state.cards.values()
+                    if value.owner == "A" and value.printed_name == "Sol Ring")
+        engine.move_card(card.object_id, "battlefield", controller="A")
+        engine.state.phase = "ending"
+        engine.state.step = "end_step"
+        engine.state.phase_index = TURN_STEPS.index(("ending", "end_step"))
+        for suffix, controller in (("indefinite", "C"), ("temporary", "B")):
+            key = "test:control:" + suffix
+            engine.semantics.put(SemanticProgram(key=key, ability_id=key, label="Generic arbiter control fixture",
+                effects=[], trust_level="provisional", requires_arbiter=True))
+            engine.state.stack.append(StackItem(stack_id="control:" + suffix, ref="CONTROL:" + suffix,
+                kind="triggered_ability", controller=controller, label="Generic control command fixture",
+                semantic_key=key, visibility=list("ABCD")))
+        engine._prepare_stack_resolution()
+        initial_turn = engine.state.turn_sequence
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        def resolve(operation, controller):
+            result = session.act("arbiter", {"action_id":"resolve", "effects":[
+                {"op":operation, "card":card.ref, "controller":controller}]})
+            self.assertTrue(result.ok, result.summary)
+        before = authoritative_state_hash(engine.state)
+        rejected = session.act("pilot:A", {"action_id":"resolve", "effects":[{"op":"change_control", "card":card.ref, "controller":"C"}]})
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before, authoritative_state_hash(engine.state))
+        resolve("change_control_until_end_of_turn", "B")
+        self.assertEqual("B", engine.state.cards[card.object_id].controller)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "pending-control"
+            session.save(path)
+            session = CommanderSession.load(self.db, path)
+        engine = session.engine
+        for _ in range(30):
+            principal = session.pending_principals()[0]
+            decision = session.packet(principal, full=True)["decision"]
+            if decision["kind"] == "arbiter.resolve":
+                break
+            self.assertEqual("priority", decision["kind"])
+            self.assertTrue(session.act(principal, {"action_id":"pass"}).ok)
+        before = authoritative_state_hash(engine.state)
+        rejected = session.act("arbiter", {"action_id":"resolve", "effects":[
+            {"op":"change_control", "card":card.ref, "controller":"C"},
+            {"op":"change_control", "card":card.ref, "controller":"missing-seat"}]})
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before, authoritative_state_hash(engine.state))
+        resolve("change_control", "C")
+        self.assertEqual("C", engine.state.cards[card.object_id].controller)
+        for seat in "ABCD":
+            self.assertNotIn("control_previous", json.dumps(session.packet("pilot:" + seat, full=True)))
+        for _ in range(40):
+            if engine.state.turn_sequence > initial_turn:
+                break
+            principal = session.pending_principals()[0]
+            decision = session.packet(principal, full=True)["decision"]
+            self.assertEqual("priority", decision["kind"])
+            self.assertTrue(session.act(principal, {"action_id":"pass"}).ok)
+        self.assertEqual("C", engine.state.cards[card.object_id].controller)
+        expected = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "control-record"
+            session.save(path)
+            replay = replay_record(path, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected, replay["final_state_hash"])
+        archive = getattr(self, "archive_control_record", None)
+        if archive is not None:
+            session.save(archive)
+
+    def test_newer_indefinite_control_change_survives_older_temporary_cleanup(self):
+        from quorune.effect_runtime import dispatch_effect
+        session = self.session(25200101, players=3)
+        engine = session.engine
+        card = next(value for value in engine.state.cards.values()
+                    if value.owner == "A" and value.printed_name == "Sol Ring")
+        engine.move_card(card.object_id, "battlefield", controller="A")
+        dispatch_effect(engine, {"op":"change_control_until_end_of_turn", "card":card.ref, "controller":"B"},
+            actor="B", operation="change_control_until_end_of_turn", reason="generic temporary control instruction")
+        self.assertEqual("B", card.controller)
+        dispatch_effect(engine, {"op":"change_control", "card":card.ref, "controller":"C"},
+            actor="C", operation="change_control", reason="generic newer indefinite control instruction")
+        self.assertEqual("C", card.controller)
+        engine._finish_cleanup()
+        self.assertEqual("C", card.controller,
+            "Expiring the older control effect must not overwrite the newer indefinite effect")
+        self.assertIn(card.object_id, engine.state.players["C"].zones["battlefield"])
+        self.assertNotIn(card.object_id, engine.state.players["A"].zones["battlefield"])
+
+    def test_temporary_control_does_not_restore_a_reentered_incarnation(self):
+        session = self.session(25200103, players=3)
+        engine = session.engine
+        card = next(value for value in engine.state.cards.values()
+                    if value.owner == "A" and value.printed_name == "Sol Ring")
+        engine.move_card(card.object_id, "battlefield", controller="A")
+        original = card.logical_object_id
+        engine.apply_effect({"op":"change_control_until_end_of_turn", "card":card.ref, "controller":"B"}, actor="B")
+        engine.move_card(card.object_id, "graveyard")
+        engine.move_card(card.object_id, "battlefield", controller="C")
+        self.assertNotEqual(original, card.logical_object_id)
+        engine._finish_cleanup()
+        self.assertEqual("C", card.controller)
+
+
     @classmethod
     def setUpClass(cls):
         cls.db, cls.mishra, cls.zimone = load_assets()

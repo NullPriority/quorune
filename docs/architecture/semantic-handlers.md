@@ -36,6 +36,17 @@ stable inventory. A handler may request a narrowly defined continuation for a
 choice or replacement-aware transaction, but it may not retain mutable state
 or commit around the canonical owner. Rollback must leave no partial mutation.
 
+The existing generic direct-control operations share the authoritative control
+and acquisition-history owner. An indefinite control instruction invalidates
+an older end-of-turn restoration even when it names the current controller.
+Temporary control captures the previous restoration before that shared commit
+and reinstates only its own explicit duration afterward. Cleanup therefore
+restores the latest indefinite boundary, not an obsolete controller. This
+bounded legacy-operation correction adds no printed control grammar or general
+layer-2/attachment-control capability. Current command replay is separate from
+historical execution; records declaring incompatible runtime trust are rejected
+instead of being reinterpreted under the corrected cleanup behavior.
+
 The fixed optional-effect choice handler accepts one already represented atomic
 instruction or one validated linked exile/return phase pair for the resolving
 controller. It exposes only apply or
