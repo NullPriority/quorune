@@ -124,6 +124,17 @@ its instruction resolves; unavailable phasing interactions do not reject an
 unrelated earlier movement. Relevant failures still restore all stack contexts
 through the canonical zone owner's transaction boundary.
 
+Tap-state occurrences are emitted only for actual committed state changes.
+The canonical tap owner seals object incarnation, controller, characteristics,
+and attack-declaration cause. Explicit simultaneous instructions and costs
+commit their complete group before discovery; the ordinary APNAP owner places
+the resulting abilities. Untap-step triggers remain held until upkeep priority.
+No-op changes, entering in a tap state, stun-replaced untaps, and rollback do not
+trigger. A real untap cost is distinct from rollback. Fixed event-controller
+life, damage, and Mill results are nontargeted and retain the occurrence's
+controller; they never create a target selection. First-time, once-per-turn,
+and independently unsupported bodies remain residual.
+
 Behavior that participates in later events—replacements, prevention, static
 effects, and other persistent descriptors—belongs to
 [runtime components](runtime-components.md), not this boundary. Family-specific

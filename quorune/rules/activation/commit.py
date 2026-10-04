@@ -239,7 +239,7 @@ def _commit_symbol_costs(
             source.ref,
             actor=proposal.seat,
             tapped=False,
-            revert=True,
+            untap_cost=True,
             reason=f"{ability.ability_id} activation cost",
             log=False,
         )

@@ -30,6 +30,8 @@ _ADMITTED_BINDINGS = frozenset(
         ("creature.blocks", "this_creature_blocks_flying"),
         ("creature.becomes_blocked", "this_creature_becomes_blocked"),
         ("damage.dealt.self", "source_combat_damage_player"),
+        ("permanent.tap", "source_public_tap_state_transition"),
+        ("permanent.untap", "source_public_tap_state_transition"),
     }
 )
 

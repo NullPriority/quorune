@@ -44,7 +44,7 @@ if TYPE_CHECKING:
 
 
 ASSURANCE_SCHEMA_VERSION = 1
-ASSURANCE_ALGORITHM_VERSION = "fixed-target-corpus-assurance-v9"
+ASSURANCE_ALGORITHM_VERSION = "fixed-target-corpus-assurance-v10"
 STANDALONE_TEMPLATE_ID = (
     "fixed-target-characteristics-until-end-of-turn-v1"
 )

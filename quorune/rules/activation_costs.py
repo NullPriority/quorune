@@ -8,7 +8,7 @@ from typing import Any, Mapping, Protocol
 from ..object_predicate import ObjectQuerySpec
 from ..object_query import object_query_result, query_objects
 from ..replacement.immutable import FrozenMap
-from ..tap_state import set_permanent_tapped
+from ..tap_state import dispatch_tapped_cost_group, set_permanent_tapped
 from .casting_additional_costs import fixed_zone_change_cost_candidates
 from ..combat_entry_activations import (
     FIXED_COMBAT_RETURN_CONTEXT,
@@ -357,7 +357,12 @@ def commit_fixed_tap_cost(
             reason="activated ability cost",
             logical_object_id=candidate.logical_object_id,
             log=False,
+            semantic_events=False,
         )
+    dispatch_tapped_cost_group(
+        host, (host.state.cards[candidate.object_id] for candidate in plan.selected),
+        reason="activated ability cost",
+    )
     host._log(
         plan.seat,
         "cost.tap_selected",

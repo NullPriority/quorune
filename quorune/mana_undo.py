@@ -207,6 +207,8 @@ def available_mana_undo(
         return None
     if not entries:
         return None
+    if state.pending_trigger_batches:
+        return None
     entry = entries[-1]
     source = state.cards.get(entry.source_object_id)
     if (

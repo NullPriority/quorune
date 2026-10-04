@@ -50,7 +50,7 @@ from ...zone_object_state import (
     mark_card_kicked,
 )
 from ...stack_counter import oracle_has_intrinsic_counter_prohibition
-from ...tap_state import set_permanent_tapped
+from ...tap_state import dispatch_tapped_cost_group, set_permanent_tapped
 from ...trigger_processing import collect_ward_occurrences, enqueue_trigger_batch
 from ...zone_trigger_events import ZoneTransitionKind
 from ..action_proposals import CastProposal, thaw_json
@@ -195,6 +195,7 @@ def _commit_tap_costs(
             tapped=True,
             reason=f"{card.printed_name} casting cost",
             log=False,
+            semantic_events=False,
         )
         host._log(
             proposal.seat,
@@ -210,6 +211,7 @@ def _commit_tap_costs(
             changed_players=[proposal.seat],
         )
         result.append(tapped)
+    dispatch_tapped_cost_group(host, result, reason=f"{card.printed_name} casting cost")
     return result
 
 

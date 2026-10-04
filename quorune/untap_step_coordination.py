@@ -11,6 +11,7 @@ from .tap_state import (
     consume_next_untap_prohibition,
     REASON_FIELD,
     untap_permanent,
+    tap_state_occurrence_context,
 )
 from .trigger_processing import collect_trigger_items
 
@@ -204,18 +205,17 @@ def coordinate_untap_step(
 
     for object_id in untapped_object_ids:
         card = host.state.cards[object_id]
-        event_context = {
-            "card": card.ref,
-            "player": active_player,
-            "controller": card.controller,
-            "phase": phase,
-            "step": step,
-            REASON_FIELD: "untap step",
-        }
+        if host.state.tap_state_event_version is None:
+            waiting_triggers = collect_trigger_items(
+                host, "permanent.untap",
+                {"card": card.ref, "player": active_player, "controller": card.controller,
+                 "phase": phase, "step": step, REASON_FIELD: "untap step"},
+                held_triggers=waiting_triggers,
+            )
+            continue
         waiting_triggers = collect_trigger_items(
-            host,
-            "permanent.untap",
-            event_context,
+            host, "permanent.untap",
+            tap_state_occurrence_context(host, card, reason="untap step"),
             held_triggers=waiting_triggers,
         )
     host._advance_step(held_triggers=waiting_triggers)

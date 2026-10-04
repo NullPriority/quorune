@@ -13,7 +13,7 @@ from typing import Any, Mapping, Protocol, Sequence
 
 from .object_query import exact_numeric_characteristic
 from .replacement.immutable import FrozenMap
-from .tap_state import set_permanent_tapped
+from .tap_state import dispatch_tapped_cost_group, set_permanent_tapped
 from .util import normalize_mana_bundle
 
 
@@ -398,7 +398,12 @@ def commit_crew_cost(
             reason=f"Crew {plan.threshold} activation cost",
             logical_object_id=candidate.logical_object_id,
             log=False,
+            semantic_events=False,
         )
+    dispatch_tapped_cost_group(
+        host, (host.state.cards[candidate.object_id] for candidate in plan.selected),
+        reason=f"Crew {plan.threshold} activation cost",
+    )
     if plan.selected:
         host._log(
             plan.seat,
