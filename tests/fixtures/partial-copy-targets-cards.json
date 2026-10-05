@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "source": "Constructed generic copy-target identity fixtures",
+  "cards": [
+    {
+      "oracle_id": "fixture-generic-storm-two-targets",
+      "name": "Generic Storm Twin Target Fixture",
+      "layout": "normal",
+      "type_line": "Instant",
+      "mana_cost": "{G}",
+      "cmc": 1,
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "oracle_text": "Tap two target creatures.\nStorm",
+      "keywords": ["Storm"],
+      "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "fixture-generic-storm-optional-two-targets",
+      "name": "Generic Storm Optional Twin Target Fixture",
+      "layout": "normal",
+      "type_line": "Instant",
+      "mana_cost": "{G}",
+      "cmc": 1,
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "oracle_text": "Tap up to two target creatures.\nStorm",
+      "keywords": ["Storm"],
+      "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "fixture-generic-copy-target-creature",
+      "name": "Generic Copy Target Creature Fixture",
+      "layout": "normal",
+      "type_line": "Creature",
+      "mana_cost": "{G}",
+      "cmc": 1,
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "power": "3",
+      "toughness": "3",
+      "oracle_text": "",
+      "keywords": [],
+      "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "fixture-generic-copy-prior-spell",
+      "name": "Generic Copy Prior Spell Fixture",
+      "layout": "normal",
+      "type_line": "Instant",
+      "mana_cost": "{G}",
+      "cmc": 1,
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "oracle_text": "You gain 1 life.",
+      "keywords": [],
+      "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "fixture-generic-copy-target-return",
+      "name": "Generic Copy Target Return Fixture",
+      "layout": "normal",
+      "type_line": "Instant",
+      "mana_cost": "{U}",
+      "cmc": 1,
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "oracle_text": "Return target creature to its owner's hand.",
+      "keywords": [],
+      "legalities": {"commander": "legal"}
+    }
+  ],
+  "rulings": []
+}

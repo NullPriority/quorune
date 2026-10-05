@@ -34,6 +34,7 @@
     "tests/fixtures/flashback-cards.json",
     "tests/fixtures/intrinsic-basic-land-mana-cards.json",
     "tests/fixtures/leveler-bands-cards.json",
+    "tests/fixtures/partial-copy-targets-cards.json",
     "tests/fixtures/prowess-cards.json",
     "tests/fixtures/public-activation-condition-cards.json",
     "tests/fixtures/public-collection-quantity-cards.json",

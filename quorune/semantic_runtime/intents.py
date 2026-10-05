@@ -1286,8 +1286,11 @@ class CopyStackItemIntent:
     targets: tuple[str, ...]
     target_groups: FrozenMap
     reason: str
+    target_snapshots: FrozenMap | None = None
 
     def __post_init__(self) -> None:
+        if self.target_snapshots is not None and not isinstance(self.target_snapshots, FrozenMap):
+            object.__setattr__(self, "target_snapshots", FrozenMap(self.target_snapshots))
         if not isinstance(self.target_groups, FrozenMap):
             object.__setattr__(
                 self,

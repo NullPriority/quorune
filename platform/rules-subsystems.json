@@ -4811,13 +4811,13 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v252-temporary-control-cleanup-boundary",
-      "compiler_version": "oracle-ir-v252",
+      "transition_id": "oracle-ir-v253-copied-target-decision-boundary",
+      "compiler_version": "oracle-ir-v253",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
-      "non_harvest_reason": "Correct the confirmed existing temporary-control restoration boundary so cleanup cannot overwrite a newer indefinite control instruction, without expanding printed control grammar or capability trust.",
+      "non_harvest_reason": "Correct copied-target retention, original per-group cardinality, and incarnation pinning through the existing canonical targeting, Storm and generic-copy owners, without expanding printed card grammar or adding a parallel targeting or copy engine.",
       "expected_complete_card_gain": null
     },
     "forecast_corrections": [

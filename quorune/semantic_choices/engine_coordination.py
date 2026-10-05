@@ -16,6 +16,7 @@ from ..semantic_runtime import (
 )
 from ..token_creation import preview_token_creation
 from ..replacement_effects import ReplacementChoiceRequired
+from ..selection.copy_targets import copy_target_public_schema, prepare_copy_targets
 from ..targets import TargetGroup, available_modes, target_plan
 from ..util import unique_preserving_order
 from .context import (
@@ -113,6 +114,7 @@ class SemanticChoiceCoordinationMixin:
                 targets=tuple(item.targets),
                 modes=tuple(item.modes),
                 target_groups=dict(item.context.get("target_groups") or {}),
+                target_snapshots=dict(item.context.get("target_snapshots") or {}),
             )
             for item in self.state.stack
         )
@@ -245,7 +247,13 @@ class SemanticChoiceCoordinationMixin:
         if not isinstance(raw_schema, Mapping) or not target_item.targets:
             return target_schemas, validated_targets
         public_schema: Mapping[str, Any] | None = None
-        if operation == "retarget_stack_item" and available_modes(raw_schema):
+        if operation == "copy_stack_item":
+            public_schema = copy_target_public_schema(
+                self, validation_actor, raw_schema, target_item.modes,
+                list(target_item.targets), dict(target_item.context.get("target_groups") or {}),
+                self._stack_source_ref(target_item),
+            )
+        elif available_modes(raw_schema):
             plan = target_plan(
                 raw_schema, target_item.modes, require_modes=True
             )
@@ -280,7 +288,20 @@ class SemanticChoiceCoordinationMixin:
             "public": dict(public_schema),
         }
         submitted = (response or {}).get("targets")
-        if submitted is not None:
+        if operation == "copy_stack_item":
+            assignment = prepare_copy_targets(
+                self, actor=validation_actor, schema=raw_schema,
+                modes=target_item.modes, source_ref=self._stack_source_ref(target_item),
+                original_targets=list(target_item.targets),
+                original_groups=dict(target_item.context.get("target_groups") or {}),
+                original_snapshots=dict(target_item.context.get("target_snapshots") or {}),
+                submitted=submitted,
+            )
+            validated_targets[key] = {
+                "targets": list(assignment.targets), "groups": thaw_value(assignment.groups),
+                "snapshots": thaw_value(assignment.snapshots),
+            }
+        elif submitted is not None:
             selected, grouped = self._validate_semantic_targets(
                 validation_actor,
                 self.semantics.get(target_item.semantic_key),

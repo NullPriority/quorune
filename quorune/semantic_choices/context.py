@@ -19,6 +19,7 @@ class ChoiceStackView:
     targets: tuple[str | None, ...]
     modes: tuple[str, ...]
     target_groups: FrozenMap = field(default_factory=FrozenMap)
+    target_snapshots: FrozenMap = field(default_factory=FrozenMap)
 
     def __post_init__(self) -> None:
         if not isinstance(self.target_groups, FrozenMap):
@@ -27,6 +28,8 @@ class ChoiceStackView:
                 "target_groups",
                 FrozenMap(self.target_groups),
             )
+        if not isinstance(self.target_snapshots, FrozenMap):
+            object.__setattr__(self, "target_snapshots", FrozenMap(self.target_snapshots))
 
 
 class ObjectRulesQuery(Protocol):
@@ -70,6 +73,8 @@ class StackRulesQuery(Protocol):
         actor: str,
         target_schema: Mapping[str, Any],
     ) -> tuple[tuple[str, ...], Mapping[str, Any]]: ...
+
+    def copied_target_snapshots(self, stack_ref: str, *, actor: str) -> Mapping[str, Any]: ...
 
 
 class CostRulesQuery(Protocol):
@@ -269,6 +274,13 @@ class SnapshotSemanticChoiceQuery:
         if not isinstance(targets, tuple) or not isinstance(groups, Mapping):
             raise ValueError("Materialized target validation is malformed")
         return tuple(str(target) for target in targets), dict(groups)
+
+    def copied_target_snapshots(self, stack_ref: str, *, actor: str) -> Mapping[str, Any]:
+        value = self.validated_targets.get(f"{actor}:{stack_ref}")
+        snapshots = value.get("snapshots") if isinstance(value, Mapping) else None
+        if not isinstance(snapshots, Mapping):
+            raise ValueError("Copied target identities were not materialized")
+        return snapshots
 
     @staticmethod
     def _cost_key(seat: str, requirements: Mapping[str, int]) -> str:

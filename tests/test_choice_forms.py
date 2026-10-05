@@ -10,6 +10,28 @@ from quorune.choice_forms import (
 
 
 class ChoiceFormTests(unittest.TestCase):
+    def test_copy_retention_forms_expose_indices_not_internal_snapshots(self):
+        schema = {"groups": [{"id": "target", "min": 2, "max": 2, "legal_refs": ["CURRENT"]}]}
+        context = {"default_target_groups": {"target": ["OLD", "OTHER"]},
+                   "target_snapshots": {"OLD": {"object_id": "private-id", "zone_change_counter": 0}}}
+        action = {"id": "choose", "action": "choose", "choice_schema": {
+            "field": "targets", "optional": True, "default": ["OLD", "OTHER"],
+            "target_schema": schema, "may_retain_each_default": True,
+        }}
+        form = build_action_form(action, decision_kind="semantic.choice", context=context)
+        field = form["fields"][0]
+        self.assertEqual("copy_targets", field["control"])
+        self.assertTrue(field["single_copy"])
+        self.assertTrue(field["may_retain_each_default"])
+        self.assertEqual(context["default_target_groups"], field["copies"][0]["default_target_groups"])
+        self.assertNotIn("private-id", json.dumps(form))
+        self.assertEqual({"targets"}, delegated_choice_fields(action, decision_kind="semantic.choice", context=context))
+        legacy = {**action, "choice_schema": {key: value for key, value in action["choice_schema"].items()
+                                             if key != "may_retain_each_default"}}
+        legacy_form = build_action_form(legacy, decision_kind="semantic.choice", context=context)
+        self.assertEqual("targets", legacy_form["fields"][0]["control"])
+        self.assertNotIn("single_copy", legacy_form["fields"][0])
+
     def test_disjoint_object_cardinalities_are_preserved_in_projected_form(self):
         action={'id':'choose','action':'choose','choice_schema':{'field':'cards','legal_refs':['A01','A02'],'minimum':0,'maximum':2,'optional':True,'distinct':True,'allowed_cardinalities':[0,2]}}
         form=build_action_form(action,decision_kind='semantic.choice',context={})

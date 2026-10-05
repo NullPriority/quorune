@@ -89,6 +89,28 @@ def _ordered_partition_field(
     }
 
 
+def _copy_target_form_field(
+    value: Mapping[str, Any], context: Mapping[str, Any],
+) -> dict[str, Any]:
+    if isinstance(value.get("target_schema"), Mapping):
+        return {
+            "control": "copy_targets", "single_copy": True,
+            "copy_count": 1, "may_retain_each_default": True,
+            "copies": [{
+                "default_targets": copy.deepcopy(value.get("default", [])),
+                "default_target_groups": copy.deepcopy(context.get("default_target_groups", {})),
+                "target_schema": copy.deepcopy(dict(value["target_schema"])),
+            }],
+        }
+    return {
+        "control": "copy_targets",
+        "copy_count": int(value.get("copy_count") or 0),
+        "may_keep_default": bool(value.get("may_keep_default")),
+        **({"may_retain_each_default": True} if value.get("may_retain_each_default") else {}),
+        "copies": copy.deepcopy(list(context.get("copies") or [])),
+    }
+
+
 def _field(
     name: str,
     descriptor: Any,
@@ -108,6 +130,9 @@ def _field(
     }
     target_schema = value.get("target_schema")
     if isinstance(target_schema, Mapping):
+        if value.get("may_retain_each_default"):
+            field.update(_copy_target_form_field(value, context))
+            return field
         field.update(
             {
                 "control": "targets",
@@ -127,14 +152,7 @@ def _field(
     if shape == "ordered_partition":
         return _ordered_partition_field(name, value, context)
     if name == "copy_targets" and value.get("copy_count") is not None:
-        field.update(
-            {
-                "control": "copy_targets",
-                "copy_count": int(value.get("copy_count") or 0),
-                "may_keep_default": bool(value.get("may_keep_default")),
-                "copies": copy.deepcopy(list(context.get("copies") or [])),
-            }
-        )
+        field.update(_copy_target_form_field(value, context))
         return field
     if value_type == "boolean" or (
         isinstance(legal_values, Sequence)

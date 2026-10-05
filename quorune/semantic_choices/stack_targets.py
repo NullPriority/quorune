@@ -96,6 +96,7 @@ class StackTargetChoiceHandler:
                         ),
                         target_groups=target.target_groups,
                         reason=context.stack_label,
+                        target_snapshots=target.target_snapshots,
                     ),
                 )
             return SemanticChoicePreparation(
@@ -139,6 +140,7 @@ class StackTargetChoiceHandler:
                 choice=TargetAssignmentChoice(
                     target_schema=FrozenMap(public),
                     default_targets=defaults,
+                    may_retain_each_default=self.mode == "copy",
                 ),
                 public_context=FrozenMap(
                     {
@@ -147,6 +149,7 @@ class StackTargetChoiceHandler:
                         "target_stack": target.ref,
                         "default_targets": defaults,
                         "target_schema": dict(public),
+                        "default_target_groups": target.target_groups,
                     }
                 ),
             ),
@@ -167,7 +170,7 @@ class StackTargetChoiceHandler:
                 "The stack object selected for the choice no longer exists"
             )
         submitted = response.get("targets")
-        if submitted is None:
+        if submitted is None and self.mode != "copy":
             targets = tuple(
                 str(value)
                 for value in effect.get("_default_targets", ())
@@ -195,6 +198,7 @@ class StackTargetChoiceHandler:
                 targets=targets,
                 target_groups=groups,
                 reason=str(effect["_stack_label"]),
+                target_snapshots=FrozenMap(query.copied_target_snapshots(target_ref, actor=actor)),
             )
         else:
             intent = RetargetStackItemIntent(

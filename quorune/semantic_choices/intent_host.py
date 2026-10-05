@@ -1163,11 +1163,7 @@ class SemanticChoiceIntentHostMixin:
 
     def copy_stack_item_intent(self, intent: CopyStackItemIntent) -> str:
         target = next(
-            (
-                item
-                for item in self.state.stack
-                if item.ref == intent.target_stack_ref
-            ),
+            (item for item in self.state.stack if item.ref == intent.target_stack_ref),
             None,
         )
         if target is None:
@@ -1180,6 +1176,7 @@ class SemanticChoiceIntentHostMixin:
             targets=list(intent.targets),
             target_groups=thaw_value(intent.target_groups),
             reason=intent.reason,
+            target_snapshots=thaw_value(intent.target_snapshots) if intent.target_snapshots is not None else None,
         )
         return copied.ref
 

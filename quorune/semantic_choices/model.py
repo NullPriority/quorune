@@ -182,6 +182,7 @@ class TargetAssignmentChoice:
     target_schema: FrozenMap
     default_targets: tuple[str, ...] = ()
     optional: bool = True
+    may_retain_each_default: bool = False
 
     def __post_init__(self) -> None:
         if not isinstance(self.target_schema, FrozenMap):
@@ -197,6 +198,7 @@ class TargetAssignmentChoice:
             "optional": self.optional,
             "default": list(self.default_targets),
             "target_schema": thaw_value(self.target_schema),
+            **({"may_retain_each_default": True} if self.may_retain_each_default else {}),
         }
 
 

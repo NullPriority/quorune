@@ -3,6 +3,7 @@ import {
   activeFields,
   choicesWithDefaults,
   copyTargetGroups,
+  copyTargetSlots,
   list,
   orderedPartitionNames,
   record,
@@ -516,7 +517,10 @@ function CopyTargets({
   labelFor: (value: string) => string;
 }) {
   const copies = list(field.copies).map(record);
-  const submitted = list(value);
+  const submitted = field.single_copy ? [value ?? []] : list(value);
+  function updateCopies(next: JsonValue[]) {
+    onValue(field.single_copy ? next[0] ?? [] : next);
+  }
   function selectedFor(
     entry: JsonValue | undefined,
     group: ChoiceField,
@@ -547,12 +551,47 @@ function CopyTargets({
     grouped[id] = next;
     const nextCopies = [...submitted];
     nextCopies[index] = grouped;
-    onValue(nextCopies);
+    updateCopies(nextCopies);
   }
   return (
     <fieldset className="choice-field copy-targets">
       <legend><FieldLabel field={field} /></legend>
       {copies.map((copy, index) => {
+        if (field.may_retain_each_default) {
+          const slots = copyTargetSlots(copy);
+          const selected = list(submitted[index]);
+          return <div key={index} className="target-group">
+            <strong>Copy {index + 1}</strong>
+            {slots.map((slot) => {
+              const current = record(selected[slot.index]);
+              const keeping = Object.hasOwn(current, "retain")
+                || selected[slot.index] === slot.original;
+              return <label key={slot.index} className="choice-option">
+                Target {slot.index + 1}
+                <select
+                  data-testid={`choice-copy-${index}-slot-${slot.index}`}
+                  value={keeping ? "__retain_original" : text(current.ref || selected[slot.index])}
+                  onChange={(event) => {
+                    const nextSelection = [...selected];
+                    nextSelection[slot.index] = event.target.value === "__retain_original"
+                      ? { retain: slot.index }
+                      : { group: text(slot.group.id || "target"), ref: event.target.value };
+                    const nextCopies = [...submitted];
+                    nextCopies[index] = nextSelection;
+                    updateCopies(nextCopies);
+                  }}
+                >
+                  <option value="__retain_original">Keep original target ({labelFor(slot.original)})</option>
+                  {list(slot.group.legal_refs).map((rawRef) => {
+                    const ref = text(rawRef);
+                    return <option key={ref} value={ref}>Choose current object ({labelFor(ref)})</option>;
+                  })}
+                </select>
+              </label>;
+            })}
+            {slots.length === 0 && <span className="choice-help">This copy retains zero targets.</span>}
+          </div>;
+        }
         const groups = copyTargetGroups(copy);
         return (
           <div key={index} className="target-group">
