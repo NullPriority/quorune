@@ -1059,6 +1059,7 @@
         "test_fixed_keyword_entry_counters",
         "test_game_record_v3",
         "test_high_risk_interaction_assurance",
+        "test_history_entry_characteristics",
         "test_intrinsic_entry_counters",
         "test_kicker_rules",
         "test_riot_rules",

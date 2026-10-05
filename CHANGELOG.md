@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Seal represented token-entry characteristics after complete group history,
+  retaining subsequent-grant timing and canonical replacement/replay ownership.
+
 - Give copied permanents their applicable represented entry counters through
   the existing prospective component and nested replacement owners, without
   copying source counters or committing objects before replacement choices.

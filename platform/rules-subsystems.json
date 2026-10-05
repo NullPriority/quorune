@@ -4811,13 +4811,13 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v255-copied-entry-counter-boundary",
-      "compiler_version": "oracle-ir-v255",
+        "transition_id": "oracle-ir-v256-history-dependent-token-entry",
+        "compiler_version": "oracle-ir-v256",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
-      "non_harvest_reason": "Restore fixed self-entry component presence and copied-token counter preparation through the existing prospective component, zone-replacement and counter owners, preserving atomic choices and replay without new grammar or a parallel rules engine.",
+        "non_harvest_reason": "Seal token entry characteristics after complete committed group history and before post-entry grants, preserving existing occurrence, characteristic, replacement, trigger, and replay owners without grammar expansion.",
       "expected_complete_card_gain": null
     },
     "forecast_corrections": [

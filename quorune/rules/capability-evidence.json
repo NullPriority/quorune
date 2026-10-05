@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "fa14f6c312d11809ed93a49e27c2cb7963aad2f56821e4ffaf104c6efabfcff6",
-  "declaration_source_fingerprint": "4951ea9a6b1f4bc9038cda7abb7cc90bd85b24137ebc9a184bbf1353ebb3bb18",
+  "registry_fingerprint": "4d59ad88885a6ad3f881f16d51b944b93f983149e0cd7d9783d8c4f1fbc6c9dc",
+  "declaration_source_fingerprint": "0be7d12d516858017fe200c222f6067ff94c18d7992d701882d73b0a5c0f7cd0",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -23502,7 +23502,9 @@
         "613.1f",
         "613.1g",
         "613.4c",
-        "613.6"
+        "613.6",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -23523,7 +23525,9 @@
         "613.1f",
         "613.1g",
         "613.4c",
-        "613.6"
+        "613.6",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -23544,7 +23548,9 @@
         "613.1f",
         "613.1g",
         "613.4c",
-        "613.6"
+        "613.6",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -23565,7 +23571,9 @@
         "613.1f",
         "613.1g",
         "613.4c",
-        "613.6"
+        "613.6",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -23573,6 +23581,75 @@
         "commander_review"
       ],
       "applicability_note": "Recompute the same typed public-state predicate for paired layer-6 ability grants and layer-7c fixed power/toughness modifiers."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_history_entry_characteristics.HistoryEntryCharacteristicReproduction.test_history_characteristic_distinguishing_controls",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Genuine prior entries, separate sequential actions, and a history-independent static modifier distinguish the boundary; no new two-instruction spell grammar is claimed."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_history_entry_characteristics.HistoryEntryCharacteristicReproduction.test_replacement_adjusted_history_characteristic_quantity",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A represented additional-Food replacement establishes two actual nonland entries before the creature's power-qualified observer and complete draw consequence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_history_entry_characteristics.HistoryEntrySealingOwnerTests.test_history_precedes_final_power_and_keyword_sealing",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Isolated owner model for history-dependent power/keyword sealing, not additional printed observer grammar or card-action admission."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -23586,7 +23663,9 @@
         "613.1f",
         "613.1g",
         "613.4c",
-        "613.6"
+        "613.6",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -23607,7 +23686,9 @@
         "613.1f",
         "613.1g",
         "613.4c",
-        "613.6"
+        "613.6",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -23628,7 +23709,9 @@
         "613.1f",
         "613.1g",
         "613.4c",
-        "613.6"
+        "613.6",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -23649,7 +23732,9 @@
         "613.1f",
         "613.1g",
         "613.4c",
-        "613.6"
+        "613.6",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -23670,7 +23755,9 @@
         "613.1f",
         "613.1g",
         "613.4c",
-        "613.6"
+        "613.6",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -23691,7 +23778,9 @@
         "613.1f",
         "613.1g",
         "613.4c",
-        "613.6"
+        "613.6",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -23712,7 +23801,9 @@
         "613.1f",
         "613.1g",
         "613.4c",
-        "613.6"
+        "613.6",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -23733,7 +23824,9 @@
         "613.1f",
         "613.1g",
         "613.4c",
-        "613.6"
+        "613.6",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -23754,7 +23847,9 @@
         "613.1f",
         "613.1g",
         "613.4c",
-        "613.6"
+        "613.6",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -23775,7 +23870,9 @@
         "613.1f",
         "613.1g",
         "613.4c",
-        "613.6"
+        "613.6",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -23783,6 +23880,29 @@
         "commander_review"
       ],
       "applicability_note": "Block the shared target-query dependency before a public-state-gated characteristic component can become exact."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_history_entry_characteristics.HistoryEntrySealingOwnerTests.test_pre_history_characteristic_sealing_mutant_is_killed",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A mutation moves final characteristic sealing before complete history; the exact owner timing contract kills it."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -23796,7 +23916,9 @@
         "613.1f",
         "613.1g",
         "613.4c",
-        "613.6"
+        "613.6",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -23817,7 +23939,9 @@
         "613.1f",
         "613.1g",
         "613.4c",
-        "613.6"
+        "613.6",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -23838,7 +23962,9 @@
         "613.1f",
         "613.1g",
         "613.4c",
-        "613.6"
+        "613.6",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -23859,7 +23985,9 @@
         "613.1f",
         "613.1g",
         "613.4c",
-        "613.6"
+        "613.6",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -23880,7 +24008,9 @@
         "613.1f",
         "613.1g",
         "613.4c",
-        "613.6"
+        "613.6",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -23901,7 +24031,9 @@
         "613.1f",
         "613.1g",
         "613.4c",
-        "613.6"
+        "613.6",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -23922,7 +24054,9 @@
         "613.1f",
         "613.1g",
         "613.4c",
-        "613.6"
+        "613.6",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -23930,6 +24064,29 @@
         "commander_review"
       ],
       "applicability_note": "Reuse the same public target query under a separately typed source-state condition."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_history_entry_characteristics.HistoryEntryCharacteristicReproduction.test_two_simultaneous_copies_use_post_event_history_characteristics",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Real current-trusted cast/payment/copy entry seals post-history power and resolves two observer draws, with checkpoint/load and exact replay."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -23943,7 +24100,9 @@
         "613.1f",
         "613.1g",
         "613.4c",
-        "613.6"
+        "613.6",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -23964,7 +24123,9 @@
         "613.1f",
         "613.1g",
         "613.4c",
-        "613.6"
+        "613.6",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -23985,7 +24146,9 @@
         "613.1f",
         "613.1g",
         "613.4c",
-        "613.6"
+        "613.6",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -24006,7 +24169,9 @@
         "613.1f",
         "613.1g",
         "613.4c",
-        "613.6"
+        "613.6",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -24027,7 +24192,9 @@
         "613.1f",
         "613.1g",
         "613.4c",
-        "613.6"
+        "613.6",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -24048,7 +24215,9 @@
         "613.1f",
         "613.1g",
         "613.4c",
-        "613.6"
+        "613.6",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -24069,7 +24238,9 @@
         "613.1f",
         "613.1g",
         "613.4c",
-        "613.6"
+        "613.6",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -62534,7 +62705,9 @@
         "707.2",
         "707.9",
         "614.16",
-        "616.1"
+        "616.1",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -62559,7 +62732,9 @@
         "707.2",
         "707.9",
         "614.16",
-        "616.1"
+        "616.1",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -62584,7 +62759,9 @@
         "707.2",
         "707.9",
         "614.16",
-        "616.1"
+        "616.1",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -62609,7 +62786,9 @@
         "707.2",
         "707.9",
         "614.16",
-        "616.1"
+        "616.1",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -62634,7 +62813,9 @@
         "707.2",
         "707.9",
         "614.16",
-        "616.1"
+        "616.1",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -62659,7 +62840,9 @@
         "707.2",
         "707.9",
         "614.16",
-        "616.1"
+        "616.1",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -62684,7 +62867,9 @@
         "707.2",
         "707.9",
         "614.16",
-        "616.1"
+        "616.1",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -62692,6 +62877,87 @@
         "commander_review"
       ],
       "applicability_note": "Revalidate the target at resolution and copy its current copiable values through the canonical token transaction."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_history_entry_characteristics.HistoryEntryCharacteristicReproduction.test_history_characteristic_distinguishing_controls",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Genuine prior entries, separate sequential actions, and a history-independent static modifier distinguish the boundary; no new two-instruction spell grammar is claimed."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_history_entry_characteristics.HistoryEntryCharacteristicReproduction.test_replacement_adjusted_history_characteristic_quantity",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A represented additional-Food replacement establishes two actual nonland entries before the creature's power-qualified observer and complete draw consequence."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_history_entry_characteristics.HistoryEntrySealingOwnerTests.test_history_precedes_final_power_and_keyword_sealing",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Isolated owner model for history-dependent power/keyword sealing, not additional printed observer grammar or card-action admission."
     },
     {
       "capability_id": "token.creation.fixed_copy",
@@ -62709,7 +62975,9 @@
         "707.2",
         "707.9",
         "614.16",
-        "616.1"
+        "616.1",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -62734,7 +63002,9 @@
         "707.2",
         "707.9",
         "614.16",
-        "616.1"
+        "616.1",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -62759,7 +63029,9 @@
         "707.2",
         "707.9",
         "614.16",
-        "616.1"
+        "616.1",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -62784,7 +63056,9 @@
         "707.2",
         "707.9",
         "614.16",
-        "616.1"
+        "616.1",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -62809,7 +63083,9 @@
         "707.2",
         "707.9",
         "614.16",
-        "616.1"
+        "616.1",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -62834,7 +63110,9 @@
         "707.2",
         "707.9",
         "614.16",
-        "616.1"
+        "616.1",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -62859,7 +63137,9 @@
         "707.2",
         "707.9",
         "614.16",
-        "616.1"
+        "616.1",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -62884,7 +63164,9 @@
         "707.2",
         "707.9",
         "614.16",
-        "616.1"
+        "616.1",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -62909,7 +63191,9 @@
         "707.2",
         "707.9",
         "614.16",
-        "616.1"
+        "616.1",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -62934,7 +63218,9 @@
         "707.2",
         "707.9",
         "614.16",
-        "616.1"
+        "616.1",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -62959,7 +63245,9 @@
         "707.2",
         "707.9",
         "614.16",
-        "616.1"
+        "616.1",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -62984,7 +63272,9 @@
         "707.2",
         "707.9",
         "614.16",
-        "616.1"
+        "616.1",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -63009,7 +63299,9 @@
         "707.2",
         "707.9",
         "614.16",
-        "616.1"
+        "616.1",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -63034,7 +63326,9 @@
         "707.2",
         "707.9",
         "614.16",
-        "616.1"
+        "616.1",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -63059,7 +63353,9 @@
         "707.2",
         "707.9",
         "614.16",
-        "616.1"
+        "616.1",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -63067,6 +63363,33 @@
         "commander_review"
       ],
       "applicability_note": "Reject source-LKI, modified, optional, multiple, chosen, and zone-linked copy-token forms."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "negative",
+      "test_id": "tests.test_history_entry_characteristics.HistoryEntrySealingOwnerTests.test_pre_history_characteristic_sealing_mutant_is_killed",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A mutation moves final characteristic sealing before complete history; the exact owner timing contract kills it."
     },
     {
       "capability_id": "token.creation.fixed_copy",
@@ -63084,7 +63407,9 @@
         "707.2",
         "707.9",
         "614.16",
-        "616.1"
+        "616.1",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -63109,7 +63434,9 @@
         "707.2",
         "707.9",
         "614.16",
-        "616.1"
+        "616.1",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -63134,7 +63461,9 @@
         "707.2",
         "707.9",
         "614.16",
-        "616.1"
+        "616.1",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -63159,7 +63488,9 @@
         "707.2",
         "707.9",
         "614.16",
-        "616.1"
+        "616.1",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -63184,7 +63515,9 @@
         "707.2",
         "707.9",
         "614.16",
-        "616.1"
+        "616.1",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -63192,6 +63525,33 @@
         "commander_review"
       ],
       "applicability_note": "Lower one exact targeted creature or artifact-creature-land copy instruction with a canonical target schema."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_history_entry_characteristics.HistoryEntryCharacteristicReproduction.test_two_simultaneous_copies_use_post_event_history_characteristics",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Real current-trusted cast/payment/copy entry seals post-history power and resolves two observer draws, with checkpoint/load and exact replay."
     },
     {
       "capability_id": "token.creation.fixed_copy",
@@ -63209,7 +63569,9 @@
         "707.2",
         "707.9",
         "614.16",
-        "616.1"
+        "616.1",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -63234,7 +63596,9 @@
         "707.2",
         "707.9",
         "614.16",
-        "616.1"
+        "616.1",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -63259,7 +63623,9 @@
         "707.2",
         "707.9",
         "614.16",
-        "616.1"
+        "616.1",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -63284,7 +63650,9 @@
         "707.2",
         "707.9",
         "614.16",
-        "616.1"
+        "616.1",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -63309,7 +63677,9 @@
         "707.2",
         "707.9",
         "614.16",
-        "616.1"
+        "616.1",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -63334,7 +63704,9 @@
         "707.2",
         "707.9",
         "614.16",
-        "616.1"
+        "616.1",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -63359,7 +63731,9 @@
         "707.2",
         "707.9",
         "614.16",
-        "616.1"
+        "616.1",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -63384,7 +63758,9 @@
         "707.2",
         "707.9",
         "614.16",
-        "616.1"
+        "616.1",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -63409,7 +63785,9 @@
         "707.2",
         "707.9",
         "614.16",
-        "616.1"
+        "616.1",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -63434,7 +63812,9 @@
         "707.2",
         "707.9",
         "614.16",
-        "616.1"
+        "616.1",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -63459,7 +63839,9 @@
         "707.2",
         "707.9",
         "614.16",
-        "616.1"
+        "616.1",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -63484,7 +63866,9 @@
         "707.2",
         "707.9",
         "614.16",
-        "616.1"
+        "616.1",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -63509,7 +63893,9 @@
         "707.2",
         "707.9",
         "614.16",
-        "616.1"
+        "616.1",
+        "603.6b",
+        "603.10"
       ],
       "supported_profiles": [
         "traditional",
@@ -67765,7 +68151,8 @@
         "603.10a",
         "603.10e",
         "701.9",
-        "701.21"
+        "701.21",
+        "603.6b"
       ],
       "supported_profiles": [
         "traditional",
@@ -67787,7 +68174,8 @@
         "603.10a",
         "603.10e",
         "701.9",
-        "701.21"
+        "701.21",
+        "603.6b"
       ],
       "supported_profiles": [
         "traditional",
@@ -67809,7 +68197,8 @@
         "603.10a",
         "603.10e",
         "701.9",
-        "701.21"
+        "701.21",
+        "603.6b"
       ],
       "supported_profiles": [
         "traditional",
@@ -67831,7 +68220,8 @@
         "603.10a",
         "603.10e",
         "701.9",
-        "701.21"
+        "701.21",
+        "603.6b"
       ],
       "supported_profiles": [
         "traditional",
@@ -67853,7 +68243,8 @@
         "603.10a",
         "603.10e",
         "701.9",
-        "701.21"
+        "701.21",
+        "603.6b"
       ],
       "supported_profiles": [
         "traditional",
@@ -67875,7 +68266,8 @@
         "603.10a",
         "603.10e",
         "701.9",
-        "701.21"
+        "701.21",
+        "603.6b"
       ],
       "supported_profiles": [
         "traditional",
@@ -67883,6 +68275,75 @@
         "commander_review"
       ],
       "applicability_note": "Carry the entering permanent's immutable public subtype tuple into trigger matching so controller and Human predicates are decided without runtime prose access."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_history_entry_characteristics.HistoryEntryCharacteristicReproduction.test_history_characteristic_distinguishing_controls",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Genuine prior entries, separate sequential actions, and a history-independent static modifier distinguish the boundary; no new two-instruction spell grammar is claimed."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_history_entry_characteristics.HistoryEntryCharacteristicReproduction.test_replacement_adjusted_history_characteristic_quantity",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A represented additional-Food replacement establishes two actual nonland entries before the creature's power-qualified observer and complete draw consequence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_history_entry_characteristics.HistoryEntrySealingOwnerTests.test_history_precedes_final_power_and_keyword_sealing",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Isolated owner model for history-dependent power/keyword sealing, not additional printed observer grammar or card-action admission."
     },
     {
       "capability_id": "trigger.event.normalized_zone_change",
@@ -67897,7 +68358,8 @@
         "603.10a",
         "603.10e",
         "701.9",
-        "701.21"
+        "701.21",
+        "603.6b"
       ],
       "supported_profiles": [
         "traditional",
@@ -67919,7 +68381,8 @@
         "603.10a",
         "603.10e",
         "701.9",
-        "701.21"
+        "701.21",
+        "603.6b"
       ],
       "supported_profiles": [
         "traditional",
@@ -67941,7 +68404,8 @@
         "603.10a",
         "603.10e",
         "701.9",
-        "701.21"
+        "701.21",
+        "603.6b"
       ],
       "supported_profiles": [
         "traditional",
@@ -67963,7 +68427,8 @@
         "603.10a",
         "603.10e",
         "701.9",
-        "701.21"
+        "701.21",
+        "603.6b"
       ],
       "supported_profiles": [
         "traditional",
@@ -67985,7 +68450,8 @@
         "603.10a",
         "603.10e",
         "701.9",
-        "701.21"
+        "701.21",
+        "603.6b"
       ],
       "supported_profiles": [
         "traditional",
@@ -68007,7 +68473,8 @@
         "603.10a",
         "603.10e",
         "701.9",
-        "701.21"
+        "701.21",
+        "603.6b"
       ],
       "supported_profiles": [
         "traditional",
@@ -68029,7 +68496,8 @@
         "603.10a",
         "603.10e",
         "701.9",
-        "701.21"
+        "701.21",
+        "603.6b"
       ],
       "supported_profiles": [
         "traditional",
@@ -68037,6 +68505,29 @@
         "commander_review"
       ],
       "applicability_note": "Kill omission of the normalized counter-event derivation at the shared committed zone-change boundary."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "negative",
+      "test_id": "tests.test_history_entry_characteristics.HistoryEntrySealingOwnerTests.test_pre_history_characteristic_sealing_mutant_is_killed",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A mutation moves final characteristic sealing before complete history; the exact owner timing contract kills it."
     },
     {
       "capability_id": "trigger.event.normalized_zone_change",
@@ -68051,7 +68542,8 @@
         "603.10a",
         "603.10e",
         "701.9",
-        "701.21"
+        "701.21",
+        "603.6b"
       ],
       "supported_profiles": [
         "traditional",
@@ -68073,7 +68565,8 @@
         "603.10a",
         "603.10e",
         "701.9",
-        "701.21"
+        "701.21",
+        "603.6b"
       ],
       "supported_profiles": [
         "traditional",
@@ -68095,7 +68588,8 @@
         "603.10a",
         "603.10e",
         "701.9",
-        "701.21"
+        "701.21",
+        "603.6b"
       ],
       "supported_profiles": [
         "traditional",
@@ -68103,6 +68597,29 @@
         "commander_review"
       ],
       "applicability_note": "Match a self-entry trigger only from the committed untapped entry fact and reject the tapped contrast."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "positive",
+      "test_id": "tests.test_history_entry_characteristics.HistoryEntryCharacteristicReproduction.test_two_simultaneous_copies_use_post_event_history_characteristics",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Real current-trusted cast/payment/copy entry seals post-history power and resolves two observer draws, with checkpoint/load and exact replay."
     },
     {
       "capability_id": "trigger.event.normalized_zone_change",
@@ -68117,7 +68634,8 @@
         "603.10a",
         "603.10e",
         "701.9",
-        "701.21"
+        "701.21",
+        "603.6b"
       ],
       "supported_profiles": [
         "traditional",
@@ -68139,7 +68657,8 @@
         "603.10a",
         "603.10e",
         "701.9",
-        "701.21"
+        "701.21",
+        "603.6b"
       ],
       "supported_profiles": [
         "traditional",
@@ -68161,7 +68680,8 @@
         "603.10a",
         "603.10e",
         "701.9",
-        "701.21"
+        "701.21",
+        "603.6b"
       ],
       "supported_profiles": [
         "traditional",
@@ -68183,7 +68703,8 @@
         "603.10a",
         "603.10e",
         "701.9",
-        "701.21"
+        "701.21",
+        "603.6b"
       ],
       "supported_profiles": [
         "traditional",
@@ -68205,7 +68726,8 @@
         "603.10a",
         "603.10e",
         "701.9",
-        "701.21"
+        "701.21",
+        "603.6b"
       ],
       "supported_profiles": [
         "traditional",
@@ -68227,7 +68749,8 @@
         "603.10a",
         "603.10e",
         "701.9",
-        "701.21"
+        "701.21",
+        "603.6b"
       ],
       "supported_profiles": [
         "traditional",
@@ -68249,7 +68772,8 @@
         "603.10a",
         "603.10e",
         "701.9",
-        "701.21"
+        "701.21",
+        "603.6b"
       ],
       "supported_profiles": [
         "traditional",
@@ -68271,7 +68795,8 @@
         "603.10a",
         "603.10e",
         "701.9",
-        "701.21"
+        "701.21",
+        "603.6b"
       ],
       "supported_profiles": [
         "traditional",
@@ -75772,5 +76297,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "649c768c4a83d621d83b4c3666725528c992aed758e213a8a3ca5ee556405844"
+  "fingerprint": "218c8bf39c980e995fad2a8e83e752fb1d4cd483b52f0de2a2f0a9e229ee04e3"
 }

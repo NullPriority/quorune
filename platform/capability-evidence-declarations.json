@@ -9071,7 +9071,7 @@
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_live_public_object_state_and_layer_five_queries_recompute",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Recompute combat, controller-relative modified, equipped-source, attached-object color, and layer-5 type-count gates through one live typed boundary."
     },
@@ -9079,7 +9079,7 @@
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_public_condition_queries_follow_authoritative_history_and_control",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Recompute fixed characteristic conditions from canonical draw and cast history, current controller query membership, player counters, monarch state, and control changes."
     },
@@ -9087,7 +9087,7 @@
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_public_fact_conditions_recompute_and_replay",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Recompute schema-v3 graveyard, entry, attack, life, hand, starting-life, and planeswalker-subtype conditions through the existing layer-6 and layer-7c owner."
     },
@@ -9095,14 +9095,14 @@
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_public_state_conditions_recompute_layer_six_and_seven_results",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Recompute the same typed public-state predicate for paired layer-6 ability grants and layer-7c fixed power/toughness modifiers."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "interaction",
-      "test_id": "tests.test_public_history_condition_closure.PublicHistoryConditionRuntimeContractTests.test_history_facts_use_sealed_actor_and_target_not_current_objects",
+      "test_id": "tests.test_history_entry_characteristics.HistoryEntryCharacteristicReproduction.test_history_characteristic_distinguishing_controls",
       "official_rule_ids": [
         "604.1",
         "611.3a",
@@ -9111,8 +9111,68 @@
         "613.1f",
         "613.1g",
         "613.4c",
-        "613.6"
+        "613.6",
+        "603.6b",
+        "603.10"
       ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Genuine prior entries, separate sequential actions, and a history-independent static modifier distinguish the boundary; no new two-instruction spell grammar is claimed."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_history_entry_characteristics.HistoryEntryCharacteristicReproduction.test_replacement_adjusted_history_characteristic_quantity",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A represented additional-Food replacement establishes two actual nonland entries before the creature's power-qualified observer and complete draw consequence."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_history_entry_characteristics.HistoryEntrySealingOwnerTests.test_history_precedes_final_power_and_keyword_sealing",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Isolated owner model for history-dependent power/keyword sealing, not additional printed observer grammar or card-action admission."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_history_condition_closure.PublicHistoryConditionRuntimeContractTests.test_history_facts_use_sealed_actor_and_target_not_current_objects",
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
       "supported_profiles": [
         "traditional",
         "commander_duel",
@@ -9124,7 +9184,7 @@
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_public_condition_queries_follow_authoritative_history_and_control",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Evaluate controller-relative history and query conditions against the correct seat while opponent poison and monarch facts remain public in four-player state."
     },
@@ -9132,7 +9192,7 @@
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_public_fact_conditions_recompute_and_replay",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Evaluate controller-relative public facts in four-player state while retaining exact source incarnation and seat relations."
     },
@@ -9140,7 +9200,7 @@
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_turn_gated_attachment_and_anthem_compose",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Track the source controller, active player, attached object, and controller-scoped target set while control and zone membership change in a four-player game."
     },
@@ -9148,7 +9208,7 @@
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_condition_and_target_mutants_change_card_program_fingerprint",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Kill a controller-turn to other-turn condition mutant by requiring the enclosing CardProgram fingerprint to change."
     },
@@ -9156,7 +9216,7 @@
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_public_fact_conditions_recompute_and_replay",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Force every public-fact quantity to zero and require all fact-gated layer-6 and layer-7c results to disappear."
     },
@@ -9164,7 +9224,7 @@
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_fixed_public_condition_dependencies_fail_closed",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Block the shared public-query or monarch capability and retain the affected static condition as a source-spanned residual."
     },
@@ -9172,7 +9232,7 @@
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_public_state_descriptors_fail_closed_without_effects",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Reject unknown fields, unsupported predicates, invalid scalar types, widened targets, and untrusted ability grants before lowering any effect."
     },
@@ -9180,7 +9240,7 @@
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_unrepresented_conditions_and_bodies_remain_residual",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Keep ability-presence counts, dynamic amounts, unmarked open counts, per-opponent thresholds above existence, otherwise branches, compound or unsupported state comparisons, Ward, and quoted abilities material and residual."
     },
@@ -9188,15 +9248,38 @@
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_shared_public_query_dependency_fails_closed_across_consumers",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Block the shared target-query dependency before a public-state-gated characteristic component can become exact."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_history_entry_characteristics.HistoryEntrySealingOwnerTests.test_pre_history_characteristic_sealing_mutant_is_killed",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A mutation moves final characteristic sealing before complete history; the exact owner timing contract kills it."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_closed_public_state_grammar_compiles_capability_closed",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Compile the closed turn, graveyard-card-count, hand-count, life-total, entry-turn, and named-counter grammar over source, attached, and fixed-query targets."
     },
@@ -9204,7 +9287,7 @@
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_fixed_public_condition_models_use_closed_current_facts",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Validate immutable fixed thresholds for hand, draw, cast, poison, monarch, and query-count snapshots."
     },
@@ -9212,7 +9295,7 @@
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_fixed_public_condition_queries_compile_across_authoritative_facts",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Compile the bounded source, zone-query, current-turn, player-counter, and designation condition grammar into one existing typed static component."
     },
@@ -9220,7 +9303,7 @@
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_public_condition_closure_compiles_typed_queries_and_facts",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Compile cycle-safe distinct graveyard values, sealed public facts, public player relations, exact attachment counts, and planeswalker-subtype queries into schema-v3 conditions."
     },
@@ -9228,7 +9311,7 @@
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_public_object_state_and_query_conditions_compile_closed",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Compile direct public-state affected sets plus source, attached-object, and cycle-safe fixed object-count conditions through the existing typed characteristic owners."
     },
@@ -9236,7 +9319,7 @@
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_public_fact_conditions_recompute_and_replay",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Apply live schema-v3 fact quantities to fixed layer-6 keyword and layer-7c power/toughness results and remove them when the fact is absent."
     },
@@ -9244,15 +9327,38 @@
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_shared_public_set_query_fans_into_layers_and_resolution",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Reuse the same public target query under a separately typed source-state condition."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_history_entry_characteristics.HistoryEntryCharacteristicReproduction.test_two_simultaneous_copies_use_post_event_history_characteristics",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Real current-trusted cast/payment/copy entry seals post-history power and resolves two observer draws, with checkpoint/load and exact replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_hand_count_condition_projects_and_replays_without_hidden_identity",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Consume only the controller's public hand count and exclude hidden card identity from every opposing principal projection."
     },
@@ -9260,7 +9366,7 @@
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_public_condition_queries_follow_authoritative_history_and_control",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Use only aggregate hand and history counts while keeping every hidden hand identity out of opponent projection."
     },
@@ -9268,7 +9374,7 @@
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_public_fact_conditions_recompute_and_replay",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Use only public counts and effective graveyard characteristics while keeping every hidden hand identity out of opponent projection."
     },
@@ -9276,7 +9382,7 @@
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_hand_count_condition_projects_and_replays_without_hidden_identity",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Pin the typed hand-count predicate and source identity into a checkpoint, then replay the following multiplayer priority commands exactly."
     },
@@ -9284,7 +9390,7 @@
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_live_public_object_state_and_layer_five_queries_recompute",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Pin schema-v2 source, attached-object, and layer-5 count conditions into a checkpoint and replay the following authoritative command exactly."
     },
@@ -9292,7 +9398,7 @@
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_public_condition_queries_follow_authoritative_history_and_control",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Save and replay authoritative draw, cast, control, query, player-counter, and monarch facts from the exact checkpoint."
     },
@@ -9300,7 +9406,7 @@
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_public_fact_conditions_recompute_and_replay",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
+      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Serialize schema-v3 facts plus new entry and attack history and replay the following multiplayer command to the same hash."
     },
@@ -25957,46 +26063,181 @@
       ],
       "applicability_note": "Apply a reviewed mandatory replacement that adds a fixed token definition to one nonempty token-creation event controlled by the replacement source's controller."
     },
-    {"capability_id":"token.creation.fixed_copy","evidence_class":"interaction","test_id":"tests.test_copied_self_entry_counters.CopiedSelfEntryCounterActionTests.test_actual_source_only_ability_removal_is_not_copied","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Source-only current removal is distinct from copied entry-time applicability."},
-    {"capability_id":"token.creation.fixed_copy","evidence_class":"interaction","test_id":"tests.test_copied_self_entry_counters.CopiedSelfEntryCounterActionTests.test_copy_does_not_inherit_the_original_cast_x_or_existing_counters","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Noncast copy defaults X to zero rather than inheriting original five counters."},
-    {"capability_id":"token.creation.fixed_copy","evidence_class":"interaction","test_id":"tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_actual_copy_does_not_inherit_temporary_artifact_replacement_and_replays","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Retain the contrasting false-positive replacement boundary for a creature temporarily made an artifact."},
-    {"capability_id":"token.creation.fixed_copy","evidence_class":"interaction","test_id":"tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_actual_copy_of_nonartifact_animation_retains_artifact_replacement_and_replays","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"CR 707.2 separates noncopy layer-4 characteristics from the creation replacement subject through the canonical copiable reader."},
-    {"capability_id":"token.creation.fixed_copy","evidence_class":"interaction","test_id":"tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_trusted_recipe_copied_cleanup_ability_triggers_and_replays","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Copied quoted cleanup is a recurring granted trigger, not independent delayed aftercare; actual cast, end-step execution and replay preserve that distinction."},
-    {"capability_id":"token.creation.fixed_copy","evidence_class":"interaction","test_id":"tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_trusted_recipe_self_sacrifice_uses_immediate_copy_lki_and_replays","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Actual activation pays source sacrifice and copies its immediate predeparture values rather than the later incarnation."},
-    {"capability_id":"token.creation.fixed_copy","evidence_class":"interaction","test_id":"tests.test_fixed_token_production.FixedTokenProductionTests.test_copy_and_delayed_tokens_revalidate_and_replay","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Revalidate the target at resolution and copy its current copiable values through the canonical token transaction."},
-    {"capability_id":"token.creation.fixed_copy","evidence_class":"interaction","test_id":"tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_creation_and_entry_counter_choices_resume_once_and_replay","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Creation and intrinsic loyalty-entry replacements suspend before commit and resume exactly once with a separately granted keyword."},
-    {"capability_id":"token.creation.fixed_copy","evidence_class":"interaction","test_id":"tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_intrinsic_exception_and_static_haste_are_entry_facts","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Actual creation distinguishes intrinsic, copy-exception and battlefield-static Haste as legitimate entry facts."},
-    {"capability_id":"token.creation.fixed_copy","evidence_class":"interaction","test_id":"tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_one_copy_and_sequential_creation_history_controls","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Separate actual creation instructions retain sequential thresholds and nonduplicate controller-bound history."},
-    {"capability_id":"token.creation.fixed_copy","evidence_class":"multiplayer","test_id":"tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_copy_replacement_choice_preserves_creator_projection_rollback_and_checkpoint","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"The creator controls and owns the copy despite copying another player's permanent; only creator-scoped replacements apply."},
-    {"capability_id":"token.creation.fixed_copy","evidence_class":"multiplayer","test_id":"tests.test_fixed_token_production.FixedTokenProductionTests.test_token_replacement_order_rollback_and_privacy","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Retain affected-controller replacement ordering in four-player token creation."},
-    {"capability_id":"token.creation.fixed_copy","evidence_class":"multiplayer","test_id":"tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_creation_and_entry_counter_choices_resume_once_and_replay","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"A copied B-owned A-controlled source creates A-owned and A-controlled tokens; affected A selects both replacement stages."},
-    {"capability_id":"token.creation.fixed_copy","evidence_class":"mutation","test_id":"tests.test_fixed_token_creation_effects.TokenCopyCopiableSubjectOwnerTests.test_copiable_subject_and_explicit_snapshot_kill_effective_type_mutation","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Kill restoring the current-characteristic reader and preserve explicit-snapshot behavior without reading a live source."},
-    {"capability_id":"token.creation.fixed_copy","evidence_class":"mutation","test_id":"tests.test_fixed_token_creation_effects.TokenCopyRecipeModelTests.test_copy_exception_mutation_cannot_discard_fixed_stats","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"The same fixed-stat witness passes the canonical copy owner and fails the inspected characteristic-exception mutation."},
-    {"capability_id":"token.creation.fixed_copy","evidence_class":"mutation","test_id":"tests.test_fixed_token_production.FixedTokenProductionTests.test_token_production_grammar_and_capability_mutants_fail_closed","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Change the compiler-owned copy reference away from the selected target and require shape validation to reject it."},
-    {"capability_id":"token.creation.fixed_copy","evidence_class":"mutation","test_id":"tests.test_token_entry_boundaries.TokenEntryHistoryOwnerTests.test_incomplete_history_ordering_mutant_is_killed","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Isolated owner contract kills per-member history/discovery interleaving, including zero, singleton and reversed groups; not gameplay certification."},
-    {"capability_id":"token.creation.fixed_copy","evidence_class":"mutation","test_id":"tests.test_token_entry_boundaries.TokenEntryHistoryOwnerTests.test_subsequent_aftercare_ordering_mutant_is_killed","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Isolated collaborator contract kills a separately instructed grant moved before entry discovery; not gameplay certification."},
-    {"capability_id":"token.creation.fixed_copy","evidence_class":"negative","test_id":"tests.test_copied_self_entry_counters.CopiedSelfEntryCounterActionTests.test_unavailable_prospective_component_query_rejects_resolution_atomically","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Unavailable owner query cannot authorize a token with omitted counters; rollback, retry and replay."},
-    {"capability_id":"token.creation.fixed_copy","evidence_class":"negative","test_id":"tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_actual_copy_does_not_inherit_temporary_artifact_replacement_and_replays","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"A trusted type-changing spell does not make its nonartifact source's copied token eligible for an artifact-only additional-token replacement."},
-    {"capability_id":"token.creation.fixed_copy","evidence_class":"negative","test_id":"tests.test_fixed_token_creation_effects.TokenCopyRecipeModelTests.test_copy_recipe_codec_rejects_unknown_fields_booleans_and_open_values","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Closed recipe codec rejects open reference, exception, lifecycle and malformed fixed-stat vocabulary."},
-    {"capability_id":"token.creation.fixed_copy","evidence_class":"negative","test_id":"tests.test_fixed_token_production.FixedTokenProductionTests.test_token_production_grammar_and_capability_mutants_fail_closed","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Reject source-LKI, modified, optional, multiple, chosen, and zone-linked copy-token forms."},
-    {"capability_id":"token.creation.fixed_copy","evidence_class":"negative","test_id":"tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_creation_and_entry_counter_choices_resume_once_and_replay","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Unauthorized casting and malformed or unauthorized replacement selections leave authoritative hashes unchanged."},
-    {"capability_id":"token.creation.fixed_copy","evidence_class":"positive","test_id":"tests.test_copied_self_entry_counters.CopiedSelfEntryCounterActionTests.test_actual_trusted_copy_gets_its_own_entry_counters_and_replays","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Fixed-copy owner commits canonical prepared counter leaves without rediscovery."},
-    {"capability_id":"token.creation.fixed_copy","evidence_class":"positive","test_id":"tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_actual_copy_of_nonartifact_animation_retains_artifact_replacement_and_replays","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Actually cast a trusted copy spell after a trusted artifact animation; artifact-only replacement discovery follows the copied artifact, not its current nonartifact source."},
-    {"capability_id":"token.creation.fixed_copy","evidence_class":"positive","test_id":"tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_trusted_recipe_fixed_characteristics_exclusion_rollback_and_replay","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Actual trusted cast retains the fixed copiable exception, qualified targets, illegal-command rollback and pre-action replay."},
-    {"capability_id":"token.creation.fixed_copy","evidence_class":"positive","test_id":"tests.test_fixed_token_production.FixedTokenProductionTests.test_compiler_lowers_investigate_afterlife_and_extended_token_definitions","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Lower one exact targeted creature or artifact-creature-land copy instruction with a canonical target schema."},
-    {"capability_id":"token.creation.fixed_copy","evidence_class":"positive","test_id":"tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_simultaneous_copies_see_the_complete_entry_history","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Actual trusted cast discovers both copied entry identities, resolves both draws and one aggregated observer, and exactly replays from before casting."},
-    {"capability_id":"token.creation.fixed_copy","evidence_class":"positive","test_id":"tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_subsequent_haste_does_not_rewrite_entry_facts","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Actual trusted creation captures canonical entry occurrences before a separate Haste grant, retains its noncopiable duration and exactly replays."},
-    {"capability_id":"token.creation.fixed_copy","evidence_class":"privacy","test_id":"tests.test_copied_self_entry_counters.CopiedSelfEntryCounterActionTests.test_actual_copied_group_counter_replacement_choice_is_atomic_and_replays","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Private nested choices retain malformed/unauthorized rollback after checkpoint."},
-    {"capability_id":"token.creation.fixed_copy","evidence_class":"privacy","test_id":"tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_copy_replacement_choice_preserves_creator_projection_rollback_and_checkpoint","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Only the affected creator sees replacement options; internal replacement data stays outside four-player projection."},
-    {"capability_id":"token.creation.fixed_copy","evidence_class":"privacy","test_id":"tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_trusted_populate_selects_controlled_creature_token_and_replays_choice","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Actual Populate cast uses one controller-bound creature-token choice, four-seat projection, save/load, invalid-choice rollback and replay."},
-    {"capability_id":"token.creation.fixed_copy","evidence_class":"privacy","test_id":"tests.test_fixed_token_production.FixedTokenProductionTests.test_token_replacement_order_rollback_and_privacy","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Expose only public copy-token and replacement facts, not internal object identities."},
-    {"capability_id":"token.creation.fixed_copy","evidence_class":"privacy","test_id":"tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_creation_and_entry_counter_choices_resume_once_and_replay","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Only the affected seat sees replacement choices; malformed and unauthorized commands roll back without raw object or replacement data."},
-    {"capability_id":"token.creation.fixed_copy","evidence_class":"replay","test_id":"tests.test_copied_self_entry_counters.CopiedSelfEntryCounterActionTests.test_actual_copied_group_counter_replacement_choice_is_atomic_and_replays","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Entire created group and consequences replay from before the real cast."},
-    {"capability_id":"token.creation.fixed_copy","evidence_class":"replay","test_id":"tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_copy_replacement_choice_preserves_creator_projection_rollback_and_checkpoint","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Checkpoint and reload during the actual replacement choice, reject an invalid selection atomically, then exactly replay from before the copy action without duplicate tokens."},
-    {"capability_id":"token.creation.fixed_copy","evidence_class":"replay","test_id":"tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_trusted_recipe_entry_event_copies_new_incarnation_and_replays","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Real creature cast discovers a normalized entry-object copy and exactly replays from the pre-action checkpoint."},
-    {"capability_id":"token.creation.fixed_copy","evidence_class":"replay","test_id":"tests.test_fixed_token_production.FixedTokenProductionTests.test_copy_and_delayed_tokens_revalidate_and_replay","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Persist the target snapshot, copied token characteristics, and final authoritative state."},
-    {"capability_id":"token.creation.fixed_copy","evidence_class":"replay","test_id":"tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_creation_and_entry_counter_choices_resume_once_and_replay","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Checkpoint/load at both actual replacement boundaries and exact pre-action replay preserve tokens, counters, grants and history without duplicates."},
-    {"capability_id":"token.creation.fixed_copy","evidence_class":"replay","test_id":"tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_simultaneous_copies_see_the_complete_entry_history","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Exact commands from before the cast preserve all trigger identities, normal trigger ordering and full consequences."},
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"interaction","test_id":"tests.test_copied_self_entry_counters.CopiedSelfEntryCounterActionTests.test_actual_source_only_ability_removal_is_not_copied","official_rule_ids":["111.2", "111.12", "115.1a", "603.4", "603.6a", "603.6d", "608.2b", "608.2c", "707.2", "707.9", "614.16", "616.1", "603.6b", "603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Source-only current removal is distinct from copied entry-time applicability."},
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"interaction","test_id":"tests.test_copied_self_entry_counters.CopiedSelfEntryCounterActionTests.test_copy_does_not_inherit_the_original_cast_x_or_existing_counters","official_rule_ids":["111.2", "111.12", "115.1a", "603.4", "603.6a", "603.6d", "608.2b", "608.2c", "707.2", "707.9", "614.16", "616.1", "603.6b", "603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Noncast copy defaults X to zero rather than inheriting original five counters."},
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"interaction","test_id":"tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_actual_copy_does_not_inherit_temporary_artifact_replacement_and_replays","official_rule_ids":["111.2", "111.12", "115.1a", "603.4", "603.6a", "603.6d", "608.2b", "608.2c", "707.2", "707.9", "614.16", "616.1", "603.6b", "603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Retain the contrasting false-positive replacement boundary for a creature temporarily made an artifact."},
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"interaction","test_id":"tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_actual_copy_of_nonartifact_animation_retains_artifact_replacement_and_replays","official_rule_ids":["111.2", "111.12", "115.1a", "603.4", "603.6a", "603.6d", "608.2b", "608.2c", "707.2", "707.9", "614.16", "616.1", "603.6b", "603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"CR 707.2 separates noncopy layer-4 characteristics from the creation replacement subject through the canonical copiable reader."},
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"interaction","test_id":"tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_trusted_recipe_copied_cleanup_ability_triggers_and_replays","official_rule_ids":["111.2", "111.12", "115.1a", "603.4", "603.6a", "603.6d", "608.2b", "608.2c", "707.2", "707.9", "614.16", "616.1", "603.6b", "603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Copied quoted cleanup is a recurring granted trigger, not independent delayed aftercare; actual cast, end-step execution and replay preserve that distinction."},
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"interaction","test_id":"tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_trusted_recipe_self_sacrifice_uses_immediate_copy_lki_and_replays","official_rule_ids":["111.2", "111.12", "115.1a", "603.4", "603.6a", "603.6d", "608.2b", "608.2c", "707.2", "707.9", "614.16", "616.1", "603.6b", "603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Actual activation pays source sacrifice and copies its immediate predeparture values rather than the later incarnation."},
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"interaction","test_id":"tests.test_fixed_token_production.FixedTokenProductionTests.test_copy_and_delayed_tokens_revalidate_and_replay","official_rule_ids":["111.2", "111.12", "115.1a", "603.4", "603.6a", "603.6d", "608.2b", "608.2c", "707.2", "707.9", "614.16", "616.1", "603.6b", "603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Revalidate the target at resolution and copy its current copiable values through the canonical token transaction."},
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_history_entry_characteristics.HistoryEntryCharacteristicReproduction.test_history_characteristic_distinguishing_controls",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Genuine prior entries, separate sequential actions, and a history-independent static modifier distinguish the boundary; no new two-instruction spell grammar is claimed."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_history_entry_characteristics.HistoryEntryCharacteristicReproduction.test_replacement_adjusted_history_characteristic_quantity",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A represented additional-Food replacement establishes two actual nonland entries before the creature's power-qualified observer and complete draw consequence."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_history_entry_characteristics.HistoryEntrySealingOwnerTests.test_history_precedes_final_power_and_keyword_sealing",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Isolated owner model for history-dependent power/keyword sealing, not additional printed observer grammar or card-action admission."
+    },
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"interaction","test_id":"tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_creation_and_entry_counter_choices_resume_once_and_replay","official_rule_ids":["111.2", "111.12", "115.1a", "603.4", "603.6a", "603.6d", "608.2b", "608.2c", "707.2", "707.9", "614.16", "616.1", "603.6b", "603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Creation and intrinsic loyalty-entry replacements suspend before commit and resume exactly once with a separately granted keyword."},
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"interaction","test_id":"tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_intrinsic_exception_and_static_haste_are_entry_facts","official_rule_ids":["111.2", "111.12", "115.1a", "603.4", "603.6a", "603.6d", "608.2b", "608.2c", "707.2", "707.9", "614.16", "616.1", "603.6b", "603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Actual creation distinguishes intrinsic, copy-exception and battlefield-static Haste as legitimate entry facts."},
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"interaction","test_id":"tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_one_copy_and_sequential_creation_history_controls","official_rule_ids":["111.2", "111.12", "115.1a", "603.4", "603.6a", "603.6d", "608.2b", "608.2c", "707.2", "707.9", "614.16", "616.1", "603.6b", "603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Separate actual creation instructions retain sequential thresholds and nonduplicate controller-bound history."},
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"multiplayer","test_id":"tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_copy_replacement_choice_preserves_creator_projection_rollback_and_checkpoint","official_rule_ids":["111.2", "111.12", "115.1a", "603.4", "603.6a", "603.6d", "608.2b", "608.2c", "707.2", "707.9", "614.16", "616.1", "603.6b", "603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"The creator controls and owns the copy despite copying another player's permanent; only creator-scoped replacements apply."},
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"multiplayer","test_id":"tests.test_fixed_token_production.FixedTokenProductionTests.test_token_replacement_order_rollback_and_privacy","official_rule_ids":["111.2", "111.12", "115.1a", "603.4", "603.6a", "603.6d", "608.2b", "608.2c", "707.2", "707.9", "614.16", "616.1", "603.6b", "603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Retain affected-controller replacement ordering in four-player token creation."},
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"multiplayer","test_id":"tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_creation_and_entry_counter_choices_resume_once_and_replay","official_rule_ids":["111.2", "111.12", "115.1a", "603.4", "603.6a", "603.6d", "608.2b", "608.2c", "707.2", "707.9", "614.16", "616.1", "603.6b", "603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"A copied B-owned A-controlled source creates A-owned and A-controlled tokens; affected A selects both replacement stages."},
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"mutation","test_id":"tests.test_fixed_token_creation_effects.TokenCopyCopiableSubjectOwnerTests.test_copiable_subject_and_explicit_snapshot_kill_effective_type_mutation","official_rule_ids":["111.2", "111.12", "115.1a", "603.4", "603.6a", "603.6d", "608.2b", "608.2c", "707.2", "707.9", "614.16", "616.1", "603.6b", "603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Kill restoring the current-characteristic reader and preserve explicit-snapshot behavior without reading a live source."},
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"mutation","test_id":"tests.test_fixed_token_creation_effects.TokenCopyRecipeModelTests.test_copy_exception_mutation_cannot_discard_fixed_stats","official_rule_ids":["111.2", "111.12", "115.1a", "603.4", "603.6a", "603.6d", "608.2b", "608.2c", "707.2", "707.9", "614.16", "616.1", "603.6b", "603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"The same fixed-stat witness passes the canonical copy owner and fails the inspected characteristic-exception mutation."},
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"mutation","test_id":"tests.test_fixed_token_production.FixedTokenProductionTests.test_token_production_grammar_and_capability_mutants_fail_closed","official_rule_ids":["111.2", "111.12", "115.1a", "603.4", "603.6a", "603.6d", "608.2b", "608.2c", "707.2", "707.9", "614.16", "616.1", "603.6b", "603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Change the compiler-owned copy reference away from the selected target and require shape validation to reject it."},
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"mutation","test_id":"tests.test_token_entry_boundaries.TokenEntryHistoryOwnerTests.test_incomplete_history_ordering_mutant_is_killed","official_rule_ids":["111.2", "111.12", "115.1a", "603.4", "603.6a", "603.6d", "608.2b", "608.2c", "707.2", "707.9", "614.16", "616.1", "603.6b", "603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Isolated owner contract kills per-member history/discovery interleaving, including zero, singleton and reversed groups; not gameplay certification."},
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"mutation","test_id":"tests.test_token_entry_boundaries.TokenEntryHistoryOwnerTests.test_subsequent_aftercare_ordering_mutant_is_killed","official_rule_ids":["111.2", "111.12", "115.1a", "603.4", "603.6a", "603.6d", "608.2b", "608.2c", "707.2", "707.9", "614.16", "616.1", "603.6b", "603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Isolated collaborator contract kills a separately instructed grant moved before entry discovery; not gameplay certification."},
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"negative","test_id":"tests.test_copied_self_entry_counters.CopiedSelfEntryCounterActionTests.test_unavailable_prospective_component_query_rejects_resolution_atomically","official_rule_ids":["111.2", "111.12", "115.1a", "603.4", "603.6a", "603.6d", "608.2b", "608.2c", "707.2", "707.9", "614.16", "616.1", "603.6b", "603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Unavailable owner query cannot authorize a token with omitted counters; rollback, retry and replay."},
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"negative","test_id":"tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_actual_copy_does_not_inherit_temporary_artifact_replacement_and_replays","official_rule_ids":["111.2", "111.12", "115.1a", "603.4", "603.6a", "603.6d", "608.2b", "608.2c", "707.2", "707.9", "614.16", "616.1", "603.6b", "603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"A trusted type-changing spell does not make its nonartifact source's copied token eligible for an artifact-only additional-token replacement."},
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"negative","test_id":"tests.test_fixed_token_creation_effects.TokenCopyRecipeModelTests.test_copy_recipe_codec_rejects_unknown_fields_booleans_and_open_values","official_rule_ids":["111.2", "111.12", "115.1a", "603.4", "603.6a", "603.6d", "608.2b", "608.2c", "707.2", "707.9", "614.16", "616.1", "603.6b", "603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Closed recipe codec rejects open reference, exception, lifecycle and malformed fixed-stat vocabulary."},
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"negative","test_id":"tests.test_fixed_token_production.FixedTokenProductionTests.test_token_production_grammar_and_capability_mutants_fail_closed","official_rule_ids":["111.2", "111.12", "115.1a", "603.4", "603.6a", "603.6d", "608.2b", "608.2c", "707.2", "707.9", "614.16", "616.1", "603.6b", "603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Reject source-LKI, modified, optional, multiple, chosen, and zone-linked copy-token forms."},
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "negative",
+      "test_id": "tests.test_history_entry_characteristics.HistoryEntrySealingOwnerTests.test_pre_history_characteristic_sealing_mutant_is_killed",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A mutation moves final characteristic sealing before complete history; the exact owner timing contract kills it."
+    },
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"negative","test_id":"tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_creation_and_entry_counter_choices_resume_once_and_replay","official_rule_ids":["111.2", "111.12", "115.1a", "603.4", "603.6a", "603.6d", "608.2b", "608.2c", "707.2", "707.9", "614.16", "616.1", "603.6b", "603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Unauthorized casting and malformed or unauthorized replacement selections leave authoritative hashes unchanged."},
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"positive","test_id":"tests.test_copied_self_entry_counters.CopiedSelfEntryCounterActionTests.test_actual_trusted_copy_gets_its_own_entry_counters_and_replays","official_rule_ids":["111.2", "111.12", "115.1a", "603.4", "603.6a", "603.6d", "608.2b", "608.2c", "707.2", "707.9", "614.16", "616.1", "603.6b", "603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Fixed-copy owner commits canonical prepared counter leaves without rediscovery."},
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"positive","test_id":"tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_actual_copy_of_nonartifact_animation_retains_artifact_replacement_and_replays","official_rule_ids":["111.2", "111.12", "115.1a", "603.4", "603.6a", "603.6d", "608.2b", "608.2c", "707.2", "707.9", "614.16", "616.1", "603.6b", "603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Actually cast a trusted copy spell after a trusted artifact animation; artifact-only replacement discovery follows the copied artifact, not its current nonartifact source."},
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"positive","test_id":"tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_trusted_recipe_fixed_characteristics_exclusion_rollback_and_replay","official_rule_ids":["111.2", "111.12", "115.1a", "603.4", "603.6a", "603.6d", "608.2b", "608.2c", "707.2", "707.9", "614.16", "616.1", "603.6b", "603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Actual trusted cast retains the fixed copiable exception, qualified targets, illegal-command rollback and pre-action replay."},
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"positive","test_id":"tests.test_fixed_token_production.FixedTokenProductionTests.test_compiler_lowers_investigate_afterlife_and_extended_token_definitions","official_rule_ids":["111.2", "111.12", "115.1a", "603.4", "603.6a", "603.6d", "608.2b", "608.2c", "707.2", "707.9", "614.16", "616.1", "603.6b", "603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Lower one exact targeted creature or artifact-creature-land copy instruction with a canonical target schema."},
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_history_entry_characteristics.HistoryEntryCharacteristicReproduction.test_two_simultaneous_copies_use_post_event_history_characteristics",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Real current-trusted cast/payment/copy entry seals post-history power and resolves two observer draws, with checkpoint/load and exact replay."
+    },
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"positive","test_id":"tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_simultaneous_copies_see_the_complete_entry_history","official_rule_ids":["111.2", "111.12", "115.1a", "603.4", "603.6a", "603.6d", "608.2b", "608.2c", "707.2", "707.9", "614.16", "616.1", "603.6b", "603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Actual trusted cast discovers both copied entry identities, resolves both draws and one aggregated observer, and exactly replays from before casting."},
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"positive","test_id":"tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_subsequent_haste_does_not_rewrite_entry_facts","official_rule_ids":["111.2", "111.12", "115.1a", "603.4", "603.6a", "603.6d", "608.2b", "608.2c", "707.2", "707.9", "614.16", "616.1", "603.6b", "603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Actual trusted creation captures canonical entry occurrences before a separate Haste grant, retains its noncopiable duration and exactly replays."},
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"privacy","test_id":"tests.test_copied_self_entry_counters.CopiedSelfEntryCounterActionTests.test_actual_copied_group_counter_replacement_choice_is_atomic_and_replays","official_rule_ids":["111.2", "111.12", "115.1a", "603.4", "603.6a", "603.6d", "608.2b", "608.2c", "707.2", "707.9", "614.16", "616.1", "603.6b", "603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Private nested choices retain malformed/unauthorized rollback after checkpoint."},
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"privacy","test_id":"tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_copy_replacement_choice_preserves_creator_projection_rollback_and_checkpoint","official_rule_ids":["111.2", "111.12", "115.1a", "603.4", "603.6a", "603.6d", "608.2b", "608.2c", "707.2", "707.9", "614.16", "616.1", "603.6b", "603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Only the affected creator sees replacement options; internal replacement data stays outside four-player projection."},
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"privacy","test_id":"tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_trusted_populate_selects_controlled_creature_token_and_replays_choice","official_rule_ids":["111.2", "111.12", "115.1a", "603.4", "603.6a", "603.6d", "608.2b", "608.2c", "707.2", "707.9", "614.16", "616.1", "603.6b", "603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Actual Populate cast uses one controller-bound creature-token choice, four-seat projection, save/load, invalid-choice rollback and replay."},
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"privacy","test_id":"tests.test_fixed_token_production.FixedTokenProductionTests.test_token_replacement_order_rollback_and_privacy","official_rule_ids":["111.2", "111.12", "115.1a", "603.4", "603.6a", "603.6d", "608.2b", "608.2c", "707.2", "707.9", "614.16", "616.1", "603.6b", "603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Expose only public copy-token and replacement facts, not internal object identities."},
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"privacy","test_id":"tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_creation_and_entry_counter_choices_resume_once_and_replay","official_rule_ids":["111.2", "111.12", "115.1a", "603.4", "603.6a", "603.6d", "608.2b", "608.2c", "707.2", "707.9", "614.16", "616.1", "603.6b", "603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Only the affected seat sees replacement choices; malformed and unauthorized commands roll back without raw object or replacement data."},
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"replay","test_id":"tests.test_copied_self_entry_counters.CopiedSelfEntryCounterActionTests.test_actual_copied_group_counter_replacement_choice_is_atomic_and_replays","official_rule_ids":["111.2", "111.12", "115.1a", "603.4", "603.6a", "603.6d", "608.2b", "608.2c", "707.2", "707.9", "614.16", "616.1", "603.6b", "603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Entire created group and consequences replay from before the real cast."},
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"replay","test_id":"tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_copy_replacement_choice_preserves_creator_projection_rollback_and_checkpoint","official_rule_ids":["111.2", "111.12", "115.1a", "603.4", "603.6a", "603.6d", "608.2b", "608.2c", "707.2", "707.9", "614.16", "616.1", "603.6b", "603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Checkpoint and reload during the actual replacement choice, reject an invalid selection atomically, then exactly replay from before the copy action without duplicate tokens."},
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"replay","test_id":"tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_trusted_recipe_entry_event_copies_new_incarnation_and_replays","official_rule_ids":["111.2", "111.12", "115.1a", "603.4", "603.6a", "603.6d", "608.2b", "608.2c", "707.2", "707.9", "614.16", "616.1", "603.6b", "603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Real creature cast discovers a normalized entry-object copy and exactly replays from the pre-action checkpoint."},
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"replay","test_id":"tests.test_fixed_token_production.FixedTokenProductionTests.test_copy_and_delayed_tokens_revalidate_and_replay","official_rule_ids":["111.2", "111.12", "115.1a", "603.4", "603.6a", "603.6d", "608.2b", "608.2c", "707.2", "707.9", "614.16", "616.1", "603.6b", "603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Persist the target snapshot, copied token characteristics, and final authoritative state."},
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"replay","test_id":"tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_creation_and_entry_counter_choices_resume_once_and_replay","official_rule_ids":["111.2", "111.12", "115.1a", "603.4", "603.6a", "603.6d", "608.2b", "608.2c", "707.2", "707.9", "614.16", "616.1", "603.6b", "603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Checkpoint/load at both actual replacement boundaries and exact pre-action replay preserve tokens, counters, grants and history without duplicates."},
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"replay","test_id":"tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_simultaneous_copies_see_the_complete_entry_history","official_rule_ids":["111.2", "111.12", "115.1a", "603.4", "603.6a", "603.6d", "608.2b", "608.2c", "707.2", "707.9", "614.16", "616.1", "603.6b", "603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Exact commands from before the cast preserve all trigger identities, normal trigger ordering and full consequences."},
     {"capability_id":"token.creation.fixed_definition","evidence_class":"interaction","test_id":"tests.test_fixed_token_creation_effects.FixedTokenCreationRuntimeTests.test_compiled_fixed_token_effect_replays_exactly","official_rule_ids":["111.2","111.3","111.4","111.10","603.4","603.6a","603.6d","608.2c","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Resolve a compiled fixed Treasure instruction through an additional-token replacement and reproduce both public token objects from the exact saved command record."},
     {"capability_id":"token.creation.fixed_definition","evidence_class":"interaction","test_id":"tests.test_fixed_token_creation_effects.FixedTokenCreationRuntimeTests.test_compiled_fixed_token_effect_suspends_for_replacement_order","official_rule_ids":["111.2","111.3","111.4","111.10","603.4","603.6a","603.6d","608.2c","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Suspend one compiled fixed Treasure instruction for two competing additional-token replacements, then resume all definitions with one shared creation transaction."},
     {"capability_id":"token.creation.fixed_definition","evidence_class":"multiplayer","test_id":"tests.test_fixed_token_creation_effects.FixedTokenCreationRuntimeTests.test_compiled_fixed_token_effect_suspends_for_replacement_order","official_rule_ids":["111.2","111.3","111.4","111.10","603.4","603.6a","603.6d","608.2c","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Resolve competing token replacements in four-player state while keeping the affected controller as the sole replacement chooser."},
@@ -27558,7 +27799,7 @@
       "capability_id": "trigger.event.normalized_zone_change",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_sacrifice_and_discard_predicates_use_committed_lki",
-      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21"],
+      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21", "603.6b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Match typed sacrifice and discard causes against immutable subtype, type, owner, and previous-controller facts."
     },
@@ -27566,7 +27807,7 @@
       "capability_id": "trigger.event.normalized_zone_change",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_leaving_observer_uses_complete_simultaneous_death_history_in_both_orders",
-      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21"],
+      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21", "603.6b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Publish the complete simultaneous death history before LKI discovery so a departing observer sees the other qualifying death in either enumeration order."
     },
@@ -27574,7 +27815,7 @@
       "capability_id": "trigger.event.normalized_zone_change",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_simultaneous_death_history_precedes_each_occurrence_discovery",
-      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21"],
+      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21", "603.6b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Make both committed controlled deaths visible before either occurrence checks its public threshold and preserve one trigger per qualifying death."
     },
@@ -27582,7 +27823,7 @@
       "capability_id": "trigger.event.normalized_zone_change",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_simultaneous_entry_history_is_complete_before_discovery_in_both_orders",
-      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21"],
+      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21", "603.6b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Make the complete committed nonland-entry batch visible before the entering source checks its intervening threshold in either enumeration order."
     },
@@ -27590,7 +27831,7 @@
       "capability_id": "trigger.event.normalized_zone_change",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_simultaneous_history_uses_final_destinations_and_previous_controllers",
-      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21"],
+      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21", "603.6b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Record only replacement-adjusted final deaths and attribute them to each permanent's previous controller across a simultaneous batch."
     },
@@ -27598,15 +27839,84 @@
       "capability_id": "trigger.event.normalized_zone_change",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_subtype_entry_trigger_filters_and_uses_replacement_owner",
-      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21"],
+      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21", "603.6b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Carry the entering permanent's immutable public subtype tuple into trigger matching so controller and Human predicates are decided without runtime prose access."
     },
     {
       "capability_id": "trigger.event.normalized_zone_change",
       "evidence_class": "interaction",
+      "test_id": "tests.test_history_entry_characteristics.HistoryEntryCharacteristicReproduction.test_history_characteristic_distinguishing_controls",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Genuine prior entries, separate sequential actions, and a history-independent static modifier distinguish the boundary; no new two-instruction spell grammar is claimed."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_history_entry_characteristics.HistoryEntryCharacteristicReproduction.test_replacement_adjusted_history_characteristic_quantity",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A represented additional-Food replacement establishes two actual nonland entries before the creature's power-qualified observer and complete draw consequence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_history_entry_characteristics.HistoryEntrySealingOwnerTests.test_history_precedes_final_power_and_keyword_sealing",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Isolated owner model for history-dependent power/keyword sealing, not additional printed observer grammar or card-action admission."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "interaction",
       "test_id": "tests.test_oracle_ir.OracleIRTests.test_self_dies_trigger_uses_last_known_controller",
-      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21"],
+      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21", "603.6b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Derive represented permanent-enter, permanent-leave, and creature-dies trigger occurrences from immutable facts captured around the canonical committed zone change, using pre-event source facts for leaves-the-battlefield detection."
     },
@@ -27614,7 +27924,7 @@
       "capability_id": "trigger.event.normalized_zone_change",
       "evidence_class": "interaction",
       "test_id": "tests.test_zone_trigger_events.ZoneTriggerEventModelTests.test_countered_spell_replaced_to_exile_has_no_graveyard_event",
-      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21"],
+      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21", "603.6b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Derive the pre-counter occurrence while withholding the card-graveyard occurrence when replacement changes the committed destination to exile."
     },
@@ -27622,7 +27932,7 @@
       "capability_id": "trigger.event.normalized_zone_change",
       "evidence_class": "interaction",
       "test_id": "tests.test_zone_trigger_events.ZoneTriggerIntegrationTests.test_source_that_leaves_still_observes_simultaneous_death",
-      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21"],
+      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21", "603.6b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Derive represented permanent-enter, permanent-leave, and creature-dies trigger occurrences from immutable facts captured around the canonical committed zone change, using pre-event source facts for leaves-the-battlefield detection."
     },
@@ -27630,7 +27940,7 @@
       "capability_id": "trigger.event.normalized_zone_change",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_sacrifice_and_discard_predicates_use_committed_lki",
-      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21"],
+      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21", "603.6b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Use one four-player sacrifice occurrence to place active- and nonactive-controller triggers in APNAP order."
     },
@@ -27638,7 +27948,7 @@
       "capability_id": "trigger.event.normalized_zone_change",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_preflight_v080.NormalizedZoneEventTests.test_simultaneous_semantic_triggers_use_apnap_and_owner_order",
-      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21"],
+      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21", "603.6b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Derive represented permanent-enter, permanent-leave, and creature-dies trigger occurrences from immutable facts captured around the canonical committed zone change, using pre-event source facts for leaves-the-battlefield detection."
     },
@@ -27646,7 +27956,7 @@
       "capability_id": "trigger.event.normalized_zone_change",
       "evidence_class": "mutation",
       "test_id": "tests.test_capability_implementation_mutations.CapabilityImplementationMutationTests.test_zone_trigger_detection_mutant_is_killed",
-      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21"],
+      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21", "603.6b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Derive represented permanent-enter, permanent-leave, and creature-dies trigger occurrences from immutable facts captured around the canonical committed zone change, using pre-event source facts for leaves-the-battlefield detection."
     },
@@ -27654,15 +27964,38 @@
       "capability_id": "trigger.event.normalized_zone_change",
       "evidence_class": "mutation",
       "test_id": "tests.test_stack_counter_rules.StackCounterRuleTests.test_counter_event_derivation_mutant_is_killed",
-      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21"],
+      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21", "603.6b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Kill omission of the normalized counter-event derivation at the shared committed zone-change boundary."
     },
     {
       "capability_id": "trigger.event.normalized_zone_change",
       "evidence_class": "negative",
+      "test_id": "tests.test_history_entry_characteristics.HistoryEntrySealingOwnerTests.test_pre_history_characteristic_sealing_mutant_is_killed",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A mutation moves final characteristic sealing before complete history; the exact owner timing contract kills it."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "negative",
       "test_id": "tests.test_zone_trigger_events.ZoneTriggerEventModelTests.test_counter_transition_kind_is_closed_and_typed",
-      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21"],
+      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21", "603.6b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Reject an untyped or unknown transition classification before event derivation."
     },
@@ -27670,7 +28003,7 @@
       "capability_id": "trigger.event.normalized_zone_change",
       "evidence_class": "negative",
       "test_id": "tests.test_zone_trigger_events.ZoneTriggerEventModelTests.test_occurrence_rejects_malformed_and_non_event_moves_are_empty",
-      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21"],
+      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21", "603.6b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Derive represented permanent-enter, permanent-leave, and creature-dies trigger occurrences from immutable facts captured around the canonical committed zone change, using pre-event source facts for leaves-the-battlefield detection."
     },
@@ -27678,15 +28011,38 @@
       "capability_id": "trigger.event.normalized_zone_change",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_source_land_entry_predicate_uses_committed_tapped_state",
-      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21"],
+      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21", "603.6b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Match a self-entry trigger only from the committed untapped entry fact and reject the tapped contrast."
     },
     {
       "capability_id": "trigger.event.normalized_zone_change",
       "evidence_class": "positive",
+      "test_id": "tests.test_history_entry_characteristics.HistoryEntryCharacteristicReproduction.test_two_simultaneous_copies_use_post_event_history_characteristics",
+      "official_rule_ids": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Real current-trusted cast/payment/copy entry seals post-history power and resolves two observer draws, with checkpoint/load and exact replay."
+    },
+    {
+      "capability_id": "trigger.event.normalized_zone_change",
+      "evidence_class": "positive",
       "test_id": "tests.test_preflight_v080.NormalizedZoneEventTests.test_self_dies_trigger_uses_last_known_battlefield_zone",
-      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21"],
+      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21", "603.6b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Derive represented permanent-enter, permanent-leave, and creature-dies trigger occurrences from immutable facts captured around the canonical committed zone change, using pre-event source facts for leaves-the-battlefield detection."
     },
@@ -27694,7 +28050,7 @@
       "capability_id": "trigger.event.normalized_zone_change",
       "evidence_class": "positive",
       "test_id": "tests.test_zone_trigger_events.ZoneTriggerEventModelTests.test_countered_physical_spell_derives_exact_normalized_events",
-      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21"],
+      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21", "603.6b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Derive exactly one pre-counter spell event followed by one post-move card-graveyard event for a physical spell countered to its owner's graveyard."
     },
@@ -27702,7 +28058,7 @@
       "capability_id": "trigger.event.normalized_zone_change",
       "evidence_class": "positive",
       "test_id": "tests.test_zone_trigger_events.ZoneTriggerEventModelTests.test_derives_exact_enter_and_death_events",
-      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21"],
+      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21", "603.6b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Derive represented permanent-enter, permanent-leave, and creature-dies trigger occurrences from immutable facts captured around the canonical committed zone change, using pre-event source facts for leaves-the-battlefield detection."
     },
@@ -27710,7 +28066,7 @@
       "capability_id": "trigger.event.normalized_zone_change",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_sacrifice_and_discard_predicates_use_committed_lki",
-      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21"],
+      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21", "603.6b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Expose committed public graveyard and trigger facts while stripping the discarded card's internal incarnation identities."
     },
@@ -27718,7 +28074,7 @@
       "capability_id": "trigger.event.normalized_zone_change",
       "evidence_class": "privacy",
       "test_id": "tests.test_zone_trigger_events.ZoneTriggerEventModelTests.test_private_library_to_hand_move_produces_no_public_trigger_event",
-      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21"],
+      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21", "603.6b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Do not derive a public normalized trigger event for an ordinary private library-to-hand move; visibility-dependent hidden-zone trigger families remain excluded and fail closed."
     },
@@ -27726,7 +28082,7 @@
       "capability_id": "trigger.event.normalized_zone_change",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_simultaneous_death_history_replays_from_pre_action_checkpoint",
-      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21"],
+      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21", "603.6b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay an actual mass-destruction cast from a pre-action checkpoint through complete batch history, LKI trigger placement, two draw consequences, and the final authoritative hash."
     },
@@ -27734,7 +28090,7 @@
       "capability_id": "trigger.event.normalized_zone_change",
       "evidence_class": "replay",
       "test_id": "tests.test_oracle_ir.OracleIRTests.test_fixed_life_self_enter_trigger_replays_exactly",
-      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21"],
+      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21", "603.6b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Derive represented permanent-enter, permanent-leave, and creature-dies trigger occurrences from immutable facts captured around the canonical committed zone change, using pre-event source facts for leaves-the-battlefield detection."
     },
@@ -27742,7 +28098,7 @@
       "capability_id": "trigger.event.normalized_zone_change",
       "evidence_class": "replay",
       "test_id": "tests.test_stack_counter_rules.StackCounterRuleTests.test_compiled_counter_targets_exact_stack_domains_and_replays",
-      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21"],
+      "official_rule_ids": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21", "603.6b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the countered-spell transition, normalized event ordering, trigger journal inputs, and final state hash exactly."
     },

@@ -20,6 +20,7 @@ class ChangeImpactTests(unittest.TestCase):
             "test_copied_self_entry_counters",
             "test_damage_result_events",
             "test_fixed_keyword_entry_counters",
+            "test_history_entry_characteristics",
             "test_intrinsic_entry_counters",
             "test_riot_rules",
             "test_state_based_actions",
