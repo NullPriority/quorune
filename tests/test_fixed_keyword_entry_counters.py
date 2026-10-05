@@ -978,10 +978,10 @@ class FixedKeywordEntryRuntimeTests(unittest.TestCase):
         assert_counter(7025802)
         original = zone_replacements._zone_change_snapshot_effects
 
-        def remove_fixed_entry_effects(host, subjects, active_sources):
+        def remove_fixed_entry_effects(host, subjects, active_sources, prospective_objects):
             return tuple(
                 effect
-                for effect in original(host, subjects, active_sources)
+                for effect in original(host, subjects, active_sources, prospective_objects)
                 if not effect.effect_id.startswith(
                     "replacement.zone.self-entry-counter.v1:"
                 )
@@ -1170,10 +1170,10 @@ class FixedKeywordEntryRuntimeTests(unittest.TestCase):
         assert_counter(6140104)
         original = zone_replacements._zone_change_snapshot_effects
 
-        def remove_fixed_entry_effects(host, subjects, active_sources):
+        def remove_fixed_entry_effects(host, subjects, active_sources, prospective_objects):
             return tuple(
                 effect
-                for effect in original(host, subjects, active_sources)
+                for effect in original(host, subjects, active_sources, prospective_objects)
                 if not effect.effect_id.startswith(
                     "replacement.zone.self-entry-counter.v1:"
                 )

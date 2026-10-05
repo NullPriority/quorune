@@ -626,10 +626,10 @@ class RiotRuntimeTests(unittest.TestCase):
         assert_result(70213610, haste_result=False)
         original = zone_replacements._zone_change_snapshot_effects
 
-        def remove_riot_effects(host, subjects, active_sources):
+        def remove_riot_effects(host, subjects, active_sources, prospective_objects):
             return tuple(
                 effect
-                for effect in original(host, subjects, active_sources)
+                for effect in original(host, subjects, active_sources, prospective_objects)
                 if not effect.effect_id.startswith(
                     "replacement.zone.riot-entry-choice.v1:"
                 )

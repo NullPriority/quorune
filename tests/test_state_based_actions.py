@@ -28,9 +28,11 @@ from quorune.engine import GameRuleError
 from quorune.model import DecisionGroup, StackItem
 from quorune.projection import StateProjector
 from quorune.record import (
+    authoritative_state_hash,
     checkpoint_envelope,
     replay_record,
 )
+from quorune.replacement_effects import ReplacementChoiceRequired
 from quorune.semantics import SemanticProgram
 from quorune.state_based_actions import (
     ObjectSnapshot,
@@ -1292,19 +1294,30 @@ class StateBasedActionEngineTests(unittest.TestCase):
 
     def test_damage_to_multityped_permanent_applies_every_result(self):
         engine = self.make_engine(7089)
+        characteristics = {
+            "type_line": "Token Creature Planeswalker Battle — Siege",
+            "power": "3",
+            "toughness": "4",
+            "loyalty": "5",
+            "defense": "6",
+        }
+        creation = {
+            "name": "Every Damageable Type",
+            "battle_protector": "B",
+            "characteristics": characteristics,
+        }
+        before = authoritative_state_hash(engine.state)
+        with self.assertRaises(ReplacementChoiceRequired) as raised:
+            engine.create_token("A", **creation)
+        self.assertEqual(before, authoritative_state_hash(engine.state))
+        options = raised.exception.pending.choice.options
+        self.assertEqual(2, len(options))
+        self.assertTrue(all(
+            option.startswith("replacement.intrinsic-entry-counter:")
+            for option in options
+        ))
         permanent_ref = engine.create_token(
-            "A",
-            name="Every Damageable Type",
-            battle_protector="B",
-            characteristics={
-                "type_line": (
-                    "Token Creature Planeswalker Battle — Siege"
-                ),
-                "power": "3",
-                "toughness": "4",
-                "loyalty": "5",
-                "defense": "6",
-            },
+            "A", **creation, replacement_selections=(options[0],)
         )[0]
         permanent = self.card(engine, permanent_ref)
 

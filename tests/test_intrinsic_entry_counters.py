@@ -783,11 +783,14 @@ class IntrinsicEntryCounterTests(unittest.TestCase):
             },
         )
         self.assertTrue(result.ok, result.summary)
+        entry_event = engine.state.pending_decision.continuation[
+            "replacement_batch"
+        ]["events"][0]
+        self.assertEqual("zone.change", entry_event["kind"])
+        self.assertTrue(entry_event["payload"]["prospective_subject"])
         self.assertEqual(
-            "counter.place",
-            engine.state.pending_decision.continuation[
-                "replacement_batch"
-            ]["events"][0]["kind"],
+            ["counter.place"],
+            [child["kind"] for child in entry_event["children"]],
         )
         second = StateProjector(self.db, engine.state)._decision("pilot:A")
         second_selection = second["ctx"]["options"][0]["id"]
