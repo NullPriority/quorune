@@ -21,6 +21,15 @@ from common import ROOT
 
 
 class ResolutionPublicConditionCompilerTests(unittest.TestCase):
+    def test_bare_subtype_condition_retains_permanent_not_creature_domain(self):
+        # CR 109.2: a bare subtype denotes battlefield permanents, including Kindred.
+        from quorune.compiler.public_state_queries import fixed_public_state_condition
+        bare = fixed_public_state_condition("you control a Faerie", source_name="Generic Condition")
+        creature = fixed_public_state_condition("you control a Faerie creature", source_name="Generic Condition")
+        self.assertEqual(("faerie",), bare.quantity.query.subtypes_all)
+        self.assertEqual((), bare.quantity.query.types_all)
+        self.assertEqual(("creature",), creature.quantity.query.types_all)
+
     def test_derived_conditional_results_remain_residual_without_timing_proof(self):
         examples = (
             "If you control an artifact, you gain life equal to this creature's power.",
@@ -298,6 +307,22 @@ class ResolutionPublicConditionRuntimeTests(unittest.TestCase):
         foods = [card for card in engine.state.cards.values() if card.is_token and card.zone == "battlefield"
                  and "food" in engine._type_parts(engine._effective_card_data(card)["type_line"])[1]]
         self.assertEqual(1, len(foods))
+        self.replay(session, load=True)
+
+    def test_trusted_subtype_condition_counts_noncreature_kindred_and_replays(self):
+        session = self.session(4821007)
+        engine = session.engine
+        self.add(engine, "Generic Condition Kindred Faerie", ref="kindred-faerie")
+        source = self.add(engine, "Generic Condition Faerie Draw", zone="hand")
+        target = self.add(engine, "Generic Bound Body", ref="faerie-test-target")
+        action = self.ready(session, source, {"B": 1})
+        self.checkpoint(session)
+        draws = sum(event.code == "card.draw" for event in session.state.events)
+        result = session.act("pilot:A", {"action_id": action["id"], "targets": [target.ref], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(1, engine._numeric_stat(target.object_id, "power"))
+        self.assertEqual(1, sum(event.code == "card.draw" for event in session.state.events) - draws)
         self.replay(session, load=True)
 
 

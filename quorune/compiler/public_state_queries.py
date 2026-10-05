@@ -911,7 +911,16 @@ def _controller_condition_query(subject: str) -> tuple[ObjectQuerySpec, bool] | 
         f"{material} you control"
     )
     if parsed is not None and parsed[0] == "source_controller":
-        return parsed[1], parsed[2]
+        query = parsed[1]
+        # CR 109.2: a bare creature subtype includes noncreature Kindred
+        # permanents. Only an explicit creature noun supplies that type gate.
+        if (
+            query.types_all == ("creature",)
+            and (query.subtypes_all or query.subtypes_any)
+            and not re.search(r"\bcreatures?\b", material, re.IGNORECASE)
+        ):
+            query = replace(query, types_all=())
+        return query, parsed[2]
     query = fixed_planeswalker_condition_query(material)
     if query is not None:
         return (query, False) if query is not None else None

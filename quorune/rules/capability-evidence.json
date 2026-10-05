@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "10e975f737097c61e1912c2ab135c9108904e9a44cf6d6d71ceafc313809e154",
-  "declaration_source_fingerprint": "6948a5f81cfdd540f4a2131f1be9d87ada758cfd83d5170442e6f9d1e8f21e80",
+  "registry_fingerprint": "2916120daa63f819e340963919d7b32de049686147999ce1d2f7308015501150",
+  "declaration_source_fingerprint": "3402fee55ba82e4e7ded9d4c193cfc54deeaa853bcc230469b75f92449ea1a68",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -55511,6 +55511,7 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_trusted_death_prefix_updates_history_before_condition_and_replays",
       "official_rule_ids": [
+        "109.2",
         "109.5",
         "608.2b",
         "608.2c",
@@ -55525,9 +55526,28 @@
     },
     {
       "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_trusted_subtype_condition_counts_noncreature_kindred_and_replays",
+      "official_rule_ids": [
+        "109.2",
+        "109.5",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A bare subtype condition includes a represented noncreature Kindred permanent; explicit creature-qualified conditions retain their creature gate."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_trusted_prefix_changes_condition_before_private_result_and_replay",
       "official_rule_ids": [
+        "109.2",
         "109.5",
         "608.2b",
         "608.2c",
@@ -55545,6 +55565,7 @@
       "evidence_class": "mutation",
       "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_trusted_prefix_changes_condition_before_private_result_and_replay",
       "official_rule_ids": [
+        "109.2",
         "109.5",
         "608.2b",
         "608.2c",
@@ -55562,6 +55583,7 @@
       "evidence_class": "negative",
       "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionCompilerTests.test_derived_conditional_results_remain_residual_without_timing_proof",
       "official_rule_ids": [
+        "109.2",
         "109.5",
         "608.2b",
         "608.2c",
@@ -55579,6 +55601,7 @@
       "evidence_class": "negative",
       "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionCompilerTests.test_handler_binds_controller_and_rejects_unavailable_facts",
       "official_rule_ids": [
+        "109.2",
         "109.5",
         "608.2b",
         "608.2c",
@@ -55596,6 +55619,7 @@
       "evidence_class": "positive",
       "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_trusted_prefix_changes_condition_before_private_result_and_replay",
       "official_rule_ids": [
+        "109.2",
         "109.5",
         "608.2b",
         "608.2c",
@@ -55613,6 +55637,7 @@
       "evidence_class": "privacy",
       "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_trusted_prefix_changes_condition_before_private_result_and_replay",
       "official_rule_ids": [
+        "109.2",
         "109.5",
         "608.2b",
         "608.2c",
@@ -55630,6 +55655,7 @@
       "evidence_class": "replay",
       "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_trusted_prefix_changes_condition_before_private_result_and_replay",
       "official_rule_ids": [
+        "109.2",
         "109.5",
         "608.2b",
         "608.2c",
@@ -76433,5 +76459,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "5b5cf978fae4a6867b2a2297474cfe1ac49f6753c15d18564edb62b6a78e9387"
+  "fingerprint": "2705279fbc87a6db8d11ec487977a1978ac39476266c3688dfcad7be563ddb0c"
 }

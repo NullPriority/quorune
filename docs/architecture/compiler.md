@@ -186,7 +186,10 @@ component's mechanics independently and checks the condition only when its
 printed instruction is reached. The shared public-query owner binds “you” to
 the resolving spell or ability controller, even when its source has left or
 changed controller. Only nontargeted results and independently closed prefixes
-are admitted. Source-relative, attached-object, targeted-result, nested,
+are admitted. Bare subtype-presence conditions retain the battlefield permanent
+domain, including represented noncreature Kindred objects; an explicit creature
+noun retains its creature type restriction. Source-relative, attached-object,
+targeted-result, nested,
 alternative, linked-result and “instead” forms remain residual. Derived-quantity
 and source-relative result forms also remain residual inside this wrapper until
 their conditional read timing is represented; their unconditional owners remain

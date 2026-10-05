@@ -3358,7 +3358,7 @@
     },
     {
       "id": "continuous.characteristics.fixed_public_state",
-      "version": 8,
+      "version": 9,
       "official_rules": [
         "604.1",
         "611.3a",
@@ -5755,7 +5755,7 @@
     {
       "id": "resolution.effect.public_condition",
       "version": 1,
-      "official_rules": ["109.5", "608.2b", "608.2c", "608.2h"],
+      "official_rules": ["109.2", "109.5", "608.2b", "608.2c", "608.2h"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
         "summary": "Evaluate one represented controller-bound public condition at its printed resolution instruction and resume its closed nontargeted result through the ordinary semantic continuation.",
