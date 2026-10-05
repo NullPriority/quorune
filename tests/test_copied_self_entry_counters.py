@@ -14,7 +14,10 @@ from quorune.rules.capabilities import load_default_capability_registry
 from quorune.record import authoritative_state_hash
 from quorune.session import CommanderSession
 from quorune.counter_placement import CounterPlacementError, validate_counter_event_subjects
-from quorune.replacement_effects import AffectedObject, ReplaceableEvent
+from quorune.replacement_effects import (
+    AffectedObject, ReplaceableEvent, ReplacementEffect, ReplacementEventBatch,
+    next_batch_replacement_choice,
+)
 from quorune.errors import GameRuleError
 from scripts.build_test_database import build_fixture_database
 
@@ -112,8 +115,10 @@ class CopiedSelfEntryCounterActionTests(unittest.TestCase):
         names = (source_name, "Generic Entry Two Copies", "Generic Entry Counter Double", "Generic Entry Counter Add")
         self.register(session, names)
         source = self.add(session, source_name, "ORIGINAL", owner="B", controller="A", zone="battlefield")
-        for index, name in enumerate(names[2:]):
-            self.add(session, name, f"REPLACEMENT{index}", zone="battlefield")
+        replacements = {
+            kind: self.add(session, name, f"REPLACEMENT{index}", zone="battlefield")
+            for index, (kind, name) in enumerate(zip(("double", "add"), names[2:]))
+        }
         spell = self.add(session, "Generic Entry Two Copies", "COPY")
         self.seal(session)
         self.cast(session, spell, [source.ref])
@@ -126,6 +131,8 @@ class CopiedSelfEntryCounterActionTests(unittest.TestCase):
         else:
             self.fail("Copied entry-counter replacement choice was not offered")
         decisions = 0
+        expected_amounts = {}
+        selected_orders = {}
         while session.state.pending_decision.kind == "replacement.order":
             decisions += 1
             self.assertLess(decisions, 8)
@@ -144,7 +151,47 @@ class CopiedSelfEntryCounterActionTests(unittest.TestCase):
                 self.assertEqual(before, authoritative_state_hash(loaded.state))
             decision = loaded.packet("pilot:A", full=True)["decision"]
             self.assertNotIn("object_id", str(decision))
-            option = decision["ctx"]["options"][0]["id"]
+            continuation = loaded.state.pending_decision.continuation
+            batch = ReplacementEventBatch.from_dict(continuation["replacement_batch"])
+            effects = tuple(ReplacementEffect.from_dict(row)
+                            for row in continuation["replacement_effects"])
+            pending = next_batch_replacement_choice(batch, effects)
+            self.assertIsNotNone(pending)
+            event = pending.choice.event
+            self.assertEqual("counter.place", event.kind)
+            self.assertEqual(2, event.payload["amount"])
+            identity = event.payload["target_logical_object_id"]
+            self.assertNotIn(identity, expected_amounts)
+            for previous_identity, previous_order in selected_orders.items():
+                root = next(root for root in batch.events
+                            if root.payload["logical_object_id"] == previous_identity)
+                self.assertEqual(
+                    previous_order,
+                    tuple(row.effect_id for row in batch.journal
+                          if row.event_id == root.event_id
+                          and row.effect_id in previous_order),
+                )
+            # Deliberately choose opposite orders for the two distinct tokens.
+            first, amount = (("double", 5) if not expected_amounts else ("add", 6))
+            represented = {effect.effect_id: effect for effect in effects}
+            options = {row["id"] for row in decision["ctx"]["options"]}
+            source_options = {
+                kind: next(option for option in options
+                           if represented[option].source_id == card.ref)
+                for kind, card in replacements.items()
+            }
+            self.assertEqual(options, set(source_options.values()))
+            self.assertEqual(
+                [{"op": "multiply", "field": "amount", "factor": 2}],
+                represented[source_options["double"]].to_dict()["operations"],
+            )
+            self.assertEqual(
+                [{"op": "add", "field": "amount", "amount": 1}],
+                represented[source_options["add"]].to_dict()["operations"],
+            )
+            option = source_options[first]
+            expected_amounts[identity] = amount
+            selected_orders[identity] = (option, source_options["add" if first == "double" else "double"])
             chosen = loaded.act("pilot:A", {"action_id": "choose", "replacement": option})
             self.assertTrue(chosen.ok, chosen.summary)
             session = loaded
@@ -152,7 +199,13 @@ class CopiedSelfEntryCounterActionTests(unittest.TestCase):
         tokens = [card for card in session.state.cards.values() if card.is_token]
         self.assertEqual(2, len(tokens))
         self.assertTrue(all(card.owner == "A" and card.controller == "A" for card in tokens))
-        self.assertTrue(all(card.counters.get("+1/+1") in {5, 6} for card in tokens))
+        self.assertEqual(2, decisions)
+        self.assertEqual({5, 6}, set(expected_amounts.values()))
+        self.assertEqual(
+            expected_amounts,
+            {card.logical_object_id: card.counters.get("+1/+1") for card in tokens},
+        )
+        self.assertEqual(2, len(selected_orders))
         self.assertFalse(session.state.cards[source.object_id].counters)
         rows = [row for row in session.state.turn_history.events if row.kind == "permanent_entered"]
         self.assertEqual({card.logical_object_id for card in tokens}, {row.object_incarnation for row in rows})
