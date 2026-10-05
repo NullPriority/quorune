@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 180,
+  "registry_version": 181,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -1669,24 +1669,120 @@
     },
     {
       "id": "token.creation.fixed_copy",
-      "version": 3,
-      "official_rules": ["111.2", "111.12", "115.1a", "603.4", "603.6a", "603.6d", "608.2b", "608.2c", "707.2", "707.9", "614.16", "616.1"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 4,
+      "official_rules": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Create a fixed copy-token group or Populate through the canonical choice and replacement-aware token transaction. Typed exceptions are copiable; separate keyword grants and delayed cleanup retain their distinct duration and incarnation boundaries.",
-        "inputs": ["one qualified current legal target, source, normalized zone-event object, or controlled creature-token choice", "current or immediate-departure copiable characteristics", "fixed quantity from one through five and closed copy exceptions", "resolving controller"],
-        "outputs": ["copied token group and ordinary replacement ordering and entry events", "copiable typed exceptions and granted child abilities", "independent incarnation-pinned keyword grants and grouped delayed sacrifice or exile", "target and choice revalidation, exact replay"],
-        "exclusions": ["multiple or optional targets", "variable or optional quantities", "linked, hidden, graveyard, stack, spell and card copy origins", "attacking copies and unrepresented exceptions", "unavailable characteristic boundaries"]
+        "inputs": [
+          "one qualified current legal target, source, normalized zone-event object, or controlled creature-token choice",
+          "current or immediate-departure copiable characteristics",
+          "fixed quantity from one through five and closed copy exceptions",
+          "resolving controller"
+        ],
+        "outputs": [
+          "copied token group and ordinary replacement ordering and entry events",
+          "copiable typed exceptions and granted child abilities",
+          "independent incarnation-pinned keyword grants and grouped delayed sacrifice or exile",
+          "target and choice revalidation, exact replay"
+        ],
+        "exclusions": [
+          "multiple or optional targets",
+          "variable or optional quantities",
+          "linked, hidden, graveyard, stack, spell and card copy origins",
+          "attacking copies and unrepresented exceptions",
+          "unavailable characteristic boundaries"
+        ]
       },
-      "dependencies": ["target.revalidate_resolution"],
-      "implementation_components": ["quorune.compiler.token_templates.fixed_token_creation_effect_template", "quorune.compiler.token_copy_templates.token_copy_recipe_template", "quorune.token_copy_recipes.TokenCopyRecipeSpec", "quorune.token_copy_references.pin_copy_characteristic_departures", "quorune.token_copy_runtime.apply_copy_recipe", "quorune.token_copy_runtime.finish_copy_aftercare", "quorune.semantic_choices.token_and_copy.TokenCopyChoiceHandler", "quorune.rules.token_creation_capability_shapes.fixed_token_creation_node_capabilities", "quorune.effect_runtime.objects_stack_and_tokens._apply_create_token", "quorune.token_creation.create_tokens"],
-      "positive_tests": ["test_compiler_lowers_investigate_afterlife_and_extended_token_definitions", "test_copy_and_delayed_tokens_revalidate_and_replay", "test_simultaneous_copies_see_the_complete_entry_history", "test_subsequent_haste_does_not_rewrite_entry_facts", "test_intrinsic_exception_and_static_haste_are_entry_facts", "test_actual_trusted_copy_gets_its_own_entry_counters_and_replays"],
-      "negative_tests": ["test_token_production_grammar_and_capability_mutants_fail_closed", "test_unavailable_prospective_component_query_rejects_resolution_atomically"],
-      "interaction_tests": ["test_copy_and_delayed_tokens_revalidate_and_replay", "test_token_replacement_order_rollback_and_privacy", "test_simultaneous_copies_see_the_complete_entry_history", "test_one_copy_and_sequential_creation_history_controls", "test_creation_and_entry_counter_choices_resume_once_and_replay", "test_actual_source_only_ability_removal_is_not_copied", "test_actual_copied_group_counter_replacement_choice_is_atomic_and_replays", "test_copy_does_not_inherit_the_original_cast_x_or_existing_counters"],
-      "multiplayer_tests": ["test_token_replacement_order_rollback_and_privacy", "test_creation_and_entry_counter_choices_resume_once_and_replay"],
-      "privacy_tests": ["test_token_replacement_order_rollback_and_privacy", "test_creation_and_entry_counter_choices_resume_once_and_replay", "test_actual_copied_group_counter_replacement_choice_is_atomic_and_replays"],
-      "replay_tests": ["test_copy_and_delayed_tokens_revalidate_and_replay", "test_simultaneous_copies_see_the_complete_entry_history", "test_subsequent_haste_does_not_rewrite_entry_facts", "test_creation_and_entry_counter_choices_resume_once_and_replay", "test_actual_trusted_copy_gets_its_own_entry_counters_and_replays", "test_unavailable_prospective_component_query_rejects_resolution_atomically"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "target.revalidate_resolution"
+      ],
+      "implementation_components": [
+        "quorune.compiler.token_templates.fixed_token_creation_effect_template",
+        "quorune.compiler.token_copy_templates.token_copy_recipe_template",
+        "quorune.token_copy_recipes.TokenCopyRecipeSpec",
+        "quorune.token_copy_references.pin_copy_characteristic_departures",
+        "quorune.token_copy_runtime.apply_copy_recipe",
+        "quorune.token_copy_runtime.finish_copy_aftercare",
+        "quorune.semantic_choices.token_and_copy.TokenCopyChoiceHandler",
+        "quorune.rules.token_creation_capability_shapes.fixed_token_creation_node_capabilities",
+        "quorune.effect_runtime.objects_stack_and_tokens._apply_create_token",
+        "quorune.token_creation.create_tokens"
+      ],
+      "positive_tests": [
+        "test_compiler_lowers_investigate_afterlife_and_extended_token_definitions",
+        "test_copy_and_delayed_tokens_revalidate_and_replay",
+        "test_simultaneous_copies_see_the_complete_entry_history",
+        "test_subsequent_haste_does_not_rewrite_entry_facts",
+        "test_intrinsic_exception_and_static_haste_are_entry_facts",
+        "test_actual_trusted_copy_gets_its_own_entry_counters_and_replays",
+        "test_two_simultaneous_copies_use_post_event_history_characteristics"
+      ],
+      "negative_tests": [
+        "test_token_production_grammar_and_capability_mutants_fail_closed",
+        "test_unavailable_prospective_component_query_rejects_resolution_atomically",
+        "test_pre_history_characteristic_sealing_mutant_is_killed"
+      ],
+      "interaction_tests": [
+        "test_copy_and_delayed_tokens_revalidate_and_replay",
+        "test_token_replacement_order_rollback_and_privacy",
+        "test_simultaneous_copies_see_the_complete_entry_history",
+        "test_one_copy_and_sequential_creation_history_controls",
+        "test_creation_and_entry_counter_choices_resume_once_and_replay",
+        "test_actual_source_only_ability_removal_is_not_copied",
+        "test_actual_copied_group_counter_replacement_choice_is_atomic_and_replays",
+        "test_copy_does_not_inherit_the_original_cast_x_or_existing_counters",
+        "test_history_characteristic_distinguishing_controls",
+        "test_replacement_adjusted_history_characteristic_quantity",
+        "test_history_precedes_final_power_and_keyword_sealing"
+      ],
+      "multiplayer_tests": [
+        "test_token_replacement_order_rollback_and_privacy",
+        "test_creation_and_entry_counter_choices_resume_once_and_replay"
+      ],
+      "privacy_tests": [
+        "test_token_replacement_order_rollback_and_privacy",
+        "test_creation_and_entry_counter_choices_resume_once_and_replay",
+        "test_actual_copied_group_counter_replacement_choice_is_atomic_and_replays"
+      ],
+      "replay_tests": [
+        "test_copy_and_delayed_tokens_revalidate_and_replay",
+        "test_simultaneous_copies_see_the_complete_entry_history",
+        "test_subsequent_haste_does_not_rewrite_entry_facts",
+        "test_creation_and_entry_counter_choices_resume_once_and_replay",
+        "test_actual_trusted_copy_gets_its_own_entry_counters_and_replays",
+        "test_unavailable_prospective_component_query_rejects_resolution_atomically",
+        "test_two_simultaneous_copies_use_post_event_history_characteristics",
+        "test_history_characteristic_distinguishing_controls",
+        "test_replacement_adjusted_history_characteristic_quantity"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Blocking target revalidation prevents a fixed copy-token node from receiving trusted closure.",
       "implementation_mutation_status": "killed",
@@ -3262,24 +3358,125 @@
     },
     {
       "id": "continuous.characteristics.fixed_public_state",
-      "version": 7,
-      "official_rules": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 8,
+      "official_rules": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Apply fixed supported keywords and power/toughness modifiers in layers 6 and 7c while one closed authoritative public scalar, object, cycle-safe query, sealed history, distinct graveyard characteristic, hand, starting-life, player-counter, or designation condition is true.",
-        "inputs": ["active phased-in battlefield source", "source controller turn, life, public hand, graveyard, current or sealed turn-history, opponent poison, monarch, and starting-life facts", "cycle-safe source, attached-object, controller, opponent, public-zone, distinct graveyard type, or distinct graveyard mana-value query through layer 5", "source, attached-object, or fixed ObjectQuerySpec target", "fixed represented keyword and power/toughness modifier"],
-        "outputs": ["one source-bound typed condition snapshot", "identical layer-6 and layer-7c target applicability", "live condition removal after authoritative public state, history, control, counter, designation, or effective layer-5 characteristic changes", "exact source or attachment logical-object identity", "hidden-identity-free hand counting and replay", "per-keyword capability closure"],
-        "exclusions": ["most-common, tied, open arithmetic, arbitrary dynamic quantities, and per-opponent aggregate thresholds above existence", "top-library, chosen, secret-content, city blessing, dungeon, initiative, max-speed, sticker, crime, dice, and unowned historical predicates", "otherwise branches, dynamic amounts, base-setting, type, color, ability-removal, quoted rules text, Protection, Ward, and unsupported keyword bodies", "Class levels, copied or granted source abilities without shared typed propagation, and dependency interactions outside the represented fixed conditions"]
+        "inputs": [
+          "active phased-in battlefield source",
+          "source controller turn, life, public hand, graveyard, current or sealed turn-history, opponent poison, monarch, and starting-life facts",
+          "cycle-safe source, attached-object, controller, opponent, public-zone, distinct graveyard type, or distinct graveyard mana-value query through layer 5",
+          "source, attached-object, or fixed ObjectQuerySpec target",
+          "fixed represented keyword and power/toughness modifier"
+        ],
+        "outputs": [
+          "one source-bound typed condition snapshot",
+          "identical layer-6 and layer-7c target applicability",
+          "live condition removal after authoritative public state, history, control, counter, designation, or effective layer-5 characteristic changes",
+          "exact source or attachment logical-object identity",
+          "hidden-identity-free hand counting and replay",
+          "per-keyword capability closure"
+        ],
+        "exclusions": [
+          "most-common, tied, open arithmetic, arbitrary dynamic quantities, and per-opponent aggregate thresholds above existence",
+          "top-library, chosen, secret-content, city blessing, dungeon, initiative, max-speed, sticker, crime, dice, and unowned historical predicates",
+          "otherwise branches, dynamic amounts, base-setting, type, color, ability-removal, quoted rules text, Protection, Ward, and unsupported keyword bodies",
+          "Class levels, copied or granted source abilities without shared typed propagation, and dependency interactions outside the represented fixed conditions"
+        ]
       },
-      "dependencies": ["state_query.permanent.public_state_predicate"],
-      "implementation_components": ["quorune.compiler.continuous_templates.fixed_public_state_characteristics_handler", "quorune.compiler.public_state_fact_queries.fixed_public_fact_condition", "quorune.compiler.public_state_queries.fixed_characteristic_battlefield_query_subject", "quorune.compiler.public_state_queries.fixed_public_state_parts", "quorune.continuous_conditions.FixedPublicStateConditionSpec", "quorune.card_programs.runtime._FixedPublicStateSnapshotResolver", "quorune.drawing.restrictions.drawn_this_turn", "quorune.turn_history.current_turn_history_events", "quorune.zone_trigger_processing.dispatch_zone_change_occurrence", "quorune.token_creation.create_tokens", "quorune.dynamic_characteristics.query_characteristic_count", "quorune.semantic_runtime.conditional_continuous.FixedPublicStateCharacteristicsHandler", "quorune.card_programs.runtime.collect_card_program_continuous_effects", "quorune.continuous_effects.evaluate_continuous_effects"],
-      "positive_tests": ["test_closed_public_state_grammar_compiles_capability_closed", "test_public_object_state_and_query_conditions_compile_closed", "test_public_state_conditions_recompute_layer_six_and_seven_results", "test_shared_public_set_query_fans_into_layers_and_resolution", "test_fixed_public_condition_queries_compile_across_authoritative_facts", "test_fixed_public_condition_models_use_closed_current_facts", "test_public_condition_closure_compiles_typed_queries_and_facts", "test_public_fact_conditions_recompute_and_replay", "test_public_fact_descriptors_preserve_thresholds_subtypes_and_axes", "test_public_fact_thresholds_use_canonical_producers_and_consumers"],
-      "negative_tests": ["test_unrepresented_conditions_and_bodies_remain_residual", "test_public_state_descriptors_fail_closed_without_effects", "test_shared_public_query_dependency_fails_closed_across_consumers", "test_fixed_public_condition_dependencies_fail_closed"],
-      "interaction_tests": ["test_live_public_object_state_and_layer_five_queries_recompute", "test_public_state_conditions_recompute_layer_six_and_seven_results", "test_turn_gated_attachment_and_anthem_compose", "test_public_condition_queries_follow_authoritative_history_and_control", "test_public_fact_conditions_recompute_and_replay", "test_subtype_attack_threshold_counts_distinct_event_time_objects"],
-      "multiplayer_tests": ["test_turn_gated_attachment_and_anthem_compose", "test_public_condition_queries_follow_authoritative_history_and_control", "test_public_fact_conditions_recompute_and_replay"],
-      "privacy_tests": ["test_hand_count_condition_projects_and_replays_without_hidden_identity", "test_public_condition_queries_follow_authoritative_history_and_control", "test_public_fact_conditions_recompute_and_replay"],
-      "replay_tests": ["test_hand_count_condition_projects_and_replays_without_hidden_identity", "test_live_public_object_state_and_layer_five_queries_recompute", "test_public_condition_queries_follow_authoritative_history_and_control", "test_public_fact_conditions_recompute_and_replay"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "state_query.permanent.public_state_predicate"
+      ],
+      "implementation_components": [
+        "quorune.compiler.continuous_templates.fixed_public_state_characteristics_handler",
+        "quorune.compiler.public_state_fact_queries.fixed_public_fact_condition",
+        "quorune.compiler.public_state_queries.fixed_characteristic_battlefield_query_subject",
+        "quorune.compiler.public_state_queries.fixed_public_state_parts",
+        "quorune.continuous_conditions.FixedPublicStateConditionSpec",
+        "quorune.card_programs.runtime._FixedPublicStateSnapshotResolver",
+        "quorune.drawing.restrictions.drawn_this_turn",
+        "quorune.turn_history.current_turn_history_events",
+        "quorune.zone_trigger_processing.dispatch_zone_change_occurrence",
+        "quorune.token_creation.create_tokens",
+        "quorune.dynamic_characteristics.query_characteristic_count",
+        "quorune.semantic_runtime.conditional_continuous.FixedPublicStateCharacteristicsHandler",
+        "quorune.card_programs.runtime.collect_card_program_continuous_effects",
+        "quorune.continuous_effects.evaluate_continuous_effects"
+      ],
+      "positive_tests": [
+        "test_closed_public_state_grammar_compiles_capability_closed",
+        "test_public_object_state_and_query_conditions_compile_closed",
+        "test_public_state_conditions_recompute_layer_six_and_seven_results",
+        "test_shared_public_set_query_fans_into_layers_and_resolution",
+        "test_fixed_public_condition_queries_compile_across_authoritative_facts",
+        "test_fixed_public_condition_models_use_closed_current_facts",
+        "test_public_condition_closure_compiles_typed_queries_and_facts",
+        "test_public_fact_conditions_recompute_and_replay",
+        "test_public_fact_descriptors_preserve_thresholds_subtypes_and_axes",
+        "test_public_fact_thresholds_use_canonical_producers_and_consumers",
+        "test_two_simultaneous_copies_use_post_event_history_characteristics"
+      ],
+      "negative_tests": [
+        "test_unrepresented_conditions_and_bodies_remain_residual",
+        "test_public_state_descriptors_fail_closed_without_effects",
+        "test_shared_public_query_dependency_fails_closed_across_consumers",
+        "test_fixed_public_condition_dependencies_fail_closed",
+        "test_pre_history_characteristic_sealing_mutant_is_killed"
+      ],
+      "interaction_tests": [
+        "test_live_public_object_state_and_layer_five_queries_recompute",
+        "test_public_state_conditions_recompute_layer_six_and_seven_results",
+        "test_turn_gated_attachment_and_anthem_compose",
+        "test_public_condition_queries_follow_authoritative_history_and_control",
+        "test_public_fact_conditions_recompute_and_replay",
+        "test_subtype_attack_threshold_counts_distinct_event_time_objects",
+        "test_history_characteristic_distinguishing_controls",
+        "test_replacement_adjusted_history_characteristic_quantity",
+        "test_history_precedes_final_power_and_keyword_sealing"
+      ],
+      "multiplayer_tests": [
+        "test_turn_gated_attachment_and_anthem_compose",
+        "test_public_condition_queries_follow_authoritative_history_and_control",
+        "test_public_fact_conditions_recompute_and_replay"
+      ],
+      "privacy_tests": [
+        "test_hand_count_condition_projects_and_replays_without_hidden_identity",
+        "test_public_condition_queries_follow_authoritative_history_and_control",
+        "test_public_fact_conditions_recompute_and_replay"
+      ],
+      "replay_tests": [
+        "test_hand_count_condition_projects_and_replays_without_hidden_identity",
+        "test_live_public_object_state_and_layer_five_queries_recompute",
+        "test_public_condition_queries_follow_authoritative_history_and_control",
+        "test_public_fact_conditions_recompute_and_replay",
+        "test_two_simultaneous_copies_use_post_event_history_characteristics",
+        "test_history_characteristic_distinguishing_controls",
+        "test_replacement_adjusted_history_characteristic_quantity"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Blocking the shared public-query capability prevents query-targeted public-state components from becoming exact; each emitted keyword and power/toughness body also independently declares and closes its exact consumer capability.",
       "implementation_mutation_status": "killed",
@@ -6124,24 +6321,125 @@
     },
     {
       "id": "trigger.event.normalized_zone_change",
-      "version": 7,
-      "official_rules": ["603.2", "603.6", "603.6a", "603.6c", "603.10", "603.10a", "603.10e", "701.9", "701.21"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 8,
+      "official_rules": [
+        "603.2",
+        "603.6",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "603.10e",
+        "701.9",
+        "701.21",
+        "603.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Derive represented permanent-enter, permanent-leave, creature-dies, permanent-graveyard, typed discard, typed sacrifice, graveyard-departure, and physical countered-spell occurrences from immutable facts captured around the canonical committed zone change; a simultaneous owner records the complete batch's actual final history before discovering any member's triggers while preserving pre-event source LKI.",
-        "inputs": ["committed single transition or complete simultaneous transition batch", "previous and current logical identities", "previous and current characteristics", "previous owner, controller, attachment, and token facts", "pre-event source-zone snapshot", "actual replacement-adjusted final destinations"],
-        "outputs": ["immutable normalized event context", "complete simultaneous current-turn history before intervening-condition discovery", "one detection attempt per matching occurrence", "last-known owner, controller, type, subtype, supertype, color, keyword, mana-value, integer-power/toughness, token, tapped-state, and attachment characteristics", "one-or-more trigger-batch aggregation for exact supported entry and graveyard-departure wording", "typed discard and sacrifice cause identity", "ordered pre-counter and post-graveyard events for a physical spell", "ordinary trigger batch input"],
-        "exclusions": ["intervening-if and reflexive grammar", "state triggers", "delayed trigger creation", "visibility-dependent hidden-zone triggers", "zone changes whose authoritative producer does not carry the required typed cause", "countered abilities and spell copies without physical card movement", "enters-as and enters-with replacement effects"]
+        "inputs": [
+          "committed single transition or complete simultaneous transition batch",
+          "previous and current logical identities",
+          "previous and current characteristics",
+          "previous owner, controller, attachment, and token facts",
+          "pre-event source-zone snapshot",
+          "actual replacement-adjusted final destinations"
+        ],
+        "outputs": [
+          "immutable normalized event context",
+          "complete simultaneous current-turn history before intervening-condition discovery",
+          "one detection attempt per matching occurrence",
+          "last-known owner, controller, type, subtype, supertype, color, keyword, mana-value, integer-power/toughness, token, tapped-state, and attachment characteristics",
+          "one-or-more trigger-batch aggregation for exact supported entry and graveyard-departure wording",
+          "typed discard and sacrifice cause identity",
+          "ordered pre-counter and post-graveyard events for a physical spell",
+          "ordinary trigger batch input"
+        ],
+        "exclusions": [
+          "intervening-if and reflexive grammar",
+          "state triggers",
+          "delayed trigger creation",
+          "visibility-dependent hidden-zone triggers",
+          "zone changes whose authoritative producer does not carry the required typed cause",
+          "countered abilities and spell copies without physical card movement",
+          "enters-as and enters-with replacement effects"
+        ]
       },
       "dependencies": [],
-      "implementation_components": ["quorune.zone_trigger_events.ZoneChangeOccurrence", "quorune.zone_trigger_events.normalized_zone_trigger_events", "quorune.zone_trigger_processing.record_zone_change_history", "quorune.zone_trigger_processing.dispatch_zone_change_occurrence", "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously", "quorune.trigger_discovery.dispatch_semantic_event"],
-      "positive_tests": ["test_public_action_event_contract_matrix_compiles_exactly", "test_source_land_entry_predicate_uses_committed_tapped_state", "test_derives_exact_enter_and_death_events", "test_countered_physical_spell_derives_exact_normalized_events", "test_self_dies_trigger_uses_last_known_battlefield_zone", "test_public_zone_damage_and_cast_predicates_compile_exactly", "test_public_event_binding_closure_compiles_exact_bodies", "test_public_zone_trigger_uses_sealed_entry_power"],
-      "negative_tests": ["test_public_action_event_suffixes_remain_fail_closed", "test_public_action_event_dependencies_and_parser_mutant_fail_closed", "test_occurrence_rejects_malformed_and_non_event_moves_are_empty", "test_counter_transition_kind_is_closed_and_typed", "test_public_event_binding_closure_dependencies_and_parser_mutant_fail_closed"],
-      "interaction_tests": ["test_sacrifice_and_discard_predicates_use_committed_lki", "test_normalized_batch_predicates_share_damage_zone_and_token_owners", "test_source_land_entry_predicate_uses_committed_tapped_state", "test_self_dies_trigger_uses_last_known_controller", "test_source_that_leaves_still_observes_simultaneous_death", "test_simultaneous_entry_history_is_complete_before_discovery_in_both_orders", "test_simultaneous_death_history_precedes_each_occurrence_discovery", "test_leaving_observer_uses_complete_simultaneous_death_history_in_both_orders", "test_simultaneous_history_uses_final_destinations_and_previous_controllers", "test_countered_spell_replaced_to_exile_has_no_graveyard_event", "test_public_zone_trigger_uses_sealed_entry_power", "test_attachment_damage_and_death_bindings_use_current_and_lki_relations", "test_closed_zone_event_predicates_use_lki_and_batching"],
-      "multiplayer_tests": ["test_sacrifice_and_discard_predicates_use_committed_lki", "test_normalized_batch_predicates_share_damage_zone_and_token_owners", "test_simultaneous_semantic_triggers_use_apnap_and_owner_order"],
-      "privacy_tests": ["test_sacrifice_and_discard_predicates_use_committed_lki", "test_private_library_to_hand_move_produces_no_public_trigger_event"],
-      "replay_tests": ["test_fixed_life_self_enter_trigger_replays_exactly", "test_compiled_counter_targets_exact_stack_domains_and_replays", "test_simultaneous_death_history_replays_from_pre_action_checkpoint"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "implementation_components": [
+        "quorune.zone_trigger_events.ZoneChangeOccurrence",
+        "quorune.zone_trigger_events.normalized_zone_trigger_events",
+        "quorune.zone_trigger_processing.record_zone_change_history",
+        "quorune.zone_trigger_processing.dispatch_zone_change_occurrence",
+        "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously",
+        "quorune.trigger_discovery.dispatch_semantic_event"
+      ],
+      "positive_tests": [
+        "test_public_action_event_contract_matrix_compiles_exactly",
+        "test_source_land_entry_predicate_uses_committed_tapped_state",
+        "test_derives_exact_enter_and_death_events",
+        "test_countered_physical_spell_derives_exact_normalized_events",
+        "test_self_dies_trigger_uses_last_known_battlefield_zone",
+        "test_public_zone_damage_and_cast_predicates_compile_exactly",
+        "test_public_event_binding_closure_compiles_exact_bodies",
+        "test_public_zone_trigger_uses_sealed_entry_power",
+        "test_two_simultaneous_copies_use_post_event_history_characteristics"
+      ],
+      "negative_tests": [
+        "test_public_action_event_suffixes_remain_fail_closed",
+        "test_public_action_event_dependencies_and_parser_mutant_fail_closed",
+        "test_occurrence_rejects_malformed_and_non_event_moves_are_empty",
+        "test_counter_transition_kind_is_closed_and_typed",
+        "test_public_event_binding_closure_dependencies_and_parser_mutant_fail_closed",
+        "test_pre_history_characteristic_sealing_mutant_is_killed"
+      ],
+      "interaction_tests": [
+        "test_sacrifice_and_discard_predicates_use_committed_lki",
+        "test_normalized_batch_predicates_share_damage_zone_and_token_owners",
+        "test_source_land_entry_predicate_uses_committed_tapped_state",
+        "test_self_dies_trigger_uses_last_known_controller",
+        "test_source_that_leaves_still_observes_simultaneous_death",
+        "test_simultaneous_entry_history_is_complete_before_discovery_in_both_orders",
+        "test_simultaneous_death_history_precedes_each_occurrence_discovery",
+        "test_leaving_observer_uses_complete_simultaneous_death_history_in_both_orders",
+        "test_simultaneous_history_uses_final_destinations_and_previous_controllers",
+        "test_countered_spell_replaced_to_exile_has_no_graveyard_event",
+        "test_public_zone_trigger_uses_sealed_entry_power",
+        "test_attachment_damage_and_death_bindings_use_current_and_lki_relations",
+        "test_closed_zone_event_predicates_use_lki_and_batching",
+        "test_history_characteristic_distinguishing_controls",
+        "test_replacement_adjusted_history_characteristic_quantity",
+        "test_history_precedes_final_power_and_keyword_sealing"
+      ],
+      "multiplayer_tests": [
+        "test_sacrifice_and_discard_predicates_use_committed_lki",
+        "test_normalized_batch_predicates_share_damage_zone_and_token_owners",
+        "test_simultaneous_semantic_triggers_use_apnap_and_owner_order"
+      ],
+      "privacy_tests": [
+        "test_sacrifice_and_discard_predicates_use_committed_lki",
+        "test_private_library_to_hand_move_produces_no_public_trigger_event"
+      ],
+      "replay_tests": [
+        "test_fixed_life_self_enter_trigger_replays_exactly",
+        "test_compiled_counter_targets_exact_stack_domains_and_replays",
+        "test_simultaneous_death_history_replays_from_pre_action_checkpoint",
+        "test_two_simultaneous_copies_use_post_event_history_characteristics",
+        "test_history_characteristic_distinguishing_controls",
+        "test_replacement_adjusted_history_characteristic_quantity"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "not_applicable",
       "dependency_fail_closed_rationale": "This event detector produces immutable occurrence facts; stack placement and effect results are declared separately by each CardProgram.",
       "implementation_mutation_status": "killed",

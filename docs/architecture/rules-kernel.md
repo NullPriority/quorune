@@ -275,6 +275,13 @@ copies, and next-end-step creation all converge on that same transaction.
 Token Changeling and declaration restrictions are serialized as typed
 characteristic fragments, while Powerstone, Junk, and Vibranium use closed
 ability profiles; token display text never becomes runtime authority.
+For each committed token instruction, the owner first publishes the complete
+group's identity/controller/type history, then seals the final entry-time
+characteristics used by entry predicates. History-dependent static power,
+toughness, and keywords therefore see the completed event. Separately
+instructed post-entry grants still occur after discovery, and sequential
+creation instructions remain distinct. This does not alter prospective
+replacement preparation or departure-time last-known information.
 `replacement_decisions.py` persists competing
 affected-seat choices as ordinary Game Record v3 continuations, and represented
 zone-destination changes use the same exact selection journal before mutation.

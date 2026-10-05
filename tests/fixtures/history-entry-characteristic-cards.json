@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "constructed_generic_cards",
+  "source": "Generic history-dependent token entry characteristic regressions",
+  "rulings": [],
+  "cards": [
+    {
+      "oracle_id": "48020000-0000-4000-8000-000000000001",
+      "name": "Generic History Entry Characteristic Creature",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "type_line": "Creature — Wizard",
+      "oracle_text": "This creature gets +1/+1 as long as two or more nonland permanents entered the battlefield under your control this turn.",
+      "power": "2",
+      "toughness": "2",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "48020000-0000-4000-8000-000000000002",
+      "name": "Generic History Entry Power Observer",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "type_line": "Creature — Wizard",
+      "oracle_text": "Whenever another creature you control with power 3 or greater enters, draw a card.",
+      "power": "1",
+      "toughness": "4",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "48020000-0000-4000-8000-000000000004",
+      "name": "Generic History Independent Anthem",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "type_line": "Enchantment",
+      "oracle_text": "Creatures you control get +1/+1.",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "48020000-0000-4000-8000-000000000005",
+      "name": "Generic History Additional Food",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "type_line": "Enchantment",
+      "oracle_text": "If you would create one or more tokens, instead create those tokens plus an additional Food token.",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ]
+}

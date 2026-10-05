@@ -321,6 +321,7 @@ class TokenEntryHistoryOwnerTests(unittest.TestCase):
     def history_contract(self, dispatch_creation):
         from types import SimpleNamespace
         from quorune.model import CardInstance
+        from quorune.zone_trigger_events import type_parts
         for created in ((), ("first",), ("first", "second"), ("second", "first")):
             cards = {key: CardInstance(object_id=key, ref=key.upper(),
                       oracle_id="generic:" + key, printed_name="Generic token",
@@ -332,6 +333,7 @@ class TokenEntryHistoryOwnerTests(unittest.TestCase):
                 state=SimpleNamespace(cards=cards, turn_sequence=4,
                     players={"A": SimpleNamespace(stats={})}),
                 _effective_card_data=lambda card: dict(data),
+                _type_parts=type_parts,
                 _copyable_characteristics=lambda card: dict(data),
                 _log=lambda *args, **kwargs: None,
                 _record_turn_history=lambda kind, **kwargs: rows.append((kind, kwargs)),
@@ -358,12 +360,12 @@ class TokenEntryHistoryOwnerTests(unittest.TestCase):
         before = '''        host._record_turn_history(
             "permanent_entered",
             actor=controller,
-            object_incarnation=context["card_object_identity"],
-            types=tuple(context["types"]),
+            object_incarnation=identity,
+            types=types,
         )
 '''
         self.assertEqual(1, source.count(before))
-        mutant = source.replace("    for context in entry_contexts:\n" + before, "").replace(
+        mutant = source.replace("    for identity, types in entry_occurrences:\n" + before, "").replace(
             "    for context in entry_contexts:\n",
             '''    for context in entry_contexts:
         host._record_turn_history("permanent_entered", actor=controller,

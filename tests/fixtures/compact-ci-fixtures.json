@@ -33,6 +33,7 @@
     "tests/fixtures/fixed-token-creation-cards.json",
     "tests/fixtures/fixed-token-production-cards.json",
     "tests/fixtures/flashback-cards.json",
+    "tests/fixtures/history-entry-characteristic-cards.json",
     "tests/fixtures/intrinsic-basic-land-mana-cards.json",
     "tests/fixtures/leveler-bands-cards.json",
     "tests/fixtures/partial-copy-targets-cards.json",

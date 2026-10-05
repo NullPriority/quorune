@@ -1102,6 +1102,23 @@ def _record_and_dispatch_token_creation(
         changed_objects=created,
         changed_players=[controller],
     )
+    # History needs committed identities and entry types, not a pre-history
+    # power/keyword snapshot. Final trigger facts are sealed only afterward.
+    entry_occurrences: list[tuple[str, tuple[str, ...]]] = []
+    for object_id in created:
+        card = host.state.cards[object_id]
+        data = host._effective_card_data(card)
+        types, _subtypes, _supertypes = host._type_parts(
+            str(data.get("type_line") or "")
+        )
+        entry_occurrences.append((card.logical_object_id, tuple(sorted(types))))
+    for identity, types in entry_occurrences:
+        host._record_turn_history(
+            "permanent_entered",
+            actor=controller,
+            object_incarnation=identity,
+            types=types,
+        )
     entry_contexts: list[dict[str, Any]] = []
     for object_id in created:
         card = host.state.cards[object_id]
@@ -1122,15 +1139,9 @@ def _record_and_dispatch_token_creation(
             _REASON_FIELD: reason,
         }
         entry_contexts.append(context)
-    for context in entry_contexts:
-        host._record_turn_history(
-            "permanent_entered",
-            actor=controller,
-            object_incarnation=context["card_object_identity"],
-            types=tuple(context["types"]),
-        )
     # One committed creation instruction is simultaneous. Every occurrence
-    # observes its complete history, but retains its own sealed entry facts.
+    # observes complete history and its resulting entry characteristics,
+    # before any separately instructed post-entry grant.
     trigger_batch: list[Any] = []
     for context in entry_contexts:
         host._dispatch_semantic_event(
