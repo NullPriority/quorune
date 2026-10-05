@@ -11,6 +11,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Give copied permanents their applicable represented entry counters through
+  the existing prospective component and nested replacement owners, without
+  copying source counters or committing objects before replacement choices.
+
 - Make simultaneous token entry history complete before trigger discovery and
   preserve entry-time characteristics before separately instructed keyword
   grants, through the existing token and deferred trigger owners.

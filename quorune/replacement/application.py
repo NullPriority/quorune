@@ -355,6 +355,9 @@ def _create_affected_object_counter_event(
                 "source": operation.source_ref,
                 "effect_generated": True,
                 "follows_zone_destination": True,
+                **({"prospective_subject": True,
+                    "target_logical_object_id": payload.get("logical_object_id")}
+                   if payload.get("prospective_subject") is True else {}),
             },
         )
     )

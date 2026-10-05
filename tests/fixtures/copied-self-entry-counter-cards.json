@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "constructed_generic_cards",
+  "source": "Generic copied entry-counter applicability regressions",
+  "rulings": [],
+  "cards": [
+    {
+      "oracle_id": "25510000-0000-4000-8000-000000000001",
+      "name": "Generic Copied Counter Creature",
+      "mana_cost": "{W}", "cmc": 1, "type_line": "Creature — Wizard",
+      "oracle_text": "Vigilance\nThis creature enters with two +1/+1 counters on it.",
+      "power": "2", "toughness": "2", "colors": ["W"], "color_identity": ["W"],
+      "keywords": ["Vigilance"], "layout": "normal", "released_at": "2026-01-01",
+      "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "25510000-0000-4000-8000-000000000002",
+      "name": "Generic Copied Counter Source Transformation",
+      "mana_cost": "{W}", "cmc": 1, "type_line": "Instant",
+      "oracle_text": "Until end of turn, target creature loses all abilities and becomes a blue Frog with base power and toughness 1/1.",
+      "colors": ["W"], "color_identity": ["W"], "keywords": [], "layout": "normal",
+      "released_at": "2026-01-01", "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "25510000-0000-4000-8000-000000000003",
+      "name": "Generic Copied Counter X Creature",
+      "mana_cost": "{X}{W}", "cmc": 1, "type_line": "Creature — Wizard",
+      "oracle_text": "This creature enters with X +1/+1 counters on it.",
+      "power": "1", "toughness": "1", "colors": ["W"], "color_identity": ["W"],
+      "keywords": [], "layout": "normal", "released_at": "2026-01-01",
+      "legalities": {"commander": "legal"}
+    }
+  ]
+}

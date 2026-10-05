@@ -14,6 +14,27 @@ from scripts.change_impact import (
 
 
 class ChangeImpactTests(unittest.TestCase):
+    def test_prospective_token_entry_selects_snapshot_and_counter_consumers(self):
+        expected = {
+            "test_bloodthirst_rules",
+            "test_copied_self_entry_counters",
+            "test_damage_result_events",
+            "test_fixed_keyword_entry_counters",
+            "test_intrinsic_entry_counters",
+            "test_riot_rules",
+            "test_state_based_actions",
+            "test_sunburst_rules",
+            "test_unleash_rules",
+        }
+        for owner in (
+            "quorune/semantic_runtime/zone_replacements.py",
+            "quorune/token_creation.py",
+        ):
+            with self.subTest(owner=owner):
+                self.assertLessEqual(
+                    expected, set(classify_changes([owner]).test_modules)
+                )
+
     def test_optional_payment_cardinality_selects_client_and_owner_contracts(self):
         expected={'test_choice_forms','test_fixed_optional_mana_payment_triggers','test_semantic_choice_model'}
         for owner in ('quorune/semantic_choices/model.py','quorune/semantic_choices/fixed_effect_payment.py','quorune/choice_forms.py','web/src/choices.ts'):

@@ -783,11 +783,14 @@ class IntrinsicEntryCounterTests(unittest.TestCase):
             },
         )
         self.assertTrue(result.ok, result.summary)
+        entry_event = engine.state.pending_decision.continuation[
+            "replacement_batch"
+        ]["events"][0]
+        self.assertEqual("zone.change", entry_event["kind"])
+        self.assertTrue(entry_event["payload"]["prospective_subject"])
         self.assertEqual(
-            "counter.place",
-            engine.state.pending_decision.continuation[
-                "replacement_batch"
-            ]["events"][0]["kind"],
+            ["counter.place"],
+            [child["kind"] for child in entry_event["children"]],
         )
         second = StateProjector(self.db, engine.state)._decision("pilot:A")
         second_selection = second["ctx"]["options"][0]["id"]
@@ -851,9 +854,14 @@ class IntrinsicEntryCounterTests(unittest.TestCase):
             self.assertEqual(6, walker.counters.get("loyalty", 0))
 
         assert_doubled(3065011)
+        from quorune import token_creation
+        original_prepare = token_creation._prepare_token_entry_counters
+        def omit_counter_leaves(*args, **kwargs):
+            plans, prepared_counters, entries = original_prepare(*args, **kwargs)
+            return plans, PreparedCounterPlacements((), (), ()), entries
         with patch(
-            "quorune.token_creation.prepare_counter_placement_specs",
-            return_value=PreparedCounterPlacements((), (), ()),
+            "quorune.token_creation._prepare_token_entry_counters",
+            side_effect=omit_counter_leaves,
         ):
             with self.assertRaises(AssertionError):
                 assert_doubled(3065012)

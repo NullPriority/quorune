@@ -50,6 +50,7 @@ from quorune.replacement_effects import (
     ReplaceableEvent,
     ReplacementClass,
     ReplacementEffect,
+    ReplacementChoiceRequired,
     resolve_replacements,
 )
 from quorune.semantic_runtime.damage_results import (
@@ -161,8 +162,8 @@ class DamageResultEventTests(unittest.TestCase):
         engine.state.players[seat].zones["battlefield"].append(card.object_id)
         return card
 
-    @staticmethod
     def token(
+        self,
         engine,
         seat: str,
         name: str,
@@ -193,12 +194,28 @@ class DamageResultEventTests(unittest.TestCase):
             characteristics["loyalty"] = str(loyalty)
         if defense is not None:
             characteristics["defense"] = str(defense)
-        ref = engine.create_token(
-            seat,
-            name=name,
-            characteristics=characteristics,
-            battle_protector=battle_protector,
-        )[0]
+        creation = {
+            "name": name,
+            "characteristics": characteristics,
+            "battle_protector": battle_protector,
+        }
+        before = authoritative_state_hash(engine.state)
+        try:
+            refs = engine.create_token(seat, **creation)
+        except ReplacementChoiceRequired as pending:
+            # This isolated damage fixture chooses the order of its two
+            # intrinsic entry instructions, rather than bypassing entry.
+            self.assertEqual(before, authoritative_state_hash(engine.state))
+            options = pending.pending.choice.options
+            self.assertEqual(2, len(options))
+            self.assertTrue(all(
+                option.startswith("replacement.intrinsic-entry-counter:")
+                for option in options
+            ))
+            refs = engine.create_token(
+                seat, **creation, replacement_selections=(options[0],)
+            )
+        ref = refs[0]
         return engine._resolve_object(seat, ref, zones={"battlefield"})
 
     @staticmethod

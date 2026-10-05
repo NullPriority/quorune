@@ -13107,222 +13107,46 @@
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the selected player target, four priority passes, and typed rad-counter result to the identical authoritative state hash."
     },
-    {
-      "capability_id": "counter.producer.fixed_self_entry",
-      "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_fixed_self_entry_keyword_counter_uses_shared_characteristics",
-      "official_rule_ids": ["122.1", "122.1a", "122.1b", "122.6", "614.1c", "614.12", "614.16", "616.1"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Place one Deathtouch counter during source entry and consume the resulting public counter state through the shared layer-6 effective-characteristics boundary."
-    },
-    {
-      "capability_id": "counter.producer.fixed_self_entry",
-      "evidence_class": "interaction",
-      "test_id": "tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_fixed_self_entry_uses_quantity_replacement",
-      "official_rule_ids": ["122.1", "122.1a", "122.1b", "122.6", "614.1c", "614.12", "614.16", "616.1"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Route one fixed prose self-entry counter through the nested quantity-replacement event so Doubling Season changes three +1/+1 counters to six before battlefield entry commits."
-    },
-    {
-      "capability_id": "counter.producer.fixed_self_entry",
-      "evidence_class": "multiplayer",
-      "test_id": "tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_four_player_fixed_self_entry_is_private_and_replays_exactly",
-      "official_rule_ids": ["122.1", "122.1a", "122.1b", "122.6", "614.1c", "614.12", "614.16", "616.1"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Resolve one fixed self-entry counter in four-player state and route competing replacement ordering only to the destination controller."
-    },
-    {
-      "capability_id": "counter.producer.fixed_self_entry",
-      "evidence_class": "mutation",
-      "test_id": "tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_fixed_self_entry_runtime_mutation_is_killed",
-      "official_rule_ids": ["122.1", "122.1a", "122.1b", "122.6", "614.1c", "614.12", "614.16", "616.1"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Remove the shared affected-object self-entry replacement and prove the generic fixed entry counters disappear."
-    },
-    {
-      "capability_id": "counter.producer.fixed_self_entry",
-      "evidence_class": "negative",
-      "test_id": "tests.test_fixed_keyword_entry_counters.FixedKeywordEntryCompilerTests.test_unsupported_fixed_self_entry_forms_and_dependency_fail_closed",
-      "official_rule_ids": ["122.1", "122.1a", "122.1b", "122.6", "614.1c", "614.12", "614.16", "616.1"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Keep variable, optional, conditional, additional, multikind, non-source, malformed-plural, and dependency-blocked entry-counter forms material."
-    },
-    {
-      "capability_id": "counter.producer.fixed_self_entry",
-      "evidence_class": "positive",
-      "test_id": "tests.test_fixed_keyword_entry_counters.FixedKeywordEntryCompilerTests.test_fixed_self_entry_counter_grammar_is_closed",
-      "official_rule_ids": ["122.1", "122.1a", "122.1b", "122.6", "614.1c", "614.12", "614.16", "616.1"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Compile generic this-object and bounded source-name sentences with counts from one through ten into one all-zone source-spanned self-entry descriptor."
-    },
-    {
-      "capability_id": "counter.producer.fixed_self_entry",
-      "evidence_class": "privacy",
-      "test_id": "tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_four_player_fixed_self_entry_is_private_and_replays_exactly",
-      "official_rule_ids": ["122.1", "122.1a", "122.1b", "122.6", "614.1c", "614.12", "614.16", "616.1"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Project pending entry replacement options only to the destination controller without exposing authoritative physical object identity to other seats."
-    },
-    {
-      "capability_id": "counter.producer.fixed_self_entry",
-      "evidence_class": "replay",
-      "test_id": "tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_four_player_fixed_self_entry_is_private_and_replays_exactly",
-      "official_rule_ids": ["122.1", "122.1a", "122.1b", "122.6", "614.1c", "614.12", "614.16", "616.1"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Replay the destination-controller replacement order, fixed self-entry event, and final counter result to the same authoritative state hash."
-    },
-    {
-      "capability_id": "counter.producer.fixed_self_entry",
-      "evidence_class": "rollback",
-      "test_id": "tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_stale_fixed_self_entry_aborts_without_card_mutation",
-      "official_rule_ids": ["122.1", "122.1a", "122.1b", "122.6", "614.1c", "614.12", "614.16", "616.1"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Abort a stale generic entry continuation after the proposed object leaves the stack without placing counters, reentering the object, or mutating any card snapshot."
-    },
-    {
-      "capability_id": "counter.producer.intrinsic_entry",
-      "evidence_class": "interaction",
-      "test_id": "tests.test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_competing_entry_counter_replacements_order_to_nine_or_ten",
-      "official_rule_ids": ["122.1", "122.6", "306.5b", "310.4b", "614.1c", "614.16", "616.1", "616.1f"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Apply two represented counter-quantity replacements to one intrinsic Planeswalker entry event in either legal affected-controller order."
-    },
-    {
-      "capability_id": "counter.producer.intrinsic_entry",
-      "evidence_class": "interaction",
-      "test_id": "tests.test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_counter_child_tracks_a_later_destination_replacement",
-      "official_rule_ids": ["122.1", "122.6", "306.5b", "310.4b", "614.1c", "614.16", "616.1", "616.1f"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Retarget the nested entry-counter event when a later replacement changes the containing zone-change destination."
-    },
-    {
-      "capability_id": "counter.producer.intrinsic_entry",
-      "evidence_class": "interaction",
-      "test_id": "tests.test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_token_and_counter_replacements_resume_sequentially_and_replay",
-      "official_rule_ids": ["122.1", "122.6", "306.5b", "310.4b", "614.1c", "614.16", "616.1", "616.1f"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Resume a token-quantity replacement choice and then a counter-quantity replacement choice from one strict selection journal without duplicating either transformation."
-    },
-    {
-      "capability_id": "counter.producer.intrinsic_entry",
-      "evidence_class": "multiplayer",
-      "test_id": "tests.test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_simultaneous_entry_choices_follow_four_player_apnap",
-      "official_rule_ids": ["122.1", "122.6", "306.5b", "310.4b", "614.1c", "614.16", "616.1", "616.1f"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Collect simultaneous affected-object entry-counter replacement choices in four-player APNAP order without preparing-state mutation."
-    },
-    {
-      "capability_id": "counter.producer.intrinsic_entry",
-      "evidence_class": "multiplayer",
-      "test_id": "tests.test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_token_and_counter_replacements_resume_sequentially_and_replay",
-      "official_rule_ids": ["122.1", "122.6", "306.5b", "310.4b", "614.1c", "614.16", "616.1", "616.1f"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Resolve both affected-controller choices in a four-player game while preserving one authoritative prospective token batch."
-    },
-    {
-      "capability_id": "counter.producer.intrinsic_entry",
-      "evidence_class": "mutation",
-      "test_id": "tests.test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_intrinsic_entry_counter_generation_mutant_is_killed",
-      "official_rule_ids": ["122.1", "122.6", "306.5b", "310.4b", "614.1c", "614.16", "616.1", "616.1f"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Kill removal of intrinsic self-replacement generation by requiring ordinary Planeswalker entry to produce its printed loyalty counters."
-    },
-    {
-      "capability_id": "counter.producer.intrinsic_entry",
-      "evidence_class": "mutation",
-      "test_id": "tests.test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_token_entry_counter_owner_mutant_is_killed",
-      "official_rule_ids": ["122.1", "122.6", "306.5b", "310.4b", "614.1c", "614.16", "616.1", "616.1f"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Kill a token-entry coordinator mutant that discards the prepared intrinsic counter batch by requiring doubled loyalty on the created Planeswalker token."
-    },
-    {
-      "capability_id": "counter.producer.intrinsic_entry",
-      "evidence_class": "negative",
-      "test_id": "tests.test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_battle_protector_validation_is_closed",
-      "official_rule_ids": ["122.1", "122.6", "306.5b", "310.4b", "614.1c", "614.16", "616.1", "616.1f"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Fail closed for invalid Siege protectors and Battle subtypes whose protector procedure is not represented."
-    },
-    {
-      "capability_id": "counter.producer.intrinsic_entry",
-      "evidence_class": "negative",
-      "test_id": "tests.test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_intrinsic_counter_model_rejects_malformed_values",
-      "official_rule_ids": ["122.1", "122.6", "306.5b", "310.4b", "614.1c", "614.16", "616.1", "616.1f"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Reject missing, boolean, fractional, negative, and nonnumeric printed entry values before a replacement event exists."
-    },
-    {
-      "capability_id": "counter.producer.intrinsic_entry",
-      "evidence_class": "negative",
-      "test_id": "tests.test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_unsupported_intrinsic_card_forms_are_material_residuals",
-      "official_rule_ids": ["122.1", "122.6", "306.5b", "310.4b", "614.1c", "614.16", "616.1", "616.1f"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Retain variable, missing, or otherwise unsupported printed entry characteristics as precise material card-form residuals instead of failing construction or guessing."
-    },
-    {
-      "capability_id": "counter.producer.intrinsic_entry",
-      "evidence_class": "positive",
-      "test_id": "tests.test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_intrinsic_card_form_compiler_declares_exact_typed_capability",
-      "official_rule_ids": ["122.1", "122.6", "306.5b", "310.4b", "614.1c", "614.16", "616.1", "616.1f"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Lower canonical Planeswalker and Battle card types to exact source-spanned CardProgram declarations while rejecting subtype-only matches."
-    },
-    {
-      "capability_id": "counter.producer.intrinsic_entry",
-      "evidence_class": "positive",
-      "test_id": "tests.test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_ordinary_planeswalker_and_battle_entry_use_counter_owner",
-      "official_rule_ids": ["122.1", "122.6", "306.5b", "310.4b", "614.1c", "614.16", "616.1", "616.1f"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Enter ordinary Planeswalker and Siege cards with printed counters through the canonical counter mutation owner and preserve the chosen protector."
-    },
-    {
-      "capability_id": "counter.producer.intrinsic_entry",
-      "evidence_class": "positive",
-      "test_id": "tests.test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_token_battle_entry_doubles_defense_and_pins_protector",
-      "official_rule_ids": ["122.1", "122.6", "306.5b", "310.4b", "614.1c", "614.16", "616.1", "616.1f"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Create a prospective Siege token with a validated opponent protector and commit its replaced defense-counter amount through the canonical counter owner."
-    },
-    {
-      "capability_id": "counter.producer.intrinsic_entry",
-      "evidence_class": "positive",
-      "test_id": "tests.test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_token_planeswalker_entry_uses_counter_replacement_owner",
-      "official_rule_ids": ["122.1", "122.6", "306.5b", "310.4b", "614.1c", "614.16", "616.1", "616.1f"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Create a prospective Planeswalker token, resolve a represented counter-quantity replacement before mutation, and commit the token with its doubled printed loyalty."
-    },
-    {
-      "capability_id": "counter.producer.intrinsic_entry",
-      "evidence_class": "privacy",
-      "test_id": "tests.test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_resolving_entry_choice_is_private_and_replays_exactly",
-      "official_rule_ids": ["122.1", "122.6", "306.5b", "310.4b", "614.1c", "614.16", "616.1", "616.1f"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Project a resolving-entry replacement choice only to the affected controller without exposing continuation or physical object identity."
-    },
-    {
-      "capability_id": "counter.producer.intrinsic_entry",
-      "evidence_class": "privacy",
-      "test_id": "tests.test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_token_and_counter_replacements_resume_sequentially_and_replay",
-      "official_rule_ids": ["122.1", "122.6", "306.5b", "310.4b", "614.1c", "614.16", "616.1", "616.1f"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Project each suspended replacement choice only to the affected seat without exposing the continuation to the other three seats."
-    },
-    {
-      "capability_id": "counter.producer.intrinsic_entry",
-      "evidence_class": "replay",
-      "test_id": "tests.test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_resolving_entry_choice_is_private_and_replays_exactly",
-      "official_rule_ids": ["122.1", "122.6", "306.5b", "310.4b", "614.1c", "614.16", "616.1", "616.1f"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Replay the affected-seat replacement order and resolving permanent entry to the same authoritative state hash."
-    },
-    {
-      "capability_id": "counter.producer.intrinsic_entry",
-      "evidence_class": "replay",
-      "test_id": "tests.test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_token_and_counter_replacements_resume_sequentially_and_replay",
-      "official_rule_ids": ["122.1", "122.6", "306.5b", "310.4b", "614.1c", "614.16", "616.1", "616.1f"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
-      "applicability_note": "Replay both sequential replacement choices and the prospective token identities to the identical authoritative hash."
-    },
+    {"capability_id":"counter.producer.fixed_self_entry","evidence_class":"interaction","test_id":"tests.test_copied_self_entry_counters.CopiedSelfEntryCounterActionTests.test_actual_copied_group_counter_replacement_choice_is_atomic_and_replays","official_rule_ids":["122.1","122.1a","122.1b","122.6","614.1c","614.12","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Nested entry and counter replacements finish before either token is committed."},
+    {"capability_id":"counter.producer.fixed_self_entry","evidence_class":"interaction","test_id":"tests.test_copied_self_entry_counters.CopiedSelfEntryCounterActionTests.test_actual_source_only_ability_removal_is_not_copied","official_rule_ids":["122.1","122.1a","122.1b","122.6","614.1c","614.12","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Actual admitted source-only transformation does not remove the copy's copiable entry component."},
+    {"capability_id":"counter.producer.fixed_self_entry","evidence_class":"interaction","test_id":"tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_fixed_self_entry_keyword_counter_uses_shared_characteristics","official_rule_ids":["122.1","122.1a","122.1b","122.6","614.1c","614.12","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Place one Deathtouch counter during source entry and consume the resulting public counter state through the shared layer-6 effective-characteristics boundary."},
+    {"capability_id":"counter.producer.fixed_self_entry","evidence_class":"interaction","test_id":"tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_fixed_self_entry_uses_quantity_replacement","official_rule_ids":["122.1","122.1a","122.1b","122.6","614.1c","614.12","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Route one fixed prose self-entry counter through the nested quantity-replacement event so Doubling Season changes three +1/+1 counters to six before battlefield entry commits."},
+    {"capability_id":"counter.producer.fixed_self_entry","evidence_class":"multiplayer","test_id":"tests.test_copied_self_entry_counters.CopiedSelfEntryCounterActionTests.test_actual_copied_group_counter_replacement_choice_is_atomic_and_replays","official_rule_ids":["122.1","122.1a","122.1b","122.6","614.1c","614.12","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"B-owned A-controlled source yields A-owned and controlled token subjects and chooser."},
+    {"capability_id":"counter.producer.fixed_self_entry","evidence_class":"multiplayer","test_id":"tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_four_player_fixed_self_entry_is_private_and_replays_exactly","official_rule_ids":["122.1","122.1a","122.1b","122.6","614.1c","614.12","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Resolve one fixed self-entry counter in four-player state and route competing replacement ordering only to the destination controller."},
+    {"capability_id":"counter.producer.fixed_self_entry","evidence_class":"mutation","test_id":"tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_fixed_self_entry_runtime_mutation_is_killed","official_rule_ids":["122.1","122.1a","122.1b","122.6","614.1c","614.12","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Remove the shared affected-object self-entry replacement and prove the generic fixed entry counters disappear."},
+    {"capability_id":"counter.producer.fixed_self_entry","evidence_class":"negative","test_id":"tests.test_copied_self_entry_counters.CopiedSelfEntryCounterActionTests.test_unavailable_prospective_component_query_rejects_resolution_atomically","official_rule_ids":["122.1","122.1a","122.1b","122.6","614.1c","614.12","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Negative query-error injection rejects actual resolving command and rolls back; not printed global-removal support."},
+    {"capability_id":"counter.producer.fixed_self_entry","evidence_class":"negative","test_id":"tests.test_fixed_keyword_entry_counters.FixedKeywordEntryCompilerTests.test_unsupported_fixed_self_entry_forms_and_dependency_fail_closed","official_rule_ids":["122.1","122.1a","122.1b","122.6","614.1c","614.12","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Keep variable, optional, conditional, additional, multikind, non-source, malformed-plural, and dependency-blocked entry-counter forms material."},
+    {"capability_id":"counter.producer.fixed_self_entry","evidence_class":"positive","test_id":"tests.test_copied_self_entry_counters.CopiedSelfEntryCounterActionTests.test_actual_trusted_copy_gets_its_own_entry_counters_and_replays","official_rule_ids":["122.1","122.1a","122.1b","122.6","614.1c","614.12","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Actual trusted cast/payment gives fresh two counters, not zero or source seven; full replay."},
+    {"capability_id":"counter.producer.fixed_self_entry","evidence_class":"positive","test_id":"tests.test_copied_self_entry_counters.CopiedSelfEntryCounterCompilerTests.test_fixed_self_entry_component_uses_the_shared_presence_marker","official_rule_ids":["122.1","122.1a","122.1b","122.6","614.1c","614.12","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Minimal CardRecord and unchanged exact grammar participate in the existing shared component index."},
+    {"capability_id":"counter.producer.fixed_self_entry","evidence_class":"positive","test_id":"tests.test_fixed_keyword_entry_counters.FixedKeywordEntryCompilerTests.test_fixed_self_entry_counter_grammar_is_closed","official_rule_ids":["122.1","122.1a","122.1b","122.6","614.1c","614.12","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Compile generic this-object and bounded source-name sentences with counts from one through ten into one all-zone source-spanned self-entry descriptor."},
+    {"capability_id":"counter.producer.fixed_self_entry","evidence_class":"privacy","test_id":"tests.test_copied_self_entry_counters.CopiedSelfEntryCounterActionTests.test_actual_copied_group_counter_replacement_choice_is_atomic_and_replays","official_rule_ids":["122.1","122.1a","122.1b","122.6","614.1c","614.12","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Only affected A sees choices; no raw object or replacement data in projection."},
+    {"capability_id":"counter.producer.fixed_self_entry","evidence_class":"privacy","test_id":"tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_four_player_fixed_self_entry_is_private_and_replays_exactly","official_rule_ids":["122.1","122.1a","122.1b","122.6","614.1c","614.12","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Project pending entry replacement options only to the destination controller without exposing authoritative physical object identity to other seats."},
+    {"capability_id":"counter.producer.fixed_self_entry","evidence_class":"replay","test_id":"tests.test_copied_self_entry_counters.CopiedSelfEntryCounterActionTests.test_actual_copied_group_counter_replacement_choice_is_atomic_and_replays","official_rule_ids":["122.1","122.1a","122.1b","122.6","614.1c","614.12","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Checkpoint/load at nested choices and full two-token replay without duplicates."},
+    {"capability_id":"counter.producer.fixed_self_entry","evidence_class":"replay","test_id":"tests.test_copied_self_entry_counters.CopiedSelfEntryCounterActionTests.test_actual_trusted_copy_gets_its_own_entry_counters_and_replays","official_rule_ids":["122.1","122.1a","122.1b","122.6","614.1c","614.12","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Pre-action replay reconstructs fresh entry counters independently of source counters."},
+    {"capability_id":"counter.producer.fixed_self_entry","evidence_class":"replay","test_id":"tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_four_player_fixed_self_entry_is_private_and_replays_exactly","official_rule_ids":["122.1","122.1a","122.1b","122.6","614.1c","614.12","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Replay the destination-controller replacement order, fixed self-entry event, and final counter result to the same authoritative state hash."},
+    {"capability_id":"counter.producer.fixed_self_entry","evidence_class":"rollback","test_id":"tests.test_fixed_keyword_entry_counters.FixedKeywordEntryRuntimeTests.test_stale_fixed_self_entry_aborts_without_card_mutation","official_rule_ids":["122.1","122.1a","122.1b","122.6","614.1c","614.12","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Abort a stale generic entry continuation after the proposed object leaves the stack without placing counters, reentering the object, or mutating any card snapshot."},
+    {"capability_id":"counter.producer.intrinsic_entry","evidence_class":"interaction","test_id":"tests.test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_competing_entry_counter_replacements_order_to_nine_or_ten","official_rule_ids":["122.1","122.6","306.5b","310.4b","614.1c","614.16","616.1","616.1f"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Apply two represented counter-quantity replacements to one intrinsic Planeswalker entry event in either legal affected-controller order."},
+    {"capability_id":"counter.producer.intrinsic_entry","evidence_class":"interaction","test_id":"tests.test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_counter_child_tracks_a_later_destination_replacement","official_rule_ids":["122.1","122.6","306.5b","310.4b","614.1c","614.16","616.1","616.1f"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Retarget the nested entry-counter event when a later replacement changes the containing zone-change destination."},
+    {"capability_id":"counter.producer.intrinsic_entry","evidence_class":"interaction","test_id":"tests.test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_token_and_counter_replacements_resume_sequentially_and_replay","official_rule_ids":["122.1","122.6","306.5b","310.4b","614.1c","614.16","616.1","616.1f"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Resume a token-quantity replacement choice and then a counter-quantity replacement choice from one strict selection journal without duplicating either transformation."},
+    {"capability_id":"counter.producer.intrinsic_entry","evidence_class":"interaction","test_id":"tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_creation_and_entry_counter_choices_resume_once_and_replay","official_rule_ids":["122.1","122.6","306.5b","310.4b","614.1c","614.16","616.1","616.1f"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Intrinsic loyalty is a counter child of the prospective zone parent; prior temporal and privacy controls remain."},
+    {"capability_id":"counter.producer.intrinsic_entry","evidence_class":"multiplayer","test_id":"tests.test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_simultaneous_entry_choices_follow_four_player_apnap","official_rule_ids":["122.1","122.6","306.5b","310.4b","614.1c","614.16","616.1","616.1f"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Collect simultaneous affected-object entry-counter replacement choices in four-player APNAP order without preparing-state mutation."},
+    {"capability_id":"counter.producer.intrinsic_entry","evidence_class":"multiplayer","test_id":"tests.test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_token_and_counter_replacements_resume_sequentially_and_replay","official_rule_ids":["122.1","122.6","306.5b","310.4b","614.1c","614.16","616.1","616.1f"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Resolve both affected-controller choices in a four-player game while preserving one authoritative prospective token batch."},
+    {"capability_id":"counter.producer.intrinsic_entry","evidence_class":"mutation","test_id":"tests.test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_intrinsic_entry_counter_generation_mutant_is_killed","official_rule_ids":["122.1","122.6","306.5b","310.4b","614.1c","614.16","616.1","616.1f"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Kill removal of intrinsic self-replacement generation by requiring ordinary Planeswalker entry to produce its printed loyalty counters."},
+    {"capability_id":"counter.producer.intrinsic_entry","evidence_class":"mutation","test_id":"tests.test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_token_entry_counter_owner_mutant_is_killed","official_rule_ids":["122.1","122.6","306.5b","310.4b","614.1c","614.16","616.1","616.1f"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Kill a token-entry coordinator mutant that discards the prepared intrinsic counter batch by requiring doubled loyalty on the created Planeswalker token."},
+    {"capability_id":"counter.producer.intrinsic_entry","evidence_class":"negative","test_id":"tests.test_copied_self_entry_counters.CopiedEntryCounterIdentityTests.test_prospective_counter_child_cannot_substitute_another_incarnation","official_rule_ids":["122.1","122.6","306.5b","310.4b","614.1c","614.16","616.1","616.1f"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Isolated typed-parent model rejects child's substituted incarnation; not gameplay certification."},
+    {"capability_id":"counter.producer.intrinsic_entry","evidence_class":"negative","test_id":"tests.test_copied_self_entry_counters.CopiedEntryCounterIdentityTests.test_prospective_counter_parent_marker_does_not_accept_a_boolean_alias","official_rule_ids":["122.1","122.6","306.5b","310.4b","614.1c","614.16","616.1","616.1f"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Isolated marker model rejects integer one instead of accepting truthiness."},
+    {"capability_id":"counter.producer.intrinsic_entry","evidence_class":"negative","test_id":"tests.test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_battle_protector_validation_is_closed","official_rule_ids":["122.1","122.6","306.5b","310.4b","614.1c","614.16","616.1","616.1f"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Fail closed for invalid Siege protectors and Battle subtypes whose protector procedure is not represented."},
+    {"capability_id":"counter.producer.intrinsic_entry","evidence_class":"negative","test_id":"tests.test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_intrinsic_counter_model_rejects_malformed_values","official_rule_ids":["122.1","122.6","306.5b","310.4b","614.1c","614.16","616.1","616.1f"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Reject missing, boolean, fractional, negative, and nonnumeric printed entry values before a replacement event exists."},
+    {"capability_id":"counter.producer.intrinsic_entry","evidence_class":"negative","test_id":"tests.test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_unsupported_intrinsic_card_forms_are_material_residuals","official_rule_ids":["122.1","122.6","306.5b","310.4b","614.1c","614.16","616.1","616.1f"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Retain variable, missing, or otherwise unsupported printed entry characteristics as precise material card-form residuals instead of failing construction or guessing."},
+    {"capability_id":"counter.producer.intrinsic_entry","evidence_class":"positive","test_id":"tests.test_copied_self_entry_counters.CopiedEntryCounterIdentityTests.test_matching_prospective_parent_and_child_validate_without_state_insertion","official_rule_ids":["122.1","122.6","306.5b","310.4b","614.1c","614.16","616.1","616.1f"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Isolated matching typed identities validate with no live state insertion."},
+    {"capability_id":"counter.producer.intrinsic_entry","evidence_class":"positive","test_id":"tests.test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_intrinsic_card_form_compiler_declares_exact_typed_capability","official_rule_ids":["122.1","122.6","306.5b","310.4b","614.1c","614.16","616.1","616.1f"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Lower canonical Planeswalker and Battle card types to exact source-spanned CardProgram declarations while rejecting subtype-only matches."},
+    {"capability_id":"counter.producer.intrinsic_entry","evidence_class":"positive","test_id":"tests.test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_ordinary_planeswalker_and_battle_entry_use_counter_owner","official_rule_ids":["122.1","122.6","306.5b","310.4b","614.1c","614.16","616.1","616.1f"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Enter ordinary Planeswalker and Siege cards with printed counters through the canonical counter mutation owner and preserve the chosen protector."},
+    {"capability_id":"counter.producer.intrinsic_entry","evidence_class":"positive","test_id":"tests.test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_token_battle_entry_doubles_defense_and_pins_protector","official_rule_ids":["122.1","122.6","306.5b","310.4b","614.1c","614.16","616.1","616.1f"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Create a prospective Siege token with a validated opponent protector and commit its replaced defense-counter amount through the canonical counter owner."},
+    {"capability_id":"counter.producer.intrinsic_entry","evidence_class":"positive","test_id":"tests.test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_token_planeswalker_entry_uses_counter_replacement_owner","official_rule_ids":["122.1","122.6","306.5b","310.4b","614.1c","614.16","616.1","616.1f"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Create a prospective Planeswalker token, resolve a represented counter-quantity replacement before mutation, and commit the token with its doubled printed loyalty."},
+    {"capability_id":"counter.producer.intrinsic_entry","evidence_class":"privacy","test_id":"tests.test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_resolving_entry_choice_is_private_and_replays_exactly","official_rule_ids":["122.1","122.6","306.5b","310.4b","614.1c","614.16","616.1","616.1f"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Project a resolving-entry replacement choice only to the affected controller without exposing continuation or physical object identity."},
+    {"capability_id":"counter.producer.intrinsic_entry","evidence_class":"privacy","test_id":"tests.test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_token_and_counter_replacements_resume_sequentially_and_replay","official_rule_ids":["122.1","122.6","306.5b","310.4b","614.1c","614.16","616.1","616.1f"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Project each suspended replacement choice only to the affected seat without exposing the continuation to the other three seats."},
+    {"capability_id":"counter.producer.intrinsic_entry","evidence_class":"replay","test_id":"tests.test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_resolving_entry_choice_is_private_and_replays_exactly","official_rule_ids":["122.1","122.6","306.5b","310.4b","614.1c","614.16","616.1","616.1f"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Replay the affected-seat replacement order and resolving permanent entry to the same authoritative state hash."},
+    {"capability_id":"counter.producer.intrinsic_entry","evidence_class":"replay","test_id":"tests.test_intrinsic_entry_counters.IntrinsicEntryCounterTests.test_token_and_counter_replacements_resume_sequentially_and_replay","official_rule_ids":["122.1","122.6","306.5b","310.4b","614.1c","614.16","616.1","616.1f"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Replay both sequential replacement choices and the prospective token identities to the identical authoritative hash."},
     {
       "capability_id": "counter.producer.mentor",
       "evidence_class": "interaction",
@@ -26133,6 +25957,8 @@
       ],
       "applicability_note": "Apply a reviewed mandatory replacement that adds a fixed token definition to one nonempty token-creation event controlled by the replacement source's controller."
     },
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"interaction","test_id":"tests.test_copied_self_entry_counters.CopiedSelfEntryCounterActionTests.test_actual_source_only_ability_removal_is_not_copied","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Source-only current removal is distinct from copied entry-time applicability."},
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"interaction","test_id":"tests.test_copied_self_entry_counters.CopiedSelfEntryCounterActionTests.test_copy_does_not_inherit_the_original_cast_x_or_existing_counters","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Noncast copy defaults X to zero rather than inheriting original five counters."},
     {"capability_id":"token.creation.fixed_copy","evidence_class":"interaction","test_id":"tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_actual_copy_does_not_inherit_temporary_artifact_replacement_and_replays","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Retain the contrasting false-positive replacement boundary for a creature temporarily made an artifact."},
     {"capability_id":"token.creation.fixed_copy","evidence_class":"interaction","test_id":"tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_actual_copy_of_nonartifact_animation_retains_artifact_replacement_and_replays","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"CR 707.2 separates noncopy layer-4 characteristics from the creation replacement subject through the canonical copiable reader."},
     {"capability_id":"token.creation.fixed_copy","evidence_class":"interaction","test_id":"tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_trusted_recipe_copied_cleanup_ability_triggers_and_replays","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Copied quoted cleanup is a recurring granted trigger, not independent delayed aftercare; actual cast, end-step execution and replay preserve that distinction."},
@@ -26149,19 +25975,23 @@
     {"capability_id":"token.creation.fixed_copy","evidence_class":"mutation","test_id":"tests.test_fixed_token_production.FixedTokenProductionTests.test_token_production_grammar_and_capability_mutants_fail_closed","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Change the compiler-owned copy reference away from the selected target and require shape validation to reject it."},
     {"capability_id":"token.creation.fixed_copy","evidence_class":"mutation","test_id":"tests.test_token_entry_boundaries.TokenEntryHistoryOwnerTests.test_incomplete_history_ordering_mutant_is_killed","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Isolated owner contract kills per-member history/discovery interleaving, including zero, singleton and reversed groups; not gameplay certification."},
     {"capability_id":"token.creation.fixed_copy","evidence_class":"mutation","test_id":"tests.test_token_entry_boundaries.TokenEntryHistoryOwnerTests.test_subsequent_aftercare_ordering_mutant_is_killed","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Isolated collaborator contract kills a separately instructed grant moved before entry discovery; not gameplay certification."},
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"negative","test_id":"tests.test_copied_self_entry_counters.CopiedSelfEntryCounterActionTests.test_unavailable_prospective_component_query_rejects_resolution_atomically","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Unavailable owner query cannot authorize a token with omitted counters; rollback, retry and replay."},
     {"capability_id":"token.creation.fixed_copy","evidence_class":"negative","test_id":"tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_actual_copy_does_not_inherit_temporary_artifact_replacement_and_replays","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"A trusted type-changing spell does not make its nonartifact source's copied token eligible for an artifact-only additional-token replacement."},
     {"capability_id":"token.creation.fixed_copy","evidence_class":"negative","test_id":"tests.test_fixed_token_creation_effects.TokenCopyRecipeModelTests.test_copy_recipe_codec_rejects_unknown_fields_booleans_and_open_values","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Closed recipe codec rejects open reference, exception, lifecycle and malformed fixed-stat vocabulary."},
     {"capability_id":"token.creation.fixed_copy","evidence_class":"negative","test_id":"tests.test_fixed_token_production.FixedTokenProductionTests.test_token_production_grammar_and_capability_mutants_fail_closed","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Reject source-LKI, modified, optional, multiple, chosen, and zone-linked copy-token forms."},
     {"capability_id":"token.creation.fixed_copy","evidence_class":"negative","test_id":"tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_creation_and_entry_counter_choices_resume_once_and_replay","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Unauthorized casting and malformed or unauthorized replacement selections leave authoritative hashes unchanged."},
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"positive","test_id":"tests.test_copied_self_entry_counters.CopiedSelfEntryCounterActionTests.test_actual_trusted_copy_gets_its_own_entry_counters_and_replays","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Fixed-copy owner commits canonical prepared counter leaves without rediscovery."},
     {"capability_id":"token.creation.fixed_copy","evidence_class":"positive","test_id":"tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_actual_copy_of_nonartifact_animation_retains_artifact_replacement_and_replays","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Actually cast a trusted copy spell after a trusted artifact animation; artifact-only replacement discovery follows the copied artifact, not its current nonartifact source."},
     {"capability_id":"token.creation.fixed_copy","evidence_class":"positive","test_id":"tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_trusted_recipe_fixed_characteristics_exclusion_rollback_and_replay","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Actual trusted cast retains the fixed copiable exception, qualified targets, illegal-command rollback and pre-action replay."},
     {"capability_id":"token.creation.fixed_copy","evidence_class":"positive","test_id":"tests.test_fixed_token_production.FixedTokenProductionTests.test_compiler_lowers_investigate_afterlife_and_extended_token_definitions","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Lower one exact targeted creature or artifact-creature-land copy instruction with a canonical target schema."},
     {"capability_id":"token.creation.fixed_copy","evidence_class":"positive","test_id":"tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_simultaneous_copies_see_the_complete_entry_history","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Actual trusted cast discovers both copied entry identities, resolves both draws and one aggregated observer, and exactly replays from before casting."},
     {"capability_id":"token.creation.fixed_copy","evidence_class":"positive","test_id":"tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_subsequent_haste_does_not_rewrite_entry_facts","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Actual trusted creation captures canonical entry occurrences before a separate Haste grant, retains its noncopiable duration and exactly replays."},
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"privacy","test_id":"tests.test_copied_self_entry_counters.CopiedSelfEntryCounterActionTests.test_actual_copied_group_counter_replacement_choice_is_atomic_and_replays","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Private nested choices retain malformed/unauthorized rollback after checkpoint."},
     {"capability_id":"token.creation.fixed_copy","evidence_class":"privacy","test_id":"tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_copy_replacement_choice_preserves_creator_projection_rollback_and_checkpoint","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Only the affected creator sees replacement options; internal replacement data stays outside four-player projection."},
     {"capability_id":"token.creation.fixed_copy","evidence_class":"privacy","test_id":"tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_trusted_populate_selects_controlled_creature_token_and_replays_choice","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Actual Populate cast uses one controller-bound creature-token choice, four-seat projection, save/load, invalid-choice rollback and replay."},
     {"capability_id":"token.creation.fixed_copy","evidence_class":"privacy","test_id":"tests.test_fixed_token_production.FixedTokenProductionTests.test_token_replacement_order_rollback_and_privacy","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Expose only public copy-token and replacement facts, not internal object identities."},
     {"capability_id":"token.creation.fixed_copy","evidence_class":"privacy","test_id":"tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_creation_and_entry_counter_choices_resume_once_and_replay","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Only the affected seat sees replacement choices; malformed and unauthorized commands roll back without raw object or replacement data."},
+    {"capability_id":"token.creation.fixed_copy","evidence_class":"replay","test_id":"tests.test_copied_self_entry_counters.CopiedSelfEntryCounterActionTests.test_actual_copied_group_counter_replacement_choice_is_atomic_and_replays","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Entire created group and consequences replay from before the real cast."},
     {"capability_id":"token.creation.fixed_copy","evidence_class":"replay","test_id":"tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_copy_replacement_choice_preserves_creator_projection_rollback_and_checkpoint","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Checkpoint and reload during the actual replacement choice, reject an invalid selection atomically, then exactly replay from before the copy action without duplicate tokens."},
     {"capability_id":"token.creation.fixed_copy","evidence_class":"replay","test_id":"tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_trusted_recipe_entry_event_copies_new_incarnation_and_replays","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Real creature cast discovers a normalized entry-object copy and exactly replays from the pre-action checkpoint."},
     {"capability_id":"token.creation.fixed_copy","evidence_class":"replay","test_id":"tests.test_fixed_token_production.FixedTokenProductionTests.test_copy_and_delayed_tokens_revalidate_and_replay","official_rule_ids":["111.2","111.12","115.1a","603.4","603.6a","603.6d","608.2b","608.2c","707.2","707.9","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Persist the target snapshot, copied token characteristics, and final authoritative state."},

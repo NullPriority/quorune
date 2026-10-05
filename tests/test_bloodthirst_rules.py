@@ -678,10 +678,10 @@ class BloodthirstRuntimeTests(unittest.TestCase):
         assert_counter(7025440)
         original = zone_replacements._zone_change_snapshot_effects
 
-        def remove_bloodthirst_effects(host, subjects, active_sources):
+        def remove_bloodthirst_effects(host, subjects, active_sources, prospective_objects):
             return tuple(
                 effect
-                for effect in original(host, subjects, active_sources)
+                for effect in original(host, subjects, active_sources, prospective_objects)
                 if not effect.effect_id.startswith(
                     "replacement.zone.conditional-self-entry-counter.v1:"
                 )

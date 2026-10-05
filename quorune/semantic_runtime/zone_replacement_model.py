@@ -137,6 +137,11 @@ def _validate_cast_option(value: str | None) -> None:
         )
 
 
+def _validate_entry_event_flags(*values: Any) -> None:
+    if any(type(value) is not bool for value in values):
+        raise ZoneReplacementError("Zone replacement event flags must be boolean")
+
+
 @dataclass(frozen=True, slots=True)
 class ZoneChangeSubjectSnapshot:
     object_id: str
@@ -164,6 +169,7 @@ class ZoneChangeSubjectSnapshot:
     effect_entry_counters: tuple[EffectEntryCounter, ...] = ()
     self_entry_counter_amounts: FrozenMap = field(default_factory=FrozenMap)
     cast_option: str | None = None
+    prospective_subject: bool = False
 
     def __post_init__(self) -> None:
         required = (
@@ -297,10 +303,7 @@ class ZoneChangeSubjectSnapshot:
                 "Zone replacement entry metrics must be nonnegative integers"
             )
         object.__setattr__(self, "entry_condition_metrics", metrics)
-        if type(self.opponent_was_dealt_damage_this_turn) is not bool:
-            raise ZoneReplacementError(
-                "Zone replacement turn-history facts must be boolean"
-            )
+        _validate_entry_event_flags(self.opponent_was_dealt_damage_this_turn, self.prospective_subject)
         mana_colors = tuple(self.mana_colors_spent)
         if any(
             type(value) is not str or value not in "WUBRG"

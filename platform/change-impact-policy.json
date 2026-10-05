@@ -1040,6 +1040,7 @@
         "quorune/semantic_runtime/zone_replacement_model.py",
         "quorune/semantic_runtime/zone_replacement_inputs.py",
         "quorune/semantic_runtime/zone_replacements.py",
+        "quorune/token_creation.py",
         "scripts/work_selection_cohort_measurements.py",
         "tests/high_risk_interaction_support.py",
         "tests/fixtures/fixed-self-entry-counter-cards.json",
@@ -1048,17 +1049,23 @@
         "tests/test_high_risk_interaction_assurance.py"
       ],
       "test_modules": [
+        "test_bloodthirst_rules",
         "test_capability_implementation_mutations",
         "test_card_program_trust",
         "test_casting_spells_rules",
+        "test_copied_self_entry_counters",
         "test_counter_placement_replacements",
+        "test_damage_result_events",
         "test_fixed_keyword_entry_counters",
         "test_game_record_v3",
         "test_high_risk_interaction_assurance",
         "test_intrinsic_entry_counters",
         "test_kicker_rules",
+        "test_riot_rules",
         "test_rules_scheduler",
+        "test_state_based_actions",
         "test_sunburst_rules",
+        "test_unleash_rules",
         "test_zone_replacement_compiler"
       ],
       "test_suites": [
