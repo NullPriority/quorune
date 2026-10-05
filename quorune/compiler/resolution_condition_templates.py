@@ -10,6 +10,7 @@ from ..resolution_conditions import (
     RESOLUTION_CONDITION_MECHANIC,
     RESOLUTION_CONDITION_OPERATION,
     resolution_condition_is_closed,
+    resolution_result_is_fixed,
 )
 from .closed_effect_programs import CompiledEffectTemplate, _top_level_positions
 from .public_state_queries import fixed_public_state_condition
@@ -43,6 +44,8 @@ def resolution_condition_template(
         conditional = compile_component(body[comma + 2 :])
         mandatory = compile_component(prefix) if prefix else (None, (), None, ())
         if conditional[0] is None or not conditional[1] or conditional[2] is not None or (prefix and mandatory[0] is None):
+            continue
+        if not resolution_result_is_fixed(conditional[1], conditional[3]):
             continue
         schemas = [schema for _, _, schema, _ in (mandatory, conditional) if schema is not None]
         # Independent targets in both branches need a different binding owner.

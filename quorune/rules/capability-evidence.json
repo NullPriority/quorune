@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "2913f5f043bfc31032d745b2f0bd368ffab9101e8879f6bbec68e5d27c7b8966",
-  "declaration_source_fingerprint": "8e7420595ab8c070e213cd2dd7aeb8a792720fd65d468a7525b5ba2e64a56fa5",
+  "registry_fingerprint": "10e975f737097c61e1912c2ab135c9108904e9a44cf6d6d71ceafc313809e154",
+  "declaration_source_fingerprint": "6948a5f81cfdd540f4a2131f1be9d87ada758cfd83d5170442e6f9d1e8f21e80",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -55560,6 +55560,23 @@
     {
       "capability_id": "resolution.effect.public_condition",
       "evidence_class": "negative",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionCompilerTests.test_derived_conditional_results_remain_residual_without_timing_proof",
+      "official_rule_ids": [
+        "109.5",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exclude derived conditional result reads until their instruction timing is proved, retaining the existing unconditional quantity owners."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "negative",
       "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionCompilerTests.test_handler_binds_controller_and_rejects_unavailable_facts",
       "official_rule_ids": [
         "109.5",
@@ -76416,5 +76433,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "576cd4b60bf6c5258b94add2e526586bfc6caa0b3c7058e743f56462b460a7cf"
+  "fingerprint": "5b5cf978fae4a6867b2a2297474cfe1ac49f6753c15d18564edb62b6a78e9387"
 }

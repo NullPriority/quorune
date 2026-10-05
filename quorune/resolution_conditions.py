@@ -16,6 +16,30 @@ from .replacement.immutable import FrozenMap
 RESOLUTION_CONDITION_OPERATION = "apply_if_public_condition"
 RESOLUTION_CONDITION_MECHANIC = "fixed-resolution-public-condition"
 RESOLUTION_CONDITION_CAPABILITY = "resolution.effect.public_condition"
+_DERIVED_RESULT_MECHANICS = frozenset({
+    "declared-effect-amount", "public-query-effect-amount", "scalar-effect-amount",
+})
+_DERIVED_VALUE_KINDS = frozenset({
+    "declared_effect_amount", "public_query_effect_amount", "scalar_effect_amount",
+})
+
+
+def _contains_derived_result_value(value: Any) -> bool:
+    if isinstance(value, str):
+        return value == "$source" or value.startswith("$source.")
+    if isinstance(value, Mapping):
+        return value.get("kind") in _DERIVED_VALUE_KINDS or any(
+            _contains_derived_result_value(child) for child in value.values()
+        )
+    if isinstance(value, (list, tuple)):
+        return any(_contains_derived_result_value(child) for child in value)
+    return False
+
+
+def resolution_result_is_fixed(effects: Any, mechanic_ids: Any) -> bool:
+    """Keep unproved quantities and source bindings outside this fixed slice."""
+
+    return not _DERIVED_RESULT_MECHANICS.intersection(mechanic_ids) and not _contains_derived_result_value(effects)
 
 
 @dataclass(frozen=True, slots=True)
@@ -88,4 +112,6 @@ def validate_resolution_condition_instruction(
         for value in nested
     ):
         raise ValueError("Resolution conditions require a bounded nonnested effect program")
+    if not resolution_result_is_fixed(nested, effect["mechanic_ids"]):
+        raise ValueError("Derived or source-relative results require a separate binding and timing boundary")
     return condition, tuple(nested)

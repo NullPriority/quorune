@@ -187,7 +187,10 @@ printed instruction is reached. The shared public-query owner binds “you” to
 the resolving spell or ability controller, even when its source has left or
 changed controller. Only nontargeted results and independently closed prefixes
 are admitted. Source-relative, attached-object, targeted-result, nested,
-alternative, linked-result and “instead” forms remain residual. Existing typed
+alternative, linked-result and “instead” forms remain residual. Derived-quantity
+and source-relative result forms also remain residual inside this wrapper until
+their conditional read timing is represented; their unconditional owners remain
+available. Existing typed
 leaf validators also participate in the common closed-component gate; no leaf
 grammar or mutation owner is duplicated.
 

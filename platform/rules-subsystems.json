@@ -4616,7 +4616,7 @@
           "estimated_probe_hours": 1,
           "estimated_generation_hours": 1,
           "expected_downstream_closure": "Shared typed result composition across spell, activated and triggered carriers; full original-source CardProgram closure is measured from the current frontier.",
-          "explicit_exclusions": ["instead, linked-result, nested and alternative conditions", "modal conditional programs", "source- or attachment-relative conditions", "targeted conditional results and unsupported leaf effects"],
+          "explicit_exclusions": ["derived-quantity or source-relative conditional results without a represented timing boundary", "instead, linked-result, nested and alternative conditions", "modal conditional programs", "source- or attachment-relative conditions", "targeted conditional results and unsupported leaf effects"],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "controller-program-composition-existing-owner-v1"
         },

@@ -21,6 +21,20 @@ from common import ROOT
 
 
 class ResolutionPublicConditionCompilerTests(unittest.TestCase):
+    def test_derived_conditional_results_remain_residual_without_timing_proof(self):
+        examples = (
+            "If you control an artifact, you gain life equal to this creature's power.",
+            "If you control an artifact, draw a card for each creature you control.",
+            "If you control an artifact, this creature gets +1/+1 until end of turn.",
+        )
+        for text in examples:
+            with self.subTest(text=text):
+                compiled = _reviewed_effect_template(text, card_name="Generic Condition", source_is_permanent=True)
+                self.assertIsNone(compiled[0], "Derived conditional results are outside the fixed-result boundary")
+        # The existing unconditional quantity owners remain available.
+        for body in ("You gain life equal to this creature's power.", "Draw a card for each creature you control."):
+            self.assertIsNotNone(_reviewed_effect_template(body, card_name="Generic Condition", source_is_permanent=True)[0])
+
     def test_condition_uses_real_spell_trigger_and_activation_shells(self):
         from test_bound_effect_programs import record
         from quorune.oracle_ir import compile_oracle_card

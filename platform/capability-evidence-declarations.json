@@ -22940,6 +22940,14 @@
     {
       "capability_id": "resolution.effect.public_condition",
       "evidence_class": "negative",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionCompilerTests.test_derived_conditional_results_remain_residual_without_timing_proof",
+      "official_rule_ids": ["109.5", "608.2b", "608.2c", "608.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Exclude derived conditional result reads until their instruction timing is proved, retaining the existing unconditional quantity owners."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "negative",
       "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionCompilerTests.test_handler_binds_controller_and_rejects_unavailable_facts",
       "official_rule_ids": ["109.5", "608.2b", "608.2c", "608.2h"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
