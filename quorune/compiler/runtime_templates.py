@@ -504,6 +504,7 @@ def _self_entry_counter_runtime_template(
                 "generic fixed self-entry counters depend on the canonical "
                 "zone and counter replacement owners"
             ),
+            runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
         )
     dynamic = dynamic_self_entry_counter_handler(text, source_name=source_name)
     if dynamic is None:

@@ -128,6 +128,7 @@
       "test_bestow_rules",
       "test_casting_spells_rules",
       "test_class_lifecycle",
+      "test_copied_self_entry_counters",
       "test_fixed_counter_keyword_activations",
       "test_fixed_counter_removal_effects",
       "test_fixed_damage_effect_clauses",

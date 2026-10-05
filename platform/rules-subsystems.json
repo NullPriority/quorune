@@ -4811,13 +4811,13 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v254-token-entry-event-boundary",
-      "compiler_version": "oracle-ir-v254",
+      "transition_id": "oracle-ir-v255-copied-entry-counter-boundary",
+      "compiler_version": "oracle-ir-v255",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
-      "non_harvest_reason": "Correct complete simultaneous token-entry history and separately instructed post-entry grants through the existing token, history, trigger and continuous-effect owners, without expanding printed grammar or introducing another event or history registry.",
+      "non_harvest_reason": "Restore fixed self-entry component presence and copied-token counter preparation through the existing prospective component, zone-replacement and counter owners, preserving atomic choices and replay without new grammar or a parallel rules engine.",
       "expected_complete_card_gain": null
     },
     "forecast_corrections": [

@@ -65,7 +65,15 @@ def validate_counter_event_subjects(
                 expected_logical_id = parent.payload.get(
                     "logical_object_id"
                 )
-                expected_zone = parent.payload.get("origin")
+                if parent.payload.get("prospective_subject") is not True:
+                    expected_zone = parent.payload.get("origin")
+                elif (
+                    parent.payload.get("origin") != "outside"
+                    or expected_zone != "battlefield"
+                    or event.payload.get("prospective_subject") is not True
+                    or event.payload.get("target_logical_object_id") != expected_logical_id
+                ):
+                    raise CounterPlacementError("Prospective token counter lost its entry identity")
             prospective_subject = (
                 event.payload.get("prospective_subject") is True
             )

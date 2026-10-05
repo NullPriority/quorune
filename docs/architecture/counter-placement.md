@@ -31,6 +31,17 @@ payload, object identifier, replacement batch, and prior journal remain in the
 authoritative continuation. Exact replay reconstructs and validates the path,
 chooser, and selected effect.
 
+Token preparation uses that same nested zone-entry replacement tree for
+represented intrinsic and self-entry counter components. Prospective objects
+are explicit new outside-zone tokens; they remain absent from live state until
+every affected-player selection is complete. The shared layer-6 component
+query evaluates their copiable abilities at the prospective battlefield
+boundary. Source-only noncopy ability removal and source counters are not
+copied. Unknown component availability rejects before commit rather than
+silently omitting counters. Resolved counter children retain the parent's
+prospective incarnation and commit through the ordinary counter owner after
+the complete token group exists, without replacement rediscovery.
+
 `replacement.counter.quantity.v2` is the current bounded component. It applies
 fixed positive integral multiplication or fixed nonnegative addition to a
 represented placement on a player or battlefield permanent. Its closed

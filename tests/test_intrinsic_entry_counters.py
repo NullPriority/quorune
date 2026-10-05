@@ -851,9 +851,14 @@ class IntrinsicEntryCounterTests(unittest.TestCase):
             self.assertEqual(6, walker.counters.get("loyalty", 0))
 
         assert_doubled(3065011)
+        from quorune import token_creation
+        original_prepare = token_creation._prepare_token_entry_counters
+        def omit_counter_leaves(*args, **kwargs):
+            plans, prepared_counters, entries = original_prepare(*args, **kwargs)
+            return plans, PreparedCounterPlacements((), (), ()), entries
         with patch(
-            "quorune.token_creation.prepare_counter_placement_specs",
-            return_value=PreparedCounterPlacements((), (), ()),
+            "quorune.token_creation._prepare_token_entry_counters",
+            side_effect=omit_counter_leaves,
         ):
             with self.assertRaises(AssertionError):
                 assert_doubled(3065012)

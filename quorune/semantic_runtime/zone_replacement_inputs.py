@@ -6,6 +6,21 @@ from typing import Any, Mapping, Sequence
 
 from ..entry_counters import EffectEntryCounter
 from ..zone_trigger_events import ZoneTransitionKind
+from ..replacement_effects import AffectedObject, ReplaceableEvent
+from .zone_replacement_model import ZoneChangeReplacementSnapshot, ZoneChangeSubjectSnapshot
+
+
+def zone_change_subject_card(
+    host: Any,
+    object_id: str,
+    prospective_objects: Mapping[str, Any],
+    error_type: type[Exception],
+) -> Any:
+    """Resolve an existing or explicitly prospective immutable subject."""
+    card = prospective_objects.get(object_id) or host.state.cards.get(object_id)
+    if card is None:
+        raise error_type("Zone replacement snapshot references an unknown object")
+    return card
 
 
 def active_zone_replacement_sources(
@@ -158,8 +173,65 @@ def validated_zone_change_snapshot_inputs(
     )
 
 
+def zone_change_snapshot_event(
+    snapshot: ZoneChangeReplacementSnapshot,
+    subject: ZoneChangeSubjectSnapshot,
+) -> ReplaceableEvent:
+    return ReplaceableEvent(
+        event_id=(
+            f"zone.change:{snapshot.revision}:"
+            f"{snapshot.event_sequence + 1}:{subject.object_ref}"
+        ),
+        kind="zone.change",
+        affected_player=None,
+        affected_object=AffectedObject(
+            object_id=subject.object_id,
+            owner=subject.owner,
+            controller=(
+                subject.owner
+                if subject.is_commander
+                and subject.destination in {"hand", "library"}
+                else (
+                    subject.destination_controller
+                    if subject.destination == "battlefield"
+                    else subject.controller
+                )
+            ),
+        ),
+        payload={
+            "origin": subject.origin,
+            "destination": subject.destination,
+            "destination_controller": subject.destination_controller,
+            "object_kind": "card" if subject.is_card_object else "noncard",
+            "object_ref": subject.object_ref,
+            "object_types": list(subject.object_types),
+            "logical_object_id": subject.logical_object_id,
+            **({"prospective_subject": True} if subject.prospective_subject else {}),
+            "transition_kind": subject.transition_kind.value,
+            "owner": subject.owner,
+            **(
+                {"cast_option": subject.cast_option}
+                if subject.cast_option is not None
+                else {}
+            ),
+            "tapped": subject.requested_tapped,
+            "entry_life_payment": 0,
+            "read_ahead_chapter": None,
+            "opponent_count": subject.opponent_count,
+            "controller_basic_land_types": list(
+                subject.controller_basic_land_types
+            ),
+            "opponent_was_dealt_damage_this_turn": (
+                subject.opponent_was_dealt_damage_this_turn
+            ),
+        },
+    )
+
+
 __all__ = [
     "active_zone_replacement_sources",
     "prospective_destination_controller",
     "validated_zone_change_snapshot_inputs",
+    "zone_change_snapshot_event",
+    "zone_change_subject_card",
 ]

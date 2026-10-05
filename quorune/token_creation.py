@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import copy
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any, Iterable, Mapping, Protocol, Sequence
 
 from .aura import (
@@ -19,11 +19,9 @@ from .counter_placement import (
     commit_prepared_counter_placements,
     CounterPlacementError,
     PreparedCounterPlacements,
-    prepare_counter_placement_specs,
 )
 from .entry_counters import (
     EntryCounterError,
-    intrinsic_entry_counters,
     mark_intrinsic_entry_counters_initialized,
     validate_battle_entry_protector,
 )
@@ -32,7 +30,6 @@ from .replacement_effects import (
 )
 from .replacement.immutable import FrozenMap, thaw_value
 from .semantic_runtime import (
-    CounterPlacementEventSpec,
     TokenCreationReplacementContext,
     default_token_creation_replacement_registry,
     resolve_token_creation_replacements,
@@ -40,6 +37,12 @@ from .semantic_runtime import (
 from .trigger_processing import enqueue_trigger_batch
 from .standard_token_abilities import standard_token_characteristics
 from .zone_trigger_events import sealed_public_characteristic_facts
+from .semantic_runtime.zone_replacements import (
+    capture_zone_change_replacement_snapshot,
+    prepare_zone_change_replacement_snapshot,
+    log_applied_zone_replacements,
+)
+from .semantic_runtime.zone_replacement_model import PreparedZoneChange
 
 
 class TokenCreationError(ValueError):
@@ -81,6 +84,16 @@ class TokenCreationHost(Protocol):
     ) -> Mapping[str, Any]: ...
 
     def _copyable_characteristics(self, card: Any) -> Mapping[str, Any]: ...
+
+    def card_record(self, card: Any) -> Any: ...
+
+    def _effective_static_component_keys(
+        self,
+        card: Any,
+        *,
+        prospective_zone: str | None = None,
+        prospective_controller: str | None = None,
+    ) -> tuple[str, ...]: ...
 
     def _compiled_enchant_spec(
         self,
@@ -921,58 +934,60 @@ def _prepare_token_objects(
     return tuple(plans)
 
 
-def _token_entry_counter_specs(
+def _prepare_token_entry_counters(
     host: TokenCreationHost,
     controller: str,
     plans: Sequence[PreparedTokenObject],
-) -> tuple[CounterPlacementEventSpec, ...]:
-    specs: list[CounterPlacementEventSpec] = []
+    selections: Sequence[str | None | Mapping[str, Any]],
+) -> tuple[
+    tuple[PreparedTokenObject, ...],
+    PreparedCounterPlacements,
+    Mapping[str, PreparedZoneChange],
+]:
+    """Prepare the canonical entry tree without allocating live objects."""
+    if not plans:
+        return (), PreparedCounterPlacements((), (), ()), {}
+    objects: dict[str, CardInstance] = {}
+    characteristics: dict[str, Mapping[str, Any]] = {}
     for plan in plans:
         card = _card_from_token_plan(host, controller, plan)
-        try:
-            data = host._effective_card_data(
-                card,
-                printed_entry_characteristics=True,
-            )
-            card_types, subtypes, supertypes = host._type_parts(
-                str(data.get("type_line") or "")
-            )
-            counters = intrinsic_entry_counters(
-                data,
-                card_types=tuple(sorted(card_types)),
-                card_subtypes=tuple(sorted(subtypes)),
-                keywords=tuple(data.get("keywords") or ()),
-            )
-        except EntryCounterError as exc:
-            raise TokenCreationError(str(exc)) from exc
-        for index, counter in enumerate(counters):
-            if counter.amount == 0:
-                continue
-            specs.append(
-                CounterPlacementEventSpec(
-                    event_id=(
-                        f"token.entry-counter:{host.state.revision}:"
-                        f"{host.state.event_sequence + 1}:{plan.ref}:"
-                        f"{index}"
-                    ),
-                    subject_kind="permanent",
-                    subject_id=plan.object_id,
-                    owner=controller,
-                    controller=controller,
-                    target_zone="battlefield",
-                    target_types=tuple(
-                        sorted({*card_types, *subtypes, *supertypes})
-                    ),
-                    placing_player=controller,
-                    counter_name=counter.counter_name,
-                    amount=counter.amount,
-                    source_ref=f"rule:{counter.rule_id}:{plan.ref}",
-                    effect_generated=True,
-                    logical_object_id=card.logical_object_id,
-                    prospective_subject=True,
-                )
-            )
-    return tuple(specs)
+        characteristics[card.object_id] = host._effective_card_data(
+            card, printed_entry_characteristics=True,
+        )
+        card.zone = "outside"
+        objects[card.object_id] = card
+    snapshot = capture_zone_change_replacement_snapshot(
+        host,
+        tuple((key, "battlefield") for key in objects),
+        destination_controllers={key: controller for key in objects},
+        entry_characteristics=characteristics,
+        prospective_objects=objects,
+        requested_tapped={plan.object_id: plan.tapped for plan in plans},
+        error_type=TokenCreationError,
+    )
+    prepared = prepare_zone_change_replacement_snapshot(
+        snapshot, selections=selections, error_type=TokenCreationError,
+    )
+    if any(
+        entry.destination != "battlefield"
+        or entry.entry_life_payment
+        or entry.keyword_grants
+        or entry.read_ahead_chapter is not None
+        for entry in prepared.values()
+    ):
+        raise TokenCreationError(
+            "Token entry replacement requires an unrepresented noncounter result"
+        )
+    events = tuple(event for entry in prepared.values() for event in entry.counter_events)
+    counter_ids = {event.event_id for event in events}
+    journal = tuple(
+        selection for entry in prepared.values() for selection in entry.journal
+        if selection.event_id in counter_ids
+    )
+    entry_plans = tuple(
+        replace(plan, tapped=prepared[plan.object_id].entry_tapped) for plan in plans
+    )
+    return entry_plans, PreparedCounterPlacements(events, snapshot.effects, journal), prepared
 
 
 def _commit_token_specs(
@@ -982,6 +997,7 @@ def _commit_token_specs(
     *,
     creation_timestamp: int,
     prepared_counters: PreparedCounterPlacements,
+    prepared_entries: Mapping[str, PreparedZoneChange] | None = None,
 ) -> tuple[list[str], list[dict[str, Any]]]:
     if plans:
         allocated_timestamp = host._next_zone_timestamp()
@@ -1028,6 +1044,11 @@ def _commit_token_specs(
             )
         for object_id in created:
             token = host.state.cards[object_id]
+            if prepared_entries is not None:
+                log_applied_zone_replacements(
+                    host, prepared_entries[object_id], token,
+                    requested_destination="battlefield", error_type=TokenCreationError,
+                )
             data = host._effective_card_data(
                 token,
                 printed_entry_characteristics=True,
@@ -1194,14 +1215,8 @@ def _commit_resolved_token_specs(
         creation_timestamp=creation_timestamp,
     )
     try:
-        prepared_counters = prepare_counter_placement_specs(
-            host,
-            _token_entry_counter_specs(host, controller, plans),
-            selections=resolved.remaining_selections,
-            batch_id=(
-                f"replacement:token.entry-counter:{host.state.revision}:"
-                f"{host.state.event_sequence + 1}"
-            ),
+        plans, prepared_counters, prepared_entries = _prepare_token_entry_counters(
+            host, controller, plans, resolved.remaining_selections,
         )
     except CounterPlacementError as exc:
         raise TokenCreationError(str(exc)) from exc
@@ -1211,6 +1226,7 @@ def _commit_resolved_token_specs(
         plans,
         creation_timestamp=creation_timestamp,
         prepared_counters=prepared_counters,
+        prepared_entries=prepared_entries,
     )
     from .token_copy_runtime import finish_copy_aftercare
     _record_and_dispatch_token_creation(

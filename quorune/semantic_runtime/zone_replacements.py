@@ -83,6 +83,8 @@ from .zone_replacement_inputs import (
     active_zone_replacement_sources,
     prospective_destination_controller,
     validated_zone_change_snapshot_inputs,
+    zone_change_snapshot_event as _snapshot_event,
+    zone_change_subject_card,
 )
 
 
@@ -737,15 +739,12 @@ def _zone_change_snapshot_subjects(
     entry_pay_life: Mapping[str, bool | None],
     transition_kinds: Mapping[str, ZoneTransitionKind],
     error_type: type[Exception],
+    prospective_objects: Mapping[str, Any],
 ) -> tuple[ZoneChangeSubjectSnapshot, ...]:
     subjects: list[ZoneChangeSubjectSnapshot] = []
     entry_metrics_by_controller: dict[str | None, Mapping[str, int]] = {}
     for object_id, destination in changes:
-        card = host.state.cards.get(object_id)
-        if card is None:
-            raise error_type(
-                "Zone replacement snapshot references an unknown object"
-            )
+        card = zone_change_subject_card(host, object_id, prospective_objects, error_type)
         try:
             characteristics = dict(
                 entry_characteristics.get(
@@ -774,6 +773,7 @@ def _zone_change_snapshot_subjects(
             subjects.append(
                 ZoneChangeSubjectSnapshot(
                     object_id=card.object_id,
+                    prospective_subject=card.object_id in prospective_objects,
                     object_ref=card.ref,
                     logical_object_id=card.logical_object_id,
                     owner=card.owner,
@@ -880,11 +880,13 @@ def _zone_change_snapshot_effects(
     host: ZoneReplacementHost,
     subjects: Sequence[ZoneChangeSubjectSnapshot],
     active_sources: Sequence[Any],
+    prospective_objects: Mapping[str, Any],
 ) -> tuple[ReplacementEffect, ...]:
     ambient_effects = collect_zone_change_replacement_effects(
         host,
         sources=active_sources, source_zones={source.object_id: "battlefield" for source in active_sources},
     )
+    subject_cards = {**host.state.cards, **prospective_objects}
     intrinsic_effects = tuple(
         effect
         for subject in subjects
@@ -906,7 +908,7 @@ def _zone_change_snapshot_effects(
     self_entry_effects: list[ReplacementEffect] = []
     subject_effects: list[ReplacementEffect] = []
     for subject in subjects:
-        card = host.state.cards.get(subject.object_id)
+        card = prospective_objects.get(subject.object_id) or host.state.cards.get(subject.object_id)
         if card is None:
             raise ZoneReplacementError(
                 "Affected zone-replacement source disappeared during snapshot"
@@ -987,9 +989,9 @@ def _zone_change_snapshot_effects(
         sorted(
             (
                 *ambient_effects,
-                *flashed_back_subject_replacements(host.state.cards, (subject.object_id for subject in subjects)),
+                *flashed_back_subject_replacements(subject_cards, (subject.object_id for subject in subjects)),
                 *fixed_cast_lifecycle_subject_replacements(
-                    host.state.cards,
+                    subject_cards,
                     tuple(subject.object_id for subject in subjects),
                 ),
                 *intrinsic_effects,
@@ -1022,6 +1024,7 @@ def capture_zone_change_replacement_snapshot(
     sources: Sequence[Any] | None = None,
     source_zones: Mapping[str, str] | None = None,
     error_type: type[Exception] = ZoneReplacementError,
+    prospective_objects: Mapping[str, Any] | None = None,
 ) -> ZoneChangeReplacementSnapshot:
     """Capture every represented source and affected object before mutation."""
 
@@ -1048,6 +1051,19 @@ def capture_zone_change_replacement_snapshot(
     )
     frozen_amounts = dict(self_entry_counter_amounts or {})
     supplied_ids = {object_id for object_id, _destination in supplied}
+    prospective = dict(prospective_objects or {})
+    if set(prospective) - supplied_ids or any(
+        key in host.state.cards
+        or card.object_id != key
+        or card.zone != "outside"
+        or card.is_token is not True
+        or card.owner not in host.active_seats
+        or card.controller not in host.active_seats
+        for key, card in prospective.items()
+    ):
+        raise error_type(
+            "Prospective entry objects must be new outside-zone tokens bound to this batch"
+        )
     if any(
         object_id not in supplied_ids
         or not isinstance(amounts, Mapping)
@@ -1075,6 +1091,7 @@ def capture_zone_change_replacement_snapshot(
         entry_pay_life=life_choices,
         transition_kinds=kinds,
         error_type=error_type,
+        prospective_objects=prospective,
     )
     active_sources = active_zone_replacement_sources(
         host,
@@ -1089,65 +1106,13 @@ def capture_zone_change_replacement_snapshot(
             source_refs=tuple(source.ref for source in active_sources),
             subjects=subjects,
             effects=_zone_change_snapshot_effects(
-                host, subjects, active_sources
+                host, subjects, active_sources, prospective
             ),
         )
     except (SemanticNodeError, ZoneReplacementError) as exc:
         raise error_type(str(exc)) from exc
 
 
-def _snapshot_event(
-    snapshot: ZoneChangeReplacementSnapshot,
-    subject: ZoneChangeSubjectSnapshot,
-) -> ReplaceableEvent:
-    return ReplaceableEvent(
-        event_id=(
-            f"zone.change:{snapshot.revision}:"
-            f"{snapshot.event_sequence + 1}:{subject.object_ref}"
-        ),
-        kind="zone.change",
-        affected_player=None,
-        affected_object=AffectedObject(
-            object_id=subject.object_id,
-            owner=subject.owner,
-            controller=(
-                subject.owner
-                if subject.is_commander
-                and subject.destination in {"hand", "library"}
-                else (
-                    subject.destination_controller
-                    if subject.destination == "battlefield"
-                    else subject.controller
-                )
-            ),
-        ),
-        payload={
-            "origin": subject.origin,
-            "destination": subject.destination,
-            "destination_controller": subject.destination_controller,
-            "object_kind": "card" if subject.is_card_object else "noncard",
-            "object_ref": subject.object_ref,
-            "object_types": list(subject.object_types),
-            "logical_object_id": subject.logical_object_id,
-            "transition_kind": subject.transition_kind.value,
-            "owner": subject.owner,
-            **(
-                {"cast_option": subject.cast_option}
-                if subject.cast_option is not None
-                else {}
-            ),
-            "tapped": subject.requested_tapped,
-            "entry_life_payment": 0,
-            "read_ahead_chapter": None,
-            "opponent_count": subject.opponent_count,
-            "controller_basic_land_types": list(
-                subject.controller_basic_land_types
-            ),
-            "opponent_was_dealt_damage_this_turn": (
-                subject.opponent_was_dealt_damage_this_turn
-            ),
-        },
-    )
 
 
 def _prepared_from_event(

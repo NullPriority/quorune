@@ -270,7 +270,11 @@ class TokenEntryActionReproductions(unittest.TestCase):
             decision = session.state.pending_decision
             if decision.kind != "replacement.order":
                 break
-            kind = decision.continuation["replacement_batch"]["events"][0]["kind"]
+            root_event = decision.continuation["replacement_batch"]["events"][0]
+            kind = root_event["kind"]
+            if kind == "zone.change":
+                self.assertTrue(root_event["payload"]["prospective_subject"])
+                self.assertTrue(any(child["kind"] == "counter.place" for child in root_event["children"]))
             kinds.append(kind)
             self.assertFalse(any(c.is_token for c in session.state.cards.values()))
             self.assertFalse([e for e in session.state.turn_history.events if e.kind == "permanent_entered"])
@@ -293,7 +297,7 @@ class TokenEntryActionReproductions(unittest.TestCase):
             accepted = restored.act("pilot:A", {"action_id": "choose", "replacement": selected})
             self.assertTrue(accepted.ok, accepted.summary)
             session = restored
-        self.assertEqual(["token.create", "counter.place"], kinds)
+        self.assertEqual(["token.create", "zone.change"], kinds)
         self.finish(session)
         tokens = [c for c in session.state.cards.values() if c.is_token and c.zone == "battlefield"]
         self.assertEqual(3, len(tokens))
@@ -390,8 +394,7 @@ class TokenEntryHistoryOwnerTests(unittest.TestCase):
             replacements = (
                 patch.object(owner, "_preflight_aura_token_specs", return_value=()),
                 patch.object(owner, "_prepare_token_objects", return_value=()),
-                patch.object(owner, "_token_entry_counter_specs", return_value=()),
-                patch.object(owner, "prepare_counter_placement_specs", return_value=object()),
+                patch.object(owner, "_prepare_token_entry_counters", return_value=((), object(), {})),
                 patch.object(owner, "_commit_token_specs", return_value=(["created"], [])),
                 patch.object(owner, "_record_and_dispatch_token_creation", side_effect=lambda *a, **k: calls.append("entry")),
                 patch.object(token_copy_runtime, "finish_copy_aftercare", side_effect=lambda *a, **k: calls.append("aftercare")),
@@ -404,7 +407,7 @@ class TokenEntryHistoryOwnerTests(unittest.TestCase):
                 # the same isolated collaborators as the production function.
                 if resolve is not original:
                     for name in ("_preflight_aura_token_specs", "_prepare_token_objects",
-                                 "_token_entry_counter_specs", "prepare_counter_placement_specs",
+                                 "_prepare_token_entry_counters",
                                  "_commit_token_specs", "_record_and_dispatch_token_creation"):
                         namespace[name] = getattr(owner, name)
                 resolve(host, "A", resolved=owner.ResolvedTokenSpecs((), (), ()),
