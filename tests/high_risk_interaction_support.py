@@ -506,17 +506,17 @@ _WITNESSES = {
         "2",
     ),
     "heartless-pillage": _Witness(
-        "Heartless Pillage",
+        "Generic Unsupported Conditional Discard Fixture",
         "Sorcery",
         "Target opponent discards two cards.\n"
-        "Raid — If you attacked this turn, create a Treasure token.",
+        "If you control a creature of the chosen type, create a Treasure token.",
         "{2}{B}",
     ),
     "madness-conditional-choice": _Witness(
         "Generic Madness Conditional Choice Fixture",
         "Sorcery",
         "Target opponent discards two cards.\n"
-        "Raid — If you attacked this turn, create a Treasure token.\n"
+        "If you control a creature of the chosen type, create a Treasure token.\n"
         "Madness {B}",
         "{2}{B}",
         ("Madness",),

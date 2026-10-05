@@ -203,9 +203,9 @@ class FixedMillCompilerTests(unittest.TestCase):
         base = self.db.lookup("Fixed Target Mill")
         variants = (
             (
-                "conditional",
+                "unsupported-condition",
                 "Target player mills five cards.\n"
-                "If you control an artifact, draw a card.",
+                "If you control a creature of the chosen type, draw a card.",
             ),
             (
                 "multiple-targets",
@@ -252,6 +252,22 @@ class FixedMillCompilerTests(unittest.TestCase):
                 )
                 self.assertTrue(program.residuals)
                 self.assertFalse(program.abilities)
+
+
+    def test_promoted_mill_conditional_pair_is_capability_closed(self):
+        record = replace(self.db.lookup("Fixed Target Mill"),
+            oracle_id="fixture:promoted-mill-public-condition",
+            oracle_text="Target player mills five cards.\nIf you control an artifact, draw a card.")
+        ir = compile_oracle_card(record, capability_registry=self.capabilities,
+                                 capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        program = compile_best_available_card_program(self.db, record,
+            semantic_registry=SemanticRegistry(), capability_registry=self.capabilities,
+            capability_profile="commander_review")
+        self.assertEqual("capability_closed", program.trust_closure["trust_basis"])
+        self.assertFalse(program.residuals)
+        operations = [effect["op"] for ability in program.abilities for effect in ability.effects]
+        self.assertEqual(["mill", "apply_if_public_condition"], operations)
 
 
 class FixedMillRuntimeTests(unittest.TestCase):

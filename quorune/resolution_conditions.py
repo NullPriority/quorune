@@ -28,7 +28,7 @@ def _contains_derived_result_value(value: Any) -> bool:
     if isinstance(value, str):
         return value == "$source" or value.startswith("$source.")
     if isinstance(value, Mapping):
-        return value.get("kind") in _DERIVED_VALUE_KINDS or any(
+        return value.get("op") == "delayed_trigger" or value.get("kind") in _DERIVED_VALUE_KINDS or any(
             _contains_derived_result_value(child) for child in value.values()
         )
     if isinstance(value, (list, tuple)):
@@ -103,6 +103,8 @@ def validate_resolution_condition_instruction(
             raise ValueError("Resolution condition component mechanics are malformed")
     if not effect["mechanic_ids"]:
         raise ValueError("Resolution condition result mechanics must be present")
+    if "fixed-next-turn-upkeep-draw" in (*effect["mechanic_ids"], *effect["prefix_mechanic_ids"]):
+        raise ValueError("Delayed draw remains outside conditional programs")
     condition = FixedPublicStateConditionSpec.from_dict(effect["condition"])
     if not resolution_condition_is_closed(condition):
         raise ValueError("Object-relative resolution conditions are unsupported")

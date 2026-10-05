@@ -47,6 +47,8 @@ def resolution_condition_template(
             continue
         if not resolution_result_is_fixed(conditional[1], conditional[3]):
             continue
+        if "fixed-next-turn-upkeep-draw" in (*mandatory[3], *conditional[3]):
+            continue
         schemas = [schema for _, _, schema, _ in (mandatory, conditional) if schema is not None]
         # Independent targets in both branches need a different binding owner.
         if len(schemas) > 1 or len(mandatory[1]) + len(conditional[1]) > 8:

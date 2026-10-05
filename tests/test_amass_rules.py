@@ -179,7 +179,7 @@ class AmassCompilerTests(unittest.TestCase):
                 "Amass 2.",
                 "Amass Modified creatures 2.",
                 "Amass Orcs 1 twice.",
-                "If you control an Army, amass Orcs 2.",
+                "If you control a creature of the chosen type, amass Orcs 2.",
             ),
             start=10,
         ):
@@ -192,6 +192,16 @@ class AmassCompilerTests(unittest.TestCase):
                 )
                 self.assertNotEqual("exact", ir.status)
                 self.assertTrue(ir.material_residuals)
+
+    def test_fixed_public_condition_amass_is_positive_integration(self):
+        text = "If you control an Army, amass Orcs 2."
+        self.assertIsNone(fixed_amass_effect_template(text))
+        ir = compile_oracle_card(amass_record(text, suffix=31),
+            capability_registry=self.capabilities, capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        effect = ir.faces[0].nodes[0].effects[0]
+        self.assertEqual("apply_if_public_condition", effect["op"])
+        self.assertEqual("amass", effect["effects"][0]["op"])
 
     def test_amass_dependencies_shapes_and_compiler_mutation_fail_closed(self):
         valid = ({"op": "amass", "subtype": "Orc", "amount": 2},)

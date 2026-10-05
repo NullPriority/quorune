@@ -117,7 +117,7 @@ class FixedSourceCharacteristicCompilerTests(unittest.TestCase):
             "Target creature becomes a copy of another creature until end of turn.",
             "Target land becomes a 2/2 creature with banding until end of turn. It's still a land.",
             "Target land becomes a 2/2 creature until end of turn. It can't be blocked this turn.",
-            "Target creature has base power and toughness 2/2 until end of turn, then draw a card.",
+            "Target creature has base power and toughness 2/2 until end of turn, then draw the chosen number of cards.",
             "Target creature becomes a blue Robot with base power and toughness 2/2 in addition to its other colors and types until end of turn.",
             "Target land becomes a 2/2 mystery creature until end of turn. It's still a land.",
         )
@@ -126,6 +126,18 @@ class FixedSourceCharacteristicCompilerTests(unittest.TestCase):
                 compiled=self.compile(text,type_line='Instant')
                 self.assertNotEqual('exact',compiled.status)
                 self.assertTrue(compiled.material_residuals)
+
+    def test_base_setting_draw_composition_is_a_positive_integration_witness(self):
+        text = "Target creature has base power and toughness 2/2 until end of turn, then draw a card."
+        compiled = self.compile(text, type_line="Instant")
+        self.assertEqual("exact", compiled.status, compiled.material_residuals)
+        node = compiled.faces[0].nodes[0]
+        self.assertEqual(2, len(node.effects))
+        spec, _ = fixed_resolution_characteristic_instruction(node.effects[0])
+        self.assertEqual((2, 2), (spec.base_power, spec.base_toughness))
+        self.assertEqual("draw", node.effects[1]["op"])
+        self.assertIn(SOURCE_CAPABILITY, node.capability_dependencies)
+        self.assertEqual(text, compiled.faces[0].oracle_text[node.span.start:node.span.end])
 
     def test_fixed_animation_versioned_schema_rejects_nonboolean_and_open_fields(self):
         compiled=self.compile('Target land becomes a 2/2 creature until end of turn. It\'s still a land.',type_line='Instant')

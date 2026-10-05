@@ -35,6 +35,8 @@ class ResolutionPublicConditionCompilerTests(unittest.TestCase):
             "If you control an artifact, you gain life equal to this creature's power.",
             "If you control an artifact, draw a card for each creature you control.",
             "If you control an artifact, this creature gets +1/+1 until end of turn.",
+            "If you control an artifact, draw a card at the beginning of the next turn's upkeep.",
+            "Draw a card at the beginning of the next turn's upkeep. If you control an artifact, draw a card.",
         )
         for text in examples:
             with self.subTest(text=text):

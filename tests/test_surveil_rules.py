@@ -580,8 +580,8 @@ class FixedSurveilRuntimeTests(unittest.TestCase):
     def test_residual_surveil_pairs_remain_fail_closed_at_cardprogram_boundary(self):
         variants = (
             (
-                "conditional",
-                "Surveil 2.\nIf you control an artifact, draw a card.",
+                "unsupported-condition",
+                "Surveil 2.\nIf you control a creature of the chosen type, draw a card.",
             ),
             (
                 "multiple-targets",
@@ -636,6 +636,22 @@ class FixedSurveilRuntimeTests(unittest.TestCase):
                         for ability in program.abilities
                     )
                 )
+
+    def test_promoted_surveil_conditional_pair_is_capability_closed(self):
+        record = replace(base_surveil_record(),
+            oracle_id="fixture:promoted-surveil-public-condition",
+            name="Promoted Surveil Public Condition",
+            oracle_text="Surveil 2.\nIf you control an artifact, draw a card.")
+        ir = compile_oracle_card(record, capability_registry=self.capabilities,
+                                 capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        program = compile_best_available_card_program(self.db, record,
+            semantic_registry=SemanticRegistry(), capability_registry=self.capabilities,
+            capability_profile="commander_review")
+        self.assertEqual("capability_closed", program.trust_closure["trust_basis"])
+        self.assertFalse(program.residuals)
+        operations = [effect["op"] for ability in program.abilities for effect in ability.effects]
+        self.assertEqual(["surveil", "apply_if_public_condition"], operations)
 
     def test_surveil_runtime_validation_mutant_is_killed(self):
         def stale_rejection(seed: int) -> None:
