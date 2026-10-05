@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 181,
+  "registry_version": 182,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -5751,6 +5751,33 @@
       "implementation_mutation_rationale": "The focused semantic tap-state mutation test kills an aggregate sink that omits eligible creatures or bypasses individual untap behavior.",
       "blockers": ["Complete effective-characteristic dependencies and untap replacement ordering are not yet represented in ambient match closure."],
       "status": "tested"
+    },
+    {
+      "id": "resolution.effect.public_condition",
+      "version": 1,
+      "official_rules": ["109.5", "608.2b", "608.2c", "608.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Evaluate one represented controller-bound public condition at its printed resolution instruction and resume its closed nontargeted result through the ordinary semantic continuation.",
+        "inputs": ["one complete source-spanned conditional result", "an optional independently typed mandatory prefix", "the resolving spell or ability controller", "current canonical public-state facts", "independently capability-closed child effects"],
+        "outputs": ["printed-order condition evaluation", "a skipped or selected typed result", "ordinary replacement and private-choice suspension", "exact replay"],
+        "exclusions": ["instead or linked-result conditions", "object-relative source or attachment conditions", "targeted conditional results", "nested, alternative, or repeated conditional programs", "unrepresented child effects or unavailable public queries"]
+      },
+      "dependencies": ["continuous.characteristics.fixed_public_state"],
+      "implementation_components": ["quorune.resolution_conditions.validate_resolution_condition_instruction", "quorune.compiler.resolution_condition_templates.resolution_condition_template", "quorune.rules.resolution_condition_shapes.resolution_condition_node_capabilities", "quorune.semantic_choices.resolution_condition.PublicResolutionConditionHandler"],
+      "positive_tests": ["test_condition_keeps_printed_order_and_child_capability_shapes", "test_trusted_prefix_changes_condition_before_private_result_and_replay"],
+      "negative_tests": ["test_conditional_exclusions_are_fully_consumed", "test_handler_binds_controller_and_rejects_unavailable_facts"],
+      "interaction_tests": ["test_trusted_death_prefix_updates_history_before_condition_and_replays", "test_trusted_prefix_changes_condition_before_private_result_and_replay"],
+      "multiplayer_tests": ["test_trusted_prefix_changes_condition_before_private_result_and_replay"],
+      "privacy_tests": ["test_trusted_prefix_changes_condition_before_private_result_and_replay"],
+      "replay_tests": ["test_trusted_prefix_changes_condition_before_private_result_and_replay", "test_trusted_death_prefix_updates_history_before_condition_and_replays"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Both child programs must independently close their complete mechanics and target schema; unavailable public facts and object-relative conditions are rejected instead of treated as false or zero.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "The focused prefix witness contrasts the correct post-prefix condition with a forced false evaluator, which omits the independently expected private draw.",
+      "blockers": [],
+      "status": "trusted"
     },
     {
       "id": "resolution.effect_program.closed_components",

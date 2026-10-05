@@ -403,6 +403,7 @@ def _activated_effect_dependency_gate(
                 "fixed-controller-effect-sequence",
                 "fixed-counter-controller-effect-sequence",
                 "fixed-effect-clause-sequence",
+                "fixed-resolution-public-condition",
                 "closed-effect-program", "fixed-target-hand-inspection", "temporary-target-interaction", "linked-exile-return",
             }.intersection(mechanics)
         )

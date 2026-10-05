@@ -4605,6 +4605,22 @@
           "measurement_probe_id": "temporary-target-interaction-closure-existing-owner-v1"
         },
         {
+          "bundle_id": "bundle:controller-program-composition",
+          "member_family_ids": ["effect_clause:create-token", "effect_clause:draw", "effect_clause:ordered-effect-composition", "effect_clause:return", "target_or_choice:conditional-effect"],
+          "canonical_owner_ids": ["capability:resolution.effect.public_condition", "component:quorune.compiler.effect_template_composition.reviewed_effect_template_composition", "component:quorune.compiler.resolution_condition_templates.resolution_condition_template", "component:quorune.rules.fixed_effect_clause_shapes.closed_effect_component_capabilities", "component:quorune.semantic_choices.resolution_condition.PublicResolutionConditionHandler"],
+          "source_contexts": ["activated", "spell", "triggered"],
+          "normalized_literal_parameters": ["closed-public-condition", "existing-typed-components", "printed-order", "resolving-controller"],
+          "shared_dependencies": ["continuous.characteristics.fixed_public_state", "target.revalidate_resolution"],
+          "shared_grammar": "closed controller programs composing existing typed leaves and one nontargeted public conditional result at its printed instruction boundary",
+          "estimated_implementation_hours": 4,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Shared typed result composition across spell, activated and triggered carriers; full original-source CardProgram closure is measured from the current frontier.",
+          "explicit_exclusions": ["instead, linked-result, nested and alternative conditions", "modal conditional programs", "source- or attachment-relative conditions", "targeted conditional results and unsupported leaf effects"],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "controller-program-composition-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:bound-effect-program-closure",
           "member_family_ids": [
             "activated_effect:unparsed-target-creature-gains",
@@ -4811,14 +4827,14 @@
       ]
     },
     "semantic_transition_declaration": {
-        "transition_id": "oracle-ir-v256-history-dependent-token-entry",
-        "compiler_version": "oracle-ir-v256",
-      "bundle_id": null,
-      "candidate_ids": [],
-      "family_ids": [],
-      "capability_ids": [],
-        "non_harvest_reason": "Seal token entry characteristics after complete committed group history and before post-entry grants, preserving existing occurrence, characteristic, replacement, trigger, and replay owners without grammar expansion.",
-      "expected_complete_card_gain": null
+      "transition_id": "oracle-ir-v257-controller-program-composition",
+      "compiler_version": "oracle-ir-v257",
+      "bundle_id": "bundle:controller-program-composition",
+      "candidate_ids": ["bundle:controller-program-composition"],
+      "family_ids": ["effect_clause:create-token", "effect_clause:draw", "effect_clause:ordered-effect-composition", "effect_clause:return", "target_or_choice:conditional-effect"],
+      "capability_ids": ["effect.choice.optional_fixed", "resolution.effect.public_condition", "resolution.effect_program.closed_components", "resolution.effect_sequence.fixed_clauses"],
+      "non_harvest_reason": null,
+      "measurement_id": "measurement:controller-program-composition"
     },
     "forecast_corrections": [
       {

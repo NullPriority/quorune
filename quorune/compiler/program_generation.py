@@ -1344,6 +1344,9 @@ def _is_closed_effect_program(program: SemanticProgram) -> bool:
     """Return whether a reviewed capability-shaped effect owns execution."""
 
     from ..rules.linked_exile_return_shapes import linked_exile_return_node_capabilities
+    from ..rules.resolution_condition_shapes import resolution_condition_node_capabilities
+    if _node_capabilities_close_program(program, resolution_condition_node_capabilities):
+        return True
     if _node_capabilities_close_program(program, linked_exile_return_node_capabilities):
         return True
     if is_closed_composed_spell_effect_program(

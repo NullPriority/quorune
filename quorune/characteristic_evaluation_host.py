@@ -88,6 +88,8 @@ class CharacteristicEvaluationHostMixin:
         self,
         source: CardInstance,
         condition: FixedPublicStateConditionSpec,
+        *,
+        require_available: bool = False,
     ) -> bool:
         return fixed_public_state_condition_matches(
             self.state,
@@ -102,6 +104,7 @@ class CharacteristicEvaluationHostMixin:
                 self,
                 _enforce_static_component_applicability=True,
             ),
+            require_available=require_available,
         )
 
     def _apply_layered_characteristic_annotations(

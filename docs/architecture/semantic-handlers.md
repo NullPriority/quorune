@@ -57,6 +57,14 @@ chooser identity, extra fields, and nested optional wrappers. Specialized
 optional choices such as fixed counter placement retain their historical
 operation and replay identity rather than being rewritten through this owner.
 
+The public resolution-condition handler receives one immutable result from the
+canonical public-state query at the current instruction boundary. A known false
+condition skips its result; an unavailable fact rejects instead of becoming
+false. A known true condition prepends the unchanged typed result to the normal
+continuation, so private choices and replacements resume after the committed
+prefix without rerunning it or rechecking the condition at arbitrary later
+state. It creates no decision, mutation owner, or independent query engine.
+
 The linked exile/return coordinator delegates both simultaneous movements to
 the existing zone owner. Exile commits and records only resulting exiled card
 incarnations on the resolving stack item. Return or delayed-trigger creation

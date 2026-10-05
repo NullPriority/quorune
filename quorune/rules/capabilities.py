@@ -13,6 +13,11 @@ from ..class_levels import (
     CLASS_MECHANIC_ID,
 )
 from .component_resolution import implementation_component_resolves
+from .effect_shape_walkers import (
+    contains_aftermath_kind as _contains_aftermath_kind,
+    contains_nested_key as _contains_nested_key,
+    nested_effect_operations as _nested_effect_operations,
+)
 from .attachment_action_capability_shapes import (
     attachment_action_covered_mechanics,
     fixed_attachment_action_node_capabilities,
@@ -1172,42 +1177,6 @@ def _fixed_modal_capability_dependencies(
     return tuple(sorted(dependencies))
 
 
-def _nested_effect_operations(value: Any) -> set[str]:
-    found: set[str] = set()
-    if isinstance(value, Mapping):
-        operation = value.get("op")
-        if isinstance(operation, str) and operation:
-            found.add(operation)
-        for child in value.values():
-            found.update(_nested_effect_operations(child))
-    elif isinstance(value, (list, tuple)):
-        for child in value:
-            found.update(_nested_effect_operations(child))
-    return found
-
-
-def _contains_aftermath_kind(value: Any, kind: str) -> bool:
-    if isinstance(value, Mapping):
-        if value.get("kind") == kind:
-            return True
-        return any(
-            _contains_aftermath_kind(child, kind) for child in value.values()
-        )
-    if isinstance(value, (list, tuple)):
-        return any(_contains_aftermath_kind(child, kind) for child in value)
-    return False
-
-
-def _contains_nested_key(value: Any, key: str) -> bool:
-    if isinstance(value, Mapping):
-        return key in value or any(
-            _contains_nested_key(child, key) for child in value.values()
-        )
-    if isinstance(value, (list, tuple)):
-        return any(_contains_nested_key(child, key) for child in value)
-    return False
-
-
 def capability_dependencies_for_node(
     *,
     effects: Sequence[Mapping[str, Any]],
@@ -1224,6 +1193,13 @@ def capability_dependencies_for_node(
 
     mechanic_values = tuple(str(value).casefold() for value in mechanic_ids)
     mechanics = set(mechanic_values)
+    from ..resolution_conditions import RESOLUTION_CONDITION_MECHANIC, RESOLUTION_CONDITION_OPERATION
+    if RESOLUTION_CONDITION_MECHANIC in mechanics or RESOLUTION_CONDITION_OPERATION in _nested_effect_operations(effects):
+        from .resolution_condition_shapes import resolution_condition_node_capabilities
+        return resolution_condition_node_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanics,
+            cost_schema=cost_schema,
+        )
     if mechanics.intersection(
         {
             FIXED_CHOOSE_ONE_MODAL_MECHANIC,
@@ -1446,6 +1422,9 @@ def capability_covered_mechanics(
         for mechanic, required in MECHANIC_CAPABILITY_DEPENDENCIES.items()
         if set(required).issubset(supplied)
     }
+    from ..resolution_conditions import RESOLUTION_CONDITION_CAPABILITY, RESOLUTION_CONDITION_MECHANIC
+    if RESOLUTION_CONDITION_CAPABILITY in supplied:
+        covered.add(RESOLUTION_CONDITION_MECHANIC)
     if "continuous.characteristics.changeling" in supplied:
         covered.add("changeling")
     if supplied.intersection({"target.public.player_or_damageable_permanent", "target.revalidate_resolution"}):
