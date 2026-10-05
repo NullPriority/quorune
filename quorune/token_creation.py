@@ -1081,12 +1081,11 @@ def _record_and_dispatch_token_creation(
         changed_objects=created,
         changed_players=[controller],
     )
-    trigger_batch: list[Any] = []
+    entry_contexts: list[dict[str, Any]] = []
     for object_id in created:
         card = host.state.cards[object_id]
         data = host._effective_card_data(card)
         characteristic_facts = sealed_public_characteristic_facts(data)
-        types = set(characteristic_facts["types"])
         context = {
             "card": card.ref,
             "card_object_identity": card.logical_object_id,
@@ -1101,20 +1100,26 @@ def _record_and_dispatch_token_creation(
             "tapped": card.tapped,
             _REASON_FIELD: reason,
         }
-        host._dispatch_semantic_event(
-            "token.created", context, trigger_batch=trigger_batch
-        )
+        entry_contexts.append(context)
+    for context in entry_contexts:
         host._record_turn_history(
             "permanent_entered",
             actor=controller,
-            object_incarnation=card.logical_object_id,
-            types=tuple(sorted(types)),
+            object_incarnation=context["card_object_identity"],
+            types=tuple(context["types"]),
+        )
+    # One committed creation instruction is simultaneous. Every occurrence
+    # observes its complete history, but retains its own sealed entry facts.
+    trigger_batch: list[Any] = []
+    for context in entry_contexts:
+        host._dispatch_semantic_event(
+            "token.created", context, trigger_batch=trigger_batch
         )
         host._dispatch_semantic_event(
             "permanent.enter", context, trigger_batch=trigger_batch
         )
         for card_type in ("artifact", "creature", "land", "enchantment"):
-            if card_type in types:
+            if card_type in context["types"]:
                 host._dispatch_semantic_event(
                     f"{card_type}.enter",
                     context,
@@ -1208,7 +1213,6 @@ def _commit_resolved_token_specs(
         prepared_counters=prepared_counters,
     )
     from .token_copy_runtime import finish_copy_aftercare
-    finish_copy_aftercare(host, controller, created)
     _record_and_dispatch_token_creation(
         host,
         controller,
@@ -1219,6 +1223,9 @@ def _commit_resolved_token_specs(
         replacement_journal=resolved.journal,
         reason=reason,
     )
+    # A separate subsequent grant is not an entry modification. Discovery
+    # remains deferred; this does not introduce priority or an SBA checkpoint.
+    finish_copy_aftercare(host, controller, created)
     return [host.state.cards[object_id].ref for object_id in created]
 
 

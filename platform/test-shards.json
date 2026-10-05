@@ -146,6 +146,7 @@
       "test_scry_rules",
       "test_spell_history_transformations",
       "test_token_creation_replacements",
+      "test_token_entry_boundaries",
       "test_typed_untap_step_participation"
     ],
     "functional-05": [

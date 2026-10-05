@@ -11,6 +11,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Make simultaneous token entry history complete before trigger discovery and
+  preserve entry-time characteristics before separately instructed keyword
+  grants, through the existing token and deferred trigger owners.
+
 - Preserve copied target counts and original retained incarnations through the
   shared target validator, including partial illegal-target retention, explicit
   current-object selection, pending-choice recovery, and exact replay.
