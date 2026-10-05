@@ -72,6 +72,34 @@ emits `same_owner: true` only for such a group, preserving the existing schema
 for all other targets. This represents cards chosen from a single graveyard;
 it does not expose hidden zones or create a general relational-target grammar.
 
+## Copied target decisions
+
+Copied spells and abilities retain their selected modes and original target
+count in each group. `selection/copy_targets.py` binds those decisions to the
+captured original target groups and identity snapshots. Storm and generic copy
+choices then use the same structural validator in
+`selection/target_validation.py`, and genuinely changed targets still use the
+ordinary current target predicate and copied spell or ability controller.
+
+A retained-index selection keeps the original target incarnation even when it
+is no longer legal or has left its expected zone. An explicit current-reference
+selection chooses the currently represented object and must be legal. The
+client exposes these as separate per-slot options, including when a physical
+card has left and reentered under the same public reference. A retained target
+never receives the new incarnation's snapshot. Legacy default-reference arrays
+remain readable as original-target retention; grouped current-reference
+selections distinguish new targets. Ordinary casting and unrelated retargeting
+receive no copy retention exemption.
+
+The current representation fails closed before copy commitment if one
+assignment would require different incarnations sharing the same public
+reference, or if a changed relational assignment requires unavailable current
+controller facts for a retained nonplayer target. These are explicit
+composition limits, not successful approximations. Current-version replay,
+descriptor readability and historical execution remain separate claims; old
+records require matching execution provenance and are rejected when that
+provenance is incompatible.
+
 ## Typed protection boundary
 
 The protection snapshot accepts already-derived current facts:

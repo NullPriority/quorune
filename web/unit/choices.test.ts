@@ -15,6 +15,60 @@ function form(fields: ChoiceForm["fields"]): ChoiceForm {
   return { v: 1, fields, submit_label: "Submit" };
 }
 
+test("copied target slots distinguish retained identities and current objects", () => {
+  const choicesForm = form([{
+    name: "copy_targets", label: "Copy targets", control: "copy_targets",
+    copy_count: 1, may_retain_each_default: true,
+    copies: [{default_targets: ["OLD", "OTHER"], default_target_groups: {target: ["OLD", "OTHER"]},
+      target_schema: {groups: [{id: "target", min: 2, max: 2, legal_refs: ["OLD", "NEW"]}]}}],
+  }]);
+  const initial = initialChoices(choicesForm);
+  assert.deepEqual(initial.copy_targets, [[{retain: 0}, {retain: 1}]]);
+  assert.deepEqual(validateChoices(choicesForm, initial), []);
+  initial.copy_targets = [[{retain: 0}, {group: "target", ref: "NEW"}]];
+  assert.deepEqual(validateChoices(choicesForm, initial), []);
+  initial.copy_targets = [[{group: "target", ref: "OLD"}, {retain: 1}]];
+  assert.deepEqual(validateChoices(choicesForm, initial), []);
+  initial.copy_targets = [[{retain: true}, {retain: 1}]];
+  assert.match(validateChoices(choicesForm, initial)[0], /invalid retained/);
+  initial.copy_targets = [[{retain: 0}, {group: "target", ref: "HIDDEN"}]];
+  assert.match(validateChoices(choicesForm, initial)[0], /legal new target/);
+  initial.copy_targets = [[{retain: 0}]];
+  assert.match(validateChoices(choicesForm, initial)[0], /original target count/);
+});
+
+test("copied target slots retain departed defaults in their original groups", () => {
+  const choicesForm = form([{
+    name: "targets", label: "Targets", control: "copy_targets", single_copy: true,
+    copy_count: 1, may_retain_each_default: true,
+    copies: [{default_targets: ["DEPARTED", "PRESENT"], default_target_groups: {source: ["DEPARTED"], recipient: ["PRESENT"]},
+      target_schema: {groups: [
+        {id: "source", min: 1, max: 1, legal_refs: []},
+        {id: "recipient", min: 1, max: 1, legal_refs: ["NEW"]},
+      ]}}],
+  }]);
+  const initial = initialChoices(choicesForm);
+  assert.deepEqual(initial.targets, [{retain: 0}, {retain: 1}]);
+  assert.deepEqual(validateChoices(choicesForm, initial), []);
+  initial.targets = [{retain: 1}, {retain: 0}];
+  assert.match(validateChoices(choicesForm, initial)[0], /invalid retained/);
+  initial.targets = [{retain: 0}, {group: "recipient", ref: "NEW"}];
+  assert.deepEqual(validateChoices(choicesForm, initial), []);
+});
+
+test("copied target slots keep a selected zero-target count", () => {
+  const choicesForm = form([{
+    name: "copy_targets", label: "Copy targets", control: "copy_targets", copy_count: 1,
+    may_retain_each_default: true, copies: [{default_targets: [],
+      target_schema: {groups: [{id: "target", min: 0, max: 0, legal_refs: ["AVAILABLE"]}]}}],
+  }]);
+  const initial = initialChoices(choicesForm);
+  assert.deepEqual(initial.copy_targets, [[]]);
+  assert.deepEqual(validateChoices(choicesForm, initial), []);
+  initial.copy_targets = [[{group: "target", ref: "AVAILABLE"}]];
+  assert.match(validateChoices(choicesForm, initial)[0], /original target count/);
+});
+
 test("fixed optional costs permit decline or complete payment, not the intervening range", () => {
   const payment = form([{
     name: "cards", label: "Cards", control: "refs", required: false,

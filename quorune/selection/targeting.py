@@ -35,6 +35,7 @@ from .target_query import (
     target_identity_matches_snapshot,
     target_snapshot,
 )
+from .target_validation import CopyTargetValidation, validate_grouped_target_assignment
 
 
 TARGET_OPERATION_ID = "selection.target.semantic.v1"
@@ -788,6 +789,7 @@ class TargetSelectionOwnerMixin:
         modes: Sequence[str] = (),
         source_ref: str | None = None,
         target_schema: Mapping[str, Any] | None = None,
+        copy_targets: CopyTargetValidation | None = None,
     ) -> tuple[list[str], dict[str, list[str]]]:
         schema = (
             target_schema
@@ -816,85 +818,17 @@ class TargetSelectionOwnerMixin:
                 selected_modes,
                 require_modes=bool(available_modes(schema)),
             )
+            if copy_targets is not None:
+                plan = copy_targets.fixed_plan(plan)
             candidates = self._target_candidate_map(
                 controller,
                 plan,
                 source_ref=source_ref,
             )
             grouped = self._group_target_submission(plan, targets)
-            used_global: set[str] = set()
-            for group in plan.groups:
-                chosen = grouped[group.group_id]
-                if not (
-                    group.min_targets
-                    <= len(chosen)
-                    <= group.max_targets
-                ):
-                    raise GameRuleError(
-                        f"Target group {group.group_id} requires between "
-                        f"{group.min_targets} and {group.max_targets} target(s)"
-                    )
-                if (
-                    group.distinct
-                    and not group.allow_reuse
-                    and len(set(chosen)) != len(chosen)
-                ):
-                    raise GameRuleError(
-                        f"Target group {group.group_id} requires distinct targets"
-                    )
-                legal = set(candidates[group.group_id])
-                if any(ref not in legal for ref in chosen):
-                    raise GameRuleError(
-                        "Selected target is not legal for this target group"
-                    )
-                if group.same_owner and chosen:
-                    owners = [
-                        self._target_snapshot(ref).get("owner")
-                        for ref in chosen
-                    ]
-                    if any(
-                        type(owner) is not str or not owner
-                        for owner in owners
-                    ) or len(set(owners)) != 1:
-                        raise GameRuleError(
-                            "Selected targets must have the same owner"
-                        )
-                if any(
-                    ref in grouped.get(other, ())
-                    for other in group.different_from_groups
-                    for ref in chosen
-                ):
-                    raise GameRuleError(
-                        "Selected targets violate a different-target restriction"
-                    )
-                if plan.globally_distinct and any(
-                    ref in used_global for ref in chosen
-                ):
-                    raise GameRuleError(
-                        "Target groups require globally distinct targets"
-                    )
-                used_global.update(chosen)
-            for left_group, right_group in plan.same_player_groups:
-                left = grouped.get(left_group, [])
-                right = grouped.get(right_group, [])
-                if not left or not right:
-                    raise GameRuleError(
-                        "Related target groups must both contain a target"
-                    )
-                if any(
-                    self._target_snapshot(left_ref).get("controller")
-                    != self._target_snapshot(right_ref).get("controller")
-                    for left_ref in left
-                    for right_ref in right
-                ):
-                    raise GameRuleError(
-                        "Related targets must belong to the same player"
-                    )
-            flattened = [
-                ref
-                for group in plan.groups
-                for ref in grouped[group.group_id]
-            ]
+            flattened = validate_grouped_target_assignment(
+                self, plan, grouped, candidates, copy_targets=copy_targets,
+            )
             return flattened, grouped
         except (GameRuleError, ValueError) as exc:
             self._increment_optimization(

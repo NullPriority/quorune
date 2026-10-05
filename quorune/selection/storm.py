@@ -11,6 +11,7 @@ from ..model import StackItem
 from ..replacement.immutable import FrozenMap, thaw_value
 from ..spell_copy_engine_adapter import dispatch_normalized_spell_copy_event
 from ..storm import STORM_SEMANTIC_KEY, validated_storm_trigger
+from .copy_targets import copy_target_public_schema, prepare_copy_targets
 from .model import (
     SelectionContinuation,
     SelectionContract,
@@ -89,22 +90,19 @@ class StormTargetChoiceOwnerMixin:
             copies = self._build_storm_copies(context)
             self._commit_storm_copies(context, copies)
             return
-        public_schema = (
-            self._public_target_schema(
-                item.controller,
-                target_schema,
-                source_ref=item.ref,
-            )
-            if isinstance(target_schema, Mapping)
-            else None
+        public_schema = copy_target_public_schema(
+            self, item.controller, target_schema, list(template.get("modes") or []),
+            list(template.get("targets") or []), dict(template.get("target_groups") or {}),
+            item.ref,
         )
         copies = [
             {
                 "copy_index": index,
-                "default_targets": copy.deepcopy(
+                    "default_targets": copy.deepcopy(
                     template.get("targets") or []
                 ),
-                "modes": copy.deepcopy(template.get("modes") or []),
+                    "modes": copy.deepcopy(template.get("modes") or []),
+                    "default_target_groups": copy.deepcopy(template.get("target_groups") or {}),
                 "target_schema": copy.deepcopy(public_schema),
             }
             for index in range(count)
@@ -130,6 +128,7 @@ class StormTargetChoiceOwnerMixin:
                                 "field": "copy_targets",
                                 "copy_count": count,
                                 "may_keep_default": True,
+                                "may_retain_each_default": True,
                             },
                         }
                     ],
@@ -250,35 +249,15 @@ class StormTargetChoiceOwnerMixin:
         target_schema = template.get("target_schema")
         copies: list[StackItem] = []
         for raw_targets in submitted:
-            normalized = self._normalize_target_submission(raw_targets)
-            selected = (
-                [str(value) for value in normalized]
-                if all(
-                    not isinstance(value, Mapping)
-                    for value in normalized
-                )
-                else []
+            assignment = prepare_copy_targets(
+                self, actor=seat, schema=target_schema,
+                modes=list(template.get("modes") or []), source_ref=trigger.ref,
+                original_targets=list(template.get("targets") or []),
+                original_groups=dict(template.get("target_groups") or {}),
+                original_snapshots=dict(template.get("target_snapshots") or {}),
+                submitted=raw_targets,
             )
-            defaults = [
-                str(value) for value in template.get("targets") or []
-            ]
-            if selected == defaults:
-                grouped = copy.deepcopy(
-                    dict(template.get("target_groups") or {})
-                )
-            else:
-                selected, grouped = self._validate_semantic_targets(
-                    seat,
-                    program,
-                    normalized,
-                    modes=list(template.get("modes") or []),
-                    source_ref=trigger.ref,
-                    target_schema=(
-                        target_schema
-                        if isinstance(target_schema, Mapping)
-                        else None
-                    ),
-                )
+            selected, grouped = list(assignment.targets), thaw_value(assignment.groups)
             copy_ref = self._next_ref("S")
             copies.append(
                 StackItem(
@@ -300,11 +279,7 @@ class StormTargetChoiceOwnerMixin:
                     ),
                     context={
                         "target_groups": grouped,
-                        "target_snapshots": {
-                            ref: self._target_snapshot(ref)
-                            for ref in selected
-                            if ref is not None
-                        },
+                        "target_snapshots": thaw_value(assignment.snapshots),
                         "targets_revalidated": False,
                     },
                 )

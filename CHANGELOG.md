@@ -11,6 +11,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Preserve copied target counts and original retained incarnations through the
+  shared target validator, including partial illegal-target retention, explicit
+  current-object selection, pending-choice recovery, and exact replay.
+
 - Preserve a newer indefinite control instruction when an older temporary
   control effect expires, including the same-controller case, through the
   existing control and cleanup owners.

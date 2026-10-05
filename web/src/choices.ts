@@ -59,9 +59,10 @@ function initialField(field: ChoiceField): JsonValue | undefined {
     };
   }
   if (control === "copy_targets") {
-    return list(field.copies).map((copy) =>
-      structuredClone(record(copy).default_targets ?? []),
-    );
+    const copies = list(field.copies).map((copy) => field.may_retain_each_default
+      ? copyTargetSlots(record(copy)).map((slot) => ({ retain: slot.index }))
+      : structuredClone(record(copy).default_targets ?? []));
+    return field.single_copy ? copies[0] ?? [] : copies;
   }
   if (control === "damage_assignments") {
     const sources = record(record(field.combat).damage_sources);
@@ -209,6 +210,57 @@ export function copyTargetGroups(copy: ChoiceField): ChoiceField[] {
   return list(schema.groups).map((group) => record(group));
 }
 
+export interface CopyTargetSlot {
+  index: number;
+  original: string;
+  group: ChoiceField;
+}
+
+export function copyTargetSlots(copy: ChoiceField): CopyTargetSlot[] {
+  const groups = copyTargetGroups(copy);
+  const defaults = list(copy.default_targets).map(String);
+  const grouped = record(copy.default_target_groups);
+  const result: CopyTargetSlot[] = [];
+  let offset = 0;
+  for (const group of groups) {
+    const id = stringValue(group.id || "target");
+    const refs = Object.hasOwn(grouped, id) ? list(grouped[id]).map(String)
+      : groups.length === 1 ? defaults
+      : defaults.slice(offset, offset + Number(group.min ?? 0));
+    refs.forEach((original) => result.push({ index: result.length, original, group }));
+    offset += refs.length;
+  }
+  return result;
+}
+
+function copiedSlotErrors(copy: ChoiceField, submitted: JsonValue | undefined, copyIndex: number): string[] {
+  const slots = copyTargetSlots(copy);
+  const selected = list(submitted);
+  const errors: string[] = [];
+  if (!Array.isArray(submitted) || selected.length !== slots.length) {
+    return [`Copy ${copyIndex + 1} must retain its original target count.`];
+  }
+  slots.forEach((slot, position) => {
+    const choice = record(selected[position]);
+    if (Object.hasOwn(choice, "retain")) {
+      const retained = slots[Number(choice.retain)];
+      if (!Number.isInteger(choice.retain) || !retained
+          || retained.group.id !== slot.group.id || Object.keys(choice).length !== 1) {
+        errors.push(`Copy ${copyIndex + 1} has an invalid retained target.`);
+      }
+      return;
+    }
+    const raw = selected[position];
+    if (typeof raw === "string" && raw === slot.original) return;
+    const ref = typeof raw === "string" ? raw : choice.ref;
+    if (typeof ref !== "string" || !list(slot.group.legal_refs).includes(ref)
+        || (choice.group !== undefined && choice.group !== slot.group.id)) {
+      errors.push(`Copy ${copyIndex + 1} requires a legal new target.`);
+    }
+  });
+  return errors;
+}
+
 function refsForCopyGroup(
   rawTargets: JsonValue | undefined,
   group: ChoiceField,
@@ -346,11 +398,15 @@ function fieldErrors(field: ChoiceField, values: ChoiceValues): string[] {
     }
   } else if (control === "copy_targets") {
     const copies = list(field.copies).map(record);
-    const submitted = list(value);
+    const submitted = field.single_copy ? [value] : list(value);
     if (submitted.length !== Number(field.copy_count ?? copies.length)) {
       errors.push(`${label} requires one target selection per copy.`);
     }
     copies.forEach((copy, index) => {
+      if (field.may_retain_each_default) {
+        errors.push(...copiedSlotErrors(copy, submitted[index], index));
+        return;
+      }
       const groups = copyTargetGroups(copy);
       groups.forEach((group) => {
         const count = refsForCopyGroup(submitted[index], group, groups.length).length;

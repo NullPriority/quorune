@@ -163,6 +163,7 @@ from .zone_transitions import ZoneTransitionOwner
 from .turn_priority_owner import TurnPriorityDecisionOwner
 from .turn_step_owner import TURN_STEPS, TurnStepOwner
 from .selection.targeting import TargetSelectionOwnerMixin
+from .selection import copy_targets as copy_target_selection
 from .selection.searching import HiddenSearchOwnerMixin
 from .selection.apnap import ApnapChoiceOwnerMixin
 from .selection.storm import STORM_SEMANTIC_KEY, StormTargetChoiceOwnerMixin
@@ -3869,6 +3870,7 @@ class CommanderEngine(
         targets: Sequence[str],
         target_groups: Mapping[str, Sequence[str]],
         reason: str,
+        target_snapshots: Mapping[str, Any] | None = None,
     ) -> StackItem:
         """Create an independent stack copy without copying paid costs."""
 
@@ -3929,27 +3931,12 @@ class CommanderEngine(
             default_destination=target.default_destination,
             visibility=list(self.seats),
             referred_object_ids=list(target.referred_object_ids),
-            context={
-                **copy.deepcopy(dict(target.context)),
-                "target_groups": {
-                    str(key): [str(value) for value in values]
-                    for key, values in target_groups.items()
-                },
-                "target_snapshots": {
-                    str(value): self._target_snapshot(str(value))
-                    for value in targets
-                },
-                "targets_revalidated": False,
-                "targets_chosen_at_creation": True,
-                "copied_from_stack": target.ref,
-                "copy_permanent_spell": permanent_spell,
-                "copy_permanent_name": str(
-                    original_data.get("name") or target.label
-                ),
-                "copy_permanent_characteristics": copy.deepcopy(
-                    original_data
-                ),
-            },
+            context=copy_target_selection.stack_copy_context(
+                target, target_groups,
+                target_snapshots if target_snapshots is not None
+                else {str(value): self._target_snapshot(str(value)) for value in targets},
+                permanent_spell=permanent_spell, characteristics=original_data,
+            ),
         )
         self.state.stack.append(copied)
         copy_events.dispatch_normalized_spell_copy_event(self, copied, target.ref)
