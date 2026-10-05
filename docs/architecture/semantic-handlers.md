@@ -156,6 +156,16 @@ exceptions become copiable values, while separately granted Haste uses the
 existing incarnation-pinned continuous-effect owner with its stated duration.
 Independent next-end-step cleanup records actual created incarnations and uses
 one filtered simultaneous sacrifice or exile through the zone transaction.
+The token owner seals entry facts for the actual replacement-adjusted group,
+records every member's entry history, and only then discovers creation and entry
+triggers. Copy exceptions, intrinsic entry modifications and applicable static
+effects contribute to entry facts; a separately instructed keyword grant does
+not retroactively change those facts. Subsequent grants run after discovery
+without priority or a state-based checkpoint, and trigger placement remains
+deferred through the existing APNAP batch owner. Independent creation
+instructions remain sequential, including zero actual creations. Printed
+Haste-qualified entry observers remain residual; event-data diagnostics do not
+expand that grammar.
 Copied recurring abilities remain ordinary typed granted triggers. Populate
 chooses only a currently controlled creature token, including the known-empty
 case, through the existing choice and token owners. Historical descriptor

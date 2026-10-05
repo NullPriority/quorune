@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "constructed_generic_cards",
+  "source": "Generic token entry sequencing regressions",
+  "rulings": [],
+  "cards": [
+    {
+      "oracle_id": "25400000-0000-4000-8000-000000000001",
+      "name": "Generic Entry Two Copies",
+      "mana_cost": "{W}", "cmc": 1, "type_line": "Instant",
+      "oracle_text": "Create two tokens that are copies of target creature you control.",
+      "colors": ["W"], "color_identity": ["W"], "keywords": [],
+      "layout": "normal", "released_at": "2026-01-01", "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "25400000-0000-4000-8000-000000000002",
+      "name": "Generic Entry One Copy",
+      "mana_cost": "{W}", "cmc": 1, "type_line": "Instant",
+      "oracle_text": "Create a token that's a copy of target creature you control.",
+      "colors": ["W"], "color_identity": ["W"], "keywords": [],
+      "layout": "normal", "released_at": "2026-01-01", "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "25400000-0000-4000-8000-000000000003",
+      "name": "Generic Entry Copy Exception",
+      "mana_cost": "{W}", "cmc": 1, "type_line": "Instant",
+      "oracle_text": "Create a token that's a copy of target creature you control, except it has haste.",
+      "colors": ["W"], "color_identity": ["W"], "keywords": [],
+      "layout": "normal", "released_at": "2026-01-01", "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "25400000-0000-4000-8000-000000000004",
+      "name": "Generic Entry Subsequent Haste",
+      "mana_cost": "{W}", "cmc": 1, "type_line": "Instant",
+      "oracle_text": "Create a token that's a copy of target creature you control. It gains haste until end of turn.",
+      "colors": ["W"], "color_identity": ["W"], "keywords": [],
+      "layout": "normal", "released_at": "2026-01-01", "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "25400000-0000-4000-8000-000000000005",
+      "name": "Generic Entry Haste Static",
+      "mana_cost": "{W}", "cmc": 1, "type_line": "Enchantment",
+      "oracle_text": "Creatures you control have haste.",
+      "colors": ["W"], "color_identity": ["W"], "keywords": [],
+      "layout": "normal", "released_at": "2026-01-01", "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "25400000-0000-4000-8000-000000000006",
+      "name": "Generic Entry Map Bonus",
+      "mana_cost": "{W}", "cmc": 1, "type_line": "Enchantment",
+      "oracle_text": "If one or more tokens would be created under your control, those tokens plus an additional Map token are created instead.",
+      "colors": ["W"], "color_identity": ["W"], "keywords": [],
+      "layout": "normal", "released_at": "2026-01-01", "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "25400000-0000-4000-8000-000000000007",
+      "name": "Generic Entry Food Bonus",
+      "mana_cost": "{W}", "cmc": 1, "type_line": "Enchantment",
+      "oracle_text": "If one or more tokens would be created under your control, those tokens plus an additional Food token are created instead.",
+      "colors": ["W"], "color_identity": ["W"], "keywords": [],
+      "layout": "normal", "released_at": "2026-01-01", "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "25400000-0000-4000-8000-000000000009",
+      "name": "Generic Entry Counter Double",
+      "mana_cost": "{W}", "cmc": 1, "type_line": "Enchantment",
+      "oracle_text": "If an effect would put one or more counters on a permanent you control, it puts twice that many of those counters on that permanent instead.",
+      "colors": ["W"], "color_identity": ["W"], "keywords": [],
+      "layout": "normal", "released_at": "2026-01-01", "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "25400000-0000-4000-8000-000000000010",
+      "name": "Generic Entry Counter Add",
+      "mana_cost": "{W}", "cmc": 1, "type_line": "Enchantment",
+      "oracle_text": "If you would put one or more counters on a permanent you control, put that many plus one of each of those kinds of counters on that permanent instead.",
+      "colors": ["W"], "color_identity": ["W"], "keywords": [],
+      "layout": "normal", "released_at": "2026-01-01", "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "25400000-0000-4000-8000-000000000011",
+      "name": "Generic Entry Counter Walker",
+      "mana_cost": "{W}", "cmc": 1, "type_line": "Creature Planeswalker — Wizard",
+      "oracle_text": "Vigilance",
+      "power": "2", "toughness": "2", "loyalty": "4",
+      "colors": ["W"], "color_identity": ["W"], "keywords": ["Vigilance"],
+      "layout": "normal", "released_at": "2026-01-01", "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "25400000-0000-4000-8000-000000000012",
+      "name": "Generic Entry Vigilance Creature",
+      "mana_cost": "{W}", "cmc": 1, "type_line": "Creature — Wizard",
+      "oracle_text": "Vigilance", "power": "2", "toughness": "2",
+      "colors": ["W"], "color_identity": ["W"], "keywords": ["Vigilance"],
+      "layout": "normal", "released_at": "2026-01-01", "legalities": {"commander": "legal"}
+    }
+  ]
+}

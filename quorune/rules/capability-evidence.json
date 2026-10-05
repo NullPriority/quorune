@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "049b69d066fe75a2aa5f0cd83962210500b2a116dfd76f1a2781e0c144f90780",
-  "declaration_source_fingerprint": "24ff3bca681e2696fc1acfcc4f56ffb7d12bc404fb3ec7560812341f1531ee17",
+  "registry_fingerprint": "fc5d3e4ce45adf886a85ce94de3ff6b41a55eb33cf19e84f0c49d808a13c8db7",
+  "declaration_source_fingerprint": "34d49570385d28ee8dde8daf4d5ac17646c25b21912d70ec4f5250b51bcca280",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -62253,7 +62253,11 @@
         "111.2",
         "111.12",
         "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
         "608.2b",
+        "608.2c",
         "707.2",
         "707.9",
         "614.16",
@@ -62274,7 +62278,11 @@
         "111.2",
         "111.12",
         "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
         "608.2b",
+        "608.2c",
         "707.2",
         "707.9",
         "614.16",
@@ -62295,7 +62303,11 @@
         "111.2",
         "111.12",
         "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
         "608.2b",
+        "608.2c",
         "707.2",
         "707.9",
         "614.16",
@@ -62316,7 +62328,11 @@
         "111.2",
         "111.12",
         "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
         "608.2b",
+        "608.2c",
         "707.2",
         "707.9",
         "614.16",
@@ -62337,7 +62353,11 @@
         "111.2",
         "111.12",
         "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
         "608.2b",
+        "608.2c",
         "707.2",
         "707.9",
         "614.16",
@@ -62352,13 +62372,92 @@
     },
     {
       "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_creation_and_entry_counter_choices_resume_once_and_replay",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Creation and intrinsic loyalty-entry replacements suspend before commit and resume exactly once with a separately granted keyword."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_intrinsic_exception_and_static_haste_are_entry_facts",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual creation distinguishes intrinsic, copy-exception and battlefield-static Haste as legitimate entry facts."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_one_copy_and_sequential_creation_history_controls",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Separate actual creation instructions retain sequential thresholds and nonduplicate controller-bound history."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_copy_replacement_choice_preserves_creator_projection_rollback_and_checkpoint",
       "official_rule_ids": [
         "111.2",
         "111.12",
         "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
         "608.2b",
+        "608.2c",
         "707.2",
         "707.9",
         "614.16",
@@ -62379,7 +62478,11 @@
         "111.2",
         "111.12",
         "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
         "608.2b",
+        "608.2c",
         "707.2",
         "707.9",
         "614.16",
@@ -62394,13 +62497,42 @@
     },
     {
       "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_creation_and_entry_counter_choices_resume_once_and_replay",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A copied B-owned A-controlled source creates A-owned and A-controlled tokens; affected A selects both replacement stages."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_token_creation_effects.TokenCopyCopiableSubjectOwnerTests.test_copiable_subject_and_explicit_snapshot_kill_effective_type_mutation",
       "official_rule_ids": [
         "111.2",
         "111.12",
         "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
         "608.2b",
+        "608.2c",
         "707.2",
         "707.9",
         "614.16",
@@ -62421,7 +62553,11 @@
         "111.2",
         "111.12",
         "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
         "608.2b",
+        "608.2c",
         "707.2",
         "707.9",
         "614.16",
@@ -62442,7 +62578,11 @@
         "111.2",
         "111.12",
         "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
         "608.2b",
+        "608.2c",
         "707.2",
         "707.9",
         "614.16",
@@ -62457,13 +62597,67 @@
     },
     {
       "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_token_entry_boundaries.TokenEntryHistoryOwnerTests.test_incomplete_history_ordering_mutant_is_killed",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Isolated owner contract kills per-member history/discovery interleaving, including zero, singleton and reversed groups; not gameplay certification."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_token_entry_boundaries.TokenEntryHistoryOwnerTests.test_subsequent_aftercare_ordering_mutant_is_killed",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Isolated collaborator contract kills a separately instructed grant moved before entry discovery; not gameplay certification."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_actual_copy_does_not_inherit_temporary_artifact_replacement_and_replays",
       "official_rule_ids": [
         "111.2",
         "111.12",
         "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
         "608.2b",
+        "608.2c",
         "707.2",
         "707.9",
         "614.16",
@@ -62484,7 +62678,11 @@
         "111.2",
         "111.12",
         "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
         "608.2b",
+        "608.2c",
         "707.2",
         "707.9",
         "614.16",
@@ -62505,7 +62703,11 @@
         "111.2",
         "111.12",
         "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
         "608.2b",
+        "608.2c",
         "707.2",
         "707.9",
         "614.16",
@@ -62520,13 +62722,42 @@
     },
     {
       "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "negative",
+      "test_id": "tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_creation_and_entry_counter_choices_resume_once_and_replay",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unauthorized casting and malformed or unauthorized replacement selections leave authoritative hashes unchanged."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_actual_copy_of_nonartifact_animation_retains_artifact_replacement_and_replays",
       "official_rule_ids": [
         "111.2",
         "111.12",
         "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
         "608.2b",
+        "608.2c",
         "707.2",
         "707.9",
         "614.16",
@@ -62547,7 +62778,11 @@
         "111.2",
         "111.12",
         "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
         "608.2b",
+        "608.2c",
         "707.2",
         "707.9",
         "614.16",
@@ -62568,7 +62803,11 @@
         "111.2",
         "111.12",
         "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
         "608.2b",
+        "608.2c",
         "707.2",
         "707.9",
         "614.16",
@@ -62583,13 +62822,67 @@
     },
     {
       "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_simultaneous_copies_see_the_complete_entry_history",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual trusted cast discovers both copied entry identities, resolves both draws and one aggregated observer, and exactly replays from before casting."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_subsequent_haste_does_not_rewrite_entry_facts",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual trusted creation captures canonical entry occurrences before a separate Haste grant, retains its noncopiable duration and exactly replays."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_copy_replacement_choice_preserves_creator_projection_rollback_and_checkpoint",
       "official_rule_ids": [
         "111.2",
         "111.12",
         "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
         "608.2b",
+        "608.2c",
         "707.2",
         "707.9",
         "614.16",
@@ -62610,7 +62903,11 @@
         "111.2",
         "111.12",
         "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
         "608.2b",
+        "608.2c",
         "707.2",
         "707.9",
         "614.16",
@@ -62631,7 +62928,11 @@
         "111.2",
         "111.12",
         "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
         "608.2b",
+        "608.2c",
         "707.2",
         "707.9",
         "614.16",
@@ -62646,13 +62947,42 @@
     },
     {
       "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_creation_and_entry_counter_choices_resume_once_and_replay",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Only the affected seat sees replacement choices; malformed and unauthorized commands roll back without raw object or replacement data."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_token_creation_effects.TokenCopyCopiableBoundaryActionTests.test_copy_replacement_choice_preserves_creator_projection_rollback_and_checkpoint",
       "official_rule_ids": [
         "111.2",
         "111.12",
         "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
         "608.2b",
+        "608.2c",
         "707.2",
         "707.9",
         "614.16",
@@ -62673,7 +63003,11 @@
         "111.2",
         "111.12",
         "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
         "608.2b",
+        "608.2c",
         "707.2",
         "707.9",
         "614.16",
@@ -62694,7 +63028,11 @@
         "111.2",
         "111.12",
         "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
         "608.2b",
+        "608.2c",
         "707.2",
         "707.9",
         "614.16",
@@ -62708,6 +63046,56 @@
       "applicability_note": "Persist the target snapshot, copied token characteristics, and final authoritative state."
     },
     {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "replay",
+      "test_id": "tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_creation_and_entry_counter_choices_resume_once_and_replay",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Checkpoint/load at both actual replacement boundaries and exact pre-action replay preserve tokens, counters, grants and history without duplicates."
+    },
+    {
+      "capability_id": "token.creation.fixed_copy",
+      "evidence_class": "replay",
+      "test_id": "tests.test_token_entry_boundaries.TokenEntryActionReproductions.test_simultaneous_copies_see_the_complete_entry_history",
+      "official_rule_ids": [
+        "111.2",
+        "111.12",
+        "115.1a",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2b",
+        "608.2c",
+        "707.2",
+        "707.9",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exact commands from before the cast preserve all trigger identities, normal trigger ordering and full consequences."
+    },
+    {
       "capability_id": "token.creation.fixed_definition",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_token_creation_effects.FixedTokenCreationRuntimeTests.test_compiled_fixed_token_effect_replays_exactly",
@@ -62716,6 +63104,9 @@
         "111.3",
         "111.4",
         "111.10",
+        "603.4",
+        "603.6a",
+        "603.6d",
         "608.2c",
         "614.16",
         "616.1"
@@ -62736,6 +63127,9 @@
         "111.3",
         "111.4",
         "111.10",
+        "603.4",
+        "603.6a",
+        "603.6d",
         "608.2c",
         "614.16",
         "616.1"
@@ -62756,6 +63150,9 @@
         "111.3",
         "111.4",
         "111.10",
+        "603.4",
+        "603.6a",
+        "603.6d",
         "608.2c",
         "614.16",
         "616.1"
@@ -62776,6 +63173,9 @@
         "111.3",
         "111.4",
         "111.10",
+        "603.4",
+        "603.6a",
+        "603.6d",
         "608.2c",
         "614.16",
         "616.1"
@@ -62789,6 +63189,29 @@
     },
     {
       "capability_id": "token.creation.fixed_definition",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_token_entry_boundaries.TokenEntryHistoryOwnerTests.test_incomplete_history_ordering_mutant_is_killed",
+      "official_rule_ids": [
+        "111.2",
+        "111.3",
+        "111.4",
+        "111.10",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2c",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Isolated shared token-owner contract kills incomplete simultaneous history before discovery."
+    },
+    {
+      "capability_id": "token.creation.fixed_definition",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_token_creation_effects.FixedTokenCreationCompilerTests.test_fixed_token_capability_shape_rejects_malformed_effects",
       "official_rule_ids": [
@@ -62796,6 +63219,9 @@
         "111.3",
         "111.4",
         "111.10",
+        "603.4",
+        "603.6a",
+        "603.6d",
         "608.2c",
         "614.16",
         "616.1"
@@ -62816,6 +63242,9 @@
         "111.3",
         "111.4",
         "111.10",
+        "603.4",
+        "603.6a",
+        "603.6d",
         "608.2c",
         "614.16",
         "616.1"
@@ -62836,6 +63265,9 @@
         "111.3",
         "111.4",
         "111.10",
+        "603.4",
+        "603.6a",
+        "603.6d",
         "608.2c",
         "614.16",
         "616.1"
@@ -62856,6 +63288,9 @@
         "111.3",
         "111.4",
         "111.10",
+        "603.4",
+        "603.6a",
+        "603.6d",
         "608.2c",
         "614.16",
         "616.1"
@@ -62869,6 +63304,29 @@
     },
     {
       "capability_id": "token.creation.fixed_definition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_token_entry_boundaries.TokenEntryHistoryOwnerTests.test_zero_single_reversed_groups_have_complete_nonduplicate_history",
+      "official_rule_ids": [
+        "111.2",
+        "111.3",
+        "111.4",
+        "111.10",
+        "603.4",
+        "603.6a",
+        "603.6d",
+        "608.2c",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Isolated shared token-owner ordering covers zero, singleton and reversed groups without claiming zero-quantity grammar or gameplay certification."
+    },
+    {
+      "capability_id": "token.creation.fixed_definition",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_token_creation_effects.FixedTokenCreationRuntimeTests.test_compiled_fixed_token_effect_suspends_for_replacement_order",
       "official_rule_ids": [
@@ -62876,6 +63334,9 @@
         "111.3",
         "111.4",
         "111.10",
+        "603.4",
+        "603.6a",
+        "603.6d",
         "608.2c",
         "614.16",
         "616.1"
@@ -62896,6 +63357,9 @@
         "111.3",
         "111.4",
         "111.10",
+        "603.4",
+        "603.6a",
+        "603.6d",
         "608.2c",
         "614.16",
         "616.1"
@@ -62916,6 +63380,9 @@
         "111.3",
         "111.4",
         "111.10",
+        "603.4",
+        "603.6a",
+        "603.6d",
         "608.2c",
         "614.16",
         "616.1"
@@ -74882,5 +75349,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "bf3d4cf9ecdd5a0feb5241ae1ca121613904a1b55e9489c818154bb792e53c9f"
+  "fingerprint": "37222b2113cd99655caf82dc4e17cdc8e26b681a0150d32557611dd4bb444f80"
 }

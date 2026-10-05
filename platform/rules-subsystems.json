@@ -4811,13 +4811,13 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v253-copied-target-decision-boundary",
-      "compiler_version": "oracle-ir-v253",
+      "transition_id": "oracle-ir-v254-token-entry-event-boundary",
+      "compiler_version": "oracle-ir-v254",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
-      "non_harvest_reason": "Correct copied-target retention, original per-group cardinality, and incarnation pinning through the existing canonical targeting, Storm and generic-copy owners, without expanding printed card grammar or adding a parallel targeting or copy engine.",
+      "non_harvest_reason": "Correct complete simultaneous token-entry history and separately instructed post-entry grants through the existing token, history, trigger and continuous-effect owners, without expanding printed grammar or introducing another event or history registry.",
       "expected_complete_card_gain": null
     },
     "forecast_corrections": [
