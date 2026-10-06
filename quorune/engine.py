@@ -7399,13 +7399,14 @@ class CommanderEngine(
         if card.zone != "battlefield":
             raise GameRuleError("Only battlefield permanents have controllers")
         old = card.controller
-        self._remove_object_from_combat(
-            card,
-            reason="control changed",
-        )
-        self.state.players[old].zones["battlefield"].remove(object_id)
-        self.state.players[new_controller].zones["battlefield"].append(object_id)
-        card.controller = new_controller
+        if old != new_controller:
+            self._remove_object_from_combat(
+                card,
+                reason="control changed",
+            )
+            self.state.players[old].zones["battlefield"].remove(object_id)
+            self.state.players[new_controller].zones["battlefield"].append(object_id)
+            card.controller = new_controller
         control_history.record_control_change(self.state, card, self._next_zone_timestamp, previous_controller=old)
         self._log(None, "control.change", f"Control of {card.ref} changed {old} → {new_controller}.", {"object": card.ref, "from": old, "to": new_controller, "reason": reason}, importance=2, changed_objects=[object_id], changed_players=[old, new_controller])
 

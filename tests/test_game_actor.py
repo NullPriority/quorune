@@ -111,13 +111,17 @@ class GameActorTests(unittest.IsolatedAsyncioTestCase):
             await asyncio.wait_for(manager.close(), timeout=5)
 
     async def test_slow_persistence_keeps_progress_observable_before_ack(self):
+        # These are deadlock watchdogs, not a persistence performance budget.
+        # First-command preparation may exceed five seconds on a loaded
+        # cross-platform runner; the barriers still prove progress before ack.
+        watchdog_seconds = 30
         save_started = threading.Event()
         release_save = threading.Event()
 
         class SlowPersistence:
             def save(self, service):
                 save_started.set()
-                if not release_save.wait(timeout=5):
+                if not release_save.wait(timeout=watchdog_seconds):
                     raise TimeoutError("test did not release persistence")
                 return {
                     "authoritative_seconds": 0.25,
@@ -132,7 +136,7 @@ class GameActorTests(unittest.IsolatedAsyncioTestCase):
             actor.command("pilot:A", self.envelope(session))
         )
         try:
-            started = await asyncio.to_thread(save_started.wait, 5)
+            started = await asyncio.to_thread(save_started.wait, watchdog_seconds)
             self.assertTrue(started)
 
             # Persistence runs outside the event loop.  Public progress remains
@@ -147,7 +151,7 @@ class GameActorTests(unittest.IsolatedAsyncioTestCase):
             self.assertFalse(command.done())
 
             release_save.set()
-            receipt = await asyncio.wait_for(command, timeout=5)
+            receipt = await asyncio.wait_for(command, timeout=watchdog_seconds)
             self.assertTrue(receipt.ok)
             complete = actor.progress_snapshot()
             self.assertFalse(complete["persistence"]["pending"])
@@ -166,7 +170,7 @@ class GameActorTests(unittest.IsolatedAsyncioTestCase):
             )
         finally:
             release_save.set()
-            await asyncio.wait_for(manager.close(), timeout=5)
+            await asyncio.wait_for(manager.close(), timeout=watchdog_seconds)
 
     async def test_network_projection_cursors_are_connection_isolated(self):
         session, service = self.make_service(32005)
