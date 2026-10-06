@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Update the browser build dependency `source-map-js` to its patched release
+  for indexed source-map section offset validation.
+
 - Preserve combat relationships and control-acquisition history when a new
   control instruction names the current controller, while retaining obsolete
   temporary-restoration invalidation through the existing owners.
