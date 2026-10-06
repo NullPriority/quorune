@@ -159,7 +159,7 @@ class BolsterCompilerTests(unittest.TestCase):
                 "Bolster -1.",
                 "Target creature bolsters 1.",
                 "Bolster 1 twice.",
-                "If you control a Dragon, bolster 2.",
+                "If you control a creature of the chosen type, bolster 2.",
                 "Bolster 1, then bolster 1 again.",
             ),
             start=10,
@@ -173,6 +173,16 @@ class BolsterCompilerTests(unittest.TestCase):
                 )
                 self.assertNotEqual("exact", ir.status)
                 self.assertTrue(ir.material_residuals)
+
+    def test_fixed_public_condition_bolster_is_positive_integration(self):
+        text = "If you control a Dragon, bolster 2."
+        self.assertIsNone(fixed_bolster_effect_template(text))
+        ir = compile_oracle_card(bolster_record(text, suffix=31),
+            capability_registry=self.capabilities, capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        effect = ir.faces[0].nodes[0].effects[0]
+        self.assertEqual("apply_if_public_condition", effect["op"])
+        self.assertEqual("fixed_bolster", effect["effects"][0]["op"])
 
     def test_bolster_compiler_mutant_is_killed(self):
         record = bolster_record("Bolster 2.", suffix=30)

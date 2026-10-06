@@ -180,6 +180,25 @@ remains outside the choice. Modal, conditional, linked-result, pronoun,
 variable, repeated, independently targeted, unsupported optional, quoted-boundary,
 parenthetical-boundary, and larger sequences remain source-spanned residuals.
 
+`compiler/resolution_condition_templates.py` composes one fixed public-state
+conditional result with an optional mandatory typed prefix. It preserves each
+component's mechanics independently and checks the condition only when its
+printed instruction is reached. The shared public-query owner binds “you” to
+the resolving spell or ability controller, even when its source has left or
+changed controller. Only nontargeted results and independently closed prefixes
+are admitted. Bare subtype-presence conditions retain the battlefield permanent
+domain, including represented noncreature Kindred objects; an explicit creature
+noun retains its creature type restriction. Source-relative, attached-object,
+targeted-result, nested,
+alternative, linked-result and “instead” forms remain residual. Derived-quantity
+and source-relative result forms, plus delayed results, remain residual inside this wrapper until
+their conditional read timing is represented; their unconditional owners remain
+available. Existing typed
+leaf validators also participate in the common closed-component gate; no leaf
+grammar or mutation owner is duplicated.
+The mandatory delayed-draw leaf retains its separate temporal scope and is not
+lifted into optional or closed multi-result programs by this component gate.
+
 `compiler/fixed_homogeneous_target_sets.py` lifts an existing reviewed scalar
 destroy, exile, tap, untap, battlefield-return, own-graveyard-return, or public-
 graveyard-exile clause into one interchangeable public target set. The grammar

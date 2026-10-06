@@ -11,6 +11,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Compose represented controller-bound public conditions and existing typed
+  effect leaves through printed-order resolution, ordinary continuations,
+  private choices and exact replay.
+
 - Seal represented token-entry characteristics after complete group history,
   retaining subsequent-grant timing and canonical replacement/replay ownership.
 

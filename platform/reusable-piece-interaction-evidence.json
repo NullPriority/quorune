@@ -3310,7 +3310,7 @@
             "zone.change.destination_replacement"
         ],
         "interaction_order": 2,
-        "assertion": "The Heartless Pillage pair subtest compiles the fixed targeted discard through the canonical destination-replacement dependency while preserving the unresolved Raid condition, then proves the partial CardProgram is not runtime-admissible."
+        "assertion": "The generic unsupported-condition discard subtest compiles the fixed targeted discard through the canonical destination-replacement dependency while preserving an unresolved chosen-type condition, then proves the partial CardProgram is not runtime-admissible. Represented public Raid conditions are positive integration rather than residual witnesses."
     },
     {
         "evidence_class": "interaction",

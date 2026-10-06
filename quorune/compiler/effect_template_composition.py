@@ -16,6 +16,7 @@ from .fixed_effect_payment_templates import fixed_effect_payment_template,fixed_
 from .optional_payment_templates import fixed_optional_mana_payment_template
 from .counter_templates import targeted_controller_payment_template
 from .token_copy_templates import token_copy_recipe_template
+from .resolution_condition_templates import resolution_condition_template
 
 
 CompiledEffectTemplate = tuple[
@@ -84,12 +85,24 @@ def reviewed_effect_template_composition(
     cast_x_available: bool = False,
     forbid_public_x: bool = False,
     allow_declarations: bool = True,
+    allow_conditions: bool = True,
 ) -> CompiledEffectTemplate:
     """Compile one reviewed effect or a closed composition of those effects."""
 
     atomic = compile_atomic(text)
     if atomic[0] is not None:
         return atomic
+    if allow_conditions:
+        conditional = resolution_condition_template(
+            text, source_name=source_name,
+            compile_component=lambda body: reviewed_effect_template_composition(
+                body, source_name=source_name, compile_atomic=compile_atomic,
+                compile_fixed=compile_fixed, cast_x_available=cast_x_available,
+                forbid_public_x=forbid_public_x, allow_conditions=False,
+            ),
+        )
+        if conditional is not None:
+            return conditional
     query_amount = public_query_effect_amount_template(
         text, source_name=source_name, compile_fixed=compile_fixed,
     )

@@ -60,6 +60,16 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
             database=self.db,
         )
 
+    def test_public_condition_promotion_keeps_chosen_condition_boundaries(self):
+        assert_high_risk_boundary_pairs(
+            self,
+            (
+                ("capability.zone.change.destination_replacement", "residual.target_or_choice.conditional-effect"),
+                ("capability.zone.discard.typed_cause", "residual.target_or_choice.conditional-effect"),
+            ),
+            database=self.db,
+        )
+
     def test_blink_promotion_preserves_unsupported_predicate_boundaries(self):
         assert_high_risk_boundary_pairs(
             self,

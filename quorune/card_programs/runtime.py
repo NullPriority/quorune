@@ -12,6 +12,7 @@ from ..continuous_conditions import (
     FixedPublicStateFact,
     FixedPublicStateConditionSpec,
     FixedPublicStateConditionSnapshot,
+    FixedPublicStateConditionError,
 )
 from ..continuous_effects import Layer
 from ..characteristic_fragments import CharacteristicQuantitySpec
@@ -441,6 +442,7 @@ def fixed_public_state_condition_matches(
     *,
     public_object_resolver: Callable[[Any], ObjectQueryResult] | None,
     quantity_resolver: Callable[[Any, CharacteristicQuantitySpec], int] | None,
+    require_available: bool = False,
 ) -> bool:
     """Evaluate one shared public-state condition at its canonical boundary."""
 
@@ -449,7 +451,14 @@ def fixed_public_state_condition_matches(
         public_object_resolver=public_object_resolver,
         quantity_resolver=quantity_resolver,
     )
-    return condition.matches(resolver.snapshot(source, condition))
+    snapshot = resolver.snapshot(source, condition)
+    if require_available and condition.kind in {
+        FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST,
+        FixedPublicStateConditionKind.QUERY_COUNT_AT_MOST,
+        FixedPublicStateConditionKind.PUBLIC_FACT_AT_LEAST,
+    } and snapshot.condition_quantity is None:
+        raise FixedPublicStateConditionError("The public resolution condition is unavailable")
+    return condition.matches(snapshot)
 
 
 def _applicable_static_programs(

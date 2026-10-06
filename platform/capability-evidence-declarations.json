@@ -22913,6 +22913,78 @@
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay one ordinary destruction, one shield replacement, one Indestructible result, and their canonical simultaneous transition."
     },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_trusted_death_prefix_updates_history_before_condition_and_replays",
+      "official_rule_ids": ["109.2", "109.5", "608.2b", "608.2c", "608.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "A target-dependent mandatory destruction commits history before the later condition reads it."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_trusted_subtype_condition_counts_noncreature_kindred_and_replays",
+      "official_rule_ids": ["109.2", "109.5", "608.2b", "608.2c", "608.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "A bare subtype condition includes a represented noncreature Kindred permanent; explicit creature-qualified conditions retain their creature gate."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_trusted_prefix_changes_condition_before_private_result_and_replay",
+      "official_rule_ids": ["109.2", "109.5", "608.2b", "608.2c", "608.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "The accepted spell and public predicate belong to the casting controller in a four-seat session."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_trusted_prefix_changes_condition_before_private_result_and_replay",
+      "official_rule_ids": ["109.2", "109.5", "608.2b", "608.2c", "608.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "A forced false evaluator loses the expected post-prefix draw, killing the timing mutation."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionCompilerTests.test_derived_conditional_results_remain_residual_without_timing_proof",
+      "official_rule_ids": ["109.2", "109.5", "608.2b", "608.2c", "608.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Exclude derived conditional result reads until their instruction timing is proved, retaining the existing unconditional quantity owners."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionCompilerTests.test_handler_binds_controller_and_rejects_unavailable_facts",
+      "official_rule_ids": ["109.2", "109.5", "608.2b", "608.2c", "608.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Unavailable facts and incorrect resolving-controller bindings reject rather than authorize a guessed result."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_trusted_prefix_changes_condition_before_private_result_and_replay",
+      "official_rule_ids": ["109.2", "109.5", "608.2b", "608.2c", "608.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "A real offered cast changes the public condition before reaching its result instruction."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_trusted_prefix_changes_condition_before_private_result_and_replay",
+      "official_rule_ids": ["109.2", "109.5", "608.2b", "608.2c", "608.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Only the resolving controller sees the resulting drawn card; other seat projections remain private."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_trusted_prefix_changes_condition_before_private_result_and_replay",
+      "official_rule_ids": ["109.2", "109.5", "608.2b", "608.2c", "608.2h"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Replay begins before the real offered action and reproduces the prefix, conditional result and exact authoritative hash."
+    },
     {"capability_id":"resolution.effect_program.bound_references","evidence_class":"interaction","test_id":"tests.test_bound_effect_programs.BoundEffectProgramRuntimeTests.test_counter_choice_resumes_after_prior_effect_once","official_rule_ids":["115.1","115.3","400.7","608.2b","608.2c","608.2d","608.2h","609.3"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Commit a prior modifier, suspend at counter replacement ordering, then apply the counter and final untap without repeating prior work."},
     {"capability_id":"resolution.effect_program.bound_references","evidence_class":"interaction","test_id":"tests.test_bound_effect_programs.BoundEffectProgramRuntimeTests.test_target_revalidation_precedes_but_does_not_repeat_between_effects","official_rule_ids":["115.1","115.3","400.7","608.2b","608.2c","608.2d","608.2h","609.3"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Revalidate original target qualifiers before resolution, then retain the established reference after an earlier effect grants Shroud."},
     {"capability_id":"resolution.effect_program.bound_references","evidence_class":"interaction","test_id":"tests.test_bound_effect_programs.BoundEffectProgramRuntimeTests.test_trusted_player_subject_draw_loss_and_discard","official_rule_ids":["115.1","115.3","400.7","608.2b","608.2c","608.2d","608.2h","609.3"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"The targeted player draws or privately discards before that player's life changes; the casting controller remains distinct."},

@@ -115,6 +115,8 @@ class SemanticChoiceQuery(
 
     def opponent_cast_colors_this_turn(self, seat: str) -> tuple[str, ...]: ...
 
+    def resolution_condition_matches(self, condition: Mapping[str, Any]) -> bool: ...
+
     def draw_permission(self, seat: str) -> DrawPermission: ...
 
     def choice_candidate_refs(self) -> tuple[str, ...]: ...
@@ -154,6 +156,7 @@ class SnapshotSemanticChoiceQuery:
     materialized_damage_source_candidates: tuple[str, ...] | None = None
     materialized_token_creation_preview: tuple[FrozenMap, ...] = ()
     current_turn_sequence: int = 0
+    resolution_condition_facts: FrozenMap = field(default_factory=FrozenMap)
 
     def __post_init__(self) -> None:
         for field_name in (
@@ -167,6 +170,7 @@ class SnapshotSemanticChoiceQuery:
             "drawn_this_turn_by_seat",
             "opponent_cast_colors_by_seat",
             "draw_permissions_by_seat",
+            "resolution_condition_facts",
         ):
             value = getattr(self, field_name)
             if not isinstance(value, FrozenMap):
@@ -359,6 +363,14 @@ class SnapshotSemanticChoiceQuery:
 
     def token_creation_preview(self) -> tuple[Mapping[str, Any], ...]:
         return tuple(self.materialized_token_creation_preview)
+
+    def resolution_condition_matches(self, condition: Mapping[str, Any]) -> bool:
+        from ..util import stable_json
+
+        matched = self.resolution_condition_facts.get(stable_json(condition))
+        if type(matched) is not bool:
+            raise ValueError("Public resolution condition was not materialized")
+        return matched
 
     @property
     def damage_source_candidates_are_complete(self) -> bool:

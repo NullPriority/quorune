@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "4d59ad88885a6ad3f881f16d51b944b93f983149e0cd7d9783d8c4f1fbc6c9dc",
-  "declaration_source_fingerprint": "0be7d12d516858017fe200c222f6067ff94c18d7992d701882d73b0a5c0f7cd0",
+  "registry_fingerprint": "53998d7e01cac6e35197566e221a215755abe91fc501e923be6b671f95686402",
+  "declaration_source_fingerprint": "3402fee55ba82e4e7ded9d4c193cfc54deeaa853bcc230469b75f92449ea1a68",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -55507,6 +55507,168 @@
       "applicability_note": "Replay one ordinary destruction, one shield replacement, one Indestructible result, and their canonical simultaneous transition."
     },
     {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_trusted_death_prefix_updates_history_before_condition_and_replays",
+      "official_rule_ids": [
+        "109.2",
+        "109.5",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A target-dependent mandatory destruction commits history before the later condition reads it."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_trusted_subtype_condition_counts_noncreature_kindred_and_replays",
+      "official_rule_ids": [
+        "109.2",
+        "109.5",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A bare subtype condition includes a represented noncreature Kindred permanent; explicit creature-qualified conditions retain their creature gate."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_trusted_prefix_changes_condition_before_private_result_and_replay",
+      "official_rule_ids": [
+        "109.2",
+        "109.5",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The accepted spell and public predicate belong to the casting controller in a four-seat session."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_trusted_prefix_changes_condition_before_private_result_and_replay",
+      "official_rule_ids": [
+        "109.2",
+        "109.5",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A forced false evaluator loses the expected post-prefix draw, killing the timing mutation."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionCompilerTests.test_derived_conditional_results_remain_residual_without_timing_proof",
+      "official_rule_ids": [
+        "109.2",
+        "109.5",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exclude derived conditional result reads until their instruction timing is proved, retaining the existing unconditional quantity owners."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "negative",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionCompilerTests.test_handler_binds_controller_and_rejects_unavailable_facts",
+      "official_rule_ids": [
+        "109.2",
+        "109.5",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unavailable facts and incorrect resolving-controller bindings reject rather than authorize a guessed result."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_trusted_prefix_changes_condition_before_private_result_and_replay",
+      "official_rule_ids": [
+        "109.2",
+        "109.5",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A real offered cast changes the public condition before reaching its result instruction."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_trusted_prefix_changes_condition_before_private_result_and_replay",
+      "official_rule_ids": [
+        "109.2",
+        "109.5",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Only the resolving controller sees the resulting drawn card; other seat projections remain private."
+    },
+    {
+      "capability_id": "resolution.effect.public_condition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_trusted_prefix_changes_condition_before_private_result_and_replay",
+      "official_rule_ids": [
+        "109.2",
+        "109.5",
+        "608.2b",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay begins before the real offered action and reproduces the prefix, conditional result and exact authoritative hash."
+    },
+    {
       "capability_id": "resolution.effect_program.bound_references",
       "evidence_class": "interaction",
       "test_id": "tests.test_bound_effect_programs.BoundEffectProgramRuntimeTests.test_counter_choice_resumes_after_prior_effect_once",
@@ -76297,5 +76459,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "218c8bf39c980e995fad2a8e83e752fb1d4cd483b52f0de2a2f0a9e229ee04e3"
+  "fingerprint": "66c7babef9d670318197990dc8c2ecbf1c432de7f34aeba25654226ae83ecf11"
 }

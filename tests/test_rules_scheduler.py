@@ -2581,6 +2581,10 @@ class RulesSchedulerTests(unittest.TestCase):
             "Whenever you cast a white spell, draw a card.",
             "Whenever a player casts a Spirit or Arcane spell, you gain 1 life.",
             "Whenever an opponent casts a colorless or multicolored spell, scry 1.",
+            (
+                "Whenever you cast a Spirit or Arcane spell, you may return "
+                "Characteristic trigger source to its owner's hand."
+            ),
         ):
             with self.subTest(source=source):
                 self.assertTrue(
@@ -2601,7 +2605,7 @@ class RulesSchedulerTests(unittest.TestCase):
             ),
             (
                 "Whenever you cast a Spirit or Arcane spell, you may return "
-                "Characteristic trigger source to its owner's hand."
+                "Characteristic trigger source to its owner's hand and perform an unsupported action."
             ),
         ):
             with self.subTest(source=source):

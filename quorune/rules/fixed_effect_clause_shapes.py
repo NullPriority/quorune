@@ -68,6 +68,21 @@ from .token_creation_capability_shapes import (
     fixed_token_creation_node_capabilities,
 )
 from .surveil_capability_shapes import fixed_surveil_node_capabilities
+from .attachment_action_capability_shapes import fixed_attachment_action_node_capabilities
+from .entry_return_capability_shapes import fixed_entry_return_node_capabilities
+from .tap_state_event_capability_shapes import tap_state_event_player_node_capabilities
+from .impulse_access_capability_shapes import fixed_impulse_access_node_capabilities
+from .monarch_capability_shapes import fixed_monarch_node_capabilities
+from .transform_capability_shapes import source_transform_node_capabilities
+from .library_selection_capability_shapes import fixed_library_selection_node_capabilities
+from .hand_inspection_capability_shapes import fixed_hand_inspection_node_capabilities
+from .reanimation_capability_shapes import fixed_target_reanimation_node_capabilities
+from .public_zone_move_capability_shapes import fixed_owner_zone_move_node_capabilities
+from .node_capability_shapes import (
+    fixed_source_characteristics_node_capabilities,
+    fixed_target_effect_sequence_node_capabilities,
+    fixed_source_effect_sequence_node_capabilities,
+)
 from .self_return_capability_shapes import fixed_self_return_node_capabilities
 from .temporary_target_interaction_shapes import temporary_target_interaction_node_capabilities
 from ..compiler.optional_effect_templates import (
@@ -88,6 +103,19 @@ FIXED_EFFECT_CLAUSE_SEQUENCE_CAPABILITY = (
 )
 
 _COMPONENT_RESOLVERS = (
+    fixed_attachment_action_node_capabilities,
+    fixed_source_characteristics_node_capabilities,
+    fixed_target_effect_sequence_node_capabilities,
+    fixed_source_effect_sequence_node_capabilities,
+    fixed_entry_return_node_capabilities,
+    tap_state_event_player_node_capabilities,
+    fixed_impulse_access_node_capabilities,
+    fixed_monarch_node_capabilities,
+    source_transform_node_capabilities,
+    fixed_library_selection_node_capabilities,
+    fixed_hand_inspection_node_capabilities,
+    fixed_target_reanimation_node_capabilities,
+    fixed_owner_zone_move_node_capabilities,
     linked_exile_return_node_capabilities,
     all_counter_removal_node_capabilities,
     fixed_affected_player_discard_node_capabilities,

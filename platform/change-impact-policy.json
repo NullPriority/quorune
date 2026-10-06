@@ -1499,6 +1499,11 @@
       ]
     },
     {
+      "id": "controller-program-composition-contract",
+      "patterns": ["quorune/compiler/resolution_condition_templates.py", "quorune/compiler/effect_template_composition.py", "quorune/resolution_conditions.py", "quorune/rules/resolution_condition_shapes.py", "quorune/rules/fixed_effect_clause_shapes.py", "quorune/semantic_choices/resolution_condition.py", "scripts/controller_program_measurement.py", "tests/fixtures/resolution-public-condition-cards.json"],
+      "test_modules": ["test_amass_rules", "test_bolster_rules", "test_bound_effect_programs", "test_card_program_trust", "test_closed_effect_programs", "test_delayed_triggers", "test_fixed_effect_clause_sequences", "test_fixed_optional_effect_choices", "test_fixed_public_state_characteristics", "test_fixed_source_characteristic_effects", "test_fixed_target_effect_sequences", "test_high_risk_interaction_assurance", "test_mechanic_contracts", "test_mill_rules", "test_resolution_public_conditions", "test_rules_scheduler", "test_surveil_rules", "test_targeted_return_to_hand_effect_clauses"]
+    },
+    {
       "id": "bound-effect-program-contract",
       "patterns": [
         "quorune/compiler/bound_effect_programs.py",

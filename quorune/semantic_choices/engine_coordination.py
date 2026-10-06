@@ -19,6 +19,11 @@ from ..replacement_effects import ReplacementChoiceRequired
 from ..selection.copy_targets import copy_target_public_schema, prepare_copy_targets
 from ..targets import TargetGroup, available_modes, target_plan
 from ..util import unique_preserving_order
+from ..util import stable_json
+from ..resolution_conditions import (
+    RESOLUTION_CONDITION_OPERATION, ResolutionConditionBinding,
+    validate_resolution_condition_instruction,
+)
 from .context import (
     ChoiceObjectView,
     ChoiceStackView,
@@ -484,6 +489,17 @@ class SemanticChoiceCoordinationMixin:
                 actor, choice_effect, response
             )
         )
+        condition_facts = {}
+        if choice_effect.get("op") == RESOLUTION_CONDITION_OPERATION:
+            try:
+                condition, _effects = validate_resolution_condition_instruction(choice_effect)
+                if choice_effect["player"] != actor:
+                    raise SemanticChoiceError("Resolution condition controller binding changed")
+                condition_facts[stable_json(condition.to_dict())] = self._fixed_public_state_condition_holds(
+                    ResolutionConditionBinding(controller=actor), condition, require_available=True,
+                )
+            except (ValueError, TypeError, KeyError) as exc:
+                raise SemanticChoiceError(str(exc)) from exc
         return SnapshotSemanticChoiceQuery(
             seat_order=tuple(self.seats),
             active_order=tuple(self.active_seats),
@@ -565,6 +581,7 @@ class SemanticChoiceCoordinationMixin:
                 )
             ),
             current_turn_sequence=self.state.turn_sequence,
+            resolution_condition_facts=condition_facts,
         )
     def _semantic_choice_context(
         self,
