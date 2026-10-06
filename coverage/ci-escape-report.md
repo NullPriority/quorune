@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "120aef4ad1000f83b986bb7728b994e8ea53ddb754ffdecb64626adcb9587ed6"
+verified: "fdf71f1731378ae3ec925c3a9d6cbf87e27f78ba9135baa00ccb80eaff992827"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -15,7 +15,7 @@ This report classifies observed deterministic failures that escaped the local qu
 
 - Observation window: 2026-08-25T03:52:06Z through 2026-08-25T20:56:41Z
 - Observed population: tracked recent pull requests (n=4)
-- Escapes: 71
+- Escapes: 72
 - Deterministic escapes: 65
 - Current missing impact edges: 0
 - Known flaky tests: 0
@@ -100,6 +100,7 @@ This report classifies observed deterministic failures that escaped the local qu
 | `ci-20261003-65` | [37081568937](https://github.com/NullPriority/quorune/actions/runs/37081568937) | `missing_affected_test` | `added` | Use one shared test helper that removes and verifies exactly one live direct compiler route, preserving all dependency and residual assertions. The unchanged temporary mutation fails in 4.096 seconds, public-zone mutation in 6.016 seconds, and original checkpoint return mutations in 2.380 seconds; all four corrected tests pass in 12.382 seconds. Add the direct-resolution source and all affected consumers to the stack-payment impact edge. This changes only tests and selection evidence; preserve the verified frozen semantic census key and reuse it downstream. |
 | `ci-20261003-66` | [37081568937](https://github.com/NullPriority/quorune/actions/runs/37081568937) | `missing_affected_test` | `added` | The unchanged exact integration regression fails locally in 46.850 seconds on exactly those two names. The corrected exact test passes in 46.747 seconds. Update the independently supported Oracle exact set and assert one exact typed v2 counter-payment node for each while retaining all Storm event, span, handler and capability assertions. Add the direct-resolution/counter source impact edge selecting Storm consumers. Keep Flusterstorm's mixed trust basis separate from capability-closed card gain; no production or census input changes. |
 | `ci-20261003-67` | [37081568937](https://github.com/NullPriority/quorune/actions/runs/37081568937) | `missing_affected_test` | `added` | The unchanged test fails in 0.004 seconds with the new first rule ID. Bind additive and removal mutations to the stable changed-python-test ID, preserving the exact rejection reason and all policy assertions; the corrected test passes in 0.006 seconds. Add this consumer to the same harvest impact edge. No policy algorithm or semantic census input changes. |
+| `ci-20261006-485-persistence-watchdog` | [37410280657](https://github.com/NullPriority/quorune/actions/runs/37410280657) | `flaky_test` | `not_applicable` | The unchanged exact test passes locally in 50.74 seconds. Use one bounded thirty-second deadlock watchdog for the existing save-start/release barriers, acknowledgement and cleanup waits; preserve every pending-progress, no-premature-acknowledgement and committed-result assertion. The corrected exact test passes in 53.37 seconds. Server production and semantic corpus inputs remain unchanged, and the complete gate already selects the module. |
 
 ## Measurement limitations
 

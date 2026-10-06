@@ -1078,6 +1078,18 @@
       "regressions": ["test_ci_policy_delta.CiPolicyDeltaTests.test_impact_policy_accepts_only_monotonic_selection_evidence"],
       "impact_edge_status": "added",
       "resolution": "The unchanged test fails in 0.004 seconds with the new first rule ID. Bind additive and removal mutations to the stable changed-python-test ID, preserving the exact rejection reason and all policy assertions; the corrected test passes in 0.006 seconds. Add this consumer to the same harvest impact edge. No policy algorithm or semantic census input changes."
+    },
+    {
+      "id": "ci-20261006-485-persistence-watchdog",
+      "run_id": 37410280657,
+      "head_sha": "50141134772d2d5b2bdd6a15ae05d16663e2349d",
+      "category": "flaky_test",
+      "deterministic": false,
+      "summary": "The persistence-progress witness starts a five-second thread wait before first-command preparation completes. Windows recorded an eleven-second event-loop stall, so the wait expired before persistence started.",
+      "failed_surfaces": ["PR / Windows / functional-09 (job 112097383812)"],
+      "regressions": ["test_game_actor.GameActorTests.test_slow_persistence_keeps_progress_observable_before_ack"],
+      "impact_edge_status": "not_applicable",
+      "resolution": "The unchanged exact test passes locally in 50.74 seconds. Use one bounded thirty-second deadlock watchdog for the existing save-start/release barriers, acknowledgement and cleanup waits; preserve every pending-progress, no-premature-acknowledgement and committed-result assertion. The corrected exact test passes in 53.37 seconds. Server production and semantic corpus inputs remain unchanged, and the complete gate already selects the module."
     }
   ],
   "recent_pull_requests": [

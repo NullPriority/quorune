@@ -6072,8 +6072,8 @@
         },
         "engine_logical_lines": {
           "baseline": 6950,
-          "current": 6937,
-          "delta": -13
+          "current": 6938,
+          "delta": -12
         },
         "legacy_card_specific_operations": {
           "baseline": 5,
@@ -6541,20 +6541,20 @@
           "symbol": "create_emblem"
         },
         {
-          "column": 8,
+          "column": 12,
           "expression": "self.state.players[old].zones[\"battlefield\"].remove(object_id)",
           "file": "quorune/engine.py",
           "kind": "mutating_call:remove",
-          "line": 7406,
+          "line": 7407,
           "state_path": "players.zones",
           "symbol": "change_control"
         },
         {
-          "column": 8,
+          "column": 12,
           "expression": "self.state.players[new_controller].zones[\"battlefield\"].append(object_id)",
           "file": "quorune/engine.py",
           "kind": "mutating_call:append",
-          "line": 7407,
+          "line": 7408,
           "state_path": "players.zones",
           "symbol": "change_control"
         },
@@ -7746,7 +7746,7 @@
         },
         {
           "classification": "grandfathered_engine_debt",
-          "column": 8,
+          "column": 12,
           "expression": "self.state.players[new_controller].zones[\"battlefield\"].append(object_id)",
           "file": "quorune/engine.py",
           "identity": {
@@ -7756,7 +7756,7 @@
             "symbol": "change_control"
           },
           "kind": "mutating_call:append",
-          "line": 7407,
+          "line": 7408,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "players.zones",
           "subsystems": [
@@ -7766,7 +7766,7 @@
         },
         {
           "classification": "grandfathered_engine_debt",
-          "column": 8,
+          "column": 12,
           "expression": "self.state.players[old].zones[\"battlefield\"].remove(object_id)",
           "file": "quorune/engine.py",
           "identity": {
@@ -7776,7 +7776,7 @@
             "symbol": "change_control"
           },
           "kind": "mutating_call:remove",
-          "line": 7406,
+          "line": 7407,
           "owner_rationale": "The legacy engine still mutates this represented state directly.",
           "state_path": "players.zones",
           "subsystems": [
@@ -8448,8 +8448,8 @@
     "engine": {
       "cross_subsystem_responsibility_count": 7,
       "dunder_methods": 1,
-      "logical_lines": 6937,
-      "physical_lines": 7437,
+      "logical_lines": 6938,
+      "physical_lines": 7438,
       "private_methods": 197,
       "public_methods": 27,
       "responsibility_groups": [
@@ -12535,7 +12535,7 @@
       "covered_high_risk_pairs": 336,
       "covered_piece_pairs": 1037,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "dfff55db4e9bf583007f04553a59eb4e19ac17ffb6d7ec14fd6d495db84baffd",
+      "source_fingerprint": "f26a01be471bad844dede509fcf5fb5aae91441f6654932be36595d3758b0111",
       "uncovered_high_risk_pairs": 0
     },
     "migration_queue": [],
@@ -12924,7 +12924,7 @@
           "visibility": "private"
         }
       ],
-      "logical_lines": 239567,
+      "logical_lines": 239572,
       "methods": {
         "dunder": 598,
         "private": 962,
@@ -12936,8 +12936,8 @@
           "file": "quorune/engine.py",
           "functions_and_methods": 228,
           "language": "python",
-          "logical_lines": 6937,
-          "physical_lines": 7437
+          "logical_lines": 6938,
+          "physical_lines": 7438
         },
         {
           "file": "quorune/declaration_restrictions.py",
@@ -15887,6 +15887,13 @@
           "physical_lines": 152
         },
         {
+          "file": "quorune/control_history.py",
+          "functions_and_methods": 6,
+          "language": "python",
+          "logical_lines": 143,
+          "physical_lines": 179
+        },
+        {
           "file": "quorune/rules/casting/static_modifiers.py",
           "functions_and_methods": 3,
           "language": "python",
@@ -15962,13 +15969,6 @@
           "language": "python",
           "logical_lines": 139,
           "physical_lines": 164
-        },
-        {
-          "file": "quorune/control_history.py",
-          "functions_and_methods": 6,
-          "language": "python",
-          "logical_lines": 139,
-          "physical_lines": 173
         },
         {
           "file": "quorune/land_entry_coordination.py",
@@ -18465,8 +18465,8 @@
           "file": "quorune/engine.py",
           "functions_and_methods": 228,
           "language": "python",
-          "logical_lines": 6937,
-          "physical_lines": 7437
+          "logical_lines": 6938,
+          "physical_lines": 7438
         },
         {
           "file": "quorune/declaration_restrictions.py",
@@ -18497,7 +18497,7 @@
           "physical_lines": 1697
         }
       ],
-      "physical_lines": 261808,
+      "physical_lines": 261815,
       "python_file_count": 729,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -33300,7 +33300,7 @@
     "compiler_module": "quorune/oracle_ir.py",
     "compiler_module_logical_lines": 1476,
     "compiler_module_physical_lines": 1536,
-    "compiler_version": "oracle-ir-v257",
+    "compiler_version": "oracle-ir-v258",
     "current_ir": "OracleCardIR lowered to canonical CardProgram V2 with a derived SemanticProgram compatibility index",
     "full_oracle": {
       "current_snapshot_complete": false,
@@ -33589,10 +33589,10 @@
         },
         "declaration_count": 3707,
         "declaration_source_fingerprint": "3402fee55ba82e4e7ded9d4c193cfc54deeaa853bcc230469b75f92449ea1a68",
-        "fingerprint": "66c7babef9d670318197990dc8c2ecbf1c432de7f34aeba25654226ae83ecf11",
-        "registry_fingerprint": "53998d7e01cac6e35197566e221a215755abe91fc501e923be6b671f95686402"
+        "fingerprint": "1fd0ff3c8f318b8384ab6a6000f4d052bbf88c1e998f1b9be22e020e4b0e0a57",
+        "registry_fingerprint": "28a54d999506cef8110e00c5904bbe26be9ccf4f1b8134d338b6c1c56dc4a652"
       },
-      "fingerprint": "53998d7e01cac6e35197566e221a215755abe91fc501e923be6b671f95686402",
+      "fingerprint": "28a54d999506cef8110e00c5904bbe26be9ccf4f1b8134d338b6c1c56dc4a652",
       "implementation_mutation_status_counts": {
         "killed": 302,
         "not_run": 4
@@ -33602,7 +33602,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "registry_version": 182,
+      "registry_version": 183,
       "schema_version": 1,
       "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
       "status_counts": {
@@ -33931,7 +33931,7 @@
         "contract_fingerprint": "785a9d775fa100cedfaf1caecbf7d631fd6ff5b4cf9cde964a5aeb841a3f7037",
         "exact_cards_with_template": 693,
         "exact_nodes": 879,
-        "fingerprint": "673d1fbdaec009f0d403ececf5c9b8b937e165efc574f9320345874a025760f3",
+        "fingerprint": "136d5d5d741bc655f814f1c152a95e4a63df54f822047b3e92c209f3b39dfae8",
         "grammar_source_fingerprint": "a7559e8a624023da1c2d4d8f637b906a2776414dac0391290a831fab397f710c",
         "identity_fingerprint": "0e56ae721d87d28d3628d3778ca7a9af913e2ad79f5837d1bdf939754b6a7350",
         "present": true,
@@ -33943,7 +33943,7 @@
         "contract_fingerprint": "785a9d775fa100cedfaf1caecbf7d631fd6ff5b4cf9cde964a5aeb841a3f7037",
         "exact_cards_with_template": 714,
         "exact_nodes": 910,
-        "fingerprint": "418ab1a88216f4506b7cce1b379087bef76ea9b705f302417cc70f4fd1a040cf",
+        "fingerprint": "399cb2aba3def08a2ed2a93832212de2b1f59c5cdc8bd9398a81d87df8b9193d",
         "grammar_source_fingerprint": "a7559e8a624023da1c2d4d8f637b906a2776414dac0391290a831fab397f710c",
         "identity_fingerprint": "840fbaebe907674cafca6b6008b3e8b2b75da9eba1b2cf435355ba40452704f8",
         "present": true,
@@ -33962,7 +33962,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "b658262a1985ee7f472b4d575f3093fe88f026b6d2a900b5f0170958fcc8bcf1",
+      "fingerprint": "bb7873259a7d03c530055388c95f149bf5ce0947f5be38313b553fba0b394556",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -34820,8 +34820,8 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 4698,
-      "discovered_total": 8007,
+      "conventional_ast_cases": 4703,
+      "discovered_total": 8012,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 249,
