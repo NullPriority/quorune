@@ -369,7 +369,11 @@ outside trust.
 Ordinary printed fixed-mana Echo uses one source-spanned trigger descriptor.
 `control_history.py` owns the public acquisition timestamp and per-player upkeep
 boundary used by its intervening condition; ordinary summoning-sickness turn
-counts remain part of that same control-acquisition write. Trigger discovery
+counts remain part of that same control-acquisition write. That owner records
+a new acquisition only when the authoritative controller changes. A
+new control instruction naming the same controller leaves combat relationships,
+battlefield ordering and acquisition history intact, while still superseding
+an older temporary restoration where applicable. Trigger discovery
 freezes the ability controller, logical source identity, and acquisition fact,
 then the shared payment choice emits only typed mana-payment or controlled-source
 sacrifice intents. The additive control-history version is explicit in new Game

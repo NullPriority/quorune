@@ -110,6 +110,9 @@ def record_control_change(
         raise ControlHistoryError(
             "Control changes require the previous controller"
         )
+    history_version = getattr(state, "control_history_version", None)
+    if history_version not in {None, CONTROL_HISTORY_VERSION}:
+        raise ControlHistoryError("Unsupported control-history version")
     # The canonical direct control change is indefinite. An older temporary
     # restoration cannot supersede it, even if the controller does not change.
     temporary = permanent.annotations.get("until_end_of_turn")
@@ -117,11 +120,14 @@ def record_control_change(
         temporary.pop("control_previous", None)
     if previous_controller != permanent.controller:
         expire_control_change_continuous_effects(state, permanent)
-    history_version = getattr(state, "control_history_version", None)
     if history_version is not None and timestamp_factory is None:
         raise ControlHistoryError(
             "Current control history requires a timestamp factory"
         )
+    if previous_controller == permanent.controller:
+        # A newer control effect may supersede temporary restoration without
+        # the player acquiring this permanent again (CR 302.6 and 506.4).
+        return
     timestamp = timestamp_factory() if history_version is not None else 0
     record_battlefield_acquisition(state, permanent, timestamp)
 

@@ -11,6 +11,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Preserve combat relationships and control-acquisition history when a new
+  control instruction names the current controller, while retaining obsolete
+  temporary-restoration invalidation through the existing owners.
+
 - Compose represented controller-bound public conditions and existing typed
   effect leaves through printed-order resolution, ordinary continuations,
   private choices and exact replay.

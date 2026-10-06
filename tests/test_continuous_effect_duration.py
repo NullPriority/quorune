@@ -139,6 +139,75 @@ def locked_effect(
 
 
 class ContinuousEffectModelTests(unittest.TestCase):
+    def test_same_controller_guard_retains_history_version_validation(self):
+        from types import SimpleNamespace
+        from quorune.control_history import ControlHistoryError, record_control_change
+
+        card = SimpleNamespace(controller="A", annotations={})
+        state = SimpleNamespace(control_history_version=2, continuous_effects=None)
+        with self.assertRaisesRegex(ControlHistoryError, "Unsupported control-history version"):
+            record_control_change(state, card, lambda: 32, previous_controller="A")
+
+    def test_same_controller_acquisition_guard_mutant_is_killed(self):
+        import inspect
+        from types import SimpleNamespace
+        from quorune import control_history as owner
+
+        source = inspect.getsource(owner.record_control_change)
+        guard = "if previous_controller == permanent.controller:"
+        self.assertEqual(1, source.count(guard))
+        namespace = dict(vars(owner))
+        exec(source.replace(guard, "if False:"), namespace)
+
+        def witness(record):
+            card = SimpleNamespace(
+                controller="A", acquired_control_turn_count=2,
+                acquired_control_timestamp=21,
+                annotations={"until_end_of_turn": {"control_previous": "B"}},
+            )
+            state = SimpleNamespace(
+                players={"A": SimpleNamespace(turns_begun=3)},
+                control_history_version=1, continuous_effects=None,
+            )
+            record(state, card, lambda: 32, previous_controller="A")
+            self.assertEqual((2, 21), (
+                card.acquired_control_turn_count, card.acquired_control_timestamp,
+            ))
+            self.assertNotIn("control_previous", card.annotations["until_end_of_turn"])
+
+        witness(owner.record_control_change)
+        with self.assertRaises(AssertionError):
+            witness(namespace["record_control_change"])
+
+    def test_same_controller_invalidates_restoration_without_new_acquisition(self):
+        from types import SimpleNamespace
+        from quorune.control_history import record_control_change
+
+        card = SimpleNamespace(
+            controller="A", acquired_control_turn_count=2,
+            acquired_control_timestamp=21,
+            annotations={"until_end_of_turn": {"control_previous": "B"}},
+        )
+        state = SimpleNamespace(
+            players={"A": SimpleNamespace(turns_begun=3)},
+            control_history_version=1, continuous_effects=None,
+        )
+        timestamps = []
+        def timestamp():
+            timestamps.append(32)
+            return 32
+        record_control_change(state, card, timestamp, previous_controller="A")
+        self.assertNotIn("control_previous", card.annotations["until_end_of_turn"])
+        self.assertEqual([], timestamps)
+        self.assertEqual((2, 21), (
+            card.acquired_control_turn_count, card.acquired_control_timestamp,
+        ))
+        record_control_change(state, card, timestamp, previous_controller="B")
+        self.assertEqual([32], timestamps)
+        self.assertEqual((3, 32), (
+            card.acquired_control_turn_count, card.acquired_control_timestamp,
+        ))
+
     def test_control_restoration_invalidation_mutant_is_killed(self):
         import inspect
         from types import SimpleNamespace
@@ -1189,6 +1258,78 @@ class ContinuousEffectModelTests(unittest.TestCase):
 
 
 class ContinuousEffectEngineTests(unittest.TestCase):
+    def test_actual_controller_change_still_removes_combat_and_records_acquisition(self):
+        session = self.session(25200105, players=3)
+        engine = session.engine
+        card = self.creature(engine, "A", "Generic Actual Control Change Creature")
+        card.attacking = "B"
+        engine.state.combat.attackers[card.object_id] = "B"
+        previous_timestamp = card.acquired_control_timestamp
+        engine.change_control(card.object_id, "B", reason="actual controller-change control")
+        self.assertEqual("B", card.controller)
+        self.assertIsNone(card.attacking)
+        self.assertNotIn(card.object_id, engine.state.combat.attackers)
+        self.assertGreater(card.acquired_control_timestamp, previous_timestamp)
+        self.assertNotIn(card.object_id, engine.state.players["A"].zones["battlefield"])
+        self.assertIn(card.object_id, engine.state.players["B"].zones["battlefield"])
+
+    def test_same_controller_control_instruction_preserves_combat_and_acquisition(self):
+        """CR 506.4/302.6: a new effect is not necessarily a control change.
+
+        This is an actual scoped-arbiter command witness for the existing
+        control owner, not a claim that the new control grammar is trusted.
+        """
+        from quorune.record import authoritative_state_hash
+        from quorune.turn_step_owner import TURN_STEPS
+
+        session = self.session(25200104, players=3)
+        engine = session.engine
+        card = self.creature(engine, "A", "Generic Control Boundary Creature")
+        engine.state.phase = "combat"
+        engine.state.step = "declare_attackers"
+        engine.state.phase_index = TURN_STEPS.index(("combat", "declare_attackers"))
+        engine.state.combat.attackers_declared = True
+        engine.state.combat.attackers[card.object_id] = "B"
+        card.attacking = "B"
+        acquisition = (card.acquired_control_turn_count, card.acquired_control_timestamp)
+        key = "test:control:same-controller"
+        engine.semantics.put(SemanticProgram(
+            key=key, ability_id=key, label="Generic scoped control fixture",
+            effects=[], trust_level="provisional", requires_arbiter=True,
+        ))
+        engine.state.stack.append(StackItem(
+            stack_id="control:same-controller", ref="CONTROL:same-controller",
+            kind="triggered_ability", controller="A", label="Generic control boundary",
+            semantic_key=key, visibility=list("ABC"),
+        ))
+        engine._prepare_stack_resolution()
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        result = session.act("arbiter", {"action_id": "resolve", "effects": [
+            {"op": "change_control", "card": card.ref, "controller": "A"},
+        ]})
+        self.assertTrue(result.ok, result.summary)
+        card = engine.state.cards[card.object_id]
+        with self.subTest(boundary="combat"):
+            self.assertEqual("B", card.attacking)
+            self.assertEqual("B", engine.state.combat.attackers.get(card.object_id))
+        with self.subTest(boundary="acquisition"):
+            self.assertEqual(acquisition, (
+                card.acquired_control_turn_count, card.acquired_control_timestamp,
+            ))
+        expected = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "same-controller-control-record"
+            session.save(path)
+            replay = replay_record(path, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected, replay["final_state_hash"])
+
+        archive = getattr(self, "archive_same_control_record", None)
+        if archive is not None:
+            session.save(archive)
+
     def test_actual_arbiter_control_commands_cleanup_rollback_projection_and_replay(self):
         from quorune.record import authoritative_state_hash
         from quorune.session import CommanderSession

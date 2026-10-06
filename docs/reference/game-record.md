@@ -85,6 +85,12 @@ marker remain in the historical no-history mode so later replay does not add
 control-acquisition or upkeep timestamps that were absent from their command
 hashes.
 
+Control-instruction execution is also bound to the existing runtime-trust
+identity. Correcting a same-controller instruction does not rename its readable
+descriptor or reset the control-history marker. Records pinned to the prior
+execution identity are rejected before commands run; successful decoding is not
+evidence that their earlier combat and acquisition results are preserved.
+
 Battlefield-departure look-back history has an additive
 `turn_history.departure_history_version` marker. New games set it to one;
 the record format binds the same version to the initial checkpoint. Absence

@@ -4827,14 +4827,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v257-controller-program-composition",
-      "compiler_version": "oracle-ir-v257",
-      "bundle_id": "bundle:controller-program-composition",
-      "candidate_ids": ["bundle:controller-program-composition"],
-      "family_ids": ["effect_clause:create-token", "effect_clause:draw", "effect_clause:ordered-effect-composition", "effect_clause:return", "target_or_choice:conditional-effect"],
-      "capability_ids": ["effect.choice.optional_fixed", "resolution.effect.public_condition", "resolution.effect_program.closed_components", "resolution.effect_sequence.fixed_clauses"],
-      "non_harvest_reason": null,
-      "measurement_id": "measurement:controller-program-composition"
+      "transition_id": "oracle-ir-v258-same-controller-control-boundary",
+      "compiler_version": "oracle-ir-v258",
+      "bundle_id": null,
+      "candidate_ids": [],
+      "family_ids": [],
+      "capability_ids": [],
+      "non_harvest_reason": "Correct the existing control owner so a same-controller instruction preserves combat and acquisition history while superseding obsolete temporary restoration. No new control grammar is admitted.",
+      "expected_complete_card_gain": null
     },
     "forecast_corrections": [
       {
