@@ -10,6 +10,59 @@
   "repository": "NullPriority/quorune",
   "escapes": [
     {
+      "id": "ci-20261007-75",
+      "run_id": 37587369857,
+      "head_sha": "47c189e5c32e01942b9b831c1a88728af9abe4ae",
+      "category": "windows_compatibility",
+      "deterministic": true,
+      "summary": "Local Windows compact dependency generation hashed the raw CRLF fixture and shard policy bytes. Git committed their LF content, so Linux exact-head freshness rejected the two policy fingerprints despite identical closure and source identity.",
+      "failed_surfaces": ["PR / Generated and architecture"],
+      "regressions": ["test_compact_ci_dependencies.CompactCIDependencyTests.test_policy_line_endings_preserve_report_identity_and_content_changes_remain_visible"],
+      "impact_edge_status": "not_applicable",
+      "resolution": "The exact complete-report LF/CRLF regression fails on unchanged production in 18.826 seconds. Normalize only CRLF policy text line endings before SHA-256 for the fixture manifest and shard manifest; retain binary file hashing elsewhere and prove that adding a valid fixture still changes the policy identity and report. The existing compact dependency source impact edge already selects this module and the canonical owner. Refresh all affected reports through the existing finalizer without changing compiler semantics or weakening freshness."
+    },
+    {
+      "id": "ci-20261007-74",
+      "run_id": 37564121955,
+      "head_sha": "2ab3c544172a253a76de19dc3ef49a0fbf6bf7c5",
+      "category": "generated_artifact_drift",
+      "deterministic": true,
+      "summary": "The v259 control harvest retained the landed v258 non-harvest declaration. Source policy accepted its shape, but the cloud scheduler correctly rejected its mismatch with the new corpus receipt.",
+      "failed_surfaces": ["Generated cloud / Rules scheduler"],
+      "regressions": ["test_rules_scheduler.RulesSchedulerSourcePolicyTests.test_pre_corpus_policy_validation_rejects_invalid_transition_metadata"],
+      "impact_edge_status": "not_applicable",
+      "resolution": "Declare the fixed-control and optional-untap harvest against its canonical generated cohort measurement. Extend the existing pre-corpus policy validator and exact regression to reject a declaration whose compiler version differs from the source compiler. The existing quick-gate sentinel invokes this validator; stale checkpoint reports remain pending until complete verified cloud installation."
+    },
+    {
+      "id": "ci-20261007-73",
+      "run_id": 37564121972,
+      "head_sha": "2ab3c544172a253a76de19dc3ef49a0fbf6bf7c5",
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "summary": "Fixed control made Spreading Insurrection exact and introduced control-history version 2, while older Storm, tap-state diagnostic hosts and invalid-version tests retained their prior boundaries on both operating systems.",
+      "failed_surfaces": ["PR / Python / functional-02", "PR / Python / functional-10", "PR / Python / functional-11", "PR / Windows / functional-02", "PR / Windows / functional-10", "PR / Windows / functional-11"],
+      "regressions": [
+        "test_storm_rules.StormCompilerTests.test_all_real_storm_cards_lower_typed_stack_trigger",
+        "test_continuous_effect_duration.ContinuousEffectModelTests.test_same_controller_guard_retains_history_version_validation",
+        "test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_tap_state_owner_noop_undo_cost_and_sealed_source_order",
+        "test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_tap_state_group_observes_complete_commit_and_vigilance"
+      ],
+      "impact_edge_status": "added",
+      "resolution": "Preserve typed runtime requirements: explicitly select historical control mode in the isolated tap-state hosts and derive an invalid version above the current version. Admit Spreading Insurrection in the existing complete real-Storm-card compiler witness. Add the fixed-resolution-control impact edge selecting these consumers, replay, multiplayer, optional untap and trust tests."
+    },
+    {
+      "id": "ci-20261007-72",
+      "run_id": 37564121972,
+      "head_sha": "2ab3c544172a253a76de19dc3ef49a0fbf6bf7c5",
+      "category": "source_correctness",
+      "deterministic": true,
+      "summary": "The newly unconditional zone-change control synchronization ran during owned-object removal, before a departing player's control effects ended, and prematurely exiled a permanent that should return to its active original controller.",
+      "failed_surfaces": ["PR / Python / functional-03", "PR / Windows / functional-03"],
+      "regressions": ["test_fixed_control_effects.FixedControlGameplayTests.test_actual_departures_preserve_initial_custody_and_exile_inactive_origin_with_replay"],
+      "impact_edge_status": "added",
+      "resolution": "Use the existing canonical zone-transition owner's deferred synchronization for the owned-object removal batch. End the departing player's control grants and synchronize once before the remaining-controller exile boundary. Retain the authenticated concessions and pre-action replay witness distinguishing active initial custody from a departed initial controller."
+    },
+    {
       "id": "ci-20261003-71",
       "run_id": 37130709952,
       "head_sha": "3f8ca310476383f88c0c1437413ed1589ceff0f9",

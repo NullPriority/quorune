@@ -6,6 +6,7 @@ from typing import Any, Mapping
 
 from .activated_ability_descriptor import validate_activated_ability_descriptor
 from .object_predicate import ObjectQuerySpec
+from .source_continuity import SourceContinuitySnapshot
 from .ability_fragments import ability_fragment_from_dict
 from .replacement.immutable import (
     freeze_value,
@@ -44,6 +45,28 @@ class ContinuousEffectDuration(str, Enum):
     UNTIL_END_OF_TURN = "until_end_of_turn"
     UNTIL_CONTROL_CHANGE = "until_control_change"
     ZONE_OBJECT = "zone_object"
+    UNTIL_SOURCE_LEAVES = "until_source_leaves"
+    UNTIL_SOURCE_CONTROL_CHANGES = "until_source_control_changes"
+    UNTIL_SOURCE_LEAVES_OR_UNTAPS = "until_source_leaves_or_untaps"
+    UNTIL_SOURCE_CONTROL_CHANGES_OR_UNTAPS = "until_source_control_changes_or_untaps"
+
+    @property
+    def source_bound(self) -> bool:
+        return self in {
+            self.UNTIL_SOURCE_LEAVES, self.UNTIL_SOURCE_CONTROL_CHANGES,
+            self.UNTIL_SOURCE_LEAVES_OR_UNTAPS,
+            self.UNTIL_SOURCE_CONTROL_CHANGES_OR_UNTAPS,
+        }
+
+    @property
+    def requires_source_controller(self) -> bool:
+        return self in {self.UNTIL_SOURCE_CONTROL_CHANGES,
+                        self.UNTIL_SOURCE_CONTROL_CHANGES_OR_UNTAPS}
+
+    @property
+    def requires_tapped_source(self) -> bool:
+        return self in {self.UNTIL_SOURCE_LEAVES_OR_UNTAPS,
+                        self.UNTIL_SOURCE_CONTROL_CHANGES_OR_UNTAPS}
 
 
 class ContinuousEffectRelation(str, Enum):
@@ -428,6 +451,20 @@ def _validate_continuous_effect_identity_scope(
     effect: "ContinuousEffect",
     locked: tuple[ContinuousObjectIdentity, ...],
 ) -> None:
+    if effect.duration.source_bound:
+        if (effect.origin is not ContinuousEffectOrigin.RESOLUTION
+                or effect.layer is not Layer.CONTROL
+                or not isinstance(effect.duration_source, ContinuousObjectIdentity)
+                or not isinstance(effect.duration_history, SourceContinuitySnapshot)
+                or effect.source_id != effect.duration_source.object_id):
+            raise ContinuousEffectError("Source-bound control requires one original source incarnation")
+        if effect.duration.requires_source_controller:
+            if type(effect.duration_controller) is not str or not effect.duration_controller:
+                raise ContinuousEffectError("Source-control duration requires its resolving controller")
+        elif effect.duration_controller is not None:
+            raise ContinuousEffectError("Source-presence duration cannot add a controller condition")
+    elif any(value is not None for value in (effect.duration_source, effect.duration_controller, effect.duration_history)):
+        raise ContinuousEffectError("Only source-bound control may carry duration source facts")
     locked_origins = {
         ContinuousEffectOrigin.REPLACEMENT,
         ContinuousEffectOrigin.RESOLUTION,
@@ -494,6 +531,9 @@ class ContinuousEffect:
     locked_objects: tuple[ContinuousObjectIdentity, ...] = ()
     relation: ContinuousEffectRelation = ContinuousEffectRelation.NONE
     related_object: ContinuousObjectIdentity | None = None
+    duration_source: ContinuousObjectIdentity | None = None
+    duration_controller: str | None = None
+    duration_history: SourceContinuitySnapshot | None = None
 
     def __post_init__(self) -> None:
         for name, value in (
@@ -625,6 +665,10 @@ class ContinuousEffect:
                     "related_object": self.related_object.to_dict(),
                 }
             )
+        if self.duration.source_bound:
+            payload.update({"duration_source": self.duration_source.to_dict(),
+                            "duration_controller": self.duration_controller,
+                            "duration_history": self.duration_history.to_dict()})
         return payload
 
     @classmethod
@@ -645,6 +689,7 @@ class ContinuousEffect:
             "locked_objects",
         }
         relation_fields = legacy_fields | {"relation", "related_object"}
+        duration_fields = legacy_fields | {"duration_source", "duration_controller", "duration_history"}
         if not isinstance(value, Mapping):
             raise ContinuousEffectError(
                 "Continuous effect fields are missing or unknown"
@@ -653,6 +698,7 @@ class ContinuousEffect:
         if actual_fields not in {
             frozenset(legacy_fields),
             frozenset(relation_fields),
+            frozenset(duration_fields),
         }:
             raise ContinuousEffectError(
                 "Continuous effect fields are missing or unknown"
@@ -718,6 +764,15 @@ class ContinuousEffect:
                     )
                     if "related_object" in value
                     else None
+                ),
+                duration_source=(
+                    ContinuousObjectIdentity.from_dict(value["duration_source"])
+                    if "duration_source" in value else None
+                ),
+                duration_controller=value.get("duration_controller"),
+                duration_history=(
+                    SourceContinuitySnapshot.from_dict(value["duration_history"])
+                    if "duration_history" in value else None
                 ),
             )
         except (TypeError, ValueError) as exc:

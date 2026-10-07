@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Any, Iterable, Mapping
+from ..source_continuity import SourceContinuitySnapshot
 
 
 class SemanticNodeError(ValueError):
@@ -16,8 +17,15 @@ class SemanticSourceContext:
     object_id: str | None = None
     logical_object_id: str | None = None
     card_ref: str | None = None
+    duration_history: SourceContinuitySnapshot | None = None
+    duration_resolution_timestamp: int | None = None
 
     def __post_init__(self) -> None:
+        if self.duration_history is not None and not isinstance(self.duration_history, SourceContinuitySnapshot):
+            raise SemanticNodeError("Duration source history must be a retained typed snapshot")
+        if (self.duration_resolution_timestamp is not None
+                and (type(self.duration_resolution_timestamp) is not int or self.duration_resolution_timestamp < 0)):
+            raise SemanticNodeError("Duration resolution timestamp must be a nonnegative integer")
         if not self.stack_ref:
             raise SemanticNodeError("Semantic source stack identity is required")
         if (self.object_id is None) != (self.logical_object_id is None):
@@ -61,6 +69,11 @@ def semantic_source_context(
         object_id=source.object_id if source is not None else None,
         logical_object_id=logical_object_id,
         card_ref=source.ref if source is not None else None,
+        duration_history=(
+            SourceContinuitySnapshot.from_dict(item.context["control_duration_snapshot"])
+            if item.context.get("control_duration_snapshot") is not None else None
+        ),
+        duration_resolution_timestamp=item.context.get("control_duration_resolution_timestamp"),
     )
 
 

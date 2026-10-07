@@ -13,6 +13,7 @@ from .tap_state import (
     untap_permanent,
     tap_state_occurrence_context,
 )
+from .control_effects import synchronize_control_effects
 from .trigger_processing import collect_trigger_items
 
 
@@ -119,6 +120,22 @@ def coordinate_untap_step(
         untap_context,
         held_triggers=day_night_triggers,
     )
+    from .optional_untap import begin_optional_untap_choice
+    if begin_optional_untap_choice(host, plan, waiting_triggers):
+        return
+    commit_untap_step(host, plan, waiting_triggers, selected_optional_ids=())
+
+
+def commit_untap_step(
+    host: UntapStepCoordinationHost, plan: Any, waiting_triggers: Sequence[StackItem],
+    *, selected_optional_ids: Sequence[str],
+) -> None:
+    """Commit one retained CR 502.3 selection without replaying earlier work."""
+    active_player = plan.active_player
+    phase, step = host.state.phase, host.state.step
+    waiting_triggers = list(waiting_triggers)
+    optional = set(plan.optional_object_ids)
+    selected = set(selected_optional_ids)
     untapped_object_ids: list[str] = []
     if host.state.config.auto_untap:
         prohibited = set(plan.prohibited_object_ids)
@@ -134,6 +151,8 @@ def coordinate_untap_step(
             if consume_next_untap_prohibition(card):
                 continue
             if object_id in prohibited:
+                continue
+            if object_id in optional and object_id not in selected:
                 continue
             if untap_permanent(
                 host,
@@ -203,6 +222,7 @@ def coordinate_untap_step(
                     changed_players=[seat],
                 )
 
+    synchronize_control_effects(host, reason="simultaneous untap-step source durations ended")
     for object_id in untapped_object_ids:
         card = host.state.cards[object_id]
         if host.state.tap_state_event_version is None:

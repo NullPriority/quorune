@@ -7,6 +7,7 @@ from typing import Any, Mapping
 
 from ..object_predicate import ObjectQuerySpec
 from ..untap_step import UntapInstruction
+from ..rules.source_references import SourceReferenceSpec, source_self_permanent_type
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 from .public_state_queries import fixed_battlefield_query_subject
 
@@ -92,6 +93,24 @@ def static_untap_step_handler(
     """Lower the closed ordinary static prohibition/additional family."""
 
     normalized = text.strip()
+    optional = re.fullmatch(
+        r"You may choose not to untap (?P<source>.+?) during your untap step\.?",
+        normalized, re.IGNORECASE,
+    )
+    if optional is not None and (
+        source_self_permanent_type(optional["source"]) is not None
+        or SourceReferenceSpec(source_name).matches(optional["source"])
+    ):
+        descriptor = _descriptor(
+            instruction="optional", subject_relation="source",
+            controller_relation="source_controller", creature=False,
+            turn_relation="subject_controller",
+        )
+        descriptor["handler_id"] = "participation.untap-step.optional-source.v1"
+        return (
+            "untap-step-optional-source-v1", descriptor,
+            "untap.step.optional_source",
+        )
     global_match = _GLOBAL_PROHIBITION.fullmatch(normalized)
     if global_match is not None:
         kind = global_match.group("kind").casefold()

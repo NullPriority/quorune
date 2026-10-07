@@ -25,6 +25,7 @@ def validate_control_history_provenance(
     declared = format_value.get("control_history_version", 0)
     if type(declared) is not int or declared not in {
         0,
+        1,
         CONTROL_HISTORY_VERSION,
     }:
         raise ValueError("Unsupported control-history provenance")

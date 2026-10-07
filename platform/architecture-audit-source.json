@@ -38,6 +38,8 @@
       "simctl.py"
     ],
     "state_owner_modules": [
+      "quorune/control_effects.py",
+      "quorune/optional_untap.py",
       "quorune/engine.py",
       "quorune/permissions.py",
       "quorune/counter_placement.py",

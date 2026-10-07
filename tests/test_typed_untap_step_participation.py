@@ -24,6 +24,7 @@ from quorune.semantic_runtime import (
     UntapStepSourceContext,
 )
 from quorune.semantic_runtime.context import SemanticNodeError
+from quorune.semantic_runtime.untap_steps import OPTIONAL_UNTAP_HANDLER_ID
 from quorune.untap_step import plan_untap_step
 
 
@@ -244,11 +245,10 @@ class UntapStepCompilerTests(unittest.TestCase):
             handler.validate(boolean_maximum)
 
         inventory = default_untap_step_component_registry().inventory()
-        self.assertEqual(1, len(inventory))
-        self.assertEqual(UNTAP_STEP_HANDLER_ID, inventory[0]["handler_id"])
         self.assertEqual(
-            ["untap.step.static_participation"],
-            inventory[0]["capability_dependencies"],
+            {UNTAP_STEP_HANDLER_ID: ["untap.step.static_participation"],
+             OPTIONAL_UNTAP_HANDLER_ID: ["untap.step.optional_source"]},
+            {row["handler_id"]: row["capability_dependencies"] for row in inventory},
         )
 
 

@@ -23,6 +23,7 @@ from .activation_restrictions import attached_activation_untap_participations
 
 
 UNTAP_STEP_HANDLER_ID = "participation.untap-step.static.v1"
+OPTIONAL_UNTAP_HANDLER_ID = "participation.untap-step.optional-source.v1"
 _SOURCE_STATES = {"any", "untapped"}
 _CONTROLLER_RELATIONS = {"any", "source_controller"}
 
@@ -181,13 +182,6 @@ class StaticUntapStepParticipationHandler:
             raise SemanticNodeError(
                 "Untap-step controller relation must be any or source_controller"
             )
-        if (
-            subject_relation is not UntapSubjectRelation.QUERY
-            and controller_relation != "any"
-        ):
-            raise SemanticNodeError(
-                "Pinned untap-step subjects reserve controller relations"
-            )
         try:
             predicate = ObjectQuerySpec.from_dict(subject["predicate"])
         except ObjectQueryError as exc:
@@ -227,27 +221,7 @@ class StaticUntapStepParticipationHandler:
                 "Untap-step instruction kind is unsupported"
             ) from exc
         maximum = instruction["maximum"]
-        if kind is UntapInstruction.LIMIT:
-            if type(maximum) is not int or maximum < 0:
-                raise SemanticNodeError(
-                    "Untap-step limits require a nonnegative integer maximum"
-                )
-            if subject_relation is not UntapSubjectRelation.QUERY:
-                raise SemanticNodeError(
-                    "Untap-step limits require a query subject"
-                )
-        elif maximum is not None:
-            raise SemanticNodeError(
-                "Only untap-step limits may declare a maximum"
-            )
-        if (
-            kind is UntapInstruction.ADDITIONAL
-            and turn_relation is not UntapTurnRelation.OTHER_PLAYER
-        ):
-            raise SemanticNodeError(
-                "Additional untaps require another player's untap step"
-            )
-        return UntapStepNode(
+        node = UntapStepNode(
             source_state=source_state,
             turn_relation=turn_relation,
             subject_relation=subject_relation,
@@ -256,6 +230,34 @@ class StaticUntapStepParticipationHandler:
             instruction=kind,
             maximum=maximum,
         )
+        self._validate_instruction(node)
+        return node
+
+    def _validate_instruction(self, node: UntapStepNode) -> None:
+        if node.instruction is UntapInstruction.OPTIONAL:
+            raise SemanticNodeError("Static untap handler cannot represent optional untaps")
+        if node.subject_relation is not UntapSubjectRelation.QUERY and node.controller_relation != "any":
+            raise SemanticNodeError("Pinned untap-step subjects reserve controller relations")
+        if node.instruction is UntapInstruction.LIMIT:
+            if type(node.maximum) is not int or node.maximum < 0:
+                raise SemanticNodeError(
+                    "Untap-step limits require a nonnegative integer maximum"
+                )
+            if node.subject_relation is not UntapSubjectRelation.QUERY:
+                raise SemanticNodeError(
+                    "Untap-step limits require a query subject"
+                )
+        elif node.maximum is not None:
+            raise SemanticNodeError(
+                "Only untap-step limits may declare a maximum"
+            )
+        if (
+            node.instruction is UntapInstruction.ADDITIONAL
+            and node.turn_relation is not UntapTurnRelation.OTHER_PLAYER
+        ):
+            raise SemanticNodeError(
+                "Additional untaps require another player's untap step"
+            )
 
     def lower(
         self,
@@ -300,6 +302,22 @@ class StaticUntapStepParticipationHandler:
         )
 
 
+@dataclass(frozen=True, slots=True)
+class OptionalSourceUntapStepHandler(StaticUntapStepParticipationHandler):
+    handler_id: str = OPTIONAL_UNTAP_HANDLER_ID
+    family: str = "participation.untap_step.static"
+    capability_dependencies: tuple[str, ...] = ("untap.step.optional_source",)
+
+    def _validate_instruction(self, node: UntapStepNode) -> None:
+        if (node.instruction is not UntapInstruction.OPTIONAL
+                or node.subject_relation is not UntapSubjectRelation.SOURCE
+                or node.controller_relation != "source_controller"
+                or node.turn_relation is not UntapTurnRelation.SUBJECT_CONTROLLER
+                or node.source_state != "any" or node.maximum is not None
+                or node.predicate != ObjectQuerySpec(zones=("battlefield",))):
+            raise SemanticNodeError("Optional untap requires exactly its controller's source")
+
+
 class UntapStepComponentRegistry(
     RuntimeComponentRegistry[
         UntapStepSourceContext,
@@ -312,7 +330,7 @@ class UntapStepComponentRegistry(
 @lru_cache(maxsize=1)
 def default_untap_step_component_registry() -> UntapStepComponentRegistry:
     registry = UntapStepComponentRegistry(
-        (StaticUntapStepParticipationHandler(),)
+        (StaticUntapStepParticipationHandler(), OptionalSourceUntapStepHandler())
     )
     registry.require_registered_capabilities(
         load_default_capability_registry()

@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .control_intents import GainControlIntent, GainControlSetIntent
 
 from dataclasses import dataclass
 from typing import Any, Mapping, Protocol
@@ -201,6 +202,10 @@ class SemanticIntentSink(
 
     def pay_mana_cost_intent(self, intent: PayManaCostIntent) -> None: ...
 
+    def gain_control_intent(self, intent: GainControlIntent) -> object: ...
+
+    def gain_control_set_intent(self, intent: GainControlSetIntent) -> object: ...
+
     def place_counters_intent(
         self,
         intent: PlaceCountersIntent,
@@ -345,7 +350,7 @@ def prepare_draw_resolution(
 
 
 PermanentObjectIntent = (
-    CreateRegenerationShieldIntent
+    GainControlIntent | GainControlSetIntent | CreateRegenerationShieldIntent
     | DestroyPermanentIntent
     | DestroyPermanentSetIntent
     | DestroyPermanentTargetsIntent
@@ -356,6 +361,7 @@ PermanentObjectIntent = (
     | ReturnGraveyardCardToOwnerHandIntent
 )
 PERMANENT_OBJECT_INTENT_TYPES = (
+    GainControlIntent, GainControlSetIntent,
     CreateRegenerationShieldIntent,
     DestroyPermanentIntent,
     DestroyPermanentSetIntent,
@@ -372,6 +378,10 @@ def _execute_permanent_object_intent(
     sink: SemanticIntentSink,
     intent: PermanentObjectIntent,
 ) -> tuple[str, object]:
+    if isinstance(intent, GainControlIntent):
+        return intent.object_ref, sink.gain_control_intent(intent)
+    if isinstance(intent, GainControlSetIntent):
+        return intent.actor, sink.gain_control_set_intent(intent)
     if isinstance(intent, CreateRegenerationShieldIntent):
         return (
             intent.object_ref,

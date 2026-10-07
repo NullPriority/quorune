@@ -201,7 +201,10 @@ class ZoneTransitionOwner:
         prepared_replacement: PreparedZoneChange | None = None,
         transition_kind: ZoneTransitionKind = ZoneTransitionKind.ORDINARY,
         characteristic_lki_prepared: bool = False,
+        defer_control_sync: bool = False,
     ) -> CardInstance:
+        if type(defer_control_sync) is not bool:
+            raise GameRuleError("Zone-move control synchronization policy must be boolean")
         card = validate_zone_transition_request(
             self.state.cards,
             object_id,
@@ -259,6 +262,7 @@ class ZoneTransitionOwner:
             log=log,
             semantic_events=semantic_events,
             transition_kind=transition_kind,
+            defer_control_sync=defer_control_sync,
         )
         return card
 
@@ -627,6 +631,7 @@ class ZoneTransitionOwner:
         log: bool,
         semantic_events: bool,
         transition_kind: ZoneTransitionKind,
+        defer_control_sync: bool = False,
     ) -> None:
         card = plan.card
         log_applied_zone_replacements(
@@ -649,6 +654,9 @@ class ZoneTransitionOwner:
             destination=card.zone,
             destination_type_line=plan.destination_type_line,
         )
+        if not defer_control_sync:
+            from .control_effects import synchronize_control_effects
+            synchronize_control_effects(self.host, reason="control duration source changed zones")
         if semantic_events:
             sources = departure.trigger_sources
             self.host._dispatch_zone_change_events(
@@ -923,7 +931,10 @@ class ZoneTransitionOwner:
                 prepared_replacement=prepared[object_id],
                 characteristic_lki_prepared=True,
                 transition_kind=kinds.get(object_id, ZoneTransitionKind.ORDINARY),
+                defer_control_sync=True,
             )
+        from .control_effects import synchronize_control_effects
+        synchronize_control_effects(self.host, reason="control duration sources changed zones simultaneously")
         occurrences = tuple(
             self._zone_change_occurrence(
                 card,

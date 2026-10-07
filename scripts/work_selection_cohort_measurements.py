@@ -211,6 +211,7 @@ _PROBE_FIXED_HAND_INSPECTION = (
 )
 _PROBE_TEMPORARY_TARGET_INTERACTION = "temporary-target-interaction-closure-existing-owner-v1"
 _PROBE_BOUND_EFFECT_PROGRAM = "bound-effect-program-existing-owner-v1"
+_PROBE_FIXED_CONTROL_UNTAP = "fixed-control-optional-untap-existing-owner-v1"
 _PROBE_CONTROLLER_PROGRAM = "controller-program-composition-existing-owner-v1"
 _PROBE_DECLARED_EFFECT_AMOUNT = "declared-effect-amount-existing-owner-v1"
 _PROBE_FIXED_ANIMATION = "fixed-resolution-animation-existing-owner-v1"
@@ -576,6 +577,7 @@ _PROBE_IDS = {
     _PROBE_FIXED_HAND_INSPECTION,
     _PROBE_TEMPORARY_TARGET_INTERACTION,
     _PROBE_BOUND_EFFECT_PROGRAM,
+    _PROBE_FIXED_CONTROL_UNTAP,
     _PROBE_CONTROLLER_PROGRAM,
     _PROBE_DECLARED_EFFECT_AMOUNT,
     _PROBE_FIXED_ANIMATION,
@@ -1266,6 +1268,8 @@ def _matches_probe(
         return (" and " in source.casefold() or ". " in source) and any(
             word in source.casefold() for word in ("target ", "each player", "each opponent", "you ")
         )
+    if probe_id == _PROBE_FIXED_CONTROL_UNTAP:
+        return "gain control" in source.casefold() or "choose not to untap" in source.casefold()
     if probe_id == _PROBE_TEMPORARY_TARGET_INTERACTION:
         return "target " in source.casefold() and "until end of turn" in source.casefold()
     if probe_id == _PROBE_FIXED_HAND_INSPECTION:
@@ -5355,7 +5359,7 @@ def _measurement(
             cards_by_oracle_id=cards_by_oracle_id, coverage=coverage,
             cohort_fingerprint=cohort_fingerprint, database=database,
         )
-    if probe_id in {_PROBE_BOUND_EFFECT_PROGRAM, _PROBE_QUALIFIED_ZONE_EVENT,
+    if probe_id in {_PROBE_BOUND_EFFECT_PROGRAM, _PROBE_FIXED_CONTROL_UNTAP, _PROBE_QUALIFIED_ZONE_EVENT,
                     _PROBE_DECLARED_EFFECT_AMOUNT, _PROBE_FIXED_ANIMATION, _PROBE_FIXED_EFFECT_PAYMENT, _PROBE_STACK_CONTROLLER_PAYMENT, _PROBE_LINKED_EXILE_RETURN, _PROBE_SCALAR_EFFECT_AMOUNT, _PROBE_TOKEN_COPY_RECIPE, _PROBE_TAP_STATE_EVENT, _PROBE_PUBLIC_COLLECTION_QUANTITY}:
         return _bound_effect_program_measurement(
             frontier=frontier, bundle_id=bundle_id, probe_id=probe_id,
@@ -8157,6 +8161,7 @@ def _bound_effect_program_measurement(
     capability = {
         _PROBE_QUALIFIED_ZONE_EVENT: QUALIFIED_ZONE_CAPABILITY,
         _PROBE_BOUND_EFFECT_PROGRAM: BOUND_EFFECT_PROGRAM_CAPABILITY,
+        _PROBE_FIXED_CONTROL_UNTAP: "continuous.control.fixed_resolution",
         _PROBE_DECLARED_EFFECT_AMOUNT: "quantity_expression.declared_effect_amount",
         _PROBE_FIXED_ANIMATION: "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
         _PROBE_FIXED_EFFECT_PAYMENT: "effect.choice.optional_fixed_mana_payment",
@@ -8172,6 +8177,8 @@ def _bound_effect_program_measurement(
         "quantity_expression.public_query_effect_amount",
         "continuous.characteristics.query_power_toughness_definition",
     }
+    if probe_id == _PROBE_FIXED_CONTROL_UNTAP:
+        capabilities.add("untap.step.optional_source")
     abilities = residuals = 0
     remaining: dict[str, int] = {}
     complete: set[str] = set()

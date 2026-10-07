@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .control_capability_shapes import fixed_control_node_capabilities
 
 """Capability closure for generic two-clause effect sequences."""
 
@@ -103,6 +104,7 @@ FIXED_EFFECT_CLAUSE_SEQUENCE_CAPABILITY = (
 )
 
 _COMPONENT_RESOLVERS = (
+    fixed_control_node_capabilities,
     fixed_attachment_action_node_capabilities,
     fixed_source_characteristics_node_capabilities,
     fixed_target_effect_sequence_node_capabilities,

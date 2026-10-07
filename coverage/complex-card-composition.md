@@ -2,7 +2,7 @@
 title: "Complex card composition benchmark"
 status: "generated"
 authoritative_source: "coverage/complex-card-composition.json"
-verified: "1a116afcb5a94fab983f8990fc0c025ef241f9231e99951ecd315f7133d17c0c"
+verified: "1b08457b4e07b68b182cf56fc98b8eb240a26676ebdd5b740067600f0d53c19d"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -22,6 +22,7 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Jugan Defends the Temple // Remnant of the Rising Star | 223 | 29 | 8 | 7 | 8 | 9 | `blocked` |
 | Joshua, Phoenix's Dominant // Phoenix, Warden of Fire | 222 | 24 | 8 | 6 | 12 | 10 | `blocked` |
 | Clive, Ifrit's Dominant // Ifrit, Warden of Inferno | 217 | 18 | 7 | 5 | 12 | 21 | `blocked` |
+| The Shattered States Era // Nameless Conqueror | 217 | 33 | 8 | 5 | 6 | 6 | `blocked` |
 | The Kami War // O-Kagachi Made Manifest | 216 | 28 | 8 | 7 | 9 | 6 | `blocked` |
 | Vorinclex // The Grand Evolution | 214 | 24 | 8 | 7 | 12 | 4 | `blocked` |
 | Sheoldred // The True Scriptures | 213 | 23 | 8 | 7 | 13 | 4 | `blocked` |
@@ -62,5 +63,4 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Urza, Planeswalker | 183 | 29 | 5 | 6 | 8 | 11 | `blocked` |
 | Invasion of Zendikar // Awakened Skyclave | 181 | 21 | 5 | 5 | 6 | 18 | `blocked` |
 | Michiko's Reign of Truth // Portrait of Michiko | 181 | 22 | 7 | 5 | 7 | 6 | `blocked` |
-| Tribute to Horobi // Echo of Death's Wail | 181 | 20 | 7 | 6 | 8 | 6 | `blocked` |
 | Animate Dead | 110 | 13 | 4 | 3 | 2 | 5 | `blocked` |

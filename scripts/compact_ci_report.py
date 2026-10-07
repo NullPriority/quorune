@@ -6,7 +6,7 @@ from pathlib import Path
 import tempfile
 from typing import Mapping
 
-from quorune.carddb import CardDatabase, file_sha256
+from quorune.carddb import CardDatabase
 from quorune.deck import DeckLoader
 from scripts.compact_ci_dependencies import (
     DynamicSite,
@@ -24,6 +24,11 @@ from scripts.test_shards import load_manifest as load_test_shards
 
 
 REPORT_SCHEMA_VERSION = 1
+
+
+def _policy_text_fingerprint(path: Path) -> str:
+    """Bind policy content without depending on checkout line endings."""
+    return hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
 
 
 def _declared_requirements(
@@ -252,9 +257,9 @@ def build_dependency_report(
             source_fingerprint or tracked_worktree_source_fingerprint(root)
         ),
         "compact_fixture_manifest": manifest_path.relative_to(root).as_posix(),
-        "compact_fixture_manifest_fingerprint": file_sha256(manifest_path),
+        "compact_fixture_manifest_fingerprint": _policy_text_fingerprint(manifest_path),
         "test_shard_manifest": shard_path.relative_to(root).as_posix(),
-        "test_shard_fingerprint": file_sha256(shard_path),
+        "test_shard_fingerprint": _policy_text_fingerprint(shard_path),
         "fixture_count": len(paths),
         "card_count": fixture_index["card_count"],
         "ruling_count": fixture_index["ruling_count"],

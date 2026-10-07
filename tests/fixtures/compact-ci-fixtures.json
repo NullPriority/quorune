@@ -24,6 +24,7 @@
     "tests/fixtures/echo-rules-cards.json",
     "tests/fixtures/explore-cards.json",
     "tests/fixtures/fixed-battlefield-query-characteristics-cards.json",
+    "tests/fixtures/fixed-control-effects.json",
     "tests/fixtures/fixed-counter-keyword-activations.json",
     "tests/fixtures/fixed-effect-clause-sequence-cards.json",
     "tests/fixtures/fixed-life-cumulative-upkeep-cards.json",

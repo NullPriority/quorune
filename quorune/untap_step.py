@@ -15,6 +15,7 @@ class UntapStepError(ValueError):
 
 
 class UntapInstruction(str, Enum):
+    OPTIONAL = "optional"
     PROHIBIT = "prohibition"
     ADDITIONAL = "additional"
     LIMIT = "limit"
@@ -93,6 +94,7 @@ class UntapStepPlan:
     additional_object_ids: tuple[str, ...]
     unsupported_source_object_id: str | None = None
     supporting_source_refs: tuple[str, ...] = ()
+    optional_object_ids: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         if type(self.active_player) is not str or not self.active_player:
@@ -103,6 +105,7 @@ class UntapStepPlan:
             "prohibited_object_ids",
             "additional_object_ids",
             "supporting_source_refs",
+            "optional_object_ids",
         ):
             values = getattr(self, field_name)
             if len(values) != len(set(values)) or any(
@@ -183,6 +186,7 @@ def plan_untap_step(
 
     prohibited: set[str] = set()
     additional: set[str] = set()
+    optional: set[str] = set()
     supporting_refs: set[str] = set()
     unsupported_source: str | None = None
     for participation in normalized:
@@ -199,6 +203,8 @@ def plan_untap_step(
             break
         if participation.instruction is UntapInstruction.PROHIBIT:
             prohibited.update(row.object_id for row in matches)
+        elif participation.instruction is UntapInstruction.OPTIONAL:
+            optional.update(row.object_id for row in matches if row.controller == active_player and row.tapped)
         else:
             additional.update(row.object_id for row in matches)
 
@@ -207,12 +213,14 @@ def plan_untap_step(
     # normally makes the two turn relations disjoint, but this keeps composed
     # reviewed descriptors deterministic and fail-safe.
     additional.difference_update(prohibited)
+    optional.difference_update(prohibited)
     return UntapStepPlan(
         active_player=active_player,
         prohibited_object_ids=tuple(sorted(prohibited)),
         additional_object_ids=tuple(sorted(additional)),
         unsupported_source_object_id=unsupported_source,
         supporting_source_refs=tuple(sorted(supporting_refs)),
+        optional_object_ids=tuple(sorted(optional)),
     )
 
 

@@ -15,10 +15,12 @@ if str(ROOT) not in sys.path:
 from quorune.rules_scheduler import (
     build_rules_dependency_queue_from_root,
 )
+from quorune.oracle_ir import ORACLE_COMPILER_VERSION
 from quorune.util import stable_json
 from quorune.work_selection import selected_work_candidate
 from quorune.work_selection_bundles import validate_bundle_policy
 from scripts.harvest_outcome_history import (
+    HarvestOutcomeHistoryError,
     build_harvest_outcome_history,
     validated_semantic_transition_declaration,
 )
@@ -217,7 +219,11 @@ def main() -> int:
         validate_bundle_policy(work_policy.get("coverage_family") or {})
         declaration = work_policy.get("semantic_transition_declaration")
         if declaration is not None:
-            validated_semantic_transition_declaration(declaration)
+            validated = validated_semantic_transition_declaration(declaration)
+            if validated["compiler_version"] != ORACLE_COMPILER_VERSION:
+                raise HarvestOutcomeHistoryError(
+                    "Semantic transition compiler version does not match the source compiler"
+                )
         return 0
     harvest_history = build_harvest_outcome_history(
         ROOT,

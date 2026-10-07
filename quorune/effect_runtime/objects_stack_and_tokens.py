@@ -679,6 +679,18 @@ def _apply_change_control_until_end_of_turn(
     new_controller = str(
         effect.get("controller") or actor
     )
+    from ..control_effects import gain_control_of_refs
+    from ..model import CONTROL_HISTORY_VERSION
+    if host.state.control_history_version == CONTROL_HISTORY_VERSION:
+        from ..continuous_effect_model import ContinuousEffectDuration
+        from ..continuous_effect_state import resolution_effect_source
+        gain_control_of_refs(
+            host, actor=actor, object_refs=(card.ref,), controller=new_controller,
+            duration=ContinuousEffectDuration.UNTIL_END_OF_TURN,
+            source=resolution_effect_source(host, effect, fallback_card=card),
+            reason=reason,
+        )
+        return card.ref
     until_end = card.annotations.setdefault(
         "until_end_of_turn",
         {},

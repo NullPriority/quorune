@@ -10,6 +10,7 @@ from .affected_player_sacrifice_templates import (
     fixed_affected_player_sacrifice_effect_template,
 )
 from .fixed_attachment_templates import fixed_source_attachment_effect_template
+from .fixed_control_templates import fixed_control_effect_template, fixed_control_set_effect_template
 from .linked_exile_return_templates import linked_exile_return_effect_template
 from .amass_templates import fixed_amass_effect_template
 from .bolster_templates import fixed_bolster_effect_template
@@ -109,6 +110,19 @@ _DIRECT_RESOLUTION_EFFECT_COMPILERS = (
 )
 
 
+def _source_context_resolution_template(
+    text: str, *, card_name: str, source_is_permanent: bool | None,
+    source_card_types: Sequence[str],
+) -> CompiledEffectTemplate | None:
+    control = fixed_control_effect_template(
+        text, card_name=card_name, source_is_permanent=source_is_permanent,
+        source_card_types=tuple(source_card_types),
+    ) or fixed_control_set_effect_template(text)
+    if control is not None:
+        return control.compiled()
+    return linked_exile_return_effect_template(text, card_name=card_name, source_is_permanent=source_is_permanent)
+
+
 def typed_resolution_effect_template(
     text: str,
     *,
@@ -119,9 +133,9 @@ def typed_resolution_effect_template(
 ) -> CompiledEffectTemplate | None:
     """Lower closed typed resolution-effect families."""
 
-    linked_return = linked_exile_return_effect_template(text, card_name=card_name, source_is_permanent=source_is_permanent)
-    if linked_return is not None:
-        return linked_return
+    contextual = _source_context_resolution_template(text, card_name=card_name, source_is_permanent=source_is_permanent, source_card_types=source_card_types)
+    if contextual is not None:
+        return contextual
 
     fixed_counter_controller_sequence = (
         fixed_counter_controller_effect_sequence_template(

@@ -1305,6 +1305,8 @@ def dispatch_semantic_event(
                 )
             ):
                 continue
+            from .control_effects import pin_pending_control_duration
+            pin_pending_control_duration(host, item)
             triggered.append(item)
             triggered.extend(
                 _trigger_multiplier_copies(

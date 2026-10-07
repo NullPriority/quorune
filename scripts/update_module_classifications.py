@@ -67,6 +67,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/continuous_conditions.py",
         "quorune/resolution_conditions.py",
         "quorune/continuous_effect_model.py",
+        "quorune/source_continuity.py",
         "quorune/creature_subtypes.py",
         "quorune/creature_power_damage_model.py",
         "quorune/enchant_spec.py",
@@ -495,6 +496,8 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/dynamic_characteristics.py",
         "quorune/characteristic_evaluation_host.py",
         "quorune/public_quantity_reductions.py",
+        "quorune/control_effects.py",
+        "quorune/source_continuity.py",
         "quorune/leveler_bands.py",
         "quorune/zone_object_keyword_model.py",
         "quorune/zone_object_keyword_grants.py",
@@ -624,6 +627,8 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/untap_step.py",
         "quorune/untap_step_coordination.py",
     }:
+        return "untap_step"
+    if relative == "quorune/optional_untap.py":
         return "untap_step"
     if relative in {
         "quorune/stack_counter.py",
@@ -802,6 +807,9 @@ def build_classifications() -> dict[str, Any]:
                             "mana_ability_runtime.py",
                             "trigger_targeting.py",
                             "untap_step",
+                            "optional_untap.py",
+                            "control_effects.py",
+                            "source_continuity.py",
                             "spell_history_transform.py",
                         )
                     )
