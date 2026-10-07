@@ -1802,6 +1802,23 @@
       ]
     },
     {
+      "id": "intrinsic-entry-designation-contract",
+      "patterns": [
+        "quorune/compiler/entry_designation_templates.py",
+        "quorune/entry_designations.py",
+        "quorune/semantic_runtime/chosen_characteristics.py",
+        "quorune/semantic_runtime/entry_designations.py",
+        "tests/fixtures/entry-designation-cards.json",
+        "tests/high_risk_interaction_support.py",
+        "tests/test_entry_designations.py"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_entry_designations",
+        "test_high_risk_interaction_assurance"
+      ]
+    },
+    {
       "id": "compiler-prevention-expectations",
       "patterns": [
         "quorune/compiler/damage_templates.py",

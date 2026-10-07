@@ -99,18 +99,20 @@ _WITNESSES = {
         'Lands you control have "{T}: Add two mana of any one color."',
         "{2}",
     ),
+    # Mandatory one-color/type entry choices are supported. Compound choices
+    # retain these independent exclusion pairs without altering their assertions.
     "restricted-mana-replacement-boundary": _Witness(
-        "Generic Restricted Mana Replacement Boundary Fixture",
+        "Generic Restricted Mana Replacement Boundary Compound Entry Boundary Fixture",
         "Artifact",
-        "As this artifact enters, choose a creature type.\n"
+        "As this artifact enters, choose two creature types.\n"
         "{T}: Add {G}. Spend this mana only to cast an Elemental spell or "
         "activate an ability of an Elemental.",
         "{2}",
     ),
     "dynamic-self-entry-replacement-boundary": _Witness(
-        "Generic Dynamic Self-Entry Replacement Boundary Fixture",
+        "Generic Dynamic Self Entry Replacement Boundary Compound Entry Boundary Fixture",
         "Artifact",
-        "As this artifact enters, choose a color.\n"
+        "As this artifact enters, choose two colors.\n"
         "This artifact enters with X charge counters on it.",
         "{X}",
     ),
@@ -178,10 +180,10 @@ _WITNESSES = {
         ("Changeling",),
     ),
     "floating-shield": _Witness(
-        "Floating Shield",
+        "Generic Floating Shield Compound Entry Boundary Fixture",
         "Enchantment — Aura",
         "Enchant creature\n"
-        "As this Aura enters, choose a color.\n"
+        "As this Aura enters, choose two colors.\n"
         "Enchanted creature has protection from the chosen color. This "
         "effect doesn't remove this Aura.\n"
         "{1}: Attach this Aura to target creature.\n"
@@ -191,9 +193,9 @@ _WITNESSES = {
         ("Enchant",),
     ),
     "etchings-of-the-chosen": _Witness(
-        "Etchings of the Chosen",
+        "Generic Etchings Of The Chosen Compound Entry Boundary Fixture",
         "Enchantment",
-        "As this enchantment enters, choose a creature type.\n"
+        "As this enchantment enters, choose two creature types.\n"
         "Creatures you control of the chosen type get +1/+1.\n"
         "{1}, Sacrifice a creature of the chosen type: Target creature you "
         "control gains indestructible until end of turn. (Damage and effects "
@@ -210,10 +212,10 @@ _WITNESSES = {
         ("Enchant",),
     ),
     "typed-floating-shield": _Witness(
-        "Typed Floating Shield Fixture",
+        "Generic Typed Floating Shield Compound Entry Boundary Fixture",
         "Enchantment — Aura",
         "Enchant creature or Vehicle\n"
-        "As this Aura enters, choose a color.\n"
+        "As this Aura enters, choose two colors.\n"
         "Enchanted creature has protection from the chosen color. This "
         "effect doesn't remove this Aura.\n"
         "Sacrifice this Aura: Target creature gains protection from the "
@@ -285,20 +287,20 @@ _WITNESSES = {
         "{5}",
     ),
     "prismatic-circle": _Witness(
-        "Prismatic Circle",
+        "Generic Prismatic Circle Compound Entry Boundary Fixture",
         "Enchantment",
         "Cumulative upkeep {1}\n"
-        "As this enchantment enters, choose a color.\n"
+        "As this enchantment enters, choose two colors.\n"
         "{1}: The next time a source of your choice of the chosen color would "
         "deal damage to you this turn, prevent that damage.",
         "{2}{W}",
         ("Cumulative upkeep",),
     ),
     "fixed-life-upkeep-prevention": _Witness(
-        "Fixed-Life Upkeep Prevention Fixture",
+        "Generic Fixed Life Upkeep Prevention Compound Entry Boundary Fixture",
         "Enchantment",
         "Cumulative upkeep—Pay 2 life.\n"
-        "As this enchantment enters, choose a color.\n"
+        "As this enchantment enters, choose two colors.\n"
         "{1}: The next time a source of your choice of the chosen color would "
         "deal damage to you this turn, prevent that damage.",
         "{2}{W}",
@@ -638,14 +640,14 @@ _WITNESSES = {
         toughness="1",
     ),
     "chromatic-armor": _Witness(
-        "Chromatic Armor",
+        "Generic Chromatic Armor Compound Entry Boundary Fixture",
         "Enchantment — Aura",
         "Enchant creature\n"
-        "As this Aura enters, choose a color.\n"
+        "As this Aura enters, choose two colors.\n"
         "This Aura enters with a sleight counter on it.\n"
         "Prevent all damage that would be dealt to enchanted creature by "
         "sources of the last chosen color.\n"
-        "{X}: Put a sleight counter on this Aura and choose a color. X is "
+        "{X}: Put a sleight counter on this Aura and choose two colors. X is "
         "the number of sleight counters on this Aura.",
         "{1}{W}{U}",
         ("Enchant",),
@@ -801,17 +803,17 @@ _WITNESSES = {
         "{6}",
     ),
     "kindred-discovery": _Witness(
-        "Kindred Discovery",
+        "Generic Kindred Discovery Compound Entry Boundary Fixture",
         "Enchantment",
-        "As this enchantment enters, choose a creature type.\n"
+        "As this enchantment enters, choose two creature types.\n"
         "Whenever a creature you control of the chosen type enters or attacks, "
         "draw a card.",
         "{3}{U}{U}",
     ),
     "teferis-moat": _Witness(
-        "Teferi's Moat",
+        "Generic Teferis Moat Compound Entry Boundary Fixture",
         "Enchantment",
-        "As this enchantment enters, choose a color.\n"
+        "As this enchantment enters, choose two colors.\n"
         "Creatures of the chosen color without flying can't attack you.",
         "{3}{W}{U}",
     ),
