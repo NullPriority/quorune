@@ -537,6 +537,8 @@ class ZoneTransitionOwner:
         card.entered_battlefield_turn_sequence = self.state.turn_sequence
         card.battle_protector = plan.prospective_battle_protector
         self.state.players[card.controller].zones["battlefield"].append(card.object_id)
+        from .entry_results import commit_entry_designations
+        commit_entry_designations(self.host, card, color=plan.prepared_replacement.entry_chosen_color, creature_type=plan.prepared_replacement.entry_chosen_creature_type)
         commit_aura_zone_move(
             self.host,
             card,

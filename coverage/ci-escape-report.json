@@ -1,6 +1,85 @@
 {
   "escapes": [
     {
+      "category": "generated_artifact_drift",
+      "deterministic": true,
+      "failed_surfaces": [
+        "Generated cloud / Reusable pieces"
+      ],
+      "head_sha": "f3ddbba68f56126ee1a1a569595e1967ac6ae961",
+      "id": "ci-20261007-79",
+      "impact_edge_status": "not_applicable",
+      "regressions": [
+        "test_rules_scheduler.RulesSchedulerTests.test_unmerged_harvest_compiler_revision_retains_original_frontier_identity",
+        "test_rules_scheduler.RulesSchedulerTests.test_corrected_unlanded_transition_replaces_superseded_receipt",
+        "test_rules_scheduler.RulesSchedulerTests.test_completed_corrected_measurement_rejects_stale_cohort"
+      ],
+      "resolution": "Retain the original transition ID independently of the corrected compiler version. Register probe v2 and its linked-source exclusion contract while retaining v1 so an older completed measurement cannot seed the corrected bound. The canonical transition sealer recovers the original immutable main frontier and remeasures the complete original programs to the qualifying corrected lower bound without copied policy counts or weakened eligibility. Document this existing unmerged-revision workflow; runtime semantics and the completed v261 census remain unchanged.",
+      "run_id": 37684005905,
+      "summary": "The compiler correction renamed the still-unmerged harvest transition ID. Its cohort owner could no longer recover the original immutable base frontier and instead measured the already implemented checkpoint, correctly rejecting a zero complete-card lower bound."
+    },
+    {
+      "category": "source_correctness",
+      "deterministic": true,
+      "failed_surfaces": [
+        "PR / Python / functional-01",
+        "PR / Python / functional-07",
+        "PR / Python / functional-08",
+        "PR / Windows / functional-01",
+        "PR / Windows / functional-07",
+        "PR / Browser / lifecycle"
+      ],
+      "head_sha": "133e51e9699584eb11b68f4133995ddbefb29546",
+      "id": "ci-20261007-78",
+      "impact_edge_status": "added",
+      "regressions": [
+        "test_entry_designations.EntryDesignationTests.test_linked_entry_fixture_preserves_reviewed_ruling_provenance",
+        "test_exact_mishra_closure.ExactMishraClosureTests.test_roaming_throne_type_trigger_multiplier_and_ward"
+      ],
+      "resolution": "Remove only the duplicate Roaming Throne card and ruling owner from the new fixture through the canonical export, retaining its primary fixture and exact ruling multiset. The original offered cast/one-choice/type-addition/replay witness fails on the unchanged compact database in 48.782 seconds and passes after correction in 68.900 seconds. Add a full compact fixture composition regression comparing the primary ruling multiset and repeated authoritative preflight and compatibility assembly. Preserve true Scryfall ruling multiplicity and fail-closed provenance checks; compiler semantics remain unchanged and the one v261 census is reused.",
+      "run_id": 37680285397,
+      "summary": "The added entry fixture repeated Roaming Throne and its rulings already owned by the primary exact-deck fixture. The compact builder correctly preserved ruling multiplicity, producing a different hash for generated handlers than the reviewed compatibility program and blocking sessions and browser deck validation."
+    },
+    {
+      "category": "source_correctness",
+      "deterministic": true,
+      "failed_surfaces": [
+        "PR / Python / functional-06",
+        "PR / Python / functional-12",
+        "PR / Windows / functional-06",
+        "PR / Windows / functional-12"
+      ],
+      "head_sha": "f78b345116b4ce1b8b50f94be976702e4f801e85",
+      "id": "ci-20261007-77",
+      "impact_edge_status": "added",
+      "regressions": [
+        "test_entry_designations.EntryDesignationTests.test_linked_source_type_additions_keep_the_existing_entry_owner",
+        "test_exact_mishra_closure.ExactMishraClosureTests.test_roaming_throne_type_trigger_multiplier_and_ward",
+        "test_trigger_processing_owner.TriggerProcessingOwnerIntegrationTests.test_chosen_type_multiplier_excludes_self_and_wrong_type",
+        "test_trigger_processing_owner.TriggerProcessingOwnerIntegrationTests.test_ward_occurrence_replays_exactly"
+      ],
+      "resolution": "Use the source-spanned face guard to exclude an intrinsic creature-type descriptor linked to making its source the chosen type. Preserve the linked residual and existing reviewed owner without identity dispatch or runtime text parsing. The six exact reported owner witnesses plus original closure and three printed linking exclusions pass; the strengthened offered/accepted Roaming Throne cast proves one pre-entry choice, its linked subtype, preserved trigger and Ward behavior, and exact pre-action replay. Add the existing exact-deck and trigger-processing consumers to the entry impact rule, update compiler identity, remeasure qualification, and run one census for the corrected semantic fingerprint.",
+      "run_id": 37668759749,
+      "summary": "The plain intrinsic entry compiler promoted the entry clause of a source with a linked self-type addition. Roaming Throne already had a reviewed pre-entry choice owner, so its accepted choice was followed by a second generic choice and existing direct-entry trigger and Ward witnesses suspended."
+    },
+    {
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "failed_surfaces": [
+        "PR / Python / functional-07"
+      ],
+      "head_sha": "249ac07d947aa32ea50fb043493dbc5db7e1fd5c",
+      "id": "ci-20261007-76",
+      "impact_edge_status": "added",
+      "regressions": [
+        "test_changeling_characteristics.ChangelingCompilerTests.test_original_changeling_entry_keeps_chosen_trigger_unavailable",
+        "test_changeling_characteristics.ChangelingRuntimeTests.test_changeling_executes_while_replacement_siblings_fail_closed"
+      ],
+      "resolution": "Preserve every existing replacement rejection and passive Changeling assertion with a minimal constructed two-type entry choice and a fresh fixture identity. Keep the original printed Bloodline Pretender unchanged and add a separate source-spanned positive entry witness proving its independently unsupported chosen-type trigger still blocks strict and compatible whole-card admission. Add the Changeling consumer to the monotonic intrinsic-entry impact rule; no compiler semantics, trust threshold or assertion is weakened.",
+      "run_id": 37660790800,
+      "summary": "Intrinsic mandatory entry designations made the original Bloodline Pretender entry clause exact. A Changeling interaction test still used that supported clause as its replacement exclusion and the entry grammar impact edge omitted its consumer."
+    },
+    {
       "category": "windows_compatibility",
       "deterministic": true,
       "failed_surfaces": [
@@ -1333,7 +1412,7 @@
     "sample_size": 4,
     "started_at": "2026-08-25T03:52:06Z"
   },
-  "observed_at": "2026-10-02T07:23:06Z",
+  "observed_at": "2026-10-07T21:03:55Z",
   "recent_pull_requests": [
     {
       "critical_path_seconds": 81.0,
@@ -1378,7 +1457,7 @@
   ],
   "repository": "NullPriority/quorune",
   "schema_version": 2,
-  "source_fingerprint": "c951a3102af5b24e0737b5dc02ac559c4388c3ae1b68aadfdc9e63ec24373d25",
+  "source_fingerprint": "70335d209928683164c843d3065e929cfe7f8b4399a08e3c6969111e9836ae10",
   "summary": {
     "average_critical_path_seconds": 181.25,
     "average_pushes_per_merged_pr": null,
@@ -1386,15 +1465,15 @@
     "category_counts": {
       "browser_integration": 5,
       "flaky_test": 8,
-      "generated_artifact_drift": 9,
+      "generated_artifact_drift": 10,
       "infrastructure": 1,
-      "missing_affected_test": 32,
-      "source_correctness": 20,
+      "missing_affected_test": 33,
+      "source_correctness": 22,
       "windows_compatibility": 1
     },
     "current_missing_impact_edges": [],
-    "deterministic_escape_count": 69,
-    "escape_count": 76,
+    "deterministic_escape_count": 73,
+    "escape_count": 80,
     "eventual_final_head_certification_pass_rate": 1.0,
     "eventual_final_head_certification_sample_size": 4,
     "first_eligible_head_certification_pass_rate": null,

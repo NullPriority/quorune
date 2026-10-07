@@ -11,7 +11,7 @@ from common import ROOT, keep_all, make_session
 from quorune.ability_fragments import ability_fragment_to_dict
 from quorune.card_programs import bind_card_program_runtime, compile_card_program
 from quorune.card_programs.commands import runtime_component_status
-from quorune.carddb import CardDatabase
+from quorune.carddb import CardDatabase, CardRecord
 from quorune.characteristic_evaluation import (
     evaluate_card_characteristics,
     type_parts,
@@ -38,7 +38,7 @@ from quorune.semantic_runtime.ability_fragments import (
     default_ability_fragment_registry,
 )
 from quorune.semantic_runtime.context import SemanticNodeError
-from scripts.build_test_database import build_fixture_database
+from scripts.build_test_database import _card_payload, build_fixture_database
 
 
 CAPABILITY_ID = "continuous.characteristics.changeling"
@@ -51,10 +51,24 @@ CHANGELING_FRAGMENT = ability_fragment_to_dict(
 
 def focused_card_database(directory: str) -> CardDatabase:
     database = Path(directory) / "changeling-characteristics.sqlite3"
+    boundary = CardRecord(
+        oracle_id="fixture:changeling-compound-entry-boundary",
+        name="Generic Changeling Compound Entry Boundary",
+        mana_cost="{3}", mana_value=3,
+        type_line="Artifact Creature — Shapeshifter",
+        oracle_text="Changeling\nAs this creature enters, choose two creature types.",
+        power="2", toughness="2", loyalty=None, defense=None,
+        colors=(), color_identity=(), keywords=("Changeling",),
+        produced_mana=(), layout="normal", released_at="2026-01-01",
+        legalities={"commander": "legal"}, faces=(), raw={},
+    )
+    boundary_path = Path(directory) / "compound-entry.json"
+    boundary_path.write_text(json.dumps({"schema_version": 1, "cards": [_card_payload(boundary)], "rulings": []}), encoding="utf-8")
     build_fixture_database(
         [
             ROOT / "tests" / "fixtures" / "scryfall-exact-lists.json",
             ROOT / "tests" / "fixtures" / "changeling-characteristics-cards.json",
+            boundary_path,
         ],
         database,
     )
@@ -200,6 +214,22 @@ class ChangelingCompilerTests(unittest.TestCase):
             with self.subTest(path=path):
                 with self.assertRaises(SemanticNodeError):
                     registry.validate(candidate)
+
+
+    def test_original_changeling_entry_keeps_chosen_trigger_unavailable(self):
+        registry = load_default_capability_registry()
+        record = self.db.lookup("Bloodline Pretender")
+        ir = compile_oracle_card(record, capability_registry=registry, capability_profile="commander_review")
+        entry = next(node for face in ir.faces for node in face.nodes if node.template_id == "intrinsic-entry-designation-v1")
+        self.assertTrue(entry.exact)
+        self.assertEqual(entry.text, record.oracle_text[entry.span.start:entry.span.end])
+        self.assertIn("zone.entry.public_designation", entry.capability_dependencies)
+        blockers = {blocker for residual in ir.material_residuals for blocker in residual.blockers}
+        self.assertLessEqual({"normalized event binding", "intervening-if and reflexive-trigger grammar"}, blockers)
+        program = compile_card_program(self.db, record, capability_registry=registry, capability_profile="commander_review", trust_level="provisional")
+        binding = bind_card_program_runtime(program, capability_registry=registry, profile="commander_review")
+        self.assertFalse(binding["strict_capability_ready"])
+        self.assertFalse(binding["compatible_ready"])
 
 
 class ChangelingRuntimeTests(unittest.TestCase):
@@ -381,7 +411,7 @@ class ChangelingRuntimeTests(unittest.TestCase):
     def test_changeling_executes_while_replacement_siblings_fail_closed(self):
         session = self.session(702_730_004)
         engine = session.engine
-        record = self.db.lookup("Bloodline Pretender")
+        record = self.db.lookup("Generic Changeling Compound Entry Boundary")
         program = compile_card_program(
             self.db,
             record,
@@ -447,8 +477,8 @@ class ChangelingRuntimeTests(unittest.TestCase):
         )
 
         card = CardInstance(
-            object_id="changeling-bloodline-pretender",
-            ref="BLOODLINE-PRETENDER",
+            object_id="changeling-compound-entry-boundary",
+            ref="CHANGELING-COMPOUND-BOUNDARY",
             oracle_id=record.oracle_id,
             printed_name=record.name,
             owner="A",

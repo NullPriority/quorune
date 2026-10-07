@@ -41,7 +41,7 @@ _LIFE_LOSS_DIRECTION = "loss"
 
 _SET_FIELDS = {
     "damage": {"amount", "prevented", "prevented_by", "target"},
-    "zone.change": {"destination", "read_ahead_chapter", "tapped"},
+    "zone.change": {"destination", "read_ahead_chapter", "tapped", "entry_chosen_color", "entry_chosen_creature_type"},
     "token.create": {"quantity", "created_types", "created_subtypes"},
     "counter.place": {"amount"},
     "counter.add": {"amount", "quantity"},

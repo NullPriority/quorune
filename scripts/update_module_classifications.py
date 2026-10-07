@@ -72,6 +72,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/creature_power_damage_model.py",
         "quorune/enchant_spec.py",
         "quorune/entry_counter_model.py",
+        "quorune/entry_designations.py",
         "quorune/evolve.py",
         "quorune/fixed_keyword_entry_counters.py",
         "quorune/fixed_token_production.py",

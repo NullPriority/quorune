@@ -1010,6 +1010,10 @@ def _commit_token_specs(
     for plan in plans:
         object_id = _commit_token_object(host, controller, plan)
         created.append(object_id)
+        if prepared_entries is not None:
+            from .entry_results import commit_entry_designations
+            entry = prepared_entries[object_id]
+            commit_entry_designations(host, host.state.cards[object_id], color=entry.entry_chosen_color, creature_type=entry.entry_chosen_creature_type)
         if plan.replacement_component is not None:
             component = thaw_value(plan.replacement_component)
             if component not in applied_components:

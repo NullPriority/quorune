@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "ff8d648e66d781aa6ee7a9eb69e1b74d2b97a887363ed34e97a11f6ae1f61ab1",
-  "declaration_source_fingerprint": "d955887011ba16f877f4a575e8556486ddf0c8ddbde53b2a557e73ce452cc5f8",
+  "registry_fingerprint": "5caad3a636135c40413637c575ee18a4b07fbc39db3d741931bf944fb5b0d134",
+  "declaration_source_fingerprint": "3e94df423fed462a668667831cf189a5c4fd5dc3344a63760fed197413ba3f72",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -23071,6 +23071,366 @@
         "commander_review"
       ],
       "applicability_note": "Pin the all-zone typed fragment, subtype snapshot, and runtime registry into the checkpoint before exact command replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.chosen_designation",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_entry_designations.EntryDesignationTests.test_chosen_characteristics_bind_public_value_to_existing_query_owner",
+      "official_rule_ids": [
+        "105.1",
+        "205.3m",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Instantiate a fixed public creature characteristic query from the source's retained entry choice through the existing layer-six and layer-seven-c owners."
+    },
+    {
+      "capability_id": "continuous.characteristics.chosen_designation",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_entry_designations.EntryDesignationTests.test_printed_copy_gets_fresh_entry_designation_and_replays",
+      "official_rule_ids": [
+        "105.1",
+        "205.3m",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed copy makes a fresh entry choice, rejects a stale selection atomically and replays; duplicated linked choices and departed incarnations do not retain admission or choice state."
+    },
+    {
+      "capability_id": "continuous.characteristics.chosen_designation",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_entry_designations.EntryDesignationTests.test_printed_entry_designation_cast_choice_privacy_persistence_and_replay",
+      "official_rule_ids": [
+        "105.1",
+        "205.3m",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Instantiate a fixed public creature characteristic query from the source's retained entry choice through the existing layer-six and layer-seven-c owners."
+    },
+    {
+      "capability_id": "continuous.characteristics.chosen_designation",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_entry_designations.EntryDesignationTests.test_printed_copy_gets_fresh_entry_designation_and_replays",
+      "official_rule_ids": [
+        "105.1",
+        "205.3m",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed copy makes a fresh entry choice, rejects a stale selection atomically and replays; duplicated linked choices and departed incarnations do not retain admission or choice state."
+    },
+    {
+      "capability_id": "continuous.characteristics.chosen_designation",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_entry_designations.EntryDesignationTests.test_printed_entry_designation_cast_choice_privacy_persistence_and_replay",
+      "official_rule_ids": [
+        "105.1",
+        "205.3m",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Instantiate a fixed public creature characteristic query from the source's retained entry choice through the existing layer-six and layer-seven-c owners."
+    },
+    {
+      "capability_id": "continuous.characteristics.chosen_designation",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_entry_designations.EntryDesignationTests.test_entry_designation_dependency_and_compiler_mutations_fail_closed",
+      "official_rule_ids": [
+        "105.1",
+        "205.3m",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Remove the typed compiler production or block its dependency and preserve whole-card rejection."
+    },
+    {
+      "capability_id": "continuous.characteristics.chosen_designation",
+      "evidence_class": "negative",
+      "test_id": "tests.test_entry_designations.EntryDesignationTests.test_duplicate_intrinsic_designations_preserve_linking_residuals",
+      "official_rule_ids": [
+        "105.1",
+        "205.3m",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed copy makes a fresh entry choice, rejects a stale selection atomically and replays; duplicated linked choices and departed incarnations do not retain admission or choice state."
+    },
+    {
+      "capability_id": "continuous.characteristics.chosen_designation",
+      "evidence_class": "negative",
+      "test_id": "tests.test_entry_designations.EntryDesignationTests.test_entry_designation_dependency_and_compiler_mutations_fail_closed",
+      "official_rule_ids": [
+        "105.1",
+        "205.3m",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Remove the typed compiler production or block its dependency and preserve whole-card rejection."
+    },
+    {
+      "capability_id": "continuous.characteristics.chosen_designation",
+      "evidence_class": "negative",
+      "test_id": "tests.test_entry_designations.EntryDesignationTests.test_entry_designation_vocabulary_and_descriptor_are_closed",
+      "official_rule_ids": [
+        "105.1",
+        "205.3m",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Instantiate a fixed public creature characteristic query from the source's retained entry choice through the existing layer-six and layer-seven-c owners."
+    },
+    {
+      "capability_id": "continuous.characteristics.chosen_designation",
+      "evidence_class": "negative",
+      "test_id": "tests.test_entry_designations.EntryDesignationTests.test_entry_designations_clear_with_departed_zone_object",
+      "official_rule_ids": [
+        "105.1",
+        "205.3m",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed copy makes a fresh entry choice, rejects a stale selection atomically and replays; duplicated linked choices and departed incarnations do not retain admission or choice state."
+    },
+    {
+      "capability_id": "continuous.characteristics.chosen_designation",
+      "evidence_class": "negative",
+      "test_id": "tests.test_entry_designations.EntryDesignationTests.test_linked_source_type_additions_keep_the_existing_entry_owner",
+      "official_rule_ids": [
+        "105.1",
+        "205.3m",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject the generic entry descriptor for a choice linked to source-type addition, preserving its source span and the existing reviewed entry owner instead of introducing a second choice."
+    },
+    {
+      "capability_id": "continuous.characteristics.chosen_designation",
+      "evidence_class": "negative",
+      "test_id": "tests.test_entry_designations.EntryDesignationTests.test_original_entry_designation_unsupported_siblings_reject_admission",
+      "official_rule_ids": [
+        "105.1",
+        "205.3m",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Instantiate a fixed public creature characteristic query from the source's retained entry choice through the existing layer-six and layer-seven-c owners."
+    },
+    {
+      "capability_id": "continuous.characteristics.chosen_designation",
+      "evidence_class": "positive",
+      "test_id": "tests.test_entry_designations.EntryDesignationTests.test_entry_designation_reuses_mutually_exclusive_public_replacements",
+      "official_rule_ids": [
+        "105.1",
+        "205.3m",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Instantiate a fixed public creature characteristic query from the source's retained entry choice through the existing layer-six and layer-seven-c owners."
+    },
+    {
+      "capability_id": "continuous.characteristics.chosen_designation",
+      "evidence_class": "positive",
+      "test_id": "tests.test_entry_designations.EntryDesignationTests.test_original_entry_designation_programs_close_and_keep_source_spans",
+      "official_rule_ids": [
+        "105.1",
+        "205.3m",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Instantiate a fixed public creature characteristic query from the source's retained entry choice through the existing layer-six and layer-seven-c owners."
+    },
+    {
+      "capability_id": "continuous.characteristics.chosen_designation",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_entry_designations.EntryDesignationTests.test_printed_entry_designation_cast_choice_privacy_persistence_and_replay",
+      "official_rule_ids": [
+        "105.1",
+        "205.3m",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Instantiate a fixed public creature characteristic query from the source's retained entry choice through the existing layer-six and layer-seven-c owners."
+    },
+    {
+      "capability_id": "continuous.characteristics.chosen_designation",
+      "evidence_class": "replay",
+      "test_id": "tests.test_entry_designations.EntryDesignationTests.test_printed_copy_gets_fresh_entry_designation_and_replays",
+      "official_rule_ids": [
+        "105.1",
+        "205.3m",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed copy makes a fresh entry choice, rejects a stale selection atomically and replays; duplicated linked choices and departed incarnations do not retain admission or choice state."
+    },
+    {
+      "capability_id": "continuous.characteristics.chosen_designation",
+      "evidence_class": "replay",
+      "test_id": "tests.test_entry_designations.EntryDesignationTests.test_printed_entry_designation_cast_choice_privacy_persistence_and_replay",
+      "official_rule_ids": [
+        "105.1",
+        "205.3m",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Instantiate a fixed public creature characteristic query from the source's retained entry choice through the existing layer-six and layer-seven-c owners."
+    },
+    {
+      "capability_id": "continuous.characteristics.chosen_designation",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_entry_designations.EntryDesignationTests.test_printed_copy_gets_fresh_entry_designation_and_replays",
+      "official_rule_ids": [
+        "105.1",
+        "205.3m",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed copy makes a fresh entry choice, rejects a stale selection atomically and replays; duplicated linked choices and departed incarnations do not retain admission or choice state."
     },
     {
       "capability_id": "continuous.characteristics.conditional_keyword",
@@ -75855,6 +76215,384 @@
       "applicability_note": "Replay the public reveal and exact-object conditional discard with the same final state."
     },
     {
+      "capability_id": "zone.entry.public_designation",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_entry_designations.EntryDesignationTests.test_chosen_characteristics_bind_public_value_to_existing_query_owner",
+      "official_rule_ids": [
+        "105.1",
+        "205.3m",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one color or pinned creature type through the intrinsic public battlefield-entry replacement journal and retain it on the entering incarnation."
+    },
+    {
+      "capability_id": "zone.entry.public_designation",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_entry_designations.EntryDesignationTests.test_printed_copy_gets_fresh_entry_designation_and_replays",
+      "official_rule_ids": [
+        "105.1",
+        "205.3m",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed copy makes a fresh entry choice, rejects a stale selection atomically and replays; duplicated linked choices and departed incarnations do not retain admission or choice state."
+    },
+    {
+      "capability_id": "zone.entry.public_designation",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_entry_designations.EntryDesignationTests.test_printed_entry_designation_cast_choice_privacy_persistence_and_replay",
+      "official_rule_ids": [
+        "105.1",
+        "205.3m",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one color or pinned creature type through the intrinsic public battlefield-entry replacement journal and retain it on the entering incarnation."
+    },
+    {
+      "capability_id": "zone.entry.public_designation",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_entry_designations.EntryDesignationTests.test_printed_copy_gets_fresh_entry_designation_and_replays",
+      "official_rule_ids": [
+        "105.1",
+        "205.3m",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed copy makes a fresh entry choice, rejects a stale selection atomically and replays; duplicated linked choices and departed incarnations do not retain admission or choice state."
+    },
+    {
+      "capability_id": "zone.entry.public_designation",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_entry_designations.EntryDesignationTests.test_printed_entry_designation_cast_choice_privacy_persistence_and_replay",
+      "official_rule_ids": [
+        "105.1",
+        "205.3m",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one color or pinned creature type through the intrinsic public battlefield-entry replacement journal and retain it on the entering incarnation."
+    },
+    {
+      "capability_id": "zone.entry.public_designation",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_entry_designations.EntryDesignationTests.test_entry_designation_dependency_and_compiler_mutations_fail_closed",
+      "official_rule_ids": [
+        "105.1",
+        "205.3m",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Remove the typed compiler production or block its dependency and preserve whole-card rejection."
+    },
+    {
+      "capability_id": "zone.entry.public_designation",
+      "evidence_class": "negative",
+      "test_id": "tests.test_entry_designations.EntryDesignationTests.test_duplicate_intrinsic_designations_preserve_linking_residuals",
+      "official_rule_ids": [
+        "105.1",
+        "205.3m",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed copy makes a fresh entry choice, rejects a stale selection atomically and replays; duplicated linked choices and departed incarnations do not retain admission or choice state."
+    },
+    {
+      "capability_id": "zone.entry.public_designation",
+      "evidence_class": "negative",
+      "test_id": "tests.test_entry_designations.EntryDesignationTests.test_entry_designation_dependency_and_compiler_mutations_fail_closed",
+      "official_rule_ids": [
+        "105.1",
+        "205.3m",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Remove the typed compiler production or block its dependency and preserve whole-card rejection."
+    },
+    {
+      "capability_id": "zone.entry.public_designation",
+      "evidence_class": "negative",
+      "test_id": "tests.test_entry_designations.EntryDesignationTests.test_entry_designation_vocabulary_and_descriptor_are_closed",
+      "official_rule_ids": [
+        "105.1",
+        "205.3m",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one color or pinned creature type through the intrinsic public battlefield-entry replacement journal and retain it on the entering incarnation."
+    },
+    {
+      "capability_id": "zone.entry.public_designation",
+      "evidence_class": "negative",
+      "test_id": "tests.test_entry_designations.EntryDesignationTests.test_entry_designations_clear_with_departed_zone_object",
+      "official_rule_ids": [
+        "105.1",
+        "205.3m",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed copy makes a fresh entry choice, rejects a stale selection atomically and replays; duplicated linked choices and departed incarnations do not retain admission or choice state."
+    },
+    {
+      "capability_id": "zone.entry.public_designation",
+      "evidence_class": "negative",
+      "test_id": "tests.test_entry_designations.EntryDesignationTests.test_linked_source_type_additions_keep_the_existing_entry_owner",
+      "official_rule_ids": [
+        "105.1",
+        "205.3m",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject the generic entry descriptor for a choice linked to source-type addition, preserving its source span and the existing reviewed entry owner instead of introducing a second choice."
+    },
+    {
+      "capability_id": "zone.entry.public_designation",
+      "evidence_class": "negative",
+      "test_id": "tests.test_entry_designations.EntryDesignationTests.test_original_entry_designation_unsupported_siblings_reject_admission",
+      "official_rule_ids": [
+        "105.1",
+        "205.3m",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one color or pinned creature type through the intrinsic public battlefield-entry replacement journal and retain it on the entering incarnation."
+    },
+    {
+      "capability_id": "zone.entry.public_designation",
+      "evidence_class": "positive",
+      "test_id": "tests.test_entry_designations.EntryDesignationTests.test_entry_designation_reuses_mutually_exclusive_public_replacements",
+      "official_rule_ids": [
+        "105.1",
+        "205.3m",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one color or pinned creature type through the intrinsic public battlefield-entry replacement journal and retain it on the entering incarnation."
+    },
+    {
+      "capability_id": "zone.entry.public_designation",
+      "evidence_class": "positive",
+      "test_id": "tests.test_entry_designations.EntryDesignationTests.test_original_entry_designation_programs_close_and_keep_source_spans",
+      "official_rule_ids": [
+        "105.1",
+        "205.3m",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one color or pinned creature type through the intrinsic public battlefield-entry replacement journal and retain it on the entering incarnation."
+    },
+    {
+      "capability_id": "zone.entry.public_designation",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_entry_designations.EntryDesignationTests.test_printed_entry_designation_cast_choice_privacy_persistence_and_replay",
+      "official_rule_ids": [
+        "105.1",
+        "205.3m",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one color or pinned creature type through the intrinsic public battlefield-entry replacement journal and retain it on the entering incarnation."
+    },
+    {
+      "capability_id": "zone.entry.public_designation",
+      "evidence_class": "replay",
+      "test_id": "tests.test_entry_designations.EntryDesignationTests.test_printed_copy_gets_fresh_entry_designation_and_replays",
+      "official_rule_ids": [
+        "105.1",
+        "205.3m",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed copy makes a fresh entry choice, rejects a stale selection atomically and replays; duplicated linked choices and departed incarnations do not retain admission or choice state."
+    },
+    {
+      "capability_id": "zone.entry.public_designation",
+      "evidence_class": "replay",
+      "test_id": "tests.test_entry_designations.EntryDesignationTests.test_printed_entry_designation_cast_choice_privacy_persistence_and_replay",
+      "official_rule_ids": [
+        "105.1",
+        "205.3m",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Choose one color or pinned creature type through the intrinsic public battlefield-entry replacement journal and retain it on the entering incarnation."
+    },
+    {
+      "capability_id": "zone.entry.public_designation",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_entry_designations.EntryDesignationTests.test_printed_copy_gets_fresh_entry_designation_and_replays",
+      "official_rule_ids": [
+        "105.1",
+        "205.3m",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed copy makes a fresh entry choice, rejects a stale selection atomically and replays; duplicated linked choices and departed incarnations do not retain admission or choice state."
+    },
+    {
       "capability_id": "zone.entry.tapped_state",
       "evidence_class": "interaction",
       "test_id": "tests.test_typed_land_entry_participation.TypedLandEntryRuntimeTests.test_agadeem_residual_spell_stays_fail_closed_while_land_entry_executes",
@@ -78111,5 +78849,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "c272ce66afedb787707d3ab76553a4457007fa1c8cb146a5ff6d6c55f9dacf27"
+  "fingerprint": "abc1eb8b9b87b52ab174f7373a27fdb618911a8579704f2c3f96948395e65aa0"
 }

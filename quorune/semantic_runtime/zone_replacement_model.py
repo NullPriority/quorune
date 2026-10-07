@@ -394,6 +394,8 @@ class PreparedZoneChange:
     entry_tapped: bool = False
     entry_life_payment: int = 0
     read_ahead_chapter: int | None = None
+    entry_chosen_color: str | None = None
+    entry_chosen_creature_type: str | None = None
     event: ReplaceableEvent | None = None
     effects: tuple[ReplacementEffect, ...] = ()
     counter_events: tuple[ReplaceableEvent, ...] = ()
@@ -467,6 +469,13 @@ class PreparedZoneChange:
             raise ZoneReplacementError(
                 "Prepared zone changes require a typed resolved event"
             )
+        from ..entry_designations import EntryDesignationKind, validate_designation
+        for kind, value in ((EntryDesignationKind.COLOR, self.entry_chosen_color), (EntryDesignationKind.CREATURE_TYPE, self.entry_chosen_creature_type)):
+            if value is not None:
+                try:
+                    validate_designation(kind, value)
+                except ValueError as exc:
+                    raise ZoneReplacementError(str(exc)) from exc
         for field_name, values, value_type in (
             ("effects", tuple(self.effects), ReplacementEffect),
             ("counter events", tuple(self.counter_events), ReplaceableEvent),

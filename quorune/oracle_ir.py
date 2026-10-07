@@ -169,7 +169,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v259"
+ORACLE_COMPILER_VERSION = "oracle-ir-v261"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -1452,6 +1452,8 @@ def compile_oracle_card(
         )
         for face_id, face_name, type_line, oracle_text, keywords in face_values
     )
+    from .compiler.entry_designation_templates import scope_entry_designation_faces
+    faces = scope_entry_designation_faces(faces)
     faces = scope_declared_card_faces(faces)
     oracle_hash = hashlib.sha256(
         record.oracle_text.encode("utf-8")

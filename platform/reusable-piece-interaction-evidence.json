@@ -4524,7 +4524,7 @@
       ],
       "capability_ids": ["continuous.characteristics.changeling"],
       "interaction_order": 2,
-      "assertion": "Bloodline Pretender retains its exact copied all-zone Changeling fragment while its unsupported choose-a-type entry replacement keeps the complete CardProgram unresolved and unavailable to strict runtime admission."
+      "assertion": "A constructed permanent retains its exact all-zone Changeling fragment while its independently unsupported two-type entry replacement keeps the complete CardProgram unresolved and unavailable to strict or compatible runtime admission."
     },
     {
       "evidence_class": "interaction",
@@ -4536,7 +4536,7 @@
       ],
       "capability_ids": ["continuous.characteristics.changeling"],
       "interaction_order": 2,
-      "assertion": "The trusted Changeling fragment can be promoted independently, but no sibling replacement program is admitted before its applicability and CR 616 ordering are typed."
+      "assertion": "The trusted Changeling fragment can be promoted independently, but the constructed compound entry choice contributes no replacement program before its applicability and CR 616 ordering are typed."
     },
     {
       "evidence_class": "interaction",
@@ -7406,6 +7406,95 @@
       "capability_ids": ["zone.move.fixed_private_hand_choice"],
       "interaction_order": 2,
       "assertion": "A constructed permanent retains one exact private land-entry activation while an independently unresolved conditional draw activation keeps the complete CardProgram unavailable at strict or compatible runtime admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_entry_choices_compose_with_aura_targets_and_printed_shroud",
+      "piece_ids": [
+        "capability.attachment.aura.simple_object",
+        "capability.zone.entry.public_designation"
+      ],
+      "capability_ids": [
+        "attachment.aura.simple_object",
+        "zone.entry.public_designation"
+      ],
+      "interaction_order": 2,
+      "assertion": "A constructed exact Aura is cast targeting an opponent creature before its intrinsic color choice. The pending choice precedes battlefield entry and attachment; commitment retains the public color and reciprocal attachment, including when printed Steely Resolve subsequently grants Shroud, with exact pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_entry_choices_compose_with_aura_targets_and_printed_shroud",
+      "piece_ids": [
+        "capability.attachment.aura.typed_restriction",
+        "capability.zone.entry.public_designation"
+      ],
+      "capability_ids": [
+        "attachment.aura.typed_restriction",
+        "zone.entry.public_designation"
+      ],
+      "interaction_order": 2,
+      "assertion": "A constructed exact creature-or-Vehicle Aura shares typed advertised and accepted target legality, then makes its intrinsic color choice before battlefield entry. It attaches reciprocally to the selected creature and goes to the graveyard when that creature dies, with exact pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_entry_choices_compose_with_aura_targets_and_printed_shroud",
+      "piece_ids": [
+        "capability.target.protection.shroud_permanent",
+        "capability.zone.entry.public_designation"
+      ],
+      "capability_ids": [
+        "target.protection.shroud_permanent",
+        "zone.entry.public_designation"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Steely Resolve is admitted through trusted compiler registration, cast, and chooses Elf before entry. Its chosen-type Shroud removes both friendly and opposing Elves from a generic artifact activation offer; both commands reject atomically while an unchosen Bird remains legal, with exact pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_entry_choices_compose_with_aura_targets_and_printed_shroud",
+      "piece_ids": [
+        "capability.target.public.player_or_damageable_permanent",
+        "capability.zone.entry.public_designation"
+      ],
+      "capability_ids": [
+        "target.public.player_or_damageable_permanent",
+        "zone.entry.public_designation"
+      ],
+      "interaction_order": 2,
+      "assertion": "A constructed exact artifact retains its intrinsic color choice and advertises an ordinary any-target damage activation. The accepted action damages an unchosen Bird while the same legal catalog excludes Elves protected by original Steely Resolve, with exact pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_printed_copy_gets_fresh_entry_designation_and_replays",
+      "piece_ids": [
+        "capability.target.revalidate_resolution",
+        "capability.zone.entry.public_designation"
+      ],
+      "capability_ids": [
+        "target.revalidate_resolution",
+        "zone.entry.public_designation"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Cackling Counterpart is offered and accepted with the currently legal original Plague Engineer as its locked target, then resolves through target revalidation and creates a copy with its own intrinsic entry choice. The copy chooses Bird while its source retains Elf, stale entry-choice reuse rejects atomically, state-based deaths distinguish both scopes, and the full pre-action sequence replays exactly."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_entry_designation_chosen_target_predicate_stays_unavailable",
+      "piece_ids": [
+        "capability.zone.entry.public_designation",
+        "residual.target_or_choice.target-predicate"
+      ],
+      "capability_ids": [
+        "zone.entry.public_designation"
+      ],
+      "interaction_order": 2,
+      "assertion": "A constructed permanent keeps its exact intrinsic creature-type entry choice while an independently unsupported graveyard target restricted to the chosen type leaves the complete CardProgram unavailable at both strict and compatible admission."
     }
   ]
 }

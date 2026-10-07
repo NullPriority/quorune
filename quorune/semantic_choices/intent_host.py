@@ -314,12 +314,12 @@ class SemanticChoiceIntentHostMixin:
         event_code = (
             "card.name.chosen"
             if annotation_key == "chosen_name"
-            else "creature_type.chosen"
+            else "color.chosen" if annotation_key == "chosen_color" else "creature_type.chosen"
         )
         detail_key = (
             "card_name"
             if annotation_key == "chosen_name"
-            else "creature_type"
+            else "color" if annotation_key == "chosen_color" else "creature_type"
         )
         self._log(
             intent.actor,
