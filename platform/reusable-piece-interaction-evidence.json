@@ -3,6 +3,42 @@
   "declarations": [
     {
       "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_printed_typed_aura_control_and_attachment_loss_replay",
+      "piece_ids": ["capability.attachment.aura.typed_restriction", "capability.continuous.control.fixed_resolution"],
+      "capability_ids": ["attachment.aura.typed_restriction", "continuous.control.fixed_resolution"],
+      "interaction_order": 2,
+      "assertion": "Original Giant's Grasp offers a foreign-owned Giant controlled by the caster and rejects a caster-owned Giant controlled by an opponent without mutation. Its accepted cast attaches and its separate enter-trigger selection controls a nonland permanent. Actual Lightning Bolt kills the Giant, state-based cleanup removes the Aura, and source-bound custody restores the target's initial controller distinct from its owner with exact pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_original_control_carriers_with_saga_or_replacement_siblings_reject_runtime_admission",
+      "piece_ids": ["capability.continuous.control.fixed_resolution", "residual.card_form.ordinary-saga-chapter-event-binding"],
+      "capability_ids": ["continuous.control.fixed_resolution"],
+      "interaction_order": 2,
+      "assertion": "Original The Akroan War retains its recognized fixed-control body and unresolved ordinary Saga chapter event binding; canonical whole CardProgram construction and runtime binding reject the composition without granting gameplay trust."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_original_control_carriers_with_saga_or_replacement_siblings_reject_runtime_admission",
+      "piece_ids": ["capability.continuous.control.fixed_resolution", "residual.replacement.replacement-applicability"],
+      "capability_ids": ["continuous.control.fixed_resolution"],
+      "interaction_order": 2,
+      "assertion": "Original The Beast, Deathless Prince contains a recognized fixed-control result beside an unresolved stun-counter entry replacement. Canonical runtime admission rejects the whole unresolved CardProgram rather than admitting its supported prefix as a complete card."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_original_control_carriers_with_saga_or_replacement_siblings_reject_runtime_admission",
+      "piece_ids": ["capability.continuous.control.fixed_resolution", "residual.replacement.self-replacement-and-prevention-ordering"],
+      "capability_ids": ["continuous.control.fixed_resolution"],
+      "interaction_order": 2,
+      "assertion": "The same original Beast carrier preserves explicit self-replacement/ordering residuals and reaches the canonical runtime binding rejection boundary. This is evidence for fail-closed admission, not execution of its unsupported replacement."
+    },
+    {
+      "evidence_class": "interaction",
       "assurance_kind": "fail_closed_runtime_admission",
       "test_id": "test_copy_recipe_with_unsupported_replacement_fails_closed_at_runtime_admission",
       "piece_ids": ["capability.token.creation.fixed_copy", "residual.replacement.replacement-applicability"],

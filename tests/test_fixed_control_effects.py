@@ -357,6 +357,108 @@ class FixedControlGameplayTests(unittest.TestCase):
         self.assertTrue(replay["ok"], replay)
         self.assertEqual(expected, replay["final_state_hash"])
 
+    def test_printed_typed_aura_control_and_attachment_loss_replay(self):
+        # The pinned Aura enchants a Giant its controller controls. Its enter
+        # trigger controls a separate nonland permanent only while it remains.
+        session = self.session(61120124)
+        engine = session.engine
+        aura = self.card(session, "Giant's Grasp", "A", "hand")
+        giant = self.card(session, "Blind-Spot Giant", "C", "hand")
+        engine.move_card(giant.object_id, "battlefield", controller="A", reason="foreign-owned controlled Giant fixture", log=False)
+        other_giant = self.card(session, "Blind-Spot Giant", "A", "hand")
+        engine.move_card(other_giant.object_id, "battlefield", controller="C", reason="owned opponent-controlled Giant fixture", log=False)
+        target = self.card(session, "Llanowar Elves", "B", "hand")
+        engine.move_card(target.object_id, "battlefield", controller="D", reason="initial custody fixture", log=False)
+        bolt = self.card(session, "Lightning Bolt", "B", "hand")
+        engine.state.players["A"].mana_pool.update(C=2, U=2)
+        engine.state.players["B"].mana_pool.update(R=1)
+        self.priority(session)
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        action = next(row for row in actions if row["id"] == f"cast:{aura.ref}")
+        legal = action["target_schema"]["legal_refs"]
+        self.assertIn(giant.ref, legal)
+        self.assertNotIn(other_giant.ref, legal)
+        self.assertNotIn(target.ref, legal)
+        self.checkpoint(session)
+        before = authoritative_state_hash(engine.state)
+        rejected = session.act("pilot:A", {"action_id": action["id"], "targets": [other_giant.ref], "pay": "auto"})
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before, authoritative_state_hash(engine.state))
+        # Transaction rollback restores authoritative instances; retain their
+        # identities, then read subsequent consequences from the restored set.
+        aura = engine.state.cards[aura.object_id]
+        giant = engine.state.cards[giant.object_id]
+        target = engine.state.cards[target.object_id]
+        bolt = engine.state.cards[bolt.object_id]
+        cast = session.act("pilot:A", {"action_id": action["id"], "targets": [giant.ref], "pay": "auto"})
+        self.assertTrue(cast.ok, cast.summary)
+        for _ in range(12):
+            if engine.state.pending_decision.kind == "semantic.target":
+                break
+            pass_current(session)
+        self.assertEqual("battlefield", aura.zone)
+        self.assertEqual(giant.object_id, aura.attached_to)
+        self.assertEqual("semantic.target", engine.state.pending_decision.kind)
+        chosen = session.act("pilot:A", {"action_id": "choose", "targets": [target.ref]})
+        self.assertTrue(chosen.ok, chosen.summary)
+        for _ in range(12):
+            if not engine.state.stack:
+                break
+            pass_current(session)
+        self.assertEqual("A", target.controller)
+        self.assertEqual("B", target.owner)
+        for _ in range(8):
+            if engine.state.priority_player == "B":
+                break
+            pass_current(session)
+        actions = session.packet("pilot:B", full=True)["decision"]["ctx"]["legal"]["actions"]
+        action = next(row for row in actions if row["id"] == f"cast:{bolt.ref}")
+        self.assertIn(giant.ref, action["target_schema"]["legal_refs"])
+        cast = session.act("pilot:B", {"action_id": action["id"], "targets": [giant.ref], "pay": "auto"})
+        self.assertTrue(cast.ok, cast.summary)
+        for _ in range(12):
+            if not engine.state.stack:
+                break
+            pass_current(session)
+        self.assertEqual("graveyard", giant.zone)
+        self.assertEqual("graveyard", aura.zone)
+        self.assertIsNone(aura.attached_to)
+        self.assertEqual("D", target.controller)
+        self.assertEqual("B", target.owner)
+        self.replay(session)
+
+    def test_original_control_carriers_with_saga_or_replacement_siblings_reject_runtime_admission(self):
+        from high_risk_interaction_support import _observed_piece_ids
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.compiler.unlock_frontier import analyze_card_unlocks
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.semantics import SemanticRegistry
+
+        registry = load_default_capability_registry()
+        boundaries = (
+            (self.db.lookup("The Akroan War"), ("residual.card_form.ordinary-saga-chapter-event-binding",)),
+            (self.db.lookup("The Beast, Deathless Prince"), (
+                "residual.replacement.replacement-applicability",
+                "residual.replacement.self-replacement-and-prevention-ordering",
+            )),
+        )
+        for record, residuals in boundaries:
+            with self.subTest(card=record.name):
+                ir = compile_oracle_card(record, capability_registry=registry, capability_profile="commander_review")
+                program = compile_best_available_card_program(self.db, record,
+                    semantic_registry=SemanticRegistry(), capability_registry=registry, capability_profile="commander_review")
+                row = analyze_card_unlocks(ir, program=program, program_error=None,
+                    capabilities=registry, profile="commander_review")
+                self.assertLessEqual({"capability.continuous.control.fixed_resolution", *residuals}, _observed_piece_ids(row))
+                self.assertEqual("residual", row["card_program_status"])
+                self.assertIsNone(row["hard_construction_failure"])
+                self.assertEqual("unresolved", program.trust_closure["trust_basis"])
+                binding = bind_card_program_runtime(program, capability_registry=registry, profile="commander_review")
+                self.assertFalse(binding["strict_capability_ready"])
+                self.assertFalse(binding["compatible_ready"])
+                self.assertIn("trust_basis:unresolved", binding["blockers"])
+
     def test_printed_control_spell_offers_accepts_principal_correct_targets_and_replays(self):
         session = self.session(61120101)
         engine = session.engine
