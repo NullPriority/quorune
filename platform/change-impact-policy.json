@@ -1816,7 +1816,9 @@
         "test_card_program_trust",
         "test_changeling_characteristics",
         "test_entry_designations",
-        "test_high_risk_interaction_assurance"
+        "test_exact_mishra_closure",
+        "test_high_risk_interaction_assurance",
+        "test_trigger_processing_owner"
       ]
     },
     {

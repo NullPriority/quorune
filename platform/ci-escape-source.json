@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "observed_at": "2026-10-07T17:59:44Z",
+  "observed_at": "2026-10-07T20:05:34Z",
   "measurement_window": {
     "started_at": "2026-08-25T03:52:06Z",
     "ended_at": "2026-08-25T20:56:41Z",
@@ -9,6 +9,28 @@
   },
   "repository": "NullPriority/quorune",
   "escapes": [
+    {
+      "id": "ci-20261007-77",
+      "run_id": 37668759749,
+      "head_sha": "f78b345116b4ce1b8b50f94be976702e4f801e85",
+      "category": "source_correctness",
+      "deterministic": true,
+      "summary": "The plain intrinsic entry compiler promoted the entry clause of a source with a linked self-type addition. Roaming Throne already had a reviewed pre-entry choice owner, so its accepted choice was followed by a second generic choice and existing direct-entry trigger and Ward witnesses suspended.",
+      "failed_surfaces": [
+        "PR / Python / functional-06",
+        "PR / Python / functional-12",
+        "PR / Windows / functional-06",
+        "PR / Windows / functional-12"
+      ],
+      "regressions": [
+        "test_entry_designations.EntryDesignationTests.test_linked_source_type_additions_keep_the_existing_entry_owner",
+        "test_exact_mishra_closure.ExactMishraClosureTests.test_roaming_throne_type_trigger_multiplier_and_ward",
+        "test_trigger_processing_owner.TriggerProcessingOwnerIntegrationTests.test_chosen_type_multiplier_excludes_self_and_wrong_type",
+        "test_trigger_processing_owner.TriggerProcessingOwnerIntegrationTests.test_ward_occurrence_replays_exactly"
+      ],
+      "impact_edge_status": "added",
+      "resolution": "Use the source-spanned face guard to exclude an intrinsic creature-type descriptor linked to making its source the chosen type. Preserve the linked residual and existing reviewed owner without identity dispatch or runtime text parsing. The six exact reported owner witnesses plus original closure and three printed linking exclusions pass; the strengthened offered/accepted Roaming Throne cast proves one pre-entry choice, its linked subtype, preserved trigger and Ward behavior, and exact pre-action replay. Add the existing exact-deck and trigger-processing consumers to the entry impact rule, update compiler identity, remeasure qualification, and run one census for the corrected semantic fingerprint."
+    },
     {
       "id": "ci-20261007-76",
       "run_id": 37660790800,

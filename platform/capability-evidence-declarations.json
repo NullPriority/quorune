@@ -8950,6 +8950,26 @@
     {
       "capability_id": "continuous.characteristics.chosen_designation",
       "evidence_class": "negative",
+      "test_id": "tests.test_entry_designations.EntryDesignationTests.test_linked_source_type_additions_keep_the_existing_entry_owner",
+      "official_rule_ids": [
+        "105.1",
+        "205.3m",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject the generic entry descriptor for a choice linked to source-type addition, preserving its source span and the existing reviewed entry owner instead of introducing a second choice."
+    },
+    {
+      "capability_id": "continuous.characteristics.chosen_designation",
+      "evidence_class": "negative",
       "test_id": "tests.test_entry_designations.EntryDesignationTests.test_original_entry_designation_unsupported_siblings_reject_admission",
       "official_rule_ids": ["105.1", "205.3m", "613.1f", "613.1g", "613.4c", "614.12a", "707.2"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -32595,6 +32615,27 @@
       "official_rule_ids": ["105.1", "205.3m", "400.7", "614.1c", "614.12", "614.12a", "616.1", "707.2"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Printed copy makes a fresh entry choice, rejects a stale selection atomically and replays; duplicated linked choices and departed incarnations do not retain admission or choice state."
+    },
+    {
+      "capability_id": "zone.entry.public_designation",
+      "evidence_class": "negative",
+      "test_id": "tests.test_entry_designations.EntryDesignationTests.test_linked_source_type_additions_keep_the_existing_entry_owner",
+      "official_rule_ids": [
+        "105.1",
+        "205.3m",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject the generic entry descriptor for a choice linked to source-type addition, preserving its source span and the existing reviewed entry owner instead of introducing a second choice."
     },
     {
       "capability_id": "zone.entry.public_designation",

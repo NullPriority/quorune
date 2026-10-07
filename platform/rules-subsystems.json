@@ -4909,8 +4909,8 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v260-persistent-entry-designations",
-      "compiler_version": "oracle-ir-v260",
+      "transition_id": "oracle-ir-v261-persistent-entry-designations",
+      "compiler_version": "oracle-ir-v261",
       "bundle_id": "bundle:persistent-entry-designations",
       "candidate_ids": [
         "bundle:persistent-entry-designations"

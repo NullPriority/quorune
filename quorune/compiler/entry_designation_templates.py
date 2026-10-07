@@ -25,7 +25,7 @@ from .ir_model import OracleFaceIR, append_residual
 def scope_entry_designation_faces(
     faces: Sequence[OracleFaceIR],
 ) -> tuple[OracleFaceIR, ...]:
-    """Reject duplicate same-kind entry declarations requiring linked choices."""
+    """Reject linked choices outside the plain retained-designation owner."""
     result = []
     for face in faces:
         declarations = Counter(
@@ -35,7 +35,22 @@ def scope_entry_designation_faces(
             if descriptor.get("handler_id") == ENTRY_DESIGNATION_HANDLER_ID
         )
         duplicates = {kind for kind, count in declarations.items() if count > 1}
-        if not duplicates:
+        source = (
+            rf"(?:{SourceReferenceSpec(face.face_name).regex_pattern}|"
+            r"this (?:artifact|card|creature|enchantment|land|permanent))"
+        )
+        linked_type_addition = any(
+            re.fullmatch(
+                rf"{source} is the chosen type in addition to its other types\.",
+                node.text,
+                re.IGNORECASE,
+            )
+            for node in face.nodes
+        )
+        blocked = duplicates | (
+            {"creature_type"} if linked_type_addition else set()
+        )
+        if not blocked:
             result.append(face)
             continue
         residuals = list(face.residuals)
@@ -43,7 +58,7 @@ def scope_entry_designation_faces(
         for node in face.nodes:
             if any(
                 descriptor.get("handler_id") == ENTRY_DESIGNATION_HANDLER_ID
-                and descriptor.get("designation") in duplicates
+                and descriptor.get("designation") in blocked
                 for descriptor in node.handlers
             ):
                 residual_id = append_residual(
@@ -52,7 +67,10 @@ def scope_entry_designation_faces(
                     text=node.text,
                     span=node.span,
                     reason=(
-                        "Multiple same-kind intrinsic choices require independent "
+                        "A linked source-type addition requires its own choice "
+                        "and characteristic owner"
+                        if linked_type_addition and "creature_type" not in duplicates
+                        else "Multiple same-kind intrinsic choices require independent "
                         "linked designation identities"
                     ),
                     blockers=("linked entry designation ownership",),

@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import unittest
+import tempfile
 
-from common import advance_fixture_turn, keep_all, load_assets, make_session
+from common import advance_fixture_turn, keep_all, load_assets, make_session, pass_current
 from quorune.model import StackItem, TurnEntry
 from quorune.preflight import card_semantic_status
 from quorune.projection import ProjectionCursor, StateProjector
+from quorune.record import authoritative_state_hash, checkpoint_envelope, replay_record
 from quorune.saga_progression import advance_active_player_sagas
 from quorune.trigger_processing import collect_ward_occurrences
 
@@ -904,16 +906,29 @@ class ExactMishraClosureTests(unittest.TestCase):
         engine.move_card(throne.object_id, "hand")
         self.prepare_main(engine)
         engine.state.players["A"].mana_pool["C"] = 4
-        engine._cast(
-            "A",
+        engine._grant_priority("A")
+        engine.pump()
+        offered = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        action_id = f"cast:{throne.ref}"
+        self.assertTrue(any(row["id"] == action_id for row in offered))
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        cast = session.act(
+            "pilot:A",
             {
-                "card": throne.ref,
+                "action_id": action_id,
                 "pay": "manual",
                 "payment": {"C": 4},
             },
         )
-        self.resolve_top(engine)
+        self.assertTrue(cast.ok, cast.summary)
+        for _ in range(16):
+            if engine.state.pending_decision.kind == "semantic.choice":
+                break
+            pass_current(session)
         self.assertEqual("semantic.choice", engine.state.pending_decision.kind)
+        self.assertEqual("stack", throne.zone)
         result = session.act(
             "pilot:A",
             {
@@ -931,6 +946,15 @@ class ExactMishraClosureTests(unittest.TestCase):
                 str(engine._effective_card_data(throne)["type_line"])
             )[1],
         )
+        # One AS-enters choice completes entry; a second generic choice would
+        # leave the object on the stack and violate its CR 607.2d link.
+        self.assertNotIn(engine.state.pending_decision.kind, {"semantic.choice", "replacement.order"})
+        expected = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as directory:
+            session.save(directory)
+            replay = replay_record(directory, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected, replay["final_state_hash"])
         engine.move_card(
             engineer.object_id,
             "battlefield",

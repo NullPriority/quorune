@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 184,
+  "registry_version": 185,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -8870,12 +8870,12 @@
         "summary": "Choose one color or pinned creature type through the intrinsic public battlefield-entry replacement journal and retain it on the entering incarnation.",
         "inputs": ["typed intrinsic source descriptor", "destination controller and original incarnation", "pinned public color or creature-type vocabulary"],
         "outputs": ["persisted public replacement choice", "source-bound chosen-value characteristic predicate"],
-        "exclusions": ["compound, optional or restricted entry choices", "multiple same-kind entry choices", "arbitrary chosen-value rules or independently unsupported siblings"]
+        "exclusions": ["compound, optional or restricted entry choices", "multiple same-kind entry choices", "entry choices linked to source-type additions", "arbitrary chosen-value rules or independently unsupported siblings"]
       },
       "dependencies": [],
       "implementation_components": ["quorune.semantic_runtime.entry_designations.EntryDesignationHandler"],
       "positive_tests": ["test_original_entry_designation_programs_close_and_keep_source_spans", "test_entry_designation_reuses_mutually_exclusive_public_replacements"],
-      "negative_tests": ["test_entry_designation_vocabulary_and_descriptor_are_closed", "test_original_entry_designation_unsupported_siblings_reject_admission", "test_duplicate_intrinsic_designations_preserve_linking_residuals", "test_entry_designations_clear_with_departed_zone_object"],
+      "negative_tests": ["test_entry_designation_vocabulary_and_descriptor_are_closed", "test_original_entry_designation_unsupported_siblings_reject_admission", "test_duplicate_intrinsic_designations_preserve_linking_residuals", "test_linked_source_type_additions_keep_the_existing_entry_owner", "test_entry_designations_clear_with_departed_zone_object"],
       "interaction_tests": ["test_chosen_characteristics_bind_public_value_to_existing_query_owner", "test_printed_entry_designation_cast_choice_privacy_persistence_and_replay", "test_printed_copy_gets_fresh_entry_designation_and_replays"],
       "multiplayer_tests": ["test_printed_entry_designation_cast_choice_privacy_persistence_and_replay", "test_printed_copy_gets_fresh_entry_designation_and_replays"],
       "privacy_tests": ["test_printed_entry_designation_cast_choice_privacy_persistence_and_replay"],
@@ -8897,12 +8897,12 @@
         "summary": "Instantiate a fixed public creature characteristic query from the source's retained entry choice through the existing layer-six and layer-seven-c owners.",
         "inputs": ["typed intrinsic source descriptor", "destination controller and original incarnation", "pinned public color or creature-type vocabulary"],
         "outputs": ["persisted public replacement choice", "source-bound chosen-value characteristic predicate"],
-        "exclusions": ["compound, optional or restricted entry choices", "multiple same-kind entry choices", "arbitrary chosen-value rules or independently unsupported siblings"]
+        "exclusions": ["compound, optional or restricted entry choices", "multiple same-kind entry choices", "entry choices linked to source-type additions", "arbitrary chosen-value rules or independently unsupported siblings"]
       },
       "dependencies": ["zone.entry.public_designation"],
       "implementation_components": ["quorune.semantic_runtime.chosen_characteristics.ChosenCharacteristicsHandler"],
       "positive_tests": ["test_original_entry_designation_programs_close_and_keep_source_spans", "test_entry_designation_reuses_mutually_exclusive_public_replacements"],
-      "negative_tests": ["test_entry_designation_vocabulary_and_descriptor_are_closed", "test_original_entry_designation_unsupported_siblings_reject_admission", "test_duplicate_intrinsic_designations_preserve_linking_residuals", "test_entry_designations_clear_with_departed_zone_object"],
+      "negative_tests": ["test_entry_designation_vocabulary_and_descriptor_are_closed", "test_original_entry_designation_unsupported_siblings_reject_admission", "test_duplicate_intrinsic_designations_preserve_linking_residuals", "test_linked_source_type_additions_keep_the_existing_entry_owner", "test_entry_designations_clear_with_departed_zone_object"],
       "interaction_tests": ["test_chosen_characteristics_bind_public_value_to_existing_query_owner", "test_printed_entry_designation_cast_choice_privacy_persistence_and_replay", "test_printed_copy_gets_fresh_entry_designation_and_replays"],
       "multiplayer_tests": ["test_printed_entry_designation_cast_choice_privacy_persistence_and_replay", "test_printed_copy_gets_fresh_entry_designation_and_replays"],
       "privacy_tests": ["test_printed_entry_designation_cast_choice_privacy_persistence_and_replay"],

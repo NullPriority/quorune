@@ -22,8 +22,9 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--db", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--frontier", type=Path, default=ROOT / "coverage/card-unlock-frontier.json.gz")
     args = parser.parse_args()
-    frontier = json.loads(gzip.decompress((ROOT / "coverage/card-unlock-frontier.json.gz").read_bytes()))
+    frontier = json.loads(gzip.decompress(args.frontier.read_bytes()))
     policy = json.loads((ROOT / "platform/rules-subsystems.json").read_text(encoding="utf-8"))["work_selection"]["coverage_family"]
     bundle = next(row for row in policy["candidate_bundles"] if row["bundle_id"] == "bundle:persistent-entry-designations")
     fingerprint = bundle_measurement_fingerprint(frontier, bundle)

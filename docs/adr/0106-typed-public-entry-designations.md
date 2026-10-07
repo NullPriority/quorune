@@ -64,6 +64,9 @@ production or blocking the designation capability prevents exact closure.
 Chosen-value mana, trigger queries, costs, targets, dynamic characteristics,
 restricted or optional choices, multiple same-kind linked choices and
 independently unsupported sibling abilities remain outside this grammar.
+An entry choice linked to making the source the chosen type also remains
+outside this owner. Its source-spanned entry node stays residual, so an
+existing reviewed program retains one choice and its linked type addition.
 Recognizing an entry clause does not admit its incomplete parent card.
 
 Existing records without these descriptors retain their earlier choices,

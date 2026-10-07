@@ -48,6 +48,8 @@ legality boundary.
 designation to a closed fixed-query characteristic descriptor. Its child
 owner supplies the controller relation and layer-six or layer-seven-c result.
 Unsupported chosen-value uses and incomplete parent cards remain residual.
+Entry choices linked to a source-type addition remain with their existing
+reviewed owner; the plain designation compiler contributes no second choice.
 See [ADR 0106](../adr/0106-typed-public-entry-designations.md).
 
 Every family declares a stable handler ID, schema version, event or layer,

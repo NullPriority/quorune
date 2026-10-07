@@ -218,6 +218,19 @@ class EntryDesignationTests(unittest.TestCase):
         self.assertTrue(all(not node.exact and not node.lowerable and not node.handlers for node in entries))
         self.assertTrue(any(residual.kind == "entry_designation" for face in ir.faces for residual in face.residuals))
 
+    def test_linked_source_type_additions_keep_the_existing_entry_owner(self):
+        registry = load_default_capability_registry()
+        for name in ("Roaming Throne", "Metallic Mimic", "Adaptive Automaton"):
+            with self.subTest(card=name):
+                record = self.db.lookup(name)
+                ir = compile_oracle_card(record, capability_registry=registry, capability_profile="commander_review")
+                entry = next(node for face in ir.faces for node in face.nodes if node.template_id == "intrinsic-entry-designation-v1")
+                self.assertFalse(entry.exact)
+                self.assertFalse(entry.lowerable)
+                self.assertFalse(entry.handlers)
+                self.assertEqual(entry.text, record.oracle_text[entry.span.start:entry.span.end])
+                self.assertTrue(any(residual.kind == "entry_designation" for face in ir.faces for residual in face.residuals))
+
     def card(self, session, name, seat, zone="hand"):
         engine = session.engine
         record = self.db.lookup(name)

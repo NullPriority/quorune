@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "22d729bd6a295d8f81b61587229a8a294a6c9e951099a36744d83db9ad0d00a8",
-  "declaration_source_fingerprint": "64fdead3dd3b8f5185abdaa720a9764e1bc7d04781b9fa761c4e82920a1e8a13",
+  "registry_fingerprint": "5caad3a636135c40413637c575ee18a4b07fbc39db3d741931bf944fb5b0d134",
+  "declaration_source_fingerprint": "3e94df423fed462a668667831cf189a5c4fd5dc3344a63760fed197413ba3f72",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -23271,6 +23271,26 @@
         "commander_review"
       ],
       "applicability_note": "Printed copy makes a fresh entry choice, rejects a stale selection atomically and replays; duplicated linked choices and departed incarnations do not retain admission or choice state."
+    },
+    {
+      "capability_id": "continuous.characteristics.chosen_designation",
+      "evidence_class": "negative",
+      "test_id": "tests.test_entry_designations.EntryDesignationTests.test_linked_source_type_additions_keep_the_existing_entry_owner",
+      "official_rule_ids": [
+        "105.1",
+        "205.3m",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject the generic entry descriptor for a choice linked to source-type addition, preserving its source span and the existing reviewed entry owner instead of introducing a second choice."
     },
     {
       "capability_id": "continuous.characteristics.chosen_designation",
@@ -76407,6 +76427,27 @@
     {
       "capability_id": "zone.entry.public_designation",
       "evidence_class": "negative",
+      "test_id": "tests.test_entry_designations.EntryDesignationTests.test_linked_source_type_additions_keep_the_existing_entry_owner",
+      "official_rule_ids": [
+        "105.1",
+        "205.3m",
+        "400.7",
+        "614.1c",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject the generic entry descriptor for a choice linked to source-type addition, preserving its source span and the existing reviewed entry owner instead of introducing a second choice."
+    },
+    {
+      "capability_id": "zone.entry.public_designation",
+      "evidence_class": "negative",
       "test_id": "tests.test_entry_designations.EntryDesignationTests.test_original_entry_designation_unsupported_siblings_reject_admission",
       "official_rule_ids": [
         "105.1",
@@ -78808,5 +78849,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "9aeab3e5d8e6e8a12e6bbd3bc73d8abacdd19d5ee47c98fa783a91e141432641"
+  "fingerprint": "abc1eb8b9b87b52ab174f7373a27fdb618911a8579704f2c3f96948395e65aa0"
 }
