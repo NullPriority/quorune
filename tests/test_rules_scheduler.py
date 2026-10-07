@@ -307,7 +307,7 @@ class RulesSchedulerSourcePolicyTests(unittest.TestCase):
         catalog = _json("platform/rules-subsystems.json")
         declaration = {
             "transition_id": "fixture-non-harvest-source-policy",
-            "compiler_version": "oracle-ir-v129",
+            "compiler_version": update_rules_scheduler.ORACLE_COMPILER_VERSION,
             "bundle_id": None,
             "candidate_ids": [],
             "family_ids": [],
@@ -325,6 +325,11 @@ class RulesSchedulerSourcePolicyTests(unittest.TestCase):
                 "sys.argv", ["update_rules_scheduler.py", "--validate-policy"]
             ):
                 self.assertEqual(0, update_rules_scheduler.main())
+                invalid = deepcopy(catalog)
+                invalid["work_selection"]["semantic_transition_declaration"]["compiler_version"] = "oracle-ir-v0"
+                source.write_text(json.dumps(invalid), encoding="utf-8")
+                with self.assertRaisesRegex(HarvestOutcomeHistoryError, "does not match the source compiler"):
+                    update_rules_scheduler.main()
                 for field in ("candidate_ids", "family_ids", "capability_ids"):
                     with self.subTest(field=field):
                         invalid = deepcopy(catalog)

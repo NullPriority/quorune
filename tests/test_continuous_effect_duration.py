@@ -144,7 +144,9 @@ class ContinuousEffectModelTests(unittest.TestCase):
         from quorune.control_history import ControlHistoryError, record_control_change
 
         card = SimpleNamespace(controller="A", annotations={})
-        state = SimpleNamespace(control_history_version=2, continuous_effects=None)
+        from quorune.model import CONTROL_HISTORY_VERSION
+
+        state = SimpleNamespace(control_history_version=CONTROL_HISTORY_VERSION + 1, continuous_effects=None)
         with self.assertRaisesRegex(ControlHistoryError, "Unsupported control-history version"):
             record_control_change(state, card, lambda: 32, previous_controller="A")
 

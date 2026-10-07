@@ -379,6 +379,33 @@
       "test_modules": ["test_linked_exile_return", "test_targeted_exile_effect_clauses", "test_high_risk_interaction_assurance", "test_oracle_ir", "test_fixed_target_reanimation", "test_zone_trigger_events", "test_delayed_triggers", "test_card_program_trust", "test_fixed_optional_effect_choices", "test_rules_scheduler"]
     },
     {
+      "id": "fixed-resolution-control-contract",
+      "patterns": [
+        "quorune/compiler/fixed_control_templates.py",
+        "quorune/control_effects.py",
+        "quorune/source_continuity.py",
+        "quorune/optional_untap.py",
+        "quorune/rules/control_capability_shapes.py",
+        "quorune/semantic_runtime/control_handlers.py",
+        "quorune/semantic_runtime/control_intents.py",
+        "tests/fixtures/fixed-control-effects.json"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_continuous_effect_duration",
+        "test_fixed_control_effects",
+        "test_fixed_counter_event_triggers",
+        "test_game_record_v3",
+        "test_high_risk_interaction_assurance",
+        "test_multiplayer_rules",
+        "test_oracle_ir",
+        "test_rules_scheduler",
+        "test_storm_rules",
+        "test_typed_untap_step_participation",
+        "test_untap_step_rules"
+      ]
+    },
+    {
       "id": "normalized-tap-state-event-contract",
       "patterns": ["quorune/compiler/tap_state_event_bindings.py", "quorune/rules/tap_state_event_capability_shapes.py", "quorune/tap_state.py", "quorune/public_tap_state_sets.py", "quorune/untap_step_coordination.py", "tests/fixtures/linked-exile-return-cards.json"],
       "test_modules": ["test_linked_exile_return", "test_fixed_counter_event_triggers", "test_targeted_tap_state_effect_clauses", "test_untap_step_rules", "test_typed_untap_step_participation", "test_declare_attackers_rules", "test_fixed_activation_tap_costs", "test_ordinary_crew", "test_mana_abilities", "test_game_record_v3", "test_card_program_trust", "test_rules_scheduler", "test_high_risk_interaction_assurance"]

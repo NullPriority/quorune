@@ -200,7 +200,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
         events = []
         host = SimpleNamespace(
             state=SimpleNamespace(cards={first.object_id: first, second.object_id: second},
-                                  active_player="A", phase="precombat_main", step="main", tap_state_event_version=1, delayed_triggers=[]),
+                                  active_player="A", phase="precombat_main", step="main", tap_state_event_version=1, delayed_triggers=[], control_history_version=None),
             _effective_card_data=lambda card: {"type_line": "Creature — Goblin", "colors": [], "keywords": []},
             _type_parts=lambda line: ({"creature"}, {"goblin"}, set()),
             _semantic_event_sources=lambda: [first, second],
@@ -240,7 +240,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
         observations = []
         host = SimpleNamespace(
             state=SimpleNamespace(cards={card.object_id: card for card in cards},
-                                  active_player="A", phase="combat", step="declare_attackers", tap_state_event_version=1, delayed_triggers=[]),
+                                  active_player="A", phase="combat", step="declare_attackers", tap_state_event_version=1, delayed_triggers=[], control_history_version=None),
             _effective_card_data=lambda card: {"type_line": "Creature", "keywords": ["Vigilance"] if card is cards[1] else []},
             _type_parts=lambda line: ({"creature"}, set(), set()),
             _semantic_event_sources=lambda: cards,

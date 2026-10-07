@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "fdf71f1731378ae3ec925c3a9d6cbf87e27f78ba9135baa00ccb80eaff992827"
+verified: "421d400b5e1290d6726bf370ff83dab700096e808dc1bc594599337bdfc32f69"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -15,8 +15,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 - Observation window: 2026-08-25T03:52:06Z through 2026-08-25T20:56:41Z
 - Observed population: tracked recent pull requests (n=4)
-- Escapes: 72
-- Deterministic escapes: 65
+- Escapes: 75
+- Deterministic escapes: 68
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: null
@@ -29,6 +29,9 @@ This report classifies observed deterministic failures that escaped the local qu
 
 | ID | Run | Category | Impact edge | Resolution |
 |---|---:|---|---|---|
+| `ci-20261007-74` | [37564121955](https://github.com/NullPriority/quorune/actions/runs/37564121955) | `generated_artifact_drift` | `not_applicable` | Declare the fixed-control and optional-untap harvest against its canonical generated cohort measurement. Extend the existing pre-corpus policy validator and exact regression to reject a declaration whose compiler version differs from the source compiler. The existing quick-gate sentinel invokes this validator; stale checkpoint reports remain pending until complete verified cloud installation. |
+| `ci-20261007-73` | [37564121972](https://github.com/NullPriority/quorune/actions/runs/37564121972) | `missing_affected_test` | `added` | Preserve typed runtime requirements: explicitly select historical control mode in the isolated tap-state hosts and derive an invalid version above the current version. Admit Spreading Insurrection in the existing complete real-Storm-card compiler witness. Add the fixed-resolution-control impact edge selecting these consumers, replay, multiplayer, optional untap and trust tests. |
+| `ci-20261007-72` | [37564121972](https://github.com/NullPriority/quorune/actions/runs/37564121972) | `source_correctness` | `added` | Use the existing canonical zone-transition owner's deferred synchronization for the owned-object removal batch. End the departing player's control grants and synchronize once before the remaining-controller exile boundary. Retain the authenticated concessions and pre-action replay witness distinguishing active initial custody from a departed initial controller. |
 | `ci-20261003-71` | [37130709952](https://github.com/NullPriority/quorune/actions/runs/37130709952) | `missing_affected_test` | `added` | The unchanged exact regression fails in 1.199 seconds on only the newly admitted target-power definition. Preserve the fixed leaf's rejection, assert exact whole-card lowering with the scalar capability, and use an unsupported chosen-reference definition as the residual contrast. The corrected exact test passes in 1.301 seconds; all shape mutations and neighboring exclusions remain intact. Add the temporary-target consumer to the scalar impact edge. This is a stale behavioral expectation, not a runtime defect; preserve the completed semantic census and reuse it downstream. |
 | `ci-20261003-70` | [37129199130](https://github.com/NullPriority/quorune/actions/runs/37129199130) | `missing_affected_test` | `added` | Both generic source-derived and target-derived cases failed against unchanged assurance in 1.147 seconds. The existing collector now consumes the closed scalar source grammar, applies canonical Oracle-node declaration scope, and validates scalar projection plus every fixed result capability. The same regression passes in 1.144 seconds and a changed characteristic producer still fails. Add the fixed-target corpus consumer to the existing family impact edge. Runtime/compiler lowering is unchanged; the failed 33-second attempt produced no completed corpus result. |
 | `ci-20261003-69` | [37115857103](https://github.com/NullPriority/quorune/actions/runs/37115857103) | `missing_affected_test` | `added` | The exact two-pair reproduction failed on unchanged production in 47.527 seconds. Replace the negative carriers with constructed chosen-name target predicates, preserve the promoted Madness/draw blink forms as positive compiler and runtime-binding controls, and select high-risk interaction assurance for the linked-lifecycle source paths. Both focused tests pass in 48.669 seconds. No boundary assertion, production semantics, or completed corpus result changed. |

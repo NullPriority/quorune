@@ -1,6 +1,63 @@
 {
   "escapes": [
     {
+      "category": "generated_artifact_drift",
+      "deterministic": true,
+      "failed_surfaces": [
+        "Generated cloud / Rules scheduler"
+      ],
+      "head_sha": "2ab3c544172a253a76de19dc3ef49a0fbf6bf7c5",
+      "id": "ci-20261007-74",
+      "impact_edge_status": "not_applicable",
+      "regressions": [
+        "test_rules_scheduler.RulesSchedulerSourcePolicyTests.test_pre_corpus_policy_validation_rejects_invalid_transition_metadata"
+      ],
+      "resolution": "Declare the fixed-control and optional-untap harvest against its canonical generated cohort measurement. Extend the existing pre-corpus policy validator and exact regression to reject a declaration whose compiler version differs from the source compiler. The existing quick-gate sentinel invokes this validator; stale checkpoint reports remain pending until complete verified cloud installation.",
+      "run_id": 37564121955,
+      "summary": "The v259 control harvest retained the landed v258 non-harvest declaration. Source policy accepted its shape, but the cloud scheduler correctly rejected its mismatch with the new corpus receipt."
+    },
+    {
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "failed_surfaces": [
+        "PR / Python / functional-02",
+        "PR / Python / functional-10",
+        "PR / Python / functional-11",
+        "PR / Windows / functional-02",
+        "PR / Windows / functional-10",
+        "PR / Windows / functional-11"
+      ],
+      "head_sha": "2ab3c544172a253a76de19dc3ef49a0fbf6bf7c5",
+      "id": "ci-20261007-73",
+      "impact_edge_status": "added",
+      "regressions": [
+        "test_storm_rules.StormCompilerTests.test_all_real_storm_cards_lower_typed_stack_trigger",
+        "test_continuous_effect_duration.ContinuousEffectModelTests.test_same_controller_guard_retains_history_version_validation",
+        "test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_tap_state_owner_noop_undo_cost_and_sealed_source_order",
+        "test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_tap_state_group_observes_complete_commit_and_vigilance"
+      ],
+      "resolution": "Preserve typed runtime requirements: explicitly select historical control mode in the isolated tap-state hosts and derive an invalid version above the current version. Admit Spreading Insurrection in the existing complete real-Storm-card compiler witness. Add the fixed-resolution-control impact edge selecting these consumers, replay, multiplayer, optional untap and trust tests.",
+      "run_id": 37564121972,
+      "summary": "Fixed control made Spreading Insurrection exact and introduced control-history version 2, while older Storm, tap-state diagnostic hosts and invalid-version tests retained their prior boundaries on both operating systems."
+    },
+    {
+      "category": "source_correctness",
+      "deterministic": true,
+      "failed_surfaces": [
+        "PR / Python / functional-03",
+        "PR / Windows / functional-03"
+      ],
+      "head_sha": "2ab3c544172a253a76de19dc3ef49a0fbf6bf7c5",
+      "id": "ci-20261007-72",
+      "impact_edge_status": "added",
+      "regressions": [
+        "test_fixed_control_effects.FixedControlGameplayTests.test_actual_departures_preserve_initial_custody_and_exile_inactive_origin_with_replay"
+      ],
+      "resolution": "Use the existing canonical zone-transition owner's deferred synchronization for the owned-object removal batch. End the departing player's control grants and synchronize once before the remaining-controller exile boundary. Retain the authenticated concessions and pre-action replay witness distinguishing active initial custody from a departed initial controller.",
+      "run_id": 37564121972,
+      "summary": "The newly unconditional zone-change control synchronization ran during owned-object removal, before a departing player's control effects ended, and prematurely exiled a permanent that should return to its active original controller."
+    },
+    {
       "category": "missing_affected_test",
       "deterministic": true,
       "failed_surfaces": [
@@ -1305,7 +1362,7 @@
   ],
   "repository": "NullPriority/quorune",
   "schema_version": 2,
-  "source_fingerprint": "fdf71f1731378ae3ec925c3a9d6cbf87e27f78ba9135baa00ccb80eaff992827",
+  "source_fingerprint": "421d400b5e1290d6726bf370ff83dab700096e808dc1bc594599337bdfc32f69",
   "summary": {
     "average_critical_path_seconds": 181.25,
     "average_pushes_per_merged_pr": null,
@@ -1313,14 +1370,14 @@
     "category_counts": {
       "browser_integration": 5,
       "flaky_test": 8,
-      "generated_artifact_drift": 8,
+      "generated_artifact_drift": 9,
       "infrastructure": 1,
-      "missing_affected_test": 31,
-      "source_correctness": 19
+      "missing_affected_test": 32,
+      "source_correctness": 20
     },
     "current_missing_impact_edges": [],
-    "deterministic_escape_count": 65,
-    "escape_count": 72,
+    "deterministic_escape_count": 68,
+    "escape_count": 75,
     "eventual_final_head_certification_pass_rate": 1.0,
     "eventual_final_head_certification_sample_size": 4,
     "first_eligible_head_certification_pass_rate": null,

@@ -7115,7 +7115,7 @@ class CommanderEngine(
             player = self.state.players[seat]
             player.in_game = False
             self.state.eliminated_players.append(seat)
-            # Objects owned by the player leave the game.
+            # Remove owned objects before ending grants and synchronizing custody (CR 800.4a).
             # Checkpoints are serialized with sorted mapping keys, while a
             # continuously running game retains construction order. Zone
             # timestamps are authoritative, so elimination must not allocate
@@ -7144,12 +7144,12 @@ class CommanderEngine(
                             if viewer in card.known_to
                         ]
                     else:
-                        self.move_card(card.object_id, "outside", reason="owner left game", log=False)
+                        ZoneTransitionOwner(self).move_card(card.object_id, "outside", reason="owner left game", log=False, defer_control_sync=True)
             control_effects.end_player_control_effects(self.state, seat)
             control_effects.synchronize_control_effects(self, reason="control effect controller left game")
-            # A conservative baseline for historical unjournaled control effects: surviving
-            # objects owned by others return to their owners; any leftovers are
-            # exiled. A compiled continuous-effect layer may refine this later.
+            # Preserve owner-based restoration for historical unjournaled control.
+            # Current retained custody has settled; exile any surviving permanent
+            # whose controller is departing (CR 800.4a).
             for card in sorted(
                 self.state.cards.values(),
                 key=lambda value: (value.ref, value.object_id),
