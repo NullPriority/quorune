@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "421d400b5e1290d6726bf370ff83dab700096e808dc1bc594599337bdfc32f69"
+verified: "c951a3102af5b24e0737b5dc02ac559c4388c3ae1b68aadfdc9e63ec24373d25"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -15,8 +15,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 - Observation window: 2026-08-25T03:52:06Z through 2026-08-25T20:56:41Z
 - Observed population: tracked recent pull requests (n=4)
-- Escapes: 75
-- Deterministic escapes: 68
+- Escapes: 76
+- Deterministic escapes: 69
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: null
@@ -29,6 +29,7 @@ This report classifies observed deterministic failures that escaped the local qu
 
 | ID | Run | Category | Impact edge | Resolution |
 |---|---:|---|---|---|
+| `ci-20261007-75` | [37587369857](https://github.com/NullPriority/quorune/actions/runs/37587369857) | `windows_compatibility` | `not_applicable` | The exact complete-report LF/CRLF regression fails on unchanged production in 18.826 seconds. Normalize only CRLF policy text line endings before SHA-256 for the fixture manifest and shard manifest; retain binary file hashing elsewhere and prove that adding a valid fixture still changes the policy identity and report. The existing compact dependency source impact edge already selects this module and the canonical owner. Refresh all affected reports through the existing finalizer without changing compiler semantics or weakening freshness. |
 | `ci-20261007-74` | [37564121955](https://github.com/NullPriority/quorune/actions/runs/37564121955) | `generated_artifact_drift` | `not_applicable` | Declare the fixed-control and optional-untap harvest against its canonical generated cohort measurement. Extend the existing pre-corpus policy validator and exact regression to reject a declaration whose compiler version differs from the source compiler. The existing quick-gate sentinel invokes this validator; stale checkpoint reports remain pending until complete verified cloud installation. |
 | `ci-20261007-73` | [37564121972](https://github.com/NullPriority/quorune/actions/runs/37564121972) | `missing_affected_test` | `added` | Preserve typed runtime requirements: explicitly select historical control mode in the isolated tap-state hosts and derive an invalid version above the current version. Admit Spreading Insurrection in the existing complete real-Storm-card compiler witness. Add the fixed-resolution-control impact edge selecting these consumers, replay, multiplayer, optional untap and trust tests. |
 | `ci-20261007-72` | [37564121972](https://github.com/NullPriority/quorune/actions/runs/37564121972) | `source_correctness` | `added` | Use the existing canonical zone-transition owner's deferred synchronization for the owned-object removal batch. End the departing player's control grants and synchronize once before the remaining-controller exile boundary. Retain the authenticated concessions and pre-action replay witness distinguishing active initial custody from a departed initial controller. |

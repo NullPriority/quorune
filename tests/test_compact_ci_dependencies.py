@@ -122,6 +122,36 @@ class CompactCIDependencyTests(unittest.TestCase):
             extra_fixtures=extra_fixtures,
         )
 
+    def test_policy_line_endings_preserve_report_identity_and_content_changes_remain_visible(self):
+        repository = self.temporary(
+            cards=[card("Fixture Card", "00000000-0000-4000-8000-000000000001")],
+            source='db.lookup("Fixture Card")\n',
+            extra_fixtures={"tests/fixtures/extra.json": [
+                card("Additional Card", "00000000-0000-4000-8000-000000000002"),
+            ]},
+        )
+        policies = (
+            repository.root / "tests/fixtures/compact-ci-fixtures.json",
+            repository.root / "platform/test-shards.json",
+        )
+        lf_bytes = {path: path.read_bytes().replace(b"\r\n", b"\n") for path in policies}
+        for path, content in lf_bytes.items():
+            path.write_bytes(content)
+        lf_report = repository.report()
+        self.assertTrue(lf_report["closed"])
+        for path, content in lf_bytes.items():
+            path.write_bytes(content.replace(b"\n", b"\r\n"))
+        self.assertEqual(lf_report, repository.report())
+
+        manifest = json.loads(policies[0].read_text(encoding="utf-8"))
+        manifest["fixtures"].append("tests/fixtures/extra.json")
+        policies[0].write_text(json.dumps(manifest) + "\n", encoding="utf-8")
+        changed_report = repository.report()
+        self.assertTrue(changed_report["closed"])
+        self.assertEqual(2, changed_report["card_count"])
+        self.assertNotEqual(lf_report["compact_fixture_manifest_fingerprint"],
+                            changed_report["compact_fixture_manifest_fingerprint"])
+
     def test_current_compact_shards_are_closed_with_echo_and_amass_witnesses(self):
         self.assertTrue(self.current["closed"], self.current)
         self.assertEqual([], self.current["dynamic_unresolved_requirements"])

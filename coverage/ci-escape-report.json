@@ -1,6 +1,22 @@
 {
   "escapes": [
     {
+      "category": "windows_compatibility",
+      "deterministic": true,
+      "failed_surfaces": [
+        "PR / Generated and architecture"
+      ],
+      "head_sha": "47c189e5c32e01942b9b831c1a88728af9abe4ae",
+      "id": "ci-20261007-75",
+      "impact_edge_status": "not_applicable",
+      "regressions": [
+        "test_compact_ci_dependencies.CompactCIDependencyTests.test_policy_line_endings_preserve_report_identity_and_content_changes_remain_visible"
+      ],
+      "resolution": "The exact complete-report LF/CRLF regression fails on unchanged production in 18.826 seconds. Normalize only CRLF policy text line endings before SHA-256 for the fixture manifest and shard manifest; retain binary file hashing elsewhere and prove that adding a valid fixture still changes the policy identity and report. The existing compact dependency source impact edge already selects this module and the canonical owner. Refresh all affected reports through the existing finalizer without changing compiler semantics or weakening freshness.",
+      "run_id": 37587369857,
+      "summary": "Local Windows compact dependency generation hashed the raw CRLF fixture and shard policy bytes. Git committed their LF content, so Linux exact-head freshness rejected the two policy fingerprints despite identical closure and source identity."
+    },
+    {
       "category": "generated_artifact_drift",
       "deterministic": true,
       "failed_surfaces": [
@@ -1362,7 +1378,7 @@
   ],
   "repository": "NullPriority/quorune",
   "schema_version": 2,
-  "source_fingerprint": "421d400b5e1290d6726bf370ff83dab700096e808dc1bc594599337bdfc32f69",
+  "source_fingerprint": "c951a3102af5b24e0737b5dc02ac559c4388c3ae1b68aadfdc9e63ec24373d25",
   "summary": {
     "average_critical_path_seconds": 181.25,
     "average_pushes_per_merged_pr": null,
@@ -1373,11 +1389,12 @@
       "generated_artifact_drift": 9,
       "infrastructure": 1,
       "missing_affected_test": 32,
-      "source_correctness": 20
+      "source_correctness": 20,
+      "windows_compatibility": 1
     },
     "current_missing_impact_edges": [],
-    "deterministic_escape_count": 68,
-    "escape_count": 75,
+    "deterministic_escape_count": 69,
+    "escape_count": 76,
     "eventual_final_head_certification_pass_rate": 1.0,
     "eventual_final_head_certification_sample_size": 4,
     "first_eligible_head_certification_pass_rate": null,
