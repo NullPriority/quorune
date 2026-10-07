@@ -1,6 +1,23 @@
 {
   "escapes": [
     {
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "failed_surfaces": [
+        "PR / Python / functional-07"
+      ],
+      "head_sha": "249ac07d947aa32ea50fb043493dbc5db7e1fd5c",
+      "id": "ci-20261007-76",
+      "impact_edge_status": "added",
+      "regressions": [
+        "test_changeling_characteristics.ChangelingCompilerTests.test_original_changeling_entry_keeps_chosen_trigger_unavailable",
+        "test_changeling_characteristics.ChangelingRuntimeTests.test_changeling_executes_while_replacement_siblings_fail_closed"
+      ],
+      "resolution": "Preserve every existing replacement rejection and passive Changeling assertion with a minimal constructed two-type entry choice and a fresh fixture identity. Keep the original printed Bloodline Pretender unchanged and add a separate source-spanned positive entry witness proving its independently unsupported chosen-type trigger still blocks strict and compatible whole-card admission. Add the Changeling consumer to the monotonic intrinsic-entry impact rule; no compiler semantics, trust threshold or assertion is weakened.",
+      "run_id": 37660790800,
+      "summary": "Intrinsic mandatory entry designations made the original Bloodline Pretender entry clause exact. A Changeling interaction test still used that supported clause as its replacement exclusion and the entry grammar impact edge omitted its consumer."
+    },
+    {
       "category": "windows_compatibility",
       "deterministic": true,
       "failed_surfaces": [
@@ -1333,7 +1350,7 @@
     "sample_size": 4,
     "started_at": "2026-08-25T03:52:06Z"
   },
-  "observed_at": "2026-10-02T07:23:06Z",
+  "observed_at": "2026-10-07T17:59:44Z",
   "recent_pull_requests": [
     {
       "critical_path_seconds": 81.0,
@@ -1378,7 +1395,7 @@
   ],
   "repository": "NullPriority/quorune",
   "schema_version": 2,
-  "source_fingerprint": "c951a3102af5b24e0737b5dc02ac559c4388c3ae1b68aadfdc9e63ec24373d25",
+  "source_fingerprint": "f4ed80adaa6190d5df68447db96f5cd8d75d3cc6ce32649455ad92131275a6f9",
   "summary": {
     "average_critical_path_seconds": 181.25,
     "average_pushes_per_merged_pr": null,
@@ -1388,13 +1405,13 @@
       "flaky_test": 8,
       "generated_artifact_drift": 9,
       "infrastructure": 1,
-      "missing_affected_test": 32,
+      "missing_affected_test": 33,
       "source_correctness": 20,
       "windows_compatibility": 1
     },
     "current_missing_impact_edges": [],
-    "deterministic_escape_count": 69,
-    "escape_count": 76,
+    "deterministic_escape_count": 70,
+    "escape_count": 77,
     "eventual_final_head_certification_pass_rate": 1.0,
     "eventual_final_head_certification_sample_size": 4,
     "first_eligible_head_certification_pass_rate": null,

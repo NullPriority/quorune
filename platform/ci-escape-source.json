@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "observed_at": "2026-10-02T07:23:06Z",
+  "observed_at": "2026-10-07T17:59:44Z",
   "measurement_window": {
     "started_at": "2026-08-25T03:52:06Z",
     "ended_at": "2026-08-25T20:56:41Z",
@@ -9,6 +9,23 @@
   },
   "repository": "NullPriority/quorune",
   "escapes": [
+    {
+      "id": "ci-20261007-76",
+      "run_id": 37660790800,
+      "head_sha": "249ac07d947aa32ea50fb043493dbc5db7e1fd5c",
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "summary": "Intrinsic mandatory entry designations made the original Bloodline Pretender entry clause exact. A Changeling interaction test still used that supported clause as its replacement exclusion and the entry grammar impact edge omitted its consumer.",
+      "failed_surfaces": [
+        "PR / Python / functional-07"
+      ],
+      "regressions": [
+        "test_changeling_characteristics.ChangelingCompilerTests.test_original_changeling_entry_keeps_chosen_trigger_unavailable",
+        "test_changeling_characteristics.ChangelingRuntimeTests.test_changeling_executes_while_replacement_siblings_fail_closed"
+      ],
+      "impact_edge_status": "added",
+      "resolution": "Preserve every existing replacement rejection and passive Changeling assertion with a minimal constructed two-type entry choice and a fresh fixture identity. Keep the original printed Bloodline Pretender unchanged and add a separate source-spanned positive entry witness proving its independently unsupported chosen-type trigger still blocks strict and compatible whole-card admission. Add the Changeling consumer to the monotonic intrinsic-entry impact rule; no compiler semantics, trust threshold or assertion is weakened."
+    },
     {
       "id": "ci-20261007-75",
       "run_id": 37587369857,

@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "c951a3102af5b24e0737b5dc02ac559c4388c3ae1b68aadfdc9e63ec24373d25"
+verified: "f4ed80adaa6190d5df68447db96f5cd8d75d3cc6ce32649455ad92131275a6f9"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -15,8 +15,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 - Observation window: 2026-08-25T03:52:06Z through 2026-08-25T20:56:41Z
 - Observed population: tracked recent pull requests (n=4)
-- Escapes: 76
-- Deterministic escapes: 69
+- Escapes: 77
+- Deterministic escapes: 70
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: null
@@ -29,6 +29,7 @@ This report classifies observed deterministic failures that escaped the local qu
 
 | ID | Run | Category | Impact edge | Resolution |
 |---|---:|---|---|---|
+| `ci-20261007-76` | [37660790800](https://github.com/NullPriority/quorune/actions/runs/37660790800) | `missing_affected_test` | `added` | Preserve every existing replacement rejection and passive Changeling assertion with a minimal constructed two-type entry choice and a fresh fixture identity. Keep the original printed Bloodline Pretender unchanged and add a separate source-spanned positive entry witness proving its independently unsupported chosen-type trigger still blocks strict and compatible whole-card admission. Add the Changeling consumer to the monotonic intrinsic-entry impact rule; no compiler semantics, trust threshold or assertion is weakened. |
 | `ci-20261007-75` | [37587369857](https://github.com/NullPriority/quorune/actions/runs/37587369857) | `windows_compatibility` | `not_applicable` | The exact complete-report LF/CRLF regression fails on unchanged production in 18.826 seconds. Normalize only CRLF policy text line endings before SHA-256 for the fixture manifest and shard manifest; retain binary file hashing elsewhere and prove that adding a valid fixture still changes the policy identity and report. The existing compact dependency source impact edge already selects this module and the canonical owner. Refresh all affected reports through the existing finalizer without changing compiler semantics or weakening freshness. |
 | `ci-20261007-74` | [37564121955](https://github.com/NullPriority/quorune/actions/runs/37564121955) | `generated_artifact_drift` | `not_applicable` | Declare the fixed-control and optional-untap harvest against its canonical generated cohort measurement. Extend the existing pre-corpus policy validator and exact regression to reject a declaration whose compiler version differs from the source compiler. The existing quick-gate sentinel invokes this validator; stale checkpoint reports remain pending until complete verified cloud installation. |
 | `ci-20261007-73` | [37564121972](https://github.com/NullPriority/quorune/actions/runs/37564121972) | `missing_affected_test` | `added` | Preserve typed runtime requirements: explicitly select historical control mode in the isolated tap-state hosts and derive an invalid version above the current version. Admit Spreading Insurrection in the existing complete real-Storm-card compiler witness. Add the fixed-resolution-control impact edge selecting these consumers, replay, multiplayer, optional untap and trust tests. |
