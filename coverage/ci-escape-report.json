@@ -4,6 +4,28 @@
       "category": "source_correctness",
       "deterministic": true,
       "failed_surfaces": [
+        "PR / Python / functional-01",
+        "PR / Python / functional-07",
+        "PR / Python / functional-08",
+        "PR / Windows / functional-01",
+        "PR / Windows / functional-07",
+        "PR / Browser / lifecycle"
+      ],
+      "head_sha": "133e51e9699584eb11b68f4133995ddbefb29546",
+      "id": "ci-20261007-78",
+      "impact_edge_status": "added",
+      "regressions": [
+        "test_entry_designations.EntryDesignationTests.test_linked_entry_fixture_preserves_reviewed_ruling_provenance",
+        "test_exact_mishra_closure.ExactMishraClosureTests.test_roaming_throne_type_trigger_multiplier_and_ward"
+      ],
+      "resolution": "Remove only the duplicate Roaming Throne card and ruling owner from the new fixture through the canonical export, retaining its primary fixture and exact ruling multiset. The original offered cast/one-choice/type-addition/replay witness fails on the unchanged compact database in 48.782 seconds and passes after correction in 68.900 seconds. Add a full compact fixture composition regression comparing the primary ruling multiset and repeated authoritative preflight and compatibility assembly. Preserve true Scryfall ruling multiplicity and fail-closed provenance checks; compiler semantics remain unchanged and the one v261 census is reused.",
+      "run_id": 37680285397,
+      "summary": "The added entry fixture repeated Roaming Throne and its rulings already owned by the primary exact-deck fixture. The compact builder correctly preserved ruling multiplicity, producing a different hash for generated handlers than the reviewed compatibility program and blocking sessions and browser deck validation."
+    },
+    {
+      "category": "source_correctness",
+      "deterministic": true,
+      "failed_surfaces": [
         "PR / Python / functional-06",
         "PR / Python / functional-12",
         "PR / Windows / functional-06",
@@ -1372,7 +1394,7 @@
     "sample_size": 4,
     "started_at": "2026-08-25T03:52:06Z"
   },
-  "observed_at": "2026-10-07T20:05:34Z",
+  "observed_at": "2026-10-07T20:37:40Z",
   "recent_pull_requests": [
     {
       "critical_path_seconds": 81.0,
@@ -1417,7 +1439,7 @@
   ],
   "repository": "NullPriority/quorune",
   "schema_version": 2,
-  "source_fingerprint": "cba3c40442caafa8b74ebfc855082c867d6f8cdc10410325ebbccf170e71f0aa",
+  "source_fingerprint": "998459b9bd7dabb46613e53b905f4cdc66cfcabf8dfbf4081c0bee1db91932ee",
   "summary": {
     "average_critical_path_seconds": 181.25,
     "average_pushes_per_merged_pr": null,
@@ -1428,12 +1450,12 @@
       "generated_artifact_drift": 9,
       "infrastructure": 1,
       "missing_affected_test": 33,
-      "source_correctness": 21,
+      "source_correctness": 22,
       "windows_compatibility": 1
     },
     "current_missing_impact_edges": [],
-    "deterministic_escape_count": 71,
-    "escape_count": 78,
+    "deterministic_escape_count": 72,
+    "escape_count": 79,
     "eventual_final_head_certification_pass_rate": 1.0,
     "eventual_final_head_certification_sample_size": 4,
     "first_eligible_head_certification_pass_rate": null,

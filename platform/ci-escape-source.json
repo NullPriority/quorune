@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "observed_at": "2026-10-07T20:05:34Z",
+  "observed_at": "2026-10-07T20:37:40Z",
   "measurement_window": {
     "started_at": "2026-08-25T03:52:06Z",
     "ended_at": "2026-08-25T20:56:41Z",
@@ -9,6 +9,28 @@
   },
   "repository": "NullPriority/quorune",
   "escapes": [
+    {
+      "id": "ci-20261007-78",
+      "run_id": 37680285397,
+      "head_sha": "133e51e9699584eb11b68f4133995ddbefb29546",
+      "category": "source_correctness",
+      "deterministic": true,
+      "summary": "The added entry fixture repeated Roaming Throne and its rulings already owned by the primary exact-deck fixture. The compact builder correctly preserved ruling multiplicity, producing a different hash for generated handlers than the reviewed compatibility program and blocking sessions and browser deck validation.",
+      "failed_surfaces": [
+        "PR / Python / functional-01",
+        "PR / Python / functional-07",
+        "PR / Python / functional-08",
+        "PR / Windows / functional-01",
+        "PR / Windows / functional-07",
+        "PR / Browser / lifecycle"
+      ],
+      "regressions": [
+        "test_entry_designations.EntryDesignationTests.test_linked_entry_fixture_preserves_reviewed_ruling_provenance",
+        "test_exact_mishra_closure.ExactMishraClosureTests.test_roaming_throne_type_trigger_multiplier_and_ward"
+      ],
+      "impact_edge_status": "added",
+      "resolution": "Remove only the duplicate Roaming Throne card and ruling owner from the new fixture through the canonical export, retaining its primary fixture and exact ruling multiset. The original offered cast/one-choice/type-addition/replay witness fails on the unchanged compact database in 48.782 seconds and passes after correction in 68.900 seconds. Add a full compact fixture composition regression comparing the primary ruling multiset and repeated authoritative preflight and compatibility assembly. Preserve true Scryfall ruling multiplicity and fail-closed provenance checks; compiler semantics remain unchanged and the one v261 census is reused."
+    },
     {
       "id": "ci-20261007-77",
       "run_id": 37668759749,

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+from collections import Counter
 from dataclasses import replace
 import json
 from pathlib import Path
@@ -18,6 +19,7 @@ from quorune.deck import DeckLoader
 from quorune.entry_designations import EntryDesignationKind, validate_designation
 from quorune.model import CardInstance, GameState
 from quorune.oracle_ir import compile_oracle_card, register_generated_programs
+from quorune.preflight import card_semantic_status
 from quorune.record import authoritative_state_hash, checkpoint_envelope, replay_record
 from quorune.replacement.immutable import FrozenMap
 from quorune.rules.capabilities import CapabilityRegistry, load_default_capability_registry
@@ -28,7 +30,7 @@ from quorune.semantic_runtime.entry_designations import EntryDesignationHandler
 from quorune.semantic_runtime.zone_replacement_model import ZoneChangeSubjectSnapshot, ZoneChangeReplacementSnapshot
 from quorune.semantics import SemanticRegistry
 from quorune.session import CommanderSession
-from scripts.build_test_database import _card_payload, build_fixture_database
+from scripts.build_test_database import _card_payload, build_fixture_database, compact_ci_fixture_paths
 
 
 def composition_record(identity, name, type_line, text, keywords=()):
@@ -230,6 +232,22 @@ class EntryDesignationTests(unittest.TestCase):
                 self.assertFalse(entry.handlers)
                 self.assertEqual(entry.text, record.oracle_text[entry.span.start:entry.span.end])
                 self.assertTrue(any(residual.kind == "entry_designation" for face in ir.faces for residual in face.residuals))
+
+    def test_linked_entry_fixture_preserves_reviewed_ruling_provenance(self):
+        primary = json.loads((ROOT / "tests/fixtures/scryfall-exact-lists.json").read_text(encoding="utf-8"))
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "compact.sqlite3"
+            build_fixture_database(list(compact_ci_fixture_paths()), path)
+            with CardDatabase(path) as database:
+                record = database.lookup("Roaming Throne")
+                expected = Counter((row["published_at"], row["source"], row["comment"]) for row in primary["rulings"] if row["oracle_id"] == record.oracle_id)
+                actual = Counter((row.published_at, row.source, row.comment) for row in database.rulings(record))
+                self.assertEqual(expected, actual)
+                registry = SemanticRegistry()
+                for _ in range(2):
+                    status = card_semantic_status(record, registry, db=database)
+                    self.assertEqual("fully_playable", status["status"])
+                    registry.card_programs()
 
     def card(self, session, name, seat, zone="hand"):
         engine = session.engine

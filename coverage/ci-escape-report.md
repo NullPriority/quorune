@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "cba3c40442caafa8b74ebfc855082c867d6f8cdc10410325ebbccf170e71f0aa"
+verified: "998459b9bd7dabb46613e53b905f4cdc66cfcabf8dfbf4081c0bee1db91932ee"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -15,8 +15,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 - Observation window: 2026-08-25T03:52:06Z through 2026-08-25T20:56:41Z
 - Observed population: tracked recent pull requests (n=4)
-- Escapes: 78
-- Deterministic escapes: 71
+- Escapes: 79
+- Deterministic escapes: 72
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: null
@@ -29,6 +29,7 @@ This report classifies observed deterministic failures that escaped the local qu
 
 | ID | Run | Category | Impact edge | Resolution |
 |---|---:|---|---|---|
+| `ci-20261007-78` | [37680285397](https://github.com/NullPriority/quorune/actions/runs/37680285397) | `source_correctness` | `added` | Remove only the duplicate Roaming Throne card and ruling owner from the new fixture through the canonical export, retaining its primary fixture and exact ruling multiset. The original offered cast/one-choice/type-addition/replay witness fails on the unchanged compact database in 48.782 seconds and passes after correction in 68.900 seconds. Add a full compact fixture composition regression comparing the primary ruling multiset and repeated authoritative preflight and compatibility assembly. Preserve true Scryfall ruling multiplicity and fail-closed provenance checks; compiler semantics remain unchanged and the one v261 census is reused. |
 | `ci-20261007-77` | [37668759749](https://github.com/NullPriority/quorune/actions/runs/37668759749) | `source_correctness` | `added` | Use the source-spanned face guard to exclude an intrinsic creature-type descriptor linked to making its source the chosen type. Preserve the linked residual and existing reviewed owner without identity dispatch or runtime text parsing. The six exact reported owner witnesses plus original closure and three printed linking exclusions pass; the strengthened offered/accepted Roaming Throne cast proves one pre-entry choice, its linked subtype, preserved trigger and Ward behavior, and exact pre-action replay. Add the existing exact-deck and trigger-processing consumers to the entry impact rule, update compiler identity, remeasure qualification, and run one census for the corrected semantic fingerprint. |
 | `ci-20261007-76` | [37660790800](https://github.com/NullPriority/quorune/actions/runs/37660790800) | `missing_affected_test` | `added` | Preserve every existing replacement rejection and passive Changeling assertion with a minimal constructed two-type entry choice and a fresh fixture identity. Keep the original printed Bloodline Pretender unchanged and add a separate source-spanned positive entry witness proving its independently unsupported chosen-type trigger still blocks strict and compatible whole-card admission. Add the Changeling consumer to the monotonic intrinsic-entry impact rule; no compiler semantics, trust threshold or assertion is weakened. |
 | `ci-20261007-75` | [37587369857](https://github.com/NullPriority/quorune/actions/runs/37587369857) | `windows_compatibility` | `not_applicable` | The exact complete-report LF/CRLF regression fails on unchanged production in 18.826 seconds. Normalize only CRLF policy text line endings before SHA-256 for the fixture manifest and shard manifest; retain binary file hashing elsewhere and prove that adding a valid fixture still changes the policy identity and report. The existing compact dependency source impact edge already selects this module and the canonical owner. Refresh all affected reports through the existing finalizer without changing compiler semantics or weakening freshness. |
