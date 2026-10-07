@@ -4816,7 +4816,51 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "qualified-zone-event-query-existing-owner-v1"
-        }
+        },
+        {
+            "bundle_id": "bundle:fixed-control-optional-untap",
+            "member_family_ids": [
+              "activated_effect:gain-control",
+              "continuous_layer:continuous-effect-layers-and-dependencies",
+              "effect_clause:gain-control"
+            ],
+            "canonical_owner_ids": [
+              "capability:continuous.control.fixed_resolution",
+              "capability:untap.step.optional_source",
+              "component:quorune.control_effects.gain_control_of_refs",
+              "component:quorune.optional_untap.complete_optional_untap_choice"
+            ],
+            "source_contexts": [
+              "activated",
+              "spell",
+              "static",
+              "triggered"
+            ],
+            "normalized_literal_parameters": [
+              "fixed-public-permanent-set",
+              "optional-physical-untap-selection",
+              "original-source-incarnation",
+              "resolving-controller",
+              "source-continuity-duration"
+            ],
+            "shared_dependencies": [
+              "permanent.untap.effect",
+              "target.revalidate_resolution",
+              "trigger.placement.apnap"
+            ],
+            "shared_grammar": "Resolution-created control with timestamped retained custody and original-source presence, controller or tapped continuity; one current-controller optional self untap instruction at its physical untap step.",
+            "estimated_implementation_hours": 8,
+            "estimated_probe_hours": 1,
+            "estimated_generation_hours": 1,
+            "expected_downstream_closure": "The same source continuity and untap boundary governs spells, activations and entry/action triggers without a second control or turn registry.",
+            "explicit_exclusions": [
+              "Hidden or unrepresented set queries, indefinite haste and unrelated result linkage",
+              "Phasing play and independently unsupported siblings",
+              "Static Aura control, player/spell control and unresolved broader source guards"
+            ],
+            "measurement_status": "generated_probe",
+            "measurement_probe_id": "fixed-control-optional-untap-existing-owner-v1"
+          }
       ],
       "approved_prerequisite_exceptions": [
         {

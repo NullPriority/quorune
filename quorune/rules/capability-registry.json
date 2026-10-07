@@ -8639,6 +8639,227 @@
       "implementation_mutation_rationale": "",
       "blockers": ["noncombat damage operations do not yet share the universal typed damage-event dispatch path"],
       "status": "blocked"
+    },
+    {
+      "id": "continuous.control.fixed_resolution",
+      "version": 1,
+      "official_rules": [
+        "302.6",
+        "506.4",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "613.1b",
+        "613.7",
+        "613.8a",
+        "613.8b",
+        "613.8c",
+        "800.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Fixed resolution control of one public permanent or one complete retained public set through custody-history v2 and the canonical layer-two journal.",
+        "inputs": [
+          "typed closed direct or set descriptor and original public incarnations",
+          "active resolving controller and original source identity",
+          "retained source continuity and resolution-start timestamp for source durations"
+        ],
+        "outputs": [
+          "timestamp-ordered control grants with initial custody distinct from ownership",
+          "permanent expiration of ended source guards after prerequisite control settles",
+          "printed untap/control/haste order over the original set"
+        ],
+        "exclusions": [
+          "historical custody-history modes",
+          "unrepresented targets, dynamic control subjects, exchange and unrepresented durations",
+          "phasing execution and independently unsupported Oracle siblings"
+        ]
+      },
+      "dependencies": [
+        "permanent.untap.effect"
+      ],
+      "implementation_components": [
+        "quorune.control_effects.gain_control_of_refs",
+        "quorune.control_effects.execute_control_set",
+        "quorune.semantic_runtime.control_handlers.FixedControlHandler",
+        "quorune.semantic_runtime.control_handlers.FixedControlSetHandler",
+        "quorune.semantic_runtime.control_intents.GainControlIntent",
+        "quorune.semantic_runtime.control_intents.GainControlSetIntent",
+        "quorune.compiler.fixed_control_templates.FixedControlTemplate",
+        "quorune.rules.control_capability_shapes.fixed_control_node_capabilities",
+        "quorune.control_effects.synchronize_control_effects",
+        "quorune.control_effects._next_source_expiration",
+        "quorune.source_continuity.SourceContinuitySnapshot"
+      ],
+      "positive_tests": [
+        "test_printed_control_spell_offers_accepts_principal_correct_targets_and_replays",
+        "test_printed_rubinia_activation_pins_source_duration_and_replays",
+        "test_printed_insurrection_controls_one_original_public_set_and_replays",
+        "test_printed_control_of_face_down_creature_preserves_principal_private_projection_and_replays",
+        "test_printed_brand_uses_owner_selection_across_other_controllers_and_replays",
+        "test_printed_helm_pins_duration_before_tap_and_sacrifice_costs_and_replays"
+      ],
+      "negative_tests": [
+        "test_control_shapes_reject_other_principals_and_missing_duration_identity",
+        "test_control_and_optional_untap_dependency_closures_fail_closed",
+        "test_printed_rubinia_untapped_and_retapped_before_resolution_only_new_activation_applies",
+        "test_printed_sower_source_dies_before_trigger_resolution_and_replays",
+        "test_historical_v1_control_keeps_annotation_cleanup_and_rejects_new_journal",
+        "test_source_reentry_cannot_restore_a_grant_or_satisfy_the_old_pending_identity"
+      ],
+      "interaction_tests": [
+        "test_printed_control_spell_offers_accepts_principal_correct_targets_and_replays",
+        "test_printed_rubinia_activation_pins_source_duration_and_replays",
+        "test_printed_insurrection_controls_one_original_public_set_and_replays",
+        "test_printed_rubinia_untapped_and_retapped_before_resolution_only_new_activation_applies",
+        "test_simultaneous_source_departures_settle_prerequisite_control_before_dependent_duration",
+        "test_control_set_retains_membership_after_acquisition_and_excludes_reentry",
+        "test_copied_control_ability_uses_fresh_continuity_and_copying_principal",
+        "test_historical_v1_keeps_ordinary_printed_activation_and_replay",
+        "test_printed_sower_source_dies_before_trigger_resolution_and_replays",
+        "test_actual_departures_preserve_initial_custody_and_exile_inactive_origin_with_replay",
+        "test_cyclic_source_guards_end_and_never_restart_when_cleanup_restores_control",
+        "test_printed_temporary_control_expires_at_actual_cleanup_to_initial_controller_and_replays",
+        "test_historical_v1_control_keeps_annotation_cleanup_and_rejects_new_journal",
+        "test_source_reentry_cannot_restore_a_grant_or_satisfy_the_old_pending_identity",
+        "test_printed_control_of_face_down_creature_preserves_principal_private_projection_and_replays",
+        "test_printed_brand_uses_owner_selection_across_other_controllers_and_replays",
+        "test_printed_helm_pins_duration_before_tap_and_sacrifice_costs_and_replays"
+      ],
+      "multiplayer_tests": [
+        "test_printed_control_spell_offers_accepts_principal_correct_targets_and_replays",
+        "test_printed_insurrection_controls_one_original_public_set_and_replays",
+        "test_printed_rubinia_untapped_and_retapped_before_resolution_only_new_activation_applies",
+        "test_printed_sower_source_dies_before_trigger_resolution_and_replays",
+        "test_actual_departures_preserve_initial_custody_and_exile_inactive_origin_with_replay",
+        "test_printed_brand_uses_owner_selection_across_other_controllers_and_replays"
+      ],
+      "privacy_tests": [
+        "test_printed_control_spell_offers_accepts_principal_correct_targets_and_replays",
+        "test_printed_control_of_face_down_creature_preserves_principal_private_projection_and_replays"
+      ],
+      "replay_tests": [
+        "test_printed_control_spell_offers_accepts_principal_correct_targets_and_replays",
+        "test_printed_rubinia_activation_pins_source_duration_and_replays",
+        "test_printed_insurrection_controls_one_original_public_set_and_replays",
+        "test_printed_rubinia_untapped_and_retapped_before_resolution_only_new_activation_applies",
+        "test_copied_control_ability_uses_fresh_continuity_and_copying_principal",
+        "test_historical_v1_keeps_ordinary_printed_activation_and_replay",
+        "test_printed_sower_source_dies_before_trigger_resolution_and_replays",
+        "test_actual_departures_preserve_initial_custody_and_exile_inactive_origin_with_replay",
+        "test_printed_temporary_control_expires_at_actual_cleanup_to_initial_controller_and_replays",
+        "test_printed_control_of_face_down_creature_preserves_principal_private_projection_and_replays",
+        "test_printed_brand_uses_owner_selection_across_other_controllers_and_replays",
+        "test_printed_helm_pins_duration_before_tap_and_sacrifice_costs_and_replays"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The dependency-closure witness marks the canonical untap prerequisite blocked and requires both new closures to retain its explicit status blocker. Descriptor witnesses reject reserved principal and source fields.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "The focused mutation witness removes the live control compiler route and the physical-turn matching predicate; the corresponding positive expectations fail.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "untap.step.optional_source",
+      "version": 1,
+      "official_rules": [
+        "502.3",
+        "604.1",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "The active current controller chooses which tapped optional sources untap during its physical untap step.",
+        "inputs": [
+          "exact source-only optional untap descriptor",
+          "owned versioned continuation with turn, step, plan, public incarnations and held triggers",
+          "controller-authorized unique public references with cardinality zero through the offered maximum"
+        ],
+        "outputs": [
+          "no-priority retained choice with an explicit empty decline",
+          "one simultaneous physical untap commit and one continuation to upkeep",
+          "strict stale or malformed continuation rejection through the command transaction"
+        ],
+        "exclusions": [
+          "optional additional untaps during other players turns",
+          "optional arbitrary queries and unrepresented selection limits",
+          "automatic choices when auto_untap is disabled",
+          "phasing execution and independently unsupported Oracle siblings"
+        ]
+      },
+      "dependencies": [
+        "permanent.untap.effect"
+      ],
+      "implementation_components": [
+        "quorune.compiler.untap_step_templates.static_untap_step_handler",
+        "quorune.semantic_runtime.untap_steps.OptionalSourceUntapStepHandler",
+        "quorune.untap_step.plan_untap_step",
+        "quorune.untap_step_coordination.coordinate_untap_step",
+        "quorune.optional_untap.OptionalUntapContinuation",
+        "quorune.optional_untap.begin_optional_untap_choice",
+        "quorune.optional_untap.complete_optional_untap_choice",
+        "quorune.untap_step_coordination.commit_untap_step"
+      ],
+      "positive_tests": [
+        "test_printed_optional_untap_retains_controller_authority_empty_choice_and_replays",
+        "test_selected_optional_untap_ends_control_after_reload_and_replays",
+        "test_optional_choice_preserves_original_printed_held_and_new_untap_triggers_once"
+      ],
+      "negative_tests": [
+        "test_optional_untap_is_not_admitted_through_the_original_static_contract",
+        "test_control_and_optional_untap_dependency_closures_fail_closed",
+        "test_retained_optional_untap_rejects_coerced_clocks_and_subjects",
+        "test_retained_optional_choice_rejects_changed_controller_without_mutation",
+        "test_manual_untap_mode_preserves_tapped_sources_without_optional_choice"
+      ],
+      "interaction_tests": [
+        "test_printed_optional_untap_retains_controller_authority_empty_choice_and_replays",
+        "test_selected_optional_untap_ends_control_after_reload_and_replays",
+        "test_optional_choice_preserves_original_printed_held_and_new_untap_triggers_once"
+      ],
+      "multiplayer_tests": [
+        "test_printed_optional_untap_retains_controller_authority_empty_choice_and_replays",
+        "test_selected_optional_untap_ends_control_after_reload_and_replays"
+      ],
+      "privacy_tests": [
+        "test_printed_optional_untap_retains_controller_authority_empty_choice_and_replays",
+        "test_selected_optional_untap_ends_control_after_reload_and_replays"
+      ],
+      "replay_tests": [
+        "test_printed_optional_untap_retains_controller_authority_empty_choice_and_replays",
+        "test_selected_optional_untap_ends_control_after_reload_and_replays",
+        "test_optional_choice_preserves_original_printed_held_and_new_untap_triggers_once"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The dependency-closure witness marks the canonical untap prerequisite blocked and requires both new closures to retain its explicit status blocker. Descriptor witnesses reject reserved principal and source fields.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "The focused mutation witness removes the live control compiler route and the physical-turn matching predicate; the corresponding positive expectations fail.",
+      "blockers": [],
+      "status": "trusted"
     }
   ]
 }

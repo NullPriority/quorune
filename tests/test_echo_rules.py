@@ -10,6 +10,7 @@ from unittest.mock import patch
 from common import DB_PATH, ROOT, keep_all, make_session
 from quorune.carddb import CardDatabase, CardRecord
 from quorune.control_history import (
+    CONTROL_HISTORY_VERSION,
     begin_upkeep_control_epoch,
     record_control_acquisition,
 )
@@ -527,7 +528,7 @@ class EchoRuntimeTests(unittest.TestCase):
         self.assertIsNone(legacy.control_history_version)
         validate_control_history_provenance({"format": {}}, None)
 
-        for invalid in (True, 2, "1"):
+        for invalid in (True, CONTROL_HISTORY_VERSION + 1, "1"):
             malformed = copy.deepcopy(payload)
             malformed["control_history_version"] = invalid
             with self.subTest(invalid=invalid):
@@ -608,7 +609,7 @@ class EchoRuntimeTests(unittest.TestCase):
             manifest_path = record_dir / "manifest.json"
             manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
             self.assertEqual(
-                1,
+                CONTROL_HISTORY_VERSION,
                 manifest["format"]["control_history_version"],
             )
             tampered = copy.deepcopy(manifest)

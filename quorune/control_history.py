@@ -34,7 +34,7 @@ def record_control_acquisition(
         raise ControlHistoryError(
             "Control-acquisition timestamp must be a nonnegative integer"
         )
-    if history_version not in {None, CONTROL_HISTORY_VERSION}:
+    if history_version not in {None, 1, CONTROL_HISTORY_VERSION}:
         raise ControlHistoryError("Unsupported control-history version")
     permanent.acquired_control_turn_count = controller_turns_begun
     if history_version is not None:
@@ -53,7 +53,7 @@ def begin_upkeep_control_epoch(
         raise ControlHistoryError(
             "Upkeep timestamp must be a nonnegative integer"
         )
-    if history_version not in {None, CONTROL_HISTORY_VERSION}:
+    if history_version not in {None, 1, CONTROL_HISTORY_VERSION}:
         raise ControlHistoryError("Unsupported control-history version")
     if history_version is None:
         # Historical Game Record v3 journals predate upkeep-relative control
@@ -111,7 +111,7 @@ def record_control_change(
             "Control changes require the previous controller"
         )
     history_version = getattr(state, "control_history_version", None)
-    if history_version not in {None, CONTROL_HISTORY_VERSION}:
+    if history_version not in {None, 1, CONTROL_HISTORY_VERSION}:
         raise ControlHistoryError("Unsupported control-history version")
     # The canonical direct control change is indefinite. An older temporary
     # restoration cannot supersede it, even if the controller does not change.

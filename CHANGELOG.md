@@ -11,6 +11,14 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Compile bounded permanent control instructions into the retained layer-two
+  journal, preserving initial custody, printed instruction order, source
+  continuity, cleanup, and player-departure behavior.
+
+- Let the active controller retain an optional source untap choice across
+  save and reload, then untap the selected physical set simultaneously while
+  preserving held triggers and exact command replay.
+
 - Update the browser build dependency `source-map-js` to its patched release
   for indexed source-map section offset validation.
 

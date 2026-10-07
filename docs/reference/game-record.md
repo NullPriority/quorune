@@ -85,6 +85,22 @@ marker remain in the historical no-history mode so later replay does not add
 control-acquisition or upkeep timestamps that were absent from their command
 hashes.
 
+Custody-history version two also binds resolution-created control to the
+continuous-effect journal. Initial custody is retained separately from card
+ownership. Source-bound grants carry the original source incarnation and a
+continuity snapshot; represented pending abilities retain their earlier
+snapshot and resolution-start timestamp. `source_continuity` is omitted from
+card payloads until needed. Version one and absent-marker states retain their
+earlier control path; the new fixed-control capability requires version two.
+
+An optional source untap uses a version-one owned continuation inside the
+pending decision. It retains the physical turn and step, immutable participation
+plan, public battlefield incarnations, available subjects, and held trigger
+snapshots. Reload reissues the controller's capability. An empty selection
+declines every optional untap; a stale or malformed continuation fails before
+the step commits. Completing the choice preserves held triggers and commits
+the selected physical untap set once before advancing to upkeep.
+
 Control-instruction execution is also bound to the existing runtime-trust
 identity. Correcting a same-controller instruction does not rename its readable
 descriptor or reset the control-history marker. Records pinned to the prior

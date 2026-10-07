@@ -1,4 +1,6 @@
 from __future__ import annotations
+from .control_intents import ControlIntent
+from .domain_intent import DomainEffectIntent
 
 from dataclasses import dataclass, field
 from typing import Any, Literal, Mapping, TypeAlias
@@ -1584,20 +1586,8 @@ class ProliferateIntent:
         return tuple(subject.ref for subject in self.subjects)
 
 
-@dataclass(frozen=True, slots=True)
-class DomainEffectIntent:
-    actor: str
-    operation: str
-    effect: FrozenMap
-    reason: str
-
-    def __post_init__(self) -> None:
-        if not isinstance(self.effect, FrozenMap):
-            object.__setattr__(self, "effect", FrozenMap(self.effect))
-
-
 SemanticIntent: TypeAlias = (
-    DrawCardsIntent
+    DrawCardsIntent | ControlIntent
     | MillCardsIntent
     | BecomeMonarchIntent
     | SetPermanentTappedIntent

@@ -127,6 +127,8 @@ from .counter_placement_handlers import (
     FixedCounterPlacementTargetSetHandler,
     FixedPlayerCounterPlacementHandler,
 )
+from .control_handlers import CONTROL_HANDLERS, FixedControlHandler, FixedControlSetHandler
+from .control_intents import GainControlIntent, GainControlSetIntent
 from .counter_removal_handlers import (
     AllCounterRemovalHandler,
     COUNTER_REMOVAL_HANDLERS,
@@ -398,6 +400,7 @@ def default_semantic_handler_registry() -> SemanticHandlerRegistry:
             *RETURN_TO_HAND_HANDLERS,
             *STACK_COUNTER_HANDLERS,
             *COUNTER_PLACEMENT_HANDLERS,
+            *CONTROL_HANDLERS,
             *COUNTER_REMOVAL_HANDLERS,
             *STATION_HANDLERS,
             *ZONE_OBJECT_KEYWORD_HANDLERS,

@@ -8,6 +8,7 @@ from .counter_removal import (
     CounterRemovalError,
     plan_counter_removals,
 )
+from .control_effects import record_source_transition, synchronize_control_effects
 
 VIGILANCE_KEYWORD = "vigilance"
 STUN_COUNTER_NAME = "stun"
@@ -111,6 +112,7 @@ def tap_declared_attackers(
     for card, should_tap in prepared:
         if should_tap:
             card.tapped = True
+            record_source_transition(host, card, previous_tapped=False)
             tapped_refs.append(card.ref)
     pending: list[Any] = []
     for card, should_tap in prepared:
@@ -179,6 +181,7 @@ def untap_permanent(
         )
         return False
     card.tapped = False
+    record_source_transition(host, card, previous_tapped=True)
     return True
 
 
@@ -218,6 +221,7 @@ def set_permanent_tapped(
         return card.ref
     if card.zone != "battlefield":
         return card.ref
+    previous_tapped = card.tapped
     if tapped:
         changed = not card.tapped
         card.tapped = True
@@ -231,7 +235,10 @@ def set_permanent_tapped(
             actor=actor,
             reason=reason,
         )
+    if changed and not revert and (tapped or untap_cost):
+        record_source_transition(host, card, previous_tapped=previous_tapped)
     if changed and not revert and semantic_events:
+        synchronize_control_effects(host, reason="source tap state changed")
         dispatch_tap_state_occurrence(host, card, tapped=tapped, reason=reason)
     if changed and log:
         operation = "tap" if tapped else "untap"
@@ -313,6 +320,7 @@ def dispatch_tap_state_group(
 ) -> None:
     """Announce an explicitly simultaneous instruction's committed members."""
 
+    synchronize_control_effects(host, reason="simultaneous source tap states changed")
     pending: list[Any] = []
     for card in sorted(cards, key=lambda value: value.object_id):
         dispatch_tap_state_occurrence(

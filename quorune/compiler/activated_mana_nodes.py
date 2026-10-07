@@ -296,6 +296,8 @@ def _activated_effect_residuals(
 
 
 _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
+    "gain_control",
+    "gain_control_set",
     "amass",
     "apply_source_characteristics_until_end_of_turn",
     "attach",
@@ -402,6 +404,7 @@ def _activated_effect_dependency_gate(
                 "fixed-source-effect-sequence",
                 "fixed-controller-effect-sequence",
                 "fixed-counter-controller-effect-sequence",
+                "fixed-resolution-control",
                 "fixed-effect-clause-sequence",
                 "fixed-resolution-public-condition",
                 "closed-effect-program", "fixed-target-hand-inspection", "temporary-target-interaction", "linked-exile-return",

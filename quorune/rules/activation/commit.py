@@ -36,6 +36,7 @@ from ...activation_usage import (
     commit_activation_usage,
 )
 from ...model import StackItem, YieldPolicy
+from ...control_effects import capture_control_duration
 from ...replacement.immutable import thaw_value
 from ...zone_trigger_events import ZoneTransitionKind
 from ...station import (
@@ -711,6 +712,11 @@ def _dispatch_cycling_event(
     enqueue_trigger_batch(host, trigger_batch)
 
 
+def _source_attachment_snapshot(host: ActivationCommitHost, source: Any, program: Any):
+    relation = required_attachment_relation(program.effects) if program is not None else None
+    return capture_source_attachment_snapshot(host.state.cards, source, relation) if relation is not None else None
+
+
 def commit_activation(
     host: ActivationCommitHost,
     proposal: ActivationProposal,
@@ -724,26 +730,16 @@ def commit_activation(
         str(host._effective_card_data(source).get("type_line") or "")
     )[2]
     program = host.semantics.get(proposal.semantic_key)
+    duration_tracked, duration_snapshot = capture_control_duration(
+        host, program, source, source_logical_object_id,
+    )
     cycling_snapshot = _cycling_event_snapshot(
         host,
         proposal,
         source,
         program,
     )
-    attachment_relation = (
-        required_attachment_relation(program.effects)
-        if program is not None
-        else None
-    )
-    attachment_snapshot = (
-        capture_source_attachment_snapshot(
-            host.state.cards,
-            source,
-            attachment_relation,
-        )
-        if attachment_relation is not None
-        else None
-    )
+    attachment_snapshot = _source_attachment_snapshot(host, source, program)
     if not ability.mana_ability:
         clear_mana_undo_stack(host.state.players[proposal.seat].stats)
     _commit_symbol_costs(host, proposal, source, ability)
@@ -817,6 +813,8 @@ def commit_activation(
         encore_source_context,
     )
     begin_ninjutsu_reveal(host, source, item)
+    if duration_tracked:
+        item.context["control_duration_snapshot"] = duration_snapshot.to_dict() if duration_snapshot is not None else None
     host.state.stack.append(item)
     collect_ward_occurrences(host, item)
     host._log(

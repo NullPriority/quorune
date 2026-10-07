@@ -8,6 +8,7 @@ from typing import Any, Mapping, Protocol, Sequence
 
 from .errors import GameRuleError, StateInvariantError
 from .continuous_effect_state import expire_end_of_turn_continuous_effects
+from .control_effects import synchronize_control_effects
 from .damage_prevention import expire_end_of_turn_damage_modifiers
 from .impulse_access import expire_temporary_play_permissions
 from .rules.land_play_permissions import (
@@ -511,6 +512,7 @@ class TurnStepOwner:
             player.stats.pop("hexproof_from_colors_until_end", None)
         expire_end_of_turn_damage_modifiers(self.state)
         expire_end_of_turn_continuous_effects(self.state)
+        synchronize_control_effects(self._host, reason="temporary control effect ended")
         self._host._clear_mana(reason="cleanup")
         self._host._log(
             active,

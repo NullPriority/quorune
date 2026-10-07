@@ -16,8 +16,9 @@ from .declaration_rule_effects import (
 )
 from .trigger_batches import PendingTriggerBatch, TriggerBatchError
 from .util import normalize_mana_bundle, stable_json
+from .source_continuity import SourceContinuityHistory
 
-CONTROL_HISTORY_VERSION = 1
+CONTROL_HISTORY_VERSION = 2
 _COLORED_MANA_SYMBOLS = tuple("WUBRG")
 
 ZoneName = Literal[
@@ -269,6 +270,9 @@ class CardInstance:
     # Zero is omitted from historical Game Record v3 payloads.
     transform_count: int = 0
     phased_out: bool = False
+    # Starts only when a new source-bound control ability participates. None
+    # preserves historical record payloads and untracked source behavior.
+    source_continuity: SourceContinuityHistory | None = None
     counters: dict[str, int] = field(default_factory=dict)
     marked_damage: int = 0
     deathtouch_damage: bool = False
@@ -340,6 +344,8 @@ class CardInstance:
             )
         if type(self.deathtouch_damage) is not bool:
             raise ValueError("Deathtouch damage state must be a boolean")
+        if self.source_continuity is not None and not isinstance(self.source_continuity, SourceContinuityHistory):
+            raise ValueError("Duration source continuity requires typed retained history")
         if type(self.transform_count) is not int or self.transform_count < 0:
             raise ValueError("Transform count must be a nonnegative integer")
         if (
@@ -393,6 +399,8 @@ class CardInstance:
 
     def to_dict(self) -> dict[str, Any]:
         payload = asdict(self)
+        if self.source_continuity is None:
+            payload.pop("source_continuity")
         if self.commander_designation_id is None:
             # Preserve byte-for-byte historical checkpoint payloads. The
             # GameState identity-version marker distinguishes new records.
@@ -423,6 +431,8 @@ class CardInstance:
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "CardInstance":
         payload = dict(data)
+        if "source_continuity" in payload:
+            payload["source_continuity"] = SourceContinuityHistory.from_dict(payload["source_continuity"])
         payload["goaded_by"] = [
             GoadDesignation.from_dict(value)
             for value in payload.get("goaded_by", [])
@@ -1104,7 +1114,7 @@ class GameState:
             return None
         if type(value) is not int:
             raise ValueError("Control-history version must be an integer")
-        if value != CONTROL_HISTORY_VERSION:
+        if value not in {1, CONTROL_HISTORY_VERSION}:
             raise ValueError("Unsupported control-history version")
         return value
 

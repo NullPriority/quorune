@@ -1,4 +1,5 @@
 from __future__ import annotations
+from ..semantic_runtime.control_intents import GainControlIntent, GainControlSetIntent
 
 import copy
 import random
@@ -137,6 +138,26 @@ from ..util import unique_preserving_order
 
 
 class SemanticChoiceIntentHostMixin:
+    def gain_control_intent(self, intent: GainControlIntent):
+        from ..control_effects import gain_control_of_refs, ControlEffectError
+        try:
+            return gain_control_of_refs(
+                self, actor=intent.actor, object_refs=(intent.object_ref,),
+                controller=intent.controller, duration=intent.duration,
+                source=intent.source, reason=intent.reason,
+                history_snapshot=intent.history_snapshot,
+                resolution_timestamp=intent.resolution_timestamp,
+            )
+        except ControlEffectError as exc:
+            raise GameRuleError(str(exc)) from exc
+
+    def gain_control_set_intent(self, intent: GainControlSetIntent):
+        from ..control_effects import execute_control_set, ControlEffectError
+        try:
+            return execute_control_set(self, intent)
+        except ControlEffectError as exc:
+            raise GameRuleError(str(exc)) from exc
+
     def affected_permanent_active_seats(self) -> tuple[str, ...]:
         return tuple(self.active_seats)
 

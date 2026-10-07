@@ -756,6 +756,24 @@ face-down semantics, and player or game-rule effects remain residual. This
 producer adds no family-specific ability-presence check and performs no dynamic
 characteristic count.
 
+`compiler/fixed_control_templates.py` admits one direct public permanent or
+one closed public battlefield set with fixed control duration. Direct source
+durations require the original permanent context and lower only the source
+remaining present, controlled, tapped, or the supported conjunctions. Set
+instructions retain printed untap/control/haste order and lock their complete
+original incarnation set before any substep. The typed control handlers use
+`continuous.control.fixed_resolution`; `control_effects.py` commits through
+the existing layer-two journal and custody history, without reading Oracle
+text during play. Exchange, dynamic subjects, unsupported durations, and
+independently unsupported siblings remain residuals.
+
+The source-only optional untap clause lowers to a separate component in the
+existing static untap participation family. `untap.step.optional_source`
+authorizes the active controller's retained zero-or-more choice. The planner
+and physical untap coordinator own participation and simultaneous untapping;
+optional additional untaps on other players' turns, wider optional queries,
+selection limits, and phasing execution remain outside this contract.
+
 `compiler/public_state_queries.py` owns the shared fixed battlefield-query and
 public-state condition grammar consumed by continuous characteristics, typed
 queried ability grants, resolution-locked characteristic sets, and untap-step

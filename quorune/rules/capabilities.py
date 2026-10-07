@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .control_capability_shapes import fixed_control_node_capabilities
 
 from dataclasses import dataclass
 import hashlib
@@ -1046,6 +1047,7 @@ def _targeted_effect_capabilities(
 ) -> set[str]:
     dependencies: set[str] = set()
     for resolver in (
+        fixed_control_node_capabilities,
         fixed_attachment_action_node_capabilities,
         all_counter_removal_node_capabilities,
         fixed_counter_placement_batch_node_capabilities,
@@ -1363,7 +1365,11 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
         mechanic
         for capability, mechanic in mapping.items()
         if capability in supplied
-    } | fixed_library_search_covered_mechanics(supplied)
+    } | fixed_library_search_covered_mechanics(supplied) | _control_covered_mechanics(supplied)
+
+
+def _control_covered_mechanics(supplied: set[str]) -> set[str]:
+    return {"fixed-resolution-control", "cr-611-continuous-effects"} if "continuous.control.fixed_resolution" in supplied else set()
 
 
 def _fixed_modal_covered_mechanics(supplied: set[str]) -> set[str]:

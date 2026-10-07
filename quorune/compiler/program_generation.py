@@ -1,4 +1,5 @@
 from __future__ import annotations
+from ..rules.control_capability_shapes import fixed_control_node_capabilities
 
 from collections import Counter
 from dataclasses import asdict, replace
@@ -1256,8 +1257,13 @@ def _is_closed_fixed_public_zone_move_set_program(
     )
 
 
+def _is_closed_fixed_control_program(program: SemanticProgram) -> bool:
+    return _node_capabilities_close_program(program, fixed_control_node_capabilities)
+
+
 def _closed_effect_recognizers():
     return (
+        _is_closed_fixed_control_program,
         is_closed_fixed_modal_program,
         is_closed_fixed_effect_payment_program,
         is_closed_stack_controller_payment_program,
@@ -1342,6 +1348,9 @@ def _is_closed_public_query_amount_program(program: SemanticProgram) -> bool:
 
 def _is_closed_effect_program(program: SemanticProgram) -> bool:
     """Return whether a reviewed capability-shaped effect owns execution."""
+
+    if _node_capabilities_close_program(program, fixed_control_node_capabilities):
+        return True
 
     from ..rules.linked_exile_return_shapes import linked_exile_return_node_capabilities
     from ..rules.resolution_condition_shapes import resolution_condition_node_capabilities

@@ -63,6 +63,7 @@ from . import block_transition_engine_adapter as block_triggers
 from . import attack_transition_engine_adapter as attack_transitions
 from .combat_relationship_state import remove_combat_relationships
 from . import control_history
+from . import control_effects
 from .counter_placement import (
     CounterPlacementError,
     place_counters_on_controlled_subtype,
@@ -348,9 +349,9 @@ from .state_based_actions import (
     ObjectSnapshot,
     PermanentSnapshot,
     evaluate_state_based_actions,
-    player_loss_seats,
 )
 from .state_based_execution import (
+    commit_state_based_principal_changes,
     commit_state_based_counter_removals,
     commit_state_based_zone_changes,
     prepare_state_based_execution,
@@ -455,6 +456,9 @@ class CommanderEngine(
         program: SemanticProgram | None,
     ) -> bool:
         if program is None or program.trust_level != "trusted":
+            return False
+        if ("continuous.control.fixed_resolution" in program.capability_dependencies
+                and self.state.control_history_version != control_history.CONTROL_HISTORY_VERSION):
             return False
         current_programs = self.semantics.programs_for_oracle(
             program.oracle_id or ""
@@ -1489,6 +1493,9 @@ class CommanderEngine(
             self._complete_priority(decision)
         elif kind == "combat.attackers":
             self._complete_attackers(decision)
+        elif kind == "untap.optional_source":
+            from .optional_untap import complete_optional_untap_choice
+            complete_optional_untap_choice(self, decision)
         elif kind == "combat.blockers":
             self._complete_blockers(decision)
         elif kind == "combat.damage":
@@ -3938,6 +3945,7 @@ class CommanderEngine(
                 permanent_spell=permanent_spell, characteristics=original_data,
             ),
         )
+        control_effects.pin_pending_control_duration(self, copied, reset=True)
         self.state.stack.append(copied)
         copy_events.dispatch_normalized_spell_copy_event(self, copied, target.ref)
         self._log(
@@ -4004,6 +4012,7 @@ class CommanderEngine(
             )
         if not self._revalidate_resolution_targets(item):
             return
+        control_effects.begin_control_duration_resolution(self, item)
         self._continue_resolution(
             stack_ref=item.ref,
             effects=[dict(effect) for effect in effects],
@@ -6837,11 +6846,7 @@ class CommanderEngine(
         for _ in range(100):
             if self.state.game_over:
                 return True
-            losers = player_loss_seats(self.state, self.active_seats)
-            if losers:
-                self._eliminate_players(losers, reason="state-based loss")
-                if self.state.game_over:
-                    return True
+            if commit_state_based_principal_changes(self):
                 continue
 
             if self._remove_invalid_combat_objects():
@@ -7140,7 +7145,9 @@ class CommanderEngine(
                         ]
                     else:
                         self.move_card(card.object_id, "outside", reason="owner left game", log=False)
-            # A conservative baseline for ended control effects: surviving
+            control_effects.end_player_control_effects(self.state, seat)
+            control_effects.synchronize_control_effects(self, reason="control effect controller left game")
+            # A conservative baseline for historical unjournaled control effects: surviving
             # objects owned by others return to their owners; any leftovers are
             # exiled. A compiled continuous-effect layer may refine this later.
             for card in sorted(
@@ -7148,6 +7155,9 @@ class CommanderEngine(
                 key=lambda value: (value.ref, value.object_id),
             ):
                 if card.zone == "battlefield" and card.controller == seat and card.owner != seat:
+                    if self.state.control_history_version == control_history.CONTROL_HISTORY_VERSION:
+                        self.move_card(card.object_id, "exile", reason="controller left game", log=False)
+                        continue
                     owner = card.owner
                     if self.state.players[owner].in_game:
                         self.change_control(card.object_id, owner, reason="controller left game")
@@ -7394,21 +7404,7 @@ class CommanderEngine(
             raise GameRuleError(str(exc)) from exc
 
     def change_control(self, object_id: str, new_controller: str, *, reason: str = "") -> None:
-        self._require_seat(new_controller, in_game=True)
-        card = self.state.cards[object_id]
-        if card.zone != "battlefield":
-            raise GameRuleError("Only battlefield permanents have controllers")
-        old = card.controller
-        if old != new_controller:
-            self._remove_object_from_combat(
-                card,
-                reason="control changed",
-            )
-            self.state.players[old].zones["battlefield"].remove(object_id)
-            self.state.players[new_controller].zones["battlefield"].append(object_id)
-            card.controller = new_controller
-        control_history.record_control_change(self.state, card, self._next_zone_timestamp, previous_controller=old)
-        self._log(None, "control.change", f"Control of {card.ref} changed {old} → {new_controller}.", {"object": card.ref, "from": old, "to": new_controller, "reason": reason}, importance=2, changed_objects=[object_id], changed_players=[old, new_controller])
+        control_effects.change_control(self, object_id, new_controller, reason=reason)
 
     def apply_shortcut(
         self,

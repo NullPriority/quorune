@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Protocol
+from .control_effects import ControlEffectHost, synchronize_control_effects
 
 from .counter_removal import (
     commit_counter_removals,
@@ -22,13 +24,28 @@ from .destruction import (
     prepare_destructions,
     request_for_card,
 )
-from .state_based_actions import StateBasedActionBatch
+from .state_based_actions import StateBasedActionBatch, player_loss_seats
 from .zone_trigger_events import ZoneTransitionKind
 from .util import unique_preserving_order
 
 
 class StateBasedExecutionError(ValueError):
     """A state-based action batch cannot be prepared transactionally."""
+
+
+class StateBasedPrincipalHost(ControlEffectHost, Protocol):
+    def _eliminate_players(self, seats: list[str], *, reason: str) -> None: ...
+
+
+def commit_state_based_principal_changes(host: StateBasedPrincipalHost) -> bool:
+    """Settle layer-two custody before testing the current loss conditions."""
+    if synchronize_control_effects(host, reason="control effect changed"):
+        return True
+    losers = player_loss_seats(host.state, host.active_seats)
+    if not losers:
+        return False
+    host._eliminate_players(losers, reason="state-based loss")
+    return True
 
 
 @dataclass(frozen=True, slots=True)

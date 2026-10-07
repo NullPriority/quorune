@@ -104,6 +104,7 @@
       "test_exact_land_families",
       "test_fixed_casting_surface",
       "test_fixed_combat_entry_keyword_lifecycles",
+      "test_fixed_control_effects",
       "test_fixed_controller_effect_sequences",
       "test_fixed_counter_controller_effect_sequences",
       "test_fixed_mass_damage",
