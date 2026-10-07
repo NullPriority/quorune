@@ -48,6 +48,8 @@ VALID_EFFECT_OPERATIONS = {
     "return_graveyard_targets_to_owner_hand",
     "change_control",
     "change_control_until_end_of_turn",
+    "gain_control",
+    "gain_control_set",
     "linked_exile_return",
     "return_linked_exiled_objects",
     "choose_card_name",
