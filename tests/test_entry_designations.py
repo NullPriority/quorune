@@ -9,10 +9,11 @@ import unittest
 from unittest.mock import patch
 
 from common import ROOT, keep_all, make_session, pass_current
-from quorune.carddb import CardDatabase
+from quorune.carddb import CardDatabase, CardRecord
 from quorune.card_programs import bind_card_program_runtime
 from quorune.card_programs.adapters import compile_best_available_card_program
 from quorune.compiler.entry_designation_templates import entry_designation_handler, chosen_characteristics_handler
+from quorune.compiler.unlock_frontier import canonical_residual_families
 from quorune.deck import DeckLoader
 from quorune.entry_designations import EntryDesignationKind, validate_designation
 from quorune.model import CardInstance, GameState
@@ -27,7 +28,31 @@ from quorune.semantic_runtime.entry_designations import EntryDesignationHandler
 from quorune.semantic_runtime.zone_replacement_model import ZoneChangeSubjectSnapshot, ZoneChangeReplacementSnapshot
 from quorune.semantics import SemanticRegistry
 from quorune.session import CommanderSession
-from scripts.build_test_database import build_fixture_database
+from scripts.build_test_database import _card_payload, build_fixture_database
+
+
+def composition_record(identity, name, type_line, text, keywords=()):
+    return CardRecord(
+        oracle_id=f"fixture:entry-composition:{identity}",
+        name=name,
+        mana_cost="{U}",
+        mana_value=1,
+        type_line=type_line,
+        oracle_text=text,
+        power=None,
+        toughness=None,
+        loyalty=None,
+        defense=None,
+        colors=("U",),
+        color_identity=("U",),
+        keywords=keywords,
+        produced_mana=(),
+        layout="normal",
+        released_at="2026-01-01",
+        legalities={"commander": "legal"},
+        faces=(),
+        raw={},
+    )
 
 
 class EntryDesignationTests(unittest.TestCase):
@@ -35,7 +60,17 @@ class EntryDesignationTests(unittest.TestCase):
     def setUpClass(cls):
         cls.temporary = tempfile.TemporaryDirectory()
         path = Path(cls.temporary.name) / "entry.sqlite3"
-        build_fixture_database([ROOT / "tests/fixtures/scryfall-exact-lists.json", ROOT / "tests/fixtures/entry-designation-cards.json"], path)
+        compositions = []
+        for identity, name, type_line, text, keywords in (
+            ("simple-aura", "Entry Choice Simple Aura", "Enchantment — Aura", "Enchant creature\nAs this Aura enters, choose a color.", ("Enchant",)),
+            ("typed-aura", "Entry Choice Typed Aura", "Enchantment — Aura", "Enchant creature or Vehicle\nAs this Aura enters, choose a color.", ("Enchant",)),
+            ("targeted-artifact", "Entry Choice Targeted Artifact", "Artifact", "As this artifact enters, choose a color.\n{1}: This artifact deals 1 damage to any target.", ()),
+        ):
+            record = composition_record(identity, name, type_line, text, keywords)
+            compositions.append(_card_payload(record))
+        composition_path = Path(cls.temporary.name) / "compositions.json"
+        composition_path.write_text(json.dumps({"schema_version": 1, "cards": compositions, "rulings": []}), encoding="utf-8")
+        build_fixture_database([ROOT / "tests/fixtures/scryfall-exact-lists.json", ROOT / "tests/fixtures/entry-designation-cards.json", composition_path], path)
         cls.db = CardDatabase(path)
         loader = DeckLoader(cls.db)
         cls.mishra = loader.load(ROOT / "examples/mishra-eminent-one.txt", commander="Mishra, Eminent One", deck_name="Mishra")
@@ -138,6 +173,31 @@ class EntryDesignationTests(unittest.TestCase):
         with patch("quorune.compiler.runtime_templates.chosen_characteristics_handler", return_value=None):
             mutant = compile_oracle_card(record, capability_registry=load_default_capability_registry(), capability_profile="commander_review")
         self.assertNotEqual("exact", mutant.status)
+
+    def test_entry_designation_chosen_target_predicate_stays_unavailable(self):
+        registry = load_default_capability_registry()
+        boundary = composition_record("chosen-target-boundary", "Entry Choice Target Boundary", "Artifact", "As this artifact enters, choose a creature type.\n{1}, {T}: Return target creature card of the chosen type from your graveyard to your hand.")
+        ir = compile_oracle_card(boundary, capability_registry=registry, capability_profile="commander_review")
+        self.assertTrue(any(node.exact and "zone.entry.public_designation" in node.capability_dependencies for face in ir.faces for node in face.nodes))
+        self.assertTrue(any("target_or_choice:target-predicate" in canonical_residual_families(residual) for face in ir.faces for residual in face.residuals))
+        program = compile_best_available_card_program(self.db, boundary, semantic_registry=SemanticRegistry(), capability_registry=registry, capability_profile="commander_review")
+        binding = bind_card_program_runtime(program, capability_registry=registry, profile="commander_review")
+        self.assertFalse(binding["strict_capability_ready"])
+        self.assertFalse(binding["compatible_ready"])
+
+    def test_entry_composition_programs_bind_all_target_capabilities(self):
+        registry = load_default_capability_registry()
+        for name, sibling in (("Entry Choice Simple Aura", "attachment.aura.simple_object"), ("Entry Choice Typed Aura", "attachment.aura.typed_restriction"), ("Entry Choice Targeted Artifact", "target.public.player_or_damageable_permanent"), ("Steely Resolve", "target.protection.shroud_permanent")):
+            with self.subTest(card=name):
+                record = self.db.lookup(name)
+                ir = compile_oracle_card(record, capability_registry=registry, capability_profile="commander_review")
+                self.assertEqual("exact", ir.status)
+                dependencies = {value for face in ir.faces for node in face.nodes for value in node.capability_dependencies}
+                self.assertLessEqual({"zone.entry.public_designation", sibling}, dependencies)
+                program = compile_best_available_card_program(self.db, record, semantic_registry=SemanticRegistry(), capability_registry=registry, capability_profile="commander_review")
+                self.assertTrue(bind_card_program_runtime(program, capability_registry=registry, profile="commander_review")["strict_capability_ready"])
+        copy_ir = compile_oracle_card(self.db.lookup("Cackling Counterpart"), capability_registry=registry, capability_profile="commander_review")
+        self.assertIn("target.revalidate_resolution", {value for face in copy_ir.faces for node in face.nodes for value in node.capability_dependencies})
 
     def test_entry_designations_clear_with_departed_zone_object(self):
         from quorune.zone_object_state import reset_card_after_zone_change
@@ -290,6 +350,98 @@ class EntryDesignationTests(unittest.TestCase):
         self.assertEqual("elf", engine.state.cards[source.object_id].annotations["chosen_creature_type"])
         self.assertEqual("graveyard", engine.state.cards[bird.object_id].zone)
         self.assertNotIn("chosen_creature_type_adds_subtype", tokens[0].annotations)
+        expected = authoritative_state_hash(engine.state)
+        with tempfile.TemporaryDirectory() as directory:
+            session.save(directory)
+            replay = replay_record(directory, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(expected, replay["final_state_hash"])
+
+    def test_entry_choices_compose_with_aura_targets_and_printed_shroud(self):
+        # CR 115.1b/303.4a lock Aura targets before the CR 614.12a entry
+        # choice. CR 702.18a excludes the chosen type for every controller.
+        session = make_session(self.db, self.mishra, self.zimone, players=4, seed=61412003, auto_pass_empty=False)
+        keep_all(session)
+        engine = session.engine
+        simple = self.card(session, "Entry Choice Simple Aura", "A")
+        typed = self.card(session, "Entry Choice Typed Aura", "A")
+        artifact = self.card(session, "Entry Choice Targeted Artifact", "A")
+        shroud = self.card(session, "Steely Resolve", "A")
+        own_elf = self.card(session, "Llanowar Elves", "A", "battlefield")
+        opposing_elf = self.card(session, "Llanowar Elves", "B", "battlefield")
+        bird = self.card(session, "Baleful Strix", "D", "battlefield")
+        engine.state.players["A"].mana_pool.update(C=4, U=3, G=1)
+        engine.permissions.invalidate_current()
+        engine.state.pending_decision = None
+        engine.state.started = True
+        engine.state.active_player = "A"
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        engine._grant_priority("A")
+        engine.pump()
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+
+        def actions():
+            return session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+
+        def enter(card, value, target=None):
+            action = next(row for row in actions() if row["id"] == f"cast:{card.ref}")
+            command = {"action_id": action["id"], "pay": "manual", "payment": {"U": 1} if target is not None or card is artifact else {"C": 1, "G": 1}}
+            if target is not None:
+                self.assertIn(target.ref, action["target_schema"]["legal_refs"])
+                self.assertNotIn(shroud.ref, action["target_schema"]["legal_refs"])
+                command["targets"] = [target.ref]
+            accepted = session.act("pilot:A", command)
+            self.assertTrue(accepted.ok, accepted.summary)
+            for _ in range(16):
+                if session.state.pending_decision.kind == "replacement.order":
+                    break
+                pass_current(session)
+            else:
+                self.fail("Cast did not reach the intrinsic entry choice")
+            self.assertEqual("stack", card.zone)
+            self.assertIsNone(card.attached_to)
+            decision = session.packet("pilot:A", full=True)["decision"]
+            choice = next(row["id"] for row in decision["ctx"]["options"] if row["id"].endswith(":" + value))
+            chosen = session.act("pilot:A", {"action_id": "choose", "choices": {"replacement": choice}})
+            self.assertTrue(chosen.ok, chosen.summary)
+            self.assertEqual("battlefield", card.zone)
+            if target is not None:
+                self.assertEqual(target.object_id, card.attached_to)
+                self.assertIn(card.object_id, target.attachments)
+                self.assertEqual(value, card.annotations["chosen_color"])
+
+        enter(simple, "R", opposing_elf)
+        enter(typed, "W", bird)
+        enter(artifact, "B")
+        enter(shroud, "elf")
+        self.assertEqual("elf", shroud.annotations["chosen_creature_type"])
+        self.assertIn("Shroud", engine._effective_card_data(own_elf)["keywords"])
+        self.assertIn("Shroud", engine._effective_card_data(opposing_elf)["keywords"])
+        self.assertNotIn("Shroud", engine._effective_card_data(bird)["keywords"])
+        activation = next(row for row in actions() if row["id"].startswith(f"activate:{artifact.ref}:"))
+        legal_refs = activation["target_schema"]["legal_refs"]
+        self.assertIn(bird.ref, legal_refs)
+        self.assertNotIn(own_elf.ref, legal_refs)
+        self.assertNotIn(opposing_elf.ref, legal_refs)
+        before = authoritative_state_hash(engine.state)
+        for target in (own_elf, opposing_elf):
+            rejected = session.act("pilot:A", {"action_id": activation["id"], "targets": [target.ref], "pay": "auto"})
+            self.assertFalse(rejected.ok)
+            self.assertEqual(before, authoritative_state_hash(engine.state))
+        accepted = session.act("pilot:A", {"action_id": activation["id"], "targets": [bird.ref], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        for _ in range(16):
+            if not engine.state.stack:
+                break
+            pass_current(session)
+        self.assertEqual("graveyard", engine.state.cards[bird.object_id].zone)
+        self.assertEqual("graveyard", engine.state.cards[typed.object_id].zone)
+        self.assertEqual("battlefield", engine.state.cards[simple.object_id].zone)
+        self.assertEqual(opposing_elf.object_id, engine.state.cards[simple.object_id].attached_to)
+        self.assertEqual("B", engine.state.cards[artifact.object_id].annotations["chosen_color"])
         expected = authoritative_state_hash(engine.state)
         with tempfile.TemporaryDirectory() as directory:
             session.save(directory)

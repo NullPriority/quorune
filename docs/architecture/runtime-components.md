@@ -39,6 +39,10 @@ one-color or creature-type choice before battlefield entry. The existing
 replacement journal retains the destination controller's selection, and the
 card-designation intent owner commits it on the new incarnation. Copied
 permanents make fresh choices; zone-object reset clears departing choices.
+Aura spells select their enchant target before the entry choice and commit
+attachment through the existing Aura owner. A designation does not change
+ordinary targeting rules; chosen-type Shroud uses the shared offer and command
+legality boundary.
 
 `continuous.characteristics.chosen-designation.v1` binds a retained public
 designation to a closed fixed-query characteristic descriptor. Its child
