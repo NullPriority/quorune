@@ -1,6 +1,24 @@
 {
   "escapes": [
     {
+      "category": "generated_artifact_drift",
+      "deterministic": true,
+      "failed_surfaces": [
+        "Generated cloud / Reusable pieces"
+      ],
+      "head_sha": "f3ddbba68f56126ee1a1a569595e1967ac6ae961",
+      "id": "ci-20261007-79",
+      "impact_edge_status": "not_applicable",
+      "regressions": [
+        "test_rules_scheduler.RulesSchedulerTests.test_unmerged_harvest_compiler_revision_retains_original_frontier_identity",
+        "test_rules_scheduler.RulesSchedulerTests.test_corrected_unlanded_transition_replaces_superseded_receipt",
+        "test_rules_scheduler.RulesSchedulerTests.test_completed_corrected_measurement_rejects_stale_cohort"
+      ],
+      "resolution": "Retain the original transition ID independently of the corrected compiler version. Register probe v2 and its linked-source exclusion contract while retaining v1 so an older completed measurement cannot seed the corrected bound. The canonical transition sealer recovers the original immutable main frontier and remeasures the complete original programs to the qualifying corrected lower bound without copied policy counts or weakened eligibility. Document this existing unmerged-revision workflow; runtime semantics and the completed v261 census remain unchanged.",
+      "run_id": 37684005905,
+      "summary": "The compiler correction renamed the still-unmerged harvest transition ID. Its cohort owner could no longer recover the original immutable base frontier and instead measured the already implemented checkpoint, correctly rejecting a zero complete-card lower bound."
+    },
+    {
       "category": "source_correctness",
       "deterministic": true,
       "failed_surfaces": [
@@ -1394,7 +1412,7 @@
     "sample_size": 4,
     "started_at": "2026-08-25T03:52:06Z"
   },
-  "observed_at": "2026-10-07T20:37:40Z",
+  "observed_at": "2026-10-07T21:03:55Z",
   "recent_pull_requests": [
     {
       "critical_path_seconds": 81.0,
@@ -1439,7 +1457,7 @@
   ],
   "repository": "NullPriority/quorune",
   "schema_version": 2,
-  "source_fingerprint": "998459b9bd7dabb46613e53b905f4cdc66cfcabf8dfbf4081c0bee1db91932ee",
+  "source_fingerprint": "70335d209928683164c843d3065e929cfe7f8b4399a08e3c6969111e9836ae10",
   "summary": {
     "average_critical_path_seconds": 181.25,
     "average_pushes_per_merged_pr": null,
@@ -1447,15 +1465,15 @@
     "category_counts": {
       "browser_integration": 5,
       "flaky_test": 8,
-      "generated_artifact_drift": 9,
+      "generated_artifact_drift": 10,
       "infrastructure": 1,
       "missing_affected_test": 33,
       "source_correctness": 22,
       "windows_compatibility": 1
     },
     "current_missing_impact_edges": [],
-    "deterministic_escape_count": 72,
-    "escape_count": 79,
+    "deterministic_escape_count": 73,
+    "escape_count": 80,
     "eventual_final_head_certification_pass_rate": 1.0,
     "eventual_final_head_certification_sample_size": 4,
     "first_eligible_head_certification_pass_rate": null,

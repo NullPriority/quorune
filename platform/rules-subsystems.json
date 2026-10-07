@@ -4894,10 +4894,11 @@
               "arbitrary chosen-value mana, events, costs, targets and other independent residuals",
               "compound optional or restricted entry choices",
               "dynamic characteristic results, copied or granted entry components without prospective support",
+              "entry choices linked to source-type additions",
               "multiple same-kind designations"
             ],
             "measurement_status": "generated_probe",
-            "measurement_probe_id": "persistent-entry-designation-existing-owner-v1"
+            "measurement_probe_id": "persistent-entry-designation-existing-owner-v2"
           }
       ],
       "approved_prerequisite_exceptions": [
@@ -4909,7 +4910,7 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v261-persistent-entry-designations",
+      "transition_id": "oracle-ir-v260-persistent-entry-designations",
       "compiler_version": "oracle-ir-v261",
       "bundle_id": "bundle:persistent-entry-designations",
       "candidate_ids": [

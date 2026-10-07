@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "998459b9bd7dabb46613e53b905f4cdc66cfcabf8dfbf4081c0bee1db91932ee"
+verified: "70335d209928683164c843d3065e929cfe7f8b4399a08e3c6969111e9836ae10"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -15,8 +15,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 - Observation window: 2026-08-25T03:52:06Z through 2026-08-25T20:56:41Z
 - Observed population: tracked recent pull requests (n=4)
-- Escapes: 79
-- Deterministic escapes: 72
+- Escapes: 80
+- Deterministic escapes: 73
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: null
@@ -29,6 +29,7 @@ This report classifies observed deterministic failures that escaped the local qu
 
 | ID | Run | Category | Impact edge | Resolution |
 |---|---:|---|---|---|
+| `ci-20261007-79` | [37684005905](https://github.com/NullPriority/quorune/actions/runs/37684005905) | `generated_artifact_drift` | `not_applicable` | Retain the original transition ID independently of the corrected compiler version. Register probe v2 and its linked-source exclusion contract while retaining v1 so an older completed measurement cannot seed the corrected bound. The canonical transition sealer recovers the original immutable main frontier and remeasures the complete original programs to the qualifying corrected lower bound without copied policy counts or weakened eligibility. Document this existing unmerged-revision workflow; runtime semantics and the completed v261 census remain unchanged. |
 | `ci-20261007-78` | [37680285397](https://github.com/NullPriority/quorune/actions/runs/37680285397) | `source_correctness` | `added` | Remove only the duplicate Roaming Throne card and ruling owner from the new fixture through the canonical export, retaining its primary fixture and exact ruling multiset. The original offered cast/one-choice/type-addition/replay witness fails on the unchanged compact database in 48.782 seconds and passes after correction in 68.900 seconds. Add a full compact fixture composition regression comparing the primary ruling multiset and repeated authoritative preflight and compatibility assembly. Preserve true Scryfall ruling multiplicity and fail-closed provenance checks; compiler semantics remain unchanged and the one v261 census is reused. |
 | `ci-20261007-77` | [37668759749](https://github.com/NullPriority/quorune/actions/runs/37668759749) | `source_correctness` | `added` | Use the source-spanned face guard to exclude an intrinsic creature-type descriptor linked to making its source the chosen type. Preserve the linked residual and existing reviewed owner without identity dispatch or runtime text parsing. The six exact reported owner witnesses plus original closure and three printed linking exclusions pass; the strengthened offered/accepted Roaming Throne cast proves one pre-entry choice, its linked subtype, preserved trigger and Ward behavior, and exact pre-action replay. Add the existing exact-deck and trigger-processing consumers to the entry impact rule, update compiler identity, remeasure qualification, and run one census for the corrected semantic fingerprint. |
 | `ci-20261007-76` | [37660790800](https://github.com/NullPriority/quorune/actions/runs/37660790800) | `missing_affected_test` | `added` | Preserve every existing replacement rejection and passive Changeling assertion with a minimal constructed two-type entry choice and a fresh fixture identity. Keep the original printed Bloodline Pretender unchanged and add a separate source-spanned positive entry witness proving its independently unsupported chosen-type trigger still blocks strict and compatible whole-card admission. Add the Changeling consumer to the monotonic intrinsic-entry impact rule; no compiler semantics, trust threshold or assertion is weakened. |

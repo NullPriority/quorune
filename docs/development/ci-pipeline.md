@@ -315,6 +315,11 @@ selected measurement as a content-fingerprinted transition receipt before the
 new corpus frontier retires that completed cohort. Later writes preserve only
 the still-declared transition receipt; policy stores its stable measurement ID,
 not its observed counts or frontier fingerprint.
+An unmerged feature retains its transition ID across compiler revisions so its
+original base-frontier identity remains available. A changed measurement
+contract uses a new registered probe version while retaining the previous
+version for historical receipts. The cohort owner then measures the corrected
+programs against that original frontier instead of reusing the older bound.
 The cloud job publishes and restores this safe owner's content-keyed receipt
 across commits just like the other reusable owners. A generated-output-only
 follow-up therefore reuses the source checkpoint's cohort measurement instead

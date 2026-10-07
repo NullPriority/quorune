@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "observed_at": "2026-10-07T20:37:40Z",
+  "observed_at": "2026-10-07T21:03:55Z",
   "measurement_window": {
     "started_at": "2026-08-25T03:52:06Z",
     "ended_at": "2026-08-25T20:56:41Z",
@@ -9,6 +9,24 @@
   },
   "repository": "NullPriority/quorune",
   "escapes": [
+    {
+      "id": "ci-20261007-79",
+      "run_id": 37684005905,
+      "head_sha": "f3ddbba68f56126ee1a1a569595e1967ac6ae961",
+      "category": "generated_artifact_drift",
+      "deterministic": true,
+      "summary": "The compiler correction renamed the still-unmerged harvest transition ID. Its cohort owner could no longer recover the original immutable base frontier and instead measured the already implemented checkpoint, correctly rejecting a zero complete-card lower bound.",
+      "failed_surfaces": [
+        "Generated cloud / Reusable pieces"
+      ],
+      "regressions": [
+        "test_rules_scheduler.RulesSchedulerTests.test_unmerged_harvest_compiler_revision_retains_original_frontier_identity",
+        "test_rules_scheduler.RulesSchedulerTests.test_corrected_unlanded_transition_replaces_superseded_receipt",
+        "test_rules_scheduler.RulesSchedulerTests.test_completed_corrected_measurement_rejects_stale_cohort"
+      ],
+      "impact_edge_status": "not_applicable",
+      "resolution": "Retain the original transition ID independently of the corrected compiler version. Register probe v2 and its linked-source exclusion contract while retaining v1 so an older completed measurement cannot seed the corrected bound. The canonical transition sealer recovers the original immutable main frontier and remeasures the complete original programs to the qualifying corrected lower bound without copied policy counts or weakened eligibility. Document this existing unmerged-revision workflow; runtime semantics and the completed v261 census remain unchanged."
+    },
     {
       "id": "ci-20261007-78",
       "run_id": 37680285397,
