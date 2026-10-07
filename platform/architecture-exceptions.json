@@ -1313,6 +1313,31 @@
         "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound",
         "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
       ]
+    },
+    {
+      "exception_id": "ARCH-EXC-0056",
+      "adr": "docs/adr/0105-typed-fixed-resolution-control.md",
+      "artifact": "platform/architecture-guard-baseline.json",
+      "allowance_fingerprint": "3a0cb8a6d9fc3e3cce0bd6c3b0929bd761aeeeb130492153fda28bae6099fca4",
+      "exact_allowance": "Only the exact schema-4 structural baseline and reviewed gain_control and gain_control_set operations serialized for the bounded fixed-control and optional-self-untap contract. Existing universal operations remain unchanged; engine and engine-local direct state-write ceilings decrease.",
+      "rationale": "Two strict registered effect handlers must also belong to the canonical semantic validity inventory. ADR 0105 reviews these additions through existing continuous-effect, custody-history, zone, tap, permissions and physical-step owners. The registry invariant and architecture gate remain enforced.",
+      "owner": "rules/compiler/replay maintainers through protected PR certification",
+      "maximum_scope": "The exact bound baseline plus the two reviewed operations and ADR 0105 contract. No engine method or growth allowance, new direct or unowned state-write allowance, runtime Oracle-text interpretation, identity dispatch, arbitrary callbacks, broader control subjects or durations, unsupported phase execution, or additional universal operations are allowed.",
+      "removal_condition": "Remove this binding when the two operations are retired or a later exact reviewed baseline supersedes it; retain strict typed validation, source continuity, original incarnation sets, principal-correct commands, simultaneous mutation, privacy, rollback and replay.",
+      "target_milestone": "oracle-ir-v259 bounded fixed-resolution-control certification",
+      "replay_implications": "Custody-history v2 binds new grants and retained source continuity; absent/v1 modes preserve earlier behavior. Current runtime provenance and compiler identities must agree with records. Pre-action replay witnesses cover actual supported commands and separately labeled owner-created continuations.",
+      "privacy_implications": "Control selects public references and closed public sets. Face-down identity is available only to authorized or previously aware principals; printed abilities stay absent while face down. Optional untap capabilities and choices belong only to the active controller.",
+      "security_implications": "Only current capability-bound programs emit these strict intents. Unknown fields, unavailable principals, invalid durations/queries, stale incarnations, unsupported history modes and malformed optional continuations fail closed. No client-supplied mutation callbacks or Oracle parsing are accepted.",
+      "tests": [
+        "tests.test_semantic_handlers.TypedSemanticHandlerTests.test_registry_is_deterministic_and_rejects_duplicate_ownership",
+        "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound",
+        "tests.test_fixed_control_effects.FixedControlGameplayTests.test_printed_rubinia_activation_pins_source_duration_and_replays",
+        "tests.test_fixed_control_effects.FixedControlGameplayTests.test_printed_insurrection_controls_one_original_public_set_and_replays",
+        "tests.test_fixed_control_effects.FixedControlGameplayTests.test_source_reentry_cannot_restore_a_grant_or_satisfy_the_old_pending_identity",
+        "tests.test_fixed_control_effects.FixedControlGameplayTests.test_selected_optional_untap_ends_control_after_reload_and_replays",
+        "tests.test_fixed_control_effects.FixedControlGameplayTests.test_printed_control_of_face_down_creature_preserves_principal_private_projection_and_replays",
+        "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
+      ]
     }
   ]
 }
