@@ -22,6 +22,7 @@
     "tests/fixtures/devoid-characteristics-cards.json",
     "tests/fixtures/draw-rules-cards.json",
     "tests/fixtures/echo-rules-cards.json",
+    "tests/fixtures/entry-designation-cards.json",
     "tests/fixtures/explore-cards.json",
     "tests/fixtures/fixed-battlefield-query-characteristics-cards.json",
     "tests/fixtures/fixed-control-effects.json",

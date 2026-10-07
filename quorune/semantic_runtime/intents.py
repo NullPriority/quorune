@@ -485,7 +485,7 @@ class AddManaIntent:
 @dataclass(frozen=True, slots=True)
 class SetCardDesignationIntent:
     object_ref: str
-    designation: Literal["chosen_name", "chosen_creature_type"]
+    designation: Literal["chosen_name", "chosen_creature_type", "chosen_color"]
     value: str
     actor: str
     reason: str
@@ -495,6 +495,7 @@ class SetCardDesignationIntent:
         if self.designation not in {
             "chosen_name",
             "chosen_creature_type",
+            "chosen_color",
         }:
             raise ValueError("Card designation kind is unsupported")
         if any(
@@ -515,6 +516,8 @@ class SetCardDesignationIntent:
             raise ValueError(
                 "Only a chosen creature type may become a subtype"
             )
+        if self.designation == "chosen_color" and self.value not in tuple("WUBRG"):
+            raise ValueError("A chosen color must be one WUBRG symbol")
 
 
 @dataclass(frozen=True, slots=True)

@@ -11,6 +11,11 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Retain bounded intrinsic color and creature-type entry choices through the
+  replacement journal, and apply fixed chosen-value creature bonuses through
+  the existing characteristic queries. Copied permanents make fresh choices,
+  and unsupported sibling abilities continue to prevent whole-card admission.
+
 - Compile bounded permanent control instructions into the retained layer-two
   journal, preserving initial custody, printed instruction order, source
   continuity, cleanup, and player-departure behavior.

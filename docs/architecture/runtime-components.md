@@ -34,6 +34,18 @@ requesting principal's authorized projection.
 
 ## Descriptor and registry contract
 
+`replacement.zone.entry-designation.v1` represents a mandatory intrinsic
+one-color or creature-type choice before battlefield entry. The existing
+replacement journal retains the destination controller's selection, and the
+card-designation intent owner commits it on the new incarnation. Copied
+permanents make fresh choices; zone-object reset clears departing choices.
+
+`continuous.characteristics.chosen-designation.v1` binds a retained public
+designation to a closed fixed-query characteristic descriptor. Its child
+owner supplies the controller relation and layer-six or layer-seven-c result.
+Unsupported chosen-value uses and incomplete parent cards remain residual.
+See [ADR 0106](../adr/0106-typed-public-entry-designations.md).
+
 Every family declares a stable handler ID, schema version, event or layer,
 rule references, capability dependencies, a strict descriptor validator, and
 a deterministic inventory entry. Unknown registered fields, malformed values,

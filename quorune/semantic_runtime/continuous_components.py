@@ -125,6 +125,7 @@ class ContinuousEffectSourceContext:
     public_state: FixedPublicStateConditionSnapshot | None = None
     resolved_quantity: int | None = None
     source_counters: FrozenMap = FrozenMap()
+    source_designations: FrozenMap = FrozenMap()
 
     def __post_init__(self) -> None:
         if not self.source_object_id or not self.source_ref:
@@ -1287,6 +1288,7 @@ class ContinuousEffectComponentRegistry(
 @lru_cache(maxsize=1)
 def default_continuous_effect_component_registry(
 ) -> ContinuousEffectComponentRegistry:
+    from .chosen_characteristics import ChosenCharacteristicsHandler
     from .attached_continuous import AttachedFixedCharacteristicsHandler
     from .conditional_continuous import (
         FixedPublicStateCharacteristicsHandler,
@@ -1294,6 +1296,7 @@ def default_continuous_effect_component_registry(
 
     registry = ContinuousEffectComponentRegistry(
         (
+            ChosenCharacteristicsHandler(),
             FixedPowerToughnessAnthemHandler(),
             FixedQueryPowerToughnessAnthemHandler(),
             AddBasicLandTypeHandler(),

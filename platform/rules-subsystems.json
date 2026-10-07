@@ -4860,6 +4860,44 @@
             ],
             "measurement_status": "generated_probe",
             "measurement_probe_id": "fixed-control-optional-untap-existing-owner-v1"
+          },
+          {
+            "bundle_id": "bundle:persistent-entry-designations",
+            "member_family_ids": [
+              "continuous_layer:continuous-effect-layers-and-dependencies",
+              "replacement:replacement-applicability",
+              "replacement:self-replacement-and-prevention-ordering"
+            ],
+            "canonical_owner_ids": [
+              "capability:continuous.characteristics.chosen_designation",
+              "capability:zone.entry.public_designation",
+              "component:quorune.semantic_runtime.continuous_components",
+              "component:quorune.semantic_runtime.zone_replacements"
+            ],
+            "source_contexts": [
+              "static"
+            ],
+            "normalized_literal_parameters": [
+              "color",
+              "creature-type",
+              "fixed-characteristic-result",
+              "intrinsic-entry",
+              "original-pinned-record"
+            ],
+            "shared_dependencies": [],
+            "shared_grammar": "An intrinsic mandatory choice of one color or pinned creature type as this permanent enters, and fixed public creature-set characteristic bonuses that refer to that retained choice.",
+            "estimated_implementation_hours": 8,
+            "estimated_probe_hours": 1,
+            "estimated_generation_hours": 1,
+            "expected_downstream_closure": "Measure full original CardPrograms and strict runtime binding; independently unsupported chosen-value uses and siblings remain residual.",
+            "explicit_exclusions": [
+              "arbitrary chosen-value mana, events, costs, targets and other independent residuals",
+              "compound optional or restricted entry choices",
+              "dynamic characteristic results, copied or granted entry components without prospective support",
+              "multiple same-kind designations"
+            ],
+            "measurement_status": "generated_probe",
+            "measurement_probe_id": "persistent-entry-designation-existing-owner-v1"
           }
       ],
       "approved_prerequisite_exceptions": [
@@ -4871,21 +4909,23 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v259-fixed-control-optional-untap",
-      "compiler_version": "oracle-ir-v259",
-      "bundle_id": "bundle:fixed-control-optional-untap",
-      "candidate_ids": ["bundle:fixed-control-optional-untap"],
+      "transition_id": "oracle-ir-v260-persistent-entry-designations",
+      "compiler_version": "oracle-ir-v260",
+      "bundle_id": "bundle:persistent-entry-designations",
+      "candidate_ids": [
+        "bundle:persistent-entry-designations"
+      ],
       "family_ids": [
-        "activated_effect:gain-control",
         "continuous_layer:continuous-effect-layers-and-dependencies",
-        "effect_clause:gain-control"
+        "replacement:replacement-applicability",
+        "replacement:self-replacement-and-prevention-ordering"
       ],
       "capability_ids": [
-        "continuous.control.fixed_resolution",
-        "untap.step.optional_source"
+        "continuous.characteristics.chosen_designation",
+        "zone.entry.public_designation"
       ],
       "non_harvest_reason": null,
-      "measurement_id": "measurement:fixed-control-optional-untap"
+      "measurement_id": "measurement:persistent-entry-designations"
     },
     "forecast_corrections": [
       {
@@ -5554,6 +5594,11 @@
         "candidate_id": "compiler:public-query-characteristic-modifiers",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
         "reason": "The post-movement selector has no implementation-eligible carried candidate while the raw continuous-layer and unparsed-effect leaders remain heterogeneous and the dependency-ready counter queue is not the authorized foreground. A bounded compiler simulation retires the narrower target/source-only slice below policy, while the generated integrated existing-owner probe reaches the normal complete-card floor by including normalized trigger and already-typed quoted-activation carriers. The selected family reuses the existing PublicQueryAmountSpec, cycle-safe layer-5 CharacteristicQuantitySpec, stack-controller scalar resolution, direct target and current granted-ability applicability, layer-7c temporary characteristic, cleanup, projection, and replay owners. Opponent-relative, attachment, source-counter, source-excluding, later-layer, linked, chosen, arithmetic, aggregate-set, multiple-target, variable-duration, and independently unsupported carrier forms remain fail-closed; current identities and measurements are generated from the frontier."
+      },
+      {
+        "candidate_id": "compiler:persistent-entry-designations",
+        "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
+        "reason": "The post-control selector has no eligible carried candidate. A bounded existing-owner probe selects intrinsic mandatory public color and creature-type entry designations with fixed chosen-value characteristic results because full original CardProgram and strict runtime binding meet the normal exact-ability harvest floor with complete-card gains. The family reuses the public replacement journal, canonical card-designation intent, current static-component applicability, fixed-query layer-six and layer-seven-c owners, copied-token entry, persistence, privacy, rollback and replay. Restricted or optional choices, duplicate same-kind linked choices, arbitrary chosen-value uses and independently unsupported siblings remain fail-closed; generated measurements own all changing identities and counts."
       }
     ]
   },

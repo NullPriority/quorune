@@ -673,6 +673,11 @@ def collect_card_program_continuous_effects(
                         source_counters=FrozenMap(
                             getattr(source, "counters", {}) or {}
                         ),
+                        source_designations=FrozenMap({
+                            key: value
+                            for key, value in (getattr(source, "annotations", {}) or {}).items()
+                            if key in {"chosen_color", "chosen_creature_type"}
+                        }),
                         public_state=public_state,
                         resolved_quantity=resolved_quantity,
                         attached_object=(

@@ -60,6 +60,7 @@ from .self_entry_counters import (
 from .conditional_entry_counters import ConditionalSelfEntryCounterHandler
 from .sunburst import SunburstEntryCounterHandler
 from .entry_choices import ReadAheadEntryChoiceHandler, RiotEntryChoiceHandler
+from .entry_designations import EntryDesignationHandler
 from .kicker import FixedKickedEntryHandler
 from .madness import MadnessDiscardReplacementHandler
 from ..read_ahead import READ_AHEAD_ENTRY_HANDLER_ID
@@ -432,6 +433,7 @@ def default_zone_change_replacement_registry(
             ConditionalSelfEntryCounterHandler(),
             EntryStateReplacementHandler(),
             FixedEntryConditionReplacementHandler(),
+            EntryDesignationHandler(),
             ReadAheadEntryChoiceHandler(),
             RiotEntryChoiceHandler(),
             FixedKickedEntryHandler(),
@@ -1189,6 +1191,8 @@ def _prepared_from_event(
         entry_tapped=entry_tapped,
         entry_life_payment=entry_life_payment,
         read_ahead_chapter=read_ahead_chapter,
+        entry_chosen_color=event.payload.get("entry_chosen_color"),
+        entry_chosen_creature_type=event.payload.get("entry_chosen_creature_type"),
         event=event,
         effects=effects,
         counter_events=tuple(counter_events),

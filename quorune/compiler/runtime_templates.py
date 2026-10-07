@@ -8,6 +8,7 @@ from .activation_restriction_templates import (
     static_activation_restriction_handler,
 )
 from .action_permission_templates import static_action_permission_handler
+from .entry_designation_templates import entry_designation_handler, chosen_characteristics_handler
 from .casting_activation_metadata_templates import (
     static_loyalty_cost_modifier_handler,
     static_self_zone_cast_permission_handler,
@@ -547,6 +548,9 @@ def static_runtime_template(
         )
 
     if source_permanent:
+        designation = None if source_is_class else entry_designation_handler(text, source_name=source_name or "source")
+        if designation is not None:
+            return StaticRuntimeTemplate(compiled=designation, kind="replacement_effect", event="zone.change", active_zone="all", runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,), dependency_reason="Intrinsic entry designation requires the public replacement-choice owner")
         entry_counter = _self_entry_counter_runtime_template(
             text,
             source_name=source_name,
@@ -611,6 +615,15 @@ def static_runtime_template(
         if draw is not None:
             return draw
 
+    chosen = None if source_is_class else chosen_characteristics_handler(text)
+    if chosen is not None:
+        return StaticRuntimeTemplate(
+            compiled=chosen,
+            kind="static_ability",
+            event="characteristics.evaluate",
+            runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+            dependency_reason="Chosen-value characteristics require the retained public entry designation owner",
+        )
     continuous = _continuous_static_runtime_template(
         text,
         source_name=source_name,
