@@ -288,8 +288,12 @@ def main() -> int:
     mode.add_argument("--write", action="store_true")
     mode.add_argument("--check", action="store_true")
     mode.add_argument("--refresh-derived", action="store_true")
+    mode.add_argument("--validate-policy", action="store_true")
     parser.add_argument("--db", type=Path)
     args = parser.parse_args()
+    if args.validate_policy:
+        load_reusable_piece_policy(ROOT)
+        return 0
     if args.refresh_derived:
         artifacts = _load_tracked()
         _check_canonical(artifacts)

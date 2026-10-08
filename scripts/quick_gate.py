@@ -134,6 +134,14 @@ def build_plan(
                     ),
                 ),
                 QuickStep(
+                    "reusable-piece-policy",
+                    (
+                        python,
+                        "scripts/update_reusable_piece_matrix.py",
+                        "--validate-policy",
+                    ),
+                ),
+                QuickStep(
                     "change-impact-contract",
                     (
                         python,

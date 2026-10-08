@@ -105,6 +105,13 @@ class QuickGatePlanTests(unittest.TestCase):
         self.assertIn("architecture-policy", names)
         self.assertIn("capability-evidence-declarations", names)
         self.assertIn("rules-selection-policy", names)
+        policy_step = next(
+            step for step in plan["steps"] if step.name == "reusable-piece-policy"
+        )
+        self.assertEqual(
+            ("scripts/update_reusable_piece_matrix.py", "--validate-policy"),
+            policy_step.command[-2:],
+        )
         self.assertIn("change-impact-contract", names)
         self.assertIn("mutation-patch-target-integrity", names)
         self.assertNotIn("generated-finalization", names)
