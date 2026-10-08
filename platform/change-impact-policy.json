@@ -570,6 +570,7 @@
         "quorune/characteristic_evaluation.py",
         "quorune/characteristic_evaluation_host.py",
         "quorune/compiler/continuous_templates.py",
+        "quorune/compiler/conditional_granted_ability_templates.py",
         "quorune/compiler/public_state_fact_queries.py",
         "quorune/compiler/public_state_queries.py",
         "quorune/compiler/runtime_templates.py",

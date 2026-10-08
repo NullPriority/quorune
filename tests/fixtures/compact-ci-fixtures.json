@@ -61,6 +61,7 @@
     "tests/fixtures/token-copy-recipe-cards.json",
     "tests/fixtures/token-entry-boundary-cards.json",
     "tests/fixtures/typecycling-cards.json",
+    "tests/fixtures/typed-grant-carrier-cards.json",
     "tests/fixtures/typed-land-entry-cards.json",
     "tests/fixtures/typed-token-ability-program-cards.json"
   ],

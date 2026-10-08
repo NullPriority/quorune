@@ -10,6 +10,23 @@
   "repository": "NullPriority/quorune",
   "escapes": [
     {
+      "id": "ci-20261008-80",
+      "run_id": 37786890971,
+      "head_sha": "4ee79fcbe4d382132983a946e77d8599c3afbb0d",
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "summary": "The typed conditional grant composition promotes a single quoted activation, but the older whole-card public-state negative list still required its material residual. Windows functional-05 failed that unchanged expectation.",
+      "failed_surfaces": [
+        "PR / Windows / functional-05"
+      ],
+      "regressions": [
+        "test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_one_quoted_activation_uses_the_conditional_grant_owner",
+        "test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_unrepresented_conditions_and_bodies_remain_residual"
+      ],
+      "impact_edge_status": "added",
+      "resolution": "Retain the promoted single quoted activation as a positive whole-card witness, replace the excluded case with two independently quoted abilities, and add conditional_granted_ability_templates.py to the existing public-state characteristic impact edge. Gameplay and compiler identity remain unchanged; corpus output is reused."
+    },
+    {
       "id": "ci-20261007-79",
       "run_id": 37684005905,
       "head_sha": "f3ddbba68f56126ee1a1a569595e1967ac6ae961",

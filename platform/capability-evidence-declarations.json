@@ -8036,6 +8036,142 @@
       "applicability_note": "Round-trip the trusted generated CardProgram and prove the reminder contributes no executable node or residual."
     },
     {
+      "capability_id": "continuous.ability.fixed_public_state_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_typed_grant_carriers.TypedGrantCarrierTests.test_printed_conditional_activation_ends_without_erasing_stack",
+      "official_rule_ids": ["113.7a", "604.1", "611.3a", "611.3b", "611.3c", "613.1f"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Grant one independently compiled typed activation, fixed-output mana ability or trigger while a closed source or attached-object public-state condition holds."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_public_state_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_typed_grant_carriers.TypedGrantCarrierTests.test_printed_conditional_granted_death_trigger_uses_event_time_state",
+      "official_rule_ids": ["113.7a", "604.1", "611.3a", "611.3b", "611.3c", "613.1f"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Grant one independently compiled typed activation, fixed-output mana ability or trigger while a closed source or attached-object public-state condition holds."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_public_state_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_typed_grant_carriers.TypedGrantCarrierTests.test_printed_conditional_granted_hand_choice_is_private_and_persists",
+      "official_rule_ids": ["113.7a", "604.1", "611.3a", "611.3b", "611.3c", "613.1f"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Grant one independently compiled typed activation, fixed-output mana ability or trigger while a closed source or attached-object public-state condition holds."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_public_state_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_typed_grant_carriers.TypedGrantCarrierTests.test_printed_conditional_granted_death_trigger_uses_event_time_state",
+      "official_rule_ids": ["113.7a", "604.1", "611.3a", "611.3b", "611.3c", "613.1f"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Grant one independently compiled typed activation, fixed-output mana ability or trigger while a closed source or attached-object public-state condition holds."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_public_state_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_typed_grant_carriers.TypedGrantCarrierTests.test_printed_conditional_granted_hand_choice_is_private_and_persists",
+      "official_rule_ids": ["113.7a", "604.1", "611.3a", "611.3b", "611.3c", "613.1f"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Grant one independently compiled typed activation, fixed-output mana ability or trigger while a closed source or attached-object public-state condition holds."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_public_state_grant",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_typed_grant_carriers.TypedGrantCarrierTests.test_conditional_grant_compiler_mutation_is_killed",
+      "official_rule_ids": ["113.7a", "604.1", "611.3a", "611.3b", "611.3c", "613.1f"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Grant one independently compiled typed activation, fixed-output mana ability or trigger while a closed source or attached-object public-state condition holds."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_public_state_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_typed_grant_carriers.TypedGrantCarrierTests.test_conditional_grant_schema_and_dependencies_fail_closed",
+      "official_rule_ids": ["113.7a", "604.1", "611.3a", "611.3b", "611.3c", "613.1f"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Grant one independently compiled typed activation, fixed-output mana ability or trigger while a closed source or attached-object public-state condition holds."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_public_state_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_typed_grant_carriers.TypedGrantCarrierTests.test_printed_conditional_activation_ends_without_erasing_stack",
+      "official_rule_ids": ["113.7a", "604.1", "611.3a", "611.3b", "611.3c", "613.1f"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Grant one independently compiled typed activation, fixed-output mana ability or trigger while a closed source or attached-object public-state condition holds."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_public_state_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_typed_grant_carriers.TypedGrantCarrierTests.test_original_grant_carriers_are_capability_bound",
+      "official_rule_ids": ["113.7a", "604.1", "611.3a", "611.3b", "611.3c", "613.1f"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Grant one independently compiled typed activation, fixed-output mana ability or trigger while a closed source or attached-object public-state condition holds."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_public_state_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_typed_grant_carriers.TypedGrantCarrierTests.test_printed_conditional_activation_ends_without_erasing_stack",
+      "official_rule_ids": ["113.7a", "604.1", "611.3a", "611.3b", "611.3c", "613.1f"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Grant one independently compiled typed activation, fixed-output mana ability or trigger while a closed source or attached-object public-state condition holds."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_public_state_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_typed_grant_carriers.TypedGrantCarrierTests.test_printed_conditional_granted_hand_choice_is_private_and_persists",
+      "official_rule_ids": ["113.7a", "604.1", "611.3a", "611.3b", "611.3c", "613.1f"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Grant one independently compiled typed activation, fixed-output mana ability or trigger while a closed source or attached-object public-state condition holds."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_public_state_grant",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_typed_grant_carriers.TypedGrantCarrierTests.test_printed_conditional_granted_hand_choice_is_private_and_persists",
+      "official_rule_ids": ["113.7a", "604.1", "611.3a", "611.3b", "611.3c", "613.1f"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Grant one independently compiled typed activation, fixed-output mana ability or trigger while a closed source or attached-object public-state condition holds."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_public_state_grant",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_typed_grant_carriers.TypedGrantCarrierTests.test_printed_land_grant_uses_recipient_and_replays",
+      "official_rule_ids": ["113.7a", "604.1", "611.3a", "611.3b", "611.3c", "613.1f"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Grant one independently compiled typed activation, fixed-output mana ability or trigger while a closed source or attached-object public-state condition holds."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_public_state_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_typed_grant_carriers.TypedGrantCarrierTests.test_printed_conditional_activation_ends_without_erasing_stack",
+      "official_rule_ids": ["113.7a", "604.1", "611.3a", "611.3b", "611.3c", "613.1f"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Grant one independently compiled typed activation, fixed-output mana ability or trigger while a closed source or attached-object public-state condition holds."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_public_state_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_typed_grant_carriers.TypedGrantCarrierTests.test_printed_conditional_granted_death_trigger_uses_event_time_state",
+      "official_rule_ids": ["113.7a", "604.1", "611.3a", "611.3b", "611.3c", "613.1f"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Grant one independently compiled typed activation, fixed-output mana ability or trigger while a closed source or attached-object public-state condition holds."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_public_state_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_typed_grant_carriers.TypedGrantCarrierTests.test_printed_conditional_granted_hand_choice_is_private_and_persists",
+      "official_rule_ids": ["113.7a", "604.1", "611.3a", "611.3b", "611.3c", "613.1f"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Grant one independently compiled typed activation, fixed-output mana ability or trigger while a closed source or attached-object public-state condition holds."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_public_state_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_typed_grant_carriers.TypedGrantCarrierTests.test_printed_land_grant_uses_recipient_and_replays",
+      "official_rule_ids": ["113.7a", "604.1", "611.3a", "611.3b", "611.3c", "613.1f"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability_note": "Grant one independently compiled typed activation, fixed-output mana ability or trigger while a closed source or attached-object public-state condition holds."
+    },
+    {
       "capability_id": "continuous.ability.fixed_query_grant",
       "evidence_class": "interaction",
       "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_static_query_declaration_grant_uses_offer_commit_authority",

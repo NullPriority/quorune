@@ -926,7 +926,8 @@ class FixedPublicStateCharacteristicCompilerTests(unittest.TestCase):
             "During your turn, this creature has ward {2}.",
             "As long as this creature is untapped, other legendary creatures "
             "you control have ward {1}.",
-            "During your turn, this creature has \"{T}: Draw a card.\"",
+            "During your turn, this creature has \"{T}: Draw a card.\" "
+            "and has \"{T}: You gain 1 life.\"",
             "As long as this creature is equipped, it has ward {2}.",
             "Creatures you control have flying as long as you control an "
             "artifact with flying.",
@@ -963,6 +964,21 @@ class FixedPublicStateCharacteristicCompilerTests(unittest.TestCase):
                         for descriptor in ability.handlers
                     )
                 )
+
+    def test_one_quoted_activation_uses_the_conditional_grant_owner(self):
+        base = self.db.lookup("Fresh-Faced Recruit")
+        record = replace(base, oracle_id="00000000-0000-4000-8000-000011820099",
+            oracle_text='During your turn, this creature has "{T}: Draw a card."',
+            keywords=())
+        program = compile_card_program(self.db, record,
+            capability_registry=self.capabilities, capability_profile="commander_review",
+            trust_level="trusted")
+        self.assertEqual((), program.residuals)
+        descriptor = next(descriptor for ability in program.abilities
+            for descriptor in ability.handlers
+            if descriptor.get("handler_id") == "continuous.characteristics.fixed-public-state.v2")
+        self.assertEqual(2, descriptor["schema_version"])
+        default_continuous_effect_component_registry().validate(descriptor)
 
     def test_public_state_descriptors_fail_closed_without_effects(self):
         compiled = fixed_public_state_characteristics_handler(

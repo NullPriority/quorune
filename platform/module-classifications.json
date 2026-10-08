@@ -1833,6 +1833,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/conditional_granted_ability_templates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/continuous_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -10702,5 +10717,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "f5b46f310ffd255468777ffa03d212689e2b42a176824c08ca3fe88d8fba5b8b"
+  "fingerprint": "d7acacd5775b87fdd42dac4ce41f44ca718c65c6447279961d4e82e550a8e66d"
 }

@@ -1092,7 +1092,7 @@ def _attached_quoted_ability_shell(
         not quoted
         or "\n" in quoted
         or not text[:quote_start].casefold().startswith(
-            ("enchanted creature ", "equipped creature ")
+            ("enchanted creature ", "equipped creature ", "enchanted land ")
         )
     ):
         return None
@@ -1105,6 +1105,8 @@ def _attached_quoted_ability_shell(
             + sentinel
             + text[quote_end + 1 :]
         )
+        if synthetic.casefold().startswith("enchanted land "):
+            synthetic = "Fortified land " + synthetic[len("Enchanted land "):]
         compiled = attached_fixed_characteristics_handler(
             synthetic,
             source_name=source_name,
@@ -1178,15 +1180,16 @@ def attached_quoted_ability_handler(
     )
 
 
-def _conditional_target(
+def _conditional_self_target(
     body: str,
     *,
     source_name: str,
 ) -> tuple[Mapping[str, Any], Mapping[str, Any], tuple[str, ...]] | None:
-    """Compile one fixed characteristic body without its state condition."""
+    """Compile the normalized source-only characteristic body."""
 
-    normalized = _TRAILING_REMINDER.sub("", body.strip()).strip()
+    normalized = body
     subject = _self_subject_pattern(source_name)
+    subject = rf"(?:{subject}|This artifact|This enchantment|This land|This planeswalker)"
     self_pt = re.fullmatch(
         rf"{subject} gets (?P<power>[+-]\d+)/(?P<toughness>[+-]\d+)"
         r"(?: and has (?P<abilities>.+))?\.?",
@@ -1258,6 +1261,21 @@ def _conditional_target(
             },
             tuple(sorted(capabilities)),
         )
+
+    return None
+
+
+def _conditional_target(
+    body: str,
+    *,
+    source_name: str,
+) -> tuple[Mapping[str, Any], Mapping[str, Any], tuple[str, ...]] | None:
+    """Compile one fixed characteristic body without its state condition."""
+
+    normalized = _TRAILING_REMINDER.sub("", body.strip()).strip()
+    source = _conditional_self_target(normalized, source_name=source_name)
+    if source is not None:
+        return source
 
     for compiler in (
         fixed_query_characteristic_grant_handler,

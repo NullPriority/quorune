@@ -5,6 +5,8 @@ from typing import Any, Mapping
 
 from ..continuous_conditions import (
     FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID,
+    FIXED_PUBLIC_STATE_GRANTED_ABILITY_HANDLER_ID,
+    FIXED_PUBLIC_STATE_GRANTED_ABILITY_CAPABILITY_ID,
     FixedPublicStateConditionError,
     FixedPublicStateConditionSpec,
 )
@@ -17,6 +19,9 @@ from ..continuous_effect_model import (
     Layer,
 )
 from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
+from ..ability_fragments import (
+    GrantedActivatedAbilitySpec, GrantedTriggeredAbilitySpec, ability_fragment_from_dict,
+)
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from .component_registry import exact_fields, nonempty_strings
 from .context import SemanticNodeError
@@ -37,6 +42,7 @@ class FixedPublicStateCharacteristicsNode:
     abilities: tuple[str, ...]
     power: int
     toughness: int
+    fragments: tuple[Mapping[str, Any], ...] = ()
 
 
 def _validate_target(
@@ -146,12 +152,17 @@ def _validate_target(
     )
 
 
-def _validate_modifier(value: Any) -> tuple[tuple[str, ...], int, int]:
+def _validate_modifier(
+    value: Any, *, allow_granted_ability: bool = False,
+) -> tuple[tuple[str, ...], int, int, tuple[Mapping[str, Any], ...]]:
     if not isinstance(value, Mapping):
         raise SemanticNodeError("runtime handler modifier must be an object")
+    fields = {"add_abilities", "power", "toughness"}
+    if allow_granted_ability:
+        fields.add("add_ability_fragments")
     exact_fields(
         value,
-        {"add_abilities", "power", "toughness"},
+        fields,
         field="runtime handler modifier",
     )
     abilities = nonempty_strings(
@@ -171,11 +182,25 @@ def _validate_modifier(value: Any) -> tuple[tuple[str, ...], int, int]:
         raise SemanticNodeError(
             "fixed public-state power/toughness modifiers must be integers"
         )
-    if not abilities and power == 0 and toughness == 0:
+    raw_fragments = value.get("add_ability_fragments", [])
+    if not isinstance(raw_fragments, list) or (
+        allow_granted_ability and len(raw_fragments) != 1
+    ):
+        raise SemanticNodeError("Conditional grants require exactly one fragment")
+    fragments = []
+    for raw in raw_fragments:
+        try:
+            parsed = ability_fragment_from_dict(raw) if isinstance(raw, Mapping) else None
+        except (TypeError, ValueError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
+        if not isinstance(parsed, (GrantedActivatedAbilitySpec, GrantedTriggeredAbilitySpec)):
+            raise SemanticNodeError("Conditional grants require independently compiled typed abilities")
+        fragments.append(dict(raw))
+    if not abilities and not fragments and power == 0 and toughness == 0:
         raise SemanticNodeError(
             "fixed public-state characteristics require a modifier"
         )
-    return abilities, power, toughness
+    return abilities, power, toughness, tuple(fragments)
 
 
 @dataclass(frozen=True, slots=True)
@@ -240,8 +265,8 @@ class FixedPublicStateCharacteristicsHandler:
             exclude_source,
             subject_types_all,
         ) = _validate_target(descriptor["target"])
-        abilities, power, toughness = _validate_modifier(
-            descriptor["modifier"]
+        abilities, power, toughness, fragments = _validate_modifier(
+            descriptor["modifier"], allow_granted_ability=self.schema_version == 2,
         )
         return FixedPublicStateCharacteristicsNode(
             source_condition=source_condition,
@@ -253,6 +278,7 @@ class FixedPublicStateCharacteristicsHandler:
             abilities=abilities,
             power=power,
             toughness=toughness,
+            fragments=fragments,
         )
 
     def lower(
@@ -309,7 +335,7 @@ class FixedPublicStateCharacteristicsHandler:
             "related_object": related_object,
         }
         effects: list[ContinuousEffect] = []
-        if node.abilities:
+        if node.abilities or node.fragments:
             effects.append(
                 ContinuousEffect(
                     effect_id=(
@@ -320,7 +346,7 @@ class FixedPublicStateCharacteristicsHandler:
                     operations=tuple(
                         ContinuousOperation("add_ability", ability)
                         for ability in node.abilities
-                    ),
+                    ) + tuple(ContinuousOperation("add_ability_fragment", fragment) for fragment in node.fragments),
                     **common,
                 )
             )
@@ -344,8 +370,22 @@ class FixedPublicStateCharacteristicsHandler:
         return tuple(effects)
 
 
+@dataclass(frozen=True, slots=True)
+class FixedPublicStateGrantedAbilityHandler(FixedPublicStateCharacteristicsHandler):
+    """Apply one independently compiled grant through the conditional owner."""
+
+    handler_id: str = FIXED_PUBLIC_STATE_GRANTED_ABILITY_HANDLER_ID
+    schema_version: int = 2
+    family: str = "continuous.ability.fixed_public_state_grant"
+    capability_dependencies: tuple[str, ...] = (
+        FIXED_PUBLIC_STATE_GRANTED_ABILITY_CAPABILITY_ID,
+        "continuous.characteristics.fixed_public_state",
+    )
+
+
 __all__ = [
     "FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID",
     "FixedPublicStateCharacteristicsHandler",
     "FixedPublicStateCharacteristicsNode",
+    "FixedPublicStateGrantedAbilityHandler",
 ]

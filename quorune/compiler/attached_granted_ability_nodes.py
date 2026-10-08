@@ -20,9 +20,14 @@ from .continuous_templates import (
     fixed_query_quoted_ability_handler,
     fixed_query_quoted_ability_text,
 )
+from .conditional_granted_ability_templates import (
+    conditional_quoted_ability_text,
+    conditional_quoted_ability_handler,
+)
 from .public_query_effect_amounts import (
     contains_public_query_characteristic_amount,
     contains_public_query_effect_amount,
+    _source_characteristic_amount_base,
 )
 from .ir_model import OracleNode, OracleResidual, SourceSpan
 from .static_runtime_nodes import runtime_handler_node
@@ -265,6 +270,26 @@ def _compile_granted_ability_pair(
     )
     if inner is None or not inner.exact or inner_residuals:
         return None
+    source_characteristics = _source_characteristic_amount_base(inner.effects)
+    if source_characteristics is not None and inner.target_schema is None:
+        from ..rules.capabilities import capability_dependencies_for_node
+        template_id, effects, target_schema, mechanics = source_characteristics.compiled()
+        mechanics = tuple(dict.fromkeys((*inner.mechanics, *mechanics)))
+        dependencies = tuple(sorted(set(inner.capability_dependencies) | set(capability_dependencies_for_node(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanics,
+            cost_schema=inner.cost,
+        ))))
+        if not dependencies or capability_registry is None:
+            return None
+        closure = capability_registry.closure(dependencies, profile=capability_profile)
+        if not closure.trusted:
+            return None
+        inner = replace(
+            inner, template_id=template_id, effects=effects, target_schema=target_schema,
+            mechanics=mechanics, capability_dependencies=dependencies,
+            capability_closure=closure.reachable, capability_profile=closure.profile,
+            capability_fingerprint=closure.fingerprint,
+        )
     plan = attached_granted_ability_plan(
         node=inner,
         quoted_text=quoted,
@@ -495,6 +520,23 @@ def compile_keyword_or_attached_grant_nodes(
     granted_effect, granted_trigger_effect = grant_effect_templates(
         True, ("creature",), None
     )
+    quoted = conditional_quoted_ability_text(material_line, source_name=source_name)
+    if quoted is not None and not _EXTERNAL_ATTACHMENT_REFERENCE.search(quoted):
+        conditional = _compile_granted_ability_pair(
+            record=record, face_id=face_id, node_id=node_id, line=line,
+            material_line=material_line, span=span, quoted=quoted,
+            compile_shell=lambda fragment, fragment_capabilities: conditional_quoted_ability_handler(
+                material_line, source_name=source_name, fragment=fragment,
+                fragment_capabilities=fragment_capabilities),
+            runtime_coverage="conditional_typed_ability_grant",
+            dependency_reason="conditional typed grant requires outer and inner capability closure",
+            trusted_mechanics=trusted_mechanics, capability_registry=capability_registry,
+            capability_profile=capability_profile, residuals=residuals,
+            compile_inner=compile_inner, effect_template=granted_effect,
+            trigger_effect_template=granted_trigger_effect, material_line_for=material_line_for,
+        )
+        if conditional is not None:
+            return conditional
     fixed_query_grant = compile_fixed_query_granted_ability_nodes(
         record=record, face_id=face_id, node_id=node_id, line=line,
         material_line=material_line, span=span, source_name=source_name,

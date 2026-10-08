@@ -97,6 +97,16 @@ transition, batched through the ordinary trigger subsystem, and resolved by
 their trusted semantic program. Token reminder or Oracle text is never used
 to discover the trigger.
 
+Quoted activated, fixed-output mana, and triggered abilities use one shared
+compiler boundary for fixed attachment and live-query grants. A closed public
+condition can gate the same typed fragment, optionally beside fixed keywords
+and a power/toughness modifier. Its schema-v2 handler keeps the schema-v1
+characteristic descriptor unchanged. Current layer-6 availability controls new
+offers and trigger discovery; an ability already on the stack retains its
+compiled program after the grant ends. Fixed source modifiers use the existing
+logical-object owner, and grant carrier metadata does not bypass the inner
+effect's ordinary shape and capability checks.
+
 Explicit abilities in supported fixed creature-token definitions use the same
 boundary. The compiler lowers the token shell and each independently exact
 quoted child together, stores only typed copiable fragments on the created

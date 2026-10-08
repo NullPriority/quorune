@@ -8,6 +8,7 @@ from ..ability_fragments import static_component_keys
 from ..continuous_effects import ContinuousEffect
 from ..continuous_conditions import (
     FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID,
+    FIXED_PUBLIC_STATE_GRANTED_ABILITY_HANDLER_ID,
     FixedPublicStateConditionKind,
     FixedPublicStateFact,
     FixedPublicStateConditionSpec,
@@ -615,8 +616,9 @@ def collect_card_program_continuous_effects(
                     ) not in registered_handler_ids:
                         continue
                     public_state = None
-                    is_fixed_public_state = descriptor.get("handler_id") == (
-                        FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID
+                    is_fixed_public_state = descriptor.get("handler_id") in (
+                        FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID,
+                        FIXED_PUBLIC_STATE_GRANTED_ABILITY_HANDLER_ID,
                     )
                     if (
                         is_fixed_public_state

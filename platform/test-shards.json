@@ -370,6 +370,7 @@
       "test_server_app",
       "test_stack_rules",
       "test_trigger_batches",
+      "test_typed_grant_carriers",
       "test_zone_transition_owner"
     ],
     "generated-validation": [

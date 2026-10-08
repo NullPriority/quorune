@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 186,
+  "registry_version": 187,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -9018,6 +9018,93 @@
       "dependency_fail_closed_rationale": "Blocking the entry designation dependency prevents exact whole-card closure; the independent entry owner has no extra dependencies.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "The compiler mutation witness removes each production independently and rejects whole-card exactness.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "continuous.ability.fixed_public_state_grant",
+      "version": 1,
+      "official_rules": [
+        "113.7a",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Grant one independently compiled typed activation, fixed-output mana ability or trigger while a closed source or attached-object public-state condition holds.",
+        "inputs": [
+          "schema-v2 fixed public-state characteristic descriptor",
+          "one independently exact typed granted ability with source spans and semantic identity",
+          "shared public-state snapshot and layer-6 component applicability"
+        ],
+        "outputs": [
+          "recipient-bound currently available abilities and triggers",
+          "fixed coupled keywords and power/toughness modifiers",
+          "preserved already-stacked ability execution after a grant ends"
+        ],
+        "exclusions": [
+          "unrepresented conditions, nested static grants and multiple quotations",
+          "unsupported costs, targets or inner Oracle semantics",
+          "ability-presence or arbitrary layer dependency cycles",
+          "unsupported sibling abilities"
+        ]
+      },
+      "dependencies": [
+        "continuous.characteristics.fixed_public_state"
+      ],
+      "implementation_components": [
+        "quorune.compiler.conditional_granted_ability_templates.conditional_quoted_ability_handler",
+        "quorune.compiler.attached_granted_ability_nodes.attached_granted_ability_plan",
+        "quorune.semantic_runtime.conditional_continuous.FixedPublicStateGrantedAbilityHandler",
+        "quorune.card_programs.runtime.collect_card_program_continuous_effects"
+      ],
+      "positive_tests": [
+        "test_original_grant_carriers_are_capability_bound",
+        "test_printed_conditional_activation_ends_without_erasing_stack",
+        "test_printed_conditional_granted_hand_choice_is_private_and_persists"
+      ],
+      "negative_tests": [
+        "test_conditional_grant_schema_and_dependencies_fail_closed",
+        "test_printed_conditional_activation_ends_without_erasing_stack"
+      ],
+      "interaction_tests": [
+        "test_printed_conditional_activation_ends_without_erasing_stack",
+        "test_printed_conditional_granted_death_trigger_uses_event_time_state",
+        "test_printed_conditional_granted_hand_choice_is_private_and_persists"
+      ],
+      "multiplayer_tests": [
+        "test_printed_conditional_granted_death_trigger_uses_event_time_state",
+        "test_printed_conditional_granted_hand_choice_is_private_and_persists"
+      ],
+      "privacy_tests": [
+        "test_printed_land_grant_uses_recipient_and_replays",
+        "test_printed_conditional_granted_hand_choice_is_private_and_persists"
+      ],
+      "replay_tests": [
+        "test_printed_conditional_activation_ends_without_erasing_stack",
+        "test_printed_conditional_granted_death_trigger_uses_event_time_state",
+        "test_printed_land_grant_uses_recipient_and_replays",
+        "test_printed_conditional_granted_hand_choice_is_private_and_persists"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The versioned outer descriptor and independently compiled child retain their distinct capability requirements; blocked or missing owners withhold exact admission.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Focused typed descriptor mutations, blocked capability and printed lifetime witnesses distinguish unconditional grants, stale recipient identity and lost stack independence.",
       "blockers": [],
       "status": "trusted"
     }

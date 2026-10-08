@@ -550,6 +550,15 @@ def _controlled_battlefield_query(
 ) -> tuple[str, ObjectQuerySpec, bool] | None:
     fields: dict[str, Any] = {"zones": ("battlefield",)}
     exclude_source = False
+    normalized = " ".join(text.casefold().split())
+    subject = normalized.removeprefix("other ")
+    if subject == "tokens you control":
+        return "source_controller", ObjectQuerySpec(zones=("battlefield",), token=True), normalized.startswith("other ")
+    if subject in {"foods you control", "treasures you control", "clues you control"}:
+        subtype = subject.split()[0].removesuffix("s")
+        return "source_controller", ObjectQuerySpec(zones=("battlefield",), types_all=("artifact",), subtypes_all=(subtype,)), normalized.startswith("other ")
+    if subject == "basic lands you control":
+        return "source_controller", ObjectQuerySpec(zones=("battlefield",), types_all=("land",), supertypes_all=("basic",)), normalized.startswith("other ")
     if (match := _COUNTER_QUALIFIED_CONTROLLED_CREATURES.fullmatch(text)):
         exclude_source = bool(match.group("other"))
         fields.update(
