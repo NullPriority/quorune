@@ -15,6 +15,9 @@ from ..library_search_model import (
     FixedCountedLibrarySearchTemplate,
     counted_search_selector_is_closed,
     search_selector,
+    SEARCH_LAND_SUBTYPES,
+    SEARCH_NONCREATURE_SUBTYPES,
+    SEARCH_SUBTYPES,
 )
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 
@@ -26,14 +29,12 @@ FIXED_LIBRARY_SEARCH_TO_HAND_MECHANIC_ID = "fixed-library-search-to-hand"
 _BASIC_LAND_SUBTYPES = frozenset(
     {"plains", "island", "swamp", "mountain", "forest"}
 )
-_LAND_SUBTYPES = _BASIC_LAND_SUBTYPES | {"cave", "desert", "gate", "town"}
+_LAND_SUBTYPES = SEARCH_LAND_SUBTYPES
 _PERMANENT_TYPES = frozenset(
     {"artifact", "battle", "creature", "enchantment", "land", "planeswalker"}
 )
 _CARD_TYPES = _PERMANENT_TYPES | frozenset({"instant", "kindred", "sorcery"})
-_NONCREATURE_SUBTYPES = frozenset(
-    {"arcane", "aura", "equipment", "lesson", "plan", "trap", "vehicle"}
-)
+_NONCREATURE_SUBTYPES = SEARCH_NONCREATURE_SUBTYPES
 _COLORS = {
     "white": "W",
     "blue": "U",
@@ -146,7 +147,7 @@ def _search_query(
             )
         if subject.endswith(" permanent"):
             subtype = subject.removesuffix(" permanent").strip()
-            if subtype and " " not in subtype:
+            if subtype in SEARCH_SUBTYPES and " " not in subtype:
                 return ObjectQuerySpec(
                     types_any=tuple(sorted(_PERMANENT_TYPES)),
                     subtypes_any=(subtype,),
@@ -166,11 +167,16 @@ def _search_query(
                 subtypes_any=(qualifier,),
             )
     if normalized.endswith(" permanent"):
-        subtype = normalized.removesuffix(" permanent").strip()
-        if subtype and " " not in subtype:
+        qualifier = normalized.removesuffix(" permanent").strip()
+        if qualifier in _COLORS:
             return ObjectQuerySpec(
                 types_any=tuple(sorted(_PERMANENT_TYPES)),
-                subtypes_any=(subtype,),
+                colors_any=(_COLORS[qualifier],),
+            )
+        if qualifier in SEARCH_SUBTYPES and " " not in qualifier:
+            return ObjectQuerySpec(
+                types_any=tuple(sorted(_PERMANENT_TYPES)),
+                subtypes_any=(qualifier,),
             )
         return None
 

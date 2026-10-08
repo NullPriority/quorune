@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping
 
+from .creature_subtypes import CREATURE_SUBTYPES
 from .object_predicate import ObjectQuerySpec
 from .replacement.immutable import FrozenMap, thaw_value
 
@@ -14,9 +15,36 @@ _PERMANENT_TYPES = frozenset(
     {"artifact", "battle", "creature", "enchantment", "land", "planeswalker"}
 )
 _CARD_TYPES = _PERMANENT_TYPES | {"instant", "kindred", "sorcery"}
+SEARCH_LAND_SUBTYPES = frozenset(
+    {"plains", "island", "swamp", "mountain", "forest", "cave", "desert", "gate", "town"}
+)
+SEARCH_NONCREATURE_SUBTYPES = frozenset(
+    {"arcane", "aura", "equipment", "lesson", "plan", "trap", "vehicle"}
+)
+SEARCH_SUBTYPES = CREATURE_SUBTYPES | SEARCH_LAND_SUBTYPES | SEARCH_NONCREATURE_SUBTYPES
+
+
+def search_query_is_representable(query: ObjectQuerySpec) -> bool:
+    """Keep the existing selector codec lossless within its closed vocabulary."""
+    if not isinstance(query, ObjectQuerySpec):
+        return False
+    if (
+        set((*query.types_all, *query.types_any)) - _CARD_TYPES
+        or set(query.subtypes_any) - SEARCH_SUBTYPES
+        or set(query.supertypes_all) - {"basic", "legendary", "snow"}
+        or set(query.colors_any) - {"W", "U", "B", "R", "G"}
+    ):
+        return False
+    return query == ObjectQuerySpec(
+        types_all=query.types_all, types_any=query.types_any,
+        subtypes_any=query.subtypes_any, supertypes_all=query.supertypes_all,
+        colors_any=query.colors_any,
+    )
 
 
 def search_selector(query: ObjectQuerySpec) -> dict[str, list[str]]:
+    if not search_query_is_representable(query):
+        raise ValueError("Search query cannot be represented by the closed selector codec")
     fields = {
         "types": query.types_all,
         "types_any": query.types_any,
@@ -54,6 +82,8 @@ def counted_search_selector_is_closed(
             colors_any=tuple(ordinary.get("colors_any", ())),
         )
     except (TypeError, ValueError):
+        return False
+    if not search_query_is_representable(query):
         return False
     if search_selector(query) != {key: list(value) for key, value in ordinary.items()}:
         return False

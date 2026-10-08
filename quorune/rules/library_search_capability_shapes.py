@@ -11,6 +11,7 @@ from ..library_search_model import (
     FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID,
     FIXED_COUNTED_LIBRARY_SEARCH_MECHANIC_ID,
     FixedCountedLibrarySearchTemplate,
+    counted_search_selector_is_closed,
 )
 from ..commander_pairing import (
     PARTNER_WITH_SEARCH_CAPABILITY_ID,
@@ -81,6 +82,9 @@ def _query(
         not isinstance(selector, Mapping)
         or not selector
         or not set(selector).issubset(_SELECTOR_FIELDS)
+        or not counted_search_selector_is_closed(
+            selector, destination="battlefield" if permanent_only else "hand",
+        )
     ):
         return None
     try:
