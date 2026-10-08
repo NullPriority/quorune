@@ -5004,20 +5004,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v263-typed-layer-six-grant-carriers",
-      "compiler_version": "oracle-ir-v263",
-      "bundle_id": "bundle:typed-layer-six-grant-carriers",
-      "candidate_ids": [
-        "bundle:typed-layer-six-grant-carriers"
-      ],
-      "family_ids": [
-        "continuous_layer:continuous-effect-layers-and-dependencies"
-      ],
-      "capability_ids": [
-        "continuous.ability.fixed_public_state_grant"
-      ],
-      "non_harvest_reason": null,
-      "measurement_id": "measurement:typed-layer-six-grant-carriers"
+      "transition_id": "oracle-ir-v264-search-qualifier-correctness",
+      "compiler_version": "oracle-ir-v264",
+      "bundle_id": null,
+      "candidate_ids": [],
+      "family_ids": [],
+      "capability_ids": [],
+      "expected_complete_card_gain": null,
+      "non_harvest_reason": "Correct existing library-search predicate admission and execution: colors constrain colors, subtype qualifiers use canonical vocabulary, and unrepresented exclusions remain residual or reject rather than silently losing meaning. Retain separate historical-control provenance and simultaneous-departure assurance without changing control production."
     },
     "forecast_corrections": [
       {

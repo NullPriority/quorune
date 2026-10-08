@@ -127,53 +127,6 @@
       }
     },
     {
-      "oracle_id": "ec49dfcf-d16d-4621-af4b-4a6f09043221",
-      "name": "Runeclaw Bear",
-      "mana_cost": "{1}{G}",
-      "cmc": 2.0,
-      "type_line": "Creature — Bear",
-      "oracle_text": "",
-      "power": "2",
-      "toughness": "2",
-      "loyalty": null,
-      "defense": null,
-      "colors": [
-        "G"
-      ],
-      "color_identity": [
-        "G"
-      ],
-      "keywords": [],
-      "produced_mana": [],
-      "layout": "normal",
-      "released_at": "2014-07-18",
-      "legalities": {
-        "alchemy": "not_legal",
-        "brawl": "legal",
-        "commander": "legal",
-        "competitivebrawl": "legal",
-        "duel": "legal",
-        "future": "not_legal",
-        "gladiator": "legal",
-        "historic": "legal",
-        "legacy": "legal",
-        "modern": "legal",
-        "oathbreaker": "legal",
-        "oldschool": "not_legal",
-        "pauper": "legal",
-        "paupercommander": "legal",
-        "penny": "legal",
-        "pioneer": "legal",
-        "predh": "legal",
-        "premodern": "not_legal",
-        "standard": "not_legal",
-        "standardbrawl": "not_legal",
-        "timeless": "legal",
-        "tlr": "legal",
-        "vintage": "legal"
-      }
-    },
-    {
       "oracle_id": "9d2d6479-531c-4ce1-b52b-00e36fa63b64",
       "name": "Rancor",
       "mana_cost": "{G}",
