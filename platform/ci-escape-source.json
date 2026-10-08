@@ -1239,6 +1239,22 @@
       "regressions": ["test_game_actor.GameActorTests.test_slow_persistence_keeps_progress_observable_before_ack"],
       "impact_edge_status": "not_applicable",
       "resolution": "The unchanged exact test passes locally in 50.74 seconds. Use one bounded thirty-second deadlock watchdog for the existing save-start/release barriers, acknowledgement and cleanup waits; preserve every pending-progress, no-premature-acknowledgement and committed-result assertion. The corrected exact test passes in 53.37 seconds. Server production and semantic corpus inputs remain unchanged, and the complete gate already selects the module."
+    },
+    {
+      "id": "ci-20261008-81",
+      "run_id": 37824288440,
+      "head_sha": "c9e279579085a34444f697546ce403b9c02e4a61",
+      "category": "flaky_test",
+      "deterministic": true,
+      "summary": "The Amass privacy witness searched short hidden card references inside the entire decision JSON. A random opaque capability token happened to contain A71, failing the assertion although no projected choice data disclosed the card. A forced token collision reproduces the same test-only failure.",
+      "failed_surfaces": [
+        "Main / Broad / Python / ubuntu / functional-12"
+      ],
+      "regressions": [
+        "test_amass_rules.AmassRuntimeTests.test_multiple_army_choice_is_seat_scoped_and_replays_exactly"
+      ],
+      "impact_edge_status": "not_applicable",
+      "resolution": "Keep every existing privacy, seat-scope, accepted-choice, and replay assertion. Force a token collision in the fixture and serialize all projected decision fields except the opaque cap for hidden-reference inspection. Confirm a real hidden reference injected into projected ctx still fails. Production token generation, projection, rules, and compiler remain unchanged."
     }
   ],
   "recent_pull_requests": [

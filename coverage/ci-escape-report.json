@@ -1414,6 +1414,22 @@
       "resolution": "The unchanged exact test passes locally in 50.74 seconds. Use one bounded thirty-second deadlock watchdog for the existing save-start/release barriers, acknowledgement and cleanup waits; preserve every pending-progress, no-premature-acknowledgement and committed-result assertion. The corrected exact test passes in 53.37 seconds. Server production and semantic corpus inputs remain unchanged, and the complete gate already selects the module.",
       "run_id": 37410280657,
       "summary": "The persistence-progress witness starts a five-second thread wait before first-command preparation completes. Windows recorded an eleven-second event-loop stall, so the wait expired before persistence started."
+    },
+    {
+      "category": "flaky_test",
+      "deterministic": true,
+      "failed_surfaces": [
+        "Main / Broad / Python / ubuntu / functional-12"
+      ],
+      "head_sha": "c9e279579085a34444f697546ce403b9c02e4a61",
+      "id": "ci-20261008-81",
+      "impact_edge_status": "not_applicable",
+      "regressions": [
+        "test_amass_rules.AmassRuntimeTests.test_multiple_army_choice_is_seat_scoped_and_replays_exactly"
+      ],
+      "resolution": "Keep every existing privacy, seat-scope, accepted-choice, and replay assertion. Force a token collision in the fixture and serialize all projected decision fields except the opaque cap for hidden-reference inspection. Confirm a real hidden reference injected into projected ctx still fails. Production token generation, projection, rules, and compiler remain unchanged.",
+      "run_id": 37824288440,
+      "summary": "The Amass privacy witness searched short hidden card references inside the entire decision JSON. A random opaque capability token happened to contain A71, failing the assertion although no projected choice data disclosed the card. A forced token collision reproduces the same test-only failure."
     }
   ],
   "known_flaky_tests": [],
@@ -1474,14 +1490,14 @@
   ],
   "repository": "NullPriority/quorune",
   "schema_version": 2,
-  "source_fingerprint": "d81a16b47275334c82c03216e1b8be11477366a7fdf6fe074262d7fbd58837d7",
+  "source_fingerprint": "61fe73e828700d04fb1cd964eac0433d3c8b8fb4fdddc18ff4d30772c3109287",
   "summary": {
     "average_critical_path_seconds": 181.25,
     "average_pushes_per_merged_pr": null,
     "average_slot_b_inactive_seconds": null,
     "category_counts": {
       "browser_integration": 5,
-      "flaky_test": 8,
+      "flaky_test": 9,
       "generated_artifact_drift": 10,
       "infrastructure": 1,
       "missing_affected_test": 34,
@@ -1489,8 +1505,8 @@
       "windows_compatibility": 1
     },
     "current_missing_impact_edges": [],
-    "deterministic_escape_count": 74,
-    "escape_count": 81,
+    "deterministic_escape_count": 75,
+    "escape_count": 82,
     "eventual_final_head_certification_pass_rate": 1.0,
     "eventual_final_head_certification_sample_size": 4,
     "first_eligible_head_certification_pass_rate": null,

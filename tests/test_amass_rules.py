@@ -519,7 +519,11 @@ class AmassRuntimeTests(unittest.TestCase):
         second = self.add_permanent(
             engine, owner="A", name="Goblin Army", ref="second-army"
         )
-        self.stack_amass(engine)
+        hidden_ref = engine.state.cards[engine.state.players["A"].zones["hand"][0]].ref
+        # An opaque capability may coincidentally contain a card reference.
+        # Force that collision while inspecting only the projected choice data.
+        with patch("quorune.permissions.secrets.token_urlsafe", return_value="privacy-collision-" + hidden_ref):
+            self.stack_amass(engine)
 
         projector = StateProjector(self.database, engine.state)
         packet = projector._decision("pilot:A")
@@ -529,7 +533,7 @@ class AmassRuntimeTests(unittest.TestCase):
         )
         for seat in "BCD":
             self.assertIsNone(projector._decision(f"pilot:{seat}"))
-        serialized = json.dumps(packet, sort_keys=True)
+        serialized = json.dumps({key: value for key, value in packet.items() if key != "cap"}, sort_keys=True)
         for seat in engine.seats:
             for object_id in engine.state.players[seat].zones["hand"]:
                 self.assertNotIn(engine.state.cards[object_id].ref, serialized)
