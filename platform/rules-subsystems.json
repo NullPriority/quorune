@@ -4961,9 +4961,9 @@
           ],
           "canonical_owner_ids": [
             "capability:continuous.ability.fixed_public_state_grant",
+            "component:quorune.card_programs.runtime.collect_card_program_continuous_effects",
             "component:quorune.compiler.attached_granted_ability_nodes.attached_granted_ability_plan",
-            "component:quorune.semantic_runtime.conditional_continuous.FixedPublicStateGrantedAbilityHandler",
-            "component:quorune.card_programs.runtime.collect_card_program_continuous_effects"
+            "component:quorune.semantic_runtime.conditional_continuous.FixedPublicStateGrantedAbilityHandler"
           ],
           "source_contexts": [
             "static"
@@ -4971,14 +4971,14 @@
           "normalized_literal_parameters": [
             "closed-public-state-condition",
             "fixed-attached-land-subject",
+            "fixed-coupled-keywords-and-modifier",
             "fixed-noncreature-live-query",
-            "one-typed-quoted-ability",
-            "fixed-coupled-keywords-and-modifier"
+            "one-typed-quoted-ability"
           ],
           "shared_dependencies": [
-            "continuous.characteristics.fixed_public_state",
+            "continuous.ability.fixed_query_keyword_grant",
             "continuous.attached.fixed_characteristics",
-            "continuous.ability.fixed_query_keyword_grant"
+            "continuous.characteristics.fixed_public_state"
           ],
           "shared_grammar": "One independently exact quoted activated, fixed-output mana or triggered ability granted through an existing fixed attachment/live-query or a closed public-state condition; fixed coupled keywords and power/toughness retain the shared layer-six and layer-seven owners.",
           "estimated_implementation_hours": 8,
@@ -4986,10 +4986,10 @@
           "estimated_generation_hours": 1,
           "expected_downstream_closure": "Measure complete original CardPrograms and separately source-spanned grant nodes with strict runtime binding; prove current offer/trigger availability and retained stacked execution.",
           "explicit_exclusions": [
-            "Nested static grants and multiple quoted abilities",
-            "Unrepresented inner costs, targets, quantities, conditions and unsupported whole-card siblings",
             "Arbitrary ability-presence cycles, hidden predicates and runtime Oracle parsing",
-            "Card-identity behavior dispatch and forced gameplay trust"
+            "Card-identity behavior dispatch and forced gameplay trust",
+            "Nested static grants and multiple quoted abilities",
+            "Unrepresented inner costs, targets, quantities, conditions and unsupported whole-card siblings"
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "typed-layer-six-grant-carriers-existing-owner-v1"
