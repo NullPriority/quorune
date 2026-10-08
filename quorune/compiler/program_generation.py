@@ -8,7 +8,7 @@ from typing import Any, Iterable, Mapping
 
 from ..carddb import CardDatabase, CardRecord
 from ..card_programs.reviewed_overlay import (
-    shadowed_reviewed_multi_event_keys,
+    shadowed_reviewed_program_keys,
 )
 from ..object_predicate import ObjectQuerySpec
 from ..rules.capabilities import (
@@ -1641,7 +1641,7 @@ def register_generated_programs(
             trusted_programs.get(provisional.key, provisional)
             for provisional in provisional_programs
         )
-        shadowed_reviewed_keys = shadowed_reviewed_multi_event_keys(
+        shadowed_reviewed_keys = shadowed_reviewed_program_keys(
             record,
             runtime_programs,
             registry.programs_for_oracle(record.oracle_id),

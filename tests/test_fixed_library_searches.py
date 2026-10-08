@@ -297,6 +297,15 @@ class FixedLibrarySearchCompilerTests(unittest.TestCase):
     def test_named_linked_attachment_compound_and_open_searches_remain_residual(
         self,
     ):
+        for supported in (
+            "Search your library for a card, put it into your hand, then shuffle.",
+            "Search your library for two creature cards, reveal them, put them into your hand, then shuffle.",
+            "Search your library for a card named Lightning Bolt, reveal it, put it into your hand, then shuffle.",
+        ):
+            with self.subTest(supported=supported):
+                self.assertIsNotNone(fixed_library_search_effect_template(supported))
+                ir = self.compile(supported)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
         leaf_unsupported = (
             "Search your library for a card named Nissa's Chosen, put it onto the battlefield, then shuffle.",
             "Search your library for up to three artifact cards with different names, put them onto the battlefield, then shuffle.",
@@ -304,10 +313,10 @@ class FixedLibrarySearchCompilerTests(unittest.TestCase):
             "Search your library for a Dinosaur creature card, put it onto the battlefield, then shuffle. It gains indestructible until your next turn.",
             "Search your library for a basic land card, put it onto the battlefield tapped, then shuffle. Investigate.",
             "Search your library for up to two basic land cards and/or Gate cards, put them onto the battlefield tapped, then shuffle.",
-            "Search your library for a card, put it into your hand, then shuffle.",
-            "Search your library for two creature cards, reveal them, put them into your hand, then shuffle.",
+            "Search your library for a card with the same name as that card, put it into your hand, then shuffle.",
+            "Search your library for two creature cards, reveal them, put them onto the battlefield, then shuffle.",
             "Search your library for a nonlegendary card, put it into your hand, then shuffle.",
-            "Search your library for a card named Lightning Bolt, reveal it, put it into your hand, then shuffle.",
+            "Search your library for a card named Lightning Bolt or Clone, reveal it, put it into your hand, then shuffle.",
             "Search target player's library for an artifact card, reveal it, put it into your hand, then shuffle.",
         )
         for text in leaf_unsupported:

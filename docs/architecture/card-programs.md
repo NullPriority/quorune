@@ -31,6 +31,28 @@ source data, unknown dependencies, material residuals, or fingerprint drift
 fail closed. Historical semantic-pack records remain compatibility inputs, not
 a second current runtime authority.
 
+A current capability-bound counted search supersedes a reviewed search at the
+same key only when source hashes, event, costs, targets and result semantics
+match. The adapter records the superseded key. Persisted reviewed programs
+retain their recorded instructions and compatibility path.
+
+Fixed counted library searches use a shared immutable schema consumed by the
+compiler, capability shapes and private search owner. The compiler admits
+unqualified quantities, closed characteristic qualities, one literal card name
+as query data, and fixed mana-value comparisons. It preserves each instruction's
+reveal policy and shuffle order. A stated hidden-zone quality allows failure to
+find; an unqualified quantity requires as many cards as possible. Multiple hand
+results move through the simultaneous zone owner and retain independent
+commander replacement choices. A found top-card result remains in the library,
+is excluded from the shuffle, and is placed on top without changing its logical
+identity. The shuffle and placement expose no intermediate top-card view.
+
+Dynamic counts and predicates, name alternatives, split destinations, searches
+of another player's library, and multiple top or graveyard results remain
+outside this contract. Unsupported siblings retain their source spans and
+prevent whole-card admission. Runtime code validates the typed schema and never
+uses a card name to select rules behavior.
+
 Stack resolution never uses display or Oracle prose to decide whether an
 untrusted permanent program may resolve without its arbiter boundary. An
 intrinsic Siege transformed-cast choice for a nonpermanent face likewise

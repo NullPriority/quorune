@@ -152,7 +152,11 @@
     ["capability.counter.placement.quantity_replacement", "capability.counter.producer.sunburst"],
     ["capability.counter.placement.quantity_replacement", "capability.counter.producer.undying"],
     ["capability.trigger.event.normalized_zone_change", "capability.zone.change.destination_replacement"],
-    ["capability.zone.entry.tapped_state", "mechanic.cr-616-interaction-of-replacement-and-or-prevention-effects"]
+    ["capability.zone.entry.tapped_state", "mechanic.cr-616-interaction-of-replacement-and-or-prevention-effects"],
+    [
+      "capability.library.search.fixed_counted",
+      "capability.zone.change.destination_replacement"
+    ]
   ],
   "complex_card_weights": {
     "distinct_piece": 3,

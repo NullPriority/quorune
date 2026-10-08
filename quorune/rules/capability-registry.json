@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 185,
+  "registry_version": 186,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -1205,6 +1205,112 @@
       "dependency_fail_closed_rationale": "This read-only identity resolver has no optional capability dependency; callers fail closed on malformed descriptors, context, or stale object incarnations.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "The focused identity mutation removes the reciprocal live relation and is killed by the exact selected-object assertion; stale-incarnation negatives separately reject a new object incarnation.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "library.search.fixed_counted",
+      "version": 1,
+      "official_rules": [
+        "109.2a",
+        "400.7",
+        "608.2c",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.24",
+        "701.24a",
+        "701.24b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Resolve fixed counted self-library searches with strict predicates, stated-quality failure-to-find rules, private choices, declared reveal, simultaneous hand movement and printed shuffle/placement order.",
+        "inputs": [
+          "one schema-v2 fixed library search",
+          "one through ten hand results or one permanent, graveyard or top result",
+          "empty, fixed characteristic, one literal name or fixed mana-value selector",
+          "current owned library identities and locked resolving controller"
+        ],
+        "outputs": [
+          "principal-private legal search choices with exact cardinality",
+          "stated-quality failure to find and mandatory unqualified quantities",
+          "canonical replacement-aware result movement",
+          "found-card exclusion from a shuffle preceding top placement",
+          "declared revealed knowledge and deterministic replay"
+        ],
+        "exclusions": [
+          "dynamic or X-valued counts and qualities, multiple named alternatives and same-name linkage",
+          "searching another player or another zone, split result destinations and multiple top/graveyard/permanent results",
+          "search-limiting and search-replacement effects outside their own capability closure",
+          "untrusted selected-card entry, copy, face-down and unsupported sibling behavior",
+          "new ownership of search or shuffle triggered abilities"
+        ]
+      },
+      "dependencies": [
+        "library.search.fixed_to_battlefield",
+        "library.search.fixed_type_to_hand"
+      ],
+      "implementation_components": [
+        "quorune.library_search_model.FixedCountedLibrarySearchTemplate",
+        "quorune.compiler.library_search_templates.fixed_counted_library_search_effect_template",
+        "quorune.rules.library_search_capability_shapes.fixed_counted_library_search_node_capabilities",
+        "quorune.selection.searching.HiddenSearchOwnerMixin",
+        "quorune.zone_transitions.ZoneTransitionOwner.reveal_library_search_results",
+        "quorune.zone_transitions.ZoneTransitionOwner.shuffle_library",
+        "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously",
+        "quorune.semantic_choices.optional_effect._represented_effect",
+        "quorune.card_programs.reviewed_overlay.shadowed_reviewed_program_keys"
+      ],
+      "positive_tests": [
+        "test_original_search_programs_are_strictly_capability_bound",
+        "test_printed_unqualified_search_requires_a_card_and_keeps_private_choices",
+        "test_printed_numeric_search_filters_x_zero_and_allows_failure_to_find"
+      ],
+      "negative_tests": [
+        "test_counted_search_schema_dependencies_and_mutations_fail_closed",
+        "test_printed_unqualified_search_requires_a_card_and_keeps_private_choices",
+        "test_reviewed_search_precedence_requires_matching_trust_source_and_semantics"
+      ],
+      "interaction_tests": [
+        "test_printed_top_search_excludes_found_card_from_shuffle_and_preserves_identity",
+        "test_printed_named_multi_search_moves_one_simultaneous_private_batch",
+        "test_printed_multi_search_commander_replacements_persist_per_card"
+      ],
+      "multiplayer_tests": [
+        "test_printed_unqualified_search_requires_a_card_and_keeps_private_choices",
+        "test_printed_multi_search_commander_replacements_persist_per_card"
+      ],
+      "privacy_tests": [
+        "test_printed_unqualified_search_requires_a_card_and_keeps_private_choices",
+        "test_printed_top_search_excludes_found_card_from_shuffle_and_preserves_identity",
+        "test_printed_multi_search_commander_replacements_persist_per_card"
+      ],
+      "replay_tests": [
+        "test_printed_unqualified_search_requires_a_card_and_keeps_private_choices",
+        "test_printed_top_search_excludes_found_card_from_shuffle_and_preserves_identity",
+        "test_printed_named_multi_search_moves_one_simultaneous_private_batch",
+        "test_printed_multi_search_commander_replacements_persist_per_card",
+        "test_persisted_reviewed_search_keeps_legacy_execution_and_replay"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The exact v2 shape requires the shared fixed search, private selection, replacement, zone-entry and commander-return owners; a blocked owner leaves original nodes residual.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Compiler removal and altered shuffle/cardinality schema mutations withhold exact admission; actual printed search witnesses distinguish mandatory quantities, predicates and result order.",
       "blockers": [],
       "status": "trusted"
     },

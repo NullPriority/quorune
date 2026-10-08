@@ -81,9 +81,9 @@ Represented zone-destination replacements use an additional narrow split.
 `semantic_runtime/zone_replacement_model.py` owns immutable affected-object,
 source-effect, and prepared-move values. `zone_replacements.py` owns read-only
 descriptor discovery and APNAP preparation. Single and simultaneous moves
-capture that model once before mutation. Only `CommanderEngine.move_card`
-commits zone membership, so replacement discovery cannot become a competing
-state owner.
+capture that model once before mutation. The `CommanderEngine` compatibility
+facades delegate zone membership to the canonical `ZoneTransitionOwner`, so
+replacement discovery cannot become a competing state owner.
 
 Every production Python module has one generated exact classification covering
 layer, owner, allowed dependency layers, GameState access, specificity,

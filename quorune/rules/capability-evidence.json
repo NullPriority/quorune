@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "5caad3a636135c40413637c575ee18a4b07fbc39db3d741931bf944fb5b0d134",
-  "declaration_source_fingerprint": "3e94df423fed462a668667831cf189a5c4fd5dc3344a63760fed197413ba3f72",
+  "registry_fingerprint": "b6af8ca2f654a86521e380ed6291398124d18f50208bfe9a1ac39e212c8d1700",
+  "declaration_source_fingerprint": "81cbcd83a65028f14e7cc836bfd2b3c58953d4833092c77d4d127ef5c16dddb0",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -48600,6 +48600,506 @@
       "applicability_note": "Replay the exact private partition response to the same authoritative library order and final state hash."
     },
     {
+      "capability_id": "library.search.fixed_counted",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_counted_library_searches.CountedLibrarySearchTests.test_printed_multi_search_commander_replacements_persist_per_card",
+      "official_rule_ids": [
+        "109.2a",
+        "400.7",
+        "608.2c",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.24",
+        "701.24a",
+        "701.24b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Ignite the Beacon resolves independent CR 903.9b replacements for two printed Partner commanders; pending per-card choices persist, wrong-principal replies reject atomically, and the full pre-action sequence replays."
+    },
+    {
+      "capability_id": "library.search.fixed_counted",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_counted_library_searches.CountedLibrarySearchTests.test_printed_named_multi_search_moves_one_simultaneous_private_batch",
+      "official_rule_ids": [
+        "109.2a",
+        "400.7",
+        "608.2c",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.24",
+        "701.24a",
+        "701.24b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exercise the fixed counted search through the declared parser/schema or original-card authoritative action, private choice, canonical result and replay boundary."
+    },
+    {
+      "capability_id": "library.search.fixed_counted",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_counted_library_searches.CountedLibrarySearchTests.test_printed_top_search_excludes_found_card_from_shuffle_and_preserves_identity",
+      "official_rule_ids": [
+        "109.2a",
+        "400.7",
+        "608.2c",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.24",
+        "701.24a",
+        "701.24b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exercise the fixed counted search through the declared parser/schema or original-card authoritative action, private choice, canonical result and replay boundary."
+    },
+    {
+      "capability_id": "library.search.fixed_counted",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_counted_library_searches.CountedLibrarySearchTests.test_printed_multi_search_commander_replacements_persist_per_card",
+      "official_rule_ids": [
+        "109.2a",
+        "400.7",
+        "608.2c",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.24",
+        "701.24a",
+        "701.24b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Ignite the Beacon resolves independent CR 903.9b replacements for two printed Partner commanders; pending per-card choices persist, wrong-principal replies reject atomically, and the full pre-action sequence replays."
+    },
+    {
+      "capability_id": "library.search.fixed_counted",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_counted_library_searches.CountedLibrarySearchTests.test_printed_unqualified_search_requires_a_card_and_keeps_private_choices",
+      "official_rule_ids": [
+        "109.2a",
+        "400.7",
+        "608.2c",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.24",
+        "701.24a",
+        "701.24b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exercise the fixed counted search through the declared parser/schema or original-card authoritative action, private choice, canonical result and replay boundary."
+    },
+    {
+      "capability_id": "library.search.fixed_counted",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_counted_library_searches.CountedLibrarySearchTests.test_counted_search_schema_dependencies_and_mutations_fail_closed",
+      "official_rule_ids": [
+        "109.2a",
+        "400.7",
+        "608.2c",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.24",
+        "701.24a",
+        "701.24b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exercise the fixed counted search through the declared parser/schema or original-card authoritative action, private choice, canonical result and replay boundary."
+    },
+    {
+      "capability_id": "library.search.fixed_counted",
+      "evidence_class": "negative",
+      "test_id": "tests.test_counted_library_searches.CountedLibrarySearchTests.test_counted_search_schema_dependencies_and_mutations_fail_closed",
+      "official_rule_ids": [
+        "109.2a",
+        "400.7",
+        "608.2c",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.24",
+        "701.24a",
+        "701.24b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exercise the fixed counted search through the declared parser/schema or original-card authoritative action, private choice, canonical result and replay boundary."
+    },
+    {
+      "capability_id": "library.search.fixed_counted",
+      "evidence_class": "negative",
+      "test_id": "tests.test_counted_library_searches.CountedLibrarySearchTests.test_printed_unqualified_search_requires_a_card_and_keeps_private_choices",
+      "official_rule_ids": [
+        "109.2a",
+        "400.7",
+        "608.2c",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.24",
+        "701.24a",
+        "701.24b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exercise the fixed counted search through the declared parser/schema or original-card authoritative action, private choice, canonical result and replay boundary."
+    },
+    {
+      "capability_id": "library.search.fixed_counted",
+      "evidence_class": "negative",
+      "test_id": "tests.test_counted_library_searches.CountedLibrarySearchTests.test_reviewed_search_precedence_requires_matching_trust_source_and_semantics",
+      "official_rule_ids": [
+        "109.2a",
+        "400.7",
+        "608.2c",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.24",
+        "701.24a",
+        "701.24b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exact counted search precedence preserves a reviewed payload when trust, source, target or reveal semantics differ."
+    },
+    {
+      "capability_id": "library.search.fixed_counted",
+      "evidence_class": "positive",
+      "test_id": "tests.test_counted_library_searches.CountedLibrarySearchTests.test_original_search_programs_are_strictly_capability_bound",
+      "official_rule_ids": [
+        "109.2a",
+        "400.7",
+        "608.2c",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.24",
+        "701.24a",
+        "701.24b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exercise the fixed counted search through the declared parser/schema or original-card authoritative action, private choice, canonical result and replay boundary."
+    },
+    {
+      "capability_id": "library.search.fixed_counted",
+      "evidence_class": "positive",
+      "test_id": "tests.test_counted_library_searches.CountedLibrarySearchTests.test_printed_numeric_search_filters_x_zero_and_allows_failure_to_find",
+      "official_rule_ids": [
+        "109.2a",
+        "400.7",
+        "608.2c",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.24",
+        "701.24a",
+        "701.24b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exercise the fixed counted search through the declared parser/schema or original-card authoritative action, private choice, canonical result and replay boundary."
+    },
+    {
+      "capability_id": "library.search.fixed_counted",
+      "evidence_class": "positive",
+      "test_id": "tests.test_counted_library_searches.CountedLibrarySearchTests.test_printed_unqualified_search_requires_a_card_and_keeps_private_choices",
+      "official_rule_ids": [
+        "109.2a",
+        "400.7",
+        "608.2c",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.24",
+        "701.24a",
+        "701.24b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exercise the fixed counted search through the declared parser/schema or original-card authoritative action, private choice, canonical result and replay boundary."
+    },
+    {
+      "capability_id": "library.search.fixed_counted",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_counted_library_searches.CountedLibrarySearchTests.test_printed_multi_search_commander_replacements_persist_per_card",
+      "official_rule_ids": [
+        "109.2a",
+        "400.7",
+        "608.2c",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.24",
+        "701.24a",
+        "701.24b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Ignite the Beacon resolves independent CR 903.9b replacements for two printed Partner commanders; pending per-card choices persist, wrong-principal replies reject atomically, and the full pre-action sequence replays."
+    },
+    {
+      "capability_id": "library.search.fixed_counted",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_counted_library_searches.CountedLibrarySearchTests.test_printed_top_search_excludes_found_card_from_shuffle_and_preserves_identity",
+      "official_rule_ids": [
+        "109.2a",
+        "400.7",
+        "608.2c",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.24",
+        "701.24a",
+        "701.24b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exercise the fixed counted search through the declared parser/schema or original-card authoritative action, private choice, canonical result and replay boundary."
+    },
+    {
+      "capability_id": "library.search.fixed_counted",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_counted_library_searches.CountedLibrarySearchTests.test_printed_unqualified_search_requires_a_card_and_keeps_private_choices",
+      "official_rule_ids": [
+        "109.2a",
+        "400.7",
+        "608.2c",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.24",
+        "701.24a",
+        "701.24b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exercise the fixed counted search through the declared parser/schema or original-card authoritative action, private choice, canonical result and replay boundary."
+    },
+    {
+      "capability_id": "library.search.fixed_counted",
+      "evidence_class": "replay",
+      "test_id": "tests.test_counted_library_searches.CountedLibrarySearchTests.test_persisted_reviewed_search_keeps_legacy_execution_and_replay",
+      "official_rule_ids": [
+        "109.2a",
+        "400.7",
+        "608.2c",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.24",
+        "701.24a",
+        "701.24b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The preserved reviewed Entomb payload is decoded, offered, executed and replayed without conversion to the new search schema."
+    },
+    {
+      "capability_id": "library.search.fixed_counted",
+      "evidence_class": "replay",
+      "test_id": "tests.test_counted_library_searches.CountedLibrarySearchTests.test_printed_multi_search_commander_replacements_persist_per_card",
+      "official_rule_ids": [
+        "109.2a",
+        "400.7",
+        "608.2c",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.24",
+        "701.24a",
+        "701.24b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Ignite the Beacon resolves independent CR 903.9b replacements for two printed Partner commanders; pending per-card choices persist, wrong-principal replies reject atomically, and the full pre-action sequence replays."
+    },
+    {
+      "capability_id": "library.search.fixed_counted",
+      "evidence_class": "replay",
+      "test_id": "tests.test_counted_library_searches.CountedLibrarySearchTests.test_printed_named_multi_search_moves_one_simultaneous_private_batch",
+      "official_rule_ids": [
+        "109.2a",
+        "400.7",
+        "608.2c",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.24",
+        "701.24a",
+        "701.24b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exercise the fixed counted search through the declared parser/schema or original-card authoritative action, private choice, canonical result and replay boundary."
+    },
+    {
+      "capability_id": "library.search.fixed_counted",
+      "evidence_class": "replay",
+      "test_id": "tests.test_counted_library_searches.CountedLibrarySearchTests.test_printed_top_search_excludes_found_card_from_shuffle_and_preserves_identity",
+      "official_rule_ids": [
+        "109.2a",
+        "400.7",
+        "608.2c",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.24",
+        "701.24a",
+        "701.24b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exercise the fixed counted search through the declared parser/schema or original-card authoritative action, private choice, canonical result and replay boundary."
+    },
+    {
+      "capability_id": "library.search.fixed_counted",
+      "evidence_class": "replay",
+      "test_id": "tests.test_counted_library_searches.CountedLibrarySearchTests.test_printed_unqualified_search_requires_a_card_and_keeps_private_choices",
+      "official_rule_ids": [
+        "109.2a",
+        "400.7",
+        "608.2c",
+        "701.23",
+        "701.23a",
+        "701.23b",
+        "701.23d",
+        "701.23e",
+        "701.24",
+        "701.24a",
+        "701.24b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exercise the fixed counted search through the declared parser/schema or original-card authoritative action, private choice, canonical result and replay boundary."
+    },
+    {
       "capability_id": "library.search.fixed_to_battlefield",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_library_searches.FixedLibrarySearchRuntimeTests.test_generated_search_uses_effective_hidden_characteristics_and_replays",
@@ -78849,5 +79349,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "abc1eb8b9b87b52ab174f7373a27fdb618911a8579704f2c3f96948395e65aa0"
+  "fingerprint": "f6c1e0139e0b876bc4dde78da6a05e242dd4c496bb5d47bfaa8e433e289230d5"
 }

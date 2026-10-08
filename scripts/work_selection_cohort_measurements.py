@@ -215,6 +215,7 @@ _PROBE_FIXED_CONTROL_UNTAP = "fixed-control-optional-untap-existing-owner-v1"
 _PROBE_ENTRY_DESIGNATIONS = "persistent-entry-designation-existing-owner-v1"
 _PROBE_ENTRY_DESIGNATIONS_V2 = "persistent-entry-designation-existing-owner-v2"
 _PROBE_CONTROLLER_PROGRAM = "controller-program-composition-existing-owner-v1"
+_PROBE_COUNTED_LIBRARY_SEARCH = "fixed-counted-library-search-existing-owner-v1"
 _PROBE_DECLARED_EFFECT_AMOUNT = "declared-effect-amount-existing-owner-v1"
 _PROBE_FIXED_ANIMATION = "fixed-resolution-animation-existing-owner-v1"
 _PROBE_FIXED_EFFECT_PAYMENT = "fixed-resolution-payment-existing-owner-v1"
@@ -583,6 +584,7 @@ _PROBE_IDS = {
     _PROBE_ENTRY_DESIGNATIONS,
     _PROBE_ENTRY_DESIGNATIONS_V2,
     _PROBE_CONTROLLER_PROGRAM,
+    _PROBE_COUNTED_LIBRARY_SEARCH,
     _PROBE_DECLARED_EFFECT_AMOUNT,
     _PROBE_FIXED_ANIMATION,
     _PROBE_FIXED_EFFECT_PAYMENT,
@@ -5357,6 +5359,13 @@ def _measurement(
     if probe_id not in _PROBE_IDS:
         raise WorkSelectionCohortMeasurementError(
             f"Unknown cohort measurement probe: {probe_id}"
+        )
+    if probe_id == _PROBE_COUNTED_LIBRARY_SEARCH:
+        from scripts.counted_library_search_measurement import counted_library_search_measurement
+        return counted_library_search_measurement(
+            frontier=frontier, bundle_id=bundle_id, probe_id=probe_id,
+            cards_by_oracle_id=cards_by_oracle_id, coverage=coverage,
+            cohort_fingerprint=cohort_fingerprint, database=database,
         )
     if probe_id == _PROBE_CONTROLLER_PROGRAM:
         from scripts.controller_program_measurement import controller_program_measurement

@@ -378,7 +378,8 @@
       "implementation_inputs": [
         "scripts/update_work_selection_cohort_measurements.py",
         "scripts/work_selection_cohort_measurements.py",
-        "scripts/controller_program_measurement.py"
+        "scripts/controller_program_measurement.py",
+        "scripts/counted_library_search_measurement.py"
       ],
       "database_identity": "pinned-card-database",
       "execution_class": "reusable",

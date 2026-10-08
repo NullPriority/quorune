@@ -4899,6 +4899,60 @@
             ],
             "measurement_status": "generated_probe",
             "measurement_probe_id": "persistent-entry-designation-existing-owner-v2"
+          },
+          {
+            "bundle_id": "bundle:fixed-counted-library-searches",
+            "member_family_ids": [
+              "activated_effect:look-reveal",
+              "activated_effect:ordered-effect-composition",
+              "activated_effect:put-onto-battlefield",
+              "activated_effect:search",
+              "effect_clause:look-reveal",
+              "effect_clause:ordered-effect-composition",
+              "effect_clause:put-onto-battlefield",
+              "effect_clause:search",
+              "event_binding:intervening-if-and-reflexive-trigger-grammar",
+              "event_binding:normalized-event-binding"
+            ],
+            "canonical_owner_ids": [
+              "capability:library.search.fixed_counted",
+              "component:quorune.library_search_model.FixedCountedLibrarySearchTemplate",
+              "component:quorune.selection.searching.HiddenSearchOwnerMixin",
+              "component:quorune.zone_transitions.ZoneTransitionOwner"
+            ],
+            "source_contexts": [
+              "activated",
+              "modal",
+              "spell",
+              "triggered"
+            ],
+            "normalized_literal_parameters": [
+              "fixed-count",
+              "fixed-mana-value-filter",
+              "literal-name-query-data",
+              "mandatory-unqualified-count",
+              "printed-reveal",
+              "shuffle-before-top-placement",
+              "simultaneous-hand-results"
+            ],
+            "shared_dependencies": [
+              "library.search.fixed_to_battlefield",
+              "library.search.fixed_type_to_hand"
+            ],
+            "shared_grammar": "Fixed counted self-library searches with a closed characteristic, literal name or fixed mana-value selector, original reveal policy and printed shuffle order; one top/graveyard/permanent result or uniform one-through-ten hand results, composed only through existing exact parent owners.",
+            "estimated_implementation_hours": 8,
+            "estimated_probe_hours": 1,
+            "estimated_generation_hours": 1,
+            "expected_downstream_closure": "Measure full original CardPrograms and strict runtime binding across private choices, per-card commander replacements, counted hand movement and retained found-card knowledge.",
+            "explicit_exclusions": [
+              "X, dynamic, same-name linkage and multiple named alternatives",
+              "another player or another search origin",
+              "arbitrary callbacks, runtime Oracle parsing and card-identity behavior dispatch",
+              "multiple top, graveyard, nonland or untapped battlefield results and split destinations",
+              "search-limiting/replacement effects and independently unsupported siblings"
+            ],
+            "measurement_status": "generated_probe",
+            "measurement_probe_id": "fixed-counted-library-search-existing-owner-v1"
           }
       ],
       "approved_prerequisite_exceptions": [
@@ -4910,23 +4964,29 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v260-persistent-entry-designations",
-      "compiler_version": "oracle-ir-v261",
-      "bundle_id": "bundle:persistent-entry-designations",
+      "transition_id": "oracle-ir-v262-fixed-counted-library-searches",
+      "compiler_version": "oracle-ir-v262",
+      "bundle_id": "bundle:fixed-counted-library-searches",
       "candidate_ids": [
-        "bundle:persistent-entry-designations"
+        "bundle:fixed-counted-library-searches"
       ],
       "family_ids": [
-        "continuous_layer:continuous-effect-layers-and-dependencies",
-        "replacement:replacement-applicability",
-        "replacement:self-replacement-and-prevention-ordering"
+        "activated_effect:look-reveal",
+        "activated_effect:ordered-effect-composition",
+        "activated_effect:put-onto-battlefield",
+        "activated_effect:search",
+        "effect_clause:look-reveal",
+        "effect_clause:ordered-effect-composition",
+        "effect_clause:put-onto-battlefield",
+        "effect_clause:search",
+        "event_binding:intervening-if-and-reflexive-trigger-grammar",
+        "event_binding:normalized-event-binding"
       ],
       "capability_ids": [
-        "continuous.characteristics.chosen_designation",
-        "zone.entry.public_designation"
+        "library.search.fixed_counted"
       ],
       "non_harvest_reason": null,
-      "measurement_id": "measurement:persistent-entry-designations"
+      "measurement_id": "measurement:fixed-counted-library-searches"
     },
     "forecast_corrections": [
       {

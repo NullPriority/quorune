@@ -8,6 +8,7 @@ from typing import Any, Mapping, Sequence
 from ..compiler.optional_effect_templates import OPTIONAL_EFFECT_OPERATION
 from ..replacement.immutable import FrozenMap, freeze_value
 from ..linked_exile_return_model import validate_linked_instruction
+from ..library_search_model import FixedCountedLibrarySearchTemplate
 from ..semantic_runtime import SemanticNodeError, default_semantic_interpreter
 from .context import SemanticChoiceContext, SemanticChoiceQuery
 from .model import (
@@ -33,6 +34,12 @@ def _represented_effect(
         )
     if operation == OPTIONAL_EFFECT_OPERATION:
         raise SemanticChoiceError("Optional effects cannot nest")
+    if operation == "search" and effect.get("schema_version") == 2:
+        try:
+            FixedCountedLibrarySearchTemplate.from_effect(effect)
+        except (ValueError, TypeError, KeyError) as exc:
+            raise SemanticChoiceError("Optional counted search is malformed") from exc
+        return
     try:
         plan = default_semantic_interpreter().lower_for_seats(
             effect,
