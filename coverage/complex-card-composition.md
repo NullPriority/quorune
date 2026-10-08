@@ -2,7 +2,7 @@
 title: "Complex card composition benchmark"
 status: "generated"
 authoritative_source: "coverage/complex-card-composition.json"
-verified: "80edda0820ea3412d0372aa09bb9747bb600796a875d2e5a524eadb7a077af3e"
+verified: "dc97a31714783cee36b2eb34a2a83ab550583f1e0b003174c1a4182a2e435b5b"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -24,7 +24,7 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Clive, Ifrit's Dominant // Ifrit, Warden of Inferno | 217 | 18 | 7 | 5 | 12 | 21 | `blocked` |
 | The Shattered States Era // Nameless Conqueror | 217 | 33 | 8 | 5 | 6 | 6 | `blocked` |
 | The Kami War // O-Kagachi Made Manifest | 216 | 28 | 8 | 7 | 9 | 6 | `blocked` |
-| Vorinclex // The Grand Evolution | 214 | 24 | 8 | 7 | 12 | 4 | `blocked` |
+| Vorinclex // The Grand Evolution | 216 | 26 | 8 | 7 | 10 | 4 | `blocked` |
 | Sheoldred // The True Scriptures | 213 | 23 | 8 | 7 | 13 | 4 | `blocked` |
 | Teachings of the Kirin // Kirin-Touched Orochi | 211 | 28 | 7 | 7 | 9 | 6 | `blocked` |
 | Rowan Kenrith | 209 | 28 | 5 | 6 | 5 | 21 | `blocked` |
@@ -57,10 +57,10 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Befriending the Moths // Imperial Moth | 184 | 22 | 8 | 5 | 6 | 6 | `blocked` |
 | Flamewar, Brash Veteran // Flamewar, Streetwise Operative | 184 | 22 | 6 | 6 | 9 | 15 | `blocked` |
 | Ticket Booth // Tunnel of Hate | 184 | 19 | 5 | 4 | 3 | 32 | `blocked` |
+| Boseiju Reaches Skyward // Branch of Boseiju | 183 | 22 | 7 | 6 | 6 | 6 | `blocked` |
 | Grist, Voracious Larva // Grist, the Plague Swarm | 183 | 25 | 5 | 5 | 10 | 14 | `blocked` |
 | Invasion of Theros // Ephara, Ever-Sheltering | 183 | 22 | 6 | 4 | 5 | 18 | `blocked` |
 | Ob Nixilis, the Adversary | 183 | 35 | 5 | 5 | 5 | 7 | `blocked` |
 | Urza, Planeswalker | 183 | 29 | 5 | 6 | 8 | 11 | `blocked` |
 | Invasion of Zendikar // Awakened Skyclave | 181 | 21 | 5 | 5 | 6 | 18 | `blocked` |
-| Michiko's Reign of Truth // Portrait of Michiko | 181 | 22 | 7 | 5 | 7 | 6 | `blocked` |
 | Animate Dead | 110 | 13 | 4 | 3 | 2 | 5 | `blocked` |
