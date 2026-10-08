@@ -1,0 +1,229 @@
+{
+  "cards": [
+    {
+      "cmc": 8.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Morph",
+        "Protection",
+        "Trample"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{5}{R}{R}{R}",
+      "name": "Akroma, Angel of Fury",
+      "oracle_id": "2b80faaf-92fd-4fa0-a3f6-8bb263e7ff1d",
+      "oracle_text": "This spell can't be countered.\nFlying, trample, protection from white and from blue\n{R}: Akroma gets +1/+0 until end of turn.\nMorph {3}{R}{R}{R} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)",
+      "power": "6",
+      "produced_mana": [],
+      "released_at": "2024-02-09",
+      "toughness": "6",
+      "type_line": "Legendary Creature \u2014 Angel"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Haste"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R}",
+      "name": "Hobgoblin, Mantled Marauder",
+      "oracle_id": "1d453331-6b8e-4d3d-b658-683eab2760da",
+      "oracle_text": "Flying, haste\nWhenever you discard a card, Hobgoblin gets +2/+0 until end of turn.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2026-06-26",
+      "toughness": "2",
+      "type_line": "Legendary Creature \u2014 Goblin Human Villain"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{W/U}",
+      "name": "War Machine, James Rhodes",
+      "oracle_id": "0a512e55-793e-4936-bd27-80d749f4657e",
+      "oracle_text": "Flying (This creature can't be blocked except by creatures with flying or reach.)\nWhenever War Machine attacks, tap up to one target creature.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2026-06-26",
+      "toughness": "2",
+      "type_line": "Legendary Artifact Creature \u2014 Human Hero"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B}",
+      "name": "Yellowjacket, Heartless Marauder",
+      "oracle_id": "0a364879-31bd-4760-833d-165cde1e96c6",
+      "oracle_text": "Flying\nWhenever another Villain you control enters, Yellowjacket gets +1/+0 and gains lifelink until end of turn.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2026-06-26",
+      "toughness": "2",
+      "type_line": "Legendary Creature \u2014 Human Rogue Villain"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "A spell or ability that counters spells can still target Akroma. When that spell or ability resolves, Akroma won't be countered, but any additional effects of the countering spell or ability will still happen.",
+      "oracle_id": "2b80faaf-92fd-4fa0-a3f6-8bb263e7ff1d",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Akroma, Angel of Fury is cast face down, it can be countered.",
+      "oracle_id": "2b80faaf-92fd-4fa0-a3f6-8bb263e7ff1d",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "In a Commander game where Akroma is your commander, you may cast it face down from the command zone by paying {3} plus {2} for each time it has been cast from your command zone. The cost to turn it face up is unaffected. While face down, the combat damage it deals is still counted as damage dealt by your commander.",
+      "oracle_id": "2b80faaf-92fd-4fa0-a3f6-8bb263e7ff1d",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle/rulings subset for canonical self-reference closure"
+}

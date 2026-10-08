@@ -763,6 +763,7 @@ class FixedSourceCharacteristicRuntimeTests(unittest.TestCase):
                 / "fixtures"
                 / "query-power-toughness-definition-cards.json",
                 FIXTURE,
+                ROOT / "tests" / "fixtures" / "source-reference-closure-cards.json",
             ],
             database,
         )
@@ -857,6 +858,92 @@ class FixedSourceCharacteristicRuntimeTests(unittest.TestCase):
             replay=replay_record(path,self.db,verify=True)
         self.assertTrue(replay['ok'],replay)
         self.assertEqual(expected,replay['final_state_hash'])
+
+    def test_pinned_named_attack_chooses_legal_target_without_same_name_dispatch(self):
+        session = self.session(26520151, players=4)
+        engine = session.engine
+        source = self.add_card(session, name="War Machine, James Rhodes", ref="NAMED-ATTACK", trusted=True)
+        other = self.add_card(session, name="War Machine, James Rhodes", ref="SAME-NAME-IDLE", seat="C", trusted=True)
+        target = self.add_card(session, name="Source Growth Fixture", ref="NAMED-TARGET", seat="B", trusted=True)
+        source.temporary_keywords.append("Haste")
+        engine.state.active_player = "A"
+        engine.state.phase_index = 5
+        engine.state.phase = "combat"
+        engine.state.step = "declare_attackers"
+        engine.state.combat = CombatState()
+        engine._issue_attackers()
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        declared = session.act("pilot:A", {"a": "attack", "atk": {source.ref: "B"}})
+        self.assertTrue(declared.ok, declared.summary)
+        matching = [item for item in engine.state.stack if item.source_object_id in {source.object_id, other.object_id}]
+        self.assertEqual(1, len(matching))
+        self.assertEqual(source.object_id, matching[0].source_object_id)
+        self.assertEqual(source.logical_object_id, matching[0].context["source_logical_object_id"])
+        self.assertEqual("semantic.target", engine.state.pending_decision.kind)
+        context = session.packet("pilot:A", full=True)["decision"]["ctx"]
+        self.assertIn(target.ref, str(context["target_schema"]))
+        before = authoritative_state_hash(engine.state)
+        denied = session.act("pilot:B", {"a": "choose", "targets": [target.ref]})
+        self.assertFalse(denied.ok)
+        self.assertEqual(before, authoritative_state_hash(engine.state))
+        invalid = session.act("pilot:A", {"a": "choose", "targets": ["UNKNOWN-NAMED-TARGET"]})
+        self.assertFalse(invalid.ok)
+        self.assertEqual(before, authoritative_state_hash(engine.state))
+        target = engine.state.cards[target.object_id]
+        other = engine.state.cards[other.object_id]
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "named-trigger-pending"
+            session.save(path)
+            loaded = CommanderSession.load(self.db, path)
+            self.assertEqual(before, authoritative_state_hash(loaded.engine.state))
+        chosen = session.act("pilot:A", {"a": "choose", "targets": [target.ref]})
+        self.assertTrue(chosen.ok, chosen.summary)
+        self.resolve_stack(session)
+        self.assertTrue(target.tapped)
+        self.assertFalse(other.tapped)
+        self.assert_replay(session)
+
+    def test_pinned_named_activation_tracks_incarnation_control_and_replays(self):
+        session = self.session(26520152, players=4)
+        engine = session.engine
+        source = self.add_card(session, name="Akroma, Angel of Fury", ref="NAMED-PUMP", trusted=True)
+        other = self.add_card(session, name="Akroma, Angel of Fury", ref="SAME-NAME-PUMP", seat="B", trusted=True)
+        engine.state.players["A"].mana_pool["R"] = 1
+        self.prepare_main(session)
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        offer = self.activation_offer(session, source)
+        result = session.act("pilot:A", {"action_id": offer["id"]})
+        self.assertTrue(result.ok, result.summary)
+        self.resolve_stack(session)
+        self.assertEqual(7, engine._numeric_stat(source.object_id, "power"))
+        self.assertEqual(6, engine._numeric_stat(other.object_id, "power"))
+        self.assert_replay(session)
+
+        # A control change preserves this object; leaving and returning does not.
+        expire_end_of_turn_continuous_effects(engine.state)
+        engine.state.players["A"].mana_pool["R"] = 1
+        self.prepare_main(session)
+        result = session.act("pilot:A", {"action_id": self.activation_offer(session, source)["id"]})
+        self.assertTrue(result.ok, result.summary)
+        engine.change_control(source.object_id, "B", reason="named source control witness")
+        self.resolve_stack(session)
+        self.assertEqual(7, engine._numeric_stat(source.object_id, "power"))
+        expire_end_of_turn_continuous_effects(engine.state)
+        engine.change_control(source.object_id, "A", reason="named source reset")
+        engine.state.players["A"].mana_pool["R"] = 1
+        self.prepare_main(session)
+        result = session.act("pilot:A", {"action_id": self.activation_offer(session, source)["id"]})
+        self.assertTrue(result.ok, result.summary)
+        old_identity = source.logical_object_id
+        engine.move_card(source.object_id, "graveyard", log=False)
+        engine.move_card(source.object_id, "battlefield", controller="A", log=False)
+        self.assertNotEqual(old_identity, source.logical_object_id)
+        self.resolve_stack(session)
+        self.assertEqual(6, engine._numeric_stat(source.object_id, "power"))
 
     def test_trusted_land_animation_offer_payment_multilayer_result_and_replay(self):
         session=self.session(237020001,players=4);engine=session.engine

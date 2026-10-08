@@ -12436,6 +12436,30 @@
     {
       "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_pinned_named_activation_tracks_incarnation_control_and_replays",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.5",
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned named source activation modifies only its logical battlefield incarnation, survives control change and ignores departure/reentry, with pre-action replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "interaction",
       "test_id": "tests.test_public_query_action_registration.PublicQueryActionRegistrationTests.test_source_self_runtime_reference_distinguishes_incarnations",
       "official_rule_ids": ["205.1a", "205.1b", "208.5", "611.2a", "611.2c", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -12466,6 +12490,30 @@
       "official_rule_ids": ["205.1a", "205.1b", "208.5", "611.2a", "611.2c", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Kill the exact unconditional subtype-clear mutation without deriving expected subtype preservation from the implementation under test."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_source_references.SourceReferenceCompilerTests.test_named_source_characteristic_physical_reference_mutant_is_killed",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.5",
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Substituting physical source identity is killed by the independently required logical incarnation descriptor."
     },
     {
       "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
@@ -29665,6 +29713,23 @@
     },
     {
       "capability_id": "trigger.event.normalized_self_attack",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_pinned_named_attack_chooses_legal_target_without_same_name_dispatch",
+      "official_rule_ids": [
+        "508.1",
+        "508.1m",
+        "603.2",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pinned named attack targets through actual command authority; idle same-name object, wrong-principal and invalid-target rollback, pending reload and pre-action replay are distinct."
+    },
+    {
+      "capability_id": "trigger.event.normalized_self_attack",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_source_attack_trigger_uses_sealed_transition_and_replays",
       "official_rule_ids": ["508.1", "508.1m", "603.2", "603.3"],
@@ -29678,6 +29743,23 @@
       "official_rule_ids": ["508.1", "508.1m", "603.2", "603.3"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Suppress the per-attacker semantic dispatch and prove no competing path creates the represented self-attack trigger."
+    },
+    {
+      "capability_id": "trigger.event.normalized_self_attack",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_source_references.SourceReferenceCompilerTests.test_named_source_reference_normalization_mutant_is_killed",
+      "official_rule_ids": [
+        "508.1",
+        "508.1m",
+        "603.2",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Denying canonical named self normalization kills the independent supported-binding expectation."
     },
     {
       "capability_id": "trigger.event.normalized_self_attack",
