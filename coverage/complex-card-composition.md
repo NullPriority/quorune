@@ -2,7 +2,7 @@
 title: "Complex card composition benchmark"
 status: "generated"
 authoritative_source: "coverage/complex-card-composition.json"
-verified: "7346b9aae84ed75bc9a7445b539d720162c97d93a7a3c702701ecb548d2ffade"
+verified: "936f364b58f986c48de7188c2c7d450eb35758c7501c8693a691ec8359da1f22"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -42,11 +42,13 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | The Restoration of Eiganjo // Architect of Restoration | 200 | 27 | 7 | 6 | 6 | 7 | `blocked` |
 | Will Kenrith | 200 | 23 | 5 | 6 | 6 | 23 | `blocked` |
 | Cleric Class | 199 | 26 | 6 | 8 | 5 | 12 | `blocked` |
+| Tamiyo, Inquisitive Student // Tamiyo, Seasoned Scholar | 199 | 29 | 6 | 6 | 11 | 10 | `blocked` |
 | Ugin, Eye of the Storms | 199 | 39 | 5 | 5 | 11 | 3 | `blocked` |
 | Garruk Relentless // Garruk, the Veil-Cursed | 195 | 25 | 6 | 6 | 15 | 6 | `blocked` |
 | Invasion of Innistrad // Deluge of the Dead | 194 | 23 | 6 | 5 | 9 | 16 | `blocked` |
 | The Legend of Kyoshi // Avatar Kyoshi | 193 | 18 | 7 | 6 | 9 | 14 | `blocked` |
 | Devoted Grafkeeper // Departed Soulkeeper | 192 | 31 | 7 | 6 | 4 | 7 | `blocked` |
+| Kytheon, Hero of Akros // Gideon, Battle-Forged | 192 | 21 | 5 | 5 | 11 | 18 | `blocked` |
 | The Modern Age // Vector Glider | 191 | 26 | 7 | 5 | 6 | 6 | `blocked` |
 | Sorin of House Markov // Sorin, Ravenous Neonate | 190 | 23 | 4 | 7 | 10 | 19 | `blocked` |
 | Crystal Fragments // Summon: Alexander | 189 | 27 | 6 | 7 | 4 | 8 | `blocked` |
@@ -61,6 +63,4 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Grist, Voracious Larva // Grist, the Plague Swarm | 183 | 25 | 5 | 5 | 10 | 14 | `blocked` |
 | Invasion of Theros // Ephara, Ever-Sheltering | 183 | 22 | 6 | 4 | 5 | 18 | `blocked` |
 | Ob Nixilis, the Adversary | 183 | 35 | 5 | 5 | 5 | 7 | `blocked` |
-| Urza, Planeswalker | 183 | 29 | 5 | 6 | 8 | 11 | `blocked` |
-| Invasion of Zendikar // Awakened Skyclave | 181 | 21 | 5 | 5 | 6 | 18 | `blocked` |
 | Animate Dead | 110 | 13 | 4 | 3 | 2 | 5 | `blocked` |
