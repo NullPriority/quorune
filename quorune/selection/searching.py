@@ -11,6 +11,7 @@ from ..object_query import object_matches_query, object_query_result
 from ..replacement.immutable import FrozenMap, thaw_value
 from ..replacement_effects import ReplacementChoiceRequired
 from ..zone_transitions import ZoneTransitionOwner
+from ..library_search_model import FixedCountedLibrarySearchTemplate
 from .model import (
     SelectionContract,
     SelectionContinuation,
@@ -56,6 +57,14 @@ class HiddenSearchHost(Protocol):
 
 class HiddenSearchOwnerMixin:
     """Own hidden-zone search advertisement, validation, and completion."""
+
+    @staticmethod
+    def _validate_counted_search_effect(effect: Mapping[str, Any]) -> None:
+        if effect.get("schema_version") == 2:
+            try:
+                FixedCountedLibrarySearchTemplate.from_effect(effect)
+            except (ValueError, TypeError, KeyError) as exc:
+                raise GameRuleError("Counted library search instruction is malformed") from exc
 
     def _search_selection_continuation(
         self,
@@ -547,6 +556,7 @@ class HiddenSearchOwnerMixin:
                 instruction_pointer=instruction_pointer,
             )
             return
+        self._validate_counted_search_effect(effect)
         seat = str(effect.get("searching_player") or item.controller)
         self._require_seat(seat, in_game=True)
         options = self._semantic_search_options(seat, effect)
@@ -879,6 +889,28 @@ class HiddenSearchOwnerMixin:
                 owned_only=True,
             )
             selected_cards.append(card)
+        owner = ZoneTransitionOwner(self)
+        if effect.get("schema_version") == 2:
+            self._validate_counted_search_effect(effect)
+            if effect.get("shuffle_before_placement") is True:
+                if destination != "library" or position != "top" or len(selected_cards) > 1:
+                    raise GameRuleError("Counted search shuffle/placement changed")
+                object_ids = tuple(card.object_id for card in selected_cards)
+                owner.reveal_library_search_results(seat, object_ids, public=reveal)
+                owner.shuffle_library(seat, reason=f"{item.label} resolved", excluded_object_ids=object_ids)
+            elif len(selected_cards) > 1 and destination == "hand":
+                owner.reveal_library_search_results(seat, tuple(card.object_id for card in selected_cards), public=reveal)
+                moved = owner.move_cards_simultaneously(
+                    tuple((card.object_id, destination) for card in selected_cards),
+                    reason=f"{item.label} search", log=False,
+                    replacement_selections=replacement_selections,
+                )
+                if reveal:
+                    owner.reveal_library_search_results(
+                        seat, tuple(card.object_id for card in moved if card.zone == "hand"),
+                        public=True, expected_zone="hand",
+                    )
+                return moved
         if (
             len(selected_cards) > 1
             and destination == "battlefield"
@@ -1048,9 +1080,11 @@ class HiddenSearchOwnerMixin:
         ):
             raise GameRuleError("Malformed semantic search completion identity")
         selected = list(raw_selected)
-        if len(selected) != len(set(selected)) or len(selected) > 1:
+        counted = effect.get("schema_version") == 2 and effect.get("destination") == "hand"
+        maximum = effect.get("count", {}).get("maximum", 1) if counted else 1
+        if type(maximum) is not int or len(selected) != len(set(selected)) or len(selected) > maximum:
             raise GameRuleError(
-                "Replacement-resumed semantic search must select at most one card"
+                "Replacement-resumed semantic search changed its cardinality"
             )
         base_effect = {
             key: copy.deepcopy(value)
@@ -1061,6 +1095,7 @@ class HiddenSearchOwnerMixin:
                 _REPLACEMENT_SELECTIONS_FIELD,
             }
         }
+        self._validate_counted_search_effect(base_effect)
         seat = str(base_effect.get("searching_player") or item.controller)
         if actor != seat:
             raise GameRuleError("Semantic search completion actor changed")
@@ -1194,7 +1229,7 @@ class HiddenSearchOwnerMixin:
                 position=position,
             )
         except ReplacementChoiceRequired as required:
-            if destination != "hand" or len(values) > 1:
+            if destination != "hand" or len(values) > 1 and context.effect.get("schema_version") != 2:
                 raise
             from ..replacement_decisions import issue_replacement_order_choice
 

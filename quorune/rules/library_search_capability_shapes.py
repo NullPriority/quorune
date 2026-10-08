@@ -7,6 +7,11 @@ from ..compiler.library_search_templates import (
     FIXED_LIBRARY_SEARCH_MECHANIC_ID,
     FIXED_LIBRARY_SEARCH_TO_HAND_MECHANIC_ID,
 )
+from ..library_search_model import (
+    FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID,
+    FIXED_COUNTED_LIBRARY_SEARCH_MECHANIC_ID,
+    FixedCountedLibrarySearchTemplate,
+)
 from ..commander_pairing import (
     PARTNER_WITH_SEARCH_CAPABILITY_ID,
     PARTNER_WITH_SEARCH_MECHANIC_ID,
@@ -45,7 +50,26 @@ def fixed_library_search_covered_mechanics(
         covered.add(FIXED_LIBRARY_SEARCH_MECHANIC_ID)
     if FIXED_TYPE_TO_HAND_SEARCH_CAPABILITY_ID in capabilities:
         covered.add(FIXED_LIBRARY_SEARCH_TO_HAND_MECHANIC_ID)
+    if FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID in capabilities:
+        covered.add(FIXED_COUNTED_LIBRARY_SEARCH_MECHANIC_ID)
     return covered
+
+
+def fixed_counted_library_search_node_capabilities(
+    *, effects: Sequence[Mapping[str, object]],
+    target_schema: Mapping[str, object] | None,
+    mechanic_ids: Iterable[str],
+) -> tuple[str, ...]:
+    if (
+        FIXED_COUNTED_LIBRARY_SEARCH_MECHANIC_ID not in mechanic_ids
+        or target_schema is not None or len(effects) != 1
+    ):
+        return ()
+    try:
+        FixedCountedLibrarySearchTemplate.from_effect(effects[0])
+    except (ValueError, TypeError, KeyError):
+        return ()
+    return (FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID,)
 
 
 def _query(
@@ -95,6 +119,8 @@ def fixed_library_search_node_capabilities(
     """Recognize one compiler-owned fixed search-to-battlefield instruction."""
 
     mechanics = {str(value).casefold() for value in mechanic_ids}
+    if FIXED_COUNTED_LIBRARY_SEARCH_MECHANIC_ID in mechanics:
+        return fixed_counted_library_search_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
     if (
         FIXED_LIBRARY_SEARCH_MECHANIC_ID not in mechanics
         or target_schema is not None
@@ -270,6 +296,7 @@ __all__ = [
     "PARTNER_WITH_SEARCH_MECHANIC_ID",
     "fixed_library_search_covered_mechanics",
     "fixed_library_search_node_capabilities",
+    "fixed_counted_library_search_node_capabilities",
     "fixed_type_to_hand_search_node_capabilities",
     "partner_with_search_node_capabilities",
 ]

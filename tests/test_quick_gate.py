@@ -105,6 +105,13 @@ class QuickGatePlanTests(unittest.TestCase):
         self.assertIn("architecture-policy", names)
         self.assertIn("capability-evidence-declarations", names)
         self.assertIn("rules-selection-policy", names)
+        policy_step = next(
+            step for step in plan["steps"] if step.name == "reusable-piece-policy"
+        )
+        self.assertEqual(
+            ("scripts/update_reusable_piece_matrix.py", "--validate-policy"),
+            policy_step.command[-2:],
+        )
         self.assertIn("change-impact-contract", names)
         self.assertIn("mutation-patch-target-integrity", names)
         self.assertNotIn("generated-finalization", names)
@@ -113,6 +120,21 @@ class QuickGatePlanTests(unittest.TestCase):
         self.assertNotIn("affected-tests", names)
         self.assertEqual((), plan["test_modules"])
         self.assertTrue(plan["deferred_test_modules"])
+
+    def test_pre_corpus_search_change_checks_the_saga_residual_carrier(self):
+        plan = build_plan(
+            ("quorune/compiler/library_search_templates.py",),
+            phase="pre-corpus",
+        )
+        step = next(
+            step for step in plan["steps"]
+            if step.name == "search-saga-residual-carrier-contract"
+        )
+        self.assertEqual(
+            "test_counted_search_promotion_preserves_saga_reanimation_boundary",
+            step.command[-1],
+        )
+        self.assertEqual((), plan["test_modules"])
 
     def test_pre_corpus_target_carrier_sentinel_is_owned_and_bounded(self):
         plan = build_plan(

@@ -419,5 +419,61 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
         )
 
 
+class CountedSearchSagaCarrierTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        import tempfile
+        from pathlib import Path
+        from scripts.build_test_database import build_fixture_database
+        cls.temporary = tempfile.TemporaryDirectory()
+        directory = Path(cls.temporary.name)
+        fixture = directory / "empty.json"
+        fixture.write_text(
+            '{"schema_version": 1, "cards": [], "rulings": []}', encoding="utf-8",
+        )
+        path = directory / "empty-rulings.sqlite3"
+        build_fixture_database((fixture,), path)
+        cls.db = CardDatabase(path)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    def test_counted_search_promotion_preserves_saga_reanimation_boundary(self):
+        from dataclasses import replace
+        from high_risk_interaction_support import _record
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.capabilities import load_default_capability_registry
+        from quorune.semantics import SemanticRegistry
+
+        registry = load_default_capability_registry()
+        boundary = _record("reanimation-saga-boundary")
+        promoted = replace(
+            boundary,
+            oracle_text=boundary.oracle_text.replace(
+                "a card with the same name as that card", "a card",
+            ),
+        )
+        ir = compile_oracle_card(
+            promoted, capability_registry=registry, capability_profile="commander_review",
+        )
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        program = compile_best_available_card_program(
+            self.db, promoted, semantic_registry=SemanticRegistry(),
+            capability_registry=registry, capability_profile="commander_review",
+        )
+        binding = bind_card_program_runtime(
+            program, capability_registry=registry, profile="commander_review",
+        )
+        self.assertTrue(binding["strict_capability_ready"], binding)
+        self.assertTrue(binding["compatible_ready"], binding)
+        assert_high_risk_boundary_pairs(
+            self, (REANIMATION_RESIDUAL_BOUNDARY_PAIRS[0],), database=self.db,
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

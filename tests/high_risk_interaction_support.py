@@ -62,7 +62,10 @@ _WITNESSES = {
         "Sacrifice after III.)\n"
         "I — Target opponent reveals their hand. You choose a creature card "
         "from it. That player discards that card.\n"
-        "II — Search your library for a card, put that card into your hand, "
+        # The fixed search is supported. A dynamic name keeps this witness
+        # explicitly outside the represented chapter body contract.
+        "II — Search your library for a card with the same name as that card, "
+        "put that card into your hand, "
         "then shuffle. You lose 3 life.\n"
         "III — Put target creature card from a graveyard onto the battlefield "
         "under your control.",

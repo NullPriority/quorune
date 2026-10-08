@@ -7495,6 +7495,51 @@
       ],
       "interaction_order": 2,
       "assertion": "A constructed permanent keeps its exact intrinsic creature-type entry choice while an independently unsupported graveyard target restricted to the chosen type leaves the complete CardProgram unavailable at both strict and compatible admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_printed_multi_search_commander_replacements_persist_per_card",
+      "piece_ids": [
+        "capability.library.search.fixed_counted",
+        "capability.variant.commander.zone_return"
+      ],
+      "capability_ids": [
+        "library.search.fixed_counted",
+        "variant.commander.zone_return"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Ignite the Beacon chooses two printed Partner commanders, keeps every card in the library while independent commander replacements are pending, declines the first and accepts the second, persists pending choices, rejects a wrong principal atomically and replays from the cast."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_printed_multi_search_commander_replacements_persist_per_card",
+      "piece_ids": [
+        "capability.library.search.fixed_counted",
+        "capability.zone.change.destination_replacement"
+      ],
+      "capability_ids": [
+        "library.search.fixed_counted",
+        "zone.change.destination_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "The counted search supplies one simultaneous two-card hand transaction to the canonical destination-replacement owner. No result moves before the per-card decisions complete; the commander choices produce exactly one hand and one command-zone result with saved continuation and exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_printed_named_multi_search_moves_one_simultaneous_private_batch",
+      "piece_ids": [
+        "capability.effect.choice.optional_fixed",
+        "capability.library.search.fixed_counted"
+      ],
+      "capability_ids": [
+        "effect.choice.optional_fixed",
+        "library.search.fixed_counted"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Squadron Hawk casts and enters, advertises its optional printed search, accepts the controller's apply choice, filters by its literal printed name, rejects excess selections atomically and moves three disclosed results in one canonical hand batch with pre-action replay."
     }
   ]
 }

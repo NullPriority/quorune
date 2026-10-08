@@ -8,6 +8,14 @@ from typing import Any, Mapping
 
 from ..creature_subtypes import CREATURE_SUBTYPES
 from ..object_predicate import ObjectQuerySpec
+from ..replacement.immutable import FrozenMap
+from ..library_search_model import (
+    FIXED_COUNTED_LIBRARY_SEARCH_MECHANIC_ID,
+    FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID,
+    FixedCountedLibrarySearchTemplate,
+    counted_search_selector_is_closed,
+    search_selector,
+)
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 
 
@@ -42,6 +50,25 @@ _FIXED_SEARCH = re.compile(
     rf"(?:(?P<hand>into your hand)|onto the battlefield(?P<tapped> tapped)?), "
     rf"then shuffle\.$",
     re.IGNORECASE,
+)
+_COUNTED_START = (
+    rf"Search your library for (?P<optional>up to )?"
+    rf"(?P<count>an|{FIXED_COUNT_PATTERN}) "
+    r"(?:(?P<quality>.+?) )?card(?P<plural>s)?"
+    r"(?: named (?P<name>.+?))?"
+    r"(?: with mana value (?P<mv>[0-9]+)"
+    r"(?: (?P<comparison>or less|or greater))?)?, "
+)
+_COUNTED_REVEAL = r"(?P<reveal>reveal (?P<reveal_pronoun>it|that card|them|those cards), )?"
+_COUNTED_MOVE = re.compile(
+    _COUNTED_START + _COUNTED_REVEAL
+    + r"put (?P<pronoun>it|that card|them|those cards) "
+    r"(?P<destination>into your hand|into your graveyard|"
+    r"onto the battlefield(?: tapped)?), then shuffle\.", re.I,
+)
+_COUNTED_TOP = re.compile(
+    _COUNTED_START + _COUNTED_REVEAL
+    + r"then shuffle and put (?P<pronoun>it|that card) on top\.", re.I,
 )
 
 
@@ -185,14 +212,63 @@ def _search_query(
 
 
 def _selector(query: ObjectQuerySpec) -> dict[str, list[str]]:
-    fields = {
-        "types": query.types_all,
-        "types_any": query.types_any,
-        "subtypes_any": query.subtypes_any,
-        "supertypes": query.supertypes_all,
-        "colors_any": query.colors_any,
-    }
-    return {name: list(values) for name, values in fields.items() if values}
+    return search_selector(query)
+
+
+def fixed_counted_library_search_effect_template(
+    text: str,
+) -> FixedCountedLibrarySearchTemplate | None:
+    normalized = " ".join(text.strip().split())
+    match = _COUNTED_MOVE.fullmatch(normalized) or _COUNTED_TOP.fullmatch(normalized)
+    if match is None:
+        return None
+    count = fixed_number(match["count"])
+    singular = count == 1
+    pronouns = {"it", "that card"}
+    if (
+        not 1 <= count <= 10 or singular == bool(match["plural"])
+        or singular != (match["pronoun"].casefold() in pronouns)
+    ):
+        return None
+    if match["reveal_pronoun"] and singular != (match["reveal_pronoun"].casefold() in pronouns):
+        return None
+    top = match.re is _COUNTED_TOP
+    destination = "library_top" if top else {
+        "into your hand": "hand", "into your graveyard": "graveyard",
+        "onto the battlefield": "battlefield", "onto the battlefield tapped": "battlefield",
+    }[match["destination"].casefold()]
+    if count > 1 and destination != "hand":
+        return None
+    quality = match["quality"] or ""
+    query = (
+        _search_query(
+            quality, destination="battlefield" if destination == "battlefield" else "hand",
+        ) if quality else ObjectQuerySpec()
+    )
+    if query is None:
+        return None
+    selector: dict[str, Any] = _selector(query)
+    if match["name"] is not None:
+        name = match["name"].strip()
+        if (
+            not name or not name[0].isupper()
+            or any(value in name.casefold() for value in (" or ", "chosen", "same name", "this way"))
+        ):
+            return None
+        selector["names"] = [name]
+    if match["mv"] is not None:
+        comparison = match["comparison"].casefold() if match["comparison"] else None
+        key = {None: "equal", "or less": "maximum", "or greater": "minimum"}[comparison]
+        selector["mana_value"] = {key: int(match["mv"])}
+    try:
+        return FixedCountedLibrarySearchTemplate(
+            count=count, optional_count=bool(match["optional"]),
+            selector=FrozenMap(selector), destination=destination,
+            reveal=bool(match["reveal"]),
+            enters_tapped=not top and match["destination"].casefold().endswith("tapped"),
+        )
+    except ValueError:
+        return None
 
 
 @dataclass(frozen=True, slots=True)
@@ -246,12 +322,12 @@ class FixedLibrarySearchTemplate:
 
 def fixed_library_search_effect_template(
     text: str,
-) -> FixedLibrarySearchTemplate | None:
+) -> FixedLibrarySearchTemplate | FixedCountedLibrarySearchTemplate | None:
     """Lower one fixed restrictive library search directly to the battlefield."""
 
     match = _FIXED_SEARCH.fullmatch(" ".join(text.strip().split()))
     if match is None:
-        return None
+        return fixed_counted_library_search_effect_template(text)
     count = fixed_number(match.group("count"))
     if not 1 <= count <= 10:
         return None
@@ -268,7 +344,7 @@ def fixed_library_search_effect_template(
         return None
     destination = "hand" if match.group("hand") else "battlefield"
     if destination == "hand" and count != 1:
-        return None
+        return fixed_counted_library_search_effect_template(text)
     query = _search_query(
         match.group("quality"),
         destination=destination,
@@ -300,5 +376,10 @@ __all__ = [
     "FIXED_LIBRARY_SEARCH_MECHANIC_ID",
     "FIXED_LIBRARY_SEARCH_TO_HAND_MECHANIC_ID",
     "FixedLibrarySearchTemplate",
+    "FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID",
+    "FIXED_COUNTED_LIBRARY_SEARCH_MECHANIC_ID",
+    "FixedCountedLibrarySearchTemplate",
+    "counted_search_selector_is_closed",
+    "fixed_counted_library_search_effect_template",
     "fixed_library_search_effect_template",
 ]

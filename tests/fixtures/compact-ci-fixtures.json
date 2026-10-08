@@ -17,6 +17,7 @@
     "tests/fixtures/complex-activation-mana-cards.json",
     "tests/fixtures/composition-assurance-cards.json",
     "tests/fixtures/copied-self-entry-counter-cards.json",
+    "tests/fixtures/counted-library-search-cards.json",
     "tests/fixtures/counter-replacement-cards.json",
     "tests/fixtures/damage-result-cards.json",
     "tests/fixtures/devoid-characteristics-cards.json",

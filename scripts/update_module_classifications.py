@@ -80,6 +80,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/spell_history_transform_model.py",
         "quorune/static_component_scope.py",
         "quorune/leveler_bands.py",
+        "quorune/library_search_model.py",
         "quorune/modular.py",
         "quorune/renown.py",
         "quorune/model.py",
@@ -322,6 +323,8 @@ def _owner(relative: str, layer: str) -> str:
     if relative.startswith("quorune/semantic_choices/"):
         return "semantic_choices"
     if relative.startswith("quorune/selection/"):
+        return "search_target_and_choice"
+    if relative == "quorune/library_search_model.py":
         return "search_target_and_choice"
     if relative.startswith("quorune/effect_runtime/"):
         return "effect_runtime"
@@ -778,6 +781,7 @@ def build_classifications() -> dict[str, Any]:
                             "life_change.py",
                             "life_state.py",
                             "leveler_bands.py",
+                            "library_search_model.py",
                             "permanent_transform.py",
                             "mana_activation.py",
                             "mana_provenance.py",

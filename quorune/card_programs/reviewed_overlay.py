@@ -7,6 +7,10 @@ from typing import Any, Iterable
 from ..carddb import CardRecord
 from ..rules.event_subscriptions import FixedEventSubscriptionSet
 from ..semantics import SemanticProgram
+from ..library_search_model import (
+    FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID,
+    FixedCountedLibrarySearchTemplate,
+)
 
 
 _SOURCE_REF_EVENT_CONDITION = {
@@ -110,4 +114,84 @@ def shadowed_reviewed_multi_event_keys(
     return shadowed
 
 
-__all__ = ["shadowed_reviewed_multi_event_keys"]
+def shadowed_reviewed_counted_search_keys(
+    record: CardRecord,
+    generated_programs: Iterable[SemanticProgram],
+    reviewed_programs: Iterable[SemanticProgram],
+) -> set[str]:
+    """Prefer a current bound search only over the same reviewed instruction.
+
+    Persisted reviewed programs remain compatibility payloads. This precedence
+    applies while assembling current programs, with matching source hashes,
+    events, targets, costs and effect semantics rather than a card identity.
+    """
+    reviewed = {program.key: program for program in reviewed_programs}
+    shadowed = set()
+    for generated in generated_programs:
+        old = reviewed.get(generated.key)
+        if (
+            old is None or generated.trust_level != "trusted"
+            or old.trust_level != "trusted"
+            or FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID not in generated.capability_dependencies
+        ):
+            continue
+        if not generated.capability_closure or generated.capability_closure.get("trusted") is not True:
+            continue
+        if any(
+            getattr(generated, field) != getattr(old, field)
+            for field in (
+                "active_zone", "event", "event_condition", "target_schema",
+                "cost_schema", "handlers", "destination", "requires_arbiter",
+            )
+        ):
+            continue
+        if any(
+            not generated.provenance.get(field)
+            or generated.provenance[field] != old.provenance.get(field)
+            for field in ("source_oracle_hash", "source_rulings_hash")
+        ):
+            continue
+        if len(generated.effects) != len(old.effects):
+            continue
+        equal = True
+        for current, previous in zip(generated.effects, old.effects):
+            current = dict(current)
+            previous = dict(previous)
+            if current.get("op") != "search" or current.get("schema_version") != 2:
+                equal = False
+                break
+            try:
+                FixedCountedLibrarySearchTemplate.from_effect(current)
+            except (ValueError, TypeError, KeyError):
+                equal = False
+                break
+            current.pop("schema_version")
+            if current.get("shuffle_before_placement") is False:
+                current.pop("shuffle_before_placement")
+            if previous.get("searching_player") == "$controller":
+                previous.pop("searching_player")
+            if current != previous:
+                equal = False
+                break
+        if equal:
+            shadowed.add(old.key)
+    return shadowed
+
+
+def shadowed_reviewed_program_keys(
+    record: CardRecord,
+    generated_programs: Iterable[SemanticProgram],
+    reviewed_programs: Iterable[SemanticProgram],
+) -> set[str]:
+    """Apply shared current-program precedence in both assembly paths."""
+    generated = tuple(generated_programs)
+    reviewed = tuple(reviewed_programs)
+    return shadowed_reviewed_multi_event_keys(
+        record, generated, reviewed,
+    ) | shadowed_reviewed_counted_search_keys(record, generated, reviewed)
+
+
+__all__ = [
+    "shadowed_reviewed_multi_event_keys", "shadowed_reviewed_counted_search_keys",
+    "shadowed_reviewed_program_keys",
+]

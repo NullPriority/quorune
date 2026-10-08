@@ -134,6 +134,14 @@ def build_plan(
                     ),
                 ),
                 QuickStep(
+                    "reusable-piece-policy",
+                    (
+                        python,
+                        "scripts/update_reusable_piece_matrix.py",
+                        "--validate-policy",
+                    ),
+                ),
+                QuickStep(
                     "change-impact-contract",
                     (
                         python,
@@ -147,6 +155,13 @@ def build_plan(
                 ),
             )
         )
+        if "quorune/compiler/library_search_templates.py" in paths:
+            steps.append(QuickStep(
+                "search-saga-residual-carrier-contract",
+                (python, "-m", "unittest", "discover", "-s", "tests",
+                 "-p", "test_high_risk_interaction_assurance.py", "-k",
+                 "test_counted_search_promotion_preserves_saga_reanimation_boundary"),
+            ))
         if "test_fixed_counter_event_triggers" in selected_modules:
             steps.append(QuickStep(
                 "target-corpus-carrier-contract",

@@ -1088,16 +1088,70 @@ class ZoneTransitionOwner:
         )
         return moved
 
-    def shuffle_library(self, seat: str, *, reason: str = "shuffle") -> None:
+    def reveal_library_search_results(
+        self, seat: str, object_ids: Sequence[str], *, public: bool,
+        expected_zone: str = LIBRARY_ZONE,
+    ) -> None:
+        """Retain found-card knowledge before a search's shuffle or placement."""
+        self.host._require_seat(seat)
+        if type(public) is not bool or expected_zone not in {LIBRARY_ZONE, "hand"}:
+            raise GameRuleError("Search-result visibility is malformed")
+        if any(
+            type(object_id) is not str or object_id not in self.state.cards
+            for object_id in object_ids
+        ):
+            raise GameRuleError("Search-result identities are unavailable")
+        if len(object_ids) != len(set(object_ids)):
+            raise GameRuleError("Search-result identities must be unique")
+        cards = [self.state.cards[object_id] for object_id in object_ids]
+        if any(
+            card.owner != seat or card.zone != expected_zone
+            or card.object_id not in self.state.players[seat].zones[expected_zone]
+            for card in cards
+        ):
+            raise GameRuleError("Search-result visibility requires the expected owned zone")
+        viewers = set(self.host.seats) if public else {seat}
+        for card in cards:
+            card.known_to = sorted(set(card.known_to).union(viewers))
+            if public:
+                card.revealed_to = sorted(set(card.revealed_to).union(viewers))
+        if public and cards:
+            self.host._log(
+                seat, "library.search.reveal", f"{seat} revealed search results.",
+                {"objects": [card.ref for card in cards]}, importance=1,
+                changed_objects=list(object_ids), changed_players=[seat],
+            )
+
+    def shuffle_library(
+        self, seat: str, *, reason: str = "shuffle",
+        excluded_object_ids: Sequence[str] = (),
+    ) -> None:
         self.host._require_seat(seat)
         player = self.state.players[seat]
+        excluded = set(excluded_object_ids)
+        if len(excluded) != len(excluded_object_ids) or any(
+            object_id not in player.zones[LIBRARY_ZONE]
+            or self.state.cards[object_id].owner != seat
+            or self.state.cards[object_id].zone != LIBRARY_ZONE
+            for object_id in excluded
+        ):
+            raise GameRuleError("Shuffle exclusions must be unique current library objects")
         count = int(player.stats.get("shuffle_count", 0)) + 1
         player.stats["shuffle_count"] = count
         randomizer = random.Random(
             f"{self.state.config.seed}|{seat}|shuffle|{count}"
         )
-        randomizer.shuffle(player.zones[LIBRARY_ZONE])
-        for object_id in player.zones[LIBRARY_ZONE]:
+        shuffled = [
+            object_id for object_id in player.zones[LIBRARY_ZONE]
+            if object_id not in excluded
+        ]
+        randomizer.shuffle(shuffled)
+        remaining = iter(shuffled)
+        player.zones[LIBRARY_ZONE][:] = [
+            object_id if object_id in excluded else next(remaining)
+            for object_id in player.zones[LIBRARY_ZONE]
+        ]
+        for object_id in shuffled:
             card = self.state.cards[object_id]
             card.known_to = []
             card.revealed_to = []

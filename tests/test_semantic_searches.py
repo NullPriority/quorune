@@ -198,7 +198,10 @@ class SemanticPrivateSearchTests(unittest.TestCase):
             )
             runtime_row = command["semantics"]["programs_used"][0]
             self.assertEqual(64, len(runtime_row["runtime_binding_fingerprint"]))
-            self.assertTrue(runtime_row["legacy_compatibility"])
+            self.assertEqual(
+                "capability_closed", runtime_row["card_program_trust_basis"],
+            )
+            self.assertFalse(runtime_row["legacy_compatibility"])
             self.assertEqual([], runtime_row["runtime_component_ids"])
             replay = replay_record(record, self.db, verify=True)
             self.assertTrue(replay["ok"])

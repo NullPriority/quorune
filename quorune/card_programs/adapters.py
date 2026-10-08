@@ -25,7 +25,7 @@ from ..rules.capabilities import CapabilityRegistry
 from ..rules.capabilities import load_default_capability_registry
 from ..semantics import SemanticProgram, SemanticRegistry
 from .model import CardProgram, CardProgramError, CardProgramFace
-from .reviewed_overlay import shadowed_reviewed_multi_event_keys
+from .reviewed_overlay import shadowed_reviewed_program_keys
 
 
 SEMANTIC_PACK_COMPATIBILITY_COMPILER = "semantic-pack-v3-card-program-v2"
@@ -273,7 +273,7 @@ def compile_card_program(
                 reference_programs=tuple(programs.values()),
             )
         )
-        shadowed_reviewed_keys = shadowed_reviewed_multi_event_keys(
+        shadowed_reviewed_keys = shadowed_reviewed_program_keys(
             record,
             programs.values(),
             reviewed_programs,
