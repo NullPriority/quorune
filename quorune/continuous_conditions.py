@@ -19,6 +19,12 @@ class FixedPublicStateConditionError(ValueError):
 FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID = (
     "continuous.characteristics.fixed-public-state.v1"
 )
+FIXED_PUBLIC_STATE_GRANTED_ABILITY_HANDLER_ID = (
+    "continuous.characteristics.fixed-public-state.v2"
+)
+FIXED_PUBLIC_STATE_GRANTED_ABILITY_CAPABILITY_ID = (
+    "continuous.ability.fixed_public_state_grant"
+)
 FIXED_PUBLIC_STATE_INTERVENING_CONDITION_FIELD = (
     "fixed_public_state_condition"
 )

@@ -80,6 +80,8 @@ _PREDEFINED_CAPABILITIES = {
 _AUXILIARY_MECHANICS = frozenset(
     {
         "activated_ability",
+        "granted_activated_ability",
+        "granted_triggered_ability",
         "cr-601-casting-spells",
         "cr-603-handling-triggered-abilities",
         "exhaust",

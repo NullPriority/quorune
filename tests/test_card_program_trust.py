@@ -253,6 +253,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "continuous.fixed_query_keyword_grant",
                 "continuous.attached.fixed_characteristics",
                 "continuous.characteristics.fixed_public_state",
+                "continuous.ability.fixed_public_state_grant",
                 "continuous.characteristics.chosen_designation",
                 "continuous.characteristics.leveler_bands",
                 "continuous.fixed_query_power_toughness_anthem",

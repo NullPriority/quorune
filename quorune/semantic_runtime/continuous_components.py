@@ -1292,6 +1292,7 @@ def default_continuous_effect_component_registry(
     from .attached_continuous import AttachedFixedCharacteristicsHandler
     from .conditional_continuous import (
         FixedPublicStateCharacteristicsHandler,
+        FixedPublicStateGrantedAbilityHandler,
     )
 
     registry = ContinuousEffectComponentRegistry(
@@ -1305,6 +1306,7 @@ def default_continuous_effect_component_registry(
             FixedQueryCharacteristicGrantHandler(),
             LevelerBandsHandler(),
             FixedPublicStateCharacteristicsHandler(),
+            FixedPublicStateGrantedAbilityHandler(),
             AttachedFixedCharacteristicsHandler(),
         )
     )

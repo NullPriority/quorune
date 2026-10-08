@@ -286,7 +286,9 @@ and Retro-Mutation are explicit examples of those exclusions.
 
 The quoted-ability compiler also accepts one independently exact activated,
 fixed-output mana, or triggered body behind a closed live battlefield query.
-Both the query and attached forms emit a separately keyed inner CardProgram and
+The attached grammar includes enchanted lands, and fixed live-query subjects
+include controlled tokens, Foods, Treasures, Clues, and basic lands. Both the
+query and attached forms emit a separately keyed inner CardProgram and
 a typed layer-6 fragment; the runtime never reparses the quote. The fragment
 preserves only activation costs already committed by the canonical activation
 transaction, including fixed mana, tap or untap, source sacrifice, life
@@ -295,6 +297,14 @@ Multiple quotes, quoted static or declaration prose, named or external source
 references, hidden-zone recipients, and independently inexact bodies remain
 material residuals. Granted fixed source-counter removal costs also remain
 residual until the granted-ability fragment schema can carry that typed cost.
+
+`compiler/conditional_granted_ability_templates.py` wraps one independently
+exact quoted child with the existing closed public-state characteristic
+grammar. It retains fixed coupled keywords and power/toughness modifiers in
+the same condition. A distinct schema-v2 runtime handler emits the typed
+fragment through the shared layer-6 owner; the earlier characteristic-only
+schema remains strict. An unsupported condition, quoted child, nested static
+grant, multiple quotation, or material sibling prevents complete-card closure.
 
 Fixed static declaration composition reuses the declaration requirement and
 restriction parsers rather than adding a combat validator. A source-local line

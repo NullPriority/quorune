@@ -7540,6 +7540,33 @@
       ],
       "interaction_order": 2,
       "assertion": "Original Squadron Hawk casts and enters, advertises its optional printed search, accepts the controller's apply choice, filters by its literal printed name, rejects excess selections atomically and moves three disclosed results in one canonical hand batch with pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_printed_conditional_activation_ends_without_erasing_stack",
+      "piece_ids": ["capability.attachment.aura.simple_object", "capability.continuous.ability.fixed_public_state_grant"],
+      "capability_ids": ["attachment.aura.simple_object", "continuous.ability.fixed_public_state_grant"],
+      "interaction_order": 2,
+      "assertion": "A real Holy Strength cast enables the printed coupled modifier, Trample and activation; a responding Disenchant ends the conditional grant while its accepted activation resolves through the logical-source owner and replays from before the cast."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_printed_conditional_granted_death_trigger_uses_event_time_state",
+      "piece_ids": ["capability.continuous.ability.fixed_public_state_grant", "capability.trigger.placement.apnap"],
+      "capability_ids": ["continuous.ability.fixed_public_state_grant", "trigger.placement.apnap"],
+      "interaction_order": 2,
+      "assertion": "A real Murder of the last controlled Cleric preserves the Relic Vial grant present immediately before the death, queues its typed trigger, changes each opponent and the locked controller by their printed life amounts, then removes future availability and replays exactly."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_printed_conditional_granted_hand_choice_is_private_and_persists",
+      "piece_ids": ["capability.continuous.ability.fixed_public_state_grant", "capability.zone.move.fixed_private_hand_choice"],
+      "capability_ids": ["continuous.ability.fixed_public_state_grant", "zone.move.fixed_private_hand_choice"],
+      "interaction_order": 2,
+      "assertion": "A printed Hunting Grounds trigger from a real opposing cast offers only its controller private creature choices, rejects another principal without mutation, survives pending save/load, and places the selected original card through the canonical hand-entry owner with pre-action replay."
     }
   ]
 }

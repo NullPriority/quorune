@@ -4953,7 +4953,47 @@
             ],
             "measurement_status": "generated_probe",
             "measurement_probe_id": "fixed-counted-library-search-existing-owner-v1"
-          }
+          },
+        {
+          "bundle_id": "bundle:typed-layer-six-grant-carriers",
+          "member_family_ids": [
+            "continuous_layer:continuous-effect-layers-and-dependencies"
+          ],
+          "canonical_owner_ids": [
+            "capability:continuous.ability.fixed_public_state_grant",
+            "component:quorune.compiler.attached_granted_ability_nodes.attached_granted_ability_plan",
+            "component:quorune.semantic_runtime.conditional_continuous.FixedPublicStateGrantedAbilityHandler",
+            "component:quorune.card_programs.runtime.collect_card_program_continuous_effects"
+          ],
+          "source_contexts": [
+            "static"
+          ],
+          "normalized_literal_parameters": [
+            "closed-public-state-condition",
+            "fixed-attached-land-subject",
+            "fixed-noncreature-live-query",
+            "one-typed-quoted-ability",
+            "fixed-coupled-keywords-and-modifier"
+          ],
+          "shared_dependencies": [
+            "continuous.characteristics.fixed_public_state",
+            "continuous.attached.fixed_characteristics",
+            "continuous.ability.fixed_query_keyword_grant"
+          ],
+          "shared_grammar": "One independently exact quoted activated, fixed-output mana or triggered ability granted through an existing fixed attachment/live-query or a closed public-state condition; fixed coupled keywords and power/toughness retain the shared layer-six and layer-seven owners.",
+          "estimated_implementation_hours": 8,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Measure complete original CardPrograms and separately source-spanned grant nodes with strict runtime binding; prove current offer/trigger availability and retained stacked execution.",
+          "explicit_exclusions": [
+            "Nested static grants and multiple quoted abilities",
+            "Unrepresented inner costs, targets, quantities, conditions and unsupported whole-card siblings",
+            "Arbitrary ability-presence cycles, hidden predicates and runtime Oracle parsing",
+            "Card-identity behavior dispatch and forced gameplay trust"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "typed-layer-six-grant-carriers-existing-owner-v1"
+        }
       ],
       "approved_prerequisite_exceptions": [
         {
@@ -4964,29 +5004,20 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v262-fixed-counted-library-searches",
-      "compiler_version": "oracle-ir-v262",
-      "bundle_id": "bundle:fixed-counted-library-searches",
+      "transition_id": "oracle-ir-v263-typed-layer-six-grant-carriers",
+      "compiler_version": "oracle-ir-v263",
+      "bundle_id": "bundle:typed-layer-six-grant-carriers",
       "candidate_ids": [
-        "bundle:fixed-counted-library-searches"
+        "bundle:typed-layer-six-grant-carriers"
       ],
       "family_ids": [
-        "activated_effect:look-reveal",
-        "activated_effect:ordered-effect-composition",
-        "activated_effect:put-onto-battlefield",
-        "activated_effect:search",
-        "effect_clause:look-reveal",
-        "effect_clause:ordered-effect-composition",
-        "effect_clause:put-onto-battlefield",
-        "effect_clause:search",
-        "event_binding:intervening-if-and-reflexive-trigger-grammar",
-        "event_binding:normalized-event-binding"
+        "continuous_layer:continuous-effect-layers-and-dependencies"
       ],
       "capability_ids": [
-        "library.search.fixed_counted"
+        "continuous.ability.fixed_public_state_grant"
       ],
       "non_harvest_reason": null,
-      "measurement_id": "measurement:fixed-counted-library-searches"
+      "measurement_id": "measurement:typed-layer-six-grant-carriers"
     },
     "forecast_corrections": [
       {
