@@ -121,6 +121,21 @@ class QuickGatePlanTests(unittest.TestCase):
         self.assertEqual((), plan["test_modules"])
         self.assertTrue(plan["deferred_test_modules"])
 
+    def test_pre_corpus_search_change_checks_the_saga_residual_carrier(self):
+        plan = build_plan(
+            ("quorune/compiler/library_search_templates.py",),
+            phase="pre-corpus",
+        )
+        step = next(
+            step for step in plan["steps"]
+            if step.name == "search-saga-residual-carrier-contract"
+        )
+        self.assertEqual(
+            "test_counted_search_promotion_preserves_saga_reanimation_boundary",
+            step.command[-1],
+        )
+        self.assertEqual((), plan["test_modules"])
+
     def test_pre_corpus_target_carrier_sentinel_is_owned_and_bounded(self):
         plan = build_plan(
             ("quorune/compiler/tap_state_event_bindings.py",),

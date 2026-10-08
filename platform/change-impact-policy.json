@@ -1591,6 +1591,7 @@
         "test_card_program_trust",
         "test_counted_library_searches",
         "test_fixed_library_searches",
+        "test_high_risk_interaction_assurance",
         "test_rules_scheduler",
         "test_semantic_searches",
         "test_storm_rules",
