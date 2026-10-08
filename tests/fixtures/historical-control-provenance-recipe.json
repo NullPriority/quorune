@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "sanitized_historical_control_provenance_recipe",
+  "control_history_version": 1,
+  "engine_version": "0.9.0",
+  "runtime_trust_fingerprints": {
+    "capability_evidence_fingerprint": "090611d0163dd2eebad997e9698f3050a6266a23b87072efb2c4c71d58e70f67",
+    "capability_registry_fingerprint": "72b5e8aa4b949d0a636fe68a5dfbda0a67feb45de4d1819fd43c263a463c5094",
+    "runtime_component_registry_fingerprint": "eb908d16946ca66648dd83e6fcf9841c1d65f543a484a5df8b4d254faab3a64c",
+    "schema_version": 1,
+    "semantic_handler_registry_fingerprint": "02e4cba6685dd601a89f35f4ee6ba8afc62412b7a01c24c38ba8b5edee3c985c"
+  },
+  "archive_file_sha256": {
+    "manifest.json": "00187cbed527c3a90a7f8c76d9a7b9dfe72d152bf42a836b821b1f568b184c96",
+    "initial-checkpoint.json.gz": "928fd9b19392053c59088b9ccfaa938b7d6067f89a0fb1732d033cab0d4d4dfe",
+    "commands.jsonl": "6eaa40af8c1e575ba50aba2c101e8ba879564c66f44dae3c2514fba6af78ee15",
+    "semantics.json": "9e92480e9693acbfa41dfbe18e6b57a716781f90b42527a765ae5868c0c9029f"
+  },
+  "accepted_commands": 10,
+  "readable_checkpoint_preserves_hash": true,
+  "current_replay_disposition": "Runtime trust provenance mismatch in record manifest",
+  "historical_execution_claim": "explicitly incompatible; no current historical execution claim"
+}

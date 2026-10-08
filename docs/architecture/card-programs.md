@@ -47,6 +47,13 @@ commander replacement choices. A found top-card result remains in the library,
 is excluded from the shuffle, and is placed on top without changing its logical
 identity. The shuffle and placement expose no intermediate top-card view.
 
+Color-qualified permanent searches constrain both color and permanent card
+type. Subtype qualifiers use the shared pinned vocabulary; arbitrary adjectives
+never become subtype names. The existing selector codec cannot represent type
+exclusions. Nonland permanent searches therefore remain material residuals,
+and the codec and search owner reject exclusion-bearing descriptors rather than
+discarding their constraint.
+
 Dynamic counts and predicates, name alternatives, split destinations, searches
 of another player's library, and multiple top or graveyard results remain
 outside this contract. Unsupported siblings retain their source spans and

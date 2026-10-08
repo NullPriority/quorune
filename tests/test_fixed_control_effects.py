@@ -7,7 +7,7 @@ import tempfile
 from unittest.mock import patch
 import unittest
 
-from common import keep_all, load_assets, make_session, pass_current
+from common import advance_fixture_turn, keep_all, load_assets, make_session, pass_current
 from quorune.compiler.fixed_control_templates import fixed_control_effect_template
 from quorune.compiler.fixed_control_templates import fixed_control_set_effect_template
 from quorune.compiler.untap_step_templates import static_untap_step_handler
@@ -1179,6 +1179,97 @@ class FixedControlGameplayTests(unittest.TestCase):
         guards = [effect for effect in engine.state.continuous_effects if effect.duration.source_bound]
         self.assertEqual(1, len(guards))
         self.assertEqual(first.logical_object_id, guards[0].duration_source.logical_object_id)
+
+    def test_two_players_lose_in_one_stabilization_preserving_surviving_control_and_actions(self):
+        # CR 704.3 performs both losses in one event; CR 800.4a removes owned
+        # objects and control grants, then exiles objects with inactive custody.
+        # The later A grant keeps A's tapped source continuously controlled, so
+        # neither its acquisition history nor its dependent grant may reset.
+        from quorune.control_effects import source_continuity_snapshot
+        ordering_result = None
+        for ordering in (('B', 'C'), ('C', 'B')):
+            with self.subTest(departure_order=ordering):
+                session = self.session(80004001)
+                engine = session.engine
+                stable = self.card(session, 'Rubinia Soulsinger', 'A', tapped=True)
+                first_helm = self.card(session, 'Helm of Possession', 'B', tapped=True)
+                second = self.card(session, 'Rubinia Soulsinger', 'D', tapped=True)
+                second_helm = self.card(session, 'Helm of Possession', 'C', tapped=True)
+                retained = self.card(session, 'Llanowar Elves', 'D')
+                returned = self.card(session, 'Llanowar Elves', 'D')
+                exiled = self.card(session, 'Llanowar Elves', 'D', 'hand')
+                engine.move_card(exiled.object_id, 'battlefield', controller='C', log=False,
+                    reason='initial custody independent of ownership')
+
+                def granted(source, target):
+                    gain_control_of_refs(engine, actor=source.controller,
+                        object_refs=(target.ref,), controller=source.controller,
+                        duration=Duration.UNTIL_SOURCE_CONTROL_CHANGES_OR_UNTAPS,
+                        source=ResolutionEffectSource(stack_ref='resolved:' + source.ref,
+                            object_id=source.object_id, logical_object_id=source.logical_object_id,
+                            card_ref=source.ref), reason='independent source dependency fixture',
+                        history_snapshot=source_continuity_snapshot(source))
+
+                granted(second_helm, second)
+                granted(second, stable)
+                granted(first_helm, stable)
+                gain_control_of_refs(engine, actor='A', object_refs=(stable.ref,), controller='A',
+                    duration=Duration.ZONE_OBJECT,
+                    source=ResolutionEffectSource(stack_ref='resolved-final-A-custody'),
+                    reason='later surviving A grant')
+                granted(stable, retained)
+                granted(first_helm, returned)
+                granted(first_helm, exiled)
+                snapshot = {card.ref: (copy.deepcopy(card.source_continuity),
+                    card.acquired_control_timestamp, card.acquired_control_turn_count,
+                    card.logical_object_id) for card in (stable, retained)}
+                advance_fixture_turn(engine)
+                engine.state.players['A'].turns_begun = 2
+                engine.state.players['B'].life = engine.state.players['C'].life = 0
+                observed = []
+                eliminate = engine._eliminate_players
+
+                def depart(seats, *, reason):
+                    observed.append(tuple(seats))
+                    self.assertEqual({'B', 'C'}, set(seats))
+                    return eliminate(ordering, reason=reason)
+
+                with patch.object(engine, '_eliminate_players', side_effect=depart):
+                    self.priority(session)
+                self.assertEqual(1, len(observed))
+                self.assertEqual(['A', 'D'], engine.active_seats)
+                self.assertFalse(engine.state.game_over)
+                for card, controller in ((stable, 'A'), (second, 'D'), (retained, 'A'), (returned, 'D')):
+                    self.assertEqual('battlefield', card.zone)
+                    self.assertEqual(controller, card.controller)
+                    self.assertIn(card.object_id, engine.state.players[controller].zones['battlefield'])
+                self.assertEqual('outside', first_helm.zone)
+                self.assertEqual('outside', second_helm.zone)
+                self.assertEqual('exile', exiled.zone)
+                self.assertEqual('D', exiled.owner)
+                for card in (stable, retained):
+                    self.assertEqual(snapshot[card.ref], (card.source_continuity,
+                        card.acquired_control_timestamp, card.acquired_control_turn_count,
+                        card.logical_object_id))
+                result = tuple((card.ref, card.zone, card.controller,
+                    card.acquired_control_turn_count,
+                    card.source_continuity.snapshot().to_dict() if card.source_continuity else None)
+                    for card in (stable, second, retained, returned, exiled))
+                if ordering_result is None:
+                    ordering_result = result
+                else:
+                    self.assertEqual(ordering_result, result)
+                self.assertGreater(second.acquired_control_timestamp, snapshot[stable.ref][1])
+                self.assertGreater(returned.acquired_control_timestamp, snapshot[retained.ref][1])
+                actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+                mana = next(action for action in actions if action['id'].startswith(f'activate:{retained.ref}:'))
+                self.checkpoint(session)
+                before = engine.state.players['A'].mana_pool.get('G', 0)
+                accepted = session.act('pilot:A', {'action_id': mana['id']})
+                self.assertTrue(accepted.ok, accepted.summary)
+                self.assertEqual(before + 1, engine.state.players['A'].mana_pool.get('G', 0))
+                self.assertTrue(retained.tapped)
+                self.replay(session)
 
     def test_printed_rubinia_untapped_and_retapped_before_resolution_only_new_activation_applies(self):
         session = self.session(61120108)

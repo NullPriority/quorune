@@ -11,7 +11,7 @@ from ..object_query import object_matches_query, object_query_result
 from ..replacement.immutable import FrozenMap, thaw_value
 from ..replacement_effects import ReplacementChoiceRequired
 from ..zone_transitions import ZoneTransitionOwner
-from ..library_search_model import FixedCountedLibrarySearchTemplate
+from ..library_search_model import FixedCountedLibrarySearchTemplate, SEARCH_SUBTYPES
 from .model import (
     SelectionContract,
     SelectionContinuation,
@@ -367,6 +367,16 @@ class HiddenSearchOwnerMixin:
         card: CardInstance,
         selector: Mapping[str, Any],
     ) -> bool:
+        # This codec does not represent type exclusions. Reject a descriptor
+        # carrying one rather than silently executing a weaker predicate.
+        if "excluded_types" in selector:
+            raise GameRuleError("Semantic search selector type exclusions are unsupported")
+        subtypes_any = selector.get("subtypes_any", ())
+        if (
+            not isinstance(subtypes_any, (list, tuple))
+            or any(type(value) is not str or value not in SEARCH_SUBTYPES for value in subtypes_any)
+        ):
+            raise GameRuleError("Semantic search selector subtype is outside the closed vocabulary")
         record = self.card_record(card)
         if record is None:
             return False
@@ -463,6 +473,8 @@ class HiddenSearchOwnerMixin:
                 f"Unsupported semantic search zone {raw_zone!r}"
             )
         selector = dict(effect.get("selector") or {})
+        if "excluded_types" in selector:
+            raise GameRuleError("Semantic search selector type exclusions are unsupported")
         return [
             {
                 "id": self.state.cards[object_id].ref,
