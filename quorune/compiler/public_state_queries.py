@@ -921,6 +921,8 @@ def _controller_condition_query(subject: str) -> tuple[ObjectQuerySpec, bool] | 
     )
     if parsed is not None and parsed[0] == "source_controller":
         query = parsed[1]
+        if query.keywords_all or query.keywords_none:
+            return None
         # CR 109.2: a bare creature subtype includes noncreature Kindred
         # permanents. Only an explicit creature noun supplies that type gate.
         if (

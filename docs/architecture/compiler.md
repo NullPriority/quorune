@@ -238,6 +238,11 @@ divided or dynamic quantities, linked results, compound or conditional tails,
 other players' graveyards, non-owner-hand destinations, and unsupported
 characteristic dependencies remain source-spanned residuals.
 
+Public quantity conditions reject keyword-qualified existence queries before
+constructing their closed quantity descriptor. An unsupported condition keeps
+its source-spanned residual; a successful direct-target predicate does not
+imply that the narrower quantity owner can evaluate it.
+
 `compiler/public_state_queries.py`, consumed by
 `compiler/continuous_templates.py`, lowers fixed controlled permanent sets that
 gain supported keywords, or gain fixed power/toughness and supported keywords,
