@@ -134,9 +134,9 @@ class CostChoice:
             object.__setattr__(self, "predicate", FrozenMap(self.predicate))
             tap_cost = self.fixed_tap_cost()
             if tap_cost is None:
-                if self.count != 1 or self.card_type is not None:
+                if self.count > 10 or self.card_type is not None:
                     raise ValueError(
-                        "typed zone-change cost choices require one exact query"
+                        "typed zone-change cost choices require one exact query and fixed count"
                     )
                 cost = self.fixed_zone_change_cost()
                 if cost is None or self.zone != cost.origin_zone:
@@ -183,7 +183,7 @@ class CostChoice:
                 ),
                 "kind": ZONE_CHANGE_COST_KIND,
                 "operation": operation,
-                "count": 1,
+                "count": self.count,
                 "choice_field": contract[2],
                 "predicate": thaw_value(self.predicate),
             }

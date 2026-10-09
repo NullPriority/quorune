@@ -1878,6 +1878,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/counted_zone_costs.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/counter_keyword_activation_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -10761,5 +10776,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "f5c17a539d3c701638665a90c47055e34a88d9da8a84a168fb5a313cf01e010d"
+  "fingerprint": "04b9a2d529ca45f2726940c96700c583250757d59b872a06cdf1ce2929502e98"
 }

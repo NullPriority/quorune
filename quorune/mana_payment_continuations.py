@@ -75,16 +75,11 @@ def issue_mana_payment_replacement_choice(
         "stage_cast_lifecycle",
     }:
         resume_kind = "priority_action_cost"
-    elif event_kinds == ("zone.change",) and action == "activate":
-        event = required.batch.events[0]
-        origin = event.payload.get("origin")
-        destination = event.payload.get("destination")
-        object_ref = event.payload.get("object_ref")
+    elif event_kinds and all(kind == 'zone.change' for kind in event_kinds) and action == "activate":
+        event = required.batch.events[pending.event_index]
         if activation_zone_change_cost_reference(
-            response,
-            origin=origin,
-            destination=destination,
-            object_ref=object_ref,
+            response, origin=event.payload.get('origin'),
+            destination=event.payload.get('destination'), object_ref=event.payload.get('object_ref'),
         ) is None:
             raise ReplacementEffectError(
                 "Activation zone-change cost replacement is unsupported"
@@ -147,6 +142,7 @@ def execute_mana_choice_capable_priority_action(
     internal_fields = {
         "_mana_payment_id",
         "_mana_replacement_selections",
+        "_counted_cost_replacement_sequence",
     }
     if not trusted_resume and internal_fields.intersection(response):
         raise GameRuleError(

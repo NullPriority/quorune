@@ -466,6 +466,17 @@ nothing. Variable, hybrid, Phyrexian, snow, zero, restricted, and nonmana
 costs, reflexive `when you do` forms, nested or repeated choices, linked
 results, and multi-effect or independently inexact bodies remain residual.
 
+The selected-object activation cost compiler admits one homogeneous fixed
+count from two through ten for discard, owned-graveyard exile, controlled
+sacrifice or return. Count and the canonical singular predicate travel together;
+unknown plurals, random or linked costs, mixed selected groups and source-plus-
+selected costs remain residual. Counted costs use one simultaneous zone batch,
+with complete distinct-object validation before mutation. Server-stored
+replacement histories resume the entire unpaid cost and retain each selected
+object's choice history across pending save/load. One-object payloads retain
+their existing execution path. Mandatory counted casting costs remain outside
+this activation grammar.
+
 `compiler/fixed_effect_payment_templates.py` extends that same registered
 payment choice with an explicit v2 payload across spell, activated and existing
 normalized-trigger carriers. One fixed ordinary mana vector, fixed positive

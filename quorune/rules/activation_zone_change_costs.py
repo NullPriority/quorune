@@ -3,6 +3,7 @@ from __future__ import annotations
 """Closed continuation identity for activation zone-change costs."""
 
 from typing import Any, Mapping
+from ..replacement.model import ReplacementEffectError
 
 from ..additional_cost_vocabulary import FIXED_ZONE_CHANGE_COST_CONTRACTS
 
@@ -74,9 +75,9 @@ def activation_zone_change_cost_reference(
         or len(choices) != 1
         or not isinstance(choices[0], Mapping)
         or not isinstance(raw_refs, (list, tuple))
-        or len(raw_refs) != 1
-        or type(raw_refs[0]) is not str
-        or raw_refs[0] != object_ref
+        or any(type(ref) is not str for ref in raw_refs)
+        or len(set(raw_refs)) != len(raw_refs)
+        or object_ref not in raw_refs
     ):
         return None
     choice = choices[0]
@@ -90,13 +91,39 @@ def activation_zone_change_cost_reference(
         or contract[1] != destination
         or choice.get("z") != origin
         or type(choice.get("n")) is not int
-        or choice.get("n") != 1
+        or not 1 <= choice.get("n") <= 10
+        or len(raw_refs) != choice['n']
         or not isinstance(choice.get("q"), Mapping)
         or not isinstance(legal_refs, (list, tuple))
-        or object_ref not in legal_refs
+        or any(ref not in legal_refs for ref in raw_refs)
     ):
         return None
     return object_ref
+
+
+def counted_activation_replacement_selections(response: Mapping[str, Any], object_refs: tuple[str, ...]) -> tuple[Any, ...]:
+    """Read one chronological, server-authored counted-cost choice sequence."""
+    sequence = response.get('_counted_cost_replacement_sequence', ())
+    if not isinstance(sequence, (list, tuple)):
+        raise ReplacementEffectError('Counted activation replacement sequence is malformed')
+    selections = []
+    by_ref = set(object_refs)
+    for row in sequence:
+        if not isinstance(row, Mapping) or set(row) != {'object_ref', 'selection'} or type(row['object_ref']) is not str or row['object_ref'] not in by_ref:
+            raise ReplacementEffectError('Counted activation replacement object is malformed')
+        selection = row['selection']
+        if type(selection) is str and selection:
+            selections.append(selection)
+        elif isinstance(selection, Mapping) and set(selection) == {'effect_id', 'event_id'} and type(selection['effect_id']) is str and selection['effect_id']:
+            event_id = selection['event_id']
+            if type(event_id) is not str or not event_id.startswith('zone.change:') or not event_id.endswith(':' + row['object_ref']):
+                raise ReplacementEffectError('Counted activation replacement event is malformed')
+            # Batch IDs advance after issuing choices. The zone owner recreates
+            # that prefix from the current event/timestamp sequences.
+            selections.append({'effect_id': selection['effect_id'], 'object_ref': row['object_ref']})
+        else:
+            raise ReplacementEffectError('Counted activation replacement selection is malformed')
+    return tuple(selections)
 
 
 __all__ = ["activation_zone_change_cost_reference"]

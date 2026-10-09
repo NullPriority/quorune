@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Closed fixed single-object zone-change costs for activated abilities."""
+"""Closed fixed homogeneous zone-change costs for activated abilities."""
 
 from dataclasses import replace
 import re
@@ -23,6 +23,9 @@ _ANOTHER_SACRIFICE = re.compile(
     r"^sacrifice another (?P<quality>[A-Za-z][A-Za-z -]*)$",
     re.IGNORECASE,
 )
+_COUNTED_OTHER_SACRIFICE = re.compile(
+    r'^sacrifice (?P<count>two|three|four|five|six|seven|eight|nine|ten|[2-9]|10) other (?P<quality>[A-Za-z][A-Za-z -]*)$', re.I,
+)
 
 
 def _activation_cost_clause(
@@ -35,6 +38,9 @@ def _activation_cost_clause(
         clause = re.sub(
             r"\s+you control$", "", clause, flags=re.IGNORECASE
         )
+    counted_other = _COUNTED_OTHER_SACRIFICE.fullmatch(clause)
+    if counted_other is not None:
+        return f"Sacrifice {counted_other['count']} {counted_other['quality']}", True
     match = _ANOTHER_SACRIFICE.fullmatch(clause)
     if match is None:
         return clause, False
@@ -55,9 +61,9 @@ def _zone_change_descriptor(cost_text: str) -> dict[str, object] | None:
         return {
             "operation": SACRIFICE_ONE_COST,
             "predicate": dict(sacrifice.descriptor["predicate"]),
-            "another": another,
+            "another": another, "count": 1,
         }
-    template = fixed_zone_change_additional_cost_template(clause)
+    template = fixed_zone_change_additional_cost_template(clause, allow_counted=True)
     if template is not None:
         return {**dict(template.descriptor), "another": another}
     return None
@@ -70,7 +76,6 @@ def fixed_activated_zone_change_cost(
 
     if (
         ability.mana_ability
-        or ability.complex_symbols
         or len(ability.choices) > 1
         or ability.discard_source
         or ability.sacrifice_source
@@ -81,7 +86,6 @@ def fixed_activated_zone_change_cost(
     if legacy_choice is not None:
         if (
             legacy_choice.predicate is not None
-            or legacy_choice.count != 1
             or ability.uncompiled_costs
         ):
             return ability
@@ -103,6 +107,7 @@ def fixed_activated_zone_change_cost(
     another = descriptor.get("another") is True
     contract = FIXED_ZONE_CHANGE_COST_CONTRACTS.get(operation)
     predicate = descriptor.get("predicate")
+    count = descriptor.get('count', 1)
     if contract is None or not isinstance(predicate, dict):
         return ability
     if legacy_choice is not None and (
@@ -113,6 +118,7 @@ def fixed_activated_zone_change_cost(
             SACRIFICE_ONE_COST: "sacrifice",
         }.get(operation)
         or legacy_choice.zone != contract[0]
+        or legacy_choice.count != count
     ):
         return ability
     return replace(
@@ -120,6 +126,7 @@ def fixed_activated_zone_change_cost(
         choices=(
             CostChoice(
                 kind=operation,
+                count=count,
                 zone=contract[0],
                 another=another,
                 predicate=FrozenMap(predicate),

@@ -260,6 +260,7 @@ class SourceMaintenanceActionTests(unittest.TestCase):
         path = Path(cls.temporary.name) / 'maintenance.sqlite3'
         build_fixture_database([
             ROOT / 'tests/fixtures/fixed-resolution-payment-cards.json',
+            ROOT / 'tests/fixtures/scryfall-exact-lists.json',
             ROOT / 'tests/fixtures/source-maintenance-cards.json',
         ], path)
         cls.db = CardDatabase(path)

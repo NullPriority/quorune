@@ -14,6 +14,8 @@ from ..combat_entry_activations import (
     FIXED_COMBAT_RETURN_CONTEXT,
     FIXED_UNBLOCKED_ATTACKER_RETURN_COST_KIND,
 )
+from ..errors import GameRuleError
+from ..zone_trigger_events import cost_transition_kind
 
 
 FIXED_TAP_ACTIVATION_COST_KIND = "tap"
@@ -46,6 +48,45 @@ class ActivationCostHost(Protocol):
         details: dict[str, Any] | None = None,
         **kwargs: Any,
     ) -> Any: ...
+
+    def _resolve_object(self, seat: str, ref: str, **kwargs: Any) -> Any: ...
+
+    def _move_cards_simultaneously(self, changes: Any, **kwargs: Any) -> Any: ...
+
+
+def pay_counted_zone_change_activation_cost(
+    host: ActivationCostHost, *, actor: str, source: Any, choice: Any,
+    response: Mapping[str, Any],
+) -> list[str]:
+    """Validate a complete fixed cost, then commit one simultaneous zone batch."""
+    cost = choice.fixed_zone_change_cost()
+    raw = response.get('cost_cards') or response.get('cost_objects') or []
+    if (
+        cost is None or cost.count <= 1 or not isinstance(raw, (list, tuple))
+        or len(raw) != cost.count or any(type(ref) is not str for ref in raw)
+        or len(set(raw)) != len(raw)
+    ):
+        raise GameRuleError('Activation requires its complete distinct selected cost')
+    legal = activation_choice_candidates(host, actor, source, choice)
+    if any(ref not in legal for ref in raw):
+        raise GameRuleError('Activation cost object is stale or ineligible')
+    cards = tuple(host._resolve_object(
+        actor, ref, zones={cost.origin_zone},
+        controlled_only=cost.origin_zone == 'battlefield',
+        owned_only=cost.origin_zone != 'battlefield',
+    ) for ref in raw)
+    from .activation_zone_change_costs import counted_activation_replacement_selections
+    raw_selections = counted_activation_replacement_selections(response, tuple(card.ref for card in cards))
+    selections = tuple(
+        {'effect_id': value['effect_id'], 'event_id': f"zone.change:{host.state.revision}:{host.state.event_sequence + 1}:{value['object_ref']}"}
+        if isinstance(value, Mapping) else value for value in raw_selections
+    )
+    host._move_cards_simultaneously(
+        tuple((card.object_id, cost.destination_zone) for card in cards),
+        reason='activated ability cost', replacement_selections=tuple(selections),
+        transition_kinds={card.object_id: cost_transition_kind(cost.log_kind) for card in cards},
+    )
+    return [card.object_id for card in cards]
 
 
 @dataclass(frozen=True, slots=True)

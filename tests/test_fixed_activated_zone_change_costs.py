@@ -333,7 +333,7 @@ class FixedActivatedZoneChangeCostCompilerTests(unittest.TestCase):
     def test_zone_change_cost_grammar_rejects_unbounded_variants(self):
         unsupported = (
             "Sacrifice any number of Goblins",
-            "Sacrifice two Goblins",
+            "Sacrifice eleven Goblins",
             "Exile a card from each graveyard",
             "Sacrifice a Goblin and an artifact",
             "Sacrifice another creature or a Treasure",
@@ -384,7 +384,7 @@ class FixedActivatedZoneChangeCostCompilerTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "one exact query"):
             CostChoice(
                 kind="sacrifice_one",
-                count=2,
+                count=11,
                 predicate=predicate,
             )
         graveyard_predicate = FrozenMap(

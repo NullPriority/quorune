@@ -4740,6 +4740,43 @@
           "measurement_probe_id": "stack-controller-payment-existing-owner-v1"
         },
         {
+          "bundle_id": "bundle:fixed-counted-activation-zone-cost",
+          "member_family_ids": [
+            "activated_cost:complete-alternate-additional-cost-grammar",
+            "activated_cost:restricted-payment-predicates",
+            "effect_clause:unrepresented-activation-cost-variant"
+          ],
+          "canonical_owner_ids": [
+            "capability:activation.selected_zone_change.fixed",
+            "component:quorune.compiler.counted_zone_costs.fixed_counted_zone_change_cost_clause",
+            "component:quorune.rules.activation_costs.pay_counted_zone_change_activation_cost"
+          ],
+          "source_contexts": [
+            "activated"
+          ],
+          "normalized_literal_parameters": [
+            "fixed-count-two-through-ten",
+            "one-current-canonical-quality",
+            "complete-distinct-cost-set"
+          ],
+          "shared_dependencies": [
+            "activation.selected_zone_change.fixed",
+            "zone.change.destination_replacement"
+          ],
+          "shared_grammar": "One fixed homogeneous selected-object discard, controlled sacrifice or return, or owned-graveyard exile activation cost through the existing complete payment, simultaneous zone and replacement owners.",
+          "estimated_implementation_hours": 4,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Retain a measured counted-cost component inside a multi-mechanic delivery batch whose final distinct net whole-card gain meets the delivery floor.",
+          "explicit_exclusions": [
+            "Random, variable, named, linked or mixed costs",
+            "Multiple selected groups or source-plus-selected zone costs",
+            "Mandatory counted casting costs and independently unsupported consequences or siblings"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-counted-activation-zone-cost-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:fixed-source-maintenance",
           "member_family_ids": [
             "event_binding:intervening-if-and-reflexive-trigger-grammar",
