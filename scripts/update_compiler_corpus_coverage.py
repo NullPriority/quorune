@@ -11,14 +11,17 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from quorune.card_programs.commands import execute_card_operation
-from quorune.compiler.corpus_reporting import execute_oracle_operation
+from quorune.carddb import CardDatabase
+from quorune.card_programs.adapters import _compile_best_available_card_program_from_ir
+from quorune.card_programs.commands import _CardProgramCoverageCollector
+from quorune.compiler.corpus_reporting import _OracleCoverageCollector
 from quorune.compiler.target_effect_corpus_assurance import (
     TargetEffectAssuranceError,
     validate_target_effect_assurance,
 )
-from quorune.oracle_ir import ORACLE_COMPILER_VERSION
+from quorune.oracle_ir import ORACLE_COMPILER_VERSION, compile_oracle_card
 from quorune.rules.capabilities import load_default_capability_registry
+from quorune.semantics import SemanticRegistry
 from quorune.util import stable_json
 from scripts.validate_python_runtime import require_supported_python
 
@@ -38,30 +41,36 @@ class CompilerCorpusCoverageError(ValueError):
 
 
 def _generate(database: Path) -> dict[str, dict[str, Any]]:
-    return {
-        "oracle_full": execute_oracle_operation(
-            "coverage",
-            db_path=database,
-            capability_profile="commander_review",
-        ),
-        "oracle_commander": execute_oracle_operation(
-            "coverage",
-            db_path=database,
-            commander_legal_only=True,
-            capability_profile="commander_review",
-        ),
-        "program_full": execute_card_operation(
-            "coverage",
-            db_path=database,
-            profile="commander_review",
-        ),
-        "program_commander": execute_card_operation(
-            "coverage",
-            db_path=database,
-            profile="commander_review",
-            commander_legal_only=True,
-        ),
-    }
+    capabilities = load_default_capability_registry()
+    semantics = SemanticRegistry()
+    oracle = {scope: _OracleCoverageCollector(capability_registry=capabilities,
+        capability_profile="commander_review", residual_limit=20) for scope in (False, True)}
+    programs = {scope: _CardProgramCoverageCollector(capabilities, "commander_review")
+                for scope in (False, True)}
+    with CardDatabase(database) as db:
+        commander_ids = {record.oracle_id for record in db.iter_cards(commander_legal_only=True)}
+        for record in db.iter_cards():
+            scopes = (False, True) if record.oracle_id in commander_ids else (False,)
+            ir = compile_oracle_card(record, capability_registry=capabilities,
+                                     capability_profile="commander_review")
+            for scope in scopes:
+                oracle[scope].observe(record, ir)
+            try:
+                program = _compile_best_available_card_program_from_ir(db, record, ir,
+                    semantic_registry=semantics, capability_registry=capabilities,
+                    capability_profile="commander_review")
+            except (KeyError, ValueError) as exc:
+                for scope in scopes:
+                    programs[scope].observe(record, error=exc)
+            else:
+                for scope in scopes:
+                    programs[scope].observe(record, program)
+        return {
+            "oracle_full": oracle[False].report(db, commander_legal_only=False),
+            "oracle_commander": oracle[True].report(db, commander_legal_only=True),
+            "program_full": programs[False].report(db, commander_legal_only=False, limit=None),
+            "program_commander": programs[True].report(db, commander_legal_only=True, limit=None),
+        }
 
 
 def _load() -> dict[str, dict[str, Any]]:

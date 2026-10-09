@@ -13,6 +13,67 @@ The repository uses narrow, opt-in local feedback and exact-head public
 certification. GitHub Actions is the ordinary broad-test and merge authority.
 The workflow never requires a visible browser.
 
+## Reducing development time
+
+Use successful exact-head run, job, step, and module timing records to identify
+the elapsed critical path before changing the pipeline. Measure queue, setup,
+generation, and tests separately; overlapping jobs do not add to elapsed time,
+and workflow timestamps do not measure active development hours. Preserve the
+observation locally and compare the same workload after a change.
+
+Prefer removing repeated deterministic computation while retaining its inputs,
+outputs, and validation contract. Implementation-component validation, for
+example, reuses parsed export names only for identical current source text; it
+still rereads the file and performs capability and evidence checks. Verify
+output parity and edited, missing, malformed, and unreadable input boundaries
+before relying on an optimization. Keep exact-source certification, complete
+test inventory, and the checked concurrency envelope intact.
+
+Whole-program cohort probes lazily construct one built-in semantic registry
+per measurement and reuse it for read-only compilation of that measurement's
+cards. Separate measurements construct fresh registries, and probes with no
+whole-program candidates avoid that setup. Compilation and strict binding
+still run independently for every original complete card.
+The extracted controller-program measurement uses the same invocation scope
+and keeps unsupported sibling nodes outside complete-card closure.
+
+The source-pronoun damage-trigger probe applies its existing grammar exclusion
+before compiling the card, avoiding compilation for candidates that the same
+predicate would reject afterward. Every admitted candidate still goes through
+the original-card compiler and exact-node checks.
+The homogeneous target-set probe similarly skips compilation only when the
+original card and all faces lack the plural-target phrase required by every
+admitted production. Counts, trigger and activation contexts, and whitespace
+normalization retain the existing compiler and exact-node checks.
+
+Capability-evidence validation similarly takes one defensive registry snapshot
+per invocation rather than serializing the same capability for each declaration.
+Every declaration, required evidence class, supported profile, registry identity,
+and evidence fingerprint is still checked.
+
+The corpus owner compiles one local IR and CardProgram per full-corpus record,
+then feeds its full and Commander coverage views through their canonical
+counters. Commander membership uses the database's existing filter, not a second
+scope classifier. Standalone coverage commands retain their interface and the
+same counters. Complete report parity, construction-failure scope and the
+compiler-input identity check remain required before publishing this change.
+
+The compiler-identity sentinel reads immutable base Python sources through one
+validated `git cat-file --batch` response, shared by import-closure traversal
+and version-literal checks. It retains the same source paths and blob identity
+comparison, including removed imports, instead of starting Git for each module.
+
+Architecture capsule generation reads and parses the current test import
+inventory once per report, then applies each subsystem's unchanged import
+matching rule to that snapshot. Later reports reread the files, so edits and
+deletions cannot reuse an older test inventory.
+
+Use the existing duration-driven shard rebalance only when module timings show
+a scheduling bottleneck. Simplifying labels or metadata is useful when it
+removes measured rework, but it must preserve the source and risk evidence
+those fields carry. Finish one measured improvement before combining unrelated
+changes so its payoff and regressions remain attributable.
+
 ## Two development slots
 
 Keep at most two substantive branches active:
@@ -324,6 +385,15 @@ The cloud job publishes and restores this safe owner's content-keyed receipt
 across commits just like the other reusable owners. A generated-output-only
 follow-up therefore reuses the source checkpoint's cohort measurement instead
 of repeating the database-backed probe.
+During one selection invocation, fingerprint validation indexes the current
+frontier's blocker and residual family references once. It hashes each relevant
+card projection once while preserving the existing canonical payload, sorting
+and fingerprint identity. A later invocation rebuilds that index from current
+inputs; stale measurement rejection still compares the full declared cohort.
+Query-characteristic probes also reject lines lacking their required `for each`,
+`as long as`, or `equal to` grammar marker before constructing source-specific
+regular expressions. The original named parser, unsupported grammar boundaries
+and whole-card binding still decide every retained candidate.
 The rules-scheduler owner also maintains
 `coverage/harvest-outcome-history.json`. Existing historical rows retain their
 immutable Git provenance, while new semantic transitions use base and head
@@ -344,6 +414,12 @@ receipts plus the transition-measurement receipt are content identities with no
 feature-commit field. They survive squash, so review, merge, and the next
 selector pass require neither a merge-commit association nor a bookkeeping
 follow-up.
+When a feature revises an unpublished non-harvest proposal, the history owner
+authenticates its prior receipt against the committed source checkpoint and
+walks its unpublished chain back to durable main. It supersedes only that
+authenticated chain before materializing the revised outcome. Landed rows,
+unlinked rows, changed support, malformed main history, and a missing or stale
+checkpoint cannot be excused by supersession; their existing checks remain.
 If no implementation-eligible cohort exists, the same selector may choose one
 `cohort_measurement` task. That task pins the corpus filter, owner hypothesis,
 grammar boundary, exclusions, cards/residuals to inspect, probe effort, and
@@ -618,6 +694,22 @@ as pushes.
 
 ## Pull-request description gate
 
+Before change-impact planning launches a matrix, `PR / Plan` also runs the
+existing compiler-corpus freshness check. A source checkpoint with an obsolete
+compiler identity fails there with the same diagnostic while its independent
+cloud generation proceeds. Commit the generated bundle to resume normal
+exact-head certification. The generated job still performs the complete
+finalizer check; this early failure neither grants a receipt nor changes
+test selection, required jobs, or merge authority.
+Planning also compares the architecture report's existing evaluated-source
+fingerprint with the current canonical tracked-source blobs. This read-only
+check rejects source checkpoints whose compiler identity is current but whose
+generated source receipt is stale, before matrices compete with cloud
+generation. It does not rebuild or certify the full report; the final generated
+job retains its complete freshness and policy checks.
+These exact read-only planning checks are the early exceptions to owner-check
+coordination; other writer and freshness commands remain finalizer-owned.
+
 `PR / Plan` runs `scripts/validate_pr_body.py` before change-impact planning or
 any expensive matrix job. It reads the pull-request event payload without a
 GitHub API call and fails deterministically when the tracked template is still
@@ -833,6 +925,12 @@ and uses the sequential backend on both operating systems. The complete
 Windows and nightly OS partitions therefore execute every discovered test
 module exactly once per platform. `windows-compat` remains an intentionally
 overlapping focused suite and never runs alongside the full Windows matrix.
+The launch order places generated validation first so its measured long
+sequential workload overlaps functional shards instead of starting in the last
+wave. The remaining launch order uses complete observed cross-platform job
+durations to start the longest functional shards earlier. Worker counts, matrix
+limits, module assignments and exact collections
+remain governed by the same policies.
 
 Keep functional shard weights close enough to use parallel capacity. Semantic
 overlays remain coherent by subsystem; primary execution shards may mix those

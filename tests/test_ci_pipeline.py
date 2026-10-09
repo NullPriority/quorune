@@ -57,6 +57,19 @@ from scripts.verify_main_broad_ci import (
 
 
 class CiPipelineTests(unittest.TestCase):
+    def test_stale_corpus_fails_plan_before_matrix_without_weakening_final_checks(self):
+        workflow = (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
+        plan = workflow.split("\n  plan:\n", 1)[1].split("\n  python:\n", 1)[0]
+        self.assertIn("run: python scripts/update_compiler_corpus_coverage.py --check", plan)
+        self.assertLess(plan.index("Require current compiler corpus"), plan.index("Classify exact changed-file impact"))
+        self.assertLess(plan.index("Require current compiler corpus"), plan.index("Classify completed main regression state"))
+        self.assertIn("run: python scripts/update_architecture_audit.py --check-source-readiness", plan)
+        self.assertLess(plan.index("Require current generated source"), plan.index("Classify exact changed-file impact"))
+        self.assertLess(plan.index("Require current generated source"), plan.index("Classify completed main regression state"))
+        self.assertIn("run: python scripts/finalize_generated.py --check", workflow)
+        self.assertIn("Create exact-head certification receipt", workflow)
+        self.assertIn("run: python scripts/verify_ci_needs.py", workflow)
+
     @staticmethod
     def _windows_result(suite: str, *, tests_run: int = 3) -> dict:
         modules, exact_count, fingerprint = suite_expectation(suite)

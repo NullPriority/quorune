@@ -56,6 +56,12 @@ Every accepted command records:
 - before-state and after-state hashes; and
 - the replay-relevant semantic/capability fingerprints used by the transition.
 
+The record-trust owner loads the current capability registry when an action actually
+resolves a semantic program and needs its binding-provenance row. Actions with
+no such resolution retain their existing command and decision records without
+constructing an unused binding registry. A later semantic resolution validates
+fresh registry and evidence inputs; no action-level snapshot is retained.
+
 The manifest pins engine, card-data, rules, compiler, CardProgram, capability,
 semantic-handler, runtime-component, profile, and record-format identity as
 applicable. Loading rejects internal disagreement before replay begins.

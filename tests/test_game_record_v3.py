@@ -34,6 +34,18 @@ class GameRecordV3Tests(unittest.TestCase):
     def tearDownClass(cls):
         cls.db.close()
 
+    def test_nonsemantic_action_records_without_loading_unused_binding_registry(self):
+        session = make_session(self.db, self.mishra, self.zimone, players=2,
+                               seed=31001, auto_pass_empty=False)
+        principal = session.pending_principals()[0]
+        session.packet(principal, full=True)
+        with patch("quorune.record_trust.load_default_capability_registry",
+                   side_effect=AssertionError("unused semantic provenance input")):
+            result = session.act(principal, {"action_id":"keep"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(1, len(session.commands))
+        self.assertNotIn("programs_used", session.commands[0])
+
     def test_archived_control_provenance_is_rejected_before_historical_commands(self):
         # The sanitized recipe is extracted from a genuine pre-repair record,
         # independently inspected for readable v1 payloads and hash preservation.

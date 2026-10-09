@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from copy import deepcopy
+from dataclasses import replace
 import gzip
 import hashlib
 import json
@@ -118,6 +119,244 @@ from scripts.work_selection_cohort_measurements import (
 
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+class BundleFingerprintBatchTests(unittest.TestCase):
+    def fixture(self):
+        import quorune.work_selection_bundles as owner
+
+        def ability(family, *, residual=False):
+            return {
+                "blockers": {"canonical_family_ids": [] if residual else [family]},
+                "residuals": [{"family_ids": [family]}] if residual else [],
+            }
+        cards = [
+            {"oracle_id": "same", "card_name": "Second Unicode \u00e9", "abilities": [ability("b"), ability("a", residual=True)]},
+            {"oracle_id": "same", "card_name": "First", "abilities": [ability("a"), ability("b")]},
+            {"oracle_id": "blockers-only", "minimum_known_blocker_set": ["a"], "abilities": []},
+            {"oracle_id": "unrelated", "abilities": [ability("other")]},
+        ]
+        frontier = {"schema_version": 1, "cards": cards,
+            "family_candidates": [{"family_id": "a"}, {"family_id": "b"}]}
+        bundles = [
+            {"bundle_id": "fixture:" + key, "member_family_ids": members,
+             "measurement_probe_id": "fixture:probe", "shared_grammar": 'quoted "cards":[] grammar'}
+            for key, members in (("a", ["a"]), ("b", ["b"]), ("both", ["b", "a"]), ("empty", ["missing"]))
+        ]
+        return owner, frontier, bundles
+
+    def reference(self, owner, frontier, bundle):
+        members = sorted(str(value) for value in bundle["member_family_ids"])
+        projected = [owner._measurement_card_projection(card, set(members))
+                     for card in frontier["cards"]]
+        cards = sorted((card for card in projected if card is not None),
+            key=lambda card: (str(card.get("oracle_id") or ""), stable_json(card)))
+        families = {str(row.get("family_id") or ""): row
+                    for row in frontier.get("family_candidates", [])}
+        payload = {
+            "schema_version": owner._MEASUREMENT_FINGERPRINT_SCHEMA,
+            "measurement_method": owner._MEASUREMENT_METHOD,
+            "frontier_contract": {field: frontier.get(field) for field in (
+                "schema_version", "algorithm_version", "boundary", "profile",
+                "commander_legal_only", "complete_snapshot_claimed")},
+            "cohort_boundary": {field: bundle.get(field) for field in (
+                "bundle_id", "member_family_ids", "canonical_owner_ids", "source_contexts",
+                "normalized_literal_parameters", "shared_dependencies", "shared_grammar",
+                "explicit_exclusions", "measurement_probe_id")},
+            "family_rows": [families.get(member) for member in members], "cards": cards,
+        }
+        return hashlib.sha256(stable_json(payload).encode("utf-8")).hexdigest()
+
+    def test_batch_matches_independent_canonical_payload_and_all_reference_paths(self):
+        owner, frontier, bundles = self.fixture()
+        actual = owner._bundle_measurement_fingerprints(frontier, bundles)
+        for bundle in bundles:
+            with self.subTest(bundle=bundle["bundle_id"]):
+                expected = self.reference(owner, frontier, bundle)
+                self.assertEqual(expected, actual[bundle["bundle_id"]])
+                self.assertEqual(expected, bundle_measurement_fingerprint(frontier, bundle))
+        reversed_frontier = {**frontier, "cards": list(reversed(frontier["cards"]))}
+        self.assertEqual(actual, owner._bundle_measurement_fingerprints(reversed_frontier, bundles))
+
+    def test_next_batch_reads_relevant_mutations_and_ignores_unrelated_cards(self):
+        owner, frontier, bundles = self.fixture()
+        original = owner._bundle_measurement_fingerprints(frontier, bundles)
+        frontier["cards"][-1]["card_name"] = "Changed unrelated card"
+        self.assertEqual(original, owner._bundle_measurement_fingerprints(frontier, bundles))
+        frontier["cards"][2]["hard_construction_failure"] = True
+        changed = owner._bundle_measurement_fingerprints(frontier, bundles)
+        self.assertNotEqual(original["fixture:a"], changed["fixture:a"])
+        self.assertNotEqual(original["fixture:both"], changed["fixture:both"])
+        self.assertEqual(original["fixture:b"], changed["fixture:b"])
+        frontier["cards"].append({"oracle_id": "new", "abilities": [
+            {"residuals": [{"family_ids": ["b"]}]}]})
+        self.assertNotEqual(changed["fixture:b"], owner._bundle_measurement_fingerprints(frontier, bundles)["fixture:b"])
+        with self.assertRaisesRegex(owner.WorkSelectionBundleError, "complete bundle"):
+            owner._bundle_measurement_fingerprints({"cards": {}}, bundles)
+
+
+class NonHarvestSupersessionTests(unittest.TestCase):
+    def proposals(self):
+        from scripts.harvest_outcome_history import _durable_main_tip
+
+        base = _receipt(ROOT, _durable_main_tip(ROOT))
+        def proposal(previous, identity, marker):
+            head = deepcopy(previous)
+            head["compiler_version"] = "oracle-ir-v" + str(identity)
+            for path in ("coverage/card-program-coverage-commander.json", "coverage/oracle-coverage-commander.json"):
+                head["blobs"][path]["raw_sha256"] = marker*64
+                head["blobs"][path]["semantic_sha256"] = marker*64
+            declaration = validated_semantic_transition_declaration({
+                "transition_id":"fixture-unpublished-"+str(identity),
+                "compiler_version":head["compiler_version"], "bundle_id":None,
+                "candidate_ids":[],"family_ids":[],"capability_ids":[],
+                "expected_complete_card_gain":None,
+                "non_harvest_reason":"Revise one unpublished compiler proposal without increasing support.",
+            })
+            return head, _non_harvest_content_entry(declaration, base=previous, head=head)
+        first, row1 = proposal(base, 990, "a")
+        second, row2 = proposal(first, 991, "b")
+        return base, first, second, row1, row2
+
+    def test_only_checkpoint_bound_unpublished_chain_can_be_superseded(self):
+        from scripts.harvest_outcome_history import _superseded_non_harvest_ids
+
+        base, first, latest, row1, row2 = self.proposals()
+        result = _superseded_non_harvest_ids([row1,row2], latest=latest,
+            durable=base, checkpoint=latest, landed_ids=set())
+        self.assertEqual({row1["transition_id"],row2["transition_id"]}, result)
+        self.assertEqual(set(), _superseded_non_harvest_ids([row1,row2],
+            latest=base, durable=base, checkpoint=latest, landed_ids=set()))
+        with self.assertRaisesRegex(HarvestOutcomeHistoryError, "source checkpoint"):
+            _superseded_non_harvest_ids([row1,row2], latest=latest,
+                durable=base, checkpoint=first, landed_ids=set())
+
+    def test_landed_and_unanchored_receipts_remain_fail_closed(self):
+        from scripts.harvest_outcome_history import _superseded_non_harvest_ids
+
+        base, first, latest, row1, row2 = self.proposals()
+        with self.assertRaisesRegex(HarvestOutcomeHistoryError, "durable main"):
+            _superseded_non_harvest_ids([row1,row2], latest=latest,
+                durable=base, checkpoint=latest, landed_ids={row1["transition_id"]})
+        with self.assertRaisesRegex(HarvestOutcomeHistoryError, "durable main"):
+            _superseded_non_harvest_ids([row2], latest=latest,
+                durable=base, checkpoint=latest, landed_ids=set())
+
+
+class CohortPrefilterTests(unittest.TestCase):
+    def record(self):
+        return CardRecord(
+            oracle_id="fixture:cohort-cache", name="Cohort Cache Witness",
+            mana_cost="{R}", mana_value=1, type_line="Instant",
+            oracle_text="Cohort Cache Witness deals 3 damage to any target.",
+            power=None, toughness=None, loyalty=None, defense=None,
+            colors=("R",), color_identity=("R",), keywords=(), produced_mana=(),
+            layout="normal", released_at="2026-01-01", legalities={"commander":"legal"},
+            faces=(), raw={},
+        )
+
+    def test_source_pronoun_prefilter_skips_only_grammar_already_excluded(self):
+        from scripts import work_selection_cohort_measurements as measurements
+
+        record = replace(self.record(), oracle_text="When this creature enters, you gain 2 life.")
+        ability = {"face_id":"front", "ability_id":"a1", "source_line":1,
+                   "status":"unresolved", "blockers":{"canonical_family_ids":["fixture:family"]}}
+        arguments = dict(frontier={"cards":[{"oracle_id":record.oracle_id,"abilities":[ability]}]},
+            bundle_id="bundle:fixed-source-pronoun-damage-triggers",
+            probe_id="fixed-source-pronoun-damage-trigger-existing-owner-v1",
+            member_ids={"fixture:family"}, cards_by_oracle_id={record.oracle_id:record},
+            coverage={"minimum_complete_card_gain":50,"minimum_exact_ability_gain":100,
+                      "minimum_material_residual_reduction":100}, cohort_fingerprint="fixture")
+        with mock.patch.object(measurements, "compile_oracle_card", side_effect=AssertionError("unneeded compilation")):
+            self.assertEqual(0, measurements._fixed_source_pronoun_damage_trigger_measurement(**arguments)["exact_ability_gain"])
+        accepted = replace(record, oracle_text="When this creature enters, it deals 1 damage to any target.")
+        node = SimpleNamespace(node_id="a1", exact=True, event="permanent.enter.self")
+        compiled = SimpleNamespace(faces=[SimpleNamespace(nodes=[node])], status="exact")
+        with mock.patch.object(measurements, "compile_oracle_card", return_value=compiled) as compiler:
+            measured = measurements._fixed_source_pronoun_damage_trigger_measurement(
+                **{**arguments, "cards_by_oracle_id":{record.oracle_id:accepted}}
+            )
+            self.assertEqual(1, measured["complete_card_gain"])
+            compiler.assert_called_once()
+
+    def test_target_set_prefilter_retains_counts_contexts_faces_and_whitespace(self):
+        from scripts import work_selection_cohort_measurements as measurements
+        from quorune.compiler.fixed_homogeneous_target_sets import fixed_homogeneous_target_set_effect_template
+
+        record = self.record()
+        ability = {"face_id":"front", "ability_id":"a1", "status":"unresolved",
+                   "blockers":{"canonical_family_ids":["fixture:family"]}}
+        arguments = dict(frontier={"cards":[{"oracle_id":record.oracle_id,"abilities":[ability]}]},
+            bundle_id="bundle:fixed-homogeneous-target-sets", probe_id="fixture",
+            member_ids={"fixture:family"}, cards_by_oracle_id={record.oracle_id:record},
+            coverage={"minimum_complete_card_gain":50,"minimum_exact_ability_gain":100,
+                      "minimum_material_residual_reduction":100}, cohort_fingerprint="fixture")
+        compiled = SimpleNamespace(faces=[], status="unresolved")
+        with mock.patch.object(measurements, "compile_oracle_card", return_value=compiled) as compiler:
+            for count in ("two", "three", "four", "five", "six", "up to two", "one or two"):
+                body = f"Destroy {count} target creatures."
+                self.assertIsNotNone(fixed_homogeneous_target_set_effect_template(body))
+                for text in (body, "{T}: " + body, "When this creature enters, " + body,
+                             body.replace(" target ", "\n target\t")):
+                    compiler.reset_mock()
+                    measurements._fixed_homogeneous_target_set_measurement(
+                        **{**arguments, "cards_by_oracle_id":{record.oracle_id:replace(record, oracle_text=text)}}
+                    )
+                    compiler.assert_called_once()
+            compiler.reset_mock()
+            measurements._fixed_homogeneous_target_set_measurement(**arguments)
+            compiler.assert_not_called()
+            compiler.reset_mock()
+            measurements._fixed_homogeneous_target_set_measurement(
+                **{**arguments, "cards_by_oracle_id":{record.oracle_id:replace(record,
+                    faces=({"oracle_text":"Untap two other target creatures."},))}}
+            )
+            compiler.assert_called_once()
+
+    def test_controller_measurement_reuses_read_only_registry_and_preserves_full_binding(self):
+        from scripts import controller_program_measurement as measurements
+        from quorune.semantics import SemanticRegistry
+        from quorune.rules.capabilities import load_default_capability_registry
+        from quorune.oracle_ir import compile_oracle_card
+
+        registry = load_default_capability_registry()
+        records = tuple(replace(self.record(), oracle_id=f"fixture:controller-{i}", oracle_text=text)
+            for i,text in enumerate(("Draw a card.", "You gain 2 life.", "Draw a card.\nThe moon remembers this spell.")))
+        cards = []
+        for record in records:
+            ir = compile_oracle_card(record, capability_registry=registry, capability_profile="commander_review")
+            cards.append({"oracle_id":record.oracle_id, "oracle_ir_status":"partial", "abilities":[
+                {"face_id":face.face_id, "ability_id":node.node_id, "status":"lowerable_untrusted", "residuals":[]}
+                for face in ir.faces for node in face.nodes
+            ]})
+        arguments = dict(frontier={"cards":cards}, bundle_id="bundle:controller-program-composition",
+            probe_id=measurements.PROBE_ID, cards_by_oracle_id={r.oracle_id:r for r in records},
+            coverage={"minimum_complete_card_gain":50,"minimum_exact_ability_gain":100,
+                      "minimum_material_residual_reduction":100}, cohort_fingerprint="fixture",
+            database=SimpleNamespace(rulings=lambda _record: ()))
+        original = measurements.compile_best_available_card_program
+        with mock.patch.object(measurements, "SemanticRegistry", wraps=SemanticRegistry) as factory, mock.patch.object(
+            measurements, "compile_best_available_card_program", wraps=original
+        ) as compiler:
+            result = measurements.controller_program_measurement(**arguments)
+            self.assertEqual(2, result["complete_card_gain"])
+            self.assertFalse(result["grants_gameplay_trust"])
+            factory.assert_called_once_with()
+            first = compiler.call_args_list[0].kwargs["semantic_registry"]
+            self.assertEqual(2, compiler.call_count)
+            self.assertTrue(all(call.kwargs["semantic_registry"] is first for call in compiler.call_args_list))
+            factory.reset_mock(); compiler.reset_mock()
+            self.assertEqual(result, measurements.controller_program_measurement(**arguments))
+            factory.assert_called_once_with()
+            self.assertIsNot(first, compiler.call_args_list[0].kwargs["semantic_registry"])
+        def fresh(*args, **kwargs):
+            kwargs["semantic_registry"] = SemanticRegistry()
+            return original(*args, **kwargs)
+        with mock.patch.object(measurements, "compile_best_available_card_program", side_effect=fresh):
+            self.assertEqual(result, measurements.controller_program_measurement(**arguments))
+        with mock.patch.object(measurements, "SemanticRegistry") as factory:
+            measurements.controller_program_measurement(**{**arguments,"frontier":{"cards":[]}})
+            factory.assert_not_called()
 
 
 def _json(relative: str):

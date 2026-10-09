@@ -2035,12 +2035,37 @@ def _check_outputs(report: Mapping[str, Any]) -> list[str]:
     return stale
 
 
+def _source_readiness_errors(root: Path) -> list[str]:
+    """Reject a source checkpoint before scheduling its broad matrices."""
+    path = root / "coverage/architecture-audit.json"
+    try:
+        report = json.loads(path.read_text(encoding="utf-8"))
+        observed = report["coordinates"]["evaluated_source_tree"]
+    except (OSError, ValueError, KeyError, TypeError):
+        return ["Architecture source receipt is missing or malformed"]
+    if not isinstance(observed, Mapping):
+        return ["Architecture source receipt is missing or malformed"]
+    if observed.get("fingerprint_algorithm") != SOURCE_TREE_FINGERPRINT_ALGORITHM:
+        return ["Architecture source fingerprint algorithm is unsupported"]
+    if observed.get("fingerprint") != tracked_worktree_source_fingerprint(root):
+        return ["Architecture source receipt is stale; install current generated outputs"]
+    return []
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--write", action="store_true")
     mode.add_argument("--check", action="store_true")
+    mode.add_argument("--check-source-readiness", action="store_true")
     args = parser.parse_args()
+    if args.check_source_readiness:
+        errors = _source_readiness_errors(ROOT)
+        if errors:
+            print("; ".join(errors), file=sys.stderr)
+            return 1
+        print(json.dumps({"ok": True, "source_readiness_only": True}))
+        return 0
     report = build_report()
     if args.write:
         _write_outputs(report)

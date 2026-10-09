@@ -7,7 +7,7 @@ from itertools import combinations
 import re
 from typing import Any, Iterable, Mapping, Sequence
 
-from ..card_programs.adapters import compile_best_available_card_program
+from ..card_programs.adapters import _compile_best_available_card_program_from_ir
 from ..carddb import CardDatabase
 from ..oracle_ir import compile_oracle_card
 from ..rules.capabilities import CapabilityRegistry
@@ -866,9 +866,10 @@ def build_card_unlock_frontier(
         program = None
         program_error = None
         try:
-            program = compile_best_available_card_program(
+            program = _compile_best_available_card_program_from_ir(
                 db,
                 record,
+                ir,
                 semantic_registry=registry,
                 capability_profile=profile,
                 capability_registry=capabilities,

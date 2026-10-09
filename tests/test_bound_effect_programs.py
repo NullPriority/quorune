@@ -33,8 +33,10 @@ from quorune.record import authoritative_state_hash, checkpoint_envelope, replay
 from quorune.rules.bound_effect_program_shapes import bound_effect_program_node_capabilities
 from quorune.rules.capabilities import CapabilityRegistry, load_default_capability_registry
 from quorune.session import CommanderSession
+from quorune.semantics import SemanticRegistry
 from scripts.build_test_database import build_fixture_database
 from scripts.work_selection_cohort_measurements import _bound_effect_program_measurement
+from scripts import work_selection_cohort_measurements as cohort_measurements
 from quorune.compiler.unlock_frontier import analyze_card_unlocks
 
 
@@ -151,7 +153,7 @@ class BoundEffectProgramCompilerTests(unittest.TestCase):
             path = Path(directory)/"bound-probe.sqlite3"
             build_fixture_database([FIXTURE], path)
             with CardDatabase(path) as database:
-                measured = _bound_effect_program_measurement(
+                arguments = dict(
                     frontier={"cards":baseline}, bundle_id="bundle:bound-effect-program-closure",
                     probe_id="bound-effect-program-existing-owner-v1",
                     cards_by_oracle_id={r.oracle_id:r for r in candidates},
@@ -159,6 +161,42 @@ class BoundEffectProgramCompilerTests(unittest.TestCase):
                               "minimum_material_residual_reduction":100},
                     cohort_fingerprint="constructed-current-frontier", database=database,
                 )
+                compile_program = cohort_measurements.compile_best_available_card_program
+                with patch.object(
+                    cohort_measurements, "SemanticRegistry", wraps=SemanticRegistry
+                ) as registry_factory, patch.object(
+                    cohort_measurements, "compile_best_available_card_program", wraps=compile_program
+                ) as compile_spy:
+                    measured = _bound_effect_program_measurement(**arguments)
+                    registry_factory.assert_called_once_with()
+                    first_registry = compile_spy.call_args_list[0].kwargs["semantic_registry"]
+                    self.assertGreaterEqual(compile_spy.call_count, 2)
+                    self.assertTrue(all(
+                        call.kwargs["semantic_registry"] is first_registry
+                        for call in compile_spy.call_args_list
+                    ))
+                    registry_factory.reset_mock()
+                    compile_spy.reset_mock()
+                    self.assertEqual(measured, _bound_effect_program_measurement(**arguments))
+                    registry_factory.assert_called_once_with()
+                    self.assertIsNot(
+                        first_registry, compile_spy.call_args_list[0].kwargs["semantic_registry"]
+                    )
+
+                def compile_with_fresh_registry(*args, **kwargs):
+                    kwargs["semantic_registry"] = SemanticRegistry()
+                    return compile_program(*args, **kwargs)
+
+                with patch.object(
+                    cohort_measurements, "compile_best_available_card_program",
+                    side_effect=compile_with_fresh_registry,
+                ):
+                    self.assertEqual(measured, _bound_effect_program_measurement(**arguments))
+                with patch.object(cohort_measurements, "SemanticRegistry") as registry_factory:
+                    self.assertEqual(0, _bound_effect_program_measurement(
+                        **{**arguments, "frontier":{"cards":[]}}
+                    )["complete_card_gain"])
+                    registry_factory.assert_not_called()
         self.assertEqual(3, measured["affected_commander_cards"])
         self.assertEqual(2, measured["complete_card_gain"])
         self.assertEqual(3, measured["exact_ability_gain"])

@@ -551,12 +551,17 @@ def _subtype_graveyard_spec(
     )
 
 
+_NAMED_SOURCE_GRAVEYARD = re.compile(
+    r"When (?s:.*?) is put into a graveyard from the battlefield, .+", re.IGNORECASE
+)
+
+
 def _named_source_graveyard_spec(
     material_line: str,
     *,
     card_name: str | None,
 ) -> FixedPublicEventBindingSpec | None:
-    if not card_name:
+    if not card_name or _NAMED_SOURCE_GRAVEYARD.fullmatch(material_line) is None:
         return None
     match = re.fullmatch(
         rf"When {re.escape(card_name)} is put into a graveyard from the "

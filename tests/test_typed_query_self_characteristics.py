@@ -45,6 +45,47 @@ QUERY_HANDLER = "ability.static.query-characteristic-modifier.v1"
 QUERY_CAPABILITY = "continuous.characteristics.query_count_modifier"
 
 
+class QueryCharacteristicPrefilterTests(unittest.TestCase):
+    def test_markers_preserve_named_prefix_suffix_and_definition_grammar(self):
+        from quorune.compiler.query_characteristic_templates import (
+            query_power_toughness_definition_handler,
+        )
+
+        for name in ("Query (Source)+", "Query, Source", "\u0130mage"):
+            with self.subTest(name=name):
+                texts = (
+                    f"{name} gets +1/+1 for each artifact you control.",
+                    f"{name} gets +1/+1 as long as you control an artifact.",
+                    f"As long as you control an artifact, {name} gets +1/+1.",
+                    "Domain \u2014 This creature gets +1/+1 for each basic land type among lands you control. (A reminder.)",
+                )
+                for text in texts:
+                    self.assertIsNotNone(query_self_characteristics_handler(text, source_name=name))
+                definition = "This creature's power and toughness are each equal to the number of creature cards in your graveyard."
+                self.assertIsNotNone(query_power_toughness_definition_handler(definition, source_name=name))
+                self.assertIsNotNone(query_self_characteristics_handler(
+                    "AS LONG AS you control an artifact, This creature gets +1/+1.", source_name=name))
+                self.assertIsNotNone(query_self_characteristics_handler(
+                    "This creature has flying as long as you control an artifact.", source_name=name))
+        self.assertIsNone(query_self_characteristics_handler(
+            "Line\nName gets +1/+1 for each artifact you control.", source_name="Line\nName"))
+        self.assertIsNone(query_self_characteristics_handler(
+            "\u0130mage has flying as long as you control an artifact.", source_name="\u0130mage"))
+
+    def test_impossible_lines_skip_named_regex_without_admitting_wrong_subjects(self):
+        from quorune.compiler import query_characteristic_templates as owner
+
+        with mock.patch.object(owner, "_self_subject_pattern", side_effect=AssertionError("unneeded named pattern")):
+            for text in ("Draw a card.", "This creature gets +1/+1.", "As long as you control an artifact."):
+                self.assertIsNone(owner.query_power_toughness_definition_handler(text, source_name="Query Source"))
+            for text in ("Draw a card.", "This creature gets +1/+1.", "This creature has flying."):
+                self.assertIsNone(owner.query_self_characteristics_handler(text, source_name="Query Source"))
+        self.assertIsNone(owner.query_self_characteristics_handler(
+            "Another Source gets +1/+1 for each artifact you control.", source_name="Query Source"))
+        self.assertIsNone(owner.query_power_toughness_definition_handler(
+            "Another Source's power is equal to the number of creature cards in your graveyard.", source_name="Query Source"))
+
+
 class _NoRulingsDatabase:
     @staticmethod
     def rulings(record):

@@ -287,6 +287,23 @@
       ]
     },
     {
+      "id": "capability-component-validation",
+      "patterns": [
+        "quorune/rules/component_resolution.py",
+        "quorune/rules/evidence.py"
+      ],
+      "checks": [
+        "capability-evidence",
+        "card-unlock-frontier",
+        "reusable-pieces"
+      ],
+      "test_modules": [
+        "test_rule_capabilities",
+        "test_capability_evidence",
+        "test_card_program_trust"
+      ]
+    },
+    {
       "id": "platform-and-workflow-sources",
       "patterns": [
         "platform/**",

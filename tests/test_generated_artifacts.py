@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+from dataclasses import replace
 import json
 from pathlib import Path
 import shutil
@@ -56,6 +57,84 @@ from quorune.compiler.target_effect_corpus_assurance import (
     TargetEffectCorpusCollector,
 )
 from quorune.rules.capabilities import load_default_capability_registry
+
+
+class SharedCompilerCensusTests(unittest.TestCase):
+    def test_report_finalization_does_not_mutate_status_counter_identity(self):
+        from quorune.compiler.corpus_reporting import _OracleCoverageCollector
+
+        collector = _OracleCoverageCollector(capability_registry=None, capability_profile="traditional")
+        collector.statuses["unresolved"] = 1
+        first = collector.report(self.database())
+        self.assertEqual(first, collector.report(self.database()))
+        self.assertEqual({"unresolved":1}, dict(collector.statuses))
+
+    def database(self):
+        from quorune.carddb import CardRecord
+
+        base = CardRecord(oracle_id="fixture:0", name="Census Witness", mana_cost="{U}",
+            mana_value=1, type_line="Instant", oracle_text="Draw a card.",
+            power=None, toughness=None, loyalty=None, defense=None, colors=("U",),
+            color_identity=("U",), keywords=(), produced_mana=(), layout="normal",
+            released_at="2026-01-01", legalities={"commander":"legal"}, faces=(), raw={})
+        records = (
+            base,
+            replace(base, oracle_id="fixture:1", oracle_text="You gain 2 life.", legalities={"commander":"banned"}),
+            replace(base, oracle_id="fixture:2", oracle_text="Draw a card.\nThe moon remembers this spell."),
+            replace(base, oracle_id="fixture:3", layout="modal_dfc", faces=(
+                {"name":"Census Front", "mana_cost":"{U}", "type_line":"Instant", "oracle_text":"Draw a card."},
+                {"name":"Census Back", "mana_cost":"{U}", "type_line":"Instant", "oracle_text":"You gain 1 life."},
+            )),
+        )
+        class Database:
+            def __enter__(self): return self
+            def __exit__(self, *_args): return None
+            def iter_cards(self, *, commander_legal_only=False, limit=None):
+                return iter([r for r in records if not commander_legal_only or r.legalities["commander"]=="legal"][:limit])
+            def metadata(self):
+                return {"schema_version":2,"card_count":4,"ruling_count":0,
+                        "oracle_source_sha256":"a"*64,"rulings_source_sha256":"b"*64}
+            def rulings(self, _record): return ()
+        return Database()
+
+    def test_four_census_views_share_one_parse_and_preserve_scope_and_faces(self):
+        from scripts import update_compiler_corpus_coverage as updater
+
+        database = self.database()
+        with mock.patch.object(updater, "CardDatabase", return_value=database), mock.patch.object(
+            updater, "compile_oracle_card", wraps=updater.compile_oracle_card
+        ) as compiler:
+            reports = updater._generate(Path("unused"))
+        self.assertEqual(4, compiler.call_count)
+        self.assertEqual(4, reports["oracle_full"]["total_oracle_ids"])
+        self.assertEqual(3, reports["oracle_commander"]["total_oracle_ids"])
+        self.assertEqual(5, reports["oracle_full"]["total_faces"])
+        self.assertEqual({"exact":3,"partial":1}, reports["oracle_full"]["status_counts"])
+        self.assertEqual(4, reports["program_full"]["cards_considered"])
+        self.assertEqual(3, reports["program_commander"]["cards_considered"])
+        self.assertEqual([], reports["program_full"]["failures"])
+        self.assertGreater(reports["oracle_commander"]["material_residuals"], 0)
+        self.assertFalse(reports["oracle_full"]["current_snapshot_complete"])
+        validate_reports(reports)
+
+    def test_compilation_errors_stay_in_their_selected_scope_and_do_not_erase_oracle_evidence(self):
+        from scripts import update_compiler_corpus_coverage as updater
+
+        original = updater._compile_best_available_card_program_from_ir
+        for failing_id, commander_failures in (("fixture:1",0),("fixture:2",1)):
+            def compile_program(db, record, ir, **kwargs):
+                if record.oracle_id == failing_id:
+                    raise ValueError("construction boundary diagnostic")
+                return original(db, record, ir, **kwargs)
+            with self.subTest(failing_id=failing_id), mock.patch.object(
+                updater, "CardDatabase", return_value=self.database()
+            ), mock.patch.object(updater, "_compile_best_available_card_program_from_ir", side_effect=compile_program):
+                reports = updater._generate(Path("unused"))
+                self.assertEqual(1, reports["program_full"]["status_counts"]["failed"])
+                self.assertEqual(commander_failures, reports["program_commander"]["status_counts"].get("failed",0))
+                self.assertEqual(failing_id, reports["program_full"]["failures"][0]["oracle_id"])
+                self.assertEqual(4, reports["oracle_full"]["total_oracle_ids"])
+                validate_reports(reports)
 
 
 class GeneratedArtifactFinalizationTests(unittest.TestCase):
@@ -863,7 +942,25 @@ class GeneratedArtifactFinalizationTests(unittest.TestCase):
             "python scripts/certification_receipt.py verify-main",
             workflows["main-smoke.yml"],
         )
-        combined = "\n".join(workflows.values())
+        readiness = (
+            "      - name: Require current compiler corpus before expensive certification\n"
+            "        run: python scripts/update_compiler_corpus_coverage.py --check\n"
+        )
+        source_readiness = (
+            "      - name: Require current generated source before expensive certification\n"
+            "        run: python scripts/update_architecture_audit.py --check-source-readiness\n"
+        )
+        plan = workflows["ci.yml"].split("\n  plan:\n", 1)[1].split("\n  python:\n", 1)[0]
+        for block in (readiness, source_readiness):
+            self.assertIn(block, plan)
+            self.assertEqual(1, workflows["ci.yml"].count(block))
+        # Only the declared read-only pre-matrix checks are early boundaries.
+        # Every other owner check still belongs to the canonical coordinator.
+        combined = "\n".join(
+            text.replace(readiness, "").replace(source_readiness, "")
+            if name == "ci.yml" else text
+            for name, text in workflows.items()
+        )
         for spec in load_manifest():
             command = "python " + " ".join(spec.check)
             self.assertNotIn(command, combined)

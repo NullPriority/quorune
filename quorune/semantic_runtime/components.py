@@ -67,6 +67,13 @@ from .zone_replacements import default_zone_change_replacement_registry
 
 
 def runtime_component_registries() -> tuple[Any, ...]:
+    from ..rules.evidence import _capability_validation_snapshot
+
+    with _capability_validation_snapshot():
+        return _runtime_component_registries()
+
+
+def _runtime_component_registries() -> tuple[Any, ...]:
     return (
         default_activated_ability_catalog_registry(),
         default_activation_restriction_registry(),

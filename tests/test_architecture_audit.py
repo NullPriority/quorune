@@ -1,6 +1,10 @@
 from __future__ import annotations
 
 import json
+import os
+from pathlib import Path
+import subprocess
+from tempfile import TemporaryDirectory
 import unittest
 from unittest import mock
 
@@ -15,6 +19,77 @@ from scripts.update_architecture_audit import (
 
 def _json(relative: str) -> dict:
     return json.loads((ROOT / relative).read_text(encoding="utf-8"))
+
+
+class ArchitectureTestImportInventoryTests(unittest.TestCase):
+    def test_shared_import_inventory_keeps_matching_and_rereads_after_edits(self):
+        from scripts.architecture_observability import _test_import_inventory, _tests_for_modules
+
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            tests = root / "tests"
+            tests.mkdir()
+            first = tests / "test_first.py"
+            first.write_text("import quorune.damage.child\nfrom quorune.draw import owner\n", encoding="utf-8")
+            second = tests / "test_second.py"
+            second.write_text("import quorune.damage_extra\ndef test_nested():\n    import quorune.damage\n", encoding="utf-8")
+            (tests / "test_malformed.py").write_text("def (\n", encoding="utf-8")
+            inventory = _test_import_inventory(root)
+            with mock.patch("scripts.architecture_observability.ast.parse", side_effect=AssertionError("reparsed inventory")):
+                self.assertEqual(["test_first", "test_second"], _tests_for_modules(root, {"quorune.damage"}, inventory=inventory))
+                self.assertEqual(["test_first"], _tests_for_modules(root, {"quorune.draw"}, inventory=inventory))
+                self.assertEqual([], _tests_for_modules(root, {"quorune.damage.child.other"}, inventory=inventory))
+            first.write_text("import quorune.life\n", encoding="utf-8")
+            second.unlink()
+            self.assertEqual([], _tests_for_modules(root, {"quorune.damage"}))
+            self.assertEqual(["test_first"], _tests_for_modules(root, {"quorune.life"}))
+
+
+class ArchitectureSourceReadinessTests(unittest.TestCase):
+    def test_readiness_rejects_same_metadata_edits_and_preserves_canonical_blobs(self):
+        from scripts.source_tree_fingerprint import (
+            SOURCE_TREE_FINGERPRINT_ALGORITHM,
+            tracked_worktree_source_fingerprint,
+        )
+        from scripts.update_architecture_audit import _source_readiness_errors
+
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            subprocess.run(["git", "init", "--quiet", str(root)], check=True)
+            source = root / "owner.py"
+            source.write_bytes(b"VALUE = 1\n")
+            report_path = root / "coverage/architecture-audit.json"
+            report_path.parent.mkdir()
+            report_path.write_text("{}", encoding="utf-8")
+            subprocess.run(["git", "-C", str(root), "add", "--", "owner.py", "coverage/architecture-audit.json"], check=True)
+            observed = {"fingerprint_algorithm": SOURCE_TREE_FINGERPRINT_ALGORITHM,
+                "fingerprint": tracked_worktree_source_fingerprint(root)}
+            report = {"coordinates": {"evaluated_source_tree": observed}}
+            report_path.write_text(json.dumps(report), encoding="utf-8")
+            self.assertEqual([], _source_readiness_errors(root))
+            metadata = source.stat()
+            source.write_bytes(b"VALUE = 2\n")
+            os.utime(source, ns=(metadata.st_atime_ns, metadata.st_mtime_ns))
+            self.assertIn("stale", _source_readiness_errors(root)[0])
+            source.write_bytes(b"VALUE = 1\n")
+            self.assertEqual([], _source_readiness_errors(root))
+            observed["fingerprint_algorithm"] = "unsupported"
+            report_path.write_text(json.dumps(report), encoding="utf-8")
+            self.assertIn("algorithm", _source_readiness_errors(root)[0])
+            report_path.write_text("[]", encoding="utf-8")
+            self.assertIn("malformed", _source_readiness_errors(root)[0])
+            report_path.unlink()
+            self.assertIn("missing", _source_readiness_errors(root)[0])
+
+    def test_readiness_mode_does_not_build_or_write_reports(self):
+        from scripts import update_architecture_audit as owner
+
+        with mock.patch("sys.argv", ["audit", "--check-source-readiness"]), \
+             mock.patch.object(owner, "_source_readiness_errors", return_value=[]) as check, \
+             mock.patch.object(owner, "build_report", side_effect=AssertionError("rebuilt report")), \
+             mock.patch.object(owner, "_write_outputs", side_effect=AssertionError("wrote report")):
+            self.assertEqual(0, owner.main())
+            check.assert_called_once_with(owner.ROOT)
 
 
 class ArchitectureAuditTests(unittest.TestCase):

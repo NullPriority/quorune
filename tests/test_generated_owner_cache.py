@@ -18,6 +18,7 @@ from scripts.generated_artifacts import (
 from scripts.generated_owner_cache import (
     GeneratedOwnerCacheError,
     _python_import_closure,
+    _ref_text_cache,
     affected_owner_plan,
     propagated_affected_owner_ids,
     compiler_identity_status,
@@ -34,6 +35,61 @@ from scripts.find_reusable_workflow_artifact import find_reusable_run
 
 
 class GeneratedOwnerCacheTests(unittest.TestCase):
+    def test_batched_compiler_sentinel_preserves_base_and_removed_imports(self):
+        with TemporaryDirectory() as raw:
+            root = Path(raw)
+            self._repository(root)
+            sources = {
+                "scripts/generate.py": "from quorune import oracle_ir\n",
+                "quorune/__init__.py": "",
+                "quorune/oracle_ir.py": (
+                    "from . import leaf\nORACLE_COMPILER_VERSION = 'oracle-ir-v1'\n"
+                    "ORACLE_IR_SCHEMA_VERSION = 1\n"
+                ),
+                "quorune/leaf.py": "VALUE = 1\n",
+                "quorune/card_programs/model.py": "CARD_PROGRAM_SCHEMA_VERSION = 2\n",
+            }
+            for relative, text in sources.items():
+                path = root / relative
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(text, encoding="utf-8")
+            subprocess.run(["git", "add", "."], cwd=root, check=True)
+            subprocess.run(["git", "commit", "-qm", "fixture"], cwd=root, check=True)
+            spec = GeneratorSpec(
+                id="compiler-corpus-coverage", depends_on=(), outputs=(),
+                check=("generate.py", "--check"), write=None,
+                write_with_database=None, write_policy="database",
+                implementation_inputs=("scripts/generate.py",),
+                implementation_import_policy="semantic_imports",
+            )
+            with mock.patch("scripts.generated_owner_cache.load_manifest", return_value=(spec,)), mock.patch(
+                "scripts.generated_owner_cache._manifest_at_ref", return_value=((spec,), None)
+            ), mock.patch(
+                "scripts.generated_owner_cache._ref_text_cache", wraps=_ref_text_cache
+            ) as batch:
+                unchanged = compiler_identity_status(base_ref="HEAD", root=root)
+                self.assertFalse(unchanged["semantic_compiler_changed"])
+                self.assertTrue(unchanged["ok"])
+                batch.assert_called_once()
+                (root / "quorune/leaf.py").write_text("VALUE = 2\n", encoding="utf-8")
+                changed = compiler_identity_status(base_ref="HEAD", root=root)
+                self.assertTrue(changed["semantic_compiler_changed"])
+                self.assertFalse(changed["ok"])
+                (root / "quorune/oracle_ir.py").write_text(
+                    "ORACLE_COMPILER_VERSION = 'oracle-ir-v1'\nORACLE_IR_SCHEMA_VERSION = 1\n",
+                    encoding="utf-8",
+                )
+                (root / "quorune/leaf.py").unlink()
+                self.assertFalse(compiler_identity_status(base_ref="HEAD", root=root)["ok"])
+                (root / "quorune/oracle_ir.py").write_text(
+                    "ORACLE_COMPILER_VERSION = 'oracle-ir-v2'\nORACLE_IR_SCHEMA_VERSION = 1\n",
+                    encoding="utf-8",
+                )
+                self.assertTrue(compiler_identity_status(base_ref="HEAD", root=root)["ok"])
+                with mock.patch("scripts.generated_owner_cache._run_git", return_value=b"truncated"):
+                    with self.assertRaisesRegex(GeneratedOwnerCacheError, "incomplete.*source batch"):
+                        _ref_text_cache(root, "HEAD", ("quorune/oracle_ir.py",))
+
     def test_validation_only_owner_change_fans_out_only_when_output_changes(self):
         capability = GeneratorSpec(
             id="capability",

@@ -32,7 +32,7 @@ from .record import (
     utc_now,
     write_record,
 )
-from .record_trust import semantic_execution_provenance_row
+from .record_trust import resolved_semantic_execution_provenance_rows
 from .review_artifacts import write_review_artifacts
 from .semantics import SemanticRegistry
 
@@ -700,24 +700,10 @@ class CommanderSession:
             seat: int(player.stats.get("shuffle_count", 0))
             for seat, player in self.state.players.items()
         }
-        programs_used: list[dict[str, Any]] = []
-        capability_registry = load_default_capability_registry()
-        for event in self.state.events:
-            if event.event_id <= before_event_sequence or event.code != "stack.resolve":
-                continue
-            stack_ref = str(event.details.get("stack") or "")
-            stack_item = before_stack_items.get(stack_ref)
-            if stack_item is None or not stack_item.semantic_key:
-                continue
-            programs_used.append(
-                semantic_execution_provenance_row(
-                    self.engine,
-                    stack_item.semantic_key,
-                    capability_registry=capability_registry,
-                    profile=self.state.config.review_profile,
-                    stack_item=stack_item,
-                )
-            )
+        programs_used = resolved_semantic_execution_provenance_rows(
+            self.engine, events=self.state.events, before_event_sequence=before_event_sequence,
+            before_stack_items=before_stack_items, capability_profile=self.state.config.review_profile,
+        )
         card_programs_used = (
             self.engine.semantics.card_program_fingerprints_for_keys(
                 row["key"] for row in programs_used

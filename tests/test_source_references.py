@@ -159,6 +159,43 @@ class SourceReferenceModelTests(unittest.TestCase):
 
 
 class SourceReferenceCompilerTests(unittest.TestCase):
+    def test_source_event_prefilter_preserves_named_matching_and_skips_unrelated_text(self):
+        from quorune.compiler.source_self_effect_templates import normalized_source_event_line
+
+        with patch("quorune.compiler.source_self_effect_templates.SourceReferenceSpec",
+                   side_effect=AssertionError("unneeded source-name parsing")):
+            for line in ("Flying", "Draw a card.", "When this creature enters, draw a card.",
+                         "Whenever another creature dies, you gain 1 life."):
+                self.assertIsNone(normalized_source_event_line(line, source_name="Witness, Source"))
+        for name in ("Witness, Source", "Regex (Source)+", "Name attacks, Then"):
+            text=f"Whenever {name} attacks, draw a card."
+            self.assertEqual("Whenever this creature attacks, draw a card.",
+                             normalized_source_event_line(text, source_name=name))
+        self.assertIsNone(normalized_source_event_line(
+            "Whenever Witness and another creature attacks, draw a card.", source_name="Witness, Source"))
+
+    def test_trigger_prefilters_preserve_original_names_events_and_captured_bodies(self):
+        from quorune.oracle_ir import _source_self_zone_trigger_match
+        from quorune.compiler.fixed_counter_trigger_nodes import _zone_change_trigger_binding
+        from quorune.compiler.fixed_public_event_trigger_bindings import _named_source_graveyard_spec
+
+        for name in ("Witness, Source", "Regex (Source)+", "Name or another Spirit", "Line\nName", "İmage"):
+            with self.subTest(name=name):
+                line=f"When {name} is put into a graveyard from the battlefield, draw a card."
+                self.assertIsNotNone(_named_source_graveyard_spec(line,card_name=name))
+                union=f"Whenever {name} or another creature dies, draw a card."
+                self.assertIsNotNone(_zone_change_trigger_binding(union,card_name=name))
+                if "\n" not in name:
+                    for event in ("enters", "dies", "leaves the battlefield"):
+                        match=_source_self_zone_trigger_match(f"When {name} {event}, draw a card.",card_name=name)
+                        self.assertIsNotNone(match)
+                        self.assertEqual(event,match.group("event"))
+                        self.assertEqual("draw a card.",match.group("body"))
+        for line in ("Draw a card.","When Witness dies, draw a card.","When Witness is put into a graveyard from anywhere, draw a card."):
+            self.assertIsNone(_named_source_graveyard_spec(line,card_name="Witness"))
+        for line in ("When another creature enters, draw a card.","When Witness and another creature dies, draw a card."):
+            self.assertIsNone(_source_self_zone_trigger_match(line,card_name="Witness"))
+
     def rulings(self, record):
         return ()
 

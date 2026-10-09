@@ -7,7 +7,7 @@ from typing import Any, Callable, Mapping, Sequence
 
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..rules.source_references import SourceReferenceSpec
-from .source_self_effect_templates import normalized_source_event_line
+from .source_self_effect_templates import normalized_source_event_line, named_source_union_candidate
 from ..continuous_conditions import (
     FIXED_PUBLIC_STATE_INTERVENING_CONDITION_FIELD,
     FIXED_PUBLIC_STATE_INTERVENING_COVERAGE,
@@ -856,7 +856,7 @@ def _zone_change_trigger_binding(
     card_name: str | None = None,
 ) -> FixedCounterTriggerBinding | None:
     normalized_line = material_line
-    if card_name:
+    if card_name and named_source_union_candidate(material_line):
         named_source = re.match(
             rf"^Whenever {re.escape(card_name)} or another "
             r"(?P<subject>[A-Za-z][A-Za-z'-]*)\b",

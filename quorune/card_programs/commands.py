@@ -329,6 +329,84 @@ def semantic_overrides(registry: SemanticRegistry) -> dict[str, Any]:
     }
 
 
+class _CardProgramCoverageCollector:
+    """Canonical CardProgram counters for one ordered corpus scope."""
+
+    def __init__(self, capabilities, profile):
+        self.capabilities, self.profile = capabilities, profile
+        self.statuses, self.trust_bases = Counter(), Counter()
+        self.ability_count = self.residual_count = 0
+        self.failures = []
+
+    def observe(self, record, program=None, *, error=None):
+        statuses, trust_bases, failures = self.statuses, self.trust_bases, self.failures
+        if error is not None:
+            statuses["failed"] += 1
+            if len(failures) < 50:
+                failures.append(
+                    {
+                        "oracle_id": record.oracle_id,
+                        "card_name": record.name,
+                        "error": str(error),
+                    }
+                )
+            return
+        self.ability_count += len(program.abilities)
+        self.residual_count += len(program.residuals)
+        trust_bases[program.trust_closure["trust_basis"]] += 1
+        if program.trust_closure["trusted"]:
+            statuses["trusted"] += 1
+        elif program.residuals:
+            statuses["residual"] += 1
+        else:
+            statuses["untrusted"] += 1
+
+    def report(self, db, *, commander_legal_only, limit):
+        from ..oracle_ir import ORACLE_COMPILER_VERSION
+        capabilities, profile = self.capabilities, self.profile
+        statuses, trust_bases, failures = self.statuses, self.trust_bases, self.failures
+        ability_count, residual_count = self.ability_count, self.residual_count
+        total = sum(statuses.values())
+        metadata = db.metadata()
+        return {
+            "schema_version": 1,
+            "card_program_schema_version": 2,
+            "compiler_version": ORACLE_COMPILER_VERSION,
+            "profile": profile,
+            "capability_registry_fingerprint": capabilities.fingerprint,
+            "capability_evidence_fingerprint": (
+                capabilities.evidence_fingerprint
+            ),
+            "card_data_snapshot": {
+                key: metadata.get(key)
+                for key in (
+                    "schema_version",
+                    "card_count",
+                    "ruling_count",
+                    "oracle_source_sha256",
+                    "rulings_source_sha256",
+                    "scryfall_oracle_updated_at",
+                    "scryfall_rulings_updated_at",
+                )
+                if metadata.get(key) is not None
+            },
+            "commander_legal_only": commander_legal_only,
+            "limited": limit is not None,
+            "cards_considered": total,
+            "ability_programs": ability_count,
+            "material_residuals": residual_count,
+            "status_counts": dict(sorted(statuses.items())),
+            "trust_basis_counts": dict(sorted(trust_bases.items())),
+            "failures": failures,
+            "current_snapshot_complete": (
+                total > 0
+                and statuses.get("trusted", 0) == total
+                and not residual_count
+                and not failures
+            ),
+        }
+
+
 def card_program_coverage(
     db: CardDatabase,
     *,
@@ -337,85 +415,17 @@ def card_program_coverage(
     commander_legal_only: bool,
     limit: int | None,
 ) -> dict[str, Any]:
-    from ..oracle_ir import ORACLE_COMPILER_VERSION
-
     capabilities = load_default_capability_registry()
-    statuses: Counter[str] = Counter()
-    trust_bases: Counter[str] = Counter()
-    ability_count = 0
-    residual_count = 0
-    failures = []
-    for record in db.iter_cards(
-        commander_legal_only=commander_legal_only,
-        limit=limit,
-    ):
+    collector = _CardProgramCoverageCollector(capabilities, profile)
+    for record in db.iter_cards(commander_legal_only=commander_legal_only, limit=limit):
         try:
-            program = _compile_best_available(
-                db,
-                record,
-                registry=registry,
-                profile=profile,
-                capabilities=capabilities,
-            )
+            program = _compile_best_available(db, record, registry=registry,
+                                              profile=profile, capabilities=capabilities)
         except (KeyError, ValueError) as exc:
-            statuses["failed"] += 1
-            if len(failures) < 50:
-                failures.append(
-                    {
-                        "oracle_id": record.oracle_id,
-                        "card_name": record.name,
-                        "error": str(exc),
-                    }
-                )
-            continue
-        ability_count += len(program.abilities)
-        residual_count += len(program.residuals)
-        trust_bases[program.trust_closure["trust_basis"]] += 1
-        if program.trust_closure["trusted"]:
-            statuses["trusted"] += 1
-        elif program.residuals:
-            statuses["residual"] += 1
+            collector.observe(record, error=exc)
         else:
-            statuses["untrusted"] += 1
-    total = sum(statuses.values())
-    metadata = db.metadata()
-    return {
-        "schema_version": 1,
-        "card_program_schema_version": 2,
-        "compiler_version": ORACLE_COMPILER_VERSION,
-        "profile": profile,
-        "capability_registry_fingerprint": capabilities.fingerprint,
-        "capability_evidence_fingerprint": (
-            capabilities.evidence_fingerprint
-        ),
-        "card_data_snapshot": {
-            key: metadata.get(key)
-            for key in (
-                "schema_version",
-                "card_count",
-                "ruling_count",
-                "oracle_source_sha256",
-                "rulings_source_sha256",
-                "scryfall_oracle_updated_at",
-                "scryfall_rulings_updated_at",
-            )
-            if metadata.get(key) is not None
-        },
-        "commander_legal_only": commander_legal_only,
-        "limited": limit is not None,
-        "cards_considered": total,
-        "ability_programs": ability_count,
-        "material_residuals": residual_count,
-        "status_counts": dict(sorted(statuses.items())),
-        "trust_basis_counts": dict(sorted(trust_bases.items())),
-        "failures": failures,
-        "current_snapshot_complete": (
-            total > 0
-            and statuses.get("trusted", 0) == total
-            and not residual_count
-            and not failures
-        ),
-    }
+            collector.observe(record, program)
+    return collector.report(db, commander_legal_only=commander_legal_only, limit=limit)
 
 
 def runtime_component_status(profile: str) -> dict[str, Any]:

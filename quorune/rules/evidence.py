@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from contextlib import contextmanager
+from contextvars import ContextVar
 import hashlib
 import json
 from pathlib import Path
@@ -113,6 +115,7 @@ def validate_capability_evidence_index(
     if not isinstance(declarations, list):
         raise CapabilityEvidenceError("declarations must be a list")
     known_profiles = set(registry.profiles)
+    capabilities = {row["id"]: row for row in registry.capabilities()}
     evidence_by_capability: dict[str, set[str]] = {}
     profiles_by_capability_evidence: dict[
         tuple[str, str], set[str]
@@ -129,7 +132,7 @@ def validate_capability_evidence_index(
             row, _DECLARATION_FIELDS, field=f"declarations[{index}]"
         )
         capability_id = str(row.get("capability_id") or "")
-        capability = registry.capability(capability_id)
+        capability = capabilities.get(capability_id)
         if capability is None:
             raise CapabilityEvidenceError(
                 f"Unknown capability evidence target: {capability_id}"
@@ -207,7 +210,7 @@ def validate_capability_evidence_index(
         raise CapabilityEvidenceError(
             "Capability evidence declarations are not canonically ordered"
         )
-    for capability in registry.capabilities():
+    for capability in capabilities.values():
         if capability["status"] != "trusted":
             continue
         capability_id = capability["id"]
@@ -259,3 +262,35 @@ def capability_evidence_fingerprint(value: Mapping[str, Any]) -> str:
     payload = dict(value)
     payload.pop("fingerprint", None)
     return _hash(payload)
+
+
+_VALIDATION_REGISTRY: ContextVar[dict[str, Any] | None] = ContextVar(
+    "validation_registry", default=None
+)
+
+
+@contextmanager
+def _capability_validation_snapshot():
+    """Share validated read-only inputs only within one component batch."""
+    if _VALIDATION_REGISTRY.get() is not None:
+        yield
+        return
+    token = _VALIDATION_REGISTRY.set({})
+    try:
+        yield
+    finally:
+        _VALIDATION_REGISTRY.reset(token)
+
+
+def _load_verified_default_capability_registry(registry_path):
+    from .capabilities import CapabilityRegistry
+
+    batch = _VALIDATION_REGISTRY.get()
+    if batch is not None and "registry" in batch:
+        return batch["registry"]
+    registry = CapabilityRegistry.from_path(registry_path)
+    _, fingerprint = load_capability_evidence_index(registry=registry)
+    registry.mark_evidence_verified(fingerprint)
+    if batch is not None:
+        batch["registry"] = registry
+    return registry
