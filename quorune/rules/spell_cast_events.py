@@ -88,12 +88,13 @@ class SpellCastEvent:
     keywords: tuple[str, ...] | None = None
     phase: str | None = None
     targets: tuple[str, ...] | None = None
+    creature_target_controllers: tuple[str, ...] | None = None
     schema_version: int = 2
 
     def __post_init__(self) -> None:
         if (
             type(self.schema_version) is not int
-            or self.schema_version not in {1, 2, 3, 4, 5}
+            or self.schema_version not in {1, 2, 3, 4, 5, 6}
         ):
             raise SpellCastEventError(
                 "Unsupported normalized spell-cast event schema version"
@@ -144,6 +145,7 @@ class SpellCastEvent:
             self.keywords,
             self.phase,
             self.targets,
+            self.creature_target_controllers,
         )
         if self.schema_version in {1, 2}:
             if any(value is not None for value in extended):
@@ -217,6 +219,15 @@ class SpellCastEvent:
                 _references(self.targets, field="targets"),
             )
 
+        if self.schema_version < 6:
+            if self.creature_target_controllers is not None:
+                raise SpellCastEventError("Legacy cast events cannot carry current creature target facts")
+        else:
+            if not isinstance(self.creature_target_controllers, (list, tuple)):
+                raise SpellCastEventError("Version-six cast events require an array of current creature target facts")
+            object.__setattr__(self, "creature_target_controllers", tuple(sorted(set(
+                _references(self.creature_target_controllers, field="creature target controllers")))))
+
     def to_context(self) -> dict[str, Any]:
         context = {
             "schema_version": self.schema_version,
@@ -230,7 +241,7 @@ class SpellCastEvent:
             "types": list(self.types),
             "stack": self.stack_ref,
         }
-        if self.schema_version in {2, 3, 4, 5}:
+        if self.schema_version in {2, 3, 4, 5, 6}:
             context.update(
                 {
                     "subtypes": list(self.subtypes),
@@ -238,7 +249,7 @@ class SpellCastEvent:
                     "colors": list(self.colors),
                 }
             )
-        if self.schema_version in {3, 4, 5}:
+        if self.schema_version in {3, 4, 5, 6}:
             context.update(
                 {
                     "mana_value": self.mana_value,
@@ -251,16 +262,18 @@ class SpellCastEvent:
                     "keywords": list(self.keywords or ()),
                     **(
                         {"phase": self.phase}
-                        if self.schema_version in {4, 5}
+                        if self.schema_version in {4, 5, 6}
                         else {}
                     ),
                     **(
                         {"targets": list(self.targets or ())}
-                        if self.schema_version == 5
+                        if self.schema_version in {5, 6}
                         else {}
                     ),
                 }
             )
+        if self.schema_version == 6:
+            context["creature_target_controllers"] = list(self.creature_target_controllers or ())
         return context
 
     @classmethod
@@ -282,9 +295,9 @@ class SpellCastEvent:
             "types",
             "stack",
         }
-        if version in {2, 3, 4, 5}:
+        if version in {2, 3, 4, 5, 6}:
             expected.update({"subtypes", "supertypes", "colors"})
-        if version in {3, 4, 5}:
+        if version in {3, 4, 5, 6}:
             expected.update(
                 {
                     "mana_value",
@@ -297,14 +310,16 @@ class SpellCastEvent:
                     "keywords",
                 }
             )
-            if version in {4, 5}:
+            if version in {4, 5, 6}:
                 expected.add("phase")
-            if version == 5:
+            if version in {5, 6}:
                 expected.add("targets")
         elif version not in {1, 2}:
             raise SpellCastEventError(
                 "Unsupported normalized spell-cast event schema version"
             )
+        if version == 6:
+            expected.add("creature_target_controllers")
         if set(value) != expected:
             raise SpellCastEventError(
                 "Normalized spell-cast events have a closed schema"
@@ -324,6 +339,7 @@ class SpellCastEvent:
             "colors": value.get("colors", ()),
             "keywords": value.get("keywords", ()),
             "targets": value.get("targets", ()),
+            "creature_target_controllers": value.get("creature_target_controllers", ()),
         }
         if any(not isinstance(item, (list, tuple)) for item in arrays.values()):
             raise SpellCastEventError(
@@ -350,13 +366,14 @@ class SpellCastEvent:
             has_adventure=value.get("has_adventure"),
             keywords=(
                 tuple(arrays["keywords"])
-                if version in {3, 4, 5}
+                if version in {3, 4, 5, 6}
                 else None
             ),
             phase=value.get("phase"),
+            creature_target_controllers=tuple(arrays["creature_target_controllers"]) if version == 6 else None,
             targets=(
                 tuple(arrays["targets"])
-                if version == 5
+                if version in {5, 6}
                 else None
             ),
         )

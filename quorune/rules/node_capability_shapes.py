@@ -1353,6 +1353,7 @@ def fixed_counter_placement_target_set_node_capabilities(
             return ()
         return (
             "counter.producer.support",
+            "counter.producer.fixed_permanent_target_set_effect",
         )
     if "source_exclusion" in schema:
         return ()

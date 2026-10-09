@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "7cfc1784211d4aa6fd9bd47fd6165e9394af8b366af79add98ceeca762341ae4",
-  "declaration_source_fingerprint": "93197c51a8b021a4089c690f3c3c5fcccd50b73009905fab16b85b1e6ae644d3",
+  "registry_fingerprint": "8c46512658ec58c0a2b76366fbc87852433b87929c24624fd8cab8a36657c5c9",
+  "declaration_source_fingerprint": "6a7f5d58d73f64afc78e1dd301c58fbe49610af3f8192e3945a6fc449babc3fc",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -73693,6 +73693,292 @@
       "applicability_note": "Replay from the checkpoint before an offered cast and verify the full entered permanent and trigger result."
     },
     {
+      "capability_id": "trigger.event.spell_cast_creature_target",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_cast_creature_targets.CastCreatureTargetActionTests.test_actual_repartee_cast_checks_target_type_controller_and_invalid_command_rollback",
+      "official_rule_ids": [
+        "115.1a",
+        "115.1b",
+        "115.9b",
+        "601.2c",
+        "601.2h",
+        "601.2i",
+        "603.2",
+        "603.3",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Public creature-target cast facts retain separate caster and target controllers through actual command rejection and exact replay."
+    },
+    {
+      "capability_id": "trigger.event.spell_cast_creature_target",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_cast_creature_targets.CastCreatureTargetActionTests.test_aura_cast_qualifies_controlled_creature_draw_but_not_repartee_with_private_replay",
+      "official_rule_ids": [
+        "115.1a",
+        "115.1b",
+        "115.9b",
+        "601.2c",
+        "601.2h",
+        "601.2i",
+        "603.2",
+        "603.3",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An actual Aura cast targets a controlled opposing-owned creature, triggers the any-spell draw, excludes instant-or-sorcery Repartee and keeps drawn card identity hidden with pre-action replay."
+    },
+    {
+      "capability_id": "trigger.event.spell_cast_creature_target",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_cast_creature_targets.CastCreatureTargetActionTests.test_support_cast_with_two_targets_queues_one_trigger_and_zero_targets_queue_none",
+      "official_rule_ids": [
+        "115.1a",
+        "115.1b",
+        "115.9b",
+        "601.2c",
+        "601.2h",
+        "601.2i",
+        "603.2",
+        "603.3",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Support casts targeting two creatures queue one cast qualifier; zero targets queue none, independently of effect resolution, with exact replay."
+    },
+    {
+      "capability_id": "trigger.event.spell_cast_creature_target",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_cast_creature_targets.CastCreatureTargetActionTests.test_target_sacrificed_as_casting_cost_is_ignored_without_last_known_target_information",
+      "official_rule_ids": [
+        "115.1a",
+        "115.1b",
+        "115.9b",
+        "601.2c",
+        "601.2h",
+        "601.2i",
+        "603.2",
+        "603.3",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual target selection followed by sacrificing that same creature as the casting price leaves no current target at cast completion; no Repartee or controlled-creature draw triggers and replay preserves the paid cost."
+    },
+    {
+      "capability_id": "trigger.event.spell_cast_creature_target",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_cast_creature_targets.CastCreatureTargetActionTests.test_actual_repartee_cast_checks_target_type_controller_and_invalid_command_rollback",
+      "official_rule_ids": [
+        "115.1a",
+        "115.1b",
+        "115.9b",
+        "601.2c",
+        "601.2h",
+        "601.2i",
+        "603.2",
+        "603.3",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Public creature-target cast facts retain separate caster and target controllers through actual command rejection and exact replay."
+    },
+    {
+      "capability_id": "trigger.event.spell_cast_creature_target",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_cast_creature_targets.CastCreatureTargetActionTests.test_cast_target_fact_omission_mutant_is_killed_by_actual_trigger_outcome",
+      "official_rule_ids": [
+        "115.1a",
+        "115.1b",
+        "115.9b",
+        "601.2c",
+        "601.2h",
+        "601.2i",
+        "603.2",
+        "603.3",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Omitting sealed current creature target facts is killed by the actual accepted cast trigger count and consequence assertions."
+    },
+    {
+      "capability_id": "trigger.event.spell_cast_creature_target",
+      "evidence_class": "negative",
+      "test_id": "tests.test_cast_creature_targets.CastCreatureTargetCompilerTests.test_targeted_cast_grammar_requires_new_capability_and_keeps_independent_siblings",
+      "official_rule_ids": [
+        "115.1a",
+        "115.1b",
+        "115.9b",
+        "601.2c",
+        "601.2h",
+        "601.2i",
+        "603.2",
+        "603.3",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Public creature-target cast facts retain separate caster and target controllers through actual command rejection and exact replay."
+    },
+    {
+      "capability_id": "trigger.event.spell_cast_creature_target",
+      "evidence_class": "positive",
+      "test_id": "tests.test_cast_creature_targets.CastCreatureTargetActionTests.test_actual_repartee_cast_checks_target_type_controller_and_invalid_command_rollback",
+      "official_rule_ids": [
+        "115.1a",
+        "115.1b",
+        "115.9b",
+        "601.2c",
+        "601.2h",
+        "601.2i",
+        "603.2",
+        "603.3",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Public creature-target cast facts retain separate caster and target controllers through actual command rejection and exact replay."
+    },
+    {
+      "capability_id": "trigger.event.spell_cast_creature_target",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_cast_creature_targets.CastCreatureTargetActionTests.test_aura_cast_qualifies_controlled_creature_draw_but_not_repartee_with_private_replay",
+      "official_rule_ids": [
+        "115.1a",
+        "115.1b",
+        "115.9b",
+        "601.2c",
+        "601.2h",
+        "601.2i",
+        "603.2",
+        "603.3",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An actual Aura cast targets a controlled opposing-owned creature, triggers the any-spell draw, excludes instant-or-sorcery Repartee and keeps drawn card identity hidden with pre-action replay."
+    },
+    {
+      "capability_id": "trigger.event.spell_cast_creature_target",
+      "evidence_class": "replay",
+      "test_id": "tests.test_cast_creature_targets.CastCreatureTargetActionTests.test_actual_repartee_cast_checks_target_type_controller_and_invalid_command_rollback",
+      "official_rule_ids": [
+        "115.1a",
+        "115.1b",
+        "115.9b",
+        "601.2c",
+        "601.2h",
+        "601.2i",
+        "603.2",
+        "603.3",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Public creature-target cast facts retain separate caster and target controllers through actual command rejection and exact replay."
+    },
+    {
+      "capability_id": "trigger.event.spell_cast_creature_target",
+      "evidence_class": "replay",
+      "test_id": "tests.test_cast_creature_targets.CastCreatureTargetActionTests.test_aura_cast_qualifies_controlled_creature_draw_but_not_repartee_with_private_replay",
+      "official_rule_ids": [
+        "115.1a",
+        "115.1b",
+        "115.9b",
+        "601.2c",
+        "601.2h",
+        "601.2i",
+        "603.2",
+        "603.3",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An actual Aura cast targets a controlled opposing-owned creature, triggers the any-spell draw, excludes instant-or-sorcery Repartee and keeps drawn card identity hidden with pre-action replay."
+    },
+    {
+      "capability_id": "trigger.event.spell_cast_creature_target",
+      "evidence_class": "replay",
+      "test_id": "tests.test_cast_creature_targets.CastCreatureTargetActionTests.test_support_cast_with_two_targets_queues_one_trigger_and_zero_targets_queue_none",
+      "official_rule_ids": [
+        "115.1a",
+        "115.1b",
+        "115.9b",
+        "601.2c",
+        "601.2h",
+        "601.2i",
+        "603.2",
+        "603.3",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Support casts targeting two creatures queue one cast qualifier; zero targets queue none, independently of effect resolution, with exact replay."
+    },
+    {
+      "capability_id": "trigger.event.spell_cast_creature_target",
+      "evidence_class": "replay",
+      "test_id": "tests.test_cast_creature_targets.CastCreatureTargetActionTests.test_target_sacrificed_as_casting_cost_is_ignored_without_last_known_target_information",
+      "official_rule_ids": [
+        "115.1a",
+        "115.1b",
+        "115.9b",
+        "601.2c",
+        "601.2h",
+        "601.2i",
+        "603.2",
+        "603.3",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual target selection followed by sacrificing that same creature as the casting price leaves no current target at cast completion; no Repartee or controlled-creature draw triggers and replay preserves the paid cost."
+    },
+    {
       "capability_id": "trigger.keyword.afflict.fixed",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectRuntimeTests.test_keyword_event_effect_runtime_boundaries",
@@ -82635,5 +82921,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "716c95411bb087d8c913e4b5f394deaf83a1a5d5f3544a2de98727e8462a05e2"
+  "fingerprint": "fcc3b13c012aa66b62e94fcba85df0915c04d5cf12dc4716cba51db20311638b"
 }

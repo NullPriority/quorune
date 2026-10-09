@@ -328,6 +328,19 @@ def _compile_card_program_from_ir(
         for face in ir.faces
         for residual in face.residuals
     ]
+    for face in ir.faces:
+        spell_nodes = tuple(node for node in face.nodes if node.kind == 'spell_ability' and node.lowerable)
+        if not spell_nodes or any(program.ability_id == 'spell:' + face.face_id for program in programs.values()):
+            continue
+        residuals.append({
+            'face_id': face.face_id, 'residual_id': 'program_lowering:' + face.face_id,
+            'kind': 'program_lowering', 'material': True,
+            'text': '\n'.join(node.text for node in spell_nodes),
+            'span': {'start': min(node.span.start for node in spell_nodes),
+                'end': max(node.span.end for node in spell_nodes), 'line': spell_nodes[0].span.line},
+            'reason': 'Recognized physical spell clauses have no executable lowering group',
+            'blockers': ['complete physical spell program lowering'],
+        })
     residuals.extend(card_form_compilation.residuals)
     return CardProgram.create(
         compiler_version=ORACLE_COMPILER_VERSION,

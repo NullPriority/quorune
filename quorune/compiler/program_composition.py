@@ -36,6 +36,36 @@ def _ordered_unique(values: Iterable[str]) -> list[str]:
     return list(dict.fromkeys(values))
 
 
+def _composed_target_schema(schemas: Sequence[Mapping[str, Any]]) -> dict[str, Any] | None:
+    if not schemas:
+        return None
+    if len(schemas) == 1:
+        return dict(schemas[0])
+    from ..rules.permanent_predicate_capability_shapes import direct_permanent_target_schema_is_closed
+    if len(schemas) > 4 or any(not direct_permanent_target_schema_is_closed(schema) or schema.get('count') != 1 for schema in schemas):
+        return None
+    return {'groups': [{**{k:v for k,v in schema.items() if k != 'count'},
+        'id': 'clause_' + str(index), 'min': 1, 'max': 1} for index,schema in enumerate(schemas)]}
+
+
+def _rebase_target(value: Any, *, old: int, new: int) -> Any:
+    if isinstance(value, Mapping):
+        return {key: _rebase_target(item, old=old, new=new) for key,item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_rebase_target(item, old=old, new=new) for item in value]
+    return '$target.' + str(new) if value == '$target.' + str(old) else value
+
+
+def _component_target_roles_are_exact(value: Any, role: int) -> bool:
+    if isinstance(value, Mapping):
+        return all(_component_target_roles_are_exact(item, role) for item in value.values())
+    if isinstance(value, (list, tuple)):
+        return all(_component_target_roles_are_exact(item, role) for item in value)
+    if isinstance(value, str) and value.startswith('$target.'):
+        return value == '$target.' + str(role)
+    return True
+
+
 def generated_node_groups(
     face: Any,
     *,
@@ -84,6 +114,8 @@ def is_closed_composed_spell_effect_program(
         "template_id",
     }
     offset = 0
+    target_offset = 0
+    multi_target = sum(isinstance(c, Mapping) and c.get("target_schema") is not None for c in components) > 1
     dependencies: set[str] = set()
     cost_schemas: list[dict[str, Any]] = []
     event_conditions: list[dict[str, Any]] = []
@@ -154,13 +186,16 @@ def is_closed_composed_spell_effect_program(
             event_conditions.append(dict(event_condition))
         if target_schema is not None:
             target_schemas.append(dict(target_schema))
+        if multi_target and target_schema is not None and not _component_target_roles_are_exact(program.effects[offset:end], target_offset):
+            return False
         component_shape = _EffectComponentView(
             capability_dependencies=list(component_dependencies),
             cost_schema=(
                 dict(cost_schema) if cost_schema is not None else None
             ),
             coverage=list(coverage),
-            effects=[dict(effect) for effect in program.effects[offset:end]],
+            effects=[_rebase_target(dict(effect), old=target_offset, new=0) if multi_target and target_schema is not None
+                else dict(effect) for effect in program.effects[offset:end]],
             event_condition=(
                 dict(event_condition)
                 if event_condition is not None
@@ -177,6 +212,8 @@ def is_closed_composed_spell_effect_program(
         ):
             return False
         dependencies.update(component_dependencies)
+        if target_schema is not None:
+            target_offset += 1
         offset = end
     expected_source_span = {
         _SPAN_START_FIELD: component_spans[0][_SPAN_START_FIELD],
@@ -193,9 +230,8 @@ def is_closed_composed_spell_effect_program(
         and len(event_conditions) <= 1
         and (event_conditions[0] if event_conditions else None)
         == program.event_condition
-        and len(target_schemas) <= 1
-        and (target_schemas[0] if target_schemas else None)
-        == program.target_schema
+        and (not multi_target or _composed_target_schema(target_schemas) is not None)
+        and _composed_target_schema(target_schemas) == program.target_schema
         and sorted(dependencies) == sorted(program.capability_dependencies)
     )
 
@@ -251,7 +287,8 @@ def _validated_group_identity(
         any(node.handlers for node in nodes)
         or len({node.active_zone for node in nodes}) != 1
         or len({node.event for node in nodes}) != 1
-        or sum(node.target_schema is not None for node in nodes) > 1
+        or (sum(node.target_schema is not None for node in nodes) > 1 and _composed_target_schema(
+            [node.target_schema for node in nodes if node.target_schema is not None]) is None)
         or sum(node.cost is not None for node in nodes) > 1
         or sum(node.event_condition is not None for node in nodes) > 1
     ):
@@ -429,11 +466,15 @@ def program_from_generated_node_group(
         (node for node in nodes if node.event_condition is not None),
         None,
     )
-    effects = [
-        dict(effect)
-        for node in nodes
-        for effect in node.effects
-    ]
+    target_schemas = [node.target_schema for node in nodes if node.target_schema is not None]
+    multi_target = len(target_schemas) > 1
+    effects = []
+    target_offset = 0
+    for node in nodes:
+        effects.extend(_rebase_target(dict(effect), old=0, new=target_offset)
+            if multi_target and node.target_schema is not None else dict(effect) for effect in node.effects)
+        if node.target_schema is not None:
+            target_offset += 1
     provenance = _node_group_provenance(
         face=face,
         nodes=nodes,
@@ -465,12 +506,8 @@ def program_from_generated_node_group(
         event=first.event,
         trust_level=trust_level,
         provenance=provenance,
-        tests=[f"oracle_template:{node.template_id}" for node in nodes],
-        target_schema=(
-            _copy_mapping(target_node.target_schema)
-            if target_node is not None
-            else None
-        ),
+        tests=_ordered_unique(f"oracle_template:{node.template_id}" for node in nodes),
+        target_schema=_composed_target_schema(target_schemas),
         cost_schema=(
             _copy_mapping(cost_node.cost) if cost_node is not None else None
         ),

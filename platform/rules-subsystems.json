@@ -375,6 +375,41 @@
       },
       "candidate_bundles": [
         {
+          "bundle_id": "bundle:cast-creature-target",
+          "member_family_ids": [
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding"
+          ],
+          "canonical_owner_ids": [
+            "capability:trigger.event.spell_cast_creature_target",
+            "component:quorune.rules.casting.commit._cast_creature_target_controllers"
+          ],
+          "source_contexts": [
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "current-creature-target-at-cast-completion",
+            "one-occurrence-per-cast",
+            "separate-source-caster-target-controller"
+          ],
+          "shared_dependencies": [
+            "target.revalidate_resolution",
+            "trigger.event.normalized_spell_cast"
+          ],
+          "shared_grammar": "Controller-bound completed spell casts with one or more current creature targets, optionally controlled by the source controller, and independently closed fixed trigger results.",
+          "estimated_implementation_hours": 3,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Retain distinct original whole-card closure as a component of a combined net-200 delivery; subtract independently confirmed lowering losses.",
+          "explicit_exclusions": [
+            "Copies, targets-only, counts and first-per-turn limits",
+            "Departed targets and last-known target information",
+            "Independent unrepresented whole-card siblings"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "cast-creature-target-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:permanent-spell-additional-price",
           "member_family_ids": [
             "effect_clause:typed-spell-additional-cost-clause"

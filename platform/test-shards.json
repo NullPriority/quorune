@@ -345,6 +345,7 @@
       "test_amass_rules",
       "test_aura_targeting_entry",
       "test_block_keyword_compiler",
+      "test_cast_creature_targets",
       "test_commander_pairing",
       "test_concession_rules",
       "test_counted_activation_costs",

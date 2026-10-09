@@ -948,7 +948,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
     def test_dynamic_spell_cast_characteristic_variants_remain_material(self):
         variants = (
             "Whenever you cast a spell with mana value 3, draw a card.",
-            "Whenever you cast a spell that targets a creature, draw a card.",
+            "Whenever you cast a spell that targets only a creature, draw a card.",
             "Whenever you cast or copy a Spirit spell, draw a card.",
             "Whenever you cast a Spirit spell, if a chosen player controls "
             "an artifact, draw a card.",

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 188,
+  "registry_version": 189,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -9645,6 +9645,85 @@
       "dependency_fail_closed_rationale": "The versioned outer descriptor and independently compiled child retain their distinct capability requirements; blocked or missing owners withhold exact admission.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Focused typed descriptor mutations, blocked capability and printed lifetime witnesses distinguish unconditional grants, stale recipient identity and lost stack independence.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "trigger.event.spell_cast_creature_target",
+      "version": 1,
+      "official_rules": [
+        "115.1a",
+        "115.1b",
+        "115.9b",
+        "601.2c",
+        "601.2h",
+        "601.2i",
+        "603.2",
+        "603.3",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Seal current creature-target controller facts at completed casting and subscribe one fixed result to a qualifying controller-bound spell cast.",
+        "inputs": [
+          "Completed spell cast facts",
+          "Current targets still in their selected zone and incarnation",
+          "Existing fixed trigger results"
+        ],
+        "outputs": [
+          "One trigger for one qualifying cast regardless of number of targets",
+          "Current target controller facts preserved in version-six public event context"
+        ],
+        "exclusions": [
+          "Targets only, target quantities, hidden-zone targets and first-per-turn limits",
+          "Ordinary spell copies and independently unsupported result siblings"
+        ]
+      },
+      "dependencies": [
+        "trigger.event.normalized_spell_cast",
+        "target.revalidate_resolution"
+      ],
+      "implementation_components": [
+        "quorune.rules.spell_cast_events.SpellCastEvent",
+        "quorune.rules.casting.commit._cast_creature_target_controllers",
+        "quorune.compiler.spell_cast_predicates.FixedSpellCastSubject",
+        "quorune.trigger_discovery.semantic_event_condition_matches"
+      ],
+      "positive_tests": [
+        "test_version_six_cast_target_facts_are_closed_and_legacy_payloads_stay_readable",
+        "test_actual_repartee_cast_checks_target_type_controller_and_invalid_command_rollback"
+      ],
+      "negative_tests": [
+        "test_targeted_cast_grammar_requires_new_capability_and_keeps_independent_siblings"
+      ],
+      "interaction_tests": [
+        "test_actual_repartee_cast_checks_target_type_controller_and_invalid_command_rollback"
+      ],
+      "multiplayer_tests": [
+        "test_actual_repartee_cast_checks_target_type_controller_and_invalid_command_rollback"
+      ],
+      "privacy_tests": [
+        "test_actual_repartee_cast_checks_target_type_controller_and_invalid_command_rollback"
+      ],
+      "replay_tests": [
+        "test_actual_repartee_cast_checks_target_type_controller_and_invalid_command_rollback"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Independent omission of target-qualified or base cast-event capability retains an inexact whole node.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "An executable omission mutant suppresses sealed creature-target cast facts and is rejected by actual accepted-cast trigger outcome assertions.",
       "blockers": [],
       "status": "trusted"
     }

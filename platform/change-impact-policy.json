@@ -1464,6 +1464,7 @@
         "tests/test_event_card_return.py",
         "quorune/compiler/permanent_additional_cost_nodes.py",
         "tests/test_permanent_additional_costs.py",
+        "tests/test_cast_creature_targets.py",
         "tests/fixtures/event-card-return.json"
       ],
       "test_modules": [
@@ -1488,6 +1489,7 @@
         "test_resolution_public_conditions",
         "test_event_card_return",
         "test_permanent_additional_costs",
+        "test_cast_creature_targets",
         "test_persist_undying_rules",
         "test_source_maintenance"
       ]

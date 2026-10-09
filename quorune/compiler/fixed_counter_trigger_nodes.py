@@ -676,6 +676,11 @@ class FixedCounterTriggerBinding:
         return "battlefield"
 
     @property
+    def explicit_capabilities(self) -> tuple[str, ...]:
+        return (*self.public_capabilities, *(("trigger.event.spell_cast_creature_target",)
+            if self.spell_subject is not None and self.spell_subject.targets_creature else ()))
+
+    @property
     def event_mechanics(self) -> tuple[str, ...]:
         """Return only the normalized-event owners this binding consumes."""
 
@@ -1290,7 +1295,7 @@ def fixed_counter_event_trigger_node(
         capability_registry=capability_registry,
         capability_profile=capability_profile,
         explicit_capabilities=(
-            *binding.public_capabilities,
+            *binding.explicit_capabilities,
             *(
                 (FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY,)
                 if binding.public_state_condition is not None
@@ -1419,7 +1424,7 @@ def fixed_typed_event_effect_trigger_node(
         capability_registry=capability_registry,
         capability_profile=capability_profile,
         explicit_capabilities=(
-            *binding.public_capabilities,
+            *binding.explicit_capabilities,
             *(
                 (FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY,)
                 if binding.public_state_condition is not None

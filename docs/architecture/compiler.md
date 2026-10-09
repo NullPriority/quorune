@@ -1452,6 +1452,25 @@ declarations carry explicit Oracle-node-scoped identities and persist their
 first execution-time value across sibling results and replacement resumption.
 Independent quantity expressions retain their separate execution-time reads.
 The casting owner remains the sole authority for choosing and paying cost X.
+Target-qualified spell-cast predicates consume version-six public cast facts.
+The casting owner reads effective creature types and controllers only for
+selected targets still in their expected zone and incarnation at cast completion
+(CR 115.9b); phased-out or departed objects are ignored. One qualifying cast
+produces one occurrence, regardless of the number of creature targets. Aura
+spells may satisfy the any-spell form, while ordinary copies remain separate
+copy events. Targets-only, target counts and first-per-turn variants remain
+outside this boundary.
+
+The physical spell composer preserves independent fixed single-permanent target
+roles across up to four printed clauses. Each role can select the same object
+as a different instance of the word target, and partial target invalidation
+retains only the applicable instruction. Component validation verifies the
+exact target-role index and source span before admitting the combined program.
+An exact recognized clause whose group cannot produce a primary executable
+spell carrier adds a material lowering residual; an empty carrier cannot become
+capability-closed merely because its leaf recognition succeeded. Variable and
+mixed target groups remain blocked until their shared composition is owned.
+
 `compiler/permanent_additional_cost_nodes.py` lowers one mandatory printed
 casting-price clause on a permanent into its primary spell cost schema. The
 carrier has no resolution effects and uses the normal battlefield destination;

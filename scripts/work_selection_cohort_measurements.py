@@ -226,6 +226,7 @@ _PROBE_KICKED_SPELL = 'fixed-kicked-spell-condition-existing-owner-v1'
 _PROBE_EVENT_CARD_RETURN = 'fixed-event-card-return-existing-owner-v1'
 _PROBE_BATCHED_SUPPORT = 'batched-card-support-existing-owner-v1'
 _PROBE_PERMANENT_PRICE = 'permanent-spell-additional-price-existing-owner-v1'
+_PROBE_CAST_CREATURE_TARGET = 'cast-creature-target-existing-owner-v1'
 _PROBE_DECLARED_EFFECT_AMOUNT = "declared-effect-amount-existing-owner-v1"
 _PROBE_FIXED_ANIMATION = "fixed-resolution-animation-existing-owner-v1"
 _PROBE_FIXED_EFFECT_PAYMENT = "fixed-resolution-payment-existing-owner-v1"
@@ -605,6 +606,7 @@ _PROBE_IDS = {
     _PROBE_EVENT_CARD_RETURN,
     _PROBE_BATCHED_SUPPORT,
     _PROBE_PERMANENT_PRICE,
+    _PROBE_CAST_CREATURE_TARGET,
     _PROBE_DECLARED_EFFECT_AMOUNT,
     _PROBE_FIXED_ANIMATION,
     _PROBE_FIXED_EFFECT_PAYMENT,
@@ -1259,6 +1261,8 @@ def _matches_probe(
     card_record: Any | None = None,
     ability: Mapping[str, Any] | None = None,
 ) -> bool:
+    if probe_id == _PROBE_CAST_CREATURE_TARGET:
+        return bool(re.search(r"cast (?:a spell|an instant or sorcery spell) that targets a creature", source, re.I))
     if probe_id == _PROBE_PERMANENT_PRICE:
         return bool(card_record is not None and card_record.is_permanent_spell
             and re.search(r"^As an additional cost to cast this spell,", source, re.I | re.M))
@@ -5430,7 +5434,7 @@ def _measurement(
             cohort_fingerprint=cohort_fingerprint, database=database,
         )
     if probe_id in {_PROBE_BOUND_EFFECT_PROGRAM, _PROBE_FIXED_CONTROL_UNTAP, _PROBE_ENTRY_DESIGNATIONS, _PROBE_ENTRY_DESIGNATIONS_V2, _PROBE_QUALIFIED_ZONE_EVENT,
-                    _PROBE_DECLARED_EFFECT_AMOUNT, _PROBE_FIXED_ANIMATION, _PROBE_FIXED_EFFECT_PAYMENT, _PROBE_STACK_CONTROLLER_PAYMENT, _PROBE_LINKED_EXILE_RETURN, _PROBE_SCALAR_EFFECT_AMOUNT, _PROBE_TOKEN_COPY_RECIPE, _PROBE_TAP_STATE_EVENT, _PROBE_PUBLIC_COLLECTION_QUANTITY, _PROBE_SOURCE_SELF_REFERENCES, _PROBE_SOURCE_MAINTENANCE, _PROBE_COUNTED_ACTIVATION_COST, _PROBE_KICKED_ENTRY, _PROBE_TARGET_ANNOUNCEMENT, _PROBE_KICKED_SPELL, _PROBE_EVENT_CARD_RETURN, _PROBE_BATCHED_SUPPORT, _PROBE_PERMANENT_PRICE}:
+                    _PROBE_DECLARED_EFFECT_AMOUNT, _PROBE_FIXED_ANIMATION, _PROBE_FIXED_EFFECT_PAYMENT, _PROBE_STACK_CONTROLLER_PAYMENT, _PROBE_LINKED_EXILE_RETURN, _PROBE_SCALAR_EFFECT_AMOUNT, _PROBE_TOKEN_COPY_RECIPE, _PROBE_TAP_STATE_EVENT, _PROBE_PUBLIC_COLLECTION_QUANTITY, _PROBE_SOURCE_SELF_REFERENCES, _PROBE_SOURCE_MAINTENANCE, _PROBE_COUNTED_ACTIVATION_COST, _PROBE_KICKED_ENTRY, _PROBE_TARGET_ANNOUNCEMENT, _PROBE_KICKED_SPELL, _PROBE_EVENT_CARD_RETURN, _PROBE_BATCHED_SUPPORT, _PROBE_PERMANENT_PRICE, _PROBE_CAST_CREATURE_TARGET}:
         return _bound_effect_program_measurement(
             frontier=frontier, bundle_id=bundle_id, probe_id=probe_id,
             cards_by_oracle_id=cards_by_oracle_id, coverage=coverage,
@@ -8261,6 +8265,7 @@ def _bound_effect_program_measurement(
         _PROBE_EVENT_CARD_RETURN: 'zone.return.fixed_event_card',
         _PROBE_BATCHED_SUPPORT: None,
         _PROBE_PERMANENT_PRICE: None,
+        _PROBE_CAST_CREATURE_TARGET: "trigger.event.spell_cast_creature_target",
     }[probe_id]
     capabilities = {capability} if capability is not None else {
         "continuous.characteristics.query_count_modifier",

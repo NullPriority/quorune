@@ -208,6 +208,9 @@ class FixedSpellCastSubject:
     requires_main_phase: bool = False
     not_owned_by_controller: bool = False
 
+    targets_creature: bool = False
+    targets_controlled_creature: bool = False
+
     def __post_init__(self) -> None:
         if not isinstance(self.controller, FixedSpellCastController):
             raise ValueError("Spell-cast subjects require a closed caster relation")
@@ -232,9 +235,13 @@ class FixedSpellCastSubject:
             "requires_adventure",
             "requires_main_phase",
             "not_owned_by_controller",
+            "targets_creature",
+            "targets_controlled_creature",
         ):
             if type(getattr(self, name)) is not bool:
                 raise ValueError(f"Spell-cast {name} must be a boolean")
+        if self.targets_controlled_creature and not self.targets_creature:
+            raise ValueError("Controlled creature targets require a creature target predicate")
         if (
             self.source_spell
             and self.controller is not FixedSpellCastController.SOURCE
@@ -312,6 +319,7 @@ class FixedSpellCastSubject:
         return any(
             (
                 self.source_spell,
+                self.targets_creature,
                 self.mana_value_minimum is not None,
                 self.caster_spell_number is not None,
                 self.caster_spell_number_minimum is not None,
@@ -394,6 +402,9 @@ class FixedSpellCastSubject:
 
     def _fact_conditions(self) -> tuple[Mapping[str, Any], ...]:
         conditions: list[Mapping[str, Any]] = []
+        if self.targets_creature:
+            conditions.append({"field": "creature_target_controllers", "op": "contains_any", "value": ["$source.controller"]}
+                if self.targets_controlled_creature else {"field": "creature_target_controllers", "op": "count_gte", "value": 1})
         if self.source_spell:
             conditions.append(
                 {"field": "card", "op": "eq", "value": "$source.ref"}
@@ -943,12 +954,24 @@ def _characteristic_trait_spell_cast_binding(
     )
 
 
+def _targeted_creature_spell_cast_binding(material_line: str) -> FixedSpellCastBindingSpec | None:
+    match = re.fullmatch(r"Whenever you cast (?P<spell>a spell|an instant or sorcery spell) that targets a creature(?P<controlled> you control)?, (?P<body>.+)", material_line, re.I)
+    if match is None:
+        return None
+    return FixedSpellCastBindingSpec(subject=FixedSpellCastSubject(
+        controller=FixedSpellCastController.SOURCE,
+        quality=FixedSpellCastQuality.ANY if match['spell'].casefold() == 'a spell' else FixedSpellCastQuality.INSTANT_OR_SORCERY,
+        targets_creature=True, targets_controlled_creature=bool(match['controlled'])),
+        body=match['body'], variant='targets_creature_you_control' if match['controlled'] else 'targets_creature')
+
+
 def fixed_spell_cast_binding_spec(
     material_line: str,
 ) -> FixedSpellCastBindingSpec | None:
     """Parse one bounded predicate over immutable normalized cast facts."""
 
     for parser in (
+        _targeted_creature_spell_cast_binding,
         _basic_spell_cast_binding,
         _history_spell_cast_binding,
         _origin_spell_cast_binding,

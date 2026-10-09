@@ -168,7 +168,7 @@ class SupportCounterPlacementCompilerTests(unittest.TestCase):
         )
         assert template is not None
         self.assertEqual(
-            ("counter.producer.support",),
+            ("counter.producer.fixed_permanent_target_set_effect", "counter.producer.support"),
             capability_dependencies_for_node(
                 effects=template.effects,
                 target_schema=template.target_schema,
