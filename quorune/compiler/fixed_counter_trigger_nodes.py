@@ -6,6 +6,8 @@ import re
 from typing import Any, Callable, Mapping, Sequence
 
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+from ..rules.source_references import SourceReferenceSpec
+from .source_self_effect_templates import normalized_source_event_line
 from ..continuous_conditions import (
     FIXED_PUBLIC_STATE_INTERVENING_CONDITION_FIELD,
     FIXED_PUBLIC_STATE_INTERVENING_COVERAGE,
@@ -1017,7 +1019,7 @@ def _public_state_source_self_trigger_binding(
         r"this (?:artifact|Aura|card|creature|enchantment|Equipment|land|permanent)"
     )
     if card_name:
-        subjects = rf"(?:{subjects}|{re.escape(card_name)})"
+        subjects = rf"(?:{subjects}|{SourceReferenceSpec(card_name).regex_pattern})"
     match = re.fullmatch(
         rf"(?:When|Whenever) {subjects} (?P<event>enters|dies), "
         r"(?P<body>.+)",
@@ -1056,6 +1058,7 @@ def fixed_counter_trigger_binding(
     material_line: str,
     *,
     card_name: str | None = None,
+    _source_normalized: bool = False,
 ) -> FixedCounterTriggerBinding | None:
     intervening = _PUBLIC_INTERVENING_IF_TRIGGER.fullmatch(material_line)
     if intervening is not None:
@@ -1142,11 +1145,13 @@ def fixed_counter_trigger_binding(
             variant="controller_second_draw",
             body=second_draw.group("body"),
         )
-    return _zone_change_trigger_binding(
+    result = _zone_change_trigger_binding(
         material_line,
         card_name=card_name,
     ) or public_binding_from_spec(qualified_public_zone_event_binding_spec(material_line, card_name=card_name),
                                  binding_type=FixedCounterTriggerBinding, event_type=FixedCounterTriggerEvent)
+    normalized = normalized_source_event_line(material_line, source_name=card_name) if not result and not _source_normalized and card_name else None
+    return result or (fixed_counter_trigger_binding(normalized, card_name=card_name, _source_normalized=True) if normalized is not None else None)
 
 
 def _nested_operations(value: Any) -> set[str]:

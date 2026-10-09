@@ -1428,6 +1428,18 @@
       ]
     },
     {
+      "id": "source-self-reference-closure-contract",
+      "patterns": [
+        "quorune/compiler/source_self_effect_templates.py",
+        "quorune/rules/source_references.py",
+        "quorune/compiler/fixed_counter_trigger_nodes.py",
+        "quorune/compiler/fixed_target_effect_sequences.py",
+        "quorune/compiler/resolution_effect_templates.py",
+        "tests/fixtures/source-reference-closure-cards.json"
+      ],
+      "test_modules": ["test_source_references", "test_fixed_source_characteristic_effects", "test_card_program_trust"]
+    },
+    {
       "id": "fixed-optional-effect-choice-contract",
       "patterns": [
         "quorune/compiler/fixed_counter_trigger_nodes.py",

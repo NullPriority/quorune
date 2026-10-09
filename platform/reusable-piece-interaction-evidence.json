@@ -7585,6 +7585,63 @@
       "capability_ids": ["attachment.aura.simple_object", "continuous.resolution.fixed_source_characteristics_until_end_of_turn"],
       "interaction_order": 2,
       "assertion": "A real Holy Strength cast enables the Flaring Flame-Kin grant. A responding Disenchant removes that Aura and all conditional results, while the already accepted activation resolves through the same logical-source characteristic owner and replays from before the initiating cast."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_named_source_promotions_keep_replacement_and_prevention_siblings_fail_closed",
+      "piece_ids": [
+        "capability.continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+        "residual.replacement.replacement-applicability"
+      ],
+      "capability_ids": [
+        "continuous.resolution.fixed_source_characteristics_until_end_of_turn"
+      ],
+      "interaction_order": 2,
+      "assertion": "Complete original Zabaz and Nemata CardPrograms preserve the exact named modifier while unrepresented replacement siblings prevent strict and compatible runtime admission. No successful replacement composition is claimed."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_named_source_promotions_keep_replacement_and_prevention_siblings_fail_closed",
+      "piece_ids": [
+        "capability.continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ],
+      "capability_ids": [
+        "continuous.resolution.fixed_source_characteristics_until_end_of_turn"
+      ],
+      "interaction_order": 2,
+      "assertion": "Complete original Zabaz and Nemata CardPrograms preserve the exact named modifier while unrepresented replacement siblings prevent strict and compatible runtime admission. No successful replacement composition is claimed."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_named_source_promotions_keep_replacement_and_prevention_siblings_fail_closed",
+      "piece_ids": [
+        "capability.permanent.indestructible.ordinary",
+        "residual.replacement.damage-prevention"
+      ],
+      "capability_ids": [
+        "permanent.indestructible.ordinary"
+      ],
+      "interaction_order": 2,
+      "assertion": "Complete original Kytheon/Gideon CardProgram retains the named Indestructible result but unrepresented prevention and other face siblings prevent strict and compatible admission. This is an explicit unsupported boundary."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_pinned_background_pairing_and_named_attack_reanimation_share_authority",
+      "piece_ids": [
+        "capability.format.commander.pairing.choose_background",
+        "capability.zone.reanimate.fixed_target"
+      ],
+      "capability_ids": [
+        "format.commander.pairing.choose_background",
+        "zone.reanimate.fixed_target"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pinned Erinis has a current typed legal Background setup designation and its actual attack offers and accepts only an owned graveyard land, returns it through the existing zone owner and replays. The independently unsupported Background body is not registered or claimed playable."
     }
   ]
 }

@@ -1,0 +1,647 @@
+{
+  "cards": [
+    {
+      "cmc": 8.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Morph",
+        "Protection",
+        "Trample"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{5}{R}{R}{R}",
+      "name": "Akroma, Angel of Fury",
+      "oracle_id": "2b80faaf-92fd-4fa0-a3f6-8bb263e7ff1d",
+      "oracle_text": "This spell can't be countered.\nFlying, trample, protection from white and from blue\n{R}: Akroma gets +1/+0 until end of turn.\nMorph {3}{R}{R}{R} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)",
+      "power": "6",
+      "produced_mana": [],
+      "released_at": "2024-02-09",
+      "toughness": "6",
+      "type_line": "Legendary Creature \u2014 Angel"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Choose a background",
+        "Deathtouch"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{G}",
+      "name": "Erinis, Gloom Stalker",
+      "oracle_id": "1b76a54d-5a9f-4b1b-a075-4b4c4de8ba0a",
+      "oracle_text": "Deathtouch\nWhenever Erinis attacks, return target land card from your graveyard to the battlefield.\nChoose a Background (You can have a Background as a second commander.)",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2022-06-10",
+      "toughness": "3",
+      "type_line": "Legendary Creature \u2014 Halfling Ranger"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}",
+      "name": "Flaming Fist",
+      "oracle_id": "cdaefc96-4560-43bb-9514-bf87657bd481",
+      "oracle_text": "Commander creatures you own have \"Whenever this creature attacks, it gains double strike until end of turn.\"",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2022-06-10",
+      "toughness": null,
+      "type_line": "Legendary Enchantment \u2014 Background"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [
+            "W"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{W}",
+          "name": "Kytheon, Hero of Akros",
+          "oracle_text": "At end of combat, if Kytheon and at least two other creatures attacked this combat, exile Kytheon, then return him to the battlefield transformed under his owner's control.\n{2}{W}: Kytheon gains indestructible until end of turn.",
+          "power": "2",
+          "toughness": "1",
+          "type_line": "Legendary Creature \u2014 Human Soldier"
+        },
+        {
+          "colors": [
+            "W"
+          ],
+          "defense": null,
+          "loyalty": "3",
+          "mana_cost": "",
+          "name": "Gideon, Battle-Forged",
+          "oracle_text": "+2: Up to one target creature an opponent controls attacks Gideon during its controller's next turn if able.\n+1: Until your next turn, target creature gains indestructible. Untap that creature.\n0: Until end of turn, Gideon becomes a 4/4 Human Soldier creature with indestructible that's still a planeswalker. Prevent all damage that would be dealt to him this turn.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Legendary Planeswalker \u2014 Gideon"
+        }
+      ],
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Transform"
+      ],
+      "layout": "transform",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W} // ",
+      "name": "Kytheon, Hero of Akros // Gideon, Battle-Forged",
+      "oracle_id": "e49d745c-5130-4b54-bcbb-643b08528456",
+      "oracle_text": "Kytheon, Hero of Akros: At end of combat, if Kytheon and at least two other creatures attacked this combat, exile Kytheon, then return him to the battlefield transformed under his owner's control.\n{2}{W}: Kytheon gains indestructible until end of turn.\n//\nGideon, Battle-Forged: +2: Up to one target creature an opponent controls attacks Gideon during its controller's next turn if able.\n+1: Until your next turn, target creature gains indestructible. Untap that creature.\n0: Until end of turn, Gideon becomes a 4/4 Human Soldier creature with indestructible that's still a planeswalker. Prevent all damage that would be dealt to him this turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2015-07-17",
+      "toughness": null,
+      "type_line": "Legendary Creature \u2014 Human Soldier // Legendary Planeswalker \u2014 Gideon"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Reach"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{B}{G}",
+      "name": "Nemata, Primeval Warden",
+      "oracle_id": "f72558f5-ac5c-4efa-b01b-439bc0bbf18d",
+      "oracle_text": "Reach\nIf a creature an opponent controls would die, exile it instead. When you do, create a 1/1 green Saproling creature token.\n{G}, Sacrifice a Saproling: Nemata gets +2/+2 until end of turn.\n{1}{B}, Sacrifice two Saprolings: Draw a card.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2022-09-09",
+      "toughness": "4",
+      "type_line": "Legendary Creature \u2014 Treefolk"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{W/U}",
+      "name": "War Machine, James Rhodes",
+      "oracle_id": "0a512e55-793e-4936-bd27-80d749f4657e",
+      "oracle_text": "Flying (This creature can't be blocked except by creatures with flying or reach.)\nWhenever War Machine attacks, tap up to one target creature.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2026-06-26",
+      "toughness": "2",
+      "type_line": "Legendary Artifact Creature \u2014 Human Hero"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Modular"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}",
+      "name": "Zabaz, the Glimmerwasp",
+      "oracle_id": "549dc9f3-1fda-4ad3-87bc-8a990800380b",
+      "oracle_text": "Modular 1\nIf a modular triggered ability would put one or more +1/+1 counters on a creature you control, that many plus one +1/+1 counters are put on it instead.\n{R}: Destroy target artifact you control.\n{W}: Zabaz gains flying until end of turn.",
+      "power": "0",
+      "produced_mana": [],
+      "released_at": "2021-06-18",
+      "toughness": "0",
+      "type_line": "Legendary Artifact Creature \u2014 Insect"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "An effect that checks whether you control your commander is satisfied if you control one or both of your two commanders.",
+      "oracle_id": "1b76a54d-5a9f-4b1b-a075-4b4c4de8ba0a",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Both commanders start in the command zone, and the remaining 98 cards (or 58 cards in a Commander Draft game) of your deck are shuffled to become your library.",
+      "oracle_id": "1b76a54d-5a9f-4b1b-a075-4b4c4de8ba0a",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Choose a Background is a variant of the partner ability. You may have two commanders if one of them is a legendary creature with the choose a background ability and the other is a legendary Background enchantment. Backgrounds and cards with choose a Background do not interact with cards which have any other partner ability.",
+      "oracle_id": "1b76a54d-5a9f-4b1b-a075-4b4c4de8ba0a",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a card refers to a commander creature you own, a Background won't usually be counted or included for that effect. If another spell or ability causes your Background to become a creature, however, it will be included. Any effect that refers to your commander or a commander you own or control without specifying creature will apply to a Background that is your commander, as appropriate.",
+      "oracle_id": "1b76a54d-5a9f-4b1b-a075-4b4c4de8ba0a",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If something refers to your commander while you have two commanders, it refers to one of them of your choice. If you are instructed to perform an action on your commander (e.g. put it from the command zone into your hand due to Command Beacon), you choose one of your commanders at the time the effect happens.",
+      "oracle_id": "1b76a54d-5a9f-4b1b-a075-4b4c4de8ba0a",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control a Background that grants an ability to commander creatures you own, and you own more than one commander creature, each of them will have that ability.",
+      "oracle_id": "1b76a54d-5a9f-4b1b-a075-4b4c4de8ba0a",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your Commander deck has two commanders, you can include only cards whose own color identities are also found in your commanders' combined color identities.",
+      "oracle_id": "1b76a54d-5a9f-4b1b-a075-4b4c4de8ba0a",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your commander loses the choose a Background ability or stops being a Background during the game, as appropriate, it is still your commander.",
+      "oracle_id": "1b76a54d-5a9f-4b1b-a075-4b4c4de8ba0a",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once the game begins, your two commanders are tracked separately. If you cast one, you won't have to pay an additional {2} the first time you cast the other. A player loses the game after having been dealt 21 combat damage from any one of them, not from both of them combined (although your Background won't usually be a creature anyway).",
+      "oracle_id": "1b76a54d-5a9f-4b1b-a075-4b4c4de8ba0a",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can choose two commanders that are the same color or colors.",
+      "oracle_id": "1b76a54d-5a9f-4b1b-a075-4b4c4de8ba0a",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "A spell or ability that counters spells can still target Akroma. When that spell or ability resolves, Akroma won't be countered, but any additional effects of the countering spell or ability will still happen.",
+      "oracle_id": "2b80faaf-92fd-4fa0-a3f6-8bb263e7ff1d",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Akroma, Angel of Fury is cast face down, it can be countered.",
+      "oracle_id": "2b80faaf-92fd-4fa0-a3f6-8bb263e7ff1d",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "In a Commander game where Akroma is your commander, you may cast it face down from the command zone by paying {3} plus {2} for each time it has been cast from your command zone. The cost to turn it face up is unaffected. While face down, the combat damage it deals is still counted as damage dealt by your commander.",
+      "oracle_id": "2b80faaf-92fd-4fa0-a3f6-8bb263e7ff1d",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If this creature gets enough -1/-1 counters put on it to cause it to go to the graveyard, modular will put a number of +1/+1 counters on the target artifact creature equal to the number of +1/+1 counters on this creature before it left the battlefield.",
+      "oracle_id": "549dc9f3-1fda-4ad3-87bc-8a990800380b",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Zabaz the Glimmerwasp's replacement effect requires it to be on the battlefield to work. Notably, that means it won't increase the counters given by its own modular ability.",
+      "oracle_id": "549dc9f3-1fda-4ad3-87bc-8a990800380b",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "An effect that checks whether you control your commander is satisfied if you control one or both of your two commanders.",
+      "oracle_id": "cdaefc96-4560-43bb-9514-bf87657bd481",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Both commanders start in the command zone, and the remaining 98 cards (or 58 cards in a Commander Draft game) of your deck are shuffled to become your library.",
+      "oracle_id": "cdaefc96-4560-43bb-9514-bf87657bd481",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Choose a Background is a variant of the partner ability. You may have two commanders if one of them is a legendary creature with the choose a background ability and the other is a legendary Background enchantment. Backgrounds and cards with choose a Background do not interact with cards which have any other partner ability.",
+      "oracle_id": "cdaefc96-4560-43bb-9514-bf87657bd481",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a card refers to a commander creature you own, a Background won't usually be counted or included for that effect. If another spell or ability causes your Background to become a creature, however, it will be included. Any effect that refers to your commander or a commander you own or control without specifying creature will apply to a Background that is your commander, as appropriate.",
+      "oracle_id": "cdaefc96-4560-43bb-9514-bf87657bd481",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If something refers to your commander while you have two commanders, it refers to one of them of your choice. If you are instructed to perform an action on your commander (e.g. put it from the command zone into your hand due to Command Beacon), you choose one of your commanders at the time the effect happens.",
+      "oracle_id": "cdaefc96-4560-43bb-9514-bf87657bd481",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control a Background that grants an ability to commander creatures you own, and you own more than one commander creature, each of them will have that ability.",
+      "oracle_id": "cdaefc96-4560-43bb-9514-bf87657bd481",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your Commander deck has two commanders, you can include only cards whose own color identities are also found in your commanders\u2019 combined color identities.",
+      "oracle_id": "cdaefc96-4560-43bb-9514-bf87657bd481",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your commander loses the choose a Background ability or stops being a Background during the game, as appropriate, it is still your commander.",
+      "oracle_id": "cdaefc96-4560-43bb-9514-bf87657bd481",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once the game begins, your two commanders are tracked separately. If you cast one, you won\u2019t have to pay an additional {2} the first time you cast the other. A player loses the game after having been dealt 21 combat damage from any one of them, not from both of them combined (although your Background won\u2019t usually be a creature anyway).",
+      "oracle_id": "cdaefc96-4560-43bb-9514-bf87657bd481",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can choose two commanders that are the same color or colors.",
+      "oracle_id": "cdaefc96-4560-43bb-9514-bf87657bd481",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "A Magic Origins planeswalker that enters the battlefield because of the ability of its front face will enter with loyalty counters as normal.",
+      "oracle_id": "e49d745c-5130-4b54-bcbb-643b08528456",
+      "published_at": "2015-06-22",
+      "source": "wotc"
+    },
+    {
+      "comment": "A double-faced card enters the battlefield with its front face up by default, unless a spell or ability instructs you to put it onto the battlefield transformed, in which case it enters with its back face up.",
+      "oracle_id": "e49d745c-5130-4b54-bcbb-643b08528456",
+      "published_at": "2015-06-22",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each face of a double-faced card has its own set of characteristics: name, types, subtypes, power and toughness, loyalty, abilities, and so on. While a double-faced card is on the battlefield, consider only the characteristics of the face that's currently up. The other set of characteristics is ignored. While a double-faced card isn't on the battlefield, consider only the characteristics of its front face.",
+      "oracle_id": "e49d745c-5130-4b54-bcbb-643b08528456",
+      "published_at": "2015-06-22",
+      "source": "wotc"
+    },
+    {
+      "comment": "Gideon's first ability causes a creature to attack him if able. If, during its controller's declare attackers step, that creature is tapped, is affected by a spell or ability that says it can't attack, or hasn't been under its controller's control continuously since that player's turn began, then that creature doesn't attack. If there's a cost associated with having that creature attack, its controller isn't forced to pay that cost. If they don't, the creature doesn't have to attack.",
+      "oracle_id": "e49d745c-5130-4b54-bcbb-643b08528456",
+      "published_at": "2015-06-22",
+      "source": "wotc"
+    },
+    {
+      "comment": "Gideon's third ability causes him to become a creature with the creature types Human Soldier. He remains a planeswalker with the planeswalker type Gideon. (He also retains any other card types or subtypes he may have had.) Each subtype is correlated to the proper card type: Gideon is just a planeswalker type (not a creature type), and Human and Soldier are just creature types (not planeswalker types).",
+      "oracle_id": "e49d745c-5130-4b54-bcbb-643b08528456",
+      "published_at": "2015-06-22",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Gideon becomes a creature due to his third ability, that doesn't count as having a creature enter the battlefield. Gideon was already on the battlefield; he only changed his types. Abilities that trigger whenever a creature enters the battlefield won't trigger.",
+      "oracle_id": "e49d745c-5130-4b54-bcbb-643b08528456",
+      "published_at": "2015-06-22",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Gideon can't be attacked, perhaps because he has left the battlefield before the creature's controller's next combat, the creature targeted by Gideon's first ability can attack you or another planeswalker you control, or its controller can choose to have it not attack at all.",
+      "oracle_id": "e49d745c-5130-4b54-bcbb-643b08528456",
+      "published_at": "2015-06-22",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a double-faced card is manifested, it will be put onto the battlefield face down (this is also true if it's put onto the battlefield face down some other way). Note that \"face down\" is not synonymous with \"with its back face up.\" A manifested double-faced card is a 2/2 creature with no name, mana cost, creature types, or abilities. While face down, it can't transform. If the front face of a manifested double-faced card is a creature card, you can turn it face up by paying its mana cost. If you do, its front face will be up. A double-faced card on the battlefield can't be turned face down.",
+      "oracle_id": "e49d745c-5130-4b54-bcbb-643b08528456",
+      "published_at": "2015-06-22",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the creature targeted by Gideon's first ability changes controllers before it has the chance to attack Gideon, the ability will apply to it during its new controller's next turn.",
+      "oracle_id": "e49d745c-5130-4b54-bcbb-643b08528456",
+      "published_at": "2015-06-22",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you activate Gideon's third ability and then damage is dealt to him that can't be prevented, that damage has all applicable results: specifically, the damage is marked on Gideon (since he's a creature) and that damage causes that many loyalty counters to be removed from him (since he's a planeswalker). If Gideon has no loyalty counters on him, he's put into his owner's graveyard as a state-based action. (As long as he still has indestructible, the marked damage won't cause him to be destroyed.)",
+      "oracle_id": "e49d745c-5130-4b54-bcbb-643b08528456",
+      "published_at": "2015-06-22",
+      "source": "wotc"
+    },
+    {
+      "comment": "In some rare cases, a spell or ability may cause one of these five cards to transform while it's a creature (front face up) on the battlefield. If this happens, the resulting planeswalker won't have any loyalty counters on it and will subsequently be put into its owner's graveyard.",
+      "oracle_id": "e49d745c-5130-4b54-bcbb-643b08528456",
+      "published_at": "2015-06-22",
+      "source": "wotc"
+    },
+    {
+      "comment": "Kytheon's first ability will count creatures that attacked but are no longer on the battlefield (perhaps because they didn't survive combat damage being dealt). It will not count any creatures that were put onto the battlefield attacking, as those creatures were never declared as attackers.",
+      "oracle_id": "e49d745c-5130-4b54-bcbb-643b08528456",
+      "published_at": "2015-06-22",
+      "source": "wotc"
+    },
+    {
+      "comment": "Say you activate Gideon's third ability, then an opponent gains control of him before combat. You may have any of your creatures attack Gideon (since he's still a planeswalker). Then Gideon may block (since he's a creature). He may block any eligible attacking creature, including one that's attacking him. During combat, he behaves as an attacked planeswalker and/or a blocking creature, as appropriate. For example, he deals combat damage to any creatures he's blocking, but he doesn't deal combat damage to any unblocked creatures that are attacking him.",
+      "oracle_id": "e49d745c-5130-4b54-bcbb-643b08528456",
+      "published_at": "2015-06-22",
+      "source": "wotc"
+    },
+    {
+      "comment": "The back face of a double-faced card (in the case of Magic Origins, the planeswalker face) can't be cast.",
+      "oracle_id": "e49d745c-5130-4b54-bcbb-643b08528456",
+      "published_at": "2015-06-22",
+      "source": "wotc"
+    },
+    {
+      "comment": "The mana value of a double-faced card not on the battlefield is the mana value of its front face.",
+      "oracle_id": "e49d745c-5130-4b54-bcbb-643b08528456",
+      "published_at": "2015-06-22",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can activate one of the planeswalker's loyalty abilities the turn it enters the battlefield. However, you may do so only during one of your main phases when the stack is empty. For example, if the planeswalker enters the battlefield during combat, there will be an opportunity for your opponent to remove it before you can activate one of its abilities.",
+      "oracle_id": "e49d745c-5130-4b54-bcbb-643b08528456",
+      "published_at": "2015-06-22",
+      "source": "wotc"
+    },
+    {
+      "comment": "The back face of a double-faced card doesn't have a mana cost. A double-faced permanent with its back face up has a mana value equal to the mana value of its front face. Each back face has a color indicator that defines its color.",
+      "oracle_id": "e49d745c-5130-4b54-bcbb-643b08528456",
+      "published_at": "2016-04-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can control two of this permanent, one front-face up and the other back-face up, at the same time.",
+      "oracle_id": "e49d745c-5130-4b54-bcbb-643b08528456",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a creature an opponent controls would die, and both Nemata and another effect are trying to exile it instead, that opponent chooses which effect to apply. If Nemata's effect ends up not applying because of this choice, the triggered ability that creates a Saproling token won't trigger, even if the creature card ends up in exile.",
+      "oracle_id": "f72558f5-ac5c-4efa-b01b-439bc0bbf18d",
+      "published_at": "2022-09-09",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle/rulings subset for canonical self-reference closure"
+}

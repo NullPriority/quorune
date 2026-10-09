@@ -2,7 +2,7 @@
 title: "Reusable rules piece matrix"
 status: "generated"
 authoritative_source: "coverage/reusable-piece-matrix.json.gz"
-verified: "dcbb939a194366991c3e070990b82a0abf6f369ac23b4ed73852844da40f0e56"
+verified: "c7c89a44def5d660e8455f0aee0046f6f9a26e6db5db4de166a8272e048ff8c8"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -19,11 +19,11 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 - Ontology: `reusable-pieces-v1`
 - Pieces: 2,941
 - Cards indexed: 31,623
-- Material abilities classified: 59,396
+- Material abilities classified: 59,395
 - Unclassified material spans: 0
 - Mapped pinned rules: 1,094 / 3,309
-- Applicable piece pairs: 99,611
-- Covered piece pairs: 1,055
+- Applicable piece pairs: 100,312
+- Covered piece pairs: 1,059
 
 ## Ontology classes
 
@@ -67,9 +67,9 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 
 | Piece | Class | Residuals | Sole blockers | Expected cards | Runtime | Assurance |
 |---|---|---:|---:|---:|---|---|
-| `residual.continuous_layer.continuous-effect-layers-and-dependencies` | `continuous_effects` | 3,886 | 1,831 | 1,831 | `absent` | `untested` |
-| `residual.effect_clause.unparsed-clause-grammar` | `one_shot_effects` | 1,845 | 180 | 180 | `absent` | `untested` |
-| `residual.activated_effect.unparsed-clause-grammar` | `one_shot_effects` | 1,400 | 145 | 145 | `absent` | `untested` |
+| `residual.continuous_layer.continuous-effect-layers-and-dependencies` | `continuous_effects` | 3,884 | 1,840 | 1,840 | `absent` | `untested` |
+| `residual.effect_clause.unparsed-clause-grammar` | `one_shot_effects` | 1,845 | 181 | 181 | `absent` | `untested` |
+| `residual.activated_effect.unparsed-clause-grammar` | `one_shot_effects` | 1,372 | 147 | 147 | `absent` | `untested` |
 | `residual.effect_clause.typed-spell-additional-cost-clause` | `one_shot_effects` | 106 | 22 | 22 | `absent` | `untested` |
 | `residual.keyword_dependency.banding` | `keyword_mechanics` | 24 | 19 | 19 | `absent` | `untested` |
 | `residual.replacement.damage-prevention` | `replacement_prevention` | 131 | 18 | 18 | `absent` | `untested` |

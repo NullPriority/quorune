@@ -4993,6 +4993,46 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "typed-layer-six-grant-carriers-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:source-self-reference-closure",
+          "member_family_ids": [
+            "activated_effect:ordered-effect-composition",
+            "duration:until-end-of-turn",
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding"
+          ],
+          "canonical_owner_ids": [
+            "component:quorune.compiler.fixed_counter_trigger_nodes.fixed_counter_trigger_binding",
+            "component:quorune.compiler.fixed_target_effect_sequences.fixed_source_characteristics_effect_template",
+            "component:quorune.rules.source_references.SourceReferenceSpec"
+          ],
+          "source_contexts": [
+            "activated",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "canonical-full-or-short-self-name",
+            "closed-existing-event-tail",
+            "incarnation-pinned-fixed-self-result"
+          ],
+          "shared_dependencies": [
+            "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+            "trigger.placement.apnap"
+          ],
+          "shared_grammar": "Canonical full or represented shortened source names and self descriptors in already-closed event subscriptions and fixed source-characteristic results; preserve original spans, source incarnation and existing independent owners.",
+          "estimated_implementation_hours": 4,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "One CR 201.5 source-reference boundary serves actual attack, block, damage and intervening entry triggers plus fixed self activations and triggered results, measured by original CardProgram binding.",
+          "explicit_exclusions": [
+            "Compound self/other event normalization and card-identity runtime dispatch",
+            "Unknown or partial nicknames and names inside target predicates",
+            "Unrepresented event, condition, cost, target, duration or whole-card siblings",
+            "Variable results and grants with independently unsupported inner programs"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "source-self-reference-closure-existing-owner-v1"
         }
       ],
       "approved_prerequisite_exceptions": [
@@ -5004,14 +5044,25 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v264-search-qualifier-correctness",
-      "compiler_version": "oracle-ir-v264",
-      "bundle_id": null,
-      "candidate_ids": [],
-      "family_ids": [],
-      "capability_ids": [],
-      "expected_complete_card_gain": null,
-      "non_harvest_reason": "Correct existing library-search predicate admission and execution: colors constrain colors, subtype qualifiers use canonical vocabulary, and unrepresented exclusions remain residual or reject rather than silently losing meaning. Retain separate historical-control provenance and simultaneous-departure assurance without changing control production."
+      "transition_id": "oracle-ir-v265-source-self-reference-closure",
+      "compiler_version": "oracle-ir-v265",
+      "bundle_id": "bundle:source-self-reference-closure",
+      "candidate_ids": [
+        "compiler:source-self-reference-closure"
+      ],
+      "family_ids": [
+        "duration:until-end-of-turn",
+        "event_binding:normalized-event-binding"
+      ],
+      "capability_ids": [
+        "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+        "trigger.event.normalized_damage",
+        "trigger.event.normalized_public_action",
+        "trigger.event.normalized_self_attack",
+        "trigger.event.normalized_zone_change"
+      ],
+      "measurement_id": "measurement:source-self-reference-closure",
+      "non_harvest_reason": null
     },
     "forecast_corrections": [
       {

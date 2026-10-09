@@ -10,6 +10,7 @@ from ..keyword_counters import keyword_counter_mechanic
 from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
 from ..landwalk import BASIC_LANDWALK_TYPES
 from ..zone_object_keyword_model import ZONE_OBJECT_KEYWORDS
+from ..rules.source_references import SourceReferenceSpec
 from .creature_subtypes import canonical_creature_subtype
 from .counter_placement_templates import (
     existing_target_counter_placement_effect_template,
@@ -288,6 +289,7 @@ def fixed_source_characteristics_effect_template(
     *,
     source_is_permanent: bool | None,
     source_card_types: tuple[str, ...],
+    source_name: str | None = None,
 ) -> FixedSourceCharacteristicsTemplate | None:
     """Lower one closed, identity-pinned source characteristic effect."""
 
@@ -297,6 +299,29 @@ def fixed_source_characteristics_effect_template(
         sorted(value.casefold() for value in source_card_types)
     )
     normalized = _TRAILING_REMINDER.sub("", text.strip()).strip()
+    named = re.fullmatch(
+        rf"{SourceReferenceSpec(source_name).regex_pattern} (?P<body>.+)",
+        normalized, re.IGNORECASE,
+    ) if source_name else None
+    if named is not None:
+        body = named["body"]
+        stats = re.fullmatch(
+            r"gets (?P<power>[+-]\d+)/(?P<toughness>[+-]\d+) until end of turn\.?",
+            body, re.IGNORECASE,
+        )
+        if stats is not None and (int(stats["power"]) or int(stats["toughness"])):
+            return FixedSourceCharacteristicsTemplate(
+                source_kind="named", power=int(stats["power"]), toughness=int(stats["toughness"]),
+            )
+        single = re.fullmatch(
+            r"gains (?P<keyword>.+?) until end of turn\.?", body, re.IGNORECASE,
+        )
+        keywords = _keyword_list(single["keyword"]) if single is not None else None
+        if keywords is not None and len(keywords) == 1:
+            return FixedSourceCharacteristicsTemplate(source_kind="named", keywords=keywords)
+        if not re.match(r"(?:gets|gains) ", body, re.IGNORECASE):
+            return None
+        normalized = "this permanent " + body
     match = _SOURCE_GETS_AND_GAINS.fullmatch(normalized)
     if match is not None:
         if not _source_kind_is_compatible(

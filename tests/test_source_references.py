@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import FrozenInstanceError
 import re
 import unittest
+from unittest.mock import patch
 
 from quorune.abilities import parse_activated_abilities
 from quorune.carddb import CardRecord
@@ -18,6 +19,7 @@ from quorune.compiler.prevention_templates import (
 from quorune.declaration_costs import normalized_oracle_line
 from quorune.declaration_restrictions import parse_declaration_restriction_line
 from quorune.oracle_ir import compile_oracle_card
+from quorune.rules.capabilities import load_default_capability_registry
 from quorune.rules.source_references import (
     SOURCE_REFERENCE_SCHEMA_VERSION,
     SourceReferenceError,
@@ -157,6 +159,104 @@ class SourceReferenceModelTests(unittest.TestCase):
 
 
 class SourceReferenceCompilerTests(unittest.TestCase):
+    def rulings(self, record):
+        return ()
+
+    def test_named_source_event_and_result_keep_source_identity_and_original_spans(self):
+        registry = load_default_capability_registry()
+        cases = (
+            ("War Machine, James Rhodes", "Whenever War Machine attacks, tap up to one target creature.", "creature.attacks", "$source.ref"),
+            ("Jareth, Leonine Titan", "Whenever Jareth blocks, draw a card.", "creature.blocks", "$source.ref"),
+            ("Gregor, Shrewd Magistrate", "Whenever Gregor deals combat damage to a player, draw a card.", "damage.dealt", "$source.ref"),
+            ("Zegana, Utopian Speaker", "When Zegana enters, if you control another creature with a +1/+1 counter on it, draw a card.", "permanent.enter.self", None),
+        )
+        for name, text, event, identity in cases:
+            with self.subTest(name=name):
+                ir = compile_oracle_card(card_record(name=name, oracle_text=text), capability_registry=registry, capability_profile="commander_review")
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                self.assertEqual(event, node.event)
+                if identity is not None:
+                    self.assertIn(identity, str(node.event_condition))
+                self.assertEqual(text, node.text)
+                self.assertEqual(text, ir.faces[0].oracle_text[node.span.start:node.span.end])
+        for body in ("Ant-Man gets +2/+0", "Ant-Man gains flying", "Ant-Man gets +1/+1 and gains lifelink"):
+            text = "{1}: " + body + " until end of turn."
+            ir = compile_oracle_card(card_record(name="Ant-Man, Scott Lang", oracle_text=text), capability_registry=registry, capability_profile="commander_review")
+            self.assertEqual("exact", ir.status, ir.material_residuals)
+            effect = ir.faces[0].nodes[0].effects[0]
+            self.assertEqual("apply_source_characteristics_until_end_of_turn", effect["op"])
+            self.assertEqual("$source.zone_object", effect["card"])
+
+    def test_named_self_closure_preserves_unknown_events_names_and_siblings(self):
+        registry = load_default_capability_registry()
+        for text in (
+            "Whenever Scott Lang attacks, draw a card.",
+            "Whenever Ant attacks, draw a card.",
+            "Whenever Ant-Man attacks alone, draw a card.",
+            "Whenever Ant-Man or a remembered creature attacks, draw a card.",
+            "{1}: Ant-Man gets +X/+X until end of turn.",
+            "{1}: Ant-Man gains banding until end of turn.",
+            "{1}: Ant-Man gets +1/+1 until your next turn.",
+            "{1}: Target creature named Ant-Man gets +1/+1 until end of turn.",
+        ):
+            with self.subTest(text=text):
+                ir = compile_oracle_card(card_record(name="Ant-Man, Scott Lang", oracle_text=text), capability_registry=registry, capability_profile="commander_review")
+                self.assertNotEqual("exact", ir.status)
+                self.assertTrue(ir.material_residuals)
+        text = "Whenever Ant-Man attacks, draw a card.\nWhenever the moon remembers a creature, draw a card."
+        ir = compile_oracle_card(card_record(name="Ant-Man, Scott Lang", oracle_text=text), capability_registry=registry, capability_profile="commander_review")
+        self.assertTrue(ir.faces[0].nodes[0].exact)
+        self.assertFalse(ir.faces[0].nodes[1].exact)
+        self.assertNotEqual("exact", ir.status)
+
+    def test_named_source_reference_normalization_mutant_is_killed(self):
+        from quorune.compiler import fixed_counter_trigger_nodes as owner
+        original = owner.fixed_counter_trigger_binding
+        def deny_normalized(text, *, card_name=None, _source_normalized=False):
+            return None if _source_normalized else original(text, card_name=card_name)
+        with patch.object(owner, "fixed_counter_trigger_binding", deny_normalized):
+            with self.assertRaises(AssertionError):
+                binding = owner.fixed_counter_trigger_binding(
+                    "Whenever War Machine attacks, draw a card.",
+                    card_name="War Machine, James Rhodes",
+                )
+                self.assertIsNotNone(binding)
+
+    def test_named_source_characteristic_physical_reference_mutant_is_killed(self):
+        from quorune.compiler.fixed_target_effect_sequences import FixedSourceCharacteristicsTemplate
+        original = FixedSourceCharacteristicsTemplate.effects.fget
+        def physical_source(spec):
+            effects = original(spec)
+            return tuple({**effect, "card": "$source"} for effect in effects)
+        with patch.object(FixedSourceCharacteristicsTemplate, "effects", property(physical_source)):
+            with self.assertRaises(AssertionError):
+                ir = compile_oracle_card(
+                    card_record(name="Ant-Man, Scott Lang", oracle_text="{1}: Ant-Man gets +2/+0 until end of turn."),
+                    capability_registry=load_default_capability_registry(), capability_profile="commander_review",
+                )
+                self.assertEqual("$source.zone_object", ir.faces[0].nodes[0].effects[0]["card"])
+
+    def test_registered_source_reference_measurement_binds_complete_original_programs(self):
+        from scripts.work_selection_cohort_measurements import _bound_effect_program_measurement
+        original = card_record(name="Ant-Man, Scott Lang", oracle_text="{1}: Ant-Man gets +2/+0 until end of turn.")
+        sibling = card_record(name=original.name, oracle_text=original.oracle_text + "\nWhenever the moon remembers a creature, draw a card.")
+        for value, expected in ((original, 1), (sibling, 0)):
+            with self.subTest(sibling=expected == 0):
+                frontier = {"cards": [{"oracle_id": value.oracle_id, "oracle_ir_status": "unresolved", "abilities": [
+                    {"face_id": "front", "ability_id": "front:n1", "status": "unresolved", "residuals": [{}]},
+                    *([{"face_id": "front", "ability_id": "front:n2", "status": "unresolved", "residuals": [{}]}] if expected == 0 else []),
+                ]}]}
+                result = _bound_effect_program_measurement(
+                    frontier=frontier, bundle_id="bundle:source-self-reference-closure",
+                    probe_id="source-self-reference-closure-existing-owner-v1", cards_by_oracle_id={value.oracle_id: value},
+                    coverage={"minimum_complete_card_gain": 1, "minimum_exact_ability_gain": 100, "minimum_material_residual_reduction": 100},
+                    cohort_fingerprint="source-reference-fixture", database=self,
+                )
+                self.assertEqual(expected, result["complete_card_gain"])
+                self.assertEqual(1, result["exact_ability_gain"])
+                self.assertFalse(result["grants_gameplay_trust"])
+
     def test_counter_damage_and_prevention_share_shortened_source_identity(self):
         counter = fixed_counter_placement_effect_template(
             "Put a +1/+1 counter on Ant-Man.",

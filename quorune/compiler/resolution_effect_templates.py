@@ -235,7 +235,7 @@ def typed_resolution_effect_template(
         fixed_source_characteristics_effect_template(
             text,
             source_is_permanent=source_is_permanent,
-            source_card_types=tuple(source_card_types),
+            source_card_types=tuple(source_card_types), source_name=card_name,
         )
     )
     if fixed_source_characteristics is not None:

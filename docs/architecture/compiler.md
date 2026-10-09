@@ -1329,7 +1329,13 @@ Vehicle. Those descriptors identify the physical source; they are not current
 characteristic predicates, so type-changing effects do not retarget or cancel
 an already represented result. The model never guesses an arbitrary prefix,
 suffix, nickname, or subtype. Lowered instructions use `$source`; runtime
-handlers do not receive names or reinterpret Oracle text. See
+handlers do not receive names or reinterpret Oracle text. Closed source attack,
+block, damage, and intervening entry subscriptions use the same reference
+vocabulary. Fixed named self power/toughness and keyword results use the
+existing `$source.zone_object` characteristic owner, so control changes retain
+the object and departure/reentry cannot retarget a queued modifier. Unknown
+event tails, nicknames, durations, costs, and whole-card siblings remain
+residual; existing exact descriptors keep precedence. See
 [ADR 0040](../adr/0040-closed-source-self-references.md).
 
 Fixed self power/toughness and supported-keyword modifiers compile through the

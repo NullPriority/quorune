@@ -18,13 +18,22 @@
         "compiler.damage_templates.fixed_damage_effect_template",
         "compiler.prevention_templates.prevention_trigger_effect_template",
         "abilities.parse_activated_abilities",
-        "declaration_costs.normalized_oracle_line"
+        "declaration_costs.normalized_oracle_line",
+        "compiler.fixed_counter_trigger_nodes.fixed_counter_trigger_binding",
+        "compiler.source_self_effect_templates.normalized_source_event_line",
+        "compiler.fixed_target_effect_sequences.fixed_source_characteristics_effect_template"
       ],
       "executable_test_ids": [
         "tests.test_source_references.SourceReferenceModelTests.test_full_and_complete_precomma_names_form_closed_vocabulary",
         "tests.test_source_references.SourceReferenceCompilerTests.test_counter_damage_and_prevention_share_shortened_source_identity",
         "tests.test_source_references.SourceReferenceCompilerTests.test_unrelated_or_partial_names_remain_residual",
-        "tests.test_source_references.SourceReferenceCompilerTests.test_oracle_ir_uses_same_reference_for_trigger_body_and_entry"
+        "tests.test_source_references.SourceReferenceCompilerTests.test_oracle_ir_uses_same_reference_for_trigger_body_and_entry",
+        "tests.test_source_references.SourceReferenceCompilerTests.test_named_source_event_and_result_keep_source_identity_and_original_spans",
+        "tests.test_source_references.SourceReferenceCompilerTests.test_named_self_closure_preserves_unknown_events_names_and_siblings",
+        "tests.test_source_references.SourceReferenceCompilerTests.test_named_source_reference_normalization_mutant_is_killed",
+        "tests.test_source_references.SourceReferenceCompilerTests.test_named_source_characteristic_physical_reference_mutant_is_killed",
+        "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_pinned_named_attack_chooses_legal_target_without_same_name_dispatch",
+        "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_pinned_named_activation_tracks_incarnation_control_and_replays"
       ],
       "required_scenarios": ["positive", "negative", "interaction"],
       "covered_scenarios": ["positive", "negative", "interaction"],
@@ -33,7 +42,9 @@
         "name changes after compilation and name references to objects other than the source require separate typed identity and effect contracts"
       ],
       "notes": [
-        "A recognized source name lowers to the existing physical $source reference; runtime handlers never compare a printed card name.",
+        "A recognized source name lowers to existing source identity; fixed newly recognized self modifiers use $source.zone_object. Runtime handlers never compare a printed card name.",
+        "Pinned War Machine Oracle: attacking with one War Machine offers up to one legal creature target and taps the chosen creature; an idle same-name permanent does not trigger. Targets are chosen at trigger placement, before resolution, under CR 603.3d.",
+        "Pinned Akroma Oracle: paying the offered red activation increases only that source object's power by one. Changing control retains that object; departure and return creates a new object under CR 400.7, so an already-stacked modifier cannot affect it. Pre-action replay and pending save/load retain those distinctions.",
         "The family is bounded to represented Oracle clauses and does not claim aggregate Name rules coverage."
       ]
     },
