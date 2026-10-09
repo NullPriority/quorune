@@ -2,7 +2,7 @@
 title: "Rules dependency queue"
 status: "generated"
 authoritative_source: "coverage/rules-dependency-queue.json"
-verified: "bd5c8e7256ba08f9af0162607ddf4e6a90785c6affce8f9db4573d13598968c0"
+verified: "ad2a582e61013f95d057ad6d4e26bbfe31962809af92e5558b72a355484998e7"
 audience: "rules, compiler, and engine contributors"
 maintenance: "generated"
 generated_source: "coverage/rules-dependency-queue.json"
@@ -11,7 +11,7 @@ generation_command: ".\.venv\Scripts\python.exe scripts\update_rules_scheduler.p
 
 # Rules dependency queue
 
-Source fingerprint: `57cc2a3138333f0397bd5af1e4afbdd039542e4b346d931611fdf0a121436415`
+Source fingerprint: `7b39a94d90124c68923099f9d5beadfa7787b0cc018d5a1920ad6247655c5708`
 
 ## Current top-level state
 
@@ -20,9 +20,9 @@ Source fingerprint: `57cc2a3138333f0397bd5af1e4afbdd039542e4b346d931611fdf0a1214
 - Subsystems: `21`
 - Selected subsystem: `replacement-prevention`
 - Selected batch: `counter-producer-replacement-closure`
-- Selected cross-program work: `none`
-- Selected work class: `none`
-- Selected work state: `none`
+- Selected cross-program work: `assurance:critical-interaction-recovery`
+- Selected work class: `interaction_assurance`
+- Selected work state: `implementation`
 - Measurement grants gameplay trust: `not_applicable`
 
 ## Cross-program work selection
@@ -34,13 +34,13 @@ Priority classes: `ci_correctness` → `replay_privacy_defect` → `prohibited_r
 
 | Rank | Selection | Work state | Implementation eligible | Candidate | Class | Members | Contexts | Complete cards | Residuals | Cards/hour | Runtime text | Direct writes |
 |---:|---|---|---|---|---|---:|---:|---:|---:|---:|---:|---:|
-| 1 | complete | implementation | false | `ci:compact-card-dependency-closure` | `ci_correctness` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
-| 2 | complete | implementation | false | `ci:materialize-harvest-outcome` | `ci_correctness` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
-| 3 | complete | implementation | false | `correctness:replay-privacy-recovery` | `replay_privacy_defect` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
-| 4 | complete | implementation | false | `architecture:dedicated-owner-extraction` | `architecture_owner_or_mutation_defect` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
-| 5 | blocked | implementation | false | `architecture:engine-mutation-and-specificity-debt` | `architecture_owner_or_mutation_defect` | 1 | 0 | 0 | 0 | unknown | 0 | 47 |
-| 6 | complete | implementation | false | `assurance:critical-interaction-recovery` | `interaction_assurance` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
-| 7 | blocked | implementation | false | `frontier:continuous_layer:continuous-effect-layers-and-dependencies` | `rules_foundation` | 1 | 0 | 1840 | 3884 | 30.163934 | 0 | 0 |
+| 1 | selected | implementation | true | `assurance:critical-interaction-recovery` | `interaction_assurance` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
+| 2 | complete | implementation | false | `ci:compact-card-dependency-closure` | `ci_correctness` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
+| 3 | complete | implementation | false | `ci:materialize-harvest-outcome` | `ci_correctness` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
+| 4 | complete | implementation | false | `correctness:replay-privacy-recovery` | `replay_privacy_defect` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
+| 5 | complete | implementation | false | `architecture:dedicated-owner-extraction` | `architecture_owner_or_mutation_defect` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
+| 6 | blocked | implementation | false | `architecture:engine-mutation-and-specificity-debt` | `architecture_owner_or_mutation_defect` | 1 | 0 | 0 | 0 | unknown | 0 | 47 |
+| 7 | blocked | implementation | false | `frontier:continuous_layer:continuous-effect-layers-and-dependencies` | `rules_foundation` | 1 | 0 | 1845 | 3871 | 30.245902 | 0 | 0 |
 | 8 | blocked | implementation | false | `interaction-implementation:residual.replacement.replacement-applicability` | `rules_foundation` | 1 | 0 | unknown | unknown | unknown | 0 | 0 |
 | 9 | blocked | implementation | false | `interaction-implementation:residual.replacement.self-replacement-and-prevention-ordering` | `rules_foundation` | 1 | 0 | unknown | unknown | unknown | 0 | 0 |
 | 10 | blocked | implementation | false | `interaction-implementation:residual.replacement.damage-prevention` | `rules_foundation` | 1 | 0 | unknown | unknown | unknown | 0 | 0 |
@@ -69,9 +69,15 @@ Priority classes: `ci_correctness` → `replay_privacy_defect` → `prohibited_r
 | 33 | blocked | implementation | false | `bundle:fixed-token-creation-contexts` | `compiler_harvest` | 2 | 4 | 0 | 17 | 0.0 | 0 | 0 |
 | 34 | blocked | implementation | false | `frontier:effect_clause:unparsed-choose-one` | `compiler_harvest` | 1 | 3 | 0 | 171 | 0.0 | 0 | 0 |
 | 35 | blocked | implementation | false | `bundle:fixed-cast-lifecycles` | `compiler_harvest` | 1 | 2 | 0 | 0 | 0.0 | 0 | 0 |
-| 36 | blocked | implementation | false | `bundle:public-static-cast-cost-modifiers` | `compiler_harvest` | 1 | 1 | 0 | 0 | 0.0 | 0 | 0 |
+| 36 | blocked | implementation | false | `bundle:fixed-counted-activation-zone-cost` | `compiler_harvest` | 3 | 1 | 0 | 0 | 0.0 | 0 | 0 |
+| 37 | blocked | implementation | false | `bundle:fixed-event-card-return` | `compiler_harvest` | 3 | 1 | 0 | 0 | 0.0 | 0 | 0 |
+| 38 | blocked | implementation | false | `bundle:fixed-kicked-entry-result` | `compiler_harvest` | 2 | 1 | 0 | 0 | 0.0 | 0 | 0 |
+| 39 | blocked | implementation | false | `bundle:fixed-kicked-spell-condition` | `compiler_harvest` | 3 | 1 | 0 | 0 | 0.0 | 0 | 0 |
+| 40 | blocked | implementation | false | `bundle:fixed-source-maintenance` | `compiler_harvest` | 3 | 1 | 0 | 0 | 0.0 | 0 | 0 |
+| 41 | blocked | implementation | false | `bundle:fixed-target-announcement` | `compiler_harvest` | 2 | 1 | 0 | 0 | 0.0 | 0 | 0 |
+| 42 | blocked | implementation | false | `bundle:public-static-cast-cost-modifiers` | `compiler_harvest` | 1 | 1 | 0 | 0 | 0.0 | 0 | 0 |
 
-Selected reason: No serious candidate currently meets the generated eligibility policy; retain visible deferred pressure and recompute after the next measured frontier classification.
+Selected reason: Uncovered high-risk interactions remain above the verified stabilization baseline.
 
 ## Top blockers
 

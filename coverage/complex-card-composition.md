@@ -2,7 +2,7 @@
 title: "Complex card composition benchmark"
 status: "generated"
 authoritative_source: "coverage/complex-card-composition.json"
-verified: "f67fe2d5957444687540028b73320672c03132f2933de4f16b7161c8bc480285"
+verified: "876fb63d190a9b12ab146cc8af7e5bba6299dec957f270aa6ca075a47563f16d"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -14,9 +14,9 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Card | Score | Pieces | Systems | Abilities | Blockers | Rulings | Status |
 |---|---:|---:|---:|---:|---:|---:|---|
 | Valki, God of Lies // Tibalt, Cosmic Impostor | 240 | 27 | 6 | 6 | 14 | 22 | `blocked` |
-| Elesh Norn // The Argent Etchings | 232 | 30 | 8 | 7 | 14 | 2 | `blocked` |
 | Dion, Bahamut's Dominant // Bahamut, Warden of Light | 230 | 26 | 8 | 7 | 11 | 10 | `blocked` |
 | Urabrask // The Great Work | 228 | 28 | 8 | 7 | 13 | 4 | `blocked` |
+| Elesh Norn // The Argent Etchings | 225 | 29 | 8 | 7 | 12 | 2 | `blocked` |
 | Terra, Magical Adept // Esper Terra | 224 | 22 | 8 | 6 | 12 | 14 | `blocked` |
 | Jin-Gitaxias // The Great Synthesis | 223 | 28 | 7 | 7 | 11 | 6 | `blocked` |
 | Jugan Defends the Temple // Remnant of the Rising Star | 223 | 29 | 8 | 7 | 8 | 9 | `blocked` |
