@@ -8225,6 +8225,7 @@ def _bound_effect_program_measurement(
     abilities = residuals = 0
     remaining: dict[str, int] = {}
     complete: set[str] = set()
+    semantic_registry: SemanticRegistry | None = None
     for card in frontier.get("cards", ()):
         if card.get("oracle_ir_status") == "exact":
             continue
@@ -8254,8 +8255,10 @@ def _bound_effect_program_measurement(
         remaining[oracle_id] = sum(a.get("status") != "exact" and identity not in promoted
                                   for identity, a in previous.items())
         if compiled.status == "exact":
+            if semantic_registry is None:
+                semantic_registry = SemanticRegistry()
             program = compile_best_available_card_program(
-                database, record, semantic_registry=SemanticRegistry(),
+                database, record, semantic_registry=semantic_registry,
                 capability_registry=registry, capability_profile="commander_review",
             )
             if bind_card_program_runtime(program, capability_registry=registry,

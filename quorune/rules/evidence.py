@@ -113,6 +113,7 @@ def validate_capability_evidence_index(
     if not isinstance(declarations, list):
         raise CapabilityEvidenceError("declarations must be a list")
     known_profiles = set(registry.profiles)
+    capabilities = {row["id"]: row for row in registry.capabilities()}
     evidence_by_capability: dict[str, set[str]] = {}
     profiles_by_capability_evidence: dict[
         tuple[str, str], set[str]
@@ -129,7 +130,7 @@ def validate_capability_evidence_index(
             row, _DECLARATION_FIELDS, field=f"declarations[{index}]"
         )
         capability_id = str(row.get("capability_id") or "")
-        capability = registry.capability(capability_id)
+        capability = capabilities.get(capability_id)
         if capability is None:
             raise CapabilityEvidenceError(
                 f"Unknown capability evidence target: {capability_id}"
@@ -207,7 +208,7 @@ def validate_capability_evidence_index(
         raise CapabilityEvidenceError(
             "Capability evidence declarations are not canonically ordered"
         )
-    for capability in registry.capabilities():
+    for capability in capabilities.values():
         if capability["status"] != "trusted":
             continue
         capability_id = capability["id"]

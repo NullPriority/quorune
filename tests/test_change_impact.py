@@ -14,6 +14,20 @@ from scripts.change_impact import (
 
 
 class ChangeImpactTests(unittest.TestCase):
+    def test_component_source_validation_selects_its_trust_consumers(self):
+        for owner in ("quorune/rules/component_resolution.py", "quorune/rules/evidence.py"):
+            with self.subTest(owner=owner):
+                plan = classify_changes([owner])
+                self.assertLessEqual(
+                    {"test_rule_capabilities", "test_capability_evidence", "test_card_program_trust"},
+                    set(plan.test_modules),
+                )
+                self.assertLessEqual(
+                    {"capability-evidence", "card-unlock-frontier", "reusable-pieces"},
+                    set(plan.checks),
+                )
+                self.assertIn("generated-finalization", plan.checks)
+
     def test_prospective_token_entry_selects_snapshot_and_counter_consumers(self):
         expected = {
             "test_bloodthirst_rules",

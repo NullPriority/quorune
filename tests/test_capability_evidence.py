@@ -4,6 +4,7 @@ from copy import deepcopy
 import json
 from pathlib import Path
 import unittest
+from unittest.mock import patch
 
 from quorune.rules.capabilities import (
     CapabilityRegistry,
@@ -57,6 +58,22 @@ class CapabilityEvidenceTests(unittest.TestCase):
         )
         self.assertFalse(closure.trusted)
         self.assertIn("evidence_index:unverified", closure.blockers)
+
+    def test_evidence_validation_reuses_one_defensive_capability_snapshot(self):
+        registry = CapabilityRegistry(self.registry_value)
+        value = json.loads((ROOT / "quorune/rules/capability-evidence.json").read_text())
+        with patch.object(registry, "capabilities", wraps=registry.capabilities) as snapshot, patch.object(
+            registry, "capability", side_effect=AssertionError("repeated per-declaration copy")
+        ):
+            self.assertEqual(value["fingerprint"], validate_capability_evidence_index(value, registry=registry))
+            snapshot.assert_called_once_with()
+        changed = deepcopy(value)
+        changed["declarations"][0]["capability_id"] = "missing.capability"
+        with self.assertRaisesRegex(CapabilityEvidenceError, "Unknown capability evidence target"):
+            validate_capability_evidence_index(changed, registry=registry)
+        stale_registry = CapabilityRegistry({**self.registry_value, "registry_version": self.registry_value["registry_version"] + 1})
+        with self.assertRaisesRegex(CapabilityEvidenceError, "registry fingerprint is stale"):
+            validate_capability_evidence_index(value, registry=stale_registry)
 
     def test_removed_or_renamed_test_invalidates_declaration(self):
         source = deepcopy(self.declaration_source)

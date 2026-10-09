@@ -13,6 +13,44 @@ The repository uses narrow, opt-in local feedback and exact-head public
 certification. GitHub Actions is the ordinary broad-test and merge authority.
 The workflow never requires a visible browser.
 
+## Reducing development time
+
+Use successful exact-head run, job, step, and module timing records to identify
+the elapsed critical path before changing the pipeline. Measure queue, setup,
+generation, and tests separately; overlapping jobs do not add to elapsed time,
+and workflow timestamps do not measure active development hours. Preserve the
+observation locally and compare the same workload after a change.
+
+Prefer removing repeated deterministic computation while retaining its inputs,
+outputs, and validation contract. Implementation-component validation, for
+example, reuses parsed export names only for identical current source text; it
+still rereads the file and performs capability and evidence checks. Verify
+output parity and edited, missing, malformed, and unreadable input boundaries
+before relying on an optimization. Keep exact-source certification, complete
+test inventory, and the checked concurrency envelope intact.
+
+Whole-program cohort probes lazily construct one built-in semantic registry
+per measurement and reuse it for read-only compilation of that measurement's
+cards. Separate measurements construct fresh registries, and probes with no
+whole-program candidates avoid that setup. Compilation and strict binding
+still run independently for every original complete card.
+
+Capability-evidence validation similarly takes one defensive registry snapshot
+per invocation rather than serializing the same capability for each declaration.
+Every declaration, required evidence class, supported profile, registry identity,
+and evidence fingerprint is still checked.
+
+The compiler-identity sentinel reads immutable base Python sources through one
+validated `git cat-file --batch` response, shared by import-closure traversal
+and version-literal checks. It retains the same source paths and blob identity
+comparison, including removed imports, instead of starting Git for each module.
+
+Use the existing duration-driven shard rebalance only when module timings show
+a scheduling bottleneck. Simplifying labels or metadata is useful when it
+removes measured rework, but it must preserve the source and risk evidence
+those fields carry. Finish one measured improvement before combining unrelated
+changes so its payoff and regressions remain attributable.
+
 ## Two development slots
 
 Keep at most two substantive branches active:

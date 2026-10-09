@@ -1162,6 +1162,16 @@ def compiler_identity_status(
     )
     current_implementation -= _IDENTITY_IMPLEMENTATION_PATHS
     base_entries = _ref_entries(root, base_ref)
+    base_content_cache = _ref_text_cache(
+        root,
+        base_ref,
+        tuple(sorted(
+            path for path in base_entries
+            if path.endswith(".py")
+            and PurePosixPath(path).parts[0] in {"quorune", "scripts", "server"}
+            or path == "simctl.py"
+        )),
+    )
     try:
         base_specs, _base_groups = _manifest_at_ref(root, base_ref)
         base_spec = next(
@@ -1169,26 +1179,13 @@ def compiler_identity_status(
             for candidate in base_specs
             if candidate.id == "compiler-corpus-coverage"
         )
-        base_content_cache: dict[str, str] = {}
-
-        def read_base_text(relative: str) -> str:
-            content = base_content_cache.get(relative)
-            if content is None:
-                content = _run_git(
-                    root,
-                    "show",
-                    f"{base_ref}:{relative}",
-                ).decode("utf-8", errors="strict")
-                base_content_cache[relative] = content
-            return content
-
         base_implementation = _python_import_closure(
             _match_patterns(
                 tuple(base_entries),
                 base_spec.implementation_inputs,
             ),
             available=set(base_entries),
-            read_text=read_base_text,
+            read_text=base_content_cache.__getitem__,
             traverse_package_initializers=(
                 base_spec.implementation_import_policy == "runtime_imports"
             ),
@@ -1215,9 +1212,7 @@ def compiler_identity_status(
         lambda relative: (root / relative).read_text(encoding="utf-8")
     )
     base_identity = _compiler_identity_values(
-        lambda relative: _run_git(root, "show", f"{base_ref}:{relative}").decode(
-            "utf-8", errors="strict"
-        )
+        base_content_cache.__getitem__
     )
     identity_changed = current_identity != base_identity
     return {

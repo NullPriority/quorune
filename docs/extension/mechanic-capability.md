@@ -42,6 +42,17 @@ A trusted capability with dependencies requires a passed dependency test and
 must have killed implementation mutation evidence. `not_applicable` requires a
 reviewed rationale.
 
+Implementation-component validation discovers the current module file and
+reads its source on every check without importing or executing it. A bounded
+process-local cache reuses only the immutable top-level export names parsed
+from identical source text. Edits invalidate that reuse even when file size and
+timestamps stay unchanged; missing, unreadable, malformed, or undecodable
+source still fails closed. Capability registries and evidence indexes continue
+to be constructed and validated independently. Evidence validation takes one
+defensive capability snapshot per invocation and reuses its rows for every
+declaration; a subsequent invocation checks the current registry and evidence
+again.
+
 Broad mechanic aggregates are reporting and migration views. A trusted narrow
 closure does not promote its broad aggregate. Conversely, a blocked aggregate
 member such as infect does not block a program whose reachable node closure

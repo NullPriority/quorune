@@ -5044,25 +5044,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v265-source-self-reference-closure",
-      "compiler_version": "oracle-ir-v265",
-      "bundle_id": "bundle:source-self-reference-closure",
-      "candidate_ids": [
-        "compiler:source-self-reference-closure"
-      ],
-      "family_ids": [
-        "duration:until-end-of-turn",
-        "event_binding:normalized-event-binding"
-      ],
-      "capability_ids": [
-        "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
-        "trigger.event.normalized_damage",
-        "trigger.event.normalized_public_action",
-        "trigger.event.normalized_self_attack",
-        "trigger.event.normalized_zone_change"
-      ],
-      "measurement_id": "measurement:source-self-reference-closure",
-      "non_harvest_reason": null
+      "transition_id": "oracle-ir-v266-component-source-validation-cache",
+      "compiler_version": "oracle-ir-v266",
+      "bundle_id": null,
+      "candidate_ids": [],
+      "family_ids": [],
+      "capability_ids": [],
+      "expected_complete_card_gain": null,
+      "non_harvest_reason": "Reduce repeated AST parsing through exact-source implementation export reuse, per-declaration capability copies through one defensive validation snapshot, and cohort semantic-registry setup through measurement-scoped reuse; preserve resolution, evidence, complete-card compilation, and strict-binding checks without adding supported grammar or gameplay trust."
     },
     "forecast_corrections": [
       {
