@@ -81,6 +81,14 @@ class ReturnGraveyardCardToOwnerHandHandler:
         effect: Mapping[str, Any],
         context: ReadOnlyHandlerContext,
     ) -> IntentPlan:
+        if effect.get('schema_version') == 2:
+            from ..event_card_return import event_card_return_intent
+            from .context import SemanticNodeError
+            try:
+                intent = event_card_return_intent(effect, actor=context.actor, reason=context.default_reason)
+            except (ValueError, TypeError, KeyError) as exc:
+                raise SemanticNodeError(str(exc)) from exc
+            return IntentPlan(operation=self.operation, handler_id=self.handler_id, intents=(intent,))
         fields = validate_direct_target_effect(
             effect,
             context,

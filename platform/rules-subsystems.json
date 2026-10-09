@@ -4740,6 +4740,74 @@
           "measurement_probe_id": "stack-controller-payment-existing-owner-v1"
         },
         {
+          "bundle_id": "bundle:fixed-kicked-spell-condition",
+          "member_family_ids": [
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding",
+            "effect_clause:ordered-effect-composition"
+          ],
+          "canonical_owner_ids": [
+            "capability:resolution.effect.fixed_cast_fact",
+            "component:quorune.compiler.kicked_spell_conditions.kicked_spell_condition_template"
+          ],
+          "source_contexts": [
+            "spell"
+          ],
+          "normalized_literal_parameters": [
+            "fixed-independent-result",
+            "sealed-recorded-fact",
+            "exact-ownership-and-incarnation"
+          ],
+          "shared_dependencies": [
+            "resolution.effect.fixed_cast_fact"
+          ],
+          "shared_grammar": "Fixed kicked spell additional result from the recorded stack paid choice after one independently owned mandatory prefix.",
+          "estimated_implementation_hours": 3,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Retain measured original whole-card closure inside a multi-mechanic net-distinct200 delivery.",
+          "explicit_exclusions": [
+            "Instead branches, additional conditional targets and unrepresented quantities",
+            "Multiple or nonmana kicker and unsupported whole-card siblings"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-kicked-spell-condition-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:fixed-event-card-return",
+          "member_family_ids": [
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding",
+            "effect_clause:ordered-effect-composition"
+          ],
+          "canonical_owner_ids": [
+            "capability:zone.return.fixed_event_card",
+            "component:quorune.compiler.event_card_return_templates.event_card_return_template"
+          ],
+          "source_contexts": [
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "fixed-independent-result",
+            "sealed-recorded-fact",
+            "exact-ownership-and-incarnation"
+          ],
+          "shared_dependencies": [
+            "zone.return.fixed_event_card"
+          ],
+          "shared_grammar": "One particular self or attached creature death-event card from its exact departed graveyard incarnation to owners hand.",
+          "estimated_implementation_hours": 3,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Retain measured original whole-card closure inside a multi-mechanic net-distinct200 delivery.",
+          "explicit_exclusions": [
+            "Optional, conditional, delayed or other-zone returns",
+            "Independent unrepresented result references and whole-card siblings"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-event-card-return-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:fixed-target-announcement",
           "member_family_ids": [
             "event_binding:intervening-if-and-reflexive-trigger-grammar",

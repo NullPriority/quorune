@@ -497,7 +497,7 @@ class SemanticChoiceCoordinationMixin:
             )
         )
         condition_facts = {}
-        if choice_effect.get("op") == RESOLUTION_CONDITION_OPERATION:
+        if choice_effect.get("op") == RESOLUTION_CONDITION_OPERATION and choice_effect.get('schema_version') != 2:
             try:
                 condition, _effects = validate_resolution_condition_instruction(choice_effect)
                 if choice_effect["player"] != actor:

@@ -2283,6 +2283,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/event_card_return_templates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/exile_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -2884,6 +2899,21 @@
     },
     {
       "file": "quorune/compiler/kicked_entry_trigger_nodes.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/compiler/kicked_spell_conditions.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
       "allowed_dependency_layers": [
@@ -5012,6 +5042,21 @@
       "layer": "rules",
       "owning_subsystem": "legacy_rules",
       "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/event_card_return.py",
+      "layer": "semantics",
+      "owning_subsystem": "legacy_semantics",
+      "allowed_dependency_layers": [
+        "adapter",
         "domain",
         "rules",
         "semantics"
@@ -10835,5 +10880,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "13d27da6df11674028b9996ac14b1f9fcd3ba8633f062ab71decbda9fc9376d2"
+  "fingerprint": "53c3616008424c792d661f3d9fb2f5a440e14d2973743b8624c4122fac732e12"
 }

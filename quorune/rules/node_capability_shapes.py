@@ -652,6 +652,7 @@ def fixed_counter_placement_node_capabilities(
             return ()
         return (
             "counter.producer.fixed_attached_effect",
+            'counter.producer.fixed_effect',
             *characteristic_capabilities,
         )
     if (

@@ -1351,6 +1351,8 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
         "trigger.source.fixed_maintenance": "fixed-source-maintenance",
         "trigger.entry.fixed_kicked_result": "fixed-kicked-entry-trigger",
         'trigger.event.normalized_target_announcement': 'trigger-event-normalized-target-announcement',
+        'resolution.effect.fixed_cast_fact': 'fixed-cast-fact-condition',
+        'zone.return.fixed_event_card': 'fixed-event-card-return',
         "zone.mill.fixed": "mill",
         IMPULSE_ACCESS_CAPABILITY_ID: IMPULSE_ACCESS_MECHANIC_ID,
         "library.select.fixed_controller": (

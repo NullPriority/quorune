@@ -497,6 +497,21 @@ Alternative/compound/dynamic costs, random/named payments, paid-object or linked
 results, reflexive triggers, nested/repeated choices, unsupported leaf owners
 and wider grammar remain residual.
 
+Fixed kicked-spell additional results use a versioned instruction in the
+existing public-condition owner. The recorded stack Kicker fact selects only
+the fixed nontargeted result after its independently closed mandatory prefix.
+A copy preserves that fact; missing history rejects instead of becoming unpaid.
+Invalidated mandatory targets still prevent the whole spell from resolving.
+Counter-source attribution remains data owned by the existing counter
+transaction. Instead branches and additional conditional targets remain residual.
+
+Public self-death and attached-creature death returns bind the event card and
+its exact post-departure zone-change counter. The existing graveyard-return
+operation lowers that descriptor to the canonical zone move intent, which
+skips missing or changed graveyard incarnations and returns to the owner's
+hand. Departure attachment facts retain the dead creature when its Aura later
+leaves. Optional, delayed and independently unsupported results remain residual.
+
 `rules/target_announcements.py` publishes a sealed public occurrence for each
 newly targeted permanent after an authoritative cast, activation, triggered
 ability target choice, stack copy or target change. Duplicate target roles
@@ -1437,6 +1452,11 @@ declarations carry explicit Oracle-node-scoped identities and persist their
 first execution-time value across sibling results and replacement resumption.
 Independent quantity expressions retain their separate execution-time reads.
 The casting owner remains the sole authority for choosing and paying cost X.
+Single-subject `place_counters` results also bind declared or current public
+characteristic amounts through their existing counter owner. A resolved zero
+amount is a paid no-op; malformed and negative amounts are rejected. Counter
+source attribution stays attached to the original resolving instruction. Group,
+set, and player counter amounts remain outside this declared-amount boundary.
 Undefined X, X-dependent target domains or cardinalities, variable activation
 costs, nonordinary X mana costs, linked or source characteristics, open arithmetic,
 unrepresented result owners, and nested modal declarations remain residual.

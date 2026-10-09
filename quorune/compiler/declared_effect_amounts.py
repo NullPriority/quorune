@@ -35,6 +35,7 @@ _RESULT_FIELDS = {
     "modify_stats_until_end_of_turn": ("power", "toughness"),
     "modify_all_matching_permanents_until_end_of_turn": ("power", "toughness"),
     "apply_source_characteristics_until_end_of_turn": ("power", "toughness"),
+    "place_counters": ("amount",),
 }
 
 

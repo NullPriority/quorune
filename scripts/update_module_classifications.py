@@ -119,6 +119,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/card_program_faces.py",
         "quorune/carddb_characteristics.py",
         "quorune/effect_contracts.py",
+        "quorune/event_card_return.py",
         "quorune/oracle_ir.py",
         "quorune/semantics.py",
         "quorune/ability_fragment_host.py",

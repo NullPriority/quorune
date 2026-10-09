@@ -26,7 +26,7 @@ class PublicResolutionConditionHandler:
     schema_version: int = 1
     rule_references: tuple[str, ...] = ("CR 109.5", "CR 608.2c", "CR 608.2h")
     capability_dependencies: tuple[str, ...] = (RESOLUTION_CONDITION_CAPABILITY,)
-    continuation_fields: tuple[str, ...] = ("player", "condition", "effects", "mechanic_ids", "prefix_mechanic_ids")
+    continuation_fields: tuple[str, ...] = ("player", "condition", "effects", "mechanic_ids", "prefix_mechanic_ids", 'schema_version', 'cast_fact')
     private_data: tuple[str, ...] = ()
     projected_fields: tuple[str, ...] = ()
     mutation_path: tuple[str, ...] = (
@@ -43,9 +43,19 @@ class PublicResolutionConditionHandler:
         if effect["player"] != context.actor or context.actor != context.stack_controller:
             raise SemanticChoiceError("Resolution conditions require the resolving controller")
         for child in effects:
-            _represented_effect(child, actor=context.actor, query=context.query)
+            if child.get('op') == 'choose_cards_apnap' and effect.get('schema_version') == 2:
+                from ..rules.affected_player_discard_capability_shapes import fixed_affected_player_discard_node_capabilities
+                symbolic = {**dict(child), 'actor': '$controller'}
+                if child.get('actor') != context.actor or child.get('players') != 'opponents' or not fixed_affected_player_discard_node_capabilities(
+                    effects=(symbolic,), target_schema=None, mechanic_ids=effect['mechanic_ids'],
+                ):
+                    raise SemanticChoiceError('Cast condition APNAP discard is malformed')
+            else:
+                _represented_effect(child, actor=context.actor, query=context.query)
         try:
-            matched = context.query.resolution_condition_matches(condition.to_dict())
+            matched = effect['cast_fact'] if effect.get('schema_version') == 2 else context.query.resolution_condition_matches(condition.to_dict())
+            if type(matched) is not bool:
+                raise ValueError('Resolution cast fact is unavailable')
         except (ValueError, TypeError, KeyError) as exc:
             raise SemanticChoiceError(str(exc)) from exc
         return SemanticChoicePreparation(

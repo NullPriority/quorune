@@ -8517,6 +8517,171 @@
       "status": "trusted"
     },
     {
+      "id": "zone.return.fixed_event_card",
+      "version": 1,
+      "official_rules": [
+        "400.7",
+        "400.7e",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "608.2c",
+        "903.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Return one card identified by a sealed self or attached-creature death occurrence from its exact new graveyard incarnation to its owners hand.",
+        "inputs": [
+          "Source-spanned death or battlefield-to-graveyard trigger",
+          "Sealed public event card and zone-change counter",
+          "Existing replacement-aware zone move intent"
+        ],
+        "outputs": [
+          "Particular departed card returned to owners hand",
+          "Missing or changed graveyard incarnation does nothing",
+          "Canonical hidden destination and replacement continuation replay"
+        ],
+        "exclusions": [
+          "Optional, delayed, conditional and another-object returns",
+          "Other zones or variable result references",
+          "Unsupported whole-card siblings"
+        ]
+      },
+      "dependencies": [
+        "trigger.event.normalized_zone_change",
+        "zone.change.destination_replacement"
+      ],
+      "implementation_components": [
+        "quorune.event_card_return.event_card_return_intent",
+        "quorune.compiler.event_card_return_templates.event_card_return_template",
+        "quorune.semantic_runtime.return_to_hand_handlers.ReturnGraveyardCardToOwnerHandHandler",
+        "quorune.semantic_choices.intent_host.SemanticChoiceIntentHostMixin.move_object_intent"
+      ],
+      "positive_tests": [
+        "test_departed_return_effect_requires_exact_event_card_and_counter",
+        "test_event_return_source_and_attached_grammar_preserve_unrelated_siblings",
+        "test_actual_sacrifice_returns_exact_card_to_owner_hand_with_pre_action_replay"
+      ],
+      "negative_tests": [
+        "test_stale_graveyard_incarnation_is_not_returned_by_old_trigger",
+        "test_event_return_missing_dependency_and_incarnation_mutants_fail_closed"
+      ],
+      "interaction_tests": [
+        "test_attachment_lki_returns_dead_creature_after_aura_leaves"
+      ],
+      "multiplayer_tests": [
+        "test_actual_sacrifice_returns_exact_card_to_owner_hand_with_pre_action_replay"
+      ],
+      "privacy_tests": [
+        "test_actual_sacrifice_returns_exact_card_to_owner_hand_with_pre_action_replay"
+      ],
+      "replay_tests": [
+        "test_actual_sacrifice_returns_exact_card_to_owner_hand_with_pre_action_replay",
+        "test_attachment_lki_returns_dead_creature_after_aura_leaves"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Independent capability mutations reject new nodes when their recorded fact, event or existing result owners cannot close.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "An executable omission mutant removes the decisive recorded cast fact or departed incarnation and is killed by actual action outcome assertions.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "resolution.effect.fixed_cast_fact",
+      "version": 1,
+      "official_rules": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Select one fixed additional kicked-spell result from the stack object recorded paid Kicker choice after its independently closed mandatory prefix.",
+        "inputs": [
+          "One complete fixed if-this-spell-was-kicked result",
+          "Immutable stack paid kicker boolean",
+          "Independently closed mandatory prefix and nontargeted consequences"
+        ],
+        "outputs": [
+          "Printed prefix executes once",
+          "Kicked result executes only for paid Kicker fact",
+          "Existing private choices and replacement continuations retain exact replay"
+        ],
+        "exclusions": [
+          "Instead self-replacement and additional targets",
+          "Multiple or nonmana Kicker costs",
+          "Unrepresented quantities, linked results and whole-card siblings"
+        ]
+      },
+      "dependencies": [
+        "casting.kicker.fixed_mana",
+        "resolution.effect.public_condition"
+      ],
+      "implementation_components": [
+        "quorune.compiler.kicked_spell_conditions.kicked_spell_condition_template",
+        "quorune.resolution_conditions.KickedCastCondition",
+        "quorune.semantic_choices.resolution_condition.PublicResolutionConditionHandler"
+      ],
+      "positive_tests": [
+        "test_kicked_result_is_separate_from_mandatory_prefix",
+        "test_real_roil_normal_and_kicked_cast_keep_prefix_and_optional_result_scope"
+      ],
+      "negative_tests": [
+        "test_cast_condition_rejects_self_replacement_open_targets_and_unknown_fields",
+        "test_runtime_cast_fact_accepts_only_sealed_boolean_and_locked_controller",
+        "test_illegal_roil_target_skips_kicked_draw_even_though_fact_is_paid",
+        "test_missing_cast_fact_is_rejected_before_conditional_result"
+      ],
+      "interaction_tests": [
+        "test_real_roil_normal_and_kicked_cast_keep_prefix_and_optional_result_scope",
+        "test_real_espionage_private_discard_after_prefix_pending_load_and_replay"
+      ],
+      "multiplayer_tests": [
+        "test_real_espionage_private_discard_after_prefix_pending_load_and_replay"
+      ],
+      "privacy_tests": [
+        "test_real_espionage_private_discard_after_prefix_pending_load_and_replay"
+      ],
+      "replay_tests": [
+        "test_real_roil_normal_and_kicked_cast_keep_prefix_and_optional_result_scope",
+        "test_real_espionage_private_discard_after_prefix_pending_load_and_replay"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Independent capability mutations reject new nodes when their recorded fact, event or existing result owners cannot close.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "An executable omission mutant removes the decisive recorded cast fact or departed incarnation and is killed by actual action outcome assertions.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
       "id": "trigger.event.normalized_target_announcement",
       "version": 1,
       "official_rules": [

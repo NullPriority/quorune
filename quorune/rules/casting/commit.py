@@ -957,6 +957,7 @@ def _create_spell_item(
             ),
             "granted_improvise": used_improvise,
             "cost_option": proposal.cost_option_id,
+            'kicked': selected_option.get('kind') == KICKER_MECHANIC_ID,
             **lifecycle_context,
             **_fixed_cast_lifecycle_cost_context(costs),
             **(

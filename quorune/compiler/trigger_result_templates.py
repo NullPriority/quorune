@@ -11,6 +11,10 @@ from .fixed_entry_return_requirements import fixed_entry_return_effect_template
 
 
 def binding_effect_template(binding, body: str, *, card_name: str, effect_template):
+    from .event_card_return_templates import event_card_return_template
+    returned = event_card_return_template(binding, body, card_name=card_name)
+    if returned is not None:
+        return returned, False
     sacrifice = target_announcement_bound_result(binding, body, card_name=card_name)
     if sacrifice is not None:
         return sacrifice, False

@@ -45,8 +45,14 @@ def resolution_condition_node_capabilities(
     if len(targeted) > 1 or (target_schema is not None) != bool(targeted):
         return ()
     dependencies = {RESOLUTION_CONDITION_CAPABILITY}
+    if wrapper.get('schema_version') == 2:
+        from ..resolution_conditions import CAST_FACT_CONDITION_CAPABILITY, CAST_FACT_CONDITION_MECHANIC
+        if CAST_FACT_CONDITION_MECHANIC not in mechanics or wrapper['cast_fact'] != '$context.kicked':
+            return ()
+        dependencies.add(CAST_FACT_CONDITION_CAPABILITY)
     ambient_mechanics = mechanics - {
         RESOLUTION_CONDITION_MECHANIC,
+        'fixed-cast-fact-condition',
         *wrapper["prefix_mechanic_ids"],
         *wrapper["mechanic_ids"],
     }

@@ -1453,7 +1453,16 @@
         "quorune/spell_copy_engine_adapter.py",
         "quorune/selection/targeting.py",
         "tests/test_target_announcements.py",
-        "tests/fixtures/target-announcements.json"
+        "tests/fixtures/target-announcements.json",
+        "quorune/compiler/kicked_spell_conditions.py",
+        "quorune/resolution_conditions.py",
+        "quorune/rules/resolution_condition_shapes.py",
+        "tests/test_kicked_spell_conditions.py",
+        "tests/fixtures/kicked-spell-conditions.json",
+        "quorune/event_card_return.py",
+        "quorune/compiler/event_card_return_templates.py",
+        "tests/test_event_card_return.py",
+        "tests/fixtures/event-card-return.json"
       ],
       "test_modules": [
         "test_activated_draw_abilities",
@@ -1472,7 +1481,13 @@
         "test_target_announcements",
         "test_copy_objects",
         "test_fixed_counter_event_triggers",
-        "test_fixed_optional_mana_payment_triggers"
+        "test_fixed_optional_mana_payment_triggers",
+        "test_kicked_spell_conditions",
+        "test_resolution_public_conditions",
+        "test_kicked_entry_triggers",
+        "test_event_card_return",
+        "test_persist_undying_rules",
+        "test_source_maintenance"
       ]
     },
     {

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "6d3763f1141ceea67a46242284e8d990c25c5cbeb6a03f535a0d0ae8e2851fc9",
-  "declaration_source_fingerprint": "62773e37c27f43102455cbe32d5e0701420065380c271a60f00684f67b396227",
+  "registry_fingerprint": "7cfc1784211d4aa6fd9bd47fd6165e9394af8b366af79add98ceeca762341ae4",
+  "declaration_source_fingerprint": "bd0514b3788032c2b14853318c72d865f83a202e8dfe7d0adc53a670186e8194",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -57899,6 +57899,26 @@
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
       "evidence_class": "negative",
+      "test_id": "tests.test_kicked_spell_conditions.KickedSpellActionTests.test_zero_scalar_counter_quantity_commits_price_and_places_no_counters",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual registered commands preserve independently specified result quantity, recorded cast choice, departed object identity and canonical continuation outcomes with exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "negative",
       "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountValueTests.test_malformed_descriptor_and_unavailable_characteristics_fail_closed",
       "official_rule_ids": [
         "107.1b",
@@ -57935,6 +57955,26 @@
         "commander_review"
       ],
       "applicability_note": "The scalar's own source, target or event-object read still rejects unavailable phased information; relevance filtering does not invent phasing support or substitute zero."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_spell_conditions.KickedSpellActionTests.test_actual_scalar_counter_quantity_reads_current_power_and_replays",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual registered commands preserve independently specified result quantity, recorded cast choice, departed object identity and canonical continuation outcomes with exact replay."
     },
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
@@ -57995,6 +58035,26 @@
         "commander_review"
       ],
       "applicability_note": "Each principal receives the ordinary projection, never an authoritative checkpoint."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_spell_conditions.KickedSpellActionTests.test_actual_scalar_counter_quantity_reads_current_power_and_replays",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual registered commands preserve independently specified result quantity, recorded cast choice, departed object identity and canonical continuation outcomes with exact replay."
     },
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
@@ -58306,6 +58366,326 @@
         "commander_review"
       ],
       "applicability_note": "Preserve the nested counter replacement journal and doubled committed amount through exact replay."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_spell_conditions.KickedSpellActionTests.test_actual_kicked_counter_result_keeps_source_attribution_after_prefix",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual registered commands preserve independently specified result quantity, recorded cast choice, departed object identity and canonical continuation outcomes with exact replay."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_spell_conditions.KickedSpellActionTests.test_copy_retains_kicked_fact_without_repaying_cost_owner",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual registered commands preserve independently specified result quantity, recorded cast choice, departed object identity and canonical continuation outcomes with exact replay."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_spell_conditions.KickedSpellActionTests.test_real_espionage_private_discard_after_prefix_pending_load_and_replay",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Recorded kicked choice controls only its fixed additional result after the independent prefix; actual cast targets, private choices, rollback and replay preserve that branch scope."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_spell_conditions.KickedSpellActionTests.test_real_roil_normal_and_kicked_cast_keep_prefix_and_optional_result_scope",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Recorded kicked choice controls only its fixed additional result after the independent prefix; actual cast targets, private choices, rollback and replay preserve that branch scope."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_spell_conditions.KickedSpellActionTests.test_real_espionage_private_discard_after_prefix_pending_load_and_replay",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Recorded kicked choice controls only its fixed additional result after the independent prefix; actual cast targets, private choices, rollback and replay preserve that branch scope."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_kicked_spell_conditions.KickedSpellActionTests.test_unconditional_cast_result_mutant_is_killed_by_actual_unpaid_cast",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual registered commands preserve independently specified result quantity, recorded cast choice, departed object identity and canonical continuation outcomes with exact replay."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_kicked_spell_conditions.KickedSpellConditionTests.test_kicked_cast_fact_dependency_mutants_fail_closed",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Recorded kicked choice controls only its fixed additional result after the independent prefix; actual cast targets, private choices, rollback and replay preserve that branch scope."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "negative",
+      "test_id": "tests.test_kicked_spell_conditions.KickedSpellActionTests.test_illegal_roil_target_skips_kicked_draw_even_though_fact_is_paid",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Recorded kicked choice controls only its fixed additional result after the independent prefix; actual cast targets, private choices, rollback and replay preserve that branch scope."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "negative",
+      "test_id": "tests.test_kicked_spell_conditions.KickedSpellActionTests.test_missing_cast_fact_is_rejected_before_conditional_result",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Recorded kicked choice controls only its fixed additional result after the independent prefix; actual cast targets, private choices, rollback and replay preserve that branch scope."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "negative",
+      "test_id": "tests.test_kicked_spell_conditions.KickedSpellConditionTests.test_cast_condition_rejects_self_replacement_open_targets_and_unknown_fields",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Recorded kicked choice controls only its fixed additional result after the independent prefix; actual cast targets, private choices, rollback and replay preserve that branch scope."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "negative",
+      "test_id": "tests.test_kicked_spell_conditions.KickedSpellConditionTests.test_runtime_cast_fact_accepts_only_sealed_boolean_and_locked_controller",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Recorded kicked choice controls only its fixed additional result after the independent prefix; actual cast targets, private choices, rollback and replay preserve that branch scope."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_spell_conditions.KickedSpellActionTests.test_real_roil_normal_and_kicked_cast_keep_prefix_and_optional_result_scope",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Recorded kicked choice controls only its fixed additional result after the independent prefix; actual cast targets, private choices, rollback and replay preserve that branch scope."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_spell_conditions.KickedSpellConditionTests.test_kicked_result_is_separate_from_mandatory_prefix",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Recorded kicked choice controls only its fixed additional result after the independent prefix; actual cast targets, private choices, rollback and replay preserve that branch scope."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_spell_conditions.KickedSpellActionTests.test_real_espionage_private_discard_after_prefix_pending_load_and_replay",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Recorded kicked choice controls only its fixed additional result after the independent prefix; actual cast targets, private choices, rollback and replay preserve that branch scope."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_spell_conditions.KickedSpellActionTests.test_real_espionage_private_discard_after_prefix_pending_load_and_replay",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Recorded kicked choice controls only its fixed additional result after the independent prefix; actual cast targets, private choices, rollback and replay preserve that branch scope."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_spell_conditions.KickedSpellActionTests.test_real_roil_normal_and_kicked_cast_keep_prefix_and_optional_result_scope",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Recorded kicked choice controls only its fixed additional result after the independent prefix; actual cast targets, private choices, rollback and replay preserve that branch scope."
     },
     {
       "capability_id": "resolution.effect.fixed_homogeneous_target_set",
@@ -81180,6 +81560,266 @@
       "applicability_note": "A target that leaves its graveyard or changes incarnation before resolution causes no zone, controller, trigger, or log mutation."
     },
     {
+      "capability_id": "zone.return.fixed_event_card",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_event_card_return.EventCardReturnActionTests.test_attachment_lki_returns_dead_creature_after_aura_leaves",
+      "official_rule_ids": [
+        "400.7",
+        "400.7e",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "608.2c",
+        "903.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The particular event card returns to its owners hand through exact post-departure identity, canonical zone transactions and replacement continuation; stale cards, unrelated same-name objects and Aura source departure preserve independent outcomes."
+    },
+    {
+      "capability_id": "zone.return.fixed_event_card",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_event_card_return.EventCardReturnActionTests.test_commander_command_choice_removes_card_before_old_return_trigger",
+      "official_rule_ids": [
+        "400.7",
+        "400.7e",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "608.2c",
+        "903.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual registered commands preserve independently specified result quantity, recorded cast choice, departed object identity and canonical continuation outcomes with exact replay."
+    },
+    {
+      "capability_id": "zone.return.fixed_event_card",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_event_card_return.EventCardReturnActionTests.test_actual_sacrifice_returns_exact_card_to_owner_hand_with_pre_action_replay",
+      "official_rule_ids": [
+        "400.7",
+        "400.7e",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "608.2c",
+        "903.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The particular event card returns to its owners hand through exact post-departure identity, canonical zone transactions and replacement continuation; stale cards, unrelated same-name objects and Aura source departure preserve independent outcomes."
+    },
+    {
+      "capability_id": "zone.return.fixed_event_card",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_event_card_return.EventCardReturnActionTests.test_return_incarnation_omission_mutant_is_killed",
+      "official_rule_ids": [
+        "400.7",
+        "400.7e",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "608.2c",
+        "903.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The particular event card returns to its owners hand through exact post-departure identity, canonical zone transactions and replacement continuation; stale cards, unrelated same-name objects and Aura source departure preserve independent outcomes."
+    },
+    {
+      "capability_id": "zone.return.fixed_event_card",
+      "evidence_class": "negative",
+      "test_id": "tests.test_event_card_return.EventCardReturnActionTests.test_stale_graveyard_incarnation_is_not_returned_by_old_trigger",
+      "official_rule_ids": [
+        "400.7",
+        "400.7e",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "608.2c",
+        "903.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The particular event card returns to its owners hand through exact post-departure identity, canonical zone transactions and replacement continuation; stale cards, unrelated same-name objects and Aura source departure preserve independent outcomes."
+    },
+    {
+      "capability_id": "zone.return.fixed_event_card",
+      "evidence_class": "negative",
+      "test_id": "tests.test_event_card_return.EventCardReturnCompilerTests.test_event_return_missing_dependency_and_incarnation_mutants_fail_closed",
+      "official_rule_ids": [
+        "400.7",
+        "400.7e",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "608.2c",
+        "903.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The particular event card returns to its owners hand through exact post-departure identity, canonical zone transactions and replacement continuation; stale cards, unrelated same-name objects and Aura source departure preserve independent outcomes."
+    },
+    {
+      "capability_id": "zone.return.fixed_event_card",
+      "evidence_class": "positive",
+      "test_id": "tests.test_event_card_return.EventCardReturnActionTests.test_actual_sacrifice_returns_exact_card_to_owner_hand_with_pre_action_replay",
+      "official_rule_ids": [
+        "400.7",
+        "400.7e",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "608.2c",
+        "903.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The particular event card returns to its owners hand through exact post-departure identity, canonical zone transactions and replacement continuation; stale cards, unrelated same-name objects and Aura source departure preserve independent outcomes."
+    },
+    {
+      "capability_id": "zone.return.fixed_event_card",
+      "evidence_class": "positive",
+      "test_id": "tests.test_event_card_return.EventCardReturnCompilerTests.test_departed_return_effect_requires_exact_event_card_and_counter",
+      "official_rule_ids": [
+        "400.7",
+        "400.7e",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "608.2c",
+        "903.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The particular event card returns to its owners hand through exact post-departure identity, canonical zone transactions and replacement continuation; stale cards, unrelated same-name objects and Aura source departure preserve independent outcomes."
+    },
+    {
+      "capability_id": "zone.return.fixed_event_card",
+      "evidence_class": "positive",
+      "test_id": "tests.test_event_card_return.EventCardReturnCompilerTests.test_event_return_source_and_attached_grammar_preserve_unrelated_siblings",
+      "official_rule_ids": [
+        "400.7",
+        "400.7e",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "608.2c",
+        "903.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The particular event card returns to its owners hand through exact post-departure identity, canonical zone transactions and replacement continuation; stale cards, unrelated same-name objects and Aura source departure preserve independent outcomes."
+    },
+    {
+      "capability_id": "zone.return.fixed_event_card",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_event_card_return.EventCardReturnActionTests.test_actual_sacrifice_returns_exact_card_to_owner_hand_with_pre_action_replay",
+      "official_rule_ids": [
+        "400.7",
+        "400.7e",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "608.2c",
+        "903.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The particular event card returns to its owners hand through exact post-departure identity, canonical zone transactions and replacement continuation; stale cards, unrelated same-name objects and Aura source departure preserve independent outcomes."
+    },
+    {
+      "capability_id": "zone.return.fixed_event_card",
+      "evidence_class": "replay",
+      "test_id": "tests.test_event_card_return.EventCardReturnActionTests.test_actual_sacrifice_returns_exact_card_to_owner_hand_with_pre_action_replay",
+      "official_rule_ids": [
+        "400.7",
+        "400.7e",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "608.2c",
+        "903.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The particular event card returns to its owners hand through exact post-departure identity, canonical zone transactions and replacement continuation; stale cards, unrelated same-name objects and Aura source departure preserve independent outcomes."
+    },
+    {
+      "capability_id": "zone.return.fixed_event_card",
+      "evidence_class": "replay",
+      "test_id": "tests.test_event_card_return.EventCardReturnActionTests.test_attachment_lki_returns_dead_creature_after_aura_leaves",
+      "official_rule_ids": [
+        "400.7",
+        "400.7e",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "608.2c",
+        "903.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The particular event card returns to its owners hand through exact post-departure identity, canonical zone transactions and replacement continuation; stale cards, unrelated same-name objects and Aura source departure preserve independent outcomes."
+    },
+    {
+      "capability_id": "zone.return.fixed_event_card",
+      "evidence_class": "replay",
+      "test_id": "tests.test_event_card_return.EventCardReturnActionTests.test_commander_command_choice_removes_card_before_old_return_trigger",
+      "official_rule_ids": [
+        "400.7",
+        "400.7e",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "608.2c",
+        "903.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual registered commands preserve independently specified result quantity, recorded cast choice, departed object identity and canonical continuation outcomes with exact replay."
+    },
+    {
       "capability_id": "zone.self_move.activated",
       "evidence_class": "interaction",
       "test_id": "tests.test_self_zone_move_rules.SelfZoneMoveRuntimeTests.test_tapped_reanimation_and_aura_return_use_zone_owners",
@@ -81604,5 +82244,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "174c326a0aa94f208c92d53b95507d765c28eb43ad7e523c2adcb49d11466561"
+  "fingerprint": "72b5de311b5404dd8fe8878ca3603b7d7b470bf90204825a7418254db22138f5"
 }

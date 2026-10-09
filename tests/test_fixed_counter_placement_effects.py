@@ -768,7 +768,8 @@ class FixedCounterPlacementRuntimeTests(unittest.TestCase):
         }
         for effect in (
             {**valid, "amount": True},
-            {**valid, "amount": 0},
+            {**valid, "amount": -1},
+            {**valid, "amount": 0, "source": None},
             {**valid, "counter": ""},
             {**valid, "source": None},
             {**valid, "unknown": 1},
@@ -779,6 +780,15 @@ class FixedCounterPlacementRuntimeTests(unittest.TestCase):
                         effect,
                         self.context(),
                     )
+
+    def test_typed_zero_counter_result_is_empty_after_schema_validation(self):
+        plan = FixedCounterPlacementHandler().lower(
+            {"op": "place_counters", "card": "target", "counter": "+1/+1",
+             "amount": 0, "source": "source"},
+            self.context(),
+        )
+        self.assertEqual((), plan.intents)
+        self.assertEqual("by_player", plan.result_shape)
 
     def test_stale_fixed_counter_target_fails_before_mutation(self):
         session = self.session(12260804)
