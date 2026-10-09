@@ -176,6 +176,13 @@ def build_plan(
                  "-p", "test_event_card_return.py", "-k",
                  "test_source_less_probe_keeps_literal_self_return_closed"),
             ))
+        if "scripts/work_selection_cohort_measurements.py" in paths:
+            steps.append(QuickStep(
+                "batch-measurement-probe-dispatch-contract",
+                (python, "-m", "unittest", "discover", "-s", "tests",
+                 "-p", "test_event_card_return.py", "-k",
+                 "test_batch_measurement_probes_reach_the_registered_dispatcher"),
+            ))
         if "test_capability_implementation_mutations" in selected_modules:
             steps.append(QuickStep(
                 "mutation-patch-target-integrity",

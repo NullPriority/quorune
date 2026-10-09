@@ -678,18 +678,6 @@ def _matches_query_self_characteristic_probe(
     *,
     source_name: str,
 ) -> bool:
-    if probe_id in {_PROBE_KICKED_SPELL, _PROBE_EVENT_CARD_RETURN}:
-        texts = (source, *(str(face.get('oracle_text') or '') for face in card_record.faces)) if card_record is not None else (source,)
-        return any('if this spell was kicked,' in text.casefold() if probe_id == _PROBE_KICKED_SPELL else bool(re.search(r'(?:dies|is put into a graveyard from the battlefield).*?return.*?hand', text, re.I)) for text in texts)
-    if probe_id == _PROBE_TARGET_ANNOUNCEMENT:
-        texts = (source, *(str(face.get('oracle_text') or '') for face in card_record.faces)) if card_record is not None else (source,)
-        return any(re.search(r'becomes the target|cast a spell that targets', text, re.I) for text in texts)
-    if probe_id == _PROBE_KICKED_ENTRY:
-        texts = (source, *(str(face.get('oracle_text') or '') for face in card_record.faces)) if card_record is not None else (source,)
-        return any('enters, if it was kicked,' in text.casefold() for text in texts)
-    if probe_id == _PROBE_COUNTED_ACTIVATION_COST:
-        texts = (source, *(str(face.get('oracle_text') or '') for face in card_record.faces)) if card_record is not None else (source,)
-        return any(re.search(r'\b(?:sacrifice|discard|exile|return) (?:two|three|four|five|six|seven|eight|nine|ten|[2-9]|10)\b', text, re.I) for text in texts)
     """Keep the completed count grammar distinct from its gated extension."""
 
     if probe_id not in {
@@ -1267,6 +1255,18 @@ def _matches_probe(
     card_record: Any | None = None,
     ability: Mapping[str, Any] | None = None,
 ) -> bool:
+    if probe_id in {_PROBE_KICKED_SPELL, _PROBE_EVENT_CARD_RETURN}:
+        texts = (source, *(str(face.get('oracle_text') or '') for face in card_record.faces)) if card_record is not None else (source,)
+        return any('if this spell was kicked,' in text.casefold() if probe_id == _PROBE_KICKED_SPELL else bool(re.search(r'(?:dies|is put into a graveyard from the battlefield).*?return.*?hand', text, re.I)) for text in texts)
+    if probe_id == _PROBE_TARGET_ANNOUNCEMENT:
+        texts = (source, *(str(face.get('oracle_text') or '') for face in card_record.faces)) if card_record is not None else (source,)
+        return any(re.search(r'becomes the target|cast a spell that targets', text, re.I) for text in texts)
+    if probe_id == _PROBE_KICKED_ENTRY:
+        texts = (source, *(str(face.get('oracle_text') or '') for face in card_record.faces)) if card_record is not None else (source,)
+        return any('enters, if it was kicked,' in text.casefold() for text in texts)
+    if probe_id == _PROBE_COUNTED_ACTIVATION_COST:
+        texts = (source, *(str(face.get('oracle_text') or '') for face in card_record.faces)) if card_record is not None else (source,)
+        return any(re.search(r'\b(?:sacrifice|discard|exile|return) (?:two|three|four|five|six|seven|eight|nine|ten|[2-9]|10)\b', text, re.I) for text in texts)
     if probe_id == _PROBE_SOURCE_MAINTENANCE:
         texts = (source, *(str(face.get('oracle_text') or '') for face in card_record.faces)) if card_record is not None else (source,)
         return any(re.search(r'\b(?:When|At the beginning of)\b.*\bsacrifice\b', text, re.I) for text in texts)

@@ -82,6 +82,54 @@ class EventCardReturnCompilerTests(unittest.TestCase):
         self.assertIsNone(self_death_return_binding("When Mortus Strider dies, return it to its owner's hand."))
         self.assertIsNone(self_death_return_binding("When this creature dies, return another card to its owner's hand."))
 
+    def test_batch_measurement_probes_reach_the_registered_dispatcher(self):
+        from scripts.work_selection_cohort_measurements import _matches_probe
+        cases = (
+            ("fixed-kicked-spell-condition-existing-owner-v1", "If this spell was kicked, draw a card."),
+            ("fixed-event-card-return-existing-owner-v1", "When this creature dies, return it to its owner's hand."),
+            ("fixed-target-announcement-existing-owner-v1", "Whenever this creature becomes the target of a spell, draw a card."),
+            ("fixed-kicked-entry-result-existing-owner-v1", "When this creature enters, if it was kicked, draw a card."),
+            ("fixed-counted-activation-zone-cost-existing-owner-v1", "Discard two cards: Draw a card."),
+        )
+        for probe, text in cases:
+            with self.subTest(probe=probe):
+                self.assertTrue(_matches_probe(probe, text))
+                self.assertFalse(_matches_probe(probe, "Draw a card."))
+
+    def test_new_batch_probes_measure_whole_programs_through_registered_dispatch(self):
+        from dataclasses import replace
+        from test_fixed_optional_mana_payment_triggers import payment_record
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.compiler.unlock_frontier import analyze_card_unlocks
+        from scripts.work_selection_cohort_measurements import _measurement
+        import json
+        cases = (
+            ("fixed-event-card-return-existing-owner-v1", "zone.return.fixed_event_card",
+             payment_record("When this creature dies, return it to its owner's hand.")),
+            ("fixed-kicked-spell-condition-existing-owner-v1", "resolution.effect.fixed_cast_fact",
+             replace(payment_record("Kicker {1}{U}\nDraw two cards. If this spell was kicked, you gain 3 life.", type_line="Sorcery"), keywords=("Kicker",))),
+        )
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
+        registry = load_default_capability_registry()
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "probe-binding.sqlite3"
+            build_fixture_database([ROOT / "tests/fixtures/event-card-return.json"], path)
+            with CardDatabase(path) as db:
+                for probe, capability, record in cases:
+                    value = deepcopy(raw)
+                    row = next(r for r in value["capabilities"] if r["id"] == capability)
+                    row.update(status="blocked", blockers=["Independent pre-support baseline"])
+                    baseline_ir = compile_oracle_card(record, capability_registry=CapabilityRegistry(value), capability_profile="commander_review")
+                    baseline = analyze_card_unlocks(baseline_ir, program=None, program_error=None, capabilities=registry, profile="commander_review")
+                    measured = _measurement(frontier={"cards": [baseline]},
+                        bundle={"bundle_id": "bundle:" + probe, "measurement_probe_id": probe},
+                        cards_by_oracle_id={record.oracle_id: record},
+                        coverage={"minimum_complete_card_gain": 50, "minimum_exact_ability_gain": 100, "minimum_material_residual_reduction": 100},
+                        cohort_fingerprint="bounded-registered-probe", database=db)
+                    with self.subTest(probe=probe):
+                        self.assertEqual(1, measured["complete_card_gain"])
+                        self.assertFalse(measured["grants_gameplay_trust"])
+
     def test_departed_return_effect_requires_exact_event_card_and_counter(self):
         intent = event_card_return_intent({**event_card_return_effect(), 'card': 'EVENT-CARD', 'expected_zone_change_counter': 2}, actor='A', reason='Witness')
         self.assertEqual('EVENT-CARD', intent.object_ref)
