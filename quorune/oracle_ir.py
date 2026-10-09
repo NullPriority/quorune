@@ -169,7 +169,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v266"
+ORACLE_COMPILER_VERSION = "oracle-ir-v267"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -804,6 +804,12 @@ def _keyword_nodes(
     return tuple(nodes)
 
 
+_SOURCE_SELF_ZONE_TRIGGER = re.compile(
+    r"(?:when|whenever) (?s:.*?) (?:enters|dies|leaves the battlefield), .+",
+    re.IGNORECASE,
+)
+
+
 def _source_self_zone_trigger_match(
     material_line: str,
     *,
@@ -811,6 +817,8 @@ def _source_self_zone_trigger_match(
 ) -> re.Match[str] | None:
     """Bind one mandatory source-self public zone-change trigger."""
 
+    if _SOURCE_SELF_ZONE_TRIGGER.fullmatch(material_line) is None:
+        return None
     source_name = SourceReferenceSpec(card_name).regex_pattern
     return re.fullmatch(
         rf"(?:when|whenever) "

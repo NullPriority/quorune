@@ -5044,14 +5044,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v266-component-source-validation-cache",
-      "compiler_version": "oracle-ir-v266",
+      "transition_id": "oracle-ir-v267-development-efficiency",
+      "compiler_version": "oracle-ir-v267",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
       "expected_complete_card_gain": null,
-      "non_harvest_reason": "Reduce repeated AST parsing through exact-source implementation export reuse, per-declaration capability copies through one defensive validation snapshot, and cohort semantic-registry setup through measurement-scoped reuse; preserve resolution, evidence, complete-card compilation, and strict-binding checks without adding supported grammar or gameplay trust."
+      "non_harvest_reason": "Reduce repeated source validation, capability copies, cohort registry setup, architecture import scans, unnecessary excluded-cohort compilation, and dynamic source-name regex compilation through bounded exact-input reuse and necessary-condition guards; preserve the original matchers, evidence, complete-card compilation, and strict binding without adding supported grammar or gameplay trust."
     },
     "forecast_corrections": [
       {

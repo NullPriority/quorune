@@ -34,6 +34,14 @@ source hashes, residuals, and capability closure into the canonical artifact.
 The local card database is a compiler input; the engine does not query it while
 performing a transition.
 
+Source-self action, zone-change, source-plus-other, and graveyard trigger parsers
+first check a name-independent superset of their closed event grammar. Only
+possible candidates construct a source-name regex. The original escaped-name
+matcher still determines recognition, captured subjects/events/bodies, and
+serialized binding; the prefilter never promotes grammar or supplies runtime
+authority. This avoids compiling a distinct name-bearing pattern for unrelated
+Oracle lines while preserving full source spans and residual boundaries.
+
 `compiler/linked_exile_return_templates.py` lowers a closed battlefield exile
 followed by an immediate return or next-end-step return. It shares direct
 permanent predicates, optional resolution choices, modal scoping, and ordinary

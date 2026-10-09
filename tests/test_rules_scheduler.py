@@ -191,6 +191,51 @@ class CohortPrefilterTests(unittest.TestCase):
             )
             compiler.assert_called_once()
 
+    def test_controller_measurement_reuses_read_only_registry_and_preserves_full_binding(self):
+        from scripts import controller_program_measurement as measurements
+        from quorune.semantics import SemanticRegistry
+        from quorune.rules.capabilities import load_default_capability_registry
+        from quorune.oracle_ir import compile_oracle_card
+
+        registry = load_default_capability_registry()
+        records = tuple(replace(self.record(), oracle_id=f"fixture:controller-{i}", oracle_text=text)
+            for i,text in enumerate(("Draw a card.", "You gain 2 life.", "Draw a card.\nThe moon remembers this spell.")))
+        cards = []
+        for record in records:
+            ir = compile_oracle_card(record, capability_registry=registry, capability_profile="commander_review")
+            cards.append({"oracle_id":record.oracle_id, "oracle_ir_status":"partial", "abilities":[
+                {"face_id":face.face_id, "ability_id":node.node_id, "status":"lowerable_untrusted", "residuals":[]}
+                for face in ir.faces for node in face.nodes
+            ]})
+        arguments = dict(frontier={"cards":cards}, bundle_id="bundle:controller-program-composition",
+            probe_id=measurements.PROBE_ID, cards_by_oracle_id={r.oracle_id:r for r in records},
+            coverage={"minimum_complete_card_gain":50,"minimum_exact_ability_gain":100,
+                      "minimum_material_residual_reduction":100}, cohort_fingerprint="fixture",
+            database=SimpleNamespace(rulings=lambda _record: ()))
+        original = measurements.compile_best_available_card_program
+        with mock.patch.object(measurements, "SemanticRegistry", wraps=SemanticRegistry) as factory, mock.patch.object(
+            measurements, "compile_best_available_card_program", wraps=original
+        ) as compiler:
+            result = measurements.controller_program_measurement(**arguments)
+            self.assertEqual(2, result["complete_card_gain"])
+            self.assertFalse(result["grants_gameplay_trust"])
+            factory.assert_called_once_with()
+            first = compiler.call_args_list[0].kwargs["semantic_registry"]
+            self.assertEqual(2, compiler.call_count)
+            self.assertTrue(all(call.kwargs["semantic_registry"] is first for call in compiler.call_args_list))
+            factory.reset_mock(); compiler.reset_mock()
+            self.assertEqual(result, measurements.controller_program_measurement(**arguments))
+            factory.assert_called_once_with()
+            self.assertIsNot(first, compiler.call_args_list[0].kwargs["semantic_registry"])
+        def fresh(*args, **kwargs):
+            kwargs["semantic_registry"] = SemanticRegistry()
+            return original(*args, **kwargs)
+        with mock.patch.object(measurements, "compile_best_available_card_program", side_effect=fresh):
+            self.assertEqual(result, measurements.controller_program_measurement(**arguments))
+        with mock.patch.object(measurements, "SemanticRegistry") as factory:
+            measurements.controller_program_measurement(**{**arguments,"frontier":{"cards":[]}})
+            factory.assert_not_called()
+
 
 def _json(relative: str):
     return json.loads((ROOT / relative).read_text(encoding="utf-8"))

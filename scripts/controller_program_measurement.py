@@ -27,6 +27,7 @@ def controller_program_measurement(
     remaining = {}
     complete = set()
     ability_gain = residual_reduction = 0
+    semantics: SemanticRegistry | None = None
     for card in frontier.get("cards", ()):
         if card.get("oracle_ir_status") == "exact":
             continue
@@ -48,7 +49,9 @@ def controller_program_measurement(
         remaining[oracle_id] = sum(ability.get("status") != "exact" and identity not in promoted for identity, ability in previous.items())
         if compiled.status != "exact":
             continue
-        program = compile_best_available_card_program(database, record, semantic_registry=SemanticRegistry(),
+        if semantics is None:
+            semantics = SemanticRegistry()
+        program = compile_best_available_card_program(database, record, semantic_registry=semantics,
             capability_registry=registry, capability_profile="commander_review")
         if bind_card_program_runtime(program, capability_registry=registry, profile="commander_review")["strict_capability_ready"]:
             complete.add(oracle_id)

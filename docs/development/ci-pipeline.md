@@ -34,6 +34,8 @@ per measurement and reuse it for read-only compilation of that measurement's
 cards. Separate measurements construct fresh registries, and probes with no
 whole-program candidates avoid that setup. Compilation and strict binding
 still run independently for every original complete card.
+The extracted controller-program measurement uses the same invocation scope
+and keeps unsupported sibling nodes outside complete-card closure.
 
 The source-pronoun damage-trigger probe applies its existing grammar exclusion
 before compiling the card, avoiding compilation for candidates that the same
