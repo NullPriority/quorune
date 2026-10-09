@@ -2153,6 +2153,7 @@ class RulesSchedulerTests(unittest.TestCase):
         }
         superseded = _content_entry(declaration, base=base, head=head)
         corrected_declaration = deepcopy(declaration)
+        corrected_declaration["transition_id"] = "fixture-corrected-unlanded-transition-v2"
         corrected_declaration["family_ids"] = [
             "effect_clause:fixture-corrected-unlanded-transition-v2"
         ]
@@ -2190,6 +2191,10 @@ class RulesSchedulerTests(unittest.TestCase):
         self.assertEqual('oracle-ir-v999',corrected['head_receipt']['compiler_version'])
         with self.assertRaisesRegex(HarvestOutcomeHistoryError,'compiler version'):
             _replace_unlanded_content_entry(superseded,declaration=corrected_declaration,base=base,head=head)
+        changed_base = deepcopy(base)
+        changed_base['blobs']['coverage/card-program-coverage-commander.json']['semantic_sha256'] = 'e' * 64
+        with self.assertRaisesRegex(HarvestOutcomeHistoryError, 'durable main'):
+            _replace_unlanded_content_entry(superseded, declaration=corrected_declaration, base=changed_base, head=corrected_head)
 
     def test_unlanded_harvest_can_be_reclassified_as_non_harvest(self):
         provenance = self.catalog["work_selection"]["harvest_provenance"]
@@ -3871,6 +3876,15 @@ class RulesSchedulerTests(unittest.TestCase):
                 revised = {'transition_id': transition_id, 'compiler_version': 'oracle-ir-v999'}
                 self.assertEqual('original-frontier', _source_checkpoint_frontier(revised['transition_id'])['fingerprint'])
             self.assertEqual(['git', 'cat-file', 'blob', 'a' * 40], git.call_args.args[0])
+
+    def test_compiler_revision_matches_only_the_same_unmerged_harvest_bundle(self):
+        from scripts.harvest_outcome_history import _declaration_revises_unlanded_content_entry
+        entry = {'transition_id': 'compiler-before', 'bundle_id': 'bundle:combined', 'candidate_ids': ['component:a', 'component:b']}
+        revised = {**entry, 'transition_id': 'compiler-after', 'outcome_kind': 'harvest'}
+        self.assertTrue(_declaration_revises_unlanded_content_entry(revised, entry))
+        self.assertFalse(_declaration_revises_unlanded_content_entry({**revised, 'bundle_id': 'bundle:other'}, entry))
+        self.assertFalse(_declaration_revises_unlanded_content_entry({**revised, 'candidate_ids': ['component:a']}, entry))
+        self.assertFalse(_declaration_revises_unlanded_content_entry({**revised, 'outcome_kind': 'non_harvest'}, entry))
 
     def test_revised_unmerged_batch_inherits_only_its_verified_receipt_base(self):
         import scripts.update_work_selection_cohort_measurements as owner

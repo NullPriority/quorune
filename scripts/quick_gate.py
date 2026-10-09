@@ -197,6 +197,13 @@ def build_plan(
                  "-p", "test_rules_scheduler.py", "-k",
                  "test_revised_unmerged_batch_inherits_only_its_verified_receipt_base"),
             ))
+        if "scripts/harvest_outcome_history.py" in paths:
+            steps.append(QuickStep(
+                "unmerged-harvest-revision-identity-contract",
+                (python, "-m", "unittest", "discover", "-s", "tests",
+                 "-p", "test_rules_scheduler.py", "-k",
+                 "test_compiler_revision_matches_only_the_same_unmerged_harvest_bundle"),
+            ))
         if "test_capability_implementation_mutations" in selected_modules:
             steps.append(QuickStep(
                 "mutation-patch-target-integrity",
