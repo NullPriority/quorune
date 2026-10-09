@@ -183,6 +183,20 @@ def build_plan(
                  "-p", "test_event_card_return.py", "-k",
                  "test_batch_measurement_probes_reach_the_registered_dispatcher"),
             ))
+        if {"quorune/compiler/event_card_return_templates.py", "quorune/card_programs/reviewed_overlay.py"}.intersection(paths):
+            steps.append(QuickStep(
+                "event-return-legacy-overlay-contract",
+                (python, "-m", "unittest", "discover", "-s", "tests",
+                 "-p", "test_exact_deck_triggers.py", "-k",
+                 "test_spine_destroys_target_then_returns_from_graveyard"),
+            ))
+        if "scripts/update_work_selection_cohort_measurements.py" in paths:
+            steps.append(QuickStep(
+                "unmerged-batch-receipt-base-contract",
+                (python, "-m", "unittest", "discover", "-s", "tests",
+                 "-p", "test_rules_scheduler.py", "-k",
+                 "test_revised_unmerged_batch_inherits_only_its_verified_receipt_base"),
+            ))
         if "test_capability_implementation_mutations" in selected_modules:
             steps.append(QuickStep(
                 "mutation-patch-target-integrity",

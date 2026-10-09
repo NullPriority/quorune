@@ -1484,7 +1484,6 @@
         "test_fixed_optional_mana_payment_triggers",
         "test_kicked_spell_conditions",
         "test_resolution_public_conditions",
-        "test_kicked_entry_triggers",
         "test_event_card_return",
         "test_persist_undying_rules",
         "test_source_maintenance"

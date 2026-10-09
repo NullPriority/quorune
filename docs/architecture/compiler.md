@@ -1460,6 +1460,17 @@ set, and player counter amounts remain outside this declared-amount boundary.
 Attached and targeted regeneration nodes retain the registered shield handler
 dependency beside the fixed-effect capability, including when a newly closed
 event-return sibling makes the complete card reachable.
+Current-program assembly supersedes an identical reviewed self-graveyard return
+with the trusted event-bound return only when event shape, source hashes, costs,
+targets and handlers agree. Both assembly paths share this precedence; unrelated
+legacy abilities remain separate and one printed return queues one trigger.
+Combined deliveries use a registered aggregate probe over original whole-card
+programs. The probe deduplicates Oracle IDs and retains independent residual
+siblings; its generated transition receipt binds the original immutable base
+frontier across revisions of an unmerged batch. Final PR delivery still uses
+immutable base/head corpus receipts and subtracts lost support. Interaction
+coverage distinguishes actual Aura, shroud and target composition from explicit
+rejection of unresolved original-card siblings.
 Undefined X, X-dependent target domains or cardinalities, variable activation
 costs, nonordinary X mana costs, linked or source characteristics, open arithmetic,
 unrepresented result owners, and nested modal declarations remain residual.

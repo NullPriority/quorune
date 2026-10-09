@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "registry_fingerprint": "7cfc1784211d4aa6fd9bd47fd6165e9394af8b366af79add98ceeca762341ae4",
-  "declaration_source_fingerprint": "bd0514b3788032c2b14853318c72d865f83a202e8dfe7d0adc53a670186e8194",
+  "declaration_source_fingerprint": "9a1f2fc28fa137434adfe860e67e81d06585cc9dd24c43cd9737f70872a2ce90",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -81562,6 +81562,26 @@
     {
       "capability_id": "zone.return.fixed_event_card",
       "evidence_class": "interaction",
+      "test_id": "tests.test_event_card_return.EventCardReturnActionTests.test_actual_spine_targeted_entry_and_sacrifice_queue_one_return_with_replay",
+      "official_rule_ids": [
+        "400.7",
+        "400.7e",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "608.2c",
+        "903.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual targeted entry result and later sacrifice cost retain one return occurrence through shared reviewed supersession and pre-action replay."
+    },
+    {
+      "capability_id": "zone.return.fixed_event_card",
+      "evidence_class": "interaction",
       "test_id": "tests.test_event_card_return.EventCardReturnActionTests.test_attachment_lki_returns_dead_creature_after_aura_leaves",
       "official_rule_ids": [
         "400.7",
@@ -81598,6 +81618,46 @@
         "commander_review"
       ],
       "applicability_note": "Actual registered commands preserve independently specified result quantity, recorded cast choice, departed object identity and canonical continuation outcomes with exact replay."
+    },
+    {
+      "capability_id": "zone.return.fixed_event_card",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_event_card_return.EventCardReturnActionTests.test_shroud_rejects_targeted_removal_but_cost_sacrifice_returns_aura_with_replay",
+      "official_rule_ids": [
+        "400.7",
+        "400.7e",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "608.2c",
+        "903.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual shroud blocks targeted removal without mutation, while a nontargeted sacrifice cost causes the Aura to return to its separate owner hand with pre-action replay."
+    },
+    {
+      "capability_id": "zone.return.fixed_event_card",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_event_card_return.EventCardReturnActionTests.test_typed_aura_cast_rejects_non_swamp_and_returns_after_destruction_with_replay",
+      "official_rule_ids": [
+        "400.7",
+        "400.7e",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "608.2c",
+        "903.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual typed Enchant Swamp cast rejects a non-Swamp, Naturalize destroys the Aura and its exact event incarnation returns once with pre-action replay."
     },
     {
       "capability_id": "zone.return.fixed_event_card",
@@ -81782,6 +81842,26 @@
     {
       "capability_id": "zone.return.fixed_event_card",
       "evidence_class": "replay",
+      "test_id": "tests.test_event_card_return.EventCardReturnActionTests.test_actual_spine_targeted_entry_and_sacrifice_queue_one_return_with_replay",
+      "official_rule_ids": [
+        "400.7",
+        "400.7e",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "608.2c",
+        "903.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual targeted entry result and later sacrifice cost retain one return occurrence through shared reviewed supersession and pre-action replay."
+    },
+    {
+      "capability_id": "zone.return.fixed_event_card",
+      "evidence_class": "replay",
       "test_id": "tests.test_event_card_return.EventCardReturnActionTests.test_attachment_lki_returns_dead_creature_after_aura_leaves",
       "official_rule_ids": [
         "400.7",
@@ -81818,6 +81898,46 @@
         "commander_review"
       ],
       "applicability_note": "Actual registered commands preserve independently specified result quantity, recorded cast choice, departed object identity and canonical continuation outcomes with exact replay."
+    },
+    {
+      "capability_id": "zone.return.fixed_event_card",
+      "evidence_class": "replay",
+      "test_id": "tests.test_event_card_return.EventCardReturnActionTests.test_shroud_rejects_targeted_removal_but_cost_sacrifice_returns_aura_with_replay",
+      "official_rule_ids": [
+        "400.7",
+        "400.7e",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "608.2c",
+        "903.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual shroud blocks targeted removal without mutation, while a nontargeted sacrifice cost causes the Aura to return to its separate owner hand with pre-action replay."
+    },
+    {
+      "capability_id": "zone.return.fixed_event_card",
+      "evidence_class": "replay",
+      "test_id": "tests.test_event_card_return.EventCardReturnActionTests.test_typed_aura_cast_rejects_non_swamp_and_returns_after_destruction_with_replay",
+      "official_rule_ids": [
+        "400.7",
+        "400.7e",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "608.2c",
+        "903.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual typed Enchant Swamp cast rejects a non-Swamp, Naturalize destroys the Aura and its exact event incarnation returns once with pre-action replay."
     },
     {
       "capability_id": "zone.self_move.activated",
@@ -82244,5 +82364,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "72b5de311b5404dd8fe8878ca3603b7d7b470bf90204825a7418254db22138f5"
+  "fingerprint": "f096280f2d7d7453c0cd325d680e255784dbd073a88738cead0e569646a4cec3"
 }

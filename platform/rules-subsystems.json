@@ -375,6 +375,70 @@
       },
       "candidate_bundles": [
         {
+          "bundle_id": "bundle:batched-card-support",
+          "member_family_ids": [
+            "activated_cost:complete-alternate-additional-cost-grammar",
+            "activated_cost:restricted-payment-predicates",
+            "effect_clause:ordered-effect-composition",
+            "effect_clause:unrepresented-activation-cost-variant",
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding",
+            "target_or_choice:conditional-effect"
+          ],
+          "canonical_owner_ids": [
+            "capability:activation.selected_zone_change.fixed",
+            "capability:resolution.effect.fixed_cast_fact",
+            "capability:trigger.entry.fixed_kicked_result",
+            "capability:trigger.event.normalized_target_announcement",
+            "capability:trigger.source.fixed_maintenance",
+            "capability:zone.return.fixed_event_card",
+            "component:quorune.compiler.counted_zone_costs.fixed_counted_zone_change_cost_clause",
+            "component:quorune.compiler.event_card_return_templates.event_card_return_template",
+            "component:quorune.compiler.kicked_entry_trigger_nodes.fixed_kicked_entry_trigger_node",
+            "component:quorune.compiler.kicked_spell_conditions.kicked_spell_condition_template",
+            "component:quorune.compiler.source_maintenance_nodes.source_maintenance_node",
+            "component:quorune.compiler.target_announcement_bindings.target_announcement_binding_spec",
+            "component:quorune.rules.activation_costs.pay_counted_zone_change_activation_cost",
+            "component:quorune.rules.target_announcements.dispatch_target_announcements",
+            "component:quorune.semantic_choices.fixed_effect_payment.complete_fixed_payment_cost",
+            "component:quorune.semantic_choices.source_maintenance.prepare_source_maintenance",
+            "component:quorune.zone_transitions.ZoneTransitionOwner"
+          ],
+          "source_contexts": [
+            "activated",
+            "spell",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "distinct-original-oracle-id",
+            "strict-whole-program-binding",
+            "union-of-reviewed-component-boundaries"
+          ],
+          "shared_dependencies": [
+            "activation.selected_zone_change.fixed",
+            "casting.kicker.fixed_mana",
+            "effect.choice.optional_fixed_mana_payment",
+            "resolution.effect.fixed_cast_fact",
+            "target.revalidate_resolution",
+            "trigger.event.normalized_zone_change",
+            "trigger.placement.apnap",
+            "zone.change.destination_replacement",
+            "zone.return.fixed_event_card"
+          ],
+          "shared_grammar": "The union of independently reviewed maintenance, counted-cost, kicked-result, targeting and departed-return boundaries plus existing single-subject counter amounts.",
+          "estimated_implementation_hours": 20,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "At least 200 net distinct capability-closed Commander cards through one delivery and immutable generated measurement.",
+          "explicit_exclusions": [
+            "Duplicate Oracle IDs do not increase gain",
+            "Independent unrepresented siblings remain residual",
+            "Lost support subtracts from final delivery"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "batched-card-support-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:copiable-token-production-recipes",
           "member_family_ids": ["activated_effect:create-token", "effect_clause:create-token", "event_binding:normalized-event-binding", "keyword_dependency:populate"],
           "canonical_owner_ids": ["capability:token.creation.fixed_copy", "component:quorune.compiler.token_copy_templates.token_copy_recipe_template", "component:quorune.token_copy_references.pin_copy_characteristic_departures", "component:quorune.token_creation.create_tokens"],
@@ -5262,8 +5326,8 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v276-batched-card-support",
-      "compiler_version": "oracle-ir-v276",
+      "transition_id": "oracle-ir-v277-batched-card-support",
+      "compiler_version": "oracle-ir-v277",
       "bundle_id": "bundle:batched-card-support",
       "candidate_ids": [
         "bundle:fixed-counted-activation-zone-cost",
@@ -5290,7 +5354,7 @@
         "trigger.source.fixed_maintenance",
         "zone.return.fixed_event_card"
       ],
-      "expected_complete_card_gain": 200,
+      "measurement_id": "measurement:batched-card-support",
       "non_harvest_reason": null
     },
 

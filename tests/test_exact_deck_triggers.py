@@ -209,7 +209,7 @@ class ExactDeckTriggerFamilyTests(unittest.TestCase):
         )
         self.assertFalse(engine._stabilize())
         self.assertEqual(
-            ["Spine of Ish Sah graveyard trigger"],
+            ["Spine of Ish Sah — When this artifact is put into a graveyard from the battlefield, return it to its owner's hand."],
             [item.label for item in engine.state.stack],
         )
         self.resolve_top(engine)

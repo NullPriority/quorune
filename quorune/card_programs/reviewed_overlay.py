@@ -178,6 +178,47 @@ def shadowed_reviewed_counted_search_keys(
     return shadowed
 
 
+def shadowed_reviewed_event_return_keys(
+    record: CardRecord,
+    generated_programs: Iterable[SemanticProgram],
+    reviewed_programs: Iterable[SemanticProgram],
+) -> set[str]:
+    """Prefer an incarnation-bound return over its same-source legacy body."""
+    from ..event_card_return import EVENT_CARD_RETURN_CAPABILITY, event_card_return_effect
+    reviewed_values = tuple(reviewed_programs)
+    shadowed: set[str] = set()
+    for generated in generated_programs:
+        if (
+            generated.trust_level != "trusted"
+            or EVENT_CARD_RETURN_CAPABILITY not in generated.capability_dependencies
+            or not generated.capability_closure
+            or generated.capability_closure.get("trusted") is not True
+            or tuple(dict(effect) for effect in generated.effects) != (event_card_return_effect(),)
+            or generated.event not in {"permanent.graveyard.self", "creature.dies.self"}
+            or generated.event_condition is not None
+        ):
+            continue
+        for old in reviewed_values:
+            if old.trust_level != "trusted" or len(old.effects) != 1:
+                continue
+            effect = dict(old.effects[0])
+            effect.pop("reason", None)
+            if effect != {"op": "move", "card": "$source", "destination": "hand"}:
+                continue
+            if any(getattr(old, field) != getattr(generated, field) for field in (
+                "active_zone", "event_condition", "target_schema", "cost_schema",
+                "handlers", "destination", "requires_arbiter",
+            )):
+                continue
+            if not _reviewed_self_event_matches_subscription(record, old.event, generated.event.removesuffix(".self")):
+                continue
+            if any(not generated.provenance.get(field) or generated.provenance[field] != old.provenance.get(field)
+                   for field in ("source_oracle_hash", "source_rulings_hash")):
+                continue
+            shadowed.add(old.key)
+    return shadowed
+
+
 def shadowed_reviewed_program_keys(
     record: CardRecord,
     generated_programs: Iterable[SemanticProgram],
@@ -188,7 +229,9 @@ def shadowed_reviewed_program_keys(
     reviewed = tuple(reviewed_programs)
     return shadowed_reviewed_multi_event_keys(
         record, generated, reviewed,
-    ) | shadowed_reviewed_counted_search_keys(record, generated, reviewed)
+    ) | shadowed_reviewed_counted_search_keys(
+        record, generated, reviewed,
+    ) | shadowed_reviewed_event_return_keys(record, generated, reviewed)
 
 
 __all__ = [

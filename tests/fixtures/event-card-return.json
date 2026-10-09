@@ -8,7 +8,7 @@
       "name": "Mortus Strider",
       "mana_cost": "{1}{U}{B}",
       "cmc": 3.0,
-      "type_line": "Creature — Skeleton",
+      "type_line": "Creature \u2014 Skeleton",
       "oracle_text": "When this creature dies, return it to its owner's hand.",
       "power": "1",
       "toughness": "1",
@@ -57,7 +57,7 @@
       "name": "Demonic Vigor",
       "mana_cost": "{B}",
       "cmc": 1.0,
-      "type_line": "Enchantment — Aura",
+      "type_line": "Enchantment \u2014 Aura",
       "oracle_text": "Enchant creature\nEnchanted creature gets +1/+1.\nWhen enchanted creature dies, return that card to its owner's hand.",
       "power": null,
       "toughness": null,
@@ -106,7 +106,7 @@
       "name": "Squee's Embrace",
       "mana_cost": "{R}{W}",
       "cmc": 2.0,
-      "type_line": "Enchantment — Aura",
+      "type_line": "Enchantment \u2014 Aura",
       "oracle_text": "Enchant creature\nEnchanted creature gets +2/+2.\nWhen enchanted creature dies, return that card to its owner's hand.",
       "power": null,
       "toughness": null,
@@ -245,6 +245,181 @@
         "tlr": "legal",
         "vintage": "legal"
       }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [
+        "Enchant"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Aspect of Mongoose",
+      "oracle_id": "dcc55415-216e-4e18-83d6-43f301359f84",
+      "oracle_text": "Enchant creature\nEnchanted creature has shroud. (It can't be the target of spells or abilities.)\nWhen this Aura is put into a graveyard from the battlefield, return it to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2006-10-06",
+      "toughness": null,
+      "type_line": "Enchantment \u2014 Aura"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [
+        "Enchant"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}",
+      "name": "Spreading Algae",
+      "oracle_id": "a08189f2-1643-496a-8a91-74864528b4db",
+      "oracle_text": "Enchant Swamp\nWhen enchanted land becomes tapped, destroy it.\nWhen this Aura is put into a graveyard from the battlefield, return it to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2003-07-28",
+      "toughness": null,
+      "type_line": "Enchantment \u2014 Aura"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [
+        "Enchant"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}",
+      "name": "Generic Swamp Return Aura",
+      "oracle_id": "fixture:swamp-aura-event-return",
+      "oracle_text": "Enchant Swamp\nWhen this Aura is put into a graveyard from the battlefield, return it to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "",
+      "toughness": null,
+      "type_line": "Enchantment \u2014 Aura"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "banned",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R}",
+      "name": "Atog",
+      "oracle_id": "3095f2cf-05c3-4381-929f-c526b6fc30a7",
+      "oracle_text": "Sacrifice an artifact: This creature gets +2/+2 until end of turn.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2011-01-10",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Atog"
     }
   ],
   "rulings": [
@@ -258,7 +433,7 @@
       "oracle_id": "00cb93a8-5d33-4c6a-9e2a-4b3560f76f3f",
       "published_at": "2018-04-27",
       "source": "wotc",
-      "comment": "Demonic Vigor can enchant a token, but its last ability won’t return the token to your hand."
+      "comment": "Demonic Vigor can enchant a token, but its last ability won\u2019t return the token to your hand."
     },
     {
       "oracle_id": "6a125750-2b8c-4f9d-8173-ac8d14c91ddb",

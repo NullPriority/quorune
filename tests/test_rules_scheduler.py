@@ -3166,7 +3166,7 @@ class RulesSchedulerTests(unittest.TestCase):
                     )
                 )
         for source in (
-            "Sacrifice two Goblins: Draw a card.",
+            "Sacrifice two Goblins, Discard two cards: Draw a card.",
             "Sacrifice another creature or a Treasure: Draw a card.",
             "Sacrifice an artifact or another creature: Draw a card.",
             "Sacrifice another creature or token: Draw a card.",
@@ -3871,6 +3871,29 @@ class RulesSchedulerTests(unittest.TestCase):
                 revised = {'transition_id': transition_id, 'compiler_version': 'oracle-ir-v999'}
                 self.assertEqual('original-frontier', _source_checkpoint_frontier(revised['transition_id'])['fingerprint'])
             self.assertEqual(['git', 'cat-file', 'blob', 'a' * 40], git.call_args.args[0])
+
+    def test_revised_unmerged_batch_inherits_only_its_verified_receipt_base(self):
+        import scripts.update_work_selection_cohort_measurements as owner
+        original = {'fingerprint': 'pre-batch-frontier', 'cards': []}
+        encoded = gzip.compress(json.dumps(original).encode('utf-8'), mtime=0)
+        prior = {'transition_id': 'batch-before-revision', 'bundle_id': 'bundle:batch',
+            'receipt_identity_kind': 'semantic_content',
+            'base_receipt': {'blobs': {'coverage/card-unlock-frontier.json.gz': {'git_blob_oid': 'a' * 40}}},
+            'head_receipt': {'blobs': {'coverage/card-unlock-frontier.json.gz': {'git_blob_oid': 'b' * 40}}}}
+        with tempfile.TemporaryDirectory() as directory:
+            history = Path(directory) / 'history.json'; policy = Path(directory) / 'policy.json'
+            history.write_text(json.dumps({'entries': [prior]}), encoding='utf-8')
+            policy.write_text(json.dumps({'work_selection': {'semantic_transition_declaration': {
+                'transition_id': 'batch-after-revision', 'bundle_id': 'bundle:batch'}}}), encoding='utf-8')
+            with mock.patch.object(owner, 'HARVEST_HISTORY', history), mock.patch.object(owner, 'POLICY', policy), mock.patch.object(
+                owner.subprocess, 'run', side_effect=[SimpleNamespace(returncode=0, stdout=('b' * 40 + '\n').encode()),
+                    SimpleNamespace(returncode=0, stdout=encoded), SimpleNamespace(returncode=0, stdout=encoded)]):
+                self.assertEqual('pre-batch-frontier', owner._source_checkpoint_frontier('batch-after-revision')['fingerprint'])
+            unrelated = gzip.compress(json.dumps({'fingerprint': 'unrelated-checkpoint', 'cards': []}).encode('utf-8'), mtime=0)
+            with mock.patch.object(owner, 'HARVEST_HISTORY', history), mock.patch.object(owner, 'POLICY', policy), mock.patch.object(
+                owner.subprocess, 'run', side_effect=[SimpleNamespace(returncode=0, stdout=('c' * 40 + '\n').encode()),
+                    SimpleNamespace(returncode=0, stdout=unrelated)]):
+                self.assertEqual('unrelated-checkpoint', owner._source_checkpoint_frontier('batch-after-revision')['fingerprint'])
 
     def test_transition_probe_recovers_receipt_blob_in_shallow_checkout(self):
         outcome = self.work_inputs["harvest_outcome_history"]["entries"][-1]

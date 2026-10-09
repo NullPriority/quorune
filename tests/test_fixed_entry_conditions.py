@@ -282,9 +282,9 @@ class FixedEntryConditionCompilerTests(unittest.TestCase):
                 "Additional Cost Boundary",
                 "This land enters tapped unless you control a legendary creature.\n"
                 "{T}: Add {R}.\n"
-                "{3}{R}, {T}, Exile three cards from your graveyard: Create "
+                "{3}{R}, {T}, Exile three cards from your graveyard, Discard two cards: Create "
                 "two Treasure tokens.",
-                "Exile three cards from your graveyard",
+                "Discard two cards",
             ),
             (
                 "Minas Tirith",

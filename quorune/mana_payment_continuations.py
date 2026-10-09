@@ -76,7 +76,10 @@ def issue_mana_payment_replacement_choice(
     }:
         resume_kind = "priority_action_cost"
     elif event_kinds and all(kind == 'zone.change' for kind in event_kinds) and action == "activate":
-        event = required.batch.events[pending.event_index]
+        event_index = getattr(pending, "event_index", None)
+        if type(event_index) is not int or not 0 <= event_index < len(required.batch.events):
+            raise ReplacementEffectError("Activation zone-change cost replacement is unsupported")
+        event = required.batch.events[event_index]
         if activation_zone_change_cost_reference(
             response, origin=event.payload.get('origin'),
             destination=event.payload.get('destination'), object_ref=event.payload.get('object_ref'),

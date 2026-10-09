@@ -223,6 +223,21 @@ def _source_checkpoint_frontier(transition_id: str) -> dict:
         ),
         None,
     )
+    inherited_unmerged = False
+    if landed is None:
+        catalog = json.loads(POLICY.read_text(encoding="utf-8"))
+        declaration = catalog.get("work_selection", {}).get("semantic_transition_declaration")
+        if isinstance(declaration, dict) and declaration.get("transition_id") == transition_id:
+            prior = next((row for row in reversed(tuple(entries))
+                          if isinstance(row, dict) and row.get("bundle_id") == declaration.get("bundle_id")
+                          and row.get("receipt_identity_kind") == "semantic_content"), None)
+            if prior is not None:
+                head = prior.get("head_receipt", {}).get("blobs", {}).get("coverage/card-unlock-frontier.json.gz", {})
+                checkpoint = subprocess.run(["git", "rev-parse", "HEAD:coverage/card-unlock-frontier.json.gz"],
+                    cwd=ROOT, check=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                if checkpoint.returncode == 0 and checkpoint.stdout.decode("ascii").strip() == head.get("git_blob_oid"):
+                    landed = prior
+                    inherited_unmerged = True
     if landed is not None:
         base = landed.get("base_receipt")
         blobs = base.get("blobs") if isinstance(base, dict) else None
@@ -233,6 +248,17 @@ def _source_checkpoint_frontier(transition_id: str) -> dict:
         )
         object_id = blob.get("git_blob_oid") if isinstance(blob, dict) else None
         expected = landed.get("measurement_frontier_fingerprint")
+        if inherited_unmerged and not isinstance(expected, str) and isinstance(object_id, str):
+            raw = subprocess.run(["git", "cat-file", "blob", object_id], cwd=ROOT, check=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            if raw.returncode:
+                recovered = _remote_git_blob(object_id)
+                if recovered is None:
+                    raise ValueError("Unmerged transition base frontier is unavailable")
+            else:
+                recovered = raw.stdout
+            expected = str(_decode_frontier(
+                recovered, label="Unmerged batch base",
+            ).get("fingerprint") or "")
         if not isinstance(object_id, str) or not isinstance(expected, str):
             raise ValueError(
                 "Landed transition lacks its immutable base-frontier identity"
