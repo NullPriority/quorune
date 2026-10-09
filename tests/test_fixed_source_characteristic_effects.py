@@ -945,6 +945,43 @@ class FixedSourceCharacteristicRuntimeTests(unittest.TestCase):
         self.resolve_stack(session)
         self.assertEqual(6, engine._numeric_stat(source.object_id, "power"))
 
+    def test_pinned_background_pairing_and_named_attack_reanimation_share_authority(self):
+        from quorune.commander_pairing import CommanderPairingKind, validate_commander_pair
+        session = self.session(26520153, players=4)
+        engine = session.engine
+        source = self.add_card(session, name="Erinis, Gloom Stalker", ref="PAIRED-REANIMATOR", trusted=True)
+        declarations = validate_commander_pair(
+            self.db, engine.semantics, (self.db.lookup(source.printed_name), self.db.lookup("Flaming Fist")),
+        )
+        self.assertEqual(CommanderPairingKind.CHOOSE_A_BACKGROUND, declarations[0].kind)
+        # The Background is a legal setup designation. Its independent body
+        # remains unsupported and is not registered or placed into gameplay.
+        land = self.add_card(session, name="Forest", ref="PAIRED-LAND", zone="graveyard", register=False)
+        creature = self.add_card(session, name="Source Growth Fixture", ref="WRONG-REANIMATION-TYPE", zone="graveyard", trusted=True)
+        source.temporary_keywords.append("Haste")
+        engine.state.active_player = "A"
+        engine.state.phase_index = 5
+        engine.state.phase = "combat"
+        engine.state.step = "declare_attackers"
+        engine.state.combat = CombatState()
+        engine._issue_attackers()
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        result = session.act("pilot:A", {"a": "attack", "atk": {source.ref: "B"}})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("semantic.target", engine.state.pending_decision.kind)
+        schema = session.packet("pilot:A", full=True)["decision"]["ctx"]["target_schema"]
+        self.assertIn(land.ref, schema["legal_refs"])
+        self.assertNotIn(creature.ref, schema["legal_refs"])
+        result = session.act("pilot:A", {"a": "choose", "targets": [land.ref]})
+        self.assertTrue(result.ok, result.summary)
+        self.resolve_stack(session)
+        self.assertEqual("battlefield", land.zone)
+        self.assertEqual("A", land.controller)
+        self.assertEqual("graveyard", creature.zone)
+        self.assert_replay(session)
+
     def test_trusted_land_animation_offer_payment_multilayer_result_and_replay(self):
         session=self.session(237020001,players=4);engine=session.engine
         source=self.add_card(session,name='Fixed Land Animation Fixture',ref='LAND-RESULT',trusted=True)

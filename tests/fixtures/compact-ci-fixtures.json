@@ -53,6 +53,7 @@
     "tests/fixtures/resolution-public-condition-cards.json",
     "tests/fixtures/scalar-effect-amount-cards.json",
     "tests/fixtures/scryfall-exact-lists.json",
+    "tests/fixtures/source-reference-closure-cards.json",
     "tests/fixtures/spell-history-transformations-cards.json",
     "tests/fixtures/static-action-permission-cards.json",
     "tests/fixtures/station-rules-cards.json",
@@ -67,6 +68,17 @@
     "tests/fixtures/typed-token-ability-program-cards.json"
   ],
   "dynamic_requirements": [
+    {
+      "source": "tests/test_high_risk_interaction_assurance.py",
+      "symbol": "HighRiskInteractionAssuranceTests.test_named_source_promotions_keep_replacement_and_prevention_siblings_fail_closed",
+      "card_names": [],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/source-reference-closure-cards.json"
+      ],
+      "rationale": "The bounded dictionary iterates complete pinned Zabaz, Nemata and Kytheon/Gideon records from the named source-reference fixture to prove residual runtime admission remains blocked."
+    },
     {
       "source": "tests/test_attached_static_characteristics.py",
       "symbol": "AttachedContinuousCompilerTests.test_measured_attached_characteristic_cohort_is_capability_closed",

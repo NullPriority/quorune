@@ -12555,11 +12555,11 @@
       "applicable_high_risk_pairs": 354,
       "applicable_piece_pairs": 100312,
       "available": true,
-      "covered_high_risk_pairs": 350,
-      "covered_piece_pairs": 1055,
+      "covered_high_risk_pairs": 354,
+      "covered_piece_pairs": 1059,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "78943edb4c7bf22d893d9374334a1b78cd3a737a2dfa3b78307c3590826ae4e8",
-      "uncovered_high_risk_pairs": 4
+      "source_fingerprint": "95b63dcc3329c1405e95545328afc8a73c7788fa68472dcb371b94b7809b4681",
+      "uncovered_high_risk_pairs": 0
     },
     "migration_queue": [],
     "missing_dedicated_owners": [],
@@ -29761,9 +29761,10 @@
         ],
         "oversized_symbol_count": 0,
         "oversized_symbols": [],
-        "primary_test_count": 1,
+        "primary_test_count": 2,
         "primary_tests": [
-          "test_commander_pairing"
+          "test_commander_pairing",
+          "test_fixed_source_characteristic_effects"
         ],
         "privacy_sensitivity": "not explicitly declared",
         "prohibited_runtime_oracle_text_accesses": 0,
@@ -34334,7 +34335,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "d8383bb8ecd89968e1708552a1549ce40fa2a1c6dee0f3aca830c5b970db08e6",
+      "fingerprint": "d5cc8660657a2774aa91a49142608d0d4ccfeaa4042aea4aecbb82f62287592f",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -35192,8 +35193,8 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 4801,
-      "discovered_total": 8110,
+      "conventional_ast_cases": 4803,
+      "discovered_total": 8112,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 253,
