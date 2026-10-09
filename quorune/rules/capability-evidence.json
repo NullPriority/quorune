@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "8c46512658ec58c0a2b76366fbc87852433b87929c24624fd8cab8a36657c5c9",
-  "declaration_source_fingerprint": "18070f0d109ae32bbf6a8ca8b65a489de18e77602f3e385c55985e5a13858cda",
+  "registry_fingerprint": "0622bc3739d8514a34708b101c0760826d934817238a28d7f3a53c5c3b0c179b",
+  "declaration_source_fingerprint": "25191bb3f5f537fd532449055f47be4e42acbeff8abb9afc70b2e1eb4d5a0113",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -34095,6 +34095,29 @@
     {
       "capability_id": "counter.producer.fixed_effect",
       "evidence_class": "interaction",
+      "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneActionTests.test_pending_counter_result_cannot_modify_blinked_observer_incarnation",
+      "official_rule_ids": [
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual trusted ordinary and counter-qualified triggers preserve the old source incarnation through an intervening blink, retain subsequent legal counter results on the new incarnation and replay from before each action; aliasing to stable source identity is killed."
+    },
+    {
+      "capability_id": "counter.producer.fixed_effect",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_counter_placement_effects.FixedCounterPlacementRuntimeTests.test_fixed_counter_effect_suspends_for_quantity_replacement",
       "official_rule_ids": [
         "115.1",
@@ -34104,7 +34127,9 @@
         "122.1a",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -34125,7 +34150,9 @@
         "122.1a",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -34133,6 +34160,29 @@
         "commander_review"
       ],
       "applicability_note": "Resolve a four-player fixed-placement replacement choice through one affected seat while preserving exact APNAP state and command replay."
+    },
+    {
+      "capability_id": "counter.producer.fixed_effect",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneActionTests.test_self_counter_reference_alias_mutant_is_killed_by_actual_blink",
+      "official_rule_ids": [
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual trusted ordinary and counter-qualified triggers preserve the old source incarnation through an intervening blink, retain subsequent legal counter results on the new incarnation and replay from before each action; aliasing to stable source identity is killed."
     },
     {
       "capability_id": "counter.producer.fixed_effect",
@@ -34146,7 +34196,9 @@
         "122.1a",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -34167,7 +34219,9 @@
         "122.1a",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -34188,7 +34242,9 @@
         "122.1a",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -34209,7 +34265,9 @@
         "122.1a",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -34230,7 +34288,9 @@
         "122.1a",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -34251,7 +34311,9 @@
         "122.1a",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -34272,7 +34334,9 @@
         "122.1a",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -34293,7 +34357,9 @@
         "122.1a",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -34301,6 +34367,29 @@
         "commander_review"
       ],
       "applicability_note": "Project the replacement decision only to the affected controller without exposing physical object identity or continuation internals."
+    },
+    {
+      "capability_id": "counter.producer.fixed_effect",
+      "evidence_class": "replay",
+      "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneActionTests.test_pending_counter_result_cannot_modify_blinked_observer_incarnation",
+      "official_rule_ids": [
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual trusted ordinary and counter-qualified triggers preserve the old source incarnation through an intervening blink, retain subsequent legal counter results on the new incarnation and replay from before each action; aliasing to stable source identity is killed."
     },
     {
       "capability_id": "counter.producer.fixed_effect",
@@ -34314,7 +34403,9 @@
         "122.1a",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -34338,7 +34429,9 @@
         "122.1",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -34346,6 +34439,32 @@
         "commander_review"
       ],
       "applicability_note": "Feed the exact Battalion threshold into ordinary trigger placement and the canonical counter transaction."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneActionTests.test_pending_counter_result_cannot_modify_blinked_observer_incarnation",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual trusted ordinary and counter-qualified triggers preserve the old source incarnation through an intervening blink, retain subsequent legal counter results on the new incarnation and replay from before each action; aliasing to stable source identity is killed."
     },
     {
       "capability_id": "counter.producer.fixed_event_trigger",
@@ -34362,7 +34481,9 @@
         "122.1",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -34386,7 +34507,9 @@
         "122.1",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -34410,7 +34533,9 @@
         "122.1",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -34434,7 +34559,9 @@
         "122.1",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -34458,7 +34585,9 @@
         "122.1",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -34482,7 +34611,9 @@
         "122.1",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -34506,7 +34637,9 @@
         "122.1",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -34530,7 +34663,9 @@
         "122.1",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -34554,7 +34689,9 @@
         "122.1",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -34578,7 +34715,9 @@
         "122.1",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -34602,7 +34741,9 @@
         "122.1",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -34626,7 +34767,9 @@
         "122.1",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -34650,7 +34793,9 @@
         "122.1",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -34674,7 +34819,9 @@
         "122.1",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -34698,7 +34845,9 @@
         "122.1",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -34722,7 +34871,9 @@
         "122.1",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -34730,6 +34881,32 @@
         "commander_review"
       ],
       "applicability_note": "In four-player free-for-all, compare the departed creature's last-known controller with the source controller and trigger only for an opponent."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneActionTests.test_self_counter_reference_alias_mutant_is_killed_by_actual_blink",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual trusted ordinary and counter-qualified triggers preserve the old source incarnation through an intervening blink, retain subsequent legal counter results on the new incarnation and replay from before each action; aliasing to stable source identity is killed."
     },
     {
       "capability_id": "counter.producer.fixed_event_trigger",
@@ -34746,7 +34923,9 @@
         "122.1",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -34770,7 +34949,9 @@
         "122.1",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -34794,7 +34975,9 @@
         "122.1",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -34818,7 +35001,9 @@
         "122.1",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -34842,7 +35027,9 @@
         "122.1",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -34866,7 +35053,9 @@
         "122.1",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -34890,7 +35079,9 @@
         "122.1",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -34914,7 +35105,9 @@
         "122.1",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -34938,7 +35131,9 @@
         "122.1",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -34962,7 +35157,9 @@
         "122.1",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -34986,7 +35183,9 @@
         "122.1",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -35010,7 +35209,9 @@
         "122.1",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -35034,7 +35235,9 @@
         "122.1",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -35042,6 +35245,32 @@
         "commander_review"
       ],
       "applicability_note": "Project the pending replacement order only to the affected third-seat controller without exposing physical object or continuation identity."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "replay",
+      "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneActionTests.test_pending_counter_result_cannot_modify_blinked_observer_incarnation",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual trusted ordinary and counter-qualified triggers preserve the old source incarnation through an intervening blink, retain subsequent legal counter results on the new incarnation and replay from before each action; aliasing to stable source identity is killed."
     },
     {
       "capability_id": "counter.producer.fixed_event_trigger",
@@ -35058,7 +35287,9 @@
         "122.1",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -35082,7 +35313,9 @@
         "122.1",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -35106,7 +35339,9 @@
         "122.1",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -35130,7 +35365,9 @@
         "122.1",
         "122.6",
         "614.16",
-        "616.1"
+        "616.1",
+        "400.7",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -70716,6 +70953,627 @@
       "applicability_note": "Actual admitted casts distinguish paid kicker from unpaid entry; copied or returned objects lack payment history, target placement remains principal correct and complete, and accepted outcomes replay from before cast."
     },
     {
+      "capability_id": "trigger.event.counter_qualified_zone_change",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneActionTests.test_actual_sacrifice_uses_counter_lki_and_replays_private_draw",
+      "official_rule_ids": [
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Sealed counter-qualified zone facts distinguish event incarnation, controller, counter kind, known-empty and missing data through actual trusted actions and applicable APNAP, private draw and exact replay witnesses."
+    },
+    {
+      "capability_id": "trigger.event.counter_qualified_zone_change",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneActionTests.test_counter_entry_uses_initialized_new_incarnation_and_replays",
+      "official_rule_ids": [
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Sealed counter-qualified zone facts distinguish event incarnation, controller, counter kind, known-empty and missing data through actual trusted actions and applicable APNAP, private draw and exact replay witnesses."
+    },
+    {
+      "capability_id": "trigger.event.counter_qualified_zone_change",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneActionTests.test_pending_counter_result_cannot_modify_blinked_observer_incarnation",
+      "official_rule_ids": [
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Sealed counter-qualified zone facts distinguish event incarnation, controller, counter kind, known-empty and missing data through actual trusted actions and applicable APNAP, private draw and exact replay witnesses."
+    },
+    {
+      "capability_id": "trigger.event.counter_qualified_zone_change",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneActionTests.test_replaced_exile_has_counter_qualified_leave_without_death",
+      "official_rule_ids": [
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Sealed counter-qualified zone facts distinguish event incarnation, controller, counter kind, known-empty and missing data through actual trusted actions and applicable APNAP, private draw and exact replay witnesses."
+    },
+    {
+      "capability_id": "trigger.event.counter_qualified_zone_change",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneActionTests.test_simultaneous_counter_deaths_keep_departing_observers_apnap_and_replay",
+      "official_rule_ids": [
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Sealed counter-qualified zone facts distinguish event incarnation, controller, counter kind, known-empty and missing data through actual trusted actions and applicable APNAP, private draw and exact replay witnesses."
+    },
+    {
+      "capability_id": "trigger.event.counter_qualified_zone_change",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneActionTests.test_simultaneous_counter_deaths_keep_departing_observers_apnap_and_replay",
+      "official_rule_ids": [
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Sealed counter-qualified zone facts distinguish event incarnation, controller, counter kind, known-empty and missing data through actual trusted actions and applicable APNAP, private draw and exact replay witnesses."
+    },
+    {
+      "capability_id": "trigger.event.counter_qualified_zone_change",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneActionTests.test_zero_wrong_counter_and_previous_controller_do_not_qualify",
+      "official_rule_ids": [
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Sealed counter-qualified zone facts distinguish event incarnation, controller, counter kind, known-empty and missing data through actual trusted actions and applicable APNAP, private draw and exact replay witnesses."
+    },
+    {
+      "capability_id": "trigger.event.counter_qualified_zone_change",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneActionTests.test_departure_counter_omission_mutant_is_killed_by_actual_action",
+      "official_rule_ids": [
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Sealed counter-qualified zone facts distinguish event incarnation, controller, counter kind, known-empty and missing data through actual trusted actions and applicable APNAP, private draw and exact replay witnesses."
+    },
+    {
+      "capability_id": "trigger.event.counter_qualified_zone_change",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneActionTests.test_self_counter_reference_alias_mutant_is_killed_by_actual_blink",
+      "official_rule_ids": [
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Sealed counter-qualified zone facts distinguish event incarnation, controller, counter kind, known-empty and missing data through actual trusted actions and applicable APNAP, private draw and exact replay witnesses."
+    },
+    {
+      "capability_id": "trigger.event.counter_qualified_zone_change",
+      "evidence_class": "negative",
+      "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneActionTests.test_nontoken_counter_death_creates_one_printed_token_and_excludes_tokens",
+      "official_rule_ids": [
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Sealed counter-qualified zone facts distinguish event incarnation, controller, counter kind, known-empty and missing data through actual trusted actions and applicable APNAP, private draw and exact replay witnesses."
+    },
+    {
+      "capability_id": "trigger.event.counter_qualified_zone_change",
+      "evidence_class": "negative",
+      "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneActionTests.test_replaced_exile_has_counter_qualified_leave_without_death",
+      "official_rule_ids": [
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Sealed counter-qualified zone facts distinguish event incarnation, controller, counter kind, known-empty and missing data through actual trusted actions and applicable APNAP, private draw and exact replay witnesses."
+    },
+    {
+      "capability_id": "trigger.event.counter_qualified_zone_change",
+      "evidence_class": "negative",
+      "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneActionTests.test_zero_wrong_counter_and_previous_controller_do_not_qualify",
+      "official_rule_ids": [
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Sealed counter-qualified zone facts distinguish event incarnation, controller, counter kind, known-empty and missing data through actual trusted actions and applicable APNAP, private draw and exact replay witnesses."
+    },
+    {
+      "capability_id": "trigger.event.counter_qualified_zone_change",
+      "evidence_class": "negative",
+      "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneCompilerTests.test_counter_fact_absence_cannot_read_the_current_object",
+      "official_rule_ids": [
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Sealed counter-qualified zone facts distinguish event incarnation, controller, counter kind, known-empty and missing data through actual trusted actions and applicable APNAP, private draw and exact replay witnesses."
+    },
+    {
+      "capability_id": "trigger.event.counter_qualified_zone_change",
+      "evidence_class": "negative",
+      "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneCompilerTests.test_counter_qualified_boundaries_and_missing_owner_fail_closed",
+      "official_rule_ids": [
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Sealed counter-qualified zone facts distinguish event incarnation, controller, counter kind, known-empty and missing data through actual trusted actions and applicable APNAP, private draw and exact replay witnesses."
+    },
+    {
+      "capability_id": "trigger.event.counter_qualified_zone_change",
+      "evidence_class": "positive",
+      "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneActionTests.test_actual_sacrifice_uses_counter_lki_and_replays_private_draw",
+      "official_rule_ids": [
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Sealed counter-qualified zone facts distinguish event incarnation, controller, counter kind, known-empty and missing data through actual trusted actions and applicable APNAP, private draw and exact replay witnesses."
+    },
+    {
+      "capability_id": "trigger.event.counter_qualified_zone_change",
+      "evidence_class": "positive",
+      "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneActionTests.test_counter_entry_uses_initialized_new_incarnation_and_replays",
+      "official_rule_ids": [
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Sealed counter-qualified zone facts distinguish event incarnation, controller, counter kind, known-empty and missing data through actual trusted actions and applicable APNAP, private draw and exact replay witnesses."
+    },
+    {
+      "capability_id": "trigger.event.counter_qualified_zone_change",
+      "evidence_class": "positive",
+      "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneActionTests.test_nontoken_counter_death_creates_one_printed_token_and_excludes_tokens",
+      "official_rule_ids": [
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Sealed counter-qualified zone facts distinguish event incarnation, controller, counter kind, known-empty and missing data through actual trusted actions and applicable APNAP, private draw and exact replay witnesses."
+    },
+    {
+      "capability_id": "trigger.event.counter_qualified_zone_change",
+      "evidence_class": "positive",
+      "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneCompilerTests.test_counter_occurrence_versions_freeze_both_timings_and_preserve_unknown",
+      "official_rule_ids": [
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Sealed counter-qualified zone facts distinguish event incarnation, controller, counter kind, known-empty and missing data through actual trusted actions and applicable APNAP, private draw and exact replay witnesses."
+    },
+    {
+      "capability_id": "trigger.event.counter_qualified_zone_change",
+      "evidence_class": "positive",
+      "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneCompilerTests.test_counter_qualified_programs_bind_named_counter_and_dependency",
+      "official_rule_ids": [
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Sealed counter-qualified zone facts distinguish event incarnation, controller, counter kind, known-empty and missing data through actual trusted actions and applicable APNAP, private draw and exact replay witnesses."
+    },
+    {
+      "capability_id": "trigger.event.counter_qualified_zone_change",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneActionTests.test_actual_sacrifice_uses_counter_lki_and_replays_private_draw",
+      "official_rule_ids": [
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Sealed counter-qualified zone facts distinguish event incarnation, controller, counter kind, known-empty and missing data through actual trusted actions and applicable APNAP, private draw and exact replay witnesses."
+    },
+    {
+      "capability_id": "trigger.event.counter_qualified_zone_change",
+      "evidence_class": "replay",
+      "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneActionTests.test_actual_sacrifice_uses_counter_lki_and_replays_private_draw",
+      "official_rule_ids": [
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Sealed counter-qualified zone facts distinguish event incarnation, controller, counter kind, known-empty and missing data through actual trusted actions and applicable APNAP, private draw and exact replay witnesses."
+    },
+    {
+      "capability_id": "trigger.event.counter_qualified_zone_change",
+      "evidence_class": "replay",
+      "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneActionTests.test_counter_entry_uses_initialized_new_incarnation_and_replays",
+      "official_rule_ids": [
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Sealed counter-qualified zone facts distinguish event incarnation, controller, counter kind, known-empty and missing data through actual trusted actions and applicable APNAP, private draw and exact replay witnesses."
+    },
+    {
+      "capability_id": "trigger.event.counter_qualified_zone_change",
+      "evidence_class": "replay",
+      "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneActionTests.test_nontoken_counter_death_creates_one_printed_token_and_excludes_tokens",
+      "official_rule_ids": [
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Sealed counter-qualified zone facts distinguish event incarnation, controller, counter kind, known-empty and missing data through actual trusted actions and applicable APNAP, private draw and exact replay witnesses."
+    },
+    {
+      "capability_id": "trigger.event.counter_qualified_zone_change",
+      "evidence_class": "replay",
+      "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneActionTests.test_pending_counter_result_cannot_modify_blinked_observer_incarnation",
+      "official_rule_ids": [
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Sealed counter-qualified zone facts distinguish event incarnation, controller, counter kind, known-empty and missing data through actual trusted actions and applicable APNAP, private draw and exact replay witnesses."
+    },
+    {
+      "capability_id": "trigger.event.counter_qualified_zone_change",
+      "evidence_class": "replay",
+      "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneActionTests.test_replaced_exile_has_counter_qualified_leave_without_death",
+      "official_rule_ids": [
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Sealed counter-qualified zone facts distinguish event incarnation, controller, counter kind, known-empty and missing data through actual trusted actions and applicable APNAP, private draw and exact replay witnesses."
+    },
+    {
+      "capability_id": "trigger.event.counter_qualified_zone_change",
+      "evidence_class": "replay",
+      "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneActionTests.test_simultaneous_counter_deaths_keep_departing_observers_apnap_and_replay",
+      "official_rule_ids": [
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Sealed counter-qualified zone facts distinguish event incarnation, controller, counter kind, known-empty and missing data through actual trusted actions and applicable APNAP, private draw and exact replay witnesses."
+    },
+    {
+      "capability_id": "trigger.event.counter_qualified_zone_change",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneActionTests.test_actual_sacrifice_uses_counter_lki_and_replays_private_draw",
+      "official_rule_ids": [
+        "122.1",
+        "122.2",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "700.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Sealed counter-qualified zone facts distinguish event incarnation, controller, counter kind, known-empty and missing data through actual trusted actions and applicable APNAP, private draw and exact replay witnesses."
+    },
+    {
       "capability_id": "trigger.event.normalized_card_draw",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_draw_and_second_draw_counter_triggers_share_one_batch",
@@ -83093,5 +83951,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "0705ffbfd4a3cfed7f1bf53b63a4230053577feec51c12f17a88e720624b01f5"
+  "fingerprint": "8e20e8307a74fbb82417360b94abf4d824b30e2169031157ec5ef143462abc0d"
 }

@@ -2620,7 +2620,7 @@
     {
       "id": "counter.producer.fixed_effect",
       "version": 1,
-      "official_rules": ["115.1", "608.2b", "608.2c", "122.1", "122.1a", "122.6", "614.16", "616.1"],
+      "official_rules": ["115.1", "608.2b", "608.2c", "122.1", "122.1a", "122.6", "614.16", "616.1", "400.7", "608.2h"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
         "summary": "Compile and resolve one mandatory positive fixed-count counter placement on the source permanent or one direct permanent target through the canonical resumable counter-placement transaction.",
@@ -2782,7 +2782,7 @@
     {
       "id": "counter.producer.fixed_event_trigger",
       "version": 6,
-      "official_rules": ["115.1", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c", "122.1", "122.6", "614.16", "616.1"],
+      "official_rules": ["115.1", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c", "122.1", "122.6", "614.16", "616.1", "400.7", "608.2h"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
         "summary": "Compile and resolve one mandatory exact counter-producing effect triggered by a represented beginning-of-step, fixed public permanent-entry or creature-death subject, single-subtype permanent entry, controlled-land-entry, closed spell-cast subject, source-self attack, Heroic, Magecraft, Constellation, Battalion, controller-life-gain, controller-card-draw, or controller-second-draw event through ordinary APNAP trigger placement and the canonical resumable counter transaction.",
@@ -6689,7 +6689,7 @@
         "summary": "Compile closed single-object public entry and departure characteristic queries into existing normalized event predicates, preserving source union, source exclusion, token, controller and graveyard-owner distinctions.",
         "inputs": ["one complete source-spanned public zone trigger", "closed public permanent characteristic query", "committed entry characteristics or previous battlefield departure facts", "one independently exact typed effect body"],
         "outputs": ["one existing normalized event subscription", "current layer-6 trigger applicability", "exact public occurrence predicates", "ordinary APNAP trigger placement", "canonical effect execution and exact replay"],
-        "exclusions": ["one-or-more aggregation", "cross-zone card and hidden-zone subjects", "chosen, linked, counter, combat-state, damage-history or relative characteristic predicates", "dynamic quantities and total-power-plus-toughness arithmetic", "unrepresented event producers and independent unsupported effect bodies"]
+        "exclusions": ["one-or-more aggregation", "cross-zone card and hidden-zone subjects", "chosen, linked, combat-state, damage-history or relative characteristic predicates", "counter predicates without the dedicated counter-qualified zone capability", "dynamic quantities and total-power-plus-toughness arithmetic", "unrepresented event producers and independent unsupported effect bodies"]
       },
       "dependencies": ["trigger.event.normalized_zone_change", "trigger.placement.apnap"],
       "implementation_components": ["quorune.compiler.qualified_zone_event_bindings.qualified_public_zone_event_binding_spec", "quorune.compiler.direct_target.DirectPermanentTargetSpec", "quorune.compiler.fixed_counter_trigger_nodes.fixed_counter_trigger_binding", "quorune.zone_trigger_events.sealed_public_characteristic_facts", "quorune.trigger_discovery.semantic_event_condition_matches"],
@@ -9724,6 +9724,33 @@
       "dependency_fail_closed_rationale": "Independent omission of target-qualified or base cast-event capability retains an inexact whole node.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "An executable omission mutant suppresses sealed creature-target cast facts and is rejected by actual accepted-cast trigger outcome assertions.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "trigger.event.counter_qualified_zone_change",
+      "version": 1,
+      "official_rules": ["122.1", "122.2", "400.7", "603.2", "603.3", "603.6a", "603.6c", "603.10", "603.10a", "700.4"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Subscribe closed single-object public zone triggers to one named counter present on the correct event incarnation.",
+        "inputs": ["One exact source-spanned named-counter zone subject", "Immutable before-departure and committed-entry counter maps", "Existing controller, token, source and characteristic qualifiers", "One independently closed fixed result"],
+        "outputs": ["One trigger for each qualifying object", "Departure counter LKI and committed-entry counter facts", "Known empty facts distinct from missing historical facts", "Existing APNAP, private result and exact replay owners"],
+        "exclusions": ["Counter quantities other than minimum one", "No-counter and chosen-counter predicates", "Aggregation, combat or turn history and hidden subjects", "Unrepresented event producers and independently unsupported result siblings"]
+      },
+      "dependencies": ["trigger.event.qualified_zone_change", "trigger.event.normalized_zone_change", "trigger.placement.apnap"],
+      "implementation_components": ["quorune.compiler.qualified_zone_event_bindings.qualified_public_zone_event_binding_spec", "quorune.zone_transitions.ZoneTransitionOwner", "quorune.zone_trigger_events.ZoneChangeOccurrence", "quorune.zone_trigger_events.normalized_zone_trigger_events", "quorune.trigger_discovery.semantic_event_condition_matches"],
+      "positive_tests": ["test_counter_occurrence_versions_freeze_both_timings_and_preserve_unknown", "test_counter_qualified_programs_bind_named_counter_and_dependency", "test_actual_sacrifice_uses_counter_lki_and_replays_private_draw", "test_counter_entry_uses_initialized_new_incarnation_and_replays", "test_nontoken_counter_death_creates_one_printed_token_and_excludes_tokens"],
+      "negative_tests": ["test_counter_qualified_boundaries_and_missing_owner_fail_closed", "test_counter_fact_absence_cannot_read_the_current_object", "test_zero_wrong_counter_and_previous_controller_do_not_qualify", "test_departure_counter_omission_mutant_is_killed_by_actual_action", "test_replaced_exile_has_counter_qualified_leave_without_death", "test_nontoken_counter_death_creates_one_printed_token_and_excludes_tokens"],
+      "interaction_tests": ["test_actual_sacrifice_uses_counter_lki_and_replays_private_draw", "test_simultaneous_counter_deaths_keep_departing_observers_apnap_and_replay", "test_counter_entry_uses_initialized_new_incarnation_and_replays", "test_replaced_exile_has_counter_qualified_leave_without_death"],
+      "multiplayer_tests": ["test_zero_wrong_counter_and_previous_controller_do_not_qualify", "test_simultaneous_counter_deaths_keep_departing_observers_apnap_and_replay"],
+      "privacy_tests": ["test_actual_sacrifice_uses_counter_lki_and_replays_private_draw"],
+      "replay_tests": ["test_actual_sacrifice_uses_counter_lki_and_replays_private_draw", "test_simultaneous_counter_deaths_keep_departing_observers_apnap_and_replay", "test_counter_entry_uses_initialized_new_incarnation_and_replays", "test_replaced_exile_has_counter_qualified_leave_without_death", "test_nontoken_counter_death_creates_one_printed_token_and_excludes_tokens"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Blocking counter facts, qualified zone predicates or normalized event ownership retains a material residual.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Removing sealed departure counters is rejected by the actual accepted sacrifice action and its expected trigger consequence.",
       "blockers": [],
       "status": "trusted"
     }

@@ -10,7 +10,7 @@ source-exclusion and ownership predicates are not interchangeable. Prevented
 or redirected movements cannot manufacture a death. Ordinary APNAP placement,
 target selection, continuations and replay remain owned by the existing engine.
 
-The grammar excludes counters, history, relative comparisons, chosen subjects,
+The grammar excludes counter quantities, history, relative comparisons, chosen subjects,
 one-or-more aggregation, cross-zone card subjects and independent unknown bodies.
 """
 
@@ -88,7 +88,7 @@ class QualifiedZoneEventCompilerTests(unittest.TestCase):
     def test_qualified_zone_event_exclusions_remain_residual(self):
         excluded = (
             "Whenever one or more legendary creatures you control enter, draw a card.",
-            "Whenever a creature with a +1/+1 counter on it dies, draw a card.",
+            "Whenever a creature with two +1/+1 counters on it dies, draw a card.",
             "Whenever a creature of the chosen type enters, draw a card.",
             "Whenever a creature with power greater than this creature's power dies, draw a card.",
             "Whenever a creature card is put into your graveyard from anywhere, draw a card.",

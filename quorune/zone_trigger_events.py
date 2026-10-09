@@ -8,6 +8,7 @@ import re
 from typing import Any, Literal, Sequence
 
 from .characteristic_evaluation import type_parts
+from .counter_names import normalized_counter_name
 from .errors import GameRuleError
 from .replacement.immutable import (
     FrozenMap,
@@ -183,6 +184,8 @@ class ZoneChangeOccurrence:
     read_ahead_chapter: int | None = None
     cast_option: str | None = None
     schema_version: int = 1
+    previous_counters: Mapping[str, int] | None = None
+    current_counters: Mapping[str, int] | None = None
 
     def __post_init__(self) -> None:
         for field in (
@@ -225,10 +228,24 @@ class ZoneChangeOccurrence:
             raise ZoneTriggerEventError(
                 "zone_occurrence.cast_option must be nonempty or null"
             )
-        if type(self.schema_version) is not int or self.schema_version != 1:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2}:
             raise ZoneTriggerEventError(
                 "Unsupported zone-trigger occurrence schema version"
             )
+        for field in ("previous_counters", "current_counters"):
+            counters = getattr(self, field)
+            if self.schema_version == 1:
+                if counters is not None:
+                    raise ZoneTriggerEventError("Counter occurrence facts require schema version 2")
+                continue
+            if not isinstance(counters, Mapping) or any(
+                type(name) is not str or not name.strip()
+                or normalized_counter_name(name) != name
+                or type(count) is not int or count < 0
+                for name, count in counters.items()
+            ):
+                raise ZoneTriggerEventError(f"zone_occurrence.{field} requires canonical nonnegative counter facts")
+            object.__setattr__(self, field, FrozenMap(counters))
         for field in ("previous_characteristics", "current_characteristics"):
             value = getattr(self, field)
             if not isinstance(value, Mapping):
@@ -296,6 +313,9 @@ class ZoneChangeOccurrence:
         }
         # Preserve historical ordinary occurrence fingerprints while making
         # semantic transition causes explicit and replay-stable.
+        if self.schema_version == 2:
+            result["previous_counters"] = thaw_value(self.previous_counters)
+            result["current_counters"] = thaw_value(self.current_counters)
         if self.transition_kind is not ZoneTransitionKind.ORDINARY:
             result["transition_kind"] = self.transition_kind.value
         if self.read_ahead_chapter is not None:
@@ -414,6 +434,8 @@ def normalized_zone_trigger_events(
         "attachments": list(occurrence.previous_attachments),
         "attached_to": occurrence.previous_attached_to,
         **previous_facts,
+        **({"counter_names": sorted(name for name, count in occurrence.previous_counters.items() if count > 0)}
+           if occurrence.previous_counters is not None else {}),
         **({"copiable_snapshot": dict(occurrence.previous_copy_snapshot)} if occurrence.previous_copy_snapshot is not None else {}),
     }
     if occurrence.cast_option is not None:
@@ -487,6 +509,8 @@ def normalized_zone_trigger_events(
             **common,
             "controller": occurrence.current_controller,
             **current_facts,
+            **({"counter_names": sorted(name for name, count in occurrence.current_counters.items() if count > 0)}
+               if occurrence.current_counters is not None else {}),
             "mana_value": float(
                 occurrence.current_characteristics.get("mana_value", 0) or 0
             ),

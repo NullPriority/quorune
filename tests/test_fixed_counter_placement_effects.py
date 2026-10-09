@@ -109,7 +109,7 @@ class FixedCounterPlacementCompilerTests(unittest.TestCase):
                 "When this creature enters, put a shield counter on this creature.",
                 "Creature — Human",
                 "triggered_ability",
-                "$source",
+                "$source.zone_object",
                 1,
                 "shield",
             ),
@@ -281,7 +281,7 @@ class FixedCounterPlacementCompilerTests(unittest.TestCase):
                 node = nodes[0]
                 self.assertIs(exact, node.exact)
                 serialized_effects = json.dumps(node.effects, sort_keys=True)
-                self.assertIn('"card": "$source"', serialized_effects)
+                self.assertIn('"card": "$source.zone_object"', serialized_effects)
                 self.assertEqual(
                     node.text,
                     record.oracle_text[node.span.start : node.span.end],

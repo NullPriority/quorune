@@ -156,9 +156,6 @@ from .zone_trigger_events import (
     ZoneChangeOccurrence,
     ZoneTransitionKind,
 )
-from .zone_trigger_processing import (
-    DepartureTriggerSnapshot,
-)
 from .zone_transition_model import ZoneDepartureSnapshot
 from .zone_transitions import ZoneTransitionOwner
 from .turn_priority_owner import TurnPriorityDecisionOwner
@@ -1218,6 +1215,7 @@ class CommanderEngine(
         origin_controller: str,
         origin_logical_object_id: str,
         origin_data: Mapping[str, Any],
+        origin_counters: Mapping[str, int] | None = None,
         origin_attachments: Sequence[str],
         origin_attached_to: str | None = None,
         departure_sources: Sequence[CardInstance],
@@ -1235,20 +1233,17 @@ class CommanderEngine(
         occurrence, event_triggers, owns_trigger_batch = (
             ZoneTransitionOwner(self).dispatch_zone_change_events(
                 card,
-                departure=ZoneDepartureSnapshot(
+                departure=ZoneDepartureSnapshot.from_event_sources(
                     origin=origin,
                     controller=origin_controller,
                     logical_object_id=origin_logical_object_id,
                     characteristics=origin_data,
-                    attachments=tuple(origin_attachments),
+                    counters=origin_counters,
+                    attachments=origin_attachments,
                     attached_to=origin_attached_to, cast_option=cast_option,
-                    trigger_sources=DepartureTriggerSnapshot(
-                        sources=tuple(departure_sources),
-                        source_zones=dict(departure_source_zones),
-                        source_characteristics=dict(
-                            departure_source_characteristics
-                        ),
-                    ),
+                    sources=departure_sources,
+                    source_zones=departure_source_zones,
+                    source_characteristics=departure_source_characteristics,
                 ),
                 destination=destination,
                 reason=reason,

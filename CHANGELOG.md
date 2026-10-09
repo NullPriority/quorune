@@ -11,6 +11,13 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Preserve counter-qualified zone triggers through sealed departure and entry
+  facts. Fixed named-counter subjects use the existing zone, trigger, APNAP and
+  effect owners; simultaneous departures retain the pre-event counters and
+  controller even when their observer leaves in the same event.
+  Fixed self-counter results also retain their source incarnation, so a queued
+  result cannot place counters on a permanent that left and returned.
+
 - Deliver card support in combined mechanic batches with at least 200 net
   distinct capability-closed Commander cards per pull request. The first batch
   adds source maintenance, counted activation prices, paid-kicker results,

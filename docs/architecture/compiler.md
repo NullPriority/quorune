@@ -984,7 +984,11 @@ must remain residual. The generated assurance lives in the Oracle coverage
 reports and contains hashes and public identities rather than Oracle prose.
 
 `compiler/counter_placement_templates.py` separately owns the closed
-fixed counter-placement grammar. Direct targets lower once to
+fixed counter-placement grammar. Source-self recipients use the existing
+`$source.zone_object` resolver so a queued result cannot modify a returned new
+incarnation. The separate source provenance reference keeps its existing
+meaning, and unavailable source instructions leave independent results intact.
+Direct targets lower once to
 `DirectPermanentTargetSpec`, whose deterministic runtime schema supports the
 represented type conjunctions and canonical disjunctions of up to four
 permanent card types; pinned positive and negative creature subtypes; bounded
@@ -1603,9 +1607,16 @@ generic production owns the same printed ability; current games never execute
 both, while saved historical registries retain their pinned compatibility data.
 Entry reads committed current characteristics and
 departure reads sealed battlefield LKI, including when the observer also leaves.
+The additional `trigger.event.counter_qualified_zone_change` capability admits
+one fixed named-counter minimum-one predicate. Version-two zone occurrences
+seal separate previous and current counter maps: departures retain counters
+before zone reset, while entries read the new incarnation after entry
+replacement and initialization. Version-one occurrences preserve their payload
+and omit these unknown facts; a counter-qualified subscription requires sealed
+facts rather than consulting the current object. Known-empty maps remain valid.
 The shared layer-6 ability query controls discovery and the existing APNAP,
 target, effect, replacement, and replay owners execute the resulting trigger.
-Aggregation, cross-zone card subjects, hidden or chosen information, counter,
+Aggregation, cross-zone card subjects, hidden or chosen information, other counter,
 combat-state, damage-history, relative and total-stat queries, and independently
 unsupported event or body forms remain residual. See
 [ADR 0090](../adr/0090-typed-public-event-effect-triggers.md).

@@ -365,6 +365,13 @@ def _semantic_condition_actual(
     field = str(condition.get("field") or "")
     if not field:
         raise GameRuleError("Semantic event condition requires a field")
+    if field == "counter_names":
+        names = context.get(field)
+        if (not isinstance(names, Sequence) or isinstance(names, (str, bytes))
+                or any(type(name) is not str or not name for name in names)
+                or list(names) != sorted(set(names))):
+            raise GameRuleError("Counter-qualified zone event requires sealed counter facts")
+        return names
     if field == FIXED_PUBLIC_STATE_INTERVENING_CONDITION_FIELD:
         return _public_state_intervening_actual(
             host,

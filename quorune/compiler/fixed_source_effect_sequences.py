@@ -90,7 +90,7 @@ def fixed_source_effect_sequence_template(
         counter_target is not None
         or characteristic_target is not None
         or len(counter_effects) != 1
-        or counter_effects[0].get("card") != "$source"
+        or counter_effects[0].get("card") != SOURCE_ZONE_OBJECT
         or not characteristic_effects
         or any(
             effect.get("card") != "$target.0"
@@ -99,7 +99,7 @@ def fixed_source_effect_sequence_template(
     ):
         return None
     effects = (
-        {**counter_effects[0], "card": SOURCE_ZONE_OBJECT},
+        counter_effects[0],
         *(
             {**effect, "card": SOURCE_ZONE_OBJECT}
             for effect in characteristic_effects

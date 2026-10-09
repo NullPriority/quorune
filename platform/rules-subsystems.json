@@ -375,6 +375,26 @@
       },
       "candidate_bundles": [
         {
+          "bundle_id": "bundle:counter-qualified-zone-event",
+          "member_family_ids": ["event_binding:intervening-if-and-reflexive-trigger-grammar", "event_binding:normalized-event-binding"],
+          "canonical_owner_ids": [
+            "capability:trigger.event.counter_qualified_zone_change",
+            "component:quorune.compiler.qualified_zone_event_bindings.qualified_public_zone_event_binding_spec",
+            "component:quorune.zone_transitions.ZoneTransitionOwner"
+          ],
+          "source_contexts": ["triggered"],
+          "normalized_literal_parameters": ["one-named-counter-minimum-one", "departure-counter-lki", "initialized-entry-counter-facts"],
+          "shared_dependencies": ["trigger.event.qualified_zone_change", "trigger.event.normalized_zone_change", "trigger.placement.apnap"],
+          "shared_grammar": "One closed counter-qualified entry, death, graveyard or leave subject with independently exact fixed results, preserving controller, token and event incarnation.",
+          "estimated_implementation_hours": 3,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Measure this reusable component against original pinned whole cards and retain it within a combined net-200 delivery; do not count leaf recognition or unsupported siblings as implemented cards.",
+          "explicit_exclusions": ["Counter quantities, no-counter and chosen-counter queries", "Aggregation, combat and turn history", "Unrepresented producers and independently unsupported result siblings"],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "counter-qualified-zone-event-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:cast-creature-target",
           "member_family_ids": [
             "event_binding:intervening-if-and-reflexive-trigger-grammar",

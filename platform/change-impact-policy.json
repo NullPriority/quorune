@@ -1593,6 +1593,11 @@
       "id": "qualified-zone-event-query-contract",
       "patterns": [
         "quorune/compiler/qualified_zone_event_bindings.py",
+        "quorune/compiler/counter_placement_templates.py",
+        "quorune/compiler/fixed_counter_controller_effect_sequences.py",
+        "quorune/compiler/fixed_source_effect_sequences.py",
+        "tests/fixtures/counter-qualified-zone-cards.json",
+        "tests/test_counter_qualified_zone_events.py",
         "quorune/compiler/typed_token_ability_nodes.py",
         "quorune/compiler/fixed_counter_trigger_nodes.py",
         "quorune/zone_trigger_events.py",
@@ -1602,6 +1607,7 @@
       "test_modules": [
         "test_ability_word_event_triggers",
         "test_capability_evidence", "test_card_program_trust",
+        "test_counter_qualified_zone_events",
         "test_exact_mishra_closure",
         "test_fixed_counter_event_triggers", "test_fixed_counter_zone_triggers",
         "test_fixed_query_quoted_ability_grants", "test_fixed_token_production", "test_game_record_v3",

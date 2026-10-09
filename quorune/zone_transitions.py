@@ -439,6 +439,7 @@ class ZoneTransitionOwner:
             controller=card.controller,
             logical_object_id=card.logical_object_id,
             characteristics=characteristics,
+            counters=dict(card.counters) if semantic_events else None,
             attachments=attachments,
             attached_to=attached_to,
             trigger_sources=capture_departure_trigger_sources(
@@ -668,6 +669,7 @@ class ZoneTransitionOwner:
                 origin_controller=departure.controller,
                 origin_logical_object_id=departure.logical_object_id,
                 origin_data=departure.characteristics,
+                origin_counters=departure.counters,
                 origin_attachments=departure.attachments,
                 origin_attached_to=departure.attached_to,
                 departure_sources=sources.sources,
@@ -838,6 +840,9 @@ class ZoneTransitionOwner:
             card_object=card.is_card_object,
             previous_characteristics=departure.characteristics,
             current_characteristics=self.host._effective_card_data(card),
+            previous_counters=departure.counters,
+            current_counters=dict(card.counters) if departure.counters is not None else None,
+            schema_version=2 if departure.counters is not None else 1,
             previous_copy_snapshot=departure.copy_snapshot,
             current_copy_snapshot=(token_copy_snapshot(self.host, card)
                                    if card.zone == "battlefield" else None),
@@ -966,6 +971,7 @@ class ZoneTransitionOwner:
                 origin_controller=departure.controller,
                 origin_logical_object_id=departure.logical_object_id,
                 origin_data=departure.characteristics,
+                origin_counters=departure.counters,
                 origin_attachments=departure.attachments,
                 origin_attached_to=departure.attached_to,
                 cast_option=departure.cast_option,
@@ -1004,6 +1010,7 @@ class ZoneTransitionOwner:
                 controller=card.controller,
                 logical_object_id=card.logical_object_id,
                 characteristics=copy.deepcopy(self.host._effective_card_data(card)),
+                counters=dict(card.counters),
                 attachments=tuple(
                     self.state.cards[attachment_id].ref
                     for attachment_id in card.attachments

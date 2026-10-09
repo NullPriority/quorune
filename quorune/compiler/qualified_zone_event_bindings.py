@@ -12,6 +12,7 @@ from .fixed_public_event_trigger_bindings import FixedPublicEventBindingSpec
 
 
 QUALIFIED_ZONE_CAPABILITY = "trigger.event.qualified_zone_change"
+COUNTER_QUALIFIED_ZONE_CAPABILITY = "trigger.event.counter_qualified_zone_change"
 QUALIFIED_ZONE_VARIANT = "qualified_public_zone_query"
 _ZONE_EVENT = re.compile(
     r"^(?:When|Whenever) (?P<subject>.+?) "
@@ -68,6 +69,8 @@ def _subject_condition(spec: DirectPermanentTargetSpec) -> Mapping[str, Any] | N
         conditions.append(_field("controller", "eq" if spec.controller_relation == "you" else "ne", "$source.controller"))
     if spec.source_exclusion:
         conditions.append(_field("card", "ne", "$source.ref"))
+    if spec.state_predicate is not None:
+        conditions.append(_field("counter_names", "contains_any", [spec.state_predicate.counter_name]))
     for value, op in ((spec.mana_value_min, "gte"), (spec.mana_value_max, "lte"), (spec.mana_value_equal, "eq")):
         if value is not None:
             conditions.append(_field("mana_value", op, value))
@@ -110,7 +113,15 @@ def qualified_public_zone_event_binding_spec(
     if query is None:
         return None
     spec, token = query
-    if any((spec.state_predicate, spec.commander, spec.combat_state,
+    state = spec.state_predicate
+    if state is not None and (
+        state.counter_name is None or state.minimum_counter_count != 1
+        or state.entered_this_turn or any(getattr(state, name) is not None for name in (
+            "tapped", "attacking", "blocking", "enchanted", "equipped", "modified", "monstrous"
+        ))
+    ):
+        return None
+    if any((spec.commander, spec.combat_state,
                            spec.damage_history, spec.color_count_min, spec.color_count_equal)):
         return None
     if spec.numeric_characteristic and spec.numeric_characteristic.characteristic is TargetNumericCharacteristic.TOTAL_POWER_AND_TOUGHNESS:
@@ -132,7 +143,8 @@ def qualified_public_zone_event_binding_spec(
         event=event, variant=QUALIFIED_ZONE_VARIANT, body=match.group("body"),
         template_id="fixed-counter-public-zone-trigger-v1",
         mechanic="trigger-event-normalized-zone-change", condition=condition,
-        capabilities=(QUALIFIED_ZONE_CAPABILITY,),
+        capabilities=(QUALIFIED_ZONE_CAPABILITY, COUNTER_QUALIFIED_ZONE_CAPABILITY)
+                     if state is not None else (QUALIFIED_ZONE_CAPABILITY,),
     )
 
 

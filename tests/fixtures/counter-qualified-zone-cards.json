@@ -1,0 +1,1137 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned original named-counter zone triggers and contrasting action witnesses",
+  "cards": [
+    {
+      "oracle_id": "043ded41-2506-4dab-91c4-142d9287e7d7",
+      "name": "Skyclave Shadowcat",
+      "mana_cost": "{3}{B}",
+      "cmc": 4.0,
+      "type_line": "Creature \u2014 Cat Horror",
+      "oracle_text": "{1}{B}, Sacrifice another creature: Put a +1/+1 counter on this creature.\nWhenever a creature you control with a +1/+1 counter on it dies, draw a card.",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-09-25",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "card_faces": []
+    },
+    {
+      "oracle_id": "046b60da-0a14-40b0-a36c-5328f6b8972b",
+      "name": "Meltstrider Eulogist",
+      "mana_cost": "{2}{G}",
+      "cmc": 3.0,
+      "type_line": "Creature \u2014 Insect Soldier",
+      "oracle_text": "Whenever a creature you control with a +1/+1 counter on it dies, draw a card.",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-08-01",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "card_faces": []
+    },
+    {
+      "oracle_id": "1c70b9d8-b04e-48f8-a4e0-12ce077d22f2",
+      "name": "Tributary Instructor",
+      "mana_cost": "{3}{G}",
+      "cmc": 4.0,
+      "type_line": "Creature \u2014 Merfolk Shaman",
+      "oracle_text": "Mentor (Whenever this creature attacks, put a +1/+1 counter on target attacking creature with lesser power.)\nWhenever a creature you control with a +1/+1 counter on it dies, draw a card.",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Mentor"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "card_faces": []
+    },
+    {
+      "oracle_id": "4d937ea3-bfd4-4cdf-b722-08f2b99ea2a5",
+      "name": "Gladehart Cavalry",
+      "mana_cost": "{5}{G}{G}",
+      "cmc": 7.0,
+      "type_line": "Creature \u2014 Elf Knight",
+      "oracle_text": "When this creature enters, support 6. (Put a +1/+1 counter on each of up to six other target creatures.)\nWhenever a creature you control with a +1/+1 counter on it dies, you gain 2 life.",
+      "power": "6",
+      "toughness": "6",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Support"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2018-04-06",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "card_faces": []
+    },
+    {
+      "oracle_id": "50863075-a30b-4238-8e31-5af32a39d886",
+      "name": "Chevill, Bane of Monsters",
+      "mana_cost": "{B}{G}",
+      "cmc": 2.0,
+      "type_line": "Legendary Creature \u2014 Human Rogue",
+      "oracle_text": "Deathtouch\nAt the beginning of your upkeep, if your opponents control no permanents with bounty counters on them, put a bounty counter on target creature or planeswalker an opponent controls.\nWhenever a permanent an opponent controls with a bounty counter on it dies, you gain 3 life and draw a card.",
+      "power": "1",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "G"
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "keywords": [
+        "Deathtouch"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-04-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "card_faces": []
+    },
+    {
+      "oracle_id": "792da586-a687-428c-a10e-75431249df5b",
+      "name": "Rayblade Trooper",
+      "mana_cost": "{2}{W}",
+      "cmc": 3.0,
+      "type_line": "Creature \u2014 Human Soldier",
+      "oracle_text": "When this creature enters, put a +1/+1 counter on target creature you control.\nWhenever a nontoken creature you control with a +1/+1 counter on it dies, create a 1/1 white Human Soldier creature token.\nWarp {1}{W} (You may cast this card from your hand for its warp cost. Exile this creature at the beginning of the next end step, then you may cast it from exile on a later turn.)",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Warp"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-08-01",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "card_faces": []
+    },
+    {
+      "oracle_id": "95892392-2ed3-4c1a-bbaa-4083f526769c",
+      "name": "Shay Cormac",
+      "mana_cost": "{W}{B}",
+      "cmc": 2.0,
+      "type_line": "Legendary Creature \u2014 Human Knight Rogue",
+      "oracle_text": "{1}: Permanents your opponents control lose hexproof, indestructible, protection, shroud, and ward until end of turn.\nWhenever a creature an opponent controls becomes the target of a spell or ability you control, put a bounty counter on that creature.\nWhenever a creature with a bounty counter on it dies, put two +1/+1 counters on Shay Cormac.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "W"
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-07-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "card_faces": []
+    },
+    {
+      "oracle_id": "9fa0c9d1-2a63-41a8-8733-39bfaee4eb0a",
+      "name": "Explorer's Cache",
+      "mana_cost": "{1}{G}",
+      "cmc": 2.0,
+      "type_line": "Artifact",
+      "oracle_text": "This artifact enters with two +1/+1 counters on it.\nWhenever a creature you control with a +1/+1 counter on it dies, put a +1/+1 counter on this artifact.\n{T}: Move a +1/+1 counter from this artifact onto target creature. Activate only as a sorcery.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "card_faces": []
+    },
+    {
+      "oracle_id": "ae6dc45c-b8c9-4cbf-892f-8c00f4199aaf",
+      "name": "Laid to Rest",
+      "mana_cost": "{3}{G}",
+      "cmc": 4.0,
+      "type_line": "Enchantment",
+      "oracle_text": "Whenever a Human you control dies, draw a card.\nWhenever a creature you control with a +1/+1 counter on it dies, you gain 2 life.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-11-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "card_faces": []
+    },
+    {
+      "oracle_id": "aff223d4-6338-460d-a4d5-d45f522864dc",
+      "name": "The Scorpion God",
+      "mana_cost": "{3}{B}{R}",
+      "cmc": 5.0,
+      "type_line": "Legendary Creature \u2014 God",
+      "oracle_text": "Whenever a creature with a -1/-1 counter on it dies, draw a card.\n{1}{B}{R}: Put a -1/-1 counter on another target creature.\nWhen The Scorpion God dies, return it to its owner's hand at the beginning of the next end step.",
+      "power": "6",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "R"
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "card_faces": []
+    },
+    {
+      "oracle_id": "b0907441-30fe-436a-b29c-585b57eabfc3",
+      "name": "Shaile, Dean of Radiance // Embrose, Dean of Shadow",
+      "mana_cost": "{1}{W} // {2}{B}{B}",
+      "cmc": 2.0,
+      "type_line": "Legendary Creature \u2014 Bird Cleric // Legendary Creature \u2014 Human Warlock",
+      "oracle_text": "Shaile, Dean of Radiance: Flying, vigilance\n{T}: Put a +1/+1 counter on each creature that entered the battlefield under your control this turn.\n//\nEmbrose, Dean of Shadow: {T}: Put a +1/+1 counter on another target creature, then Embrose deals 2 damage to that creature.\nWhenever a creature you control with a +1/+1 counter on it dies, draw a card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "keywords": [
+        "Flying",
+        "Vigilance"
+      ],
+      "produced_mana": [],
+      "layout": "modal_dfc",
+      "released_at": "2021-04-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "card_faces": [
+        {
+          "colors": [
+            "W"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{W}",
+          "name": "Shaile, Dean of Radiance",
+          "oracle_text": "Flying, vigilance\n{T}: Put a +1/+1 counter on each creature that entered the battlefield under your control this turn.",
+          "power": "1",
+          "toughness": "1",
+          "type_line": "Legendary Creature \u2014 Bird Cleric"
+        },
+        {
+          "colors": [
+            "B"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{B}{B}",
+          "name": "Embrose, Dean of Shadow",
+          "oracle_text": "{T}: Put a +1/+1 counter on another target creature, then Embrose deals 2 damage to that creature.\nWhenever a creature you control with a +1/+1 counter on it dies, draw a card.",
+          "power": "4",
+          "toughness": "4",
+          "type_line": "Legendary Creature \u2014 Human Warlock"
+        }
+      ]
+    },
+    {
+      "oracle_id": "c71b2325-bde6-4364-a93b-8477ffeb25d8",
+      "name": "Toxrill, the Corrosive",
+      "mana_cost": "{5}{B}{B}",
+      "cmc": 7.0,
+      "type_line": "Legendary Creature \u2014 Slug Horror",
+      "oracle_text": "At the beginning of each end step, put a slime counter on each creature you don't control.\nCreatures you don't control get -1/-1 for each slime counter on them.\nWhenever a creature you don't control with a slime counter on it dies, create a 1/1 black Slug creature token.\n{U}{B}, Sacrifice a Slug: Draw a card.",
+      "power": "7",
+      "toughness": "7",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-11-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "card_faces": []
+    },
+    {
+      "oracle_id": "c8deef08-fcf2-41e1-8aeb-aa4e0af147ca",
+      "name": "Alharu, Solemn Ritualist",
+      "mana_cost": "{4}{W}",
+      "cmc": 5.0,
+      "type_line": "Legendary Creature \u2014 Human Monk",
+      "oracle_text": "When Alharu enters, put a +1/+1 counter on each of up to two other target creatures.\nWhenever a nontoken creature you control with a +1/+1 counter on it dies, create a 1/1 white Spirit creature token with flying.\nPartner (You can have two commanders if both have partner.)",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Partner"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-08-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "card_faces": []
+    },
+    {
+      "oracle_id": "d057289d-5e28-43d5-8ff3-4a1bc723477d",
+      "name": "Day of Judgment",
+      "mana_cost": "{2}{W}{W}",
+      "cmc": 4.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Destroy all creatures.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "card_faces": []
+    },
+    {
+      "oracle_id": "a1cc5e37-b09a-4b7f-afd5-77c1c35aa425",
+      "name": "Carrion Feeder",
+      "mana_cost": "{B}",
+      "cmc": 1.0,
+      "type_line": "Creature \u2014 Zombie",
+      "oracle_text": "This creature can't block.\nSacrifice a creature: Put a +1/+1 counter on this creature.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2019-06-14",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "card_faces": []
+    },
+    {
+      "oracle_id": "28100000-0000-4000-8000-000000000001",
+      "name": "Generic Counter Entry Observer",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "type_line": "Enchantment",
+      "power": null,
+      "toughness": null,
+      "oracle_text": "Whenever a creature you control with a +1/+1 counter on it enters, draw a card.",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "28100000-0000-4000-8000-000000000002",
+      "name": "Generic Bounty Entry Observer",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "type_line": "Enchantment",
+      "power": null,
+      "toughness": null,
+      "oracle_text": "Whenever a creature you control with a bounty counter on it enters, you gain 2 life.",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "28100000-0000-4000-8000-000000000003",
+      "name": "Generic Counter Leave Observer",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "type_line": "Enchantment",
+      "power": null,
+      "toughness": null,
+      "oracle_text": "Whenever a creature you control with a +1/+1 counter on it leaves the battlefield, you gain 2 life.",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "28100000-0000-4000-8000-000000000004",
+      "name": "Generic Counter Renewal Observer",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "type_line": "Creature",
+      "power": "2",
+      "toughness": "3",
+      "oracle_text": "Whenever a creature you control with a +1/+1 counter on it dies, put a +1/+1 counter on this creature.",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "28100000-0000-4000-8000-000000000005",
+      "name": "Generic Ordinary Counter Renewal Observer",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "type_line": "Creature",
+      "power": "2",
+      "toughness": "3",
+      "oracle_text": "Whenever a creature you control dies, put a +1/+1 counter on this creature.",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "043ded41-2506-4dab-91c4-142d9287e7d7",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "If Skyclave Shadowcat dies at the same time as another creature you control with a +1/+1 counter on it, its last ability triggers for that creature."
+    },
+    {
+      "oracle_id": "043ded41-2506-4dab-91c4-142d9287e7d7",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "You draw just one card each time Skyclave Shadowcat\u2019s last ability resolves, no matter how many +1/+1 counters the creature had on it."
+    },
+    {
+      "oracle_id": "043ded41-2506-4dab-91c4-142d9287e7d7",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "If Skyclave Shadowcat has a +1/+1 counter on it and it dies, its last ability triggers."
+    },
+    {
+      "oracle_id": "043ded41-2506-4dab-91c4-142d9287e7d7",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "If a creature with a +1/+1 counter on it died due to receiving too many -1/-1 counters, it dies at the same time that the counters are removed, and Skyclave Shadowcat\u2019s last ability triggers."
+    },
+    {
+      "oracle_id": "046b60da-0a14-40b0-a36c-5328f6b8972b",
+      "published_at": "2025-07-25",
+      "source": "wotc",
+      "comment": "If Meltstrider Eulogist dies at the same time as one or more creatures you control with +1/+1 counters on them, its ability will trigger for each of those creatures. This includes Meltstrider Eulogist itself if it had a +1/+1 counter on it when it died."
+    },
+    {
+      "oracle_id": "1c70b9d8-b04e-48f8-a4e0-12ce077d22f2",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If the target creature's power is no longer less than the attacking creature's power as the ability resolves, mentor doesn't add a +1/+1 counter. For example, if two 3/3 creatures with mentor attack and both mentor triggers target the same 2/2 creature, the first to resolve puts a +1/+1 counter on it and the second does nothing."
+    },
+    {
+      "oracle_id": "1c70b9d8-b04e-48f8-a4e0-12ce077d22f2",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If the creature with mentor leaves the battlefield with mentor on the stack, use its power as that creature last existed on the battlefield to determine whether the target creature has less power."
+    },
+    {
+      "oracle_id": "1c70b9d8-b04e-48f8-a4e0-12ce077d22f2",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Mentor compares the power of the creature with mentor with that of the target creature at two different times: once as the triggered ability is put onto the stack, and once as the triggered ability resolves. If you wish to raise a creature's power so its mentor ability can target a bigger creature, the last chance you have to do so is during the beginning of combat step."
+    },
+    {
+      "oracle_id": "4d937ea3-bfd4-4cdf-b722-08f2b99ea2a5",
+      "published_at": "2016-01-22",
+      "source": "wotc",
+      "comment": "You can\u2019t put more than one +1/+1 counter on any one target using the support action."
+    },
+    {
+      "oracle_id": "4d937ea3-bfd4-4cdf-b722-08f2b99ea2a5",
+      "published_at": "2016-01-22",
+      "source": "wotc",
+      "comment": "If a spell with support has other abilities that target creatures, those abilities and the support ability can target the same creature."
+    },
+    {
+      "oracle_id": "4d937ea3-bfd4-4cdf-b722-08f2b99ea2a5",
+      "published_at": "2016-01-22",
+      "source": "wotc",
+      "comment": "If Gladehart Cavalry dies at the same time as a creature you control with a +1/+1 counter on it, its ability will trigger."
+    },
+    {
+      "oracle_id": "4d937ea3-bfd4-4cdf-b722-08f2b99ea2a5",
+      "published_at": "2016-01-22",
+      "source": "wotc",
+      "comment": "If Gladehart Cavalry somehow gets a +1/+1 counter, it dying will cause its own ability to trigger."
+    },
+    {
+      "oracle_id": "4d937ea3-bfd4-4cdf-b722-08f2b99ea2a5",
+      "published_at": "2016-01-22",
+      "source": "wotc",
+      "comment": "You gain 2 life per creature, not per +1/+1 counter."
+    },
+    {
+      "oracle_id": "4d937ea3-bfd4-4cdf-b722-08f2b99ea2a5",
+      "published_at": "2016-01-22",
+      "source": "wotc",
+      "comment": "Support can target a creature you don\u2019t control."
+    },
+    {
+      "oracle_id": "50863075-a30b-4238-8e31-5af32a39d886",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "If the creature or planeswalker with a bounty counter on it ceases to be a creature or planeswalker, Chevill\u2019s last ability will still trigger if that permanent is put into a graveyard from the battlefield."
+    },
+    {
+      "oracle_id": "50863075-a30b-4238-8e31-5af32a39d886",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "Chevill\u2019s middle ability and last ability look for any bounty counter on your opponents\u2019 permanents, not just one from that Chevill. For example, if players A and B each control a Chevill and player A has put a bounty counter on player C\u2019s creature, player B\u2019s Chevill won\u2019t put a counter on anything and both players will gain 3 life and draw a card when that creature dies."
+    },
+    {
+      "oracle_id": "50863075-a30b-4238-8e31-5af32a39d886",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "If your life total is brought to 0 or less at the same time that a creature with a bounty counter on it is dealt lethal damage, you lose the game before the last ability goes on the stack."
+    },
+    {
+      "oracle_id": "50863075-a30b-4238-8e31-5af32a39d886",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "If Chevill leaves the battlefield at the same time that an opponent\u2019s permanent with a bounty counter on it dies, you gain 3 life and draw a card. If Chevill leaves the battlefield before that permanent dies, Chevill\u2019s last ability won\u2019t be around to trigger."
+    },
+    {
+      "oracle_id": "792da586-a687-428c-a10e-75431249df5b",
+      "published_at": "2025-07-25",
+      "source": "wotc",
+      "comment": "If Rayblade Trooper dies at the same time as one or more creatures you control with +1/+1 counters on them, its second ability will trigger for each of those creatures. This includes Rayblade Trooper itself if it had a +1/+1 counter on it when it died."
+    },
+    {
+      "oracle_id": "95892392-2ed3-4c1a-bbaa-4083f526769c",
+      "published_at": "2024-07-05",
+      "source": "wotc",
+      "comment": "Because damage remains marked on a creature until damage is removed as the turn ends, damage previously dealt to a creature with indestructible may cause it to be destroyed if Shay Cormac\u2019s first ability resolves later during that turn. This is notably not the case with protection, as protection prevents damage."
+    },
+    {
+      "oracle_id": "95892392-2ed3-4c1a-bbaa-4083f526769c",
+      "published_at": "2024-07-05",
+      "source": "wotc",
+      "comment": "Shay Cormac\u2019s second ability resolves before the spell or ability that caused it to trigger. It resolves even if that spell or ability is countered."
+    },
+    {
+      "oracle_id": "95892392-2ed3-4c1a-bbaa-4083f526769c",
+      "published_at": "2024-07-05",
+      "source": "wotc",
+      "comment": "If a permanent enters the battlefield under an opponent\u2019s control with hexproof, indestructible, protection, shroud, and/or ward after Shay Cormac\u2019s first ability resolves, it won\u2019t lose that ability until you activate Shay Cormac\u2019s first ability again. The same is true if an opponent\u2019s permanent gains one of those abilities after Shay Cormac\u2019s first ability resolves."
+    },
+    {
+      "oracle_id": "95892392-2ed3-4c1a-bbaa-4083f526769c",
+      "published_at": "2024-07-05",
+      "source": "wotc",
+      "comment": "Shay Cormac\u2019s last ability looks for any bounty counter on a creature, not just one from that Shay Cormac. For example, if players A and B each control a Shay Cormac and player A has put a bounty counter on player C\u2019s creature, both players A and B will put two +1/+1 counters on their respective Shay Cormacs when that creature dies."
+    },
+    {
+      "oracle_id": "9fa0c9d1-2a63-41a8-8733-39bfaee4eb0a",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "To move a counter from one permanent to another, the counter is removed from the first permanent and put on the second. Any abilities that care about a counter being removed from or put onto a permanent will apply."
+    },
+    {
+      "oracle_id": "9fa0c9d1-2a63-41a8-8733-39bfaee4eb0a",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If Explorer's Cache isn't on the battlefield as its activated ability resolves, you can't remove a +1/+1 counter from it, so you won't put a +1/+1 counter on the target creature."
+    },
+    {
+      "oracle_id": "ae6dc45c-b8c9-4cbf-892f-8c00f4199aaf",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "If a Human you control with a +1/+1 counter on it dies, both abilities will trigger."
+    },
+    {
+      "oracle_id": "aff223d4-6338-460d-a4d5-d45f522864dc",
+      "published_at": "2017-07-14",
+      "source": "wotc",
+      "comment": "If a creature with a -1/-1 counter on it dies at the same time as The Scorpion God does, you'll draw a card. The same is true if The Scorpion God dies with a -1/-1 counter on it."
+    },
+    {
+      "oracle_id": "aff223d4-6338-460d-a4d5-d45f522864dc",
+      "published_at": "2017-07-14",
+      "source": "wotc",
+      "comment": "You'll draw only one card when a creature with more than one -1/-1 counter on it dies."
+    },
+    {
+      "oracle_id": "b0907441-30fe-436a-b29c-585b57eabfc3",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If a creature entered the battlefield under your control this turn but is controlled by a different player when Shaile\u2019s activated ability resolves, it will still get a +1/+1 counter."
+    },
+    {
+      "oracle_id": "c71b2325-bde6-4364-a93b-8477ffeb25d8",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "Toxrill. the Corrosive's second and third abilities apply to all creatures you don't control with slime counters, even if those slime counters came from a source other than Toxrill's first ability."
+    },
+    {
+      "oracle_id": "c71b2325-bde6-4364-a93b-8477ffeb25d8",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "Another card, Sludge Monster, causes non-Horror creatures with slime counters on them to lose all abilities and have base power and toughness 2/2. If you control both Toxrill and Sludge Monster, those non-Horror creatures are 2/2 creatures with no abilities that also get -1/-1 for each slime counter."
+    },
+    {
+      "oracle_id": "c71b2325-bde6-4364-a93b-8477ffeb25d8",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "Toxrill's third ability triggers when a creature an opponent controls with a slime counter on it dies for any reason, not just due to its toughness being decreased by Toxrill's second ability."
+    },
+    {
+      "oracle_id": "c8deef08-fcf2-41e1-8aeb-aa4e0af147ca",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "If a creature you control with a +1/+1 counter on it dies at the same time as Alharu, Alharu's ability triggers for that creature."
+    },
+    {
+      "oracle_id": "c8deef08-fcf2-41e1-8aeb-aa4e0af147ca",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "An effect that checks whether you control your commander is satisfied if you control one or both of your two commanders."
+    },
+    {
+      "oracle_id": "c8deef08-fcf2-41e1-8aeb-aa4e0af147ca",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "To have two commanders, both must have the partner ability as the game begins. Losing the ability during the game doesn't cause either to cease to be your commander."
+    },
+    {
+      "oracle_id": "c8deef08-fcf2-41e1-8aeb-aa4e0af147ca",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "You can choose two commanders with partner that are the same color or colors. In Commander Draft, you can even choose two of the same commander with partner if you drafted them. If you do this, make sure you keep the number of times you've cast each from the command zone clear for \"commander tax\" purposes."
+    },
+    {
+      "oracle_id": "c8deef08-fcf2-41e1-8aeb-aa4e0af147ca",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "If your Commander deck has two commanders, you can only include cards whose own color identities are also found in your commanders' combined color identities. If Falthis and Kediss are your commanders, your deck may contain cards with black and/or red in their color identity, but not cards with green, white, or blue."
+    },
+    {
+      "oracle_id": "c8deef08-fcf2-41e1-8aeb-aa4e0af147ca",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "You create just one Spirit token, not one for each +1/+1 counter that was on the creature that died."
+    },
+    {
+      "oracle_id": "c8deef08-fcf2-41e1-8aeb-aa4e0af147ca",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "Once the game begins, your two commanders are tracked separately. If you cast one, you won't have to pay an additional {2} the first time you cast the other. A player loses the game after having been dealt 21 damage from any one of them, not from both of them combined."
+    },
+    {
+      "oracle_id": "c8deef08-fcf2-41e1-8aeb-aa4e0af147ca",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "Both commanders start in the command zone, and the remaining 98 cards (or 58 cards in a Commander Draft game) of your deck are shuffled to become your library."
+    },
+    {
+      "oracle_id": "c8deef08-fcf2-41e1-8aeb-aa4e0af147ca",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "If something refers to your commander while you have two commanders, it refers to one of them of your choice. If you are instructed to perform an action on your commander (e.g. put it from the command zone into your hand due to Command Beacon), you choose one of your commanders at the time the effect happens."
+    },
+    {
+      "oracle_id": "c8deef08-fcf2-41e1-8aeb-aa4e0af147ca",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "If Alharu has a +1/+1 counter on it and dies, its ability triggers for itself."
+    }
+  ]
+}

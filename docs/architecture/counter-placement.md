@@ -212,8 +212,13 @@ controller-turn, sorcery-speed, once-per-turn, token-history, controlled-type,
 or graveyard-type tails after verifying the matching typed descriptor; upkeep,
 step, conditional-history, and mixed unrepresented tails remain material.
 Source-self Aura, Equipment, Saga, Spacecraft, and Vehicle wording lowers to the
-same physical `$source` identity as card-type or bounded name wording. These
-printed descriptors do not become runtime type predicates, so the counter
+same `$source.zone_object` recipient as card-type or bounded name wording. The
+existing resolver requires the activating or triggering battlefield incarnation;
+a source that leaves and returns cannot receive the old ability's counters.
+An unavailable source makes that instruction do nothing while independent
+instructions continue. The separate `$source` provenance field retains its
+existing meaning, and historical symbolic-source payloads retain their codec.
+These printed descriptors do not become runtime type predicates, so the counter
 transaction continues to validate object identity rather than reinterpreting
 current characteristics.
 

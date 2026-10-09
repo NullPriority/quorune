@@ -323,6 +323,15 @@ only inside the producer's canonical simultaneous batch, and public damage or
 zone predicates read sealed committed or last-known facts rather than live
 Oracle text.
 
+Named-counter zone predicates consume version-two occurrence counter maps.
+The zone owner captures departure counters before any reset, including for all
+members of a simultaneous move, and captures entry counters after committed
+entry replacement and initialization. The trigger owner compares only the
+positive counter names from the appropriate snapshot. It rejects missing facts
+for this predicate, preserves known-empty facts, and never reads counters from
+a returned or post-departure incarnation. Version-one occurrence payloads keep
+their original representation and do not invent counter information.
+
 Two-event triggered abilities remain one CardProgram ability and one effect
 body. `rules/event_subscriptions.py` owns the immutable ordered subscription set;
 the existing dispatcher selects the matching normalized event and condition
