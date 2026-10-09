@@ -1452,6 +1452,14 @@ declarations carry explicit Oracle-node-scoped identities and persist their
 first execution-time value across sibling results and replacement resumption.
 Independent quantity expressions retain their separate execution-time reads.
 The casting owner remains the sole authority for choosing and paying cost X.
+`compiler/permanent_additional_cost_nodes.py` lowers one mandatory printed
+casting-price clause on a permanent into its primary spell cost schema. The
+carrier has no resolution effects and uses the normal battlefield destination;
+the casting owner applies the existing exile, discard, sacrifice, owner-hand
+return, life, counter, or binary alternative price. Whole-card admission remains
+required. Repeated declarations and independently unrepresented siblings retain
+material residuals, so a supported price cannot make an unsupported card exact.
+
 Single-subject `place_counters` results also bind declared or current public
 characteristic amounts through their existing counter owner. A resolved zero
 amount is a paid no-op; malformed and negative amounts are rejected. Counter

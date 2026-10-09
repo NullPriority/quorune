@@ -302,7 +302,8 @@ def _node_group_provenance(
         }
         for node in nodes
     ]
-    requires_complete_card_program = any(
+    from .permanent_additional_cost_nodes import PERMANENT_ADDITIONAL_COST_COVERAGE
+    requires_complete_card_program = any(PERMANENT_ADDITIONAL_COST_COVERAGE in node.runtime_coverage for node in nodes) or any(
         descriptor_requires_complete_card_program(handler)
         for node in nodes
         for handler in node.handlers
@@ -454,7 +455,8 @@ def program_from_generated_node_group(
         ),
         effects=effects,
         handlers=[dict(handler) for node in nodes for handler in node.handlers],
-        destination="graveyard" if first.kind == "spell_ability" else None,
+        destination=("battlefield" if "fixed-permanent-additional-cost-declaration" in first.runtime_coverage
+            else "graveyard" if first.kind == "spell_ability" else None),
         requires_arbiter=trust_level != "trusted",
         version=1,
         oracle_id=record.oracle_id,

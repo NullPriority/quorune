@@ -3183,6 +3183,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/permanent_additional_cost_nodes.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/prevention_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -10880,5 +10895,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "53c3616008424c792d661f3d9fb2f5a440e14d2973743b8624c4122fac732e12"
+  "fingerprint": "520b83c609cfe2e103d91c8eb7d53a81c3b46c8d627c5ded87011fcdd2c248ac"
 }

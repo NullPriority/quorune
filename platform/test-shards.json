@@ -369,6 +369,7 @@
       "test_kicked_spell_conditions",
       "test_library_search_qualifiers",
       "test_maximum_counter_state_action",
+      "test_permanent_additional_costs",
       "test_proliferate_compiler",
       "test_protocol",
       "test_riot_rules",

@@ -375,6 +375,41 @@
       },
       "candidate_bundles": [
         {
+          "bundle_id": "bundle:permanent-spell-additional-price",
+          "member_family_ids": [
+            "effect_clause:typed-spell-additional-cost-clause"
+          ],
+          "canonical_owner_ids": [
+            "component:quorune.compiler.permanent_additional_cost_nodes.permanent_additional_cost_node",
+            "component:quorune.rules.casting.costs._cast_schema_and_mechanics"
+          ],
+          "source_contexts": [
+            "static"
+          ],
+          "normalized_literal_parameters": [
+            "one-fixed-price",
+            "primary-permanent-spell-schema"
+          ],
+          "shared_dependencies": [
+            "casting.additional_cost.fixed_alternative",
+            "casting.additional_cost.fixed_sacrifice",
+            "casting.additional_cost.zone_change.fixed_discard",
+            "casting.additional_cost.zone_change.fixed_exile",
+            "casting.additional_cost.zone_change.fixed_return_to_owner_hand"
+          ],
+          "shared_grammar": "One printed mandatory casting price on a permanent spell through the existing typed price parsers and authoritative casting transaction.",
+          "estimated_implementation_hours": 3,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Retain measured original whole-card closure as one component of a combined delivery meeting the 200 net distinct card floor.",
+          "explicit_exclusions": [
+            "Independently unsupported whole-card siblings",
+            "Repeated mandatory price declarations and open cost grammar"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "permanent-spell-additional-price-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:batched-card-support",
           "member_family_ids": [
             "activated_cost:complete-alternate-additional-cost-grammar",

@@ -222,8 +222,9 @@ def reject_cast_cost_composition(
 ) -> tuple[OracleNode, ...]:
     """Apply the fixed alternative and repeated-Suspend composition guards."""
 
+    from .permanent_additional_cost_nodes import reject_repeated_permanent_additional_costs
     return reject_repeated_suspend_nodes(
-        reject_public_alternative_cost_composition(nodes, residuals),
+        reject_public_alternative_cost_composition(reject_repeated_permanent_additional_costs(nodes, residuals), residuals),
         residuals,
     )
 

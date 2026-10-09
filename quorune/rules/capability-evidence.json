@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "registry_fingerprint": "7cfc1784211d4aa6fd9bd47fd6165e9394af8b366af79add98ceeca762341ae4",
-  "declaration_source_fingerprint": "9a1f2fc28fa137434adfe860e67e81d06585cc9dd24c43cd9737f70872a2ce90",
+  "declaration_source_fingerprint": "93197c51a8b021a4089c690f3c3c5fcccd50b73009905fab16b85b1e6ae644d3",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -7409,6 +7409,23 @@
     },
     {
       "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_permanent_additional_costs.PermanentAdditionalCostActionTests.test_real_alternative_mana_or_sacrifice_price_is_paid_once_and_replays",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Both publicly offered Bayou Groff sacrifice and extra-mana branches pay their independent exact prices once, preserve printed mana cost and resolve as a permanent with replay."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_alternative_additional_costs.FixedAlternativeAdditionalCostRuntimeTests.test_zone_replacement_suspends_alternative_cost_before_mutation_and_replays",
       "official_rule_ids": [
@@ -7477,6 +7494,23 @@
     },
     {
       "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "negative",
+      "test_id": "tests.test_permanent_additional_costs.PermanentAdditionalCostCompilerTests.test_price_capability_omission_keeps_whole_permanent_untrusted",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Blocking the required fixed-price capability leaves the original permanent card inexact; no cast-price omission grants whole-card trust."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_alternative_additional_costs.FixedAlternativeAdditionalCostCompilerTests.test_fixed_alternative_costs_compile_source_spanned_programs",
       "official_rule_ids": [
@@ -7542,6 +7576,23 @@
         "commander_review"
       ],
       "applicability_note": "Replay the selected branch, suspended destination-replacement decision, mana payment, and stack placement to the identical authoritative hash."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_alternative",
+      "evidence_class": "replay",
+      "test_id": "tests.test_permanent_additional_costs.PermanentAdditionalCostActionTests.test_real_alternative_mana_or_sacrifice_price_is_paid_once_and_replays",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Both publicly offered Bayou Groff sacrifice and extra-mana branches pay their independent exact prices once, preserve printed mana cost and resolve as a permanent with replay."
     },
     {
       "capability_id": "casting.additional_cost.fixed_alternative",
@@ -7928,6 +7979,26 @@
     },
     {
       "capability_id": "casting.additional_cost.fixed_sacrifice",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_permanent_additional_costs.PermanentAdditionalCostActionTests.test_permanent_sacrifice_price_replacement_is_seat_locked_pending_and_replays",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual permanent casting sacrifice price retains chooser identity through two competing exile replacements, rejects the wrong principal, resumes after pending load and pays once with pre-action replay."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_sacrifice",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_sacrifice_additional_costs.FixedSacrificeAdditionalCostRuntimeTests.test_zone_replacement_suspends_cost_before_mutation_and_replays",
       "official_rule_ids": [
@@ -8045,6 +8116,26 @@
         "commander_review"
       ],
       "applicability_note": "Reject dynamic and historical sacrifice qualities and variable or multiple payments while typed fixed binary alternatives remain separately owned."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_sacrifice",
+      "evidence_class": "negative",
+      "test_id": "tests.test_permanent_additional_costs.PermanentAdditionalCostCompilerTests.test_price_capability_omission_keeps_whole_permanent_untrusted",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Blocking the required fixed-price capability leaves the original permanent card inexact; no cast-price omission grants whole-card trust."
     },
     {
       "capability_id": "casting.additional_cost.fixed_sacrifice",
@@ -8208,6 +8299,26 @@
     },
     {
       "capability_id": "casting.additional_cost.fixed_sacrifice",
+      "evidence_class": "replay",
+      "test_id": "tests.test_permanent_additional_costs.PermanentAdditionalCostActionTests.test_permanent_sacrifice_price_replacement_is_seat_locked_pending_and_replays",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual permanent casting sacrifice price retains chooser identity through two competing exile replacements, rejects the wrong principal, resumes after pending load and pays once with pre-action replay."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_sacrifice",
       "evidence_class": "rollback",
       "test_id": "tests.test_fixed_sacrifice_additional_costs.FixedSacrificeAdditionalCostRuntimeTests.test_offer_and_submission_share_effective_type_legality",
       "official_rule_ids": [
@@ -8247,6 +8358,28 @@
         "commander_review"
       ],
       "applicability_note": "Suspend a discard cost for competing destination replacements and resume it before stack placement."
+    },
+    {
+      "capability_id": "casting.additional_cost.zone_change.fixed_discard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_permanent_additional_costs.PermanentAdditionalCostActionTests.test_real_discard_and_owner_hand_return_prices_are_private_authoritative_and_replay",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Lesser Masticore discard price is private and rejects another player card; the permanent enters only after the complete paid price and replays from before casting."
     },
     {
       "capability_id": "casting.additional_cost.zone_change.fixed_discard",
@@ -8381,6 +8514,28 @@
       "applicability_note": "Replay a suspended replacement-aware discard payment to the identical authoritative hash."
     },
     {
+      "capability_id": "casting.additional_cost.zone_change.fixed_discard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_permanent_additional_costs.PermanentAdditionalCostActionTests.test_real_discard_and_owner_hand_return_prices_are_private_authoritative_and_replay",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Lesser Masticore discard price is private and rejects another player card; the permanent enters only after the complete paid price and replays from before casting."
+    },
+    {
       "capability_id": "casting.additional_cost.zone_change.fixed_exile",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_zone_change_additional_costs.FixedZoneChangeAdditionalCostRuntimeTests.test_each_fixed_zone_change_cost_commits_to_operation_destination",
@@ -8403,6 +8558,30 @@
         "commander_review"
       ],
       "applicability_note": "Route graveyard-card and controlled-permanent exile costs through the same typed destination owner."
+    },
+    {
+      "capability_id": "casting.additional_cost.zone_change.fixed_exile",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_permanent_additional_costs.PermanentAdditionalCostActionTests.test_real_mauler_requires_own_creature_exile_price_and_resolves_as_permanent",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "406.1",
+        "406.2",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.13a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Makeshift Mauler cast rejects missing, wrong-owner and wrong-type prices with unchanged state, exiles exactly the owned graveyard creature, pays mana once and resolves as a permanent with pre-action replay."
     },
     {
       "capability_id": "casting.additional_cost.zone_change.fixed_exile",
@@ -8478,6 +8657,30 @@
     },
     {
       "capability_id": "casting.additional_cost.zone_change.fixed_exile",
+      "evidence_class": "negative",
+      "test_id": "tests.test_permanent_additional_costs.PermanentAdditionalCostCompilerTests.test_price_capability_omission_keeps_whole_permanent_untrusted",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "406.1",
+        "406.2",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.13a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Blocking the required fixed-price capability leaves the original permanent card inexact; no cast-price omission grants whole-card trust."
+    },
+    {
+      "capability_id": "casting.additional_cost.zone_change.fixed_exile",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_zone_change_additional_costs.FixedZoneChangeAdditionalCostCompilerTests.test_fixed_zone_change_costs_compile_source_spanned_programs",
       "official_rule_ids": [
@@ -8549,6 +8752,30 @@
       "applicability_note": "Replay both represented fixed-exile origins to identical authoritative hashes."
     },
     {
+      "capability_id": "casting.additional_cost.zone_change.fixed_exile",
+      "evidence_class": "replay",
+      "test_id": "tests.test_permanent_additional_costs.PermanentAdditionalCostActionTests.test_real_mauler_requires_own_creature_exile_price_and_resolves_as_permanent",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "406.1",
+        "406.2",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.13a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Makeshift Mauler cast rejects missing, wrong-owner and wrong-type prices with unchanged state, exiles exactly the owned graveyard creature, pays mana once and resolves as a permanent with pre-action replay."
+    },
+    {
       "capability_id": "casting.additional_cost.zone_change.fixed_return_to_owner_hand",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_zone_change_additional_costs.FixedZoneChangeAdditionalCostRuntimeTests.test_return_cost_routes_controlled_permanent_to_owner_hand",
@@ -8569,6 +8796,28 @@
         "commander_review"
       ],
       "applicability_note": "Return a permanent controlled by the caster to its distinct owner's hand."
+    },
+    {
+      "capability_id": "casting.additional_cost.zone_change.fixed_return_to_owner_hand",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_permanent_additional_costs.PermanentAdditionalCostActionTests.test_real_discard_and_owner_hand_return_prices_are_private_authoritative_and_replay",
+      "official_rule_ids": [
+        "400.2",
+        "400.3",
+        "400.7",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Fear of Isolation casting price returns a controlled opposing-owned permanent to its owner hand, independently of optional entry targets, with rollback rejection and pre-action replay."
     },
     {
       "capability_id": "casting.additional_cost.zone_change.fixed_return_to_owner_hand",
@@ -8701,6 +8950,28 @@
         "commander_review"
       ],
       "applicability_note": "Replay the represented return payment to the identical authoritative hash."
+    },
+    {
+      "capability_id": "casting.additional_cost.zone_change.fixed_return_to_owner_hand",
+      "evidence_class": "replay",
+      "test_id": "tests.test_permanent_additional_costs.PermanentAdditionalCostActionTests.test_real_discard_and_owner_hand_return_prices_are_private_authoritative_and_replay",
+      "official_rule_ids": [
+        "400.2",
+        "400.3",
+        "400.7",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Fear of Isolation casting price returns a controlled opposing-owned permanent to its owner hand, independently of optional entry targets, with rollback rejection and pre-action replay."
     },
     {
       "capability_id": "casting.alternative_cost.fixed_public",
@@ -82364,5 +82635,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "f096280f2d7d7453c0cd325d680e255784dbd073a88738cead0e569646a4cec3"
+  "fingerprint": "716c95411bb087d8c913e4b5f394deaf83a1a5d5f3544a2de98727e8462a05e2"
 }

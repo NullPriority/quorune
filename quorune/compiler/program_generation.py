@@ -23,6 +23,7 @@ from .modal_program_closure import is_closed_fixed_modal_program
 from .fixed_effect_payment_templates import is_closed_fixed_effect_payment_program
 from ..rules.stack_controller_payment_shapes import is_closed_stack_controller_payment_program
 from .declared_effect_amounts import is_closed_declared_amount_program
+from .permanent_additional_cost_nodes import PERMANENT_ADDITIONAL_COST_COVERAGE, is_closed_permanent_additional_cost_program
 from .public_query_effect_amounts import (
     AMOUNT_MECHANIC_CAPABILITIES,
     public_query_amount_program_is_closed,
@@ -353,7 +354,8 @@ def _generated_node_is_independently_exact(node: Any) -> bool:
 
 def _generated_static_declaration(node: Any) -> bool:
     return bool(
-        node.handlers
+        PERMANENT_ADDITIONAL_COST_COVERAGE in node.runtime_coverage
+        or node.handlers
         or (
             node.kind == "keyword_ability"
             and node.capability_dependencies
@@ -1351,6 +1353,8 @@ def _is_closed_public_query_amount_program(program: SemanticProgram) -> bool:
 def _is_closed_effect_program(program: SemanticProgram) -> bool:
     """Return whether a reviewed capability-shaped effect owns execution."""
 
+    if is_closed_permanent_additional_cost_program(program):
+        return True
     if _node_capabilities_close_program(program, fixed_control_node_capabilities):
         return True
 
