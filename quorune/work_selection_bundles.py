@@ -454,6 +454,18 @@ def bundle_measurement_fingerprint(
     frontier: Mapping[str, Any], bundle_policy: Mapping[str, Any]
 ) -> str:
     """Bind a bounded probe to its relevant frontier cohort and grammar."""
+    cards = frontier.get("cards")
+    if not isinstance(cards, list):
+        raise WorkSelectionBundleError(
+            "Card frontier lacks complete bundle card rows"
+        )
+    return _bundle_measurement_fingerprint(frontier, bundle_policy, cards)
+
+
+def _bundle_measurement_fingerprint(
+    frontier: Mapping[str, Any], bundle_policy: Mapping[str, Any],
+    cards: Sequence[Mapping[str, Any]],
+) -> str:
     member_ids = sorted(
         str(value) for value in bundle_policy["member_family_ids"]
     )
@@ -462,27 +474,14 @@ def bundle_measurement_fingerprint(
         str(row.get("family_id") or ""): row
         for row in frontier.get("family_candidates", [])
     }
-    cards = frontier.get("cards")
-    if not isinstance(cards, list):
-        raise WorkSelectionBundleError(
-            "Card frontier lacks complete bundle card rows"
-        )
-    relevant_cards = sorted(
-        (
-            projected
-            for card in cards
-            if (
-                projected := _measurement_card_projection(
-                    card, member_id_set
-                )
+    relevant_cards = []
+    for card in cards:
+        projected = _measurement_card_projection(card, member_id_set)
+        if projected is not None:
+            relevant_cards.append(
+                (str(projected.get("oracle_id") or ""), stable_json(projected))
             )
-            is not None
-        ),
-        key=lambda card: (
-            str(card.get("oracle_id") or ""),
-            stable_json(card),
-        ),
-    )
+    relevant_cards.sort()
     payload = {
         "schema_version": _MEASUREMENT_FINGERPRINT_SCHEMA,
         "measurement_method": _MEASUREMENT_METHOD,
@@ -512,9 +511,65 @@ def bundle_measurement_fingerprint(
             )
         },
         "family_rows": [family_rows.get(member_id) for member_id in member_ids],
-        "cards": relevant_cards,
+        "cards": [],
     }
-    return hashlib.sha256(stable_json(payload).encode("utf-8")).hexdigest()
+    return _measurement_payload_fingerprint(payload, relevant_cards)
+
+
+def _measurement_payload_fingerprint(
+    payload: Mapping[str, Any], cards: Sequence[tuple[str, str]],
+) -> str:
+    """Hash the unchanged canonical payload without serializing cards twice."""
+    digest = hashlib.sha256()
+    digest.update(b"{")
+    for index, field in enumerate(sorted(payload)):
+        if index:
+            digest.update(b",")
+        digest.update((stable_json(field) + ":").encode("utf-8"))
+        if field != "cards":
+            digest.update(stable_json(payload[field]).encode("utf-8"))
+            continue
+        digest.update(b"[")
+        for card_index, (_identity, serialized) in enumerate(cards):
+            if card_index:
+                digest.update(b",")
+            digest.update(serialized.encode("utf-8"))
+        digest.update(b"]")
+    digest.update(b"}")
+    return digest.hexdigest()
+
+
+def _bundle_measurement_fingerprints(
+    frontier: Mapping[str, Any], bundle_policies: Sequence[Mapping[str, Any]],
+) -> dict[str, str]:
+    """Index current family references once within one validation invocation."""
+    cards = frontier.get("cards")
+    if not isinstance(cards, list):
+        raise WorkSelectionBundleError(
+            "Card frontier lacks complete bundle card rows"
+        )
+    family_cards: dict[str, set[int]] = {}
+    for index, card in enumerate(cards):
+        families = set(card.get("minimum_known_blocker_set", []))
+        for ability in card.get("abilities", []):
+            families.update(
+                ability.get("blockers", {}).get("canonical_family_ids", [])
+            )
+            for residual in ability.get("residuals", []):
+                families.update(residual.get("family_ids", []))
+        for family in families:
+            family_cards.setdefault(family, set()).add(index)
+    fingerprints = {}
+    for bundle in bundle_policies:
+        if bundle.get("measurement_probe_id") is None:
+            continue
+        indices: set[int] = set()
+        for family in bundle["member_family_ids"]:
+            indices.update(family_cards.get(str(family), ()))
+        fingerprints[str(bundle["bundle_id"])] = _bundle_measurement_fingerprint(
+            frontier, bundle, [cards[index] for index in sorted(indices)]
+        )
+    return fingerprints
 
 
 def candidate_frontier_measurements(
@@ -659,13 +714,7 @@ def validated_candidate_frontier_measurements(
     *,
     completed_bundle_ids: Collection[str] = (),
 ) -> list[dict[str, Any]]:
-    fingerprints = {
-        str(bundle["bundle_id"]): bundle_measurement_fingerprint(
-            frontier, bundle
-        )
-        for bundle in bundle_policies
-        if bundle.get("measurement_probe_id") is not None
-    }
+    fingerprints = _bundle_measurement_fingerprints(frontier, bundle_policies)
     try:
         measurements = validate_work_selection_cohort_measurements(
             cohort_measurement_artifact,

@@ -121,6 +121,80 @@ from scripts.work_selection_cohort_measurements import (
 ROOT = Path(__file__).resolve().parents[1]
 
 
+class BundleFingerprintBatchTests(unittest.TestCase):
+    def fixture(self):
+        import quorune.work_selection_bundles as owner
+
+        def ability(family, *, residual=False):
+            return {
+                "blockers": {"canonical_family_ids": [] if residual else [family]},
+                "residuals": [{"family_ids": [family]}] if residual else [],
+            }
+        cards = [
+            {"oracle_id": "same", "card_name": "Second Unicode \u00e9", "abilities": [ability("b"), ability("a", residual=True)]},
+            {"oracle_id": "same", "card_name": "First", "abilities": [ability("a"), ability("b")]},
+            {"oracle_id": "blockers-only", "minimum_known_blocker_set": ["a"], "abilities": []},
+            {"oracle_id": "unrelated", "abilities": [ability("other")]},
+        ]
+        frontier = {"schema_version": 1, "cards": cards,
+            "family_candidates": [{"family_id": "a"}, {"family_id": "b"}]}
+        bundles = [
+            {"bundle_id": "fixture:" + key, "member_family_ids": members,
+             "measurement_probe_id": "fixture:probe", "shared_grammar": 'quoted "cards":[] grammar'}
+            for key, members in (("a", ["a"]), ("b", ["b"]), ("both", ["b", "a"]), ("empty", ["missing"]))
+        ]
+        return owner, frontier, bundles
+
+    def reference(self, owner, frontier, bundle):
+        members = sorted(str(value) for value in bundle["member_family_ids"])
+        projected = [owner._measurement_card_projection(card, set(members))
+                     for card in frontier["cards"]]
+        cards = sorted((card for card in projected if card is not None),
+            key=lambda card: (str(card.get("oracle_id") or ""), stable_json(card)))
+        families = {str(row.get("family_id") or ""): row
+                    for row in frontier.get("family_candidates", [])}
+        payload = {
+            "schema_version": owner._MEASUREMENT_FINGERPRINT_SCHEMA,
+            "measurement_method": owner._MEASUREMENT_METHOD,
+            "frontier_contract": {field: frontier.get(field) for field in (
+                "schema_version", "algorithm_version", "boundary", "profile",
+                "commander_legal_only", "complete_snapshot_claimed")},
+            "cohort_boundary": {field: bundle.get(field) for field in (
+                "bundle_id", "member_family_ids", "canonical_owner_ids", "source_contexts",
+                "normalized_literal_parameters", "shared_dependencies", "shared_grammar",
+                "explicit_exclusions", "measurement_probe_id")},
+            "family_rows": [families.get(member) for member in members], "cards": cards,
+        }
+        return hashlib.sha256(stable_json(payload).encode("utf-8")).hexdigest()
+
+    def test_batch_matches_independent_canonical_payload_and_all_reference_paths(self):
+        owner, frontier, bundles = self.fixture()
+        actual = owner._bundle_measurement_fingerprints(frontier, bundles)
+        for bundle in bundles:
+            with self.subTest(bundle=bundle["bundle_id"]):
+                expected = self.reference(owner, frontier, bundle)
+                self.assertEqual(expected, actual[bundle["bundle_id"]])
+                self.assertEqual(expected, bundle_measurement_fingerprint(frontier, bundle))
+        reversed_frontier = {**frontier, "cards": list(reversed(frontier["cards"]))}
+        self.assertEqual(actual, owner._bundle_measurement_fingerprints(reversed_frontier, bundles))
+
+    def test_next_batch_reads_relevant_mutations_and_ignores_unrelated_cards(self):
+        owner, frontier, bundles = self.fixture()
+        original = owner._bundle_measurement_fingerprints(frontier, bundles)
+        frontier["cards"][-1]["card_name"] = "Changed unrelated card"
+        self.assertEqual(original, owner._bundle_measurement_fingerprints(frontier, bundles))
+        frontier["cards"][2]["hard_construction_failure"] = True
+        changed = owner._bundle_measurement_fingerprints(frontier, bundles)
+        self.assertNotEqual(original["fixture:a"], changed["fixture:a"])
+        self.assertNotEqual(original["fixture:both"], changed["fixture:both"])
+        self.assertEqual(original["fixture:b"], changed["fixture:b"])
+        frontier["cards"].append({"oracle_id": "new", "abilities": [
+            {"residuals": [{"family_ids": ["b"]}]}]})
+        self.assertNotEqual(changed["fixture:b"], owner._bundle_measurement_fingerprints(frontier, bundles)["fixture:b"])
+        with self.assertRaisesRegex(owner.WorkSelectionBundleError, "complete bundle"):
+            owner._bundle_measurement_fingerprints({"cards": {}}, bundles)
+
+
 class NonHarvestSupersessionTests(unittest.TestCase):
     def proposals(self):
         from scripts.harvest_outcome_history import _durable_main_tip

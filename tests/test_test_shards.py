@@ -70,6 +70,7 @@ class TestShardManifestTests(unittest.TestCase):
             [row["shard"] for row in rows],
         )
         self.assertIn("generated-validation", [row["shard"] for row in rows])
+        self.assertEqual("generated-validation", rows[0]["shard"])
         self.assertEqual(
             [
                 name
@@ -197,6 +198,7 @@ class TestShardManifestTests(unittest.TestCase):
             timings,
         )
         validate_partition(balanced)
+        self.assertEqual("generated-validation", balanced["execution_order"][0])
         self.assertEqual(len(original_functional), summary["functional_shards"])
         self.assertTrue(
             all(

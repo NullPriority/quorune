@@ -401,7 +401,7 @@ def rebalance_primary_shards(
             name,
         ),
     )
-    execution_order.append(GENERATED_VALIDATION_SHARD)
+    execution_order.insert(0, GENERATED_VALIDATION_SHARD)
     balanced = {
         "schema_version": manifest["schema_version"],
         "execution_order": execution_order,

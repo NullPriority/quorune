@@ -385,6 +385,11 @@ The cloud job publishes and restores this safe owner's content-keyed receipt
 across commits just like the other reusable owners. A generated-output-only
 follow-up therefore reuses the source checkpoint's cohort measurement instead
 of repeating the database-backed probe.
+During one selection invocation, fingerprint validation indexes the current
+frontier's blocker and residual family references once. It hashes each relevant
+card projection once while preserving the existing canonical payload, sorting
+and fingerprint identity. A later invocation rebuilds that index from current
+inputs; stale measurement rejection still compares the full declared cohort.
 The rules-scheduler owner also maintains
 `coverage/harvest-outcome-history.json`. Existing historical rows retain their
 immutable Git provenance, while new semantic transitions use base and head
@@ -910,6 +915,10 @@ and uses the sequential backend on both operating systems. The complete
 Windows and nightly OS partitions therefore execute every discovered test
 module exactly once per platform. `windows-compat` remains an intentionally
 overlapping focused suite and never runs alongside the full Windows matrix.
+The launch order places generated validation first so its measured long
+sequential workload overlaps functional shards instead of starting in the last
+wave. Worker counts, matrix limits, module assignments and exact collections
+remain governed by the same policies.
 
 Keep functional shard weights close enough to use parallel capacity. Semantic
 overlays remain coherent by subsystem; primary execution shards may mix those

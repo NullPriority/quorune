@@ -1,6 +1,7 @@
 {
   "schema_version": 2,
   "execution_order": [
+    "generated-validation",
     "functional-01",
     "functional-07",
     "functional-03",
@@ -12,8 +13,7 @@
     "functional-06",
     "functional-12",
     "functional-02",
-    "functional-11",
-    "generated-validation"
+    "functional-11"
   ],
   "primary_shards": {
     "functional-01": [
