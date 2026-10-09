@@ -5262,8 +5262,8 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v275-batched-card-support",
-      "compiler_version": "oracle-ir-v275",
+      "transition_id": "oracle-ir-v276-batched-card-support",
+      "compiler_version": "oracle-ir-v276",
       "bundle_id": "bundle:batched-card-support",
       "candidate_ids": [
         "bundle:fixed-counted-activation-zone-cost",

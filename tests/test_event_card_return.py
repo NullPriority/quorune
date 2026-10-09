@@ -54,6 +54,34 @@ class EventCardReturnCompilerTests(unittest.TestCase):
                 binding = bind_card_program_runtime(program, capability_registry=registry, profile="commander_review")
                 self.assertTrue(binding["strict_capability_ready"], binding["blockers"])
 
+    def test_event_return_with_attached_regeneration_closes_actual_handler_dependency(self):
+        from dataclasses import replace
+        from test_fixed_optional_mana_payment_triggers import payment_record
+        from quorune.card_programs.adapters import compile_card_program
+        from quorune.card_programs import bind_card_program_runtime
+        record = replace(payment_record(
+            "Enchant creature\nSacrifice a Forest: Regenerate enchanted creature.\n"
+            "When this Aura is put into a graveyard from the battlefield, return it to its owner's hand.",
+            type_line="Enchantment — Aura",
+        ), keywords=("Enchant",))
+        registry = load_default_capability_registry()
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "regeneration-binding.sqlite3"
+            build_fixture_database([ROOT / "tests/fixtures/event-card-return.json"], path)
+            with CardDatabase(path) as db:
+                program = compile_card_program(db, record, capability_registry=registry, capability_profile="commander_review", trust_level="trusted")
+                binding = bind_card_program_runtime(program, capability_registry=registry, profile="commander_review")
+                self.assertTrue(binding["strict_capability_ready"], binding["blockers"])
+
+    def test_source_less_probe_keeps_literal_self_return_closed(self):
+        from quorune.compiler.event_card_return_templates import self_death_return_binding
+        from quorune.compiler.fixed_counter_trigger_nodes import fixed_counter_trigger_binding
+        text = "When this creature dies, return it to its owner's hand."
+        self.assertIsNotNone(self_death_return_binding(text))
+        self.assertIsNotNone(fixed_counter_trigger_binding(text))
+        self.assertIsNone(self_death_return_binding("When Mortus Strider dies, return it to its owner's hand."))
+        self.assertIsNone(self_death_return_binding("When this creature dies, return another card to its owner's hand."))
+
     def test_departed_return_effect_requires_exact_event_card_and_counter(self):
         intent = event_card_return_intent({**event_card_return_effect(), 'card': 'EVENT-CARD', 'expected_zone_change_counter': 2}, actor='A', reason='Witness')
         self.assertEqual('EVENT-CARD', intent.object_ref)

@@ -169,6 +169,13 @@ def build_plan(
                  "-p", "test_fixed_counter_event_triggers.py", "-k",
                  "test_tap_state_target_body_is_accepted_by_corpus_assurance"),
             ))
+        if "quorune/compiler/event_card_return_templates.py" in paths:
+            steps.append(QuickStep(
+                "event-return-source-less-probe-contract",
+                (python, "-m", "unittest", "discover", "-s", "tests",
+                 "-p", "test_event_card_return.py", "-k",
+                 "test_source_less_probe_keeps_literal_self_return_closed"),
+            ))
         if "test_capability_implementation_mutations" in selected_modules:
             steps.append(QuickStep(
                 "mutation-patch-target-integrity",

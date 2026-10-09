@@ -95,6 +95,7 @@ def self_regeneration_node_capabilities(
             return ()
         return (
             "permanent.regeneration.fixed_effect",
+            "permanent.regeneration.self_activation",
             "attachment.reference.current_or_lki",
         )
     if (
@@ -106,6 +107,7 @@ def self_regeneration_node_capabilities(
     assert target_schema is not None
     return (
         "permanent.regeneration.fixed_effect",
+        "permanent.regeneration.self_activation",
         *direct_target_predicate_capabilities(target_schema),
         "target.revalidate_resolution",
     )

@@ -1457,6 +1457,9 @@ characteristic amounts through their existing counter owner. A resolved zero
 amount is a paid no-op; malformed and negative amounts are rejected. Counter
 source attribution stays attached to the original resolving instruction. Group,
 set, and player counter amounts remain outside this declared-amount boundary.
+Attached and targeted regeneration nodes retain the registered shield handler
+dependency beside the fixed-effect capability, including when a newly closed
+event-return sibling makes the complete card reachable.
 Undefined X, X-dependent target domains or cardinalities, variable activation
 costs, nonordinary X mana costs, linked or source characteristics, open arithmetic,
 unrepresented result owners, and nested modal declarations remain residual.

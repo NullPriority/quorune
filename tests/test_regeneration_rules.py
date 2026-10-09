@@ -350,6 +350,7 @@ class RegenerationCompilerTests(unittest.TestCase):
         self.assertEqual(
             {
                 "permanent.regeneration.fixed_effect",
+                "permanent.regeneration.self_activation",
                 "target.revalidate_resolution",
             },
             set(
@@ -371,6 +372,7 @@ class RegenerationCompilerTests(unittest.TestCase):
         self.assertEqual(
             {
                 "permanent.regeneration.fixed_effect",
+                "permanent.regeneration.self_activation",
                 "attachment.reference.current_or_lki",
             },
             set(

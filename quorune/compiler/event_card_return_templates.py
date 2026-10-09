@@ -13,7 +13,10 @@ def self_death_return_binding(material_line: str, *, card_name: str | None = Non
     match = re.fullmatch(r'(?:When|Whenever) (?P<source>this creature|.+?) dies, (?P<body>.+)', material_line, re.I)
     if match is None or not (match['source'].casefold() == 'this creature' or card_name and SourceReferenceSpec(card_name).matches(match['source'])):
         return None
-    if not re.fullmatch(r"return (?:it|this card|" + SourceReferenceSpec(card_name or '').regex_pattern + r") to its owner['’]s hand\.?", match['body'], re.I):
+    subject = r"it|this card"
+    if card_name:
+        subject += "|" + SourceReferenceSpec(card_name).regex_pattern
+    if not re.fullmatch(r"return (?:" + subject + r") to its owner['’]s hand\.?", match['body'], re.I):
         return None
     return _spec('creature.dies.self', 'source_death_return', match['body'],
         'fixed-counter-source-death-return-v1', 'trigger-event-normalized-zone-change',
