@@ -8517,6 +8517,95 @@
       "status": "trusted"
     },
     {
+      "id": "trigger.event.normalized_target_announcement",
+      "version": 1,
+      "official_rules": [
+        "115.1",
+        "115.2",
+        "115.7",
+        "400.7",
+        "601.2c",
+        "601.2i",
+        "602.2b",
+        "603.2",
+        "603.3",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Publish one sealed public occurrence for each newly targeted permanent after authoritative cast, activation, triggered target selection, copy or retarget commit.",
+        "inputs": [
+          "Current stack controller, kind and targets",
+          "New targets minus prior target set",
+          "Current permanent incarnation and controller"
+        ],
+        "outputs": [
+          "One target occurrence per permanent and stack object",
+          "Qualified principal-correct typed trigger binding",
+          "Copy and retarget do not become spell casts"
+        ],
+        "exclusions": [
+          "Hidden-zone and player target subscriptions",
+          "First-time-each-turn or other unrepresented trigger limits",
+          "Independently unsupported results and whole-card siblings"
+        ]
+      },
+      "dependencies": [
+        "trigger.placement.apnap",
+        "target.revalidate_resolution"
+      ],
+      "implementation_components": [
+        "quorune.rules.target_announcements.TargetAnnouncement",
+        "quorune.rules.target_announcements.dispatch_target_announcements",
+        "quorune.compiler.target_announcement_bindings.target_announcement_binding_spec",
+        "quorune.compiler.trigger_result_templates.binding_effect_template"
+      ],
+      "positive_tests": [
+        "test_target_occurrence_pins_stack_controller_and_each_current_object_once",
+        "test_actual_targeted_cast_and_ability_each_trigger_once_and_replay",
+        "test_actual_triggered_target_choice_announces_only_committed_target"
+      ],
+      "negative_tests": [
+        "test_current_phased_or_departed_target_creates_no_occurrence",
+        "test_cast_target_occurrence_never_appears_after_invalid_target_rollback",
+        "test_target_announcement_compiler_dependency_and_implementation_mutants_fail_closed"
+      ],
+      "interaction_tests": [
+        "test_actual_targeted_cast_and_ability_each_trigger_once_and_replay",
+        "test_copy_and_retarget_owner_publish_new_targets_without_creating_casts",
+        "test_actual_targeted_illusion_sacrifices_before_spell_and_replays"
+      ],
+      "multiplayer_tests": [
+        "test_opposing_stack_controller_and_target_controller_publish_private_optional_draw"
+      ],
+      "privacy_tests": [
+        "test_opposing_stack_controller_and_target_controller_publish_private_optional_draw",
+        "test_pending_target_draw_choice_loads_and_keeps_actor_private"
+      ],
+      "replay_tests": [
+        "test_actual_targeted_cast_and_ability_each_trigger_once_and_replay",
+        "test_opposing_stack_controller_and_target_controller_publish_private_optional_draw"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Independent compiler mutations block this capability, APNAP and target legality; public affected-object references and first-time modifiers remain residual.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Removing target dispatch prevents an actual registered targeted cast from generating its printed trigger and is killed; missing APNAP or target dependencies independently prevent compiler admission.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
       "id": "trigger.entry.fixed_kicked_result",
       "version": 1,
       "official_rules": [

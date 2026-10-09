@@ -823,6 +823,8 @@ def commit_activation(
     if duration_tracked:
         item.context["control_duration_snapshot"] = duration_snapshot.to_dict() if duration_snapshot is not None else None
     host.state.stack.append(item)
+    from ..target_announcements import dispatch_target_announcements
+    dispatch_target_announcements(host, item)
     collect_ward_occurrences(host, item)
     host._log(
         proposal.seat,

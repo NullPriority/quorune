@@ -1178,6 +1178,8 @@ def _dispatch_cast_events(
             sources=event_sources,
             trigger_batch=trigger_batch,
         )
+    from ..target_announcements import dispatch_target_announcements
+    dispatch_target_announcements(host, item, trigger_batch=trigger_batch)
     enqueue_trigger_batch(host, trigger_batch)
 
 

@@ -1446,7 +1446,14 @@
         "tests/test_kicked_entry_triggers.py",
         "tests/fixtures/kicked-entry-triggers.json",
         "quorune/zone_transitions.py",
-        "quorune/rules/token_creation_capability_shapes.py"
+        "quorune/rules/token_creation_capability_shapes.py",
+        "quorune/rules/target_announcements.py",
+        "quorune/compiler/target_announcement_bindings.py",
+        "quorune/compiler/trigger_result_templates.py",
+        "quorune/spell_copy_engine_adapter.py",
+        "quorune/selection/targeting.py",
+        "tests/test_target_announcements.py",
+        "tests/fixtures/target-announcements.json"
       ],
       "test_modules": [
         "test_activated_draw_abilities",
@@ -1461,7 +1468,11 @@
         "test_counted_activation_costs",
         "test_kicked_entry_triggers",
         "test_kicker_rules",
-        "test_zone_trigger_events"
+        "test_zone_trigger_events",
+        "test_target_announcements",
+        "test_copy_objects",
+        "test_fixed_counter_event_triggers",
+        "test_fixed_optional_mana_payment_triggers"
       ]
     },
     {

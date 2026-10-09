@@ -61,6 +61,7 @@
     "tests/fixtures/static-action-permission-cards.json",
     "tests/fixtures/station-rules-cards.json",
     "tests/fixtures/storm-cards.json",
+    "tests/fixtures/target-announcements.json",
     "tests/fixtures/temporary-declaration-restriction-cards.json",
     "tests/fixtures/token-copy-boundary-cards.json",
     "tests/fixtures/token-copy-recipe-cards.json",

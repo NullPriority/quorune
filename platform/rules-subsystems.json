@@ -4740,6 +4740,42 @@
           "measurement_probe_id": "stack-controller-payment-existing-owner-v1"
         },
         {
+          "bundle_id": "bundle:fixed-target-announcement",
+          "member_family_ids": [
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding"
+          ],
+          "canonical_owner_ids": [
+            "capability:trigger.event.normalized_target_announcement",
+            "component:quorune.rules.target_announcements.dispatch_target_announcements",
+            "component:quorune.compiler.target_announcement_bindings.target_announcement_binding_spec"
+          ],
+          "source_contexts": [
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "source-or-controlled-permanent-targeted",
+            "opposing-stack-controller",
+            "one-new-target-occurrence"
+          ],
+          "shared_dependencies": [
+            "trigger.placement.apnap",
+            "target.revalidate_resolution"
+          ],
+          "shared_grammar": "Newly targeted current permanents after authoritative casts, abilities, copies and target changes, with independently closed consequences and separate spell-cast-only Heroic subscriptions.",
+          "estimated_implementation_hours": 4,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Retain a measured target occurrence component in one multi-mechanic distinct-net200 delivery batch, proving actual accepted targeting commands and source sacrifice identity.",
+          "explicit_exclusions": [
+            "Hidden-zone and player target subscriptions",
+            "First-time or once-per-turn trigger limits",
+            "Unrepresented affected-object references or independent results and whole-card siblings"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-target-announcement-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:fixed-kicked-entry-result",
           "member_family_ids": [
             "event_binding:intervening-if-and-reflexive-trigger-grammar",

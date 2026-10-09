@@ -17,6 +17,7 @@ from ..continuous_conditions import (
 from ..rules.capabilities import CapabilityRegistry
 from .dependency_gate import dependency_gate
 from .modal_templates import FIXED_NONREPEATING_MODAL_MECHANIC
+from .trigger_result_templates import binding_effect_template
 from .ir_model import OracleNode, OracleResidual, SourceSpan, append_residual
 from .fixed_source_combat_growth import (
     FIXED_SOURCE_COMBAT_GROWTH_TEMPLATE_IDS,
@@ -340,6 +341,7 @@ class FixedCounterTriggerEvent(str, Enum):
     SOURCE_CYCLED = "card.cycled.self"
     CARD_LEAVE_GRAVEYARD = "card.leave_graveyard"
     CARD_DISCARDED = "card.discarded"
+    TARGET_ANNOUNCED = 'object.became_target'
     PERMANENT_LEAVE = "permanent.leave"
     PERMANENT_SACRIFICED = "permanent.sacrificed"
     SOURCE_SACRIFICED = "permanent.sacrificed.self"
@@ -1197,51 +1199,7 @@ def _event_runtime_coverage(
     return tuple(dict.fromkeys(values))
 
 
-def _binding_effect_template(
-    binding: FixedCounterTriggerBinding,
-    body: str,
-    *,
-    card_name: str,
-    effect_template: Callable[..., tuple[
-        str | None,
-        tuple[Mapping[str, Any], ...],
-        Mapping[str, Any] | None,
-        tuple[str, ...],
-    ]],
-) -> tuple[
-    tuple[
-        str | None,
-        tuple[Mapping[str, Any], ...],
-        Mapping[str, Any] | None,
-        tuple[str, ...],
-    ],
-    bool,
-]:
-    event_result = tap_state_bound_result(binding, body, effect_template=effect_template, card_name=card_name)
-    if event_result is not None:
-        return event_result
-    from .scalar_effect_amounts import scalar_effect_amount_template
-    scalar = scalar_effect_amount_template(body, source_name=card_name,
-        event=binding.event.value, source_event=binding.variant.startswith("source_"),
-        compile_fixed=lambda text: effect_template(text, card_name=card_name))
-    if scalar is not None:
-        return scalar, False
-    from .token_copy_templates import token_copy_recipe_template
-    copy_recipe = token_copy_recipe_template(body, source_name=card_name, source_is_permanent=True, event=binding.event.value)
-    if copy_recipe is not None:
-        return copy_recipe.compiled(), False
-    specialized = fixed_source_combat_growth_effect_template(
-        body,
-        event=binding.event.value,
-        variant=binding.variant,
-    )
-    if specialized[0] is not None:
-        return specialized, True
-    if binding.variant == "fixed_entry_return_requirement":
-        entry_return = fixed_entry_return_effect_template(body)
-        if entry_return[0] is not None:
-            return entry_return, True
-    return effect_template(body, card_name=card_name), False
+_binding_effect_template = binding_effect_template
 
 
 def fixed_counter_event_trigger_node(

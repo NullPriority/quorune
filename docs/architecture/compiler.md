@@ -497,6 +497,18 @@ Alternative/compound/dynamic costs, random/named payments, paid-object or linked
 results, reflexive triggers, nested/repeated choices, unsupported leaf owners
 and wider grammar remain residual.
 
+`rules/target_announcements.py` publishes a sealed public occurrence for each
+newly targeted permanent after an authoritative cast, activation, triggered
+ability target choice, stack copy or target change. Duplicate target roles
+produce one occurrence; retaining a prior target produces none. The compiler
+keeps targeted-object controller and announcing-stack controller distinct,
+with source-bound results separate from results for another affected object.
+Ordinary Heroic subscriptions still use the spell-cast occurrence, so copying,
+activating or changing targets does not become a new cast. Source sacrifice
+results share the existing incarnation- and controller-checked owner. Hidden
+and player targets, first-time limits and unknown result references remain
+residual.
+
 `compiler/kicked_entry_trigger_nodes.py` binds a self-entry `if it was
 kicked` ability to the sealed entry occurrence's paid cast option. Casting pays
 one fixed kicker through its existing owner; target placement, token creation,
