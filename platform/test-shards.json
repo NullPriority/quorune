@@ -369,6 +369,7 @@
       "test_protocol",
       "test_riot_rules",
       "test_server_app",
+      "test_source_maintenance",
       "test_stack_rules",
       "test_trigger_batches",
       "test_typed_grant_carriers",

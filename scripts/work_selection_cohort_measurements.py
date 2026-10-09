@@ -218,6 +218,7 @@ _PROBE_CONTROLLER_PROGRAM = "controller-program-composition-existing-owner-v1"
 _PROBE_COUNTED_LIBRARY_SEARCH = "fixed-counted-library-search-existing-owner-v1"
 _PROBE_TYPED_GRANT_CARRIERS = "typed-layer-six-grant-carriers-existing-owner-v1"
 _PROBE_SOURCE_SELF_REFERENCES = "source-self-reference-closure-existing-owner-v1"
+_PROBE_SOURCE_MAINTENANCE = "fixed-source-maintenance-existing-owner-v1"
 _PROBE_DECLARED_EFFECT_AMOUNT = "declared-effect-amount-existing-owner-v1"
 _PROBE_FIXED_ANIMATION = "fixed-resolution-animation-existing-owner-v1"
 _PROBE_FIXED_EFFECT_PAYMENT = "fixed-resolution-payment-existing-owner-v1"
@@ -589,6 +590,7 @@ _PROBE_IDS = {
     _PROBE_COUNTED_LIBRARY_SEARCH,
     _PROBE_TYPED_GRANT_CARRIERS,
     _PROBE_SOURCE_SELF_REFERENCES,
+    _PROBE_SOURCE_MAINTENANCE,
     _PROBE_DECLARED_EFFECT_AMOUNT,
     _PROBE_FIXED_ANIMATION,
     _PROBE_FIXED_EFFECT_PAYMENT,
@@ -1243,6 +1245,9 @@ def _matches_probe(
     card_record: Any | None = None,
     ability: Mapping[str, Any] | None = None,
 ) -> bool:
+    if probe_id == _PROBE_SOURCE_MAINTENANCE:
+        texts = (source, *(str(face.get('oracle_text') or '') for face in card_record.faces)) if card_record is not None else (source,)
+        return any(re.search(r'\b(?:When|At the beginning of)\b.*\bsacrifice\b', text, re.I) for text in texts)
     if probe_id == _PROBE_SOURCE_SELF_REFERENCES:
         if card_record is None:
             raise WorkSelectionCohortMeasurementError("Source-reference measurement requires original card context")
@@ -5391,7 +5396,7 @@ def _measurement(
             cohort_fingerprint=cohort_fingerprint, database=database,
         )
     if probe_id in {_PROBE_BOUND_EFFECT_PROGRAM, _PROBE_FIXED_CONTROL_UNTAP, _PROBE_ENTRY_DESIGNATIONS, _PROBE_ENTRY_DESIGNATIONS_V2, _PROBE_QUALIFIED_ZONE_EVENT,
-                    _PROBE_DECLARED_EFFECT_AMOUNT, _PROBE_FIXED_ANIMATION, _PROBE_FIXED_EFFECT_PAYMENT, _PROBE_STACK_CONTROLLER_PAYMENT, _PROBE_LINKED_EXILE_RETURN, _PROBE_SCALAR_EFFECT_AMOUNT, _PROBE_TOKEN_COPY_RECIPE, _PROBE_TAP_STATE_EVENT, _PROBE_PUBLIC_COLLECTION_QUANTITY, _PROBE_SOURCE_SELF_REFERENCES}:
+                    _PROBE_DECLARED_EFFECT_AMOUNT, _PROBE_FIXED_ANIMATION, _PROBE_FIXED_EFFECT_PAYMENT, _PROBE_STACK_CONTROLLER_PAYMENT, _PROBE_LINKED_EXILE_RETURN, _PROBE_SCALAR_EFFECT_AMOUNT, _PROBE_TOKEN_COPY_RECIPE, _PROBE_TAP_STATE_EVENT, _PROBE_PUBLIC_COLLECTION_QUANTITY, _PROBE_SOURCE_SELF_REFERENCES, _PROBE_SOURCE_MAINTENANCE}:
         return _bound_effect_program_measurement(
             frontier=frontier, bundle_id=bundle_id, probe_id=probe_id,
             cards_by_oracle_id=cards_by_oracle_id, coverage=coverage,
@@ -8214,6 +8219,7 @@ def _bound_effect_program_measurement(
         _PROBE_TAP_STATE_EVENT: "trigger.event.normalized_public_action",
         _PROBE_PUBLIC_COLLECTION_QUANTITY: None,
         _PROBE_SOURCE_SELF_REFERENCES: None,
+        _PROBE_SOURCE_MAINTENANCE: 'trigger.source.fixed_maintenance',
     }[probe_id]
     capabilities = {capability} if capability is not None else {
         "continuous.characteristics.query_count_modifier",

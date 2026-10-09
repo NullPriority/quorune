@@ -1488,7 +1488,11 @@
         "quorune/rules/fixed_effect_clause_shapes.py",
         "quorune/semantic_choices/intent_host.py",
         "quorune/semantic_choices/payments.py",
-        "tests/test_fixed_optional_mana_payment_triggers.py"
+        "tests/test_fixed_optional_mana_payment_triggers.py",
+        "quorune/source_maintenance.py",
+        "quorune/compiler/source_maintenance_nodes.py",
+        "quorune/semantic_choices/source_maintenance.py",
+        "tests/test_source_maintenance.py"
       ],
       "test_modules": [
         "test_fixed_counter_event_triggers",
@@ -1496,7 +1500,8 @@
         "test_fixed_optional_mana_payment_triggers",
         "test_choice_forms",
         "test_semantic_choice_model",
-        "test_semantic_choice_characterization"
+        "test_semantic_choice_characterization",
+        "test_source_maintenance"
       ]
     },
     {

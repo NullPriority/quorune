@@ -1348,6 +1348,7 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
         FIXED_OPTIONAL_MANA_PAYMENT_CAPABILITY: (
             FIXED_OPTIONAL_MANA_PAYMENT_MECHANIC
         ),
+        "trigger.source.fixed_maintenance": "fixed-source-maintenance",
         "zone.mill.fixed": "mill",
         IMPULSE_ACCESS_CAPABILITY_ID: IMPULSE_ACCESS_MECHANIC_ID,
         "library.select.fixed_controller": (

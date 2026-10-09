@@ -16,6 +16,8 @@ from scripts.pr_evidence import (
     build_pr_evidence,
     render_pr_evidence_markdown,
     semantic_evidence_metadata,
+    require_support_delivery_floor,
+    PullRequestEvidenceError,
 )
 
 
@@ -77,7 +79,7 @@ Validate pull-request descriptions before expensive certification jobs begin.
 
 ## Safety checklist
 
-- [x] The change is one coherent subsystem-sized unit; unrelated cleanup is excluded.
+- [x] Each mechanic has a reviewable ownership and evidence boundary; unrelated cleanup is excluded.
 - [x] Advertised actions and accepted commands use the same authoritative legality path, or this is N/A with a reason above.
 - [x] No card-name, collector-number, set-code, or Oracle-ID behavior was added to the generic runtime.
 - [x] No direct `GameState` write was added outside a declared owner.
@@ -91,6 +93,29 @@ Validate pull-request descriptions before expensive certification jobs begin.
 
 
 class PullRequestBodyPolicyTests(unittest.TestCase):
+    def test_support_delivery_requires_200_actual_net_whole_cards(self) -> None:
+        catalog = {"work_selection": {"coverage_family": {"minimum_pr_complete_card_gain": 200}}}
+        evidence = {"cards": {"capability_closed": 199},
+            "source_metadata": {"bundle_id": "bundle:combined-mechanics", "expected_complete_card_gain": 400}}
+        with self.assertRaisesRegex(PullRequestEvidenceError, "199.*200"):
+            require_support_delivery_floor(evidence, catalog)
+        evidence["cards"]["capability_closed"] = 200
+        require_support_delivery_floor(evidence, catalog)
+        evidence["cards"]["capability_closed"] = 250
+        require_support_delivery_floor(evidence, catalog)
+
+    def test_support_floor_cannot_be_avoided_by_metadata_or_ability_counts(self) -> None:
+        catalog = {"work_selection": {"coverage_family": {"minimum_pr_complete_card_gain": 200}}}
+        evidence = {"cards": {"capability_closed": 199}, "abilities": {"oracle_exact_node_delta": 1000},
+            "source_metadata": {"bundle_id": None, "expected_complete_card_gain": None}}
+        with self.assertRaisesRegex(PullRequestEvidenceError, "whole-card delivery"):
+            require_support_delivery_floor(evidence, catalog)
+        evidence["cards"]["capability_closed"] = 0
+        require_support_delivery_floor(evidence, catalog)
+        catalog["work_selection"]["coverage_family"]["minimum_pr_complete_card_gain"] = 199
+        with self.assertRaisesRegex(PullRequestEvidenceError, "minimum of 200"):
+            require_support_delivery_floor(evidence, catalog)
+
     def test_semantic_evidence_omits_internal_compiler_guard(self) -> None:
         catalog = json.loads(
             (ROOT / "platform" / "rules-subsystems.json").read_text(
@@ -148,12 +173,10 @@ class PullRequestBodyPolicyTests(unittest.TestCase):
         self.assertEqual(set(), self.codes(valid_body()))
 
     def test_untouched_template_comment_is_rejected(self) -> None:
+        comment = TEMPLATE.split("<!--", 1)[1].split("-->", 1)[0]
         body = valid_body().replace(
             "Validate pull-request descriptions",
-            "<!-- CI validates this form. Remove every instructional comment, "
-            "fill every evidence row, explain each N/A, and check every safety "
-            "assertion. Explain the durable outcome and why this is one coherent "
-            "change. -->\n\n"
+            "<!--" + comment + "-->\n\n"
             "Validate pull-request descriptions",
         )
         self.assertIn("template-comment", self.codes(body))
@@ -323,7 +346,7 @@ class PullRequestBodyPolicyTests(unittest.TestCase):
 
     def test_unchecked_safety_assertion_is_rejected(self) -> None:
         body = valid_body().replace(
-            "- [x] The change is one coherent", "- [ ] The change is one coherent"
+            "- [x] Each mechanic has a reviewable", "- [ ] Each mechanic has a reviewable"
         )
         self.assertIn("unchecked-safety", self.codes(body))
 

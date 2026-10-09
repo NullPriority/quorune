@@ -147,6 +147,28 @@ def _version_delta(base: str, head: str) -> int | None:
     return int(head_match["version"]) - int(base_match["version"])
 
 
+def require_support_delivery_floor(
+    evidence: Mapping[str, Any], catalog: Mapping[str, Any],
+) -> None:
+    """Gate aggregate delivered support using immutable whole-card receipts."""
+    try:
+        minimum = catalog["work_selection"]["coverage_family"]["minimum_pr_complete_card_gain"]
+        actual = evidence["cards"]["capability_closed"]
+        metadata = evidence["source_metadata"]
+    except (KeyError, TypeError) as exc:
+        raise PullRequestEvidenceError("PR support delivery evidence is incomplete") from exc
+    if type(minimum) is not int or minimum < 200:
+        raise PullRequestEvidenceError("Support PRs require a minimum of 200 capability-closed cards")
+    if type(actual) is not int:
+        raise PullRequestEvidenceError("PR capability-closed card delta must be an integer")
+    support_delivery = metadata.get("bundle_id") is not None or actual > 0
+    if support_delivery and actual < minimum:
+        raise PullRequestEvidenceError(
+            f"Support PR delivers {actual} net capability-closed cards; {minimum} required. "
+            "Combine measured mechanics in this PR; ability or residual gains do not replace whole-card delivery."
+        )
+
+
 def _baseline_metrics(value: Mapping[str, Any]) -> dict[str, int]:
     try:
         metrics = {
@@ -658,6 +680,7 @@ def main() -> int:
     parser.add_argument("--base", default=os.environ.get("PR_BASE_SHA", "origin/main"))
     parser.add_argument("--head", default=os.environ.get("PR_HEAD_SHA", "HEAD"))
     parser.add_argument("--metadata", default=DEFAULT_METADATA_PATH)
+    parser.add_argument("--require-support-delivery", action="store_true")
     parser.add_argument(
         "--format", choices=("json", "markdown", "both"), default="both"
     )
@@ -671,6 +694,10 @@ def main() -> int:
             head_revision=args.head,
             metadata_path=args.metadata,
         )
+        if args.require_support_delivery:
+            require_support_delivery_floor(
+                evidence, _git_json(ROOT, evidence["exact_head_sha"], args.metadata)
+            )
         json_text = stable_json(evidence) + "\n"
         markdown_text = render_pr_evidence_markdown(evidence)
         if args.json_output:

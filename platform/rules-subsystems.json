@@ -350,6 +350,7 @@
       "starting_uncovered_high_risk_pairs": 0
     },
     "coverage_family": {
+      "minimum_pr_complete_card_gain": 200,
       "minimum_complete_card_gain": 50,
       "minimum_exact_ability_gain": 100,
       "minimum_material_residual_reduction": 100,
@@ -4737,6 +4738,45 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "stack-controller-payment-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:fixed-source-maintenance",
+          "member_family_ids": [
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding",
+            "target_or_choice:conditional-effect"
+          ],
+          "canonical_owner_ids": [
+            "capability:trigger.source.fixed_maintenance",
+            "component:quorune.compiler.source_maintenance_nodes.source_maintenance_node",
+            "component:quorune.semantic_choices.source_maintenance.prepare_source_maintenance",
+            "component:quorune.semantic_choices.fixed_effect_payment.complete_fixed_payment_cost"
+          ],
+          "source_contexts": [
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "fixed-entry-upkeep-or-end-step",
+            "closed-fixed-cost-or-mandatory-default",
+            "trigger-controller-and-source-incarnation"
+          ],
+          "shared_dependencies": [
+            "effect.choice.optional_fixed_mana_payment",
+            "trigger.placement.apnap",
+            "zone.change.destination_replacement"
+          ],
+          "shared_grammar": "Self-entry or fixed turn-step sacrifice of the original source unless its locked triggering controller pays one independently represented fixed cost.",
+          "estimated_implementation_hours": 4,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Measure original complete CardPrograms with strict capability/runtime binding; combine retained closed mechanics on the same branch until the distinct net delivery floor is met.",
+          "explicit_exclusions": [
+            "Variable, alternative, compound or linked costs",
+            "Reflexive results and independently unsupported siblings",
+            "Returned source incarnations and sacrifice of another controller permanent"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-source-maintenance-existing-owner-v1"
         },
         {
           "bundle_id": "bundle:fixed-resolution-payment",

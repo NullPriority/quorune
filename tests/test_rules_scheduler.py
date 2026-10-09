@@ -121,6 +121,20 @@ from scripts.work_selection_cohort_measurements import (
 ROOT = Path(__file__).resolve().parents[1]
 
 
+class SupportDeliveryPolicyTests(unittest.TestCase):
+    def test_pr_floor_is_separate_from_smaller_component_measurements(self):
+        from quorune.work_selection import _validated_coverage_policy
+
+        catalog = json.loads((ROOT / "platform/rules-subsystems.json").read_text(encoding="utf-8"))
+        coverage = catalog["work_selection"]["coverage_family"]
+        validated = _validated_coverage_policy(coverage)
+        self.assertEqual(200, validated["minimum_pr_complete_card_gain"])
+        self.assertLess(validated["minimum_complete_card_gain"], 200)
+        for value in (199, True, None):
+            with self.subTest(value=value), self.assertRaises(WorkSelectionError):
+                _validated_coverage_policy({**coverage, "minimum_pr_complete_card_gain": value})
+
+
 class BundleFingerprintBatchTests(unittest.TestCase):
     def fixture(self):
         import quorune.work_selection_bundles as owner

@@ -1119,15 +1119,21 @@ class WardPaymentChoiceHandler:
 
 
 class FixedEffectOptionalPaymentHandler(OptionalPaymentHandler):
-    """One registered owner preserves historical v1 and explicit v2 payloads."""
+    """One registered owner preserves historical v1 and versioned fixed costs."""
 
     def prepare(self,effect:Mapping[str,Any],context:SemanticChoiceContext)->SemanticChoicePreparation:
+        if effect.get('schema_version')==3:
+            from .source_maintenance import prepare_source_maintenance
+            return prepare_source_maintenance(effect,context)
         if effect.get('schema_version')==2:
             from .fixed_effect_payment import prepare_fixed_effect_payment
             return prepare_fixed_effect_payment(effect,context)
         return super().prepare(effect,context)
 
     def complete(self,continuation:SemanticChoiceContinuation,response:Mapping[str,Any],query:SemanticChoiceQuery)->SemanticChoiceCompletion:
+        if continuation.effect.get('schema_version')==3:
+            from .source_maintenance import complete_source_maintenance
+            return complete_source_maintenance(continuation,response,query)
         if continuation.effect.get('schema_version')==2:
             from .fixed_effect_payment import complete_fixed_effect_payment
             return complete_fixed_effect_payment(continuation,response,query)
@@ -1147,6 +1153,7 @@ PAYMENT_CHOICE_HANDLERS = (
         ),
         continuation_fields=(
             "player",
+            "source",
             "cost",
             "effects",
             "schema_version",

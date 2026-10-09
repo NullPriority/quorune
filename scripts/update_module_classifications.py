@@ -157,6 +157,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/activation_usage.py",
         "quorune/activation_condition_model.py",
         "quorune/abilities.py",
+        "quorune/source_maintenance.py",
         "quorune/cascade.py",
         "quorune/affected_permanents.py",
         "quorune/amass.py",

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "e5343055c1cd6d05e7266758018c0da5184fe20e27650b3f936e3f7306042620",
-  "declaration_source_fingerprint": "1dd61f574c9fcfa7d6064925f3928ce5947cd560426aba2310386d430df8773a",
+  "registry_fingerprint": "3f64359850255ab1ad90a97d9f2fc6772ba5e463951100b86a1a4bab8d9b7bc4",
+  "declaration_source_fingerprint": "5a5e29ce4c0176283f154e638bbed8722270ae3c1218afe64a1bdc529b75237d",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -74473,6 +74473,578 @@
       "applicability_note": "Replay a waiting untap trigger that is put on the stack before upkeep priority."
     },
     {
+      "capability_id": "trigger.source.fixed_maintenance",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_source_maintenance.SourceMaintenanceActionTests.test_trusted_avatar_payment_replacement_pending_resumes_once_and_replays",
+      "official_rule_ids": [
+        "118.3",
+        "118.12",
+        "118.12a",
+        "201.5",
+        "400.7",
+        "603.3",
+        "603.3a",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual registered printed-card commands preserve full costs, locked trigger controller, original source incarnation and canonical replacement continuations with independent expected results."
+    },
+    {
+      "capability_id": "trigger.source.fixed_maintenance",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_source_maintenance.SourceMaintenanceActionTests.test_trusted_granted_maintenance_uses_recipient_after_grant_source_leaves",
+      "official_rule_ids": [
+        "118.3",
+        "118.12",
+        "118.12a",
+        "201.5",
+        "400.7",
+        "603.3",
+        "603.3a",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The printed global grant creates a recipient-controller trigger with the recipient incarnation, and removal of the granting permanent after placement preserves accepted recipient sacrifice and exact replay."
+    },
+    {
+      "capability_id": "trigger.source.fixed_maintenance",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_source_maintenance.SourceMaintenanceActionTests.test_trusted_queued_mesa_retains_payer_after_source_control_changes",
+      "official_rule_ids": [
+        "118.3",
+        "118.12",
+        "118.12a",
+        "201.5",
+        "400.7",
+        "603.3",
+        "603.3a",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A normally discovered upkeep trigger retains its original payer after authoritative control transfer and cannot sacrifice the now-opposing permanent; accepted decline and pre-action replay preserve that result."
+    },
+    {
+      "capability_id": "trigger.source.fixed_maintenance",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_source_maintenance.SourceMaintenanceActionTests.test_trusted_sacred_mesa_priority_activation_then_controlled_pegasus_payment",
+      "official_rule_ids": [
+        "118.3",
+        "118.12",
+        "118.12a",
+        "201.5",
+        "400.7",
+        "603.3",
+        "603.3a",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual registered printed-card commands preserve full costs, locked trigger controller, original source incarnation and canonical replacement continuations with independent expected results."
+    },
+    {
+      "capability_id": "trigger.source.fixed_maintenance",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_source_maintenance.SourceMaintenanceChoiceTests.test_source_departure_blink_phasing_and_control_do_not_erase_payment",
+      "official_rule_ids": [
+        "118.3",
+        "118.12",
+        "118.12a",
+        "201.5",
+        "400.7",
+        "603.3",
+        "603.3a",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The registered payment handler preserves fixed cost, original source incarnation and locked controller authority for the bounded maintenance instruction."
+    },
+    {
+      "capability_id": "trigger.source.fixed_maintenance",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_source_maintenance.SourceMaintenanceActionTests.test_trusted_ball_lightning_every_players_end_step_and_blink_replays",
+      "official_rule_ids": [
+        "118.3",
+        "118.12",
+        "118.12a",
+        "201.5",
+        "400.7",
+        "603.3",
+        "603.3a",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual registered printed-card commands preserve full costs, locked trigger controller, original source incarnation and canonical replacement continuations with independent expected results."
+    },
+    {
+      "capability_id": "trigger.source.fixed_maintenance",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_source_maintenance.SourceMaintenanceActionTests.test_trusted_granted_maintenance_uses_recipient_after_grant_source_leaves",
+      "official_rule_ids": [
+        "118.3",
+        "118.12",
+        "118.12a",
+        "201.5",
+        "400.7",
+        "603.3",
+        "603.3a",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The printed global grant creates a recipient-controller trigger with the recipient incarnation, and removal of the granting permanent after placement preserves accepted recipient sacrifice and exact replay."
+    },
+    {
+      "capability_id": "trigger.source.fixed_maintenance",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_source_maintenance.SourceMaintenanceActionTests.test_trusted_queued_mesa_retains_payer_after_source_control_changes",
+      "official_rule_ids": [
+        "118.3",
+        "118.12",
+        "118.12a",
+        "201.5",
+        "400.7",
+        "603.3",
+        "603.3a",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A normally discovered upkeep trigger retains its original payer after authoritative control transfer and cannot sacrifice the now-opposing permanent; accepted decline and pre-action replay preserve that result."
+    },
+    {
+      "capability_id": "trigger.source.fixed_maintenance",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_source_maintenance.SourceMaintenanceCompilerTests.test_maintenance_dependency_and_source_guard_mutants_fail_closed",
+      "official_rule_ids": [
+        "118.3",
+        "118.12",
+        "118.12a",
+        "201.5",
+        "400.7",
+        "603.3",
+        "603.3a",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual registered printed-card commands preserve full costs, locked trigger controller, original source incarnation and canonical replacement continuations with independent expected results."
+    },
+    {
+      "capability_id": "trigger.source.fixed_maintenance",
+      "evidence_class": "negative",
+      "test_id": "tests.test_source_maintenance.SourceMaintenanceChoiceTests.test_malformed_payment_and_wrong_stack_actor_fail_closed",
+      "official_rule_ids": [
+        "118.3",
+        "118.12",
+        "118.12a",
+        "201.5",
+        "400.7",
+        "603.3",
+        "603.3a",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The registered payment handler preserves fixed cost, original source incarnation and locked controller authority for the bounded maintenance instruction."
+    },
+    {
+      "capability_id": "trigger.source.fixed_maintenance",
+      "evidence_class": "negative",
+      "test_id": "tests.test_source_maintenance.SourceMaintenanceChoiceTests.test_source_is_revalidated_after_choice_without_changing_stack_payer",
+      "official_rule_ids": [
+        "118.3",
+        "118.12",
+        "118.12a",
+        "201.5",
+        "400.7",
+        "603.3",
+        "603.3a",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The registered payment handler preserves fixed cost, original source incarnation and locked controller authority for the bounded maintenance instruction."
+    },
+    {
+      "capability_id": "trigger.source.fixed_maintenance",
+      "evidence_class": "negative",
+      "test_id": "tests.test_source_maintenance.SourceMaintenanceCompilerTests.test_maintenance_dependency_and_source_guard_mutants_fail_closed",
+      "official_rule_ids": [
+        "118.3",
+        "118.12",
+        "118.12a",
+        "201.5",
+        "400.7",
+        "603.3",
+        "603.3a",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual registered printed-card commands preserve full costs, locked trigger controller, original source incarnation and canonical replacement continuations with independent expected results."
+    },
+    {
+      "capability_id": "trigger.source.fixed_maintenance",
+      "evidence_class": "negative",
+      "test_id": "tests.test_source_maintenance.SourceMaintenanceCompilerTests.test_maintenance_shape_rejects_missing_source_wrong_payer_and_target",
+      "official_rule_ids": [
+        "118.3",
+        "118.12",
+        "118.12a",
+        "201.5",
+        "400.7",
+        "603.3",
+        "603.3a",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual registered printed-card commands preserve full costs, locked trigger controller, original source incarnation and canonical replacement continuations with independent expected results."
+    },
+    {
+      "capability_id": "trigger.source.fixed_maintenance",
+      "evidence_class": "negative",
+      "test_id": "tests.test_source_maintenance.SourceMaintenanceCompilerTests.test_open_payments_other_sources_and_whole_card_siblings_remain_residual",
+      "official_rule_ids": [
+        "118.3",
+        "118.12",
+        "118.12a",
+        "201.5",
+        "400.7",
+        "603.3",
+        "603.3a",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual registered printed-card commands preserve full costs, locked trigger controller, original source incarnation and canonical replacement continuations with independent expected results."
+    },
+    {
+      "capability_id": "trigger.source.fixed_maintenance",
+      "evidence_class": "positive",
+      "test_id": "tests.test_source_maintenance.SourceMaintenanceActionTests.test_trusted_granted_maintenance_uses_recipient_after_grant_source_leaves",
+      "official_rule_ids": [
+        "118.3",
+        "118.12",
+        "118.12a",
+        "201.5",
+        "400.7",
+        "603.3",
+        "603.3a",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The printed global grant creates a recipient-controller trigger with the recipient incarnation, and removal of the granting permanent after placement preserves accepted recipient sacrifice and exact replay."
+    },
+    {
+      "capability_id": "trigger.source.fixed_maintenance",
+      "evidence_class": "positive",
+      "test_id": "tests.test_source_maintenance.SourceMaintenanceChoiceTests.test_decline_sacrifices_same_controlled_source_to_owner_graveyard",
+      "official_rule_ids": [
+        "118.3",
+        "118.12",
+        "118.12a",
+        "201.5",
+        "400.7",
+        "603.3",
+        "603.3a",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The registered payment handler preserves fixed cost, original source incarnation and locked controller authority for the bounded maintenance instruction."
+    },
+    {
+      "capability_id": "trigger.source.fixed_maintenance",
+      "evidence_class": "positive",
+      "test_id": "tests.test_source_maintenance.SourceMaintenanceChoiceTests.test_mandatory_sacrifice_auto_continues_and_restores_identity",
+      "official_rule_ids": [
+        "118.3",
+        "118.12",
+        "118.12a",
+        "201.5",
+        "400.7",
+        "603.3",
+        "603.3a",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The registered payment handler preserves fixed cost, original source incarnation and locked controller authority for the bounded maintenance instruction."
+    },
+    {
+      "capability_id": "trigger.source.fixed_maintenance",
+      "evidence_class": "positive",
+      "test_id": "tests.test_source_maintenance.SourceMaintenanceCompilerTests.test_entry_and_fixed_steps_preserve_source_spans_and_closed_costs",
+      "official_rule_ids": [
+        "118.3",
+        "118.12",
+        "118.12a",
+        "201.5",
+        "400.7",
+        "603.3",
+        "603.3a",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual registered printed-card commands preserve full costs, locked trigger controller, original source incarnation and canonical replacement continuations with independent expected results."
+    },
+    {
+      "capability_id": "trigger.source.fixed_maintenance",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_source_maintenance.SourceMaintenanceActionTests.test_trusted_avatar_cast_private_full_payment_rollback_pending_and_replay",
+      "official_rule_ids": [
+        "118.3",
+        "118.12",
+        "118.12a",
+        "201.5",
+        "400.7",
+        "603.3",
+        "603.3a",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual registered printed-card commands preserve full costs, locked trigger controller, original source incarnation and canonical replacement continuations with independent expected results."
+    },
+    {
+      "capability_id": "trigger.source.fixed_maintenance",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_source_maintenance.SourceMaintenanceChoiceTests.test_two_card_payment_is_private_atomic_and_rejects_stale_objects",
+      "official_rule_ids": [
+        "118.3",
+        "118.12",
+        "118.12a",
+        "201.5",
+        "400.7",
+        "603.3",
+        "603.3a",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The registered payment handler preserves fixed cost, original source incarnation and locked controller authority for the bounded maintenance instruction."
+    },
+    {
+      "capability_id": "trigger.source.fixed_maintenance",
+      "evidence_class": "replay",
+      "test_id": "tests.test_source_maintenance.SourceMaintenanceActionTests.test_trusted_avatar_cast_private_full_payment_rollback_pending_and_replay",
+      "official_rule_ids": [
+        "118.3",
+        "118.12",
+        "118.12a",
+        "201.5",
+        "400.7",
+        "603.3",
+        "603.3a",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual registered printed-card commands preserve full costs, locked trigger controller, original source incarnation and canonical replacement continuations with independent expected results."
+    },
+    {
+      "capability_id": "trigger.source.fixed_maintenance",
+      "evidence_class": "replay",
+      "test_id": "tests.test_source_maintenance.SourceMaintenanceActionTests.test_trusted_avatar_payment_replacement_pending_resumes_once_and_replays",
+      "official_rule_ids": [
+        "118.3",
+        "118.12",
+        "118.12a",
+        "201.5",
+        "400.7",
+        "603.3",
+        "603.3a",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual registered printed-card commands preserve full costs, locked trigger controller, original source incarnation and canonical replacement continuations with independent expected results."
+    },
+    {
+      "capability_id": "trigger.source.fixed_maintenance",
+      "evidence_class": "replay",
+      "test_id": "tests.test_source_maintenance.SourceMaintenanceActionTests.test_trusted_ball_lightning_every_players_end_step_and_blink_replays",
+      "official_rule_ids": [
+        "118.3",
+        "118.12",
+        "118.12a",
+        "201.5",
+        "400.7",
+        "603.3",
+        "603.3a",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual registered printed-card commands preserve full costs, locked trigger controller, original source incarnation and canonical replacement continuations with independent expected results."
+    },
+    {
+      "capability_id": "trigger.source.fixed_maintenance",
+      "evidence_class": "replay",
+      "test_id": "tests.test_source_maintenance.SourceMaintenanceActionTests.test_trusted_granted_maintenance_uses_recipient_after_grant_source_leaves",
+      "official_rule_ids": [
+        "118.3",
+        "118.12",
+        "118.12a",
+        "201.5",
+        "400.7",
+        "603.3",
+        "603.3a",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The printed global grant creates a recipient-controller trigger with the recipient incarnation, and removal of the granting permanent after placement preserves accepted recipient sacrifice and exact replay."
+    },
+    {
+      "capability_id": "trigger.source.fixed_maintenance",
+      "evidence_class": "replay",
+      "test_id": "tests.test_source_maintenance.SourceMaintenanceActionTests.test_trusted_queued_mesa_retains_payer_after_source_control_changes",
+      "official_rule_ids": [
+        "118.3",
+        "118.12",
+        "118.12a",
+        "201.5",
+        "400.7",
+        "603.3",
+        "603.3a",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A normally discovered upkeep trigger retains its original payer after authoritative control transfer and cannot sacrifice the now-opposing permanent; accepted decline and pre-action replay preserve that result."
+    },
+    {
+      "capability_id": "trigger.source.fixed_maintenance",
+      "evidence_class": "replay",
+      "test_id": "tests.test_source_maintenance.SourceMaintenanceActionTests.test_trusted_rupture_spire_land_action_pays_or_sacrifices_and_replays",
+      "official_rule_ids": [
+        "118.3",
+        "118.12",
+        "118.12a",
+        "201.5",
+        "400.7",
+        "603.3",
+        "603.3a",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual registered printed-card commands preserve full costs, locked trigger controller, original source incarnation and canonical replacement continuations with independent expected results."
+    },
+    {
       "capability_id": "trigger.subscription.fixed_multi_event",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_fixed_multi_event_source_triggers_share_events_and_replay",
@@ -79754,5 +80326,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "304abbc1eadb6f209905a5fbbc0b08533f5f95763bfabfc77a540d799fb3e62f"
+  "fingerprint": "05ca51087c3534765cf51144ac2f76e92c5a37dc4b84c40203f97d44496f3f81"
 }

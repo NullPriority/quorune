@@ -169,7 +169,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v270"
+ORACLE_COMPILER_VERSION = "oracle-ir-v271"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -1033,6 +1033,14 @@ def _activated_or_fixed_event_trigger_node(
     )
     if activated is not None:
         return activated
+    from .compiler.source_maintenance_nodes import source_maintenance_node
+    maintenance = source_maintenance_node(
+        node_id=node_id, line=line, material_line=material_line, span=span,
+        card_name=card_name, capability_registry=capability_registry,
+        capability_profile=capability_profile, residuals=residuals,
+    )
+    if maintenance is not None:
+        return maintenance
     history_transform = previous_turn_transform_trigger_node(
         node_id=node_id,
         line=line,

@@ -102,6 +102,7 @@ jobs:
           python scripts/pr_evidence.py
           --base "${{ github.event.pull_request.base.sha }}"
           --head "${{ github.event.pull_request.head.sha }}"
+          --require-support-delivery
           --format markdown >> "${GITHUB_STEP_SUMMARY}"
       - name: Validate compact card and deck dependency closure
         run: python scripts/build_test_database.py validate-ci-dependencies

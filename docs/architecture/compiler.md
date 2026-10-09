@@ -481,6 +481,16 @@ Alternative/compound/dynamic costs, random/named payments, paid-object or linked
 results, reflexive triggers, nested/repeated choices, unsupported leaf owners
 and wider grammar remain residual.
 
+`compiler/source_maintenance_nodes.py` recognizes self-entry and fixed upkeep
+or end-step triggers whose only result is sacrificing the source, optionally
+unless the triggering controller pays one existing closed fixed cost. Its v3
+payment payload carries the source-incarnation binding and requires a separate
+maintenance capability in addition to the payment and zone owners. Controller
+steps retain their printed controller condition; an unqualified end step applies
+to every active player's turn. Alternative, compound, variable and linked costs,
+reflexive results and additional unrepresented text remain residual. Whole-card
+admission still requires every independently material sibling to close.
+
 `compiler/monarch_templates.py` owns the mandatory controller-becomes-monarch
 instruction. Its strict node shape declares only the existing canonical
 designation capability; combat-damage transfer, end-step draw, and

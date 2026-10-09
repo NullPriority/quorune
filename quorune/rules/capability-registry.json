@@ -8417,6 +8417,104 @@
       "status": "trusted"
     },
     {
+      "id": "trigger.source.fixed_maintenance",
+      "version": 1,
+      "official_rules": [
+        "118.3",
+        "118.12",
+        "118.12a",
+        "201.5",
+        "400.7",
+        "603.3",
+        "603.3a",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Resolve a fixed entry or turn-step trigger that sacrifices its original source unless its locked controller pays one closed fixed cost.",
+        "inputs": [
+          "source-spanned self-entry or fixed upkeep/end-step ability",
+          "triggering controller and captured source incarnation",
+          "optional fixed ordinary mana, life, discard or sacrifice cost"
+        ],
+        "outputs": [
+          "ordinary APNAP trigger with locked payer",
+          "shared full-cost optional payment",
+          "unpaid controlled-source sacrifice through canonical replacements",
+          "no sacrifice of a returned incarnation or another controller permanent"
+        ],
+        "exclusions": [
+          "variable, compound, alternative or linked costs",
+          "reflexive triggers and unrepresented riders",
+          "independently unsupported whole-card siblings"
+        ]
+      },
+      "dependencies": [
+        "effect.choice.optional_fixed_mana_payment",
+        "trigger.event.normalized_zone_change",
+        "trigger.placement.apnap",
+        "zone.change.destination_replacement"
+      ],
+      "implementation_components": [
+        "quorune.source_maintenance.SourceMaintenanceSpec",
+        "quorune.compiler.source_maintenance_nodes.source_maintenance_node",
+        "quorune.rules.fixed_effect_payment_shapes.fixed_effect_payment_node_capabilities",
+        "quorune.semantic_choices.source_maintenance.prepare_source_maintenance",
+        "quorune.semantic_choices.source_maintenance.complete_source_maintenance",
+        "quorune.semantic_choices.fixed_effect_payment.prepare_fixed_payment_cost",
+        "quorune.semantic_choices.fixed_effect_payment.complete_fixed_payment_cost"
+      ],
+      "positive_tests": [
+        "test_decline_sacrifices_same_controlled_source_to_owner_graveyard",
+        "test_mandatory_sacrifice_auto_continues_and_restores_identity",
+        "test_entry_and_fixed_steps_preserve_source_spans_and_closed_costs"
+      ],
+      "negative_tests": [
+        "test_malformed_payment_and_wrong_stack_actor_fail_closed",
+        "test_source_is_revalidated_after_choice_without_changing_stack_payer",
+        "test_open_payments_other_sources_and_whole_card_siblings_remain_residual",
+        "test_maintenance_shape_rejects_missing_source_wrong_payer_and_target",
+        "test_maintenance_dependency_and_source_guard_mutants_fail_closed"
+      ],
+      "interaction_tests": [
+        "test_source_departure_blink_phasing_and_control_do_not_erase_payment",
+        "test_trusted_sacred_mesa_priority_activation_then_controlled_pegasus_payment",
+        "test_trusted_avatar_payment_replacement_pending_resumes_once_and_replays"
+      ],
+      "multiplayer_tests": [
+        "test_trusted_ball_lightning_every_players_end_step_and_blink_replays"
+      ],
+      "privacy_tests": [
+        "test_two_card_payment_is_private_atomic_and_rejects_stale_objects",
+        "test_trusted_avatar_cast_private_full_payment_rollback_pending_and_replay"
+      ],
+      "replay_tests": [
+        "test_trusted_rupture_spire_land_action_pays_or_sacrifices_and_replays",
+        "test_trusted_avatar_cast_private_full_payment_rollback_pending_and_replay",
+        "test_trusted_ball_lightning_every_players_end_step_and_blink_replays",
+        "test_trusted_avatar_payment_replacement_pending_resumes_once_and_replays"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Compiler closure retains blocked or missing maintenance and ambient dependencies.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Source incarnation, controller and cost mutations must be killed before trust.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
       "id": "zone.self_move.activated",
       "version": 2,
       "official_rules": ["400.2", "400.3", "400.7", "602.1", "602.2", "608.2c", "701.23"],
