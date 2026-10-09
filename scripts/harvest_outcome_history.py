@@ -20,7 +20,7 @@ from quorune.work_selection_evidence import (
 
 
 HARVEST_HISTORY_SCHEMA_VERSION = 3
-HARVEST_HISTORY_ALGORITHM_VERSION = "semantic-content-fixed-point-v9"
+HARVEST_HISTORY_ALGORITHM_VERSION = "semantic-content-fixed-point-v10"
 _COMMIT = re.compile(r"^[0-9a-f]{40}$")
 _PROGRAM_PATH = "coverage/card-program-coverage-commander.json"
 _ORACLE_PATH = "coverage/oracle-coverage-commander.json"
@@ -1318,6 +1318,55 @@ def _tracked_content_entries(
     return result
 
 
+def _superseded_non_harvest_ids(
+    rows: Sequence[Mapping[str, Any]], *, latest: Mapping[str, Any],
+    durable: Mapping[str, Any], checkpoint: Mapping[str, Any],
+    landed_ids: set[str], repository: Path | None = None,
+) -> set[str]:
+    """Authenticate an unpublished proposal chain against Git and durable main."""
+    if _semantic_receipts_match(latest, durable, repository=repository):
+        return set()
+    if not _semantic_receipts_match(latest, checkpoint, repository=repository):
+        raise HarvestOutcomeHistoryError("Unpublished non-harvest head does not match its source checkpoint")
+    cursor = latest
+    superseded: set[str] = set()
+    for raw in reversed(rows):
+        row = _validate_non_harvest_content_entry(raw)
+        if not _semantic_receipts_match(row["head_receipt"], cursor, repository=repository):
+            continue
+        if row["transition_id"] in landed_ids:
+            break
+        superseded.add(row["transition_id"])
+        cursor = row["base_receipt"]
+        if _semantic_receipts_match(cursor, durable, repository=repository):
+            return superseded
+    raise HarvestOutcomeHistoryError("Non-harvest transition base does not match durable main")
+
+
+def _non_harvest_transition_base(
+    repository: Path, *, latest: Mapping[str, Any], durable: Mapping[str, Any],
+    rows: list[dict[str, Any]],
+) -> Mapping[str, Any]:
+    if _semantic_receipts_match(latest, durable, repository=repository):
+        return durable
+    tip = _durable_main_tip(repository)
+    history = _json_object(_git(repository, "show", f"{tip}:coverage/harvest-outcome-history.json"),
+                           "coverage/harvest-outcome-history.json")
+    unsigned = dict(history)
+    fingerprint = unsigned.pop("fingerprint", None)
+    if history.get("schema_version") != HARVEST_HISTORY_SCHEMA_VERSION or fingerprint != _hash(unsigned):
+        raise HarvestOutcomeHistoryError("Durable non-harvest history is malformed")
+    landed = history.get("non_harvest_transitions")
+    if not isinstance(landed, list):
+        raise HarvestOutcomeHistoryError("Durable non-harvest history is malformed")
+    landed_ids = {_validate_non_harvest_content_entry(row)["transition_id"] for row in landed}
+    head = _git(repository, "rev-parse", "HEAD").decode().strip()
+    superseded = _superseded_non_harvest_ids(rows, latest=latest, durable=durable,
+        checkpoint=_receipt(repository, head), landed_ids=landed_ids, repository=repository)
+    rows[:] = [row for row in rows if row["transition_id"] not in superseded]
+    return durable
+
+
 def _latest_semantic_receipt(
     entries: Sequence[Mapping[str, Any]],
     non_harvest_transitions: Sequence[Mapping[str, Any]],
@@ -2002,15 +2051,8 @@ def build_harvest_outcome_history(
             raise HarvestOutcomeHistoryError(
                 "Semantic transition identity has already been materialized"
             )
-        base = receipt(_durable_main_tip(repository))
-        if not _semantic_receipts_match(
-            latest,
-            base,
-            repository=repository,
-        ):
-            raise HarvestOutcomeHistoryError(
-                "Non-harvest transition base does not match durable main"
-            )
+        base = _non_harvest_transition_base(repository, latest=latest,
+            durable=receipt(_durable_main_tip(repository)), rows=non_harvest_transitions)
         non_harvest_transitions.append(
             _non_harvest_content_entry(
                 validated_declaration,

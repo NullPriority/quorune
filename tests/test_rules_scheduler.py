@@ -121,6 +121,54 @@ from scripts.work_selection_cohort_measurements import (
 ROOT = Path(__file__).resolve().parents[1]
 
 
+class NonHarvestSupersessionTests(unittest.TestCase):
+    def proposals(self):
+        from scripts.harvest_outcome_history import _durable_main_tip
+
+        base = _receipt(ROOT, _durable_main_tip(ROOT))
+        def proposal(previous, identity, marker):
+            head = deepcopy(previous)
+            head["compiler_version"] = "oracle-ir-v" + str(identity)
+            for path in ("coverage/card-program-coverage-commander.json", "coverage/oracle-coverage-commander.json"):
+                head["blobs"][path]["raw_sha256"] = marker*64
+                head["blobs"][path]["semantic_sha256"] = marker*64
+            declaration = validated_semantic_transition_declaration({
+                "transition_id":"fixture-unpublished-"+str(identity),
+                "compiler_version":head["compiler_version"], "bundle_id":None,
+                "candidate_ids":[],"family_ids":[],"capability_ids":[],
+                "expected_complete_card_gain":None,
+                "non_harvest_reason":"Revise one unpublished compiler proposal without increasing support.",
+            })
+            return head, _non_harvest_content_entry(declaration, base=previous, head=head)
+        first, row1 = proposal(base, 990, "a")
+        second, row2 = proposal(first, 991, "b")
+        return base, first, second, row1, row2
+
+    def test_only_checkpoint_bound_unpublished_chain_can_be_superseded(self):
+        from scripts.harvest_outcome_history import _superseded_non_harvest_ids
+
+        base, first, latest, row1, row2 = self.proposals()
+        result = _superseded_non_harvest_ids([row1,row2], latest=latest,
+            durable=base, checkpoint=latest, landed_ids=set())
+        self.assertEqual({row1["transition_id"],row2["transition_id"]}, result)
+        self.assertEqual(set(), _superseded_non_harvest_ids([row1,row2],
+            latest=base, durable=base, checkpoint=latest, landed_ids=set()))
+        with self.assertRaisesRegex(HarvestOutcomeHistoryError, "source checkpoint"):
+            _superseded_non_harvest_ids([row1,row2], latest=latest,
+                durable=base, checkpoint=first, landed_ids=set())
+
+    def test_landed_and_unanchored_receipts_remain_fail_closed(self):
+        from scripts.harvest_outcome_history import _superseded_non_harvest_ids
+
+        base, first, latest, row1, row2 = self.proposals()
+        with self.assertRaisesRegex(HarvestOutcomeHistoryError, "durable main"):
+            _superseded_non_harvest_ids([row1,row2], latest=latest,
+                durable=base, checkpoint=latest, landed_ids={row1["transition_id"]})
+        with self.assertRaisesRegex(HarvestOutcomeHistoryError, "durable main"):
+            _superseded_non_harvest_ids([row2], latest=latest,
+                durable=base, checkpoint=latest, landed_ids=set())
+
+
 class CohortPrefilterTests(unittest.TestCase):
     def record(self):
         return CardRecord(

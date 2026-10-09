@@ -405,6 +405,12 @@ receipts plus the transition-measurement receipt are content identities with no
 feature-commit field. They survive squash, so review, merge, and the next
 selector pass require neither a merge-commit association nor a bookkeeping
 follow-up.
+When a feature revises an unpublished non-harvest proposal, the history owner
+authenticates its prior receipt against the committed source checkpoint and
+walks its unpublished chain back to durable main. It supersedes only that
+authenticated chain before materializing the revised outcome. Landed rows,
+unlinked rows, changed support, malformed main history, and a missing or stale
+checkpoint cannot be excused by supersession; their existing checks remain.
 If no implementation-eligible cohort exists, the same selector may choose one
 `cohort_measurement` task. That task pins the corpus filter, owner hypothesis,
 grammar boundary, exclusions, cards/residuals to inspect, probe effort, and
