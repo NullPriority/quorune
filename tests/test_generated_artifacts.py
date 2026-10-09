@@ -946,13 +946,19 @@ class GeneratedArtifactFinalizationTests(unittest.TestCase):
             "      - name: Require current compiler corpus before expensive certification\n"
             "        run: python scripts/update_compiler_corpus_coverage.py --check\n"
         )
+        source_readiness = (
+            "      - name: Require current generated source before expensive certification\n"
+            "        run: python scripts/update_architecture_audit.py --check-source-readiness\n"
+        )
         plan = workflows["ci.yml"].split("\n  plan:\n", 1)[1].split("\n  python:\n", 1)[0]
-        self.assertIn(readiness, plan)
-        self.assertEqual(1, workflows["ci.yml"].count(readiness))
-        # Only the declared read-only pre-matrix check is an early boundary.
+        for block in (readiness, source_readiness):
+            self.assertIn(block, plan)
+            self.assertEqual(1, workflows["ci.yml"].count(block))
+        # Only the declared read-only pre-matrix checks are early boundaries.
         # Every other owner check still belongs to the canonical coordinator.
         combined = "\n".join(
-            text.replace(readiness, "") if name == "ci.yml" else text
+            text.replace(readiness, "").replace(source_readiness, "")
+            if name == "ci.yml" else text
             for name, text in workflows.items()
         )
         for spec in load_manifest():

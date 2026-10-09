@@ -71,6 +71,10 @@ class TestShardManifestTests(unittest.TestCase):
         )
         self.assertIn("generated-validation", [row["shard"] for row in rows])
         self.assertEqual("generated-validation", rows[0]["shard"])
+        self.assertLess(
+            self.manifest["execution_order"].index("functional-12"),
+            self.manifest["execution_order"].index("functional-01"),
+        )
         self.assertEqual(
             [
                 name

@@ -697,7 +697,13 @@ cloud generation proceeds. Commit the generated bundle to resume normal
 exact-head certification. The generated job still performs the complete
 finalizer check; this early failure neither grants a receipt nor changes
 test selection, required jobs, or merge authority.
-This exact read-only planning check is the early exception to owner-check
+Planning also compares the architecture report's existing evaluated-source
+fingerprint with the current canonical tracked-source blobs. This read-only
+check rejects source checkpoints whose compiler identity is current but whose
+generated source receipt is stale, before matrices compete with cloud
+generation. It does not rebuild or certify the full report; the final generated
+job retains its complete freshness and policy checks.
+These exact read-only planning checks are the early exceptions to owner-check
 coordination; other writer and freshness commands remain finalizer-owned.
 
 `PR / Plan` runs `scripts/validate_pr_body.py` before change-impact planning or
@@ -917,7 +923,9 @@ module exactly once per platform. `windows-compat` remains an intentionally
 overlapping focused suite and never runs alongside the full Windows matrix.
 The launch order places generated validation first so its measured long
 sequential workload overlaps functional shards instead of starting in the last
-wave. Worker counts, matrix limits, module assignments and exact collections
+wave. The remaining launch order uses complete observed cross-platform job
+durations to start the longest functional shards earlier. Worker counts, matrix
+limits, module assignments and exact collections
 remain governed by the same policies.
 
 Keep functional shard weights close enough to use parallel capacity. Semantic
