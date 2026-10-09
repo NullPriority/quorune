@@ -24,6 +24,8 @@ from .collection_quantity_templates import collection_quantity, fixed_quantity_a
 
 
 _TRAILING_REMINDER = re.compile(r"\s+\([^()]*\)\.?$")
+_SELF_QUERY_MARKER = re.compile(r" for each |as long as ", re.IGNORECASE)
+_DEFINITION_QUERY_MARKER = re.compile(r" equal to ", re.IGNORECASE)
 _COLOR_SYMBOLS = {
     "black": "B",
     "blue": "U",
@@ -384,6 +386,8 @@ def query_power_toughness_definition_handler(
 ) -> tuple[str, Mapping[str, Any], tuple[str, ...]] | None:
     """Compile one closed all-zone query-derived characteristic definition."""
 
+    if _DEFINITION_QUERY_MARKER.search(oracle_line) is None:
+        return None
     text = _TRAILING_REMINDER.sub("", oracle_line.strip()).strip()
     ability_word = re.fullmatch(
         r"[A-Z][A-Za-z0-9' ]{0,80} — (?P<body>.+)", text
@@ -607,6 +611,8 @@ def query_self_characteristics_handler(
 ) -> tuple[str, Mapping[str, Any], tuple[str, ...]] | None:
     """Compile a closed self modifier over one public typed quantity."""
 
+    if _SELF_QUERY_MARKER.search(oracle_line) is None:
+        return None
     text = _TRAILING_REMINDER.sub("", oracle_line.strip()).strip()
     ability_word = re.fullmatch(
         r"[A-Z][A-Za-z0-9' ]{0,80} — (?P<body>.+)", text

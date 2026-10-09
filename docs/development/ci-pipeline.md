@@ -390,6 +390,10 @@ frontier's blocker and residual family references once. It hashes each relevant
 card projection once while preserving the existing canonical payload, sorting
 and fingerprint identity. A later invocation rebuilds that index from current
 inputs; stale measurement rejection still compares the full declared cohort.
+Query-characteristic probes also reject lines lacking their required `for each`,
+`as long as`, or `equal to` grammar marker before constructing source-specific
+regular expressions. The original named parser, unsupported grammar boundaries
+and whole-card binding still decide every retained candidate.
 The rules-scheduler owner also maintains
 `coverage/harvest-outcome-history.json`. Existing historical rows retain their
 immutable Git provenance, while new semantic transitions use base and head
