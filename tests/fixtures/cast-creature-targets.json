@@ -562,6 +562,200 @@
         "tlr": "legal",
         "vintage": "legal"
       }
+    },
+    {
+      "oracle_id": "268d0056-0d3e-438a-ab17-625a6f5ec68a",
+      "name": "How to Start a Riot",
+      "mana_cost": "{2}{R}",
+      "cmc": 3.0,
+      "type_line": "Instant \u2014 Lesson",
+      "oracle_text": "Target creature gains menace until end of turn. (It can't be blocked except by two or more creatures.)\nCreatures target player controls get +2/+0 until end of turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-11-21",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "87a97c72-143d-48a8-a1c5-3c44aa8e5a86",
+      "name": "Sokka's Haiku",
+      "mana_cost": "{3}{U}{U}",
+      "cmc": 5.0,
+      "type_line": "Instant \u2014 Lesson",
+      "oracle_text": "Counter target spell.\nDraw a card, then mill three cards.\nUntap target land.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Mill"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-11-21",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "6fdddab4-fcc9-4622-9c17-c69f9d4bca08",
+      "name": "Render Speechless",
+      "mana_cost": "{2}{W}{B}",
+      "cmc": 4.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Target opponent reveals their hand. You choose a nonland card from it. That player discards that card.\nPut two +1/+1 counters on up to one target creature.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "W"
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-04-24",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "a729a684-9171-4ca9-83ad-1d199afad7bb",
+      "name": "Press into Service",
+      "mana_cost": "{4}{R}",
+      "cmc": 5.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Support 2. (Put a +1/+1 counter on each of up to two target creatures.)\nGain control of target creature until end of turn. Untap that creature. It gains haste until end of turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Support"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2016-01-22",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
     }
   ],
   "rulings": [
@@ -708,6 +902,48 @@
       "published_at": "2005-10-01",
       "source": "wotc",
       "comment": "You may choose the same creature as a target multiple times since the card says \u201ctarget creature\u201d multiple times. You may give three different creatures +1/+1 each, one creature +2/+2 and another creature +1/+1, or a single creature +3/+3."
+    },
+    {
+      "oracle_id": "87a97c72-143d-48a8-a1c5-3c44aa8e5a86",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "A haiku has five syllables in the first and third lines and seven in the second line."
+    },
+    {
+      "oracle_id": "a729a684-9171-4ca9-83ad-1d199afad7bb",
+      "published_at": "2016-01-22",
+      "source": "wotc",
+      "comment": "You can\u2019t put more than one +1/+1 counter on any one target using the support action."
+    },
+    {
+      "oracle_id": "a729a684-9171-4ca9-83ad-1d199afad7bb",
+      "published_at": "2016-01-22",
+      "source": "wotc",
+      "comment": "Gaining control of a creature doesn\u2019t cause you to gain control of any Auras or Equipment attached to it."
+    },
+    {
+      "oracle_id": "a729a684-9171-4ca9-83ad-1d199afad7bb",
+      "published_at": "2016-01-22",
+      "source": "wotc",
+      "comment": "The last target of Press into Service can be any creature, even one that\u2019s untapped, one you already control, or one targeted by the support part of the spell."
+    },
+    {
+      "oracle_id": "a729a684-9171-4ca9-83ad-1d199afad7bb",
+      "published_at": "2016-01-22",
+      "source": "wotc",
+      "comment": "Support can target a creature you don\u2019t control."
+    },
+    {
+      "oracle_id": "a729a684-9171-4ca9-83ad-1d199afad7bb",
+      "published_at": "2016-01-22",
+      "source": "wotc",
+      "comment": "As Press into Service resolves, if at least one of its targets is still legal, it will resolve, affecting only targets that are still legal at that time. If none of its targets are still legal at that time, it won\u2019t resolve and none of its effects will happen."
+    },
+    {
+      "oracle_id": "a729a684-9171-4ca9-83ad-1d199afad7bb",
+      "published_at": "2016-01-22",
+      "source": "wotc",
+      "comment": "If a spell with support has other abilities that target creatures, those abilities and the support ability can target the same creature."
     }
   ]
 }

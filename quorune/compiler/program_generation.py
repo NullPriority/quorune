@@ -1265,6 +1265,11 @@ def _is_closed_fixed_control_program(program: SemanticProgram) -> bool:
     return _node_capabilities_close_program(program, fixed_control_node_capabilities)
 
 
+def _is_closed_public_characteristic_set_program(program: SemanticProgram) -> bool:
+    from ..rules.fixed_resolution_characteristic_shapes import fixed_resolution_characteristic_set_node_capabilities
+    return _node_capabilities_close_program(program, fixed_resolution_characteristic_set_node_capabilities)
+
+
 def _closed_effect_recognizers():
     return (
         _is_closed_fixed_control_program,
@@ -1303,6 +1308,7 @@ def _closed_effect_recognizers():
         _is_closed_fixed_bolster_program,
         _is_closed_fixed_amass_program,
         _is_closed_fixed_target_characteristics_program,
+        _is_closed_public_characteristic_set_program,
         _is_closed_temporary_target_interaction_program,
         _is_closed_fixed_source_characteristics_program,
         _is_closed_temporary_declaration_restriction_program,

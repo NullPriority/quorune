@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "registry_fingerprint": "8c46512658ec58c0a2b76366fbc87852433b87929c24624fd8cab8a36657c5c9",
-  "declaration_source_fingerprint": "6a7f5d58d73f64afc78e1dd301c58fbe49610af3f8192e3945a6fc449babc3fc",
+  "declaration_source_fingerprint": "18070f0d109ae32bbf6a8ca8b65a489de18e77602f3e385c55985e5a13858cda",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -15975,6 +15975,28 @@
     {
       "capability_id": "choice.target_hand.fixed_inspection_move",
       "evidence_class": "interaction",
+      "test_id": "tests.test_cast_creature_targets.CastCreatureTargetActionTests.test_targeted_hand_choice_and_optional_counter_group_resume_without_repeating_prefix",
+      "official_rule_ids": [
+        "115.1",
+        "400.7",
+        "402.3",
+        "608.2b",
+        "608.2d",
+        "608.2h",
+        "701.9",
+        "701.20",
+        "701.20a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Render Speechless retains the target-player role through wrong-seat rejection, pending save/load and rejection of an ineligible land; the optional creature role receives its two counters once and replay begins before casting."
+    },
+    {
+      "capability_id": "choice.target_hand.fixed_inspection_move",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_hand_inspection.FixedHandInspectionRuntimeTests.test_bulk_discard_preserves_one_committed_batch",
       "official_rule_ids": [
         "115.1",
@@ -16279,6 +16301,28 @@
         "commander_review"
       ],
       "applicability_note": "Actual private look excludes outsider hand identities, public reveal exposes them as instructed, exile/discard preserve their destinations and artifact selection legitimately admits Artifact Land; all accepted action paths replay."
+    },
+    {
+      "capability_id": "choice.target_hand.fixed_inspection_move",
+      "evidence_class": "replay",
+      "test_id": "tests.test_cast_creature_targets.CastCreatureTargetActionTests.test_targeted_hand_choice_and_optional_counter_group_resume_without_repeating_prefix",
+      "official_rule_ids": [
+        "115.1",
+        "400.7",
+        "402.3",
+        "608.2b",
+        "608.2d",
+        "608.2h",
+        "701.9",
+        "701.20",
+        "701.20a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Render Speechless retains the target-player role through wrong-seat rejection, pending save/load and rejection of an ineligible land; the optional creature role receives its two counters once and replay begins before casting."
     },
     {
       "capability_id": "choice.target_hand.fixed_inspection_move",
@@ -26526,6 +26570,31 @@
     {
       "capability_id": "continuous.control.fixed_resolution",
       "evidence_class": "interaction",
+      "test_id": "tests.test_cast_creature_targets.CastCreatureTargetActionTests.test_partial_invalid_support_group_preserves_the_separate_control_clause_and_replays",
+      "official_rule_ids": [
+        "302.6",
+        "506.4",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "613.1b",
+        "613.7",
+        "613.8a",
+        "613.8b",
+        "613.8c",
+        "800.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Press into Service retains a separate fixed control/untap/Haste target after a Support target is sacrificed by a response; the surviving Support result never includes the control-only target and pre-action replay agrees."
+    },
+    {
+      "capability_id": "continuous.control.fixed_resolution",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_control_effects.FixedControlGameplayTests.test_actual_departures_preserve_initial_custody_and_exile_inactive_origin_with_replay",
       "official_rule_ids": [
         "302.6",
@@ -27497,6 +27566,31 @@
         "commander_review"
       ],
       "applicability_note": "Exercise the original printed-card action or nearest strict descriptor/owner counterexample through the shared control and physical untap authorities."
+    },
+    {
+      "capability_id": "continuous.control.fixed_resolution",
+      "evidence_class": "replay",
+      "test_id": "tests.test_cast_creature_targets.CastCreatureTargetActionTests.test_partial_invalid_support_group_preserves_the_separate_control_clause_and_replays",
+      "official_rule_ids": [
+        "302.6",
+        "506.4",
+        "608.2c",
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "613.1b",
+        "613.7",
+        "613.8a",
+        "613.8b",
+        "613.8c",
+        "800.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Press into Service retains a separate fixed control/untap/Haste target after a Support target is sacrificed by a response; the surviving Support result never includes the control-only target and pre-action replay agrees."
     },
     {
       "capability_id": "continuous.control.fixed_resolution",
@@ -28497,6 +28591,25 @@
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
       "evidence_class": "interaction",
+      "test_id": "tests.test_cast_creature_targets.CastCreatureTargetActionTests.test_mixed_player_and_permanent_roles_apply_to_their_independent_subjects_with_replay",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual How to Start a Riot gives Menace only to its creature target and the +2/+0 set bonus only to the independent player target creatures; exact replay preserves both subjects."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "interaction",
       "test_id": "tests.test_continuous_effect_duration.ContinuousEffectEngineTests.test_exact_continuous_effects_compose_while_replacements_stay_residual",
       "official_rule_ids": [
         "611.2a",
@@ -29253,6 +29366,25 @@
         "commander_review"
       ],
       "applicability_note": "Keep the private action decision scoped to the acting seat while exposing only public qualified target references."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_cast_creature_targets.CastCreatureTargetActionTests.test_mixed_player_and_permanent_roles_apply_to_their_independent_subjects_with_replay",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual How to Start a Riot gives Menace only to its creature target and the +2/+0 set bonus only to the independent player target creatures; exact replay preserves both subjects."
     },
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
@@ -62225,6 +62357,26 @@
     {
       "capability_id": "stack.counter.effect",
       "evidence_class": "interaction",
+      "test_id": "tests.test_cast_creature_targets.CastCreatureTargetActionTests.test_mixed_stack_and_land_roles_counter_draw_mill_and_untap_in_printed_order",
+      "official_rule_ids": [
+        "115.1",
+        "115.5",
+        "603.10e",
+        "608.2b",
+        "701.6",
+        "701.6a",
+        "701.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Sokka's Haiku counters the independently targeted stack spell, performs its printed draw and mill, then untaps the separate land target with pre-action replay."
+    },
+    {
+      "capability_id": "stack.counter.effect",
+      "evidence_class": "interaction",
       "test_id": "tests.test_stack_counter_rules.StackCounterRuleTests.test_counter_destination_replacement_emits_only_pre_counter_event",
       "official_rule_ids": [
         "115.1",
@@ -62501,6 +62653,26 @@
         "commander_review"
       ],
       "applicability_note": "Project only public stack and graveyard results while withholding unrelated opposing hand identities."
+    },
+    {
+      "capability_id": "stack.counter.effect",
+      "evidence_class": "replay",
+      "test_id": "tests.test_cast_creature_targets.CastCreatureTargetActionTests.test_mixed_stack_and_land_roles_counter_draw_mill_and_untap_in_printed_order",
+      "official_rule_ids": [
+        "115.1",
+        "115.5",
+        "603.10e",
+        "608.2b",
+        "701.6",
+        "701.6a",
+        "701.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Sokka's Haiku counters the independently targeted stack spell, performs its printed draw and mill, then untaps the separate land target with pre-action replay."
     },
     {
       "capability_id": "stack.counter.effect",
@@ -82921,5 +83093,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "fcc3b13c012aa66b62e94fcba85df0915c04d5cf12dc4716cba51db20311638b"
+  "fingerprint": "0705ffbfd4a3cfed7f1bf53b63a4230053577feec51c12f17a88e720624b01f5"
 }

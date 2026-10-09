@@ -1461,15 +1461,19 @@ spells may satisfy the any-spell form, while ordinary copies remain separate
 copy events. Targets-only, target counts and first-per-turn variants remain
 outside this boundary.
 
-The physical spell composer preserves independent fixed single-permanent target
-roles across up to four printed clauses. Each role can select the same object
+The physical spell composer preserves independent public permanent, player and
+stack-spell target roles across up to four printed clauses. Bounded optional
+creature groups retain their own selected list through scoped group references,
+so an empty or partly invalid Support group does not shift a later scalar target. Each role can select the same object
 as a different instance of the word target, and partial target invalidation
 retains only the applicable instruction. Component validation verifies the
 exact target-role index and source span before admitting the combined program.
 An exact recognized clause whose group cannot produce a primary executable
 spell carrier adds a material lowering residual; an empty carrier cannot become
-capability-closed merely because its leaf recognition succeeded. Variable and
-mixed target groups remain blocked until their shared composition is owned.
+capability-closed merely because its leaf recognition succeeded. Mixed-role programs reuse the existing target, hand-choice, counter, control and
+characteristic owners. Unsupported group domains remain blocked until their
+composition is owned; every emitted multi-target program must also pass the
+existing closed-effect composition validator.
 
 `compiler/permanent_additional_cost_nodes.py` lowers one mandatory printed
 casting-price clause on a permanent into its primary spell cost schema. The

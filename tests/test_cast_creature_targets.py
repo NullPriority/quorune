@@ -102,6 +102,34 @@ class CastCreatureTargetCompilerTests(unittest.TestCase):
                 self.assertEqual(1,measured['complete_card_gain']);self.assertEqual(2,measured['exact_ability_gain'])
                 self.assertFalse(measured['grants_gameplay_trust'])
 
+    def test_scoped_group_references_reject_aliases_missing_groups_and_malformed_values(self):
+        from types import SimpleNamespace
+        from quorune.semantic_runtime.values import resolve_semantic_value
+        from quorune.semantic_runtime.context import SemanticNodeError
+        host=SimpleNamespace()
+        item=SimpleNamespace(context={'target_groups':{'clause_0':[],'clause_1':['TARGET']},
+            'target_groups_current':{'clause_0':[],'clause_1':[None]}})
+        self.assertEqual([],resolve_semantic_value(host,'$target_group.clause_0',item))
+        self.assertIsNone(resolve_semantic_value(host,'$target_group.clause_1.0',item))
+        with self.assertRaises(SemanticNodeError):resolve_semantic_value(host,'$target_group.clause_2',item)
+        with self.assertRaises(SemanticNodeError):resolve_semantic_value(host,'$target_group.clause_0.0',item)
+        item.context['target_groups_current']['clause_1']='TARGET'
+        with self.assertRaises(SemanticNodeError):resolve_semantic_value(host,'$target_group.clause_1',item)
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'groups.sqlite3'
+            build_fixture_database([ROOT/'tests/fixtures/cast-creature-targets.json'],path)
+            with CardDatabase(path) as db:
+                registry=load_default_capability_registry()
+                program=compile_best_available_card_program(db,db.lookup('Press into Service'),semantic_registry=SemanticRegistry(),
+                    capability_registry=registry,capability_profile='commander_review')
+                from quorune.compiler.program_generation import _is_closed_effect_program
+                spell=program.abilities[0]
+                self.assertTrue(_is_closed_effect_program(spell))
+                alias=replace(spell,effects=[{**spell.effects[0],'cards':'$targets'},*spell.effects[1:]])
+                self.assertFalse(_is_closed_effect_program(alias))
+                alias=replace(spell,effects=[spell.effects[0],{**spell.effects[1],'card':'$target_group.clause_0.0'},*spell.effects[2:]])
+                self.assertFalse(_is_closed_effect_program(alias))
+
     def test_targeted_cast_grammar_requires_new_capability_and_keeps_independent_siblings(self):
         from test_fixed_optional_mana_payment_triggers import payment_record
         registry=load_default_capability_registry()
@@ -136,7 +164,7 @@ class CastCreatureTargetActionTests(unittest.TestCase):
         s=CommanderSession.create(self.db,{seat:deepcopy(self.deck) for seat in 'ABCD'},first_player='A',seed=seed,
             config=GameConfig(seed=seed,auto_pass_empty_priority=False));keep_all(s);e=s.engine
         e.permissions.invalidate_current();e.state.pending_decision=None;e.state.priority_player=None;e.state.priority_passes=[]
-        names={'Martial Glory','Common Bond','Seeds of Strength','Lead by Example','Generic Sacrifice Target Cast','Lecturing Scornmage','Melancholic Poet','Season of Growth','Mockingbird, Ace Agent','Giant Growth',
+        names={'Render Speechless','Press into Service',"Sokka's Haiku",'How to Start a Riot','Martial Glory','Common Bond','Seeds of Strength','Lead by Example','Generic Sacrifice Target Cast','Lecturing Scornmage','Melancholic Poet','Season of Growth','Mockingbird, Ace Agent','Giant Growth',
             "Altar's Reap",'Demonic Vigor','Blessed Defiance','Cackling Counterpart','Generic Payment Commander','Generic Payment Plains'}
         records=tuple(r for r in self.db.iter_cards() if r.name in names and compile_oracle_card(r,capability_registry=self.registry,capability_profile='commander_review').status=='exact')
         register_generated_programs(self.db,e.semantics,records,trust_level='trusted',capability_registry=self.registry,
@@ -299,3 +327,107 @@ class CastCreatureTargetActionTests(unittest.TestCase):
         self.assertEqual(int(before['power']),int(after['power']))
         self.assertEqual(int(before['toughness'])+3,int(after['toughness']))
         self.assertEqual('graveyard',s.state.cards[first.object_id].zone);self.replay(s)
+
+    def test_mixed_player_and_permanent_roles_apply_to_their_independent_subjects_with_replay(self):
+        s=self.session(1150911);e=s.engine
+        first=self.add(e,'Generic Payment Commander','FIRST',owner='B')
+        other=self.add(e,'Generic Payment Commander','OTHER',owner='C')
+        spell=self.add(e,'How to Start a Riot','RIOT',zone='hand')
+        before_first=e._effective_card_data(first);before_other=e._effective_card_data(other)
+        action=self.ready(s,spell,{'R':2,'C':2});self.checkpoint(s)
+        accepted=s.act('pilot:A',{'action_id':action['id'],'targets':[first.ref,'C'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(s)
+        after_first=e._effective_card_data(s.state.cards[first.object_id]);after_other=e._effective_card_data(s.state.cards[other.object_id])
+        self.assertIn('Menace',after_first.get('keywords',()))
+        self.assertEqual(int(before_first['power']),int(after_first['power']))
+        self.assertEqual(int(before_other['power'])+2,int(after_other['power']))
+        self.replay(s)
+
+    def test_mixed_stack_and_land_roles_counter_draw_mill_and_untap_in_printed_order(self):
+        s=self.session(1150912);e=s.engine
+        creature=self.add(e,'Generic Payment Commander','CREATURE')
+        land=self.add(e,'Generic Payment Plains','LAND');land.tapped=True
+        growth=self.add(e,'Giant Growth','GROWTH',zone='hand')
+        haiku=self.add(e,"Sokka's Haiku",'HAIKU',zone='hand')
+        action=self.ready(s,growth,{'G':1,'U':2,'C':3});self.checkpoint(s)
+        accepted=s.act('pilot:A',{'action_id':action['id'],'targets':[creature.ref],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        original=s.state.stack[-1]
+        action=next(row for row in s.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions'] if row['id']=='cast:'+haiku.ref)
+        before_hand=len(s.state.players['A'].zones['hand']);before_library=len(s.state.players['A'].zones['library'])
+        accepted=s.act('pilot:A',{'action_id':action['id'],'targets':[original.ref,land.ref],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(s)
+        self.assertEqual('graveyard',s.state.cards[growth.object_id].zone)
+        self.assertEqual(before_hand,len(s.state.players['A'].zones['hand']))
+        self.assertEqual(before_library-4,len(s.state.players['A'].zones['library']))
+        self.assertFalse(s.state.cards[land.object_id].tapped);self.replay(s)
+
+    def test_optional_support_group_does_not_consume_the_control_target_when_empty_or_populated(self):
+        for seed,populated in ((1150913,False),(1150914,True)):
+            with self.subTest(populated=populated):
+                s=self.session(seed);e=s.engine
+                first=self.add(e,'Generic Payment Commander','FIRST')
+                second=self.add(e,'Generic Payment Commander','SECOND',owner='C')
+                controlled=self.add(e,'Generic Payment Commander','CONTROLLED',owner='B');controlled.tapped=True
+                spell=self.add(e,'Press into Service','PRESS',zone='hand')
+                action=self.ready(s,spell,{'R':1,'C':4});self.checkpoint(s)
+                before=authoritative_state_hash(s.state)
+                for invalid in ([{'group':'clause_1','ref':controlled.ref},{'group':'clause_1','ref':first.ref}],
+                    [{'group':'clause_2','ref':controlled.ref}],
+                    [{'group':'clause_0','ref':first.ref},{'group':'clause_0','ref':first.ref},{'group':'clause_1','ref':controlled.ref}]):
+                    rejected=s.act('pilot:A',{'action_id':action['id'],'targets':invalid,'pay':'auto'})
+                    self.assertFalse(rejected.ok);self.assertEqual(before,authoritative_state_hash(s.state))
+                accepted=s.act('pilot:A',{'action_id':action['id'],'targets':[*([{'group':'clause_0','ref':first.ref},{'group':'clause_0','ref':second.ref}] if populated else []),{'group':'clause_1','ref':controlled.ref}],'pay':'auto'})
+                self.assertTrue(accepted.ok,accepted.summary);self.resolve(s)
+                self.assertEqual('A',s.state.cards[controlled.object_id].controller)
+                self.assertFalse(s.state.cards[controlled.object_id].tapped)
+                self.assertEqual(0,s.state.cards[controlled.object_id].counters.get('+1/+1',0))
+                self.assertEqual(1 if populated else 0,s.state.cards[first.object_id].counters.get('+1/+1',0))
+                self.assertEqual(1 if populated else 0,s.state.cards[second.object_id].counters.get('+1/+1',0));self.replay(s)
+
+    def test_targeted_hand_choice_and_optional_counter_group_resume_without_repeating_prefix(self):
+        s=self.session(1150915);e=s.engine
+        creature=self.add(e,'Generic Payment Commander','CREATURE')
+        nonland=self.add(e,'Giant Growth','PRIVATE-NONLAND',owner='B',zone='hand')
+        land=self.add(e,'Generic Payment Plains','PRIVATE-LAND',owner='B',zone='hand')
+        spell=self.add(e,'Render Speechless','RENDER',zone='hand')
+        action=self.ready(s,spell,{'W':1,'B':1,'C':2});self.checkpoint(s)
+        accepted=s.act('pilot:A',{'action_id':action['id'],'targets':[{'group':'clause_0','ref':'B'},{'group':'clause_1','ref':creature.ref}],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(s)
+        self.assertNotEqual('priority',s.state.pending_decision.kind)
+        before=authoritative_state_hash(s.state)
+        wrong=s.act('pilot:C',{'action_id':'choose','card':nonland.ref})
+        self.assertFalse(wrong.ok);self.assertEqual(before,authoritative_state_hash(s.state))
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'pending';s.save(path);s=CommanderSession.load(self.db,path)
+        before=authoritative_state_hash(s.state)
+        rejected=s.act('pilot:A',{'action_id':'choose','card':land.ref})
+        self.assertFalse(rejected.ok);self.assertEqual(before,authoritative_state_hash(s.state))
+        accepted=s.act('pilot:A',{'action_id':'choose','card':nonland.ref})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(s)
+        self.assertEqual('graveyard',s.state.cards[nonland.object_id].zone)
+        self.assertEqual('hand',s.state.cards[land.object_id].zone)
+        self.assertEqual(2,s.state.cards[creature.object_id].counters.get('+1/+1',0));self.replay(s)
+
+    def test_partial_invalid_support_group_preserves_the_separate_control_clause_and_replays(self):
+        s=self.session(1150916);e=s.engine
+        first=self.add(e,'Generic Payment Commander','FIRST')
+        second=self.add(e,'Generic Payment Commander','SECOND',owner='C')
+        controlled=self.add(e,'Generic Payment Commander','CONTROLLED',owner='B');controlled.tapped=True
+        spell=self.add(e,'Press into Service','PRESS',zone='hand')
+        reap=self.add(e,"Altar's Reap",'REAP',zone='hand')
+        action=self.ready(s,spell,{'R':1,'C':5,'B':1});self.checkpoint(s)
+        accepted=s.act('pilot:A',{'action_id':action['id'],'targets':[
+            {'group':'clause_0','ref':first.ref},{'group':'clause_0','ref':second.ref},
+            {'group':'clause_1','ref':controlled.ref}],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        action=next(row for row in s.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions'] if row['id']=='cast:'+reap.ref)
+        accepted=s.act('pilot:A',{'action_id':action['id'],'sacrifice_cards':[first.ref],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(s)
+        self.assertEqual('graveyard',s.state.cards[first.object_id].zone)
+        self.assertEqual(1,s.state.cards[second.object_id].counters.get('+1/+1',0))
+        self.assertEqual(0,s.state.cards[controlled.object_id].counters.get('+1/+1',0))
+        self.assertEqual('A',s.state.cards[controlled.object_id].controller)
+        self.assertFalse(s.state.cards[controlled.object_id].tapped)
+        self.assertIn('Haste',e._effective_card_data(s.state.cards[controlled.object_id]).get('keywords',()))
+        self.replay(s)

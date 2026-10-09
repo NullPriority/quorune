@@ -161,6 +161,23 @@ def resolve_semantic_value(
             raise SemanticNodeError(str(exc)) from exc
     if value.startswith("$context."):
         return item.context.get(value.removeprefix("$context."))
+    target_group_match = re.fullmatch(r"\$target_group\.(?P<group>clause_[0-3])(?P<scalar>\.0)?", value)
+    if target_group_match:
+        groups = item.context.get('target_groups_current')
+        if groups is None:
+            groups = item.context.get('target_groups')
+        if not isinstance(groups, Mapping) or target_group_match['group'] not in groups:
+            raise SemanticNodeError('Scoped target group is unavailable')
+        refs = groups[target_group_match['group']]
+        if not isinstance(refs, (list, tuple)) or any(ref is not None and (type(ref) is not str or not ref) for ref in refs):
+            raise SemanticNodeError('Scoped target group is malformed')
+        current = [ref for ref in refs if ref is not None]
+        if target_group_match['scalar']:
+            original = item.context.get('target_groups', {}).get(target_group_match['group'])
+            if not isinstance(original, (list, tuple)) or len(original) != 1 or len(refs) > 1:
+                raise SemanticNodeError('Scoped scalar target requires its one fixed role')
+            return refs[0] if refs else None
+        return current
     if value == "$targets":
         return [target for target in item.targets if target is not None]
     current_controller_match = re.fullmatch(
