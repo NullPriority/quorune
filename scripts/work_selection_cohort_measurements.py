@@ -218,6 +218,13 @@ _PROBE_CONTROLLER_PROGRAM = "controller-program-composition-existing-owner-v1"
 _PROBE_COUNTED_LIBRARY_SEARCH = "fixed-counted-library-search-existing-owner-v1"
 _PROBE_TYPED_GRANT_CARRIERS = "typed-layer-six-grant-carriers-existing-owner-v1"
 _PROBE_SOURCE_SELF_REFERENCES = "source-self-reference-closure-existing-owner-v1"
+_PROBE_SOURCE_MAINTENANCE = "fixed-source-maintenance-existing-owner-v1"
+_PROBE_COUNTED_ACTIVATION_COST = "fixed-counted-activation-zone-cost-existing-owner-v1"
+_PROBE_KICKED_ENTRY = "fixed-kicked-entry-result-existing-owner-v1"
+_PROBE_TARGET_ANNOUNCEMENT = 'fixed-target-announcement-existing-owner-v1'
+_PROBE_KICKED_SPELL = 'fixed-kicked-spell-condition-existing-owner-v1'
+_PROBE_EVENT_CARD_RETURN = 'fixed-event-card-return-existing-owner-v1'
+_PROBE_BATCHED_SUPPORT = 'batched-card-support-existing-owner-v1'
 _PROBE_DECLARED_EFFECT_AMOUNT = "declared-effect-amount-existing-owner-v1"
 _PROBE_FIXED_ANIMATION = "fixed-resolution-animation-existing-owner-v1"
 _PROBE_FIXED_EFFECT_PAYMENT = "fixed-resolution-payment-existing-owner-v1"
@@ -589,6 +596,13 @@ _PROBE_IDS = {
     _PROBE_COUNTED_LIBRARY_SEARCH,
     _PROBE_TYPED_GRANT_CARRIERS,
     _PROBE_SOURCE_SELF_REFERENCES,
+    _PROBE_SOURCE_MAINTENANCE,
+    _PROBE_COUNTED_ACTIVATION_COST,
+    _PROBE_KICKED_ENTRY,
+    _PROBE_TARGET_ANNOUNCEMENT,
+    _PROBE_KICKED_SPELL,
+    _PROBE_EVENT_CARD_RETURN,
+    _PROBE_BATCHED_SUPPORT,
     _PROBE_DECLARED_EFFECT_AMOUNT,
     _PROBE_FIXED_ANIMATION,
     _PROBE_FIXED_EFFECT_PAYMENT,
@@ -1243,6 +1257,26 @@ def _matches_probe(
     card_record: Any | None = None,
     ability: Mapping[str, Any] | None = None,
 ) -> bool:
+    if probe_id == _PROBE_BATCHED_SUPPORT:
+        return any(_matches_probe(probe, source, card_record=card_record, ability=ability) for probe in (
+            _PROBE_SOURCE_MAINTENANCE, _PROBE_COUNTED_ACTIVATION_COST, _PROBE_KICKED_ENTRY,
+            _PROBE_TARGET_ANNOUNCEMENT, _PROBE_KICKED_SPELL, _PROBE_EVENT_CARD_RETURN,
+        )) or bool(re.search(r"(?:counters?.*?\bX\b|that many.*?counters?|counters?.*?that many)", source, re.I))
+    if probe_id in {_PROBE_KICKED_SPELL, _PROBE_EVENT_CARD_RETURN}:
+        texts = (source, *(str(face.get('oracle_text') or '') for face in card_record.faces)) if card_record is not None else (source,)
+        return any('if this spell was kicked,' in text.casefold() if probe_id == _PROBE_KICKED_SPELL else bool(re.search(r'(?:dies|is put into a graveyard from the battlefield).*?return.*?hand', text, re.I)) for text in texts)
+    if probe_id == _PROBE_TARGET_ANNOUNCEMENT:
+        texts = (source, *(str(face.get('oracle_text') or '') for face in card_record.faces)) if card_record is not None else (source,)
+        return any(re.search(r'becomes the target|cast a spell that targets', text, re.I) for text in texts)
+    if probe_id == _PROBE_KICKED_ENTRY:
+        texts = (source, *(str(face.get('oracle_text') or '') for face in card_record.faces)) if card_record is not None else (source,)
+        return any('enters, if it was kicked,' in text.casefold() for text in texts)
+    if probe_id == _PROBE_COUNTED_ACTIVATION_COST:
+        texts = (source, *(str(face.get('oracle_text') or '') for face in card_record.faces)) if card_record is not None else (source,)
+        return any(re.search(r'\b(?:sacrifice|discard|exile|return) (?:two|three|four|five|six|seven|eight|nine|ten|[2-9]|10)\b', text, re.I) for text in texts)
+    if probe_id == _PROBE_SOURCE_MAINTENANCE:
+        texts = (source, *(str(face.get('oracle_text') or '') for face in card_record.faces)) if card_record is not None else (source,)
+        return any(re.search(r'\b(?:When|At the beginning of)\b.*\bsacrifice\b', text, re.I) for text in texts)
     if probe_id == _PROBE_SOURCE_SELF_REFERENCES:
         if card_record is None:
             raise WorkSelectionCohortMeasurementError("Source-reference measurement requires original card context")
@@ -5391,7 +5425,7 @@ def _measurement(
             cohort_fingerprint=cohort_fingerprint, database=database,
         )
     if probe_id in {_PROBE_BOUND_EFFECT_PROGRAM, _PROBE_FIXED_CONTROL_UNTAP, _PROBE_ENTRY_DESIGNATIONS, _PROBE_ENTRY_DESIGNATIONS_V2, _PROBE_QUALIFIED_ZONE_EVENT,
-                    _PROBE_DECLARED_EFFECT_AMOUNT, _PROBE_FIXED_ANIMATION, _PROBE_FIXED_EFFECT_PAYMENT, _PROBE_STACK_CONTROLLER_PAYMENT, _PROBE_LINKED_EXILE_RETURN, _PROBE_SCALAR_EFFECT_AMOUNT, _PROBE_TOKEN_COPY_RECIPE, _PROBE_TAP_STATE_EVENT, _PROBE_PUBLIC_COLLECTION_QUANTITY, _PROBE_SOURCE_SELF_REFERENCES}:
+                    _PROBE_DECLARED_EFFECT_AMOUNT, _PROBE_FIXED_ANIMATION, _PROBE_FIXED_EFFECT_PAYMENT, _PROBE_STACK_CONTROLLER_PAYMENT, _PROBE_LINKED_EXILE_RETURN, _PROBE_SCALAR_EFFECT_AMOUNT, _PROBE_TOKEN_COPY_RECIPE, _PROBE_TAP_STATE_EVENT, _PROBE_PUBLIC_COLLECTION_QUANTITY, _PROBE_SOURCE_SELF_REFERENCES, _PROBE_SOURCE_MAINTENANCE, _PROBE_COUNTED_ACTIVATION_COST, _PROBE_KICKED_ENTRY, _PROBE_TARGET_ANNOUNCEMENT, _PROBE_KICKED_SPELL, _PROBE_EVENT_CARD_RETURN, _PROBE_BATCHED_SUPPORT}:
         return _bound_effect_program_measurement(
             frontier=frontier, bundle_id=bundle_id, probe_id=probe_id,
             cards_by_oracle_id=cards_by_oracle_id, coverage=coverage,
@@ -8214,12 +8248,26 @@ def _bound_effect_program_measurement(
         _PROBE_TAP_STATE_EVENT: "trigger.event.normalized_public_action",
         _PROBE_PUBLIC_COLLECTION_QUANTITY: None,
         _PROBE_SOURCE_SELF_REFERENCES: None,
+        _PROBE_SOURCE_MAINTENANCE: 'trigger.source.fixed_maintenance',
+        _PROBE_COUNTED_ACTIVATION_COST: 'activation.selected_zone_change.fixed',
+        _PROBE_KICKED_ENTRY: 'trigger.entry.fixed_kicked_result',
+        _PROBE_TARGET_ANNOUNCEMENT: 'trigger.event.normalized_target_announcement',
+        _PROBE_KICKED_SPELL: 'resolution.effect.fixed_cast_fact',
+        _PROBE_EVENT_CARD_RETURN: 'zone.return.fixed_event_card',
+        _PROBE_BATCHED_SUPPORT: None,
     }[probe_id]
     capabilities = {capability} if capability is not None else {
         "continuous.characteristics.query_count_modifier",
         "quantity_expression.public_query_effect_amount",
         "continuous.characteristics.query_power_toughness_definition",
     }
+    if probe_id == _PROBE_BATCHED_SUPPORT:
+        capabilities = {
+            'trigger.source.fixed_maintenance', 'activation.selected_zone_change.fixed',
+            'trigger.entry.fixed_kicked_result', 'trigger.event.normalized_target_announcement',
+            'resolution.effect.fixed_cast_fact', 'zone.return.fixed_event_card',
+            'quantity_expression.declared_effect_amount', 'quantity_expression.scalar_effect_amount',
+        }
     if probe_id == _PROBE_SOURCE_SELF_REFERENCES:
         capabilities = {
             "trigger.event.normalized_self_attack", "trigger.effect.fixed_event",

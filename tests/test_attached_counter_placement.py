@@ -457,7 +457,7 @@ class AttachedCounterCompilerTests(unittest.TestCase):
         assert template is not None
         self.assertIs(CounterPlacementSubject.ATTACHED, template.subject)
         self.assertEqual(
-            ("counter.producer.fixed_attached_effect",),
+            ("counter.producer.fixed_attached_effect", "counter.producer.fixed_effect"),
             capability_dependencies_for_node(
                 effects=template.effects,
                 target_schema=template.target_schema,
@@ -543,7 +543,7 @@ class AttachedCounterCompilerTests(unittest.TestCase):
             )
 
         self.assertEqual(
-            ("counter.producer.fixed_attached_effect",),
+            ("counter.producer.fixed_attached_effect", "counter.producer.fixed_effect"),
             attached_shape(),
         )
         with patch.object(

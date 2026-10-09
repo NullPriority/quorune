@@ -55,6 +55,15 @@ def prepare_fixed_effect_payment(
 ) -> SemanticChoicePreparation:
     actor = context.actor
     spec, _ = _validated(effect, actor, context.query)
+    return prepare_fixed_payment_cost(spec, effect, context)
+
+
+def prepare_fixed_payment_cost(
+    spec: FixedEffectPaymentSpec, effect: Mapping[str, Any],
+    context: SemanticChoiceContext,
+) -> SemanticChoicePreparation:
+    """Publish the existing closed cost independently of its result branch."""
+    actor = context.actor
     legal = ()
     if spec.kind in {'discard', 'sacrifice'}:
         candidates = context.query.objects(
@@ -105,6 +114,19 @@ def complete_fixed_effect_payment(
     effect = continuation.effect
     actor = effect.get('_choice_actor')
     spec, consequences = _validated(effect, actor, query, continuation=True)
+    completion = complete_fixed_payment_cost(spec, effect, response, query)
+    return SemanticChoiceCompletion(
+        intents=completion.intents,
+        prepend_effects=consequences if completion.intents else (),
+    )
+
+
+def complete_fixed_payment_cost(
+    spec: FixedEffectPaymentSpec, effect: Mapping[str, Any],
+    response: Mapping[str, Any], query: SemanticChoiceQuery,
+) -> SemanticChoiceCompletion:
+    """Validate and commit one fixed cost through the canonical intent owner."""
+    actor = effect['_choice_actor']
     label = effect['_stack_label']
     if spec.kind in {'discard', 'sacrifice'}:
         unknown = set(response) - {'cards', 'pay', 'action', 'action_id', 'a', 'cap', 'reason', 'plan', 'next', 'choice_schema'}
@@ -156,4 +178,4 @@ def complete_fixed_effect_payment(
                 event_code='effect.optional_mana.paid', message='Optional fixed effect cost paid.',
                 details=FrozenMap({'cost': dict(spec.requirements)}),
             )
-    return SemanticChoiceCompletion(intents=(intent,), prepend_effects=consequences)
+    return SemanticChoiceCompletion(intents=(intent,))

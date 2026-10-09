@@ -7642,6 +7642,110 @@
       ],
       "interaction_order": 2,
       "assertion": "Pinned Erinis has a current typed legal Background setup designation and its actual attack offers and accepts only an owned graveyard land, returns it through the existing zone owner and replays. The independently unsupported Background body is not registered or claimed playable."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_attachment_lki_returns_dead_creature_after_aura_leaves",
+      "piece_ids": [
+        "capability.attachment.aura.simple_object",
+        "capability.zone.return.fixed_event_card"
+      ],
+      "capability_ids": [
+        "attachment.aura.simple_object",
+        "zone.return.fixed_event_card"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Murder kills the enchanted creature; Aura state-based departure retains attachment LKI, the departed event card returns to its owner hand, and pre-action replay agrees."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_attachment_lki_returns_dead_creature_after_aura_leaves",
+      "piece_ids": [
+        "capability.attachment.reference.current_or_lki",
+        "capability.zone.return.fixed_event_card"
+      ],
+      "capability_ids": [
+        "attachment.reference.current_or_lki",
+        "zone.return.fixed_event_card"
+      ],
+      "interaction_order": 2,
+      "assertion": "The trigger retains the prior attachment and exact departed creature incarnation after the Aura leaves through stabilization; an opponent-owned creature returns to its owner hand with replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_typed_aura_cast_rejects_non_swamp_and_returns_after_destruction_with_replay",
+      "piece_ids": [
+        "capability.attachment.aura.typed_restriction",
+        "capability.zone.return.fixed_event_card"
+      ],
+      "capability_ids": [
+        "attachment.aura.typed_restriction",
+        "zone.return.fixed_event_card"
+      ],
+      "interaction_order": 2,
+      "assertion": "A whole strictly bound generic Enchant Swamp Aura rejects a Plains target atomically, attaches through an accepted cast to a Swamp, then actual Naturalize destroys the Aura and its exact death trigger returns it once; pre-action replay covers both casts."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_shroud_rejects_targeted_removal_but_cost_sacrifice_returns_aura_with_replay",
+      "piece_ids": [
+        "capability.target.protection.shroud_permanent",
+        "capability.zone.change.destination_replacement"
+      ],
+      "capability_ids": [
+        "target.protection.shroud_permanent",
+        "zone.change.destination_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "Shroud rejects actual targeted Murder with unchanged authoritative hash, but actual Altar's Reap selects the creature as a nontargeted sacrifice cost; canonical zone transitions and Aura stabilization execute and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_shroud_rejects_targeted_removal_but_cost_sacrifice_returns_aura_with_replay",
+      "piece_ids": [
+        "capability.target.protection.shroud_permanent",
+        "capability.zone.return.fixed_event_card"
+      ],
+      "capability_ids": [
+        "target.protection.shroud_permanent",
+        "zone.return.fixed_event_card"
+      ],
+      "interaction_order": 2,
+      "assertion": "Aspect of Mongoose confers shroud before a rejected Murder command; accepted nontargeted cost sacrifice makes the Aura depart, and one exact graveyard trigger returns it to its distinct owner hand with pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_spine_targeted_entry_and_sacrifice_queue_one_return_with_replay",
+      "piece_ids": [
+        "capability.target.revalidate_resolution",
+        "capability.zone.return.fixed_event_card"
+      ],
+      "capability_ids": [
+        "target.revalidate_resolution",
+        "zone.return.fixed_event_card"
+      ],
+      "interaction_order": 2,
+      "assertion": "A real trusted Spine cast places its targeted entry trigger, destroys the accepted opposing permanent, then Atog's offered activation sacrifices Spine and queues exactly one versioned return through shared legacy supersession; pre-action replay preserves both results."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_original_typed_aura_return_with_unsupported_tap_sibling_rejects_runtime_admission",
+      "piece_ids": [
+        "capability.zone.return.fixed_event_card",
+        "residual.event_binding.normalized-event-binding"
+      ],
+      "capability_ids": [
+        "zone.return.fixed_event_card"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original pinned Spreading Algae retains its typed enchantment and exact event return beside an unsupported tap-destruction sibling; actual whole CardProgram runtime binding rejects the composition without granting gameplay trust."
     }
   ]
 }

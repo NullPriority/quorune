@@ -238,6 +238,11 @@ divided or dynamic quantities, linked results, compound or conditional tails,
 other players' graveyards, non-owner-hand destinations, and unsupported
 characteristic dependencies remain source-spanned residuals.
 
+Public quantity conditions reject keyword-qualified existence queries before
+constructing their closed quantity descriptor. An unsupported condition keeps
+its source-spanned residual; a successful direct-target predicate does not
+imply that the narrower quantity owner can evaluate it.
+
 `compiler/public_state_queries.py`, consumed by
 `compiler/continuous_templates.py`, lowers fixed controlled permanent sets that
 gain supported keywords, or gain fixed power/toughness and supported keywords,
@@ -466,6 +471,17 @@ nothing. Variable, hybrid, Phyrexian, snow, zero, restricted, and nonmana
 costs, reflexive `when you do` forms, nested or repeated choices, linked
 results, and multi-effect or independently inexact bodies remain residual.
 
+The selected-object activation cost compiler admits one homogeneous fixed
+count from two through ten for discard, owned-graveyard exile, controlled
+sacrifice or return. Count and the canonical singular predicate travel together;
+unknown plurals, random or linked costs, mixed selected groups and source-plus-
+selected costs remain residual. Counted costs use one simultaneous zone batch,
+with complete distinct-object validation before mutation. Server-stored
+replacement histories resume the entire unpaid cost and retain each selected
+object's choice history across pending save/load. One-object payloads retain
+their existing execution path. Mandatory counted casting costs remain outside
+this activation grammar.
+
 `compiler/fixed_effect_payment_templates.py` extends that same registered
 payment choice with an explicit v2 payload across spell, activated and existing
 normalized-trigger carriers. One fixed ordinary mana vector, fixed positive
@@ -480,6 +496,52 @@ CR 118.12 depends on chosen payment, not the final destination after replacement
 Alternative/compound/dynamic costs, random/named payments, paid-object or linked
 results, reflexive triggers, nested/repeated choices, unsupported leaf owners
 and wider grammar remain residual.
+
+Fixed kicked-spell additional results use a versioned instruction in the
+existing public-condition owner. The recorded stack Kicker fact selects only
+the fixed nontargeted result after its independently closed mandatory prefix.
+A copy preserves that fact; missing history rejects instead of becoming unpaid.
+Invalidated mandatory targets still prevent the whole spell from resolving.
+Counter-source attribution remains data owned by the existing counter
+transaction. Instead branches and additional conditional targets remain residual.
+
+Public self-death and attached-creature death returns bind the event card and
+its exact post-departure zone-change counter. The existing graveyard-return
+operation lowers that descriptor to the canonical zone move intent, which
+skips missing or changed graveyard incarnations and returns to the owner's
+hand. Departure attachment facts retain the dead creature when its Aura later
+leaves. Optional, delayed and independently unsupported results remain residual.
+
+`rules/target_announcements.py` publishes a sealed public occurrence for each
+newly targeted permanent after an authoritative cast, activation, triggered
+ability target choice, stack copy or target change. Duplicate target roles
+produce one occurrence; retaining a prior target produces none. The compiler
+keeps targeted-object controller and announcing-stack controller distinct,
+with source-bound results separate from results for another affected object.
+Ordinary Heroic subscriptions still use the spell-cast occurrence, so copying,
+activating or changing targets does not become a new cast. Source sacrifice
+results share the existing incarnation- and controller-checked owner. Hidden
+and player targets, first-time limits and unknown result references remain
+residual.
+
+`compiler/kicked_entry_trigger_nodes.py` binds a self-entry `if it was
+kicked` ability to the sealed entry occurrence's paid cast option. Casting pays
+one fixed kicker through its existing owner; target placement, token creation,
+private choices and other consequences retain their independently closed
+owners. The original trigger retains the entry fact when its source leaves or
+changes controller. A blinked object or token copy has no paid kicker fact and
+creates no new kicked trigger. Multiple kicker costs, Multikicker, cost-specific
+conditions and independently unsupported results or siblings remain residual.
+
+`compiler/source_maintenance_nodes.py` recognizes self-entry and fixed upkeep
+or end-step triggers whose only result is sacrificing the source, optionally
+unless the triggering controller pays one existing closed fixed cost. Its v3
+payment payload carries the source-incarnation binding and requires a separate
+maintenance capability in addition to the payment and zone owners. Controller
+steps retain their printed controller condition; an unqualified end step applies
+to every active player's turn. Alternative, compound, variable and linked costs,
+reflexive results and additional unrepresented text remain residual. Whole-card
+admission still requires every independently material sibling to close.
 
 `compiler/monarch_templates.py` owns the mandatory controller-becomes-monarch
 instruction. Its strict node shape declares only the existing canonical
@@ -1390,6 +1452,25 @@ declarations carry explicit Oracle-node-scoped identities and persist their
 first execution-time value across sibling results and replacement resumption.
 Independent quantity expressions retain their separate execution-time reads.
 The casting owner remains the sole authority for choosing and paying cost X.
+Single-subject `place_counters` results also bind declared or current public
+characteristic amounts through their existing counter owner. A resolved zero
+amount is a paid no-op; malformed and negative amounts are rejected. Counter
+source attribution stays attached to the original resolving instruction. Group,
+set, and player counter amounts remain outside this declared-amount boundary.
+Attached and targeted regeneration nodes retain the registered shield handler
+dependency beside the fixed-effect capability, including when a newly closed
+event-return sibling makes the complete card reachable.
+Current-program assembly supersedes an identical reviewed self-graveyard return
+with the trusted event-bound return only when event shape, source hashes, costs,
+targets and handlers agree. Both assembly paths share this precedence; unrelated
+legacy abilities remain separate and one printed return queues one trigger.
+Combined deliveries use a registered aggregate probe over original whole-card
+programs. The probe deduplicates Oracle IDs and retains independent residual
+siblings; its generated transition receipt binds the original immutable base
+frontier across revisions of an unmerged batch. Final PR delivery still uses
+immutable base/head corpus receipts and subtracts lost support. Interaction
+coverage distinguishes actual Aura, shroud and target composition from explicit
+rejection of unresolved original-card siblings.
 Undefined X, X-dependent target domains or cardinalities, variable activation
 costs, nonordinary X mana costs, linked or source characteristics, open arithmetic,
 unrepresented result owners, and nested modal declarations remain residual.

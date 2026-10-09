@@ -481,28 +481,128 @@
     },
     {
       "id": "activation.selected_zone_change.fixed",
-      "version": 2,
-      "official_rules": ["400.2", "400.7", "602.2", "602.2b", "614.1", "616.1", "701.9a", "701.13a", "701.21a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 3,
+      "official_rules": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
-        "summary": "Choose and pay exactly one fixed discard, sacrifice, exile, or return activated-ability cost through the same typed object query and replacement-aware zone-change owner used by fixed casting costs, including source-wide another exclusion and fixed current characteristic predicates.",
-        "inputs": ["one source-spanned fixed selected-object activation cost", "one closed actor-bound ObjectQuerySpec over fixed type, subtype, color, supertype, or token identity", "optional physical source-object exclusion", "one current eligible object", "current priority-action payment frame", "stable zone-change replacement event identity"],
-        "outputs": ["one offer and command sharing the same current effective-characteristic object set", "exact source exclusion for another", "one replacement-resolved cost destination", "normalized departure events before stack placement", "transactional rollback and seat-scoped continuation", "exact replay"],
-        "exclusions": ["zero, multiple, optional, random, variable, or repeated selected costs", "mixed type, subtype, token, or asymmetric disjunctions", "chosen, named, linked, historical, attachment, counter, modified, or quantity-derived predicates", "multiple simultaneous cost objects", "self-source plus selected-object compound costs", "cost-order choices", "complex, hybrid, Phyrexian, or snow mana symbols", "mana abilities with selected zone-change costs", "objects controlled or owned by another player"]
+        "summary": "Compile and pay one selected-object activation cost with one current predicate and a fixed count from one through ten, using the canonical owned/controlled query and simultaneous zone transaction for counted sets.",
+        "inputs": [
+          "one source-spanned fixed selected-object activation cost",
+          "one closed actor-bound ObjectQuerySpec over fixed type, subtype, color, supertype, or token identity",
+          "optional physical source-object exclusion",
+          "one through ten current eligible objects",
+          "current priority-action payment frame",
+          "stable zone-change replacement event identity",
+          "Fixed homogeneous count two through ten with complete distinct object selection"
+        ],
+        "outputs": [
+          "one offer and command sharing the same current effective-characteristic object set",
+          "exact source exclusion for another",
+          "operation-owned replacement-resolved destinations",
+          "normalized departure events before stack placement",
+          "transactional rollback and seat-scoped continuation",
+          "exact replay",
+          "Counted payment commits one simultaneous zone batch",
+          "Chronological replacement sequence preserves pending save/load and resumes the whole unpaid cost once"
+        ],
+        "exclusions": [
+          "zero, optional, random, variable or repeated selected-cost groups",
+          "mixed type, subtype, token, or asymmetric disjunctions",
+          "chosen, named, linked, historical, attachment, counter, modified, or quantity-derived predicates",
+          "self-source plus selected-object compound costs",
+          "cost-order choices",
+          "independently unsupported mana-cost variants",
+          "mana abilities with selected zone-change costs",
+          "objects controlled or owned by another player",
+          "Counts above ten, random, named or mixed selected-object groups",
+          "Counted mandatory casting costs and selected costs combined with source zone costs"
+        ]
       },
-      "dependencies": ["trigger.event.normalized_zone_change", "zone.change.destination_replacement"],
-      "implementation_components": ["quorune.compiler.activated_zone_change_costs.fixed_activated_zone_change_cost", "quorune.rules.casting_additional_costs.FixedZoneChangeAdditionalCost", "quorune.rules.activation_costs.activation_choice_candidates", "quorune.rules.activation_zone_change_costs.activation_zone_change_cost_reference", "CommanderEngine._pay_ability_choice_costs", "quorune.mana_payment_continuations.issue_mana_payment_replacement_choice", "quorune.replacement.replay.ReplacementContinuation", "CommanderEngine.move_card"],
-      "positive_tests": ["test_fixed_selected_zone_change_costs_compile_source_spanned", "test_fixed_selected_sacrifice_predicates_compile_closed_queries", "test_fixed_selected_graveyard_exile_cost_resolves", "test_nontoken_cost_excludes_matching_token", "test_unqualified_graveyard_exile_uses_owner"],
-      "negative_tests": ["test_zone_change_cost_grammar_rejects_unbounded_variants", "test_activation_zone_change_costs_exclude_mana_abilities", "test_source_zone_cost_rejects_inconsistent_descriptor", "test_selected_zone_cost_offer_and_command_share_candidates"],
-      "interaction_tests": ["test_selected_zone_cost_offer_and_command_share_candidates", "test_selected_zone_cost_uses_current_effective_characteristics", "test_selected_zone_cost_replacement_is_private_and_replays"],
-      "multiplayer_tests": ["test_selected_zone_cost_replacement_is_private_and_replays"],
-      "privacy_tests": ["test_selected_zone_cost_replacement_is_private_and_replays"],
-      "replay_tests": ["test_selected_zone_cost_replacement_is_private_and_replays"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "trigger.event.normalized_zone_change",
+        "zone.change.destination_replacement"
+      ],
+      "implementation_components": [
+        "quorune.compiler.activated_zone_change_costs.fixed_activated_zone_change_cost",
+        "quorune.rules.casting_additional_costs.FixedZoneChangeAdditionalCost",
+        "quorune.rules.activation_costs.activation_choice_candidates",
+        "quorune.rules.activation_zone_change_costs.activation_zone_change_cost_reference",
+        "CommanderEngine._pay_ability_choice_costs",
+        "quorune.mana_payment_continuations.issue_mana_payment_replacement_choice",
+        "quorune.replacement.replay.ReplacementContinuation",
+        "CommanderEngine.move_card",
+        "quorune.compiler.counted_zone_costs.fixed_counted_zone_change_cost_clause",
+        "quorune.rules.activation_costs.pay_counted_zone_change_activation_cost",
+        "quorune.rules.activation_zone_change_costs.counted_activation_replacement_selections",
+        "quorune.rules.activation.commit._pay_selected_object_costs"
+      ],
+      "positive_tests": [
+        "test_fixed_selected_zone_change_costs_compile_source_spanned",
+        "test_fixed_selected_sacrifice_predicates_compile_closed_queries",
+        "test_fixed_selected_graveyard_exile_cost_resolves",
+        "test_nontoken_cost_excludes_matching_token",
+        "test_unqualified_graveyard_exile_uses_owner",
+        "test_fixed_counted_costs_preserve_query_count_and_siblings",
+        "test_real_lavamancer_full_graveyard_payment_and_action_rollback_replay",
+        "test_real_goblin_warrens_sacrifices_one_simultaneous_controlled_set"
+      ],
+      "negative_tests": [
+        "test_zone_change_cost_grammar_rejects_unbounded_variants",
+        "test_activation_zone_change_costs_exclude_mana_abilities",
+        "test_source_zone_cost_rejects_inconsistent_descriptor",
+        "test_selected_zone_cost_offer_and_command_share_candidates",
+        "test_counted_cost_rejects_open_qualities_partial_groups_and_unknown_counts",
+        "test_counted_replacement_sequence_rejects_unselected_objects_and_open_fields",
+        "test_counted_cost_compiler_and_dependency_mutants_fail_closed"
+      ],
+      "interaction_tests": [
+        "test_selected_zone_cost_offer_and_command_share_candidates",
+        "test_selected_zone_cost_uses_current_effective_characteristics",
+        "test_selected_zone_cost_replacement_is_private_and_replays",
+        "test_counted_sacrifice_replacements_suspend_whole_cost_load_and_resume_once"
+      ],
+      "multiplayer_tests": [
+        "test_selected_zone_cost_replacement_is_private_and_replays",
+        "test_real_lavamancer_full_graveyard_payment_and_action_rollback_replay",
+        "test_counted_sacrifice_replacements_suspend_whole_cost_load_and_resume_once"
+      ],
+      "privacy_tests": [
+        "test_selected_zone_cost_replacement_is_private_and_replays",
+        "test_counted_discard_activation_is_private_complete_and_replays"
+      ],
+      "replay_tests": [
+        "test_selected_zone_cost_replacement_is_private_and_replays",
+        "test_real_lavamancer_full_graveyard_payment_and_action_rollback_replay",
+        "test_real_goblin_warrens_sacrifices_one_simultaneous_controlled_set",
+        "test_counted_discard_activation_is_private_complete_and_replays",
+        "test_counted_sacrifice_replacements_suspend_whole_cost_load_and_resume_once"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
-      "dependency_fail_closed_rationale": "test_selected_zone_cost_dependencies_fail_closed blocks each canonical zone-change dependency and proves only the selected-object activation remains inexact.",
+      "dependency_fail_closed_rationale": "test_selected_zone_cost_dependencies_fail_closed blocks each canonical zone-change dependency and proves only the selected-object activation remains inexact. Counted compiler evidence independently blocks this capability before promoting the new source-spanned grammar.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "test_selected_zone_cost_compiler_mutant_is_killed removes the shared activation-cost production; exact source-spanned compiler evidence rejects the survivor.",
+      "implementation_mutation_rationale": "test_selected_zone_cost_compiler_mutant_is_killed removes the shared activation-cost production; exact source-spanned compiler evidence rejects the survivor. The counted mutation replaces simultaneous movement with sequential moves and is killed by the actual printed Goblin Warrens cost witness.",
       "blockers": [],
       "status": "trusted"
     },
@@ -8413,6 +8513,446 @@
       "dependency_fail_closed_rationale": "The wrapper receives no trust unless the payment shape is positive and ordinary and its nested body independently resolves to an existing capability-closed effect with its exact target schema.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Focused compiler, capability-shape, and payment-handler mutations remove the wrapper, weaken cost or chooser validation, alter payment-before-body ordering, or admit an unrepresented nested instruction and are rejected before trusted promotion or mutation.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "zone.return.fixed_event_card",
+      "version": 1,
+      "official_rules": [
+        "400.7",
+        "400.7e",
+        "603.6c",
+        "603.10",
+        "603.10a",
+        "608.2c",
+        "903.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Return one card identified by a sealed self or attached-creature death occurrence from its exact new graveyard incarnation to its owners hand.",
+        "inputs": [
+          "Source-spanned death or battlefield-to-graveyard trigger",
+          "Sealed public event card and zone-change counter",
+          "Existing replacement-aware zone move intent"
+        ],
+        "outputs": [
+          "Particular departed card returned to owners hand",
+          "Missing or changed graveyard incarnation does nothing",
+          "Canonical hidden destination and replacement continuation replay"
+        ],
+        "exclusions": [
+          "Optional, delayed, conditional and another-object returns",
+          "Other zones or variable result references",
+          "Unsupported whole-card siblings"
+        ]
+      },
+      "dependencies": [
+        "trigger.event.normalized_zone_change",
+        "zone.change.destination_replacement"
+      ],
+      "implementation_components": [
+        "quorune.event_card_return.event_card_return_intent",
+        "quorune.compiler.event_card_return_templates.event_card_return_template",
+        "quorune.semantic_runtime.return_to_hand_handlers.ReturnGraveyardCardToOwnerHandHandler",
+        "quorune.semantic_choices.intent_host.SemanticChoiceIntentHostMixin.move_object_intent"
+      ],
+      "positive_tests": [
+        "test_departed_return_effect_requires_exact_event_card_and_counter",
+        "test_event_return_source_and_attached_grammar_preserve_unrelated_siblings",
+        "test_actual_sacrifice_returns_exact_card_to_owner_hand_with_pre_action_replay"
+      ],
+      "negative_tests": [
+        "test_stale_graveyard_incarnation_is_not_returned_by_old_trigger",
+        "test_event_return_missing_dependency_and_incarnation_mutants_fail_closed"
+      ],
+      "interaction_tests": [
+        "test_attachment_lki_returns_dead_creature_after_aura_leaves"
+      ],
+      "multiplayer_tests": [
+        "test_actual_sacrifice_returns_exact_card_to_owner_hand_with_pre_action_replay"
+      ],
+      "privacy_tests": [
+        "test_actual_sacrifice_returns_exact_card_to_owner_hand_with_pre_action_replay"
+      ],
+      "replay_tests": [
+        "test_actual_sacrifice_returns_exact_card_to_owner_hand_with_pre_action_replay",
+        "test_attachment_lki_returns_dead_creature_after_aura_leaves"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Independent capability mutations reject new nodes when their recorded fact, event or existing result owners cannot close.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "An executable omission mutant removes the decisive recorded cast fact or departed incarnation and is killed by actual action outcome assertions.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "resolution.effect.fixed_cast_fact",
+      "version": 1,
+      "official_rules": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Select one fixed additional kicked-spell result from the stack object recorded paid Kicker choice after its independently closed mandatory prefix.",
+        "inputs": [
+          "One complete fixed if-this-spell-was-kicked result",
+          "Immutable stack paid kicker boolean",
+          "Independently closed mandatory prefix and nontargeted consequences"
+        ],
+        "outputs": [
+          "Printed prefix executes once",
+          "Kicked result executes only for paid Kicker fact",
+          "Existing private choices and replacement continuations retain exact replay"
+        ],
+        "exclusions": [
+          "Instead self-replacement and additional targets",
+          "Multiple or nonmana Kicker costs",
+          "Unrepresented quantities, linked results and whole-card siblings"
+        ]
+      },
+      "dependencies": [
+        "casting.kicker.fixed_mana",
+        "resolution.effect.public_condition"
+      ],
+      "implementation_components": [
+        "quorune.compiler.kicked_spell_conditions.kicked_spell_condition_template",
+        "quorune.resolution_conditions.KickedCastCondition",
+        "quorune.semantic_choices.resolution_condition.PublicResolutionConditionHandler"
+      ],
+      "positive_tests": [
+        "test_kicked_result_is_separate_from_mandatory_prefix",
+        "test_real_roil_normal_and_kicked_cast_keep_prefix_and_optional_result_scope"
+      ],
+      "negative_tests": [
+        "test_cast_condition_rejects_self_replacement_open_targets_and_unknown_fields",
+        "test_runtime_cast_fact_accepts_only_sealed_boolean_and_locked_controller",
+        "test_illegal_roil_target_skips_kicked_draw_even_though_fact_is_paid",
+        "test_missing_cast_fact_is_rejected_before_conditional_result"
+      ],
+      "interaction_tests": [
+        "test_real_roil_normal_and_kicked_cast_keep_prefix_and_optional_result_scope",
+        "test_real_espionage_private_discard_after_prefix_pending_load_and_replay"
+      ],
+      "multiplayer_tests": [
+        "test_real_espionage_private_discard_after_prefix_pending_load_and_replay"
+      ],
+      "privacy_tests": [
+        "test_real_espionage_private_discard_after_prefix_pending_load_and_replay"
+      ],
+      "replay_tests": [
+        "test_real_roil_normal_and_kicked_cast_keep_prefix_and_optional_result_scope",
+        "test_real_espionage_private_discard_after_prefix_pending_load_and_replay"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Independent capability mutations reject new nodes when their recorded fact, event or existing result owners cannot close.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "An executable omission mutant removes the decisive recorded cast fact or departed incarnation and is killed by actual action outcome assertions.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "trigger.event.normalized_target_announcement",
+      "version": 1,
+      "official_rules": [
+        "115.1",
+        "115.2",
+        "115.7",
+        "400.7",
+        "601.2c",
+        "601.2i",
+        "602.2b",
+        "603.2",
+        "603.3",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Publish one sealed public occurrence for each newly targeted permanent after authoritative cast, activation, triggered target selection, copy or retarget commit.",
+        "inputs": [
+          "Current stack controller, kind and targets",
+          "New targets minus prior target set",
+          "Current permanent incarnation and controller"
+        ],
+        "outputs": [
+          "One target occurrence per permanent and stack object",
+          "Qualified principal-correct typed trigger binding",
+          "Copy and retarget do not become spell casts"
+        ],
+        "exclusions": [
+          "Hidden-zone and player target subscriptions",
+          "First-time-each-turn or other unrepresented trigger limits",
+          "Independently unsupported results and whole-card siblings"
+        ]
+      },
+      "dependencies": [
+        "trigger.placement.apnap",
+        "target.revalidate_resolution"
+      ],
+      "implementation_components": [
+        "quorune.rules.target_announcements.TargetAnnouncement",
+        "quorune.rules.target_announcements.dispatch_target_announcements",
+        "quorune.compiler.target_announcement_bindings.target_announcement_binding_spec",
+        "quorune.compiler.trigger_result_templates.binding_effect_template"
+      ],
+      "positive_tests": [
+        "test_target_occurrence_pins_stack_controller_and_each_current_object_once",
+        "test_actual_targeted_cast_and_ability_each_trigger_once_and_replay",
+        "test_actual_triggered_target_choice_announces_only_committed_target"
+      ],
+      "negative_tests": [
+        "test_current_phased_or_departed_target_creates_no_occurrence",
+        "test_cast_target_occurrence_never_appears_after_invalid_target_rollback",
+        "test_target_announcement_compiler_dependency_and_implementation_mutants_fail_closed"
+      ],
+      "interaction_tests": [
+        "test_actual_targeted_cast_and_ability_each_trigger_once_and_replay",
+        "test_copy_and_retarget_owner_publish_new_targets_without_creating_casts",
+        "test_actual_targeted_illusion_sacrifices_before_spell_and_replays"
+      ],
+      "multiplayer_tests": [
+        "test_opposing_stack_controller_and_target_controller_publish_private_optional_draw"
+      ],
+      "privacy_tests": [
+        "test_opposing_stack_controller_and_target_controller_publish_private_optional_draw",
+        "test_pending_target_draw_choice_loads_and_keeps_actor_private"
+      ],
+      "replay_tests": [
+        "test_actual_targeted_cast_and_ability_each_trigger_once_and_replay",
+        "test_opposing_stack_controller_and_target_controller_publish_private_optional_draw"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Independent compiler mutations block this capability, APNAP and target legality; public affected-object references and first-time modifiers remain residual.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Removing target dispatch prevents an actual registered targeted cast from generating its printed trigger and is killed; missing APNAP or target dependencies independently prevent compiler admission.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "trigger.entry.fixed_kicked_result",
+      "version": 1,
+      "official_rules": [
+        "400.7",
+        "603.3a",
+        "603.4",
+        "603.6d",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Bind one kicked self-entry trigger to its sealed zone-occurrence cast option and delegate independently closed consequences and target selection to their existing owners.",
+        "inputs": [
+          "one self-entry if-it-was-kicked ability",
+          "sealed paid single-kicker entry fact",
+          "independently represented typed result and targets"
+        ],
+        "outputs": [
+          "trigger only after actually kicked entry",
+          "immutable entry fact survives source departure and control changes",
+          "ordinary locked controller, target placement and replay"
+        ],
+        "exclusions": [
+          "Multikicker, repeated or multiple kicker costs",
+          "Conditional replacement spell results and paid-cost-specific variants",
+          "Unrepresented results, alternative-cost composition or whole-card siblings"
+        ]
+      },
+      "dependencies": [
+        "casting.kicker.fixed_mana",
+        "trigger.event.normalized_zone_change",
+        "trigger.placement.apnap"
+      ],
+      "implementation_components": [
+        "quorune.compiler.kicked_entry_trigger_nodes.fixed_kicked_entry_trigger_node",
+        "quorune.zone_trigger_events.normalized_zone_trigger_events",
+        "quorune.trigger_discovery.semantic_event_condition_matches",
+        "quorune.zone_transitions.ZoneTransitionOwner"
+      ],
+      "positive_tests": [
+        "test_kicked_entry_condition_and_independent_targets_keep_source_spans",
+        "test_actual_kicked_and_unkicked_druid_casts_pay_exact_cost_and_replay",
+        "test_actual_kicked_warhorse_creates_one_token_after_paid_entry",
+        "test_kicked_optional_targets_allow_zero_without_hiding_legal_targets"
+      ],
+      "negative_tests": [
+        "test_kicked_entry_unknown_payment_results_and_siblings_remain_residual",
+        "test_kicked_entry_condition_and_dependency_mutants_fail_closed",
+        "test_kicked_targets_are_chosen_only_on_paid_entry_and_illegal_choices_roll_back"
+      ],
+      "interaction_tests": [
+        "test_actual_kicked_entry_trigger_survives_blink_and_new_entry_has_no_kicker",
+        "test_actual_kicked_relic_copies_do_not_inherit_kicker_and_create_no_loop"
+      ],
+      "multiplayer_tests": [
+        "test_actual_kicked_private_library_choice_rolls_back_and_loads_pending"
+      ],
+      "privacy_tests": [
+        "test_actual_kicked_private_library_choice_rolls_back_and_loads_pending"
+      ],
+      "replay_tests": [
+        "test_actual_kicked_and_unkicked_druid_casts_pay_exact_cost_and_replay",
+        "test_actual_kicked_entry_trigger_survives_blink_and_new_entry_has_no_kicker",
+        "test_actual_kicked_private_library_choice_rolls_back_and_loads_pending"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Independent tests block kicker cost, normalized entry facts, APNAP and the kicked-result capability; unknown result and whole-card siblings remain residual.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Removing the kicked condition causes an actually unkicked Druid cast to trigger and is killed; removing the production independently prevents compiler admission.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "trigger.source.fixed_maintenance",
+      "version": 1,
+      "official_rules": [
+        "118.3",
+        "118.12",
+        "118.12a",
+        "201.5",
+        "400.7",
+        "603.3",
+        "603.3a",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Resolve a fixed entry or turn-step trigger that sacrifices its original source unless its locked controller pays one closed fixed cost.",
+        "inputs": [
+          "source-spanned self-entry or fixed upkeep/end-step ability",
+          "triggering controller and captured source incarnation",
+          "optional fixed ordinary mana, life, discard or sacrifice cost"
+        ],
+        "outputs": [
+          "ordinary APNAP trigger with locked payer",
+          "shared full-cost optional payment",
+          "unpaid controlled-source sacrifice through canonical replacements",
+          "no sacrifice of a returned incarnation or another controller permanent"
+        ],
+        "exclusions": [
+          "variable, compound, alternative or linked costs",
+          "reflexive triggers and unrepresented riders",
+          "independently unsupported whole-card siblings"
+        ]
+      },
+      "dependencies": [
+        "effect.choice.optional_fixed_mana_payment",
+        "trigger.event.normalized_zone_change",
+        "trigger.placement.apnap",
+        "zone.change.destination_replacement"
+      ],
+      "implementation_components": [
+        "quorune.source_maintenance.SourceMaintenanceSpec",
+        "quorune.compiler.source_maintenance_nodes.source_maintenance_node",
+        "quorune.rules.fixed_effect_payment_shapes.fixed_effect_payment_node_capabilities",
+        "quorune.semantic_choices.source_maintenance.prepare_source_maintenance",
+        "quorune.semantic_choices.source_maintenance.complete_source_maintenance",
+        "quorune.semantic_choices.fixed_effect_payment.prepare_fixed_payment_cost",
+        "quorune.semantic_choices.fixed_effect_payment.complete_fixed_payment_cost"
+      ],
+      "positive_tests": [
+        "test_decline_sacrifices_same_controlled_source_to_owner_graveyard",
+        "test_mandatory_sacrifice_auto_continues_and_restores_identity",
+        "test_entry_and_fixed_steps_preserve_source_spans_and_closed_costs"
+      ],
+      "negative_tests": [
+        "test_malformed_payment_and_wrong_stack_actor_fail_closed",
+        "test_source_is_revalidated_after_choice_without_changing_stack_payer",
+        "test_open_payments_other_sources_and_whole_card_siblings_remain_residual",
+        "test_maintenance_shape_rejects_missing_source_wrong_payer_and_target",
+        "test_maintenance_dependency_and_source_guard_mutants_fail_closed"
+      ],
+      "interaction_tests": [
+        "test_source_departure_blink_phasing_and_control_do_not_erase_payment",
+        "test_trusted_sacred_mesa_priority_activation_then_controlled_pegasus_payment",
+        "test_trusted_avatar_payment_replacement_pending_resumes_once_and_replays"
+      ],
+      "multiplayer_tests": [
+        "test_trusted_ball_lightning_every_players_end_step_and_blink_replays"
+      ],
+      "privacy_tests": [
+        "test_two_card_payment_is_private_atomic_and_rejects_stale_objects",
+        "test_trusted_avatar_cast_private_full_payment_rollback_pending_and_replay"
+      ],
+      "replay_tests": [
+        "test_trusted_rupture_spire_land_action_pays_or_sacrifices_and_replays",
+        "test_trusted_avatar_cast_private_full_payment_rollback_pending_and_replay",
+        "test_trusted_ball_lightning_every_players_end_step_and_blink_replays",
+        "test_trusted_avatar_payment_replacement_pending_resumes_once_and_replays"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Compiler closure retains blocked or missing maintenance and ambient dependencies.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Source incarnation, controller and cost mutations must be killed before trust.",
       "blockers": [],
       "status": "trusted"
     },

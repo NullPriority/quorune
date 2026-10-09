@@ -182,6 +182,15 @@ Do not select work one numbered rule at a time or preserve a false positive to
 avoid a measured demotion. Prefer a subsystem-sized family that removes a
 shared blocker and has one reviewable mutation boundary.
 
+A support delivery may combine multiple such families in one pull request.
+The combined final pinned Commander corpus must gain at least 200 net distinct
+capability-closed cards against the pull request's base. Count overlapping
+families once per Oracle ID, subtract demotions, and verify every remaining
+whole-card sibling and newly reachable interaction. Smaller component
+measurements can contribute to that delivery; ability, residual or downstream
+forecasts alone cannot satisfy the pull-request floor. Correctness-first work
+retains its existing priority and authority.
+
 The dependency-ready rules batch is not automatically the foreground task.
 The generated queue ranks deterministic CI, replay/privacy, missing-owner,
 runtime Oracle-text, interaction-assurance, and measured architecture debt

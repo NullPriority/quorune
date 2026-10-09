@@ -114,6 +114,16 @@ A valid rules family:
 - regenerates rules, compiler, card, architecture and status artifacts once at
   the final exact head.
 
+Card-support delivery pull requests must add at least 200 net distinct
+capability-closed cards from the pinned Commander snapshot. Multiple mechanics
+may share one delivery pull request; keep each mechanic's contract, ownership,
+evidence and commits independently reviewable. Stage smaller measured families
+on that branch until the combined final corpus meets the delivery floor.
+Count each Oracle ID once and subtract lost support. Parser matches, exact
+ability gains, residual reductions and projected downstream gains do not replace
+the whole-card requirement. Existing correctness-first prioritization and all
+trust, replay, privacy and certification requirements remain in force.
+
 Do not add a second capability, mechanic, compiler, scheduler or runtime
 component registry. Do not add runtime Oracle parsing or arbitrary executable
 callbacks. Repeated source-pinned descriptors must become a generic compiler

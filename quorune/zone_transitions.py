@@ -680,6 +680,7 @@ class ZoneTransitionOwner:
                 read_ahead_chapter=(
                     plan.prepared_replacement.read_ahead_chapter
                 ),
+                cast_option=departure.cast_option,
             )
 
     def _log_prevented_token(
@@ -846,7 +847,7 @@ class ZoneTransitionOwner:
             cause=reason,
             transition_kind=transition_kind,
             read_ahead_chapter=read_ahead_chapter,
-            cast_option=departure.cast_option,
+            cast_option=departure.cast_option if departure.origin == 'stack' and card.zone == 'battlefield' else None,
         )
 
     def move_cards_simultaneously(
@@ -967,6 +968,7 @@ class ZoneTransitionOwner:
                 origin_data=departure.characteristics,
                 origin_attachments=departure.attachments,
                 origin_attached_to=departure.attached_to,
+                cast_option=departure.cast_option,
                 departure_sources=sources.sources,
                 departure_source_zones=sources.source_zones,
                 departure_source_characteristics=(

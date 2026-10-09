@@ -3,7 +3,9 @@
 <!--
 CI validates this form. Remove every instructional comment, fill every evidence
 row, explain each N/A, and check every safety assertion. Explain the durable
-outcome and why this is one coherent change.
+outcome and each mechanic's ownership and independent evidence. Support
+deliveries must meet the 200 net capability-closed Commander-card floor; let
+PR / Plan publish the exact aggregate corpus delta.
 -->
 
 ## Change class and authority
@@ -57,7 +59,7 @@ outcome and why this is one coherent change.
 
 ## Safety checklist
 
-- [ ] The change is one coherent subsystem-sized unit; unrelated cleanup is excluded.
+- [ ] Each mechanic has a reviewable ownership and evidence boundary; unrelated cleanup is excluded.
 - [ ] Advertised actions and accepted commands use the same authoritative legality path, or this is N/A with a reason above.
 - [ ] No card-name, collector-number, set-code, or Oracle-ID behavior was added to the generic runtime.
 - [ ] No direct `GameState` write was added outside a declared owner.

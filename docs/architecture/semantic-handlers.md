@@ -103,6 +103,16 @@ from historical record replay: records with incompatible runtime trust provenanc
 are rejected explicitly before loading, rather than recompiled under current
 semantics.
 
+The same payment registration accepts a closed v3 source-maintenance payload.
+Its fixed cost uses the shared v2 cost preparation and completion helpers.
+Decline sacrifices only the original source incarnation while the trigger's
+locked controller still controls it; the canonical simultaneous-zone intent
+owns sacrifice events and destination replacements. A mandatory source sacrifice
+auto-continues without a payment decision. Optional payment remains available
+when the source has left, returned or changed controller, because the printed
+unless instruction has no intervening source-presence condition. A successful
+cost payment suppresses the default even when a replacement redirects its cards.
+
 A fixed semantic-choice life gain uses `LifeChangeIntent` rather than writing a
 life total directly. The intent host prepares the canonical life-change batch;
 when multiple replacements apply, the ordinary private replacement task stores

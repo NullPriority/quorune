@@ -2,7 +2,7 @@
 title: "Rules dependency queue"
 status: "generated"
 authoritative_source: "coverage/rules-dependency-queue.json"
-verified: "bd5c8e7256ba08f9af0162607ddf4e6a90785c6affce8f9db4573d13598968c0"
+verified: "56ed8d2962f76c8322fc9e88b51f4fa3970846c178b4f3e953f4a9a848fce40a"
 audience: "rules, compiler, and engine contributors"
 maintenance: "generated"
 generated_source: "coverage/rules-dependency-queue.json"
@@ -11,7 +11,7 @@ generation_command: ".\.venv\Scripts\python.exe scripts\update_rules_scheduler.p
 
 # Rules dependency queue
 
-Source fingerprint: `57cc2a3138333f0397bd5af1e4afbdd039542e4b346d931611fdf0a121436415`
+Source fingerprint: `313518eef24f7c7edc3e6f37898f0b6575d00ec57659a504745b8e4b3ad1374b`
 
 ## Current top-level state
 
@@ -40,7 +40,7 @@ Priority classes: `ci_correctness` → `replay_privacy_defect` → `prohibited_r
 | 4 | complete | implementation | false | `architecture:dedicated-owner-extraction` | `architecture_owner_or_mutation_defect` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
 | 5 | blocked | implementation | false | `architecture:engine-mutation-and-specificity-debt` | `architecture_owner_or_mutation_defect` | 1 | 0 | 0 | 0 | unknown | 0 | 47 |
 | 6 | complete | implementation | false | `assurance:critical-interaction-recovery` | `interaction_assurance` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
-| 7 | blocked | implementation | false | `frontier:continuous_layer:continuous-effect-layers-and-dependencies` | `rules_foundation` | 1 | 0 | 1840 | 3884 | 30.163934 | 0 | 0 |
+| 7 | blocked | implementation | false | `frontier:continuous_layer:continuous-effect-layers-and-dependencies` | `rules_foundation` | 1 | 0 | 1845 | 3871 | 30.245902 | 0 | 0 |
 | 8 | blocked | implementation | false | `interaction-implementation:residual.replacement.replacement-applicability` | `rules_foundation` | 1 | 0 | unknown | unknown | unknown | 0 | 0 |
 | 9 | blocked | implementation | false | `interaction-implementation:residual.replacement.self-replacement-and-prevention-ordering` | `rules_foundation` | 1 | 0 | unknown | unknown | unknown | 0 | 0 |
 | 10 | blocked | implementation | false | `interaction-implementation:residual.replacement.damage-prevention` | `rules_foundation` | 1 | 0 | unknown | unknown | unknown | 0 | 0 |
@@ -69,7 +69,13 @@ Priority classes: `ci_correctness` → `replay_privacy_defect` → `prohibited_r
 | 33 | blocked | implementation | false | `bundle:fixed-token-creation-contexts` | `compiler_harvest` | 2 | 4 | 0 | 17 | 0.0 | 0 | 0 |
 | 34 | blocked | implementation | false | `frontier:effect_clause:unparsed-choose-one` | `compiler_harvest` | 1 | 3 | 0 | 171 | 0.0 | 0 | 0 |
 | 35 | blocked | implementation | false | `bundle:fixed-cast-lifecycles` | `compiler_harvest` | 1 | 2 | 0 | 0 | 0.0 | 0 | 0 |
-| 36 | blocked | implementation | false | `bundle:public-static-cast-cost-modifiers` | `compiler_harvest` | 1 | 1 | 0 | 0 | 0.0 | 0 | 0 |
+| 36 | blocked | implementation | false | `bundle:fixed-counted-activation-zone-cost` | `compiler_harvest` | 3 | 1 | 0 | 0 | 0.0 | 0 | 0 |
+| 37 | blocked | implementation | false | `bundle:fixed-event-card-return` | `compiler_harvest` | 3 | 1 | 0 | 0 | 0.0 | 0 | 0 |
+| 38 | blocked | implementation | false | `bundle:fixed-kicked-entry-result` | `compiler_harvest` | 2 | 1 | 0 | 0 | 0.0 | 0 | 0 |
+| 39 | blocked | implementation | false | `bundle:fixed-kicked-spell-condition` | `compiler_harvest` | 3 | 1 | 0 | 0 | 0.0 | 0 | 0 |
+| 40 | blocked | implementation | false | `bundle:fixed-source-maintenance` | `compiler_harvest` | 3 | 1 | 0 | 0 | 0.0 | 0 | 0 |
+| 41 | blocked | implementation | false | `bundle:fixed-target-announcement` | `compiler_harvest` | 2 | 1 | 0 | 0 | 0.0 | 0 | 0 |
+| 42 | blocked | implementation | false | `bundle:public-static-cast-cost-modifiers` | `compiler_harvest` | 1 | 1 | 0 | 0 | 0.0 | 0 | 0 |
 
 Selected reason: No serious candidate currently meets the generated eligibility policy; retain visible deferred pressure and recompute after the next measured frontier classification.
 

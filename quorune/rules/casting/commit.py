@@ -957,6 +957,7 @@ def _create_spell_item(
             ),
             "granted_improvise": used_improvise,
             "cost_option": proposal.cost_option_id,
+            'kicked': selected_option.get('kind') == KICKER_MECHANIC_ID,
             **lifecycle_context,
             **_fixed_cast_lifecycle_cost_context(costs),
             **(
@@ -1178,6 +1179,8 @@ def _dispatch_cast_events(
             sources=event_sources,
             trigger_batch=trigger_batch,
         )
+    from ..target_announcements import dispatch_target_announcements
+    dispatch_target_announcements(host, item, trigger_batch=trigger_batch)
     enqueue_trigger_batch(host, trigger_batch)
 
 

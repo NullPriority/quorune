@@ -370,9 +370,26 @@ def _resume_mana_replacement(
             _mana_damage_event_id(restored.batch)
             if restored.resume_kind == "mana_payment"
             else _priority_action_cost_event_id(restored.batch)
+            if len(restored.batch.events) == 1
+            else _counted_activation_cost_event_id(restored)
         )
     except ReplacementEffectError as exc:
         raise error_type(str(exc)) from exc
+    if restored.priority_action == 'activate' and len(restored.batch.events) > 1:
+        pending = next_batch_replacement_choice(restored.batch, restored.effects)
+        if pending is None or pending.event_order_options or type(selection) is not str:
+            raise error_type('Counted activation replacement choice disappeared')
+        event = restored.batch.events[pending.event_index]
+        sequence = response.get('_counted_cost_replacement_sequence', [])
+        if not isinstance(sequence, (list, tuple)):
+            raise error_type('Counted activation replacement sequence is malformed')
+        response['_counted_cost_replacement_sequence'] = [
+            *sequence, {'object_ref': event.payload['object_ref'], 'selection': selection},
+        ]
+        resume_mana_choice_capable_priority_action(
+            host, seat=restored.priority_seat, action=restored.priority_action, response=response,
+        )
+        return
     raw_journal = response.get("_mana_replacement_selections") or {}
     if not isinstance(raw_journal, Mapping):
         raise error_type("Mana-payment replacement journal is malformed")
@@ -389,6 +406,18 @@ def _resume_mana_replacement(
         action=restored.priority_action,
         response=response,
     )
+
+
+def _counted_activation_cost_event_id(restored: ReplacementContinuation) -> str:
+    """Resume only the current replacement within a decoded exact cost batch."""
+    if restored.priority_action != 'activate' or any(
+        event.kind != 'zone.change' for event in restored.batch.events
+    ):
+        raise ReplacementEffectError('Only counted activation costs have multiple cost events')
+    pending = next_batch_replacement_choice(restored.batch, restored.effects)
+    if pending is None or pending.choice.chooser != restored.priority_seat:
+        raise ReplacementEffectError('Counted activation replacement choice disappeared')
+    return pending.event_id
 
 
 def _resume_land_entry_replacement(

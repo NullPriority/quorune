@@ -1432,7 +1432,37 @@
         "quorune/compiler/spell_additional_cost_templates.py",
         "quorune/rules/activation/counter_costs.py",
         "quorune/rules/activation_counter_cost.py",
-        "quorune/rules/casting_additional_costs.py"
+        "quorune/rules/casting_additional_costs.py",
+        "quorune/compiler/counted_zone_costs.py",
+        "quorune/rules/activation_costs.py",
+        "quorune/rules/activation_zone_change_costs.py",
+        "quorune/rules/activation/commit.py",
+        "quorune/mana_payment_continuations.py",
+        "quorune/replacement_decisions.py",
+        "quorune/replacement/replay.py",
+        "tests/test_counted_activation_costs.py",
+        "tests/fixtures/counted-activation-costs.json",
+        "quorune/compiler/kicked_entry_trigger_nodes.py",
+        "tests/test_kicked_entry_triggers.py",
+        "tests/fixtures/kicked-entry-triggers.json",
+        "quorune/zone_transitions.py",
+        "quorune/rules/token_creation_capability_shapes.py",
+        "quorune/rules/target_announcements.py",
+        "quorune/compiler/target_announcement_bindings.py",
+        "quorune/compiler/trigger_result_templates.py",
+        "quorune/spell_copy_engine_adapter.py",
+        "quorune/selection/targeting.py",
+        "tests/test_target_announcements.py",
+        "tests/fixtures/target-announcements.json",
+        "quorune/compiler/kicked_spell_conditions.py",
+        "quorune/resolution_conditions.py",
+        "quorune/rules/resolution_condition_shapes.py",
+        "tests/test_kicked_spell_conditions.py",
+        "tests/fixtures/kicked-spell-conditions.json",
+        "quorune/event_card_return.py",
+        "quorune/compiler/event_card_return_templates.py",
+        "tests/test_event_card_return.py",
+        "tests/fixtures/event-card-return.json"
       ],
       "test_modules": [
         "test_activated_draw_abilities",
@@ -1441,7 +1471,22 @@
         "test_fixed_nonrepeating_modal_programs",
         "test_fixed_source_counter_activation_costs",
         "test_fixed_target_effect_sequences",
-        "test_high_risk_interaction_assurance"
+        "test_high_risk_interaction_assurance",
+        "test_fixed_activated_zone_change_costs",
+        "test_fixed_zone_change_additional_costs",
+        "test_counted_activation_costs",
+        "test_kicked_entry_triggers",
+        "test_kicker_rules",
+        "test_zone_trigger_events",
+        "test_target_announcements",
+        "test_copy_objects",
+        "test_fixed_counter_event_triggers",
+        "test_fixed_optional_mana_payment_triggers",
+        "test_kicked_spell_conditions",
+        "test_resolution_public_conditions",
+        "test_event_card_return",
+        "test_persist_undying_rules",
+        "test_source_maintenance"
       ]
     },
     {
@@ -1488,7 +1533,11 @@
         "quorune/rules/fixed_effect_clause_shapes.py",
         "quorune/semantic_choices/intent_host.py",
         "quorune/semantic_choices/payments.py",
-        "tests/test_fixed_optional_mana_payment_triggers.py"
+        "tests/test_fixed_optional_mana_payment_triggers.py",
+        "quorune/source_maintenance.py",
+        "quorune/compiler/source_maintenance_nodes.py",
+        "quorune/semantic_choices/source_maintenance.py",
+        "tests/test_source_maintenance.py"
       ],
       "test_modules": [
         "test_fixed_counter_event_triggers",
@@ -1496,7 +1545,8 @@
         "test_fixed_optional_mana_payment_triggers",
         "test_choice_forms",
         "test_semantic_choice_model",
-        "test_semantic_choice_characterization"
+        "test_semantic_choice_characterization",
+        "test_source_maintenance"
       ]
     },
     {

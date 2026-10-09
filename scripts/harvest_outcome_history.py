@@ -1528,7 +1528,6 @@ def _declaration_revises_unlanded_content_entry(
         and all(
             declaration.get(field) == entry.get(field)
             for field in (
-                "transition_id",
                 "bundle_id",
                 "candidate_ids",
             )
@@ -1925,7 +1924,7 @@ def build_harvest_outcome_history(
         )
         and not _content_transition_is_landed(
             repository,
-            validated_declaration["transition_id"],
+            str(entries[-1]["transition_id"]),
         )
         and not _semantic_receipts_match(
             latest,

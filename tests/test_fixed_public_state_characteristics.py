@@ -148,6 +148,20 @@ def source_context(
 
 
 class FixedPublicStateCharacteristicCompilerTests(unittest.TestCase):
+    def test_keyword_qualified_opponent_condition_remains_residual_without_raising(self):
+        from quorune.compiler.public_state_queries import fixed_public_state_condition
+        self.assertIsNone(fixed_public_state_condition(
+            'an opponent controls a creature with flying', source_name='Groundling Pouncer',
+        ))
+        self.assertIsNone(fixed_public_state_condition(
+            'you control a creature with flying', source_name='Boundary witness',
+        ))
+        from test_fixed_optional_mana_payment_triggers import payment_record
+        ir = compile_oracle_card(payment_record(
+            'As long as an opponent controls a creature with flying, this creature gets +1/+1 and has flying.',
+        ), capability_registry=self.capabilities, capability_profile='commander_review')
+        self.assertNotEqual('exact', ir.status)
+        self.assertTrue(ir.material_residuals)
     @classmethod
     def setUpClass(cls):
         cls.temporary = tempfile.TemporaryDirectory()

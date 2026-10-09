@@ -169,6 +169,41 @@ def build_plan(
                  "-p", "test_fixed_counter_event_triggers.py", "-k",
                  "test_tap_state_target_body_is_accepted_by_corpus_assurance"),
             ))
+        if "quorune/compiler/event_card_return_templates.py" in paths:
+            steps.append(QuickStep(
+                "event-return-source-less-probe-contract",
+                (python, "-m", "unittest", "discover", "-s", "tests",
+                 "-p", "test_event_card_return.py", "-k",
+                 "test_source_less_probe_keeps_literal_self_return_closed"),
+            ))
+        if "scripts/work_selection_cohort_measurements.py" in paths:
+            steps.append(QuickStep(
+                "batch-measurement-probe-dispatch-contract",
+                (python, "-m", "unittest", "discover", "-s", "tests",
+                 "-p", "test_event_card_return.py", "-k",
+                 "test_batch_measurement_probes_reach_the_registered_dispatcher"),
+            ))
+        if {"quorune/compiler/event_card_return_templates.py", "quorune/card_programs/reviewed_overlay.py"}.intersection(paths):
+            steps.append(QuickStep(
+                "event-return-legacy-overlay-contract",
+                (python, "-m", "unittest", "discover", "-s", "tests",
+                 "-p", "test_event_card_return.py", "-k",
+                 "test_event_return_overlay_requires_identical_self_event_and_bound_sources"),
+            ))
+        if "scripts/update_work_selection_cohort_measurements.py" in paths:
+            steps.append(QuickStep(
+                "unmerged-batch-receipt-base-contract",
+                (python, "-m", "unittest", "discover", "-s", "tests",
+                 "-p", "test_rules_scheduler.py", "-k",
+                 "test_revised_unmerged_batch_inherits_only_its_verified_receipt_base"),
+            ))
+        if "scripts/harvest_outcome_history.py" in paths:
+            steps.append(QuickStep(
+                "unmerged-harvest-revision-identity-contract",
+                (python, "-m", "unittest", "discover", "-s", "tests",
+                 "-p", "test_rules_scheduler.py", "-k",
+                 "test_compiler_revision_matches_only_the_same_unmerged_harvest_bundle"),
+            ))
         if "test_capability_implementation_mutations" in selected_modules:
             steps.append(QuickStep(
                 "mutation-patch-target-integrity",

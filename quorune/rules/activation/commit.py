@@ -438,9 +438,7 @@ def _pay_object_and_mana_costs(
             ability=ability,
             response=response,
         )
-        paid_objects = host._pay_ability_choice_costs(
-            proposal.seat, source, ability, response
-        )
+        paid_objects = _pay_selected_object_costs(host, proposal.seat, source, ability, response)
         special_cost_context = (
             (FIXED_COMBAT_RETURN_CONTEXT, combat_return_context)
             if combat_return_context is not None
@@ -470,6 +468,15 @@ def _pay_object_and_mana_costs(
             snow_required=snow_required,
         )
     return paid_objects, activations, spent, special_cost_context
+
+
+def _pay_selected_object_costs(host, seat, source, ability, response):
+    if len(ability.choices) == 1 and ability.choices[0].count > 1 and ability.choices[0].fixed_zone_change_cost() is not None:
+        from ..activation_costs import pay_counted_zone_change_activation_cost
+        return pay_counted_zone_change_activation_cost(
+            host, actor=seat, source=source, choice=ability.choices[0], response=response,
+        )
+    return host._pay_ability_choice_costs(seat, source, ability, response)
 
 
 def _commit_activation_resource_costs(
@@ -816,6 +823,8 @@ def commit_activation(
     if duration_tracked:
         item.context["control_duration_snapshot"] = duration_snapshot.to_dict() if duration_snapshot is not None else None
     host.state.stack.append(item)
+    from ..target_announcements import dispatch_target_announcements
+    dispatch_target_announcements(host, item)
     collect_ward_occurrences(host, item)
     host._log(
         proposal.seat,

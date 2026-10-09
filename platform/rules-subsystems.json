@@ -350,6 +350,7 @@
       "starting_uncovered_high_risk_pairs": 0
     },
     "coverage_family": {
+      "minimum_pr_complete_card_gain": 200,
       "minimum_complete_card_gain": 50,
       "minimum_exact_ability_gain": 100,
       "minimum_material_residual_reduction": 100,
@@ -373,6 +374,70 @@
         "two_additional_blocker_card": 1
       },
       "candidate_bundles": [
+        {
+          "bundle_id": "bundle:batched-card-support",
+          "member_family_ids": [
+            "activated_cost:complete-alternate-additional-cost-grammar",
+            "activated_cost:restricted-payment-predicates",
+            "effect_clause:ordered-effect-composition",
+            "effect_clause:unrepresented-activation-cost-variant",
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding",
+            "target_or_choice:conditional-effect"
+          ],
+          "canonical_owner_ids": [
+            "capability:activation.selected_zone_change.fixed",
+            "capability:resolution.effect.fixed_cast_fact",
+            "capability:trigger.entry.fixed_kicked_result",
+            "capability:trigger.event.normalized_target_announcement",
+            "capability:trigger.source.fixed_maintenance",
+            "capability:zone.return.fixed_event_card",
+            "component:quorune.compiler.counted_zone_costs.fixed_counted_zone_change_cost_clause",
+            "component:quorune.compiler.event_card_return_templates.event_card_return_template",
+            "component:quorune.compiler.kicked_entry_trigger_nodes.fixed_kicked_entry_trigger_node",
+            "component:quorune.compiler.kicked_spell_conditions.kicked_spell_condition_template",
+            "component:quorune.compiler.source_maintenance_nodes.source_maintenance_node",
+            "component:quorune.compiler.target_announcement_bindings.target_announcement_binding_spec",
+            "component:quorune.rules.activation_costs.pay_counted_zone_change_activation_cost",
+            "component:quorune.rules.target_announcements.dispatch_target_announcements",
+            "component:quorune.semantic_choices.fixed_effect_payment.complete_fixed_payment_cost",
+            "component:quorune.semantic_choices.source_maintenance.prepare_source_maintenance",
+            "component:quorune.zone_transitions.ZoneTransitionOwner"
+          ],
+          "source_contexts": [
+            "activated",
+            "spell",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "distinct-original-oracle-id",
+            "strict-whole-program-binding",
+            "union-of-reviewed-component-boundaries"
+          ],
+          "shared_dependencies": [
+            "activation.selected_zone_change.fixed",
+            "casting.kicker.fixed_mana",
+            "effect.choice.optional_fixed_mana_payment",
+            "resolution.effect.fixed_cast_fact",
+            "target.revalidate_resolution",
+            "trigger.event.normalized_zone_change",
+            "trigger.placement.apnap",
+            "zone.change.destination_replacement",
+            "zone.return.fixed_event_card"
+          ],
+          "shared_grammar": "The union of independently reviewed maintenance, counted-cost, kicked-result, targeting and departed-return boundaries plus existing single-subject counter amounts.",
+          "estimated_implementation_hours": 20,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "At least 200 net distinct capability-closed Commander cards through one delivery and immutable generated measurement.",
+          "explicit_exclusions": [
+            "Duplicate Oracle IDs do not increase gain",
+            "Independent unrepresented siblings remain residual",
+            "Lost support subtracts from final delivery"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "batched-card-support-existing-owner-v1"
+        },
         {
           "bundle_id": "bundle:copiable-token-production-recipes",
           "member_family_ids": ["activated_effect:create-token", "effect_clause:create-token", "event_binding:normalized-event-binding", "keyword_dependency:populate"],
@@ -4739,6 +4804,223 @@
           "measurement_probe_id": "stack-controller-payment-existing-owner-v1"
         },
         {
+          "bundle_id": "bundle:fixed-kicked-spell-condition",
+          "member_family_ids": [
+            "effect_clause:ordered-effect-composition",
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding"
+          ],
+          "canonical_owner_ids": [
+            "capability:resolution.effect.fixed_cast_fact",
+            "component:quorune.compiler.kicked_spell_conditions.kicked_spell_condition_template"
+          ],
+          "source_contexts": [
+            "spell"
+          ],
+          "normalized_literal_parameters": [
+            "exact-ownership-and-incarnation",
+            "fixed-independent-result",
+            "sealed-recorded-fact"
+          ],
+          "shared_dependencies": [
+            "resolution.effect.fixed_cast_fact"
+          ],
+          "shared_grammar": "Fixed kicked spell additional result from the recorded stack paid choice after one independently owned mandatory prefix.",
+          "estimated_implementation_hours": 3,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Retain measured original whole-card closure inside a multi-mechanic net-distinct200 delivery.",
+          "explicit_exclusions": [
+            "Instead branches, additional conditional targets and unrepresented quantities",
+            "Multiple or nonmana kicker and unsupported whole-card siblings"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-kicked-spell-condition-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:fixed-event-card-return",
+          "member_family_ids": [
+            "effect_clause:ordered-effect-composition",
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding"
+          ],
+          "canonical_owner_ids": [
+            "capability:zone.return.fixed_event_card",
+            "component:quorune.compiler.event_card_return_templates.event_card_return_template"
+          ],
+          "source_contexts": [
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "exact-ownership-and-incarnation",
+            "fixed-independent-result",
+            "sealed-recorded-fact"
+          ],
+          "shared_dependencies": [
+            "zone.return.fixed_event_card"
+          ],
+          "shared_grammar": "One particular self or attached creature death-event card from its exact departed graveyard incarnation to owners hand.",
+          "estimated_implementation_hours": 3,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Retain measured original whole-card closure inside a multi-mechanic net-distinct200 delivery.",
+          "explicit_exclusions": [
+            "Independent unrepresented result references and whole-card siblings",
+            "Optional, conditional, delayed or other-zone returns"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-event-card-return-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:fixed-target-announcement",
+          "member_family_ids": [
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding"
+          ],
+          "canonical_owner_ids": [
+            "capability:trigger.event.normalized_target_announcement",
+            "component:quorune.compiler.target_announcement_bindings.target_announcement_binding_spec",
+            "component:quorune.rules.target_announcements.dispatch_target_announcements"
+          ],
+          "source_contexts": [
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "one-new-target-occurrence",
+            "opposing-stack-controller",
+            "source-or-controlled-permanent-targeted"
+          ],
+          "shared_dependencies": [
+            "target.revalidate_resolution",
+            "trigger.placement.apnap"
+          ],
+          "shared_grammar": "Newly targeted current permanents after authoritative casts, abilities, copies and target changes, with independently closed consequences and separate spell-cast-only Heroic subscriptions.",
+          "estimated_implementation_hours": 4,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Retain a measured target occurrence component in one multi-mechanic distinct-net200 delivery batch, proving actual accepted targeting commands and source sacrifice identity.",
+          "explicit_exclusions": [
+            "First-time or once-per-turn trigger limits",
+            "Hidden-zone and player target subscriptions",
+            "Unrepresented affected-object references or independent results and whole-card siblings"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-target-announcement-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:fixed-kicked-entry-result",
+          "member_family_ids": [
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding"
+          ],
+          "canonical_owner_ids": [
+            "capability:trigger.entry.fixed_kicked_result",
+            "component:quorune.compiler.kicked_entry_trigger_nodes.fixed_kicked_entry_trigger_node",
+            "component:quorune.zone_transitions.ZoneTransitionOwner"
+          ],
+          "source_contexts": [
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "independent-result-and-target-owners",
+            "one-self-entry-if-it-was-kicked",
+            "sealed-entry-cast-option"
+          ],
+          "shared_dependencies": [
+            "casting.kicker.fixed_mana",
+            "trigger.event.normalized_zone_change",
+            "trigger.placement.apnap"
+          ],
+          "shared_grammar": "One kicked self-entry subscription over the immutable paid cast fact, shared independently closed result owners and ordinary principal-correct trigger placement.",
+          "estimated_implementation_hours": 3,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Measure actual complete CardPrograms and stage the retained kicked result component in a distinct-net200 multi-mechanic delivery batch.",
+          "explicit_exclusions": [
+            "Cost-specific and conditional spell replacement results",
+            "Multikicker and multiple or nonmana kicker costs",
+            "Unsupported independent costs, results and whole-card siblings"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-kicked-entry-result-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:fixed-counted-activation-zone-cost",
+          "member_family_ids": [
+            "activated_cost:complete-alternate-additional-cost-grammar",
+            "activated_cost:restricted-payment-predicates",
+            "effect_clause:unrepresented-activation-cost-variant"
+          ],
+          "canonical_owner_ids": [
+            "capability:activation.selected_zone_change.fixed",
+            "component:quorune.compiler.counted_zone_costs.fixed_counted_zone_change_cost_clause",
+            "component:quorune.rules.activation_costs.pay_counted_zone_change_activation_cost"
+          ],
+          "source_contexts": [
+            "activated"
+          ],
+          "normalized_literal_parameters": [
+            "complete-distinct-cost-set",
+            "fixed-count-two-through-ten",
+            "one-current-canonical-quality"
+          ],
+          "shared_dependencies": [
+            "activation.selected_zone_change.fixed",
+            "zone.change.destination_replacement"
+          ],
+          "shared_grammar": "One fixed homogeneous selected-object discard, controlled sacrifice or return, or owned-graveyard exile activation cost through the existing complete payment, simultaneous zone and replacement owners.",
+          "estimated_implementation_hours": 4,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Retain a measured counted-cost component inside a multi-mechanic delivery batch whose final distinct net whole-card gain meets the delivery floor.",
+          "explicit_exclusions": [
+            "Mandatory counted casting costs and independently unsupported consequences or siblings",
+            "Multiple selected groups or source-plus-selected zone costs",
+            "Random, variable, named, linked or mixed costs"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-counted-activation-zone-cost-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:fixed-source-maintenance",
+          "member_family_ids": [
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding",
+            "target_or_choice:conditional-effect"
+          ],
+          "canonical_owner_ids": [
+            "capability:trigger.source.fixed_maintenance",
+            "component:quorune.compiler.source_maintenance_nodes.source_maintenance_node",
+            "component:quorune.semantic_choices.fixed_effect_payment.complete_fixed_payment_cost",
+            "component:quorune.semantic_choices.source_maintenance.prepare_source_maintenance"
+          ],
+          "source_contexts": [
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "closed-fixed-cost-or-mandatory-default",
+            "fixed-entry-upkeep-or-end-step",
+            "trigger-controller-and-source-incarnation"
+          ],
+          "shared_dependencies": [
+            "effect.choice.optional_fixed_mana_payment",
+            "trigger.placement.apnap",
+            "zone.change.destination_replacement"
+          ],
+          "shared_grammar": "Self-entry or fixed turn-step sacrifice of the original source unless its locked triggering controller pays one independently represented fixed cost.",
+          "estimated_implementation_hours": 4,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Measure original complete CardPrograms with strict capability/runtime binding; combine retained closed mechanics on the same branch until the distinct net delivery floor is met.",
+          "explicit_exclusions": [
+            "Reflexive results and independently unsupported siblings",
+            "Returned source incarnations and sacrifice of another controller permanent",
+            "Variable, alternative, compound or linked costs"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-source-maintenance-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:fixed-resolution-payment",
           "member_family_ids": ["effect_clause:ordered-effect-composition", "event_binding:intervening-if-and-reflexive-trigger-grammar", "target_or_choice:conditional-effect"],
           "canonical_owner_ids": [
@@ -5044,15 +5326,38 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v270-query-characteristic-prefilters",
-      "compiler_version": "oracle-ir-v270",
-      "bundle_id": null,
-      "candidate_ids": [],
-      "family_ids": [],
-      "capability_ids": [],
-      "expected_complete_card_gain": null,
-      "non_harvest_reason": "Reduce repeated compiler and validation work through shared corpus views, invocation-scoped validated inputs and static necessary-condition query markers before name-specific regex construction. Preserve original parser returns, source identity, whole-card trust, evidence freshness and replay boundaries without adding supported grammar or gameplay trust."
+      "transition_id": "oracle-ir-v277-batched-card-support",
+      "compiler_version": "oracle-ir-v277",
+      "bundle_id": "bundle:batched-card-support",
+      "candidate_ids": [
+        "bundle:fixed-counted-activation-zone-cost",
+        "bundle:fixed-event-card-return",
+        "bundle:fixed-kicked-entry-result",
+        "bundle:fixed-kicked-spell-condition",
+        "bundle:fixed-source-maintenance",
+        "bundle:fixed-target-announcement"
+      ],
+      "family_ids": [
+        "activated_cost:complete-alternate-additional-cost-grammar",
+        "activated_cost:restricted-payment-predicates",
+        "effect_clause:ordered-effect-composition",
+        "effect_clause:unrepresented-activation-cost-variant",
+        "event_binding:intervening-if-and-reflexive-trigger-grammar",
+        "event_binding:normalized-event-binding",
+        "target_or_choice:conditional-effect"
+      ],
+      "capability_ids": [
+        "activation.selected_zone_change.fixed",
+        "resolution.effect.fixed_cast_fact",
+        "trigger.entry.fixed_kicked_result",
+        "trigger.event.normalized_target_announcement",
+        "trigger.source.fixed_maintenance",
+        "zone.return.fixed_event_card"
+      ],
+      "measurement_id": "measurement:batched-card-support",
+      "non_harvest_reason": null
     },
+
     "forecast_corrections": [
       {
         "transition_id": "oracle-ir-v134-fixed-spell-cast-characteristic-triggers",

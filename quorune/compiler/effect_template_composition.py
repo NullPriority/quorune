@@ -93,6 +93,13 @@ def reviewed_effect_template_composition(
     if atomic[0] is not None:
         return atomic
     if allow_conditions:
+        from .kicked_spell_conditions import kicked_spell_condition_template
+        kicked = kicked_spell_condition_template(text, compile_component=lambda body: reviewed_effect_template_composition(
+            body, source_name=source_name, compile_atomic=compile_atomic, compile_fixed=compile_fixed,
+            cast_x_available=cast_x_available, forbid_public_x=forbid_public_x, allow_conditions=False,
+        ))
+        if kicked is not None:
+            return kicked
         conditional = resolution_condition_template(
             text, source_name=source_name,
             compile_component=lambda body: reviewed_effect_template_composition(

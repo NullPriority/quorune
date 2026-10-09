@@ -156,14 +156,21 @@ class FixedCounterPlacementHandler:
                 "Counter placement requires one nonempty counter name"
             )
         amount = effect.get("amount")
-        if type(amount) is not int or amount <= 0:
+        if type(amount) is not int or amount < 0:
             raise SemanticNodeError(
-                "Counter placement amount must be a positive exact integer"
+                "Counter placement amount must be a nonnegative exact integer"
             )
         source_ref = effect.get("source")
         if type(source_ref) is not str or not source_ref:
             raise SemanticNodeError(
                 "Counter placement requires one nonempty source reference"
+            )
+        if amount == 0:
+            return IntentPlan(
+                operation=self.operation,
+                handler_id=self.handler_id,
+                intents=(),
+                result_shape="by_player",
             )
         return IntentPlan(
             operation=self.operation,

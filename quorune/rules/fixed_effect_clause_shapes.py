@@ -243,7 +243,7 @@ def fixed_optional_mana_payment_node_capabilities(
 ) -> tuple[str, ...]:
     """Recognize one positive fixed-mana wrapper around one closed effect."""
 
-    if any(effect.get('schema_version')==2 and effect.get('op')==OPTIONAL_MANA_PAYMENT_OPERATION for effect in effects):
+    if any(effect.get('schema_version') in (2, 3) and effect.get('op')==OPTIONAL_MANA_PAYMENT_OPERATION for effect in effects):
         from .fixed_effect_payment_shapes import fixed_effect_payment_node_capabilities
         return fixed_effect_payment_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
 

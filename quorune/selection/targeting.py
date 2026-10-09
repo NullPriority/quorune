@@ -957,6 +957,8 @@ class TargetSelectionOwnerMixin:
         }
         item.context["targets_revalidated"] = False
         if continuation_payload.get("trigger_creation"):
+            from ..rules.target_announcements import dispatch_target_announcements
+            dispatch_target_announcements(self, item)
             item.context.pop("trigger_target_selection_pending", None)
             item.context["targets_chosen_at_creation"] = True
             self._grant_priority(self.state.active_player)

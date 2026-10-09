@@ -727,6 +727,24 @@ def _priority_action_cost_event_ids(
     response: Mapping[str, Any],
     seat: str,
 ) -> set[str]:
+    if action == 'activate' and len(batch.events) > 1:
+        refs = response.get('cost_objects') or response.get('cost_cards')
+        summary = response.get('cost_summary')
+        choices = summary.get('choose_cost') if isinstance(summary, Mapping) else None
+        if (
+            not isinstance(refs, (list, tuple)) or not 2 <= len(refs) <= 10
+            or any(type(ref) is not str for ref in refs) or len(set(refs)) != len(refs)
+            or not isinstance(choices, (list, tuple)) or len(choices) != 1
+            or not isinstance(choices[0], Mapping)
+            or choices[0].get('n') != len(refs) or len(batch.events) != len(refs)
+            or {event.payload.get('object_ref') for event in batch.events} != set(refs)
+            or len({event.event_id for event in batch.events}) != len(refs)
+            or any(event.kind != 'zone.change' or not _counted_activation_cost_event_is_valid(
+                event, response, seat=seat,
+            ) for event in batch.events)
+        ):
+            raise ReplacementEffectError('Counted activation cost continuation is malformed')
+        return {event.event_id for event in batch.events}
     if action not in {
         "cast",
         "activate",
@@ -832,6 +850,24 @@ def _priority_action_cost_event_ids(
     return {event.event_id}
 
 
+def _counted_activation_cost_event_is_valid(
+    event: ReplaceableEvent, response: Mapping[str, Any], *, seat: str,
+) -> bool:
+    """Rebind the original cost destination after recorded replacements."""
+    choices = response['cost_summary']['choose_cost']
+    contract = FIXED_ZONE_CHANGE_COST_CONTRACTS.get(str(choices[0].get('k') or ''))
+    if contract is None:
+        return False
+    payload = {**dict(event.payload), 'destination': contract[1]}
+    original = ReplaceableEvent(
+        event_id=event.event_id, kind=event.kind, affected_player=event.affected_player,
+        affected_object=event.affected_object, payload=payload,
+        applied_effects=event.applied_effects, children=event.children,
+        entry_scope=event.entry_scope,
+    )
+    return _activation_zone_cost_event_is_valid(original, response, seat=seat)
+
+
 def _decode_mana_continuation(
     continuation_type: type[ReplacementContinuation],
     value: Mapping[str, Any],
@@ -874,6 +910,11 @@ def _decode_mana_continuation(
             response=response,
             seat=seat,
         )
+        if action == 'activate' and len(batch.events) > 1:
+            from ..rules.activation_zone_change_costs import counted_activation_replacement_selections
+            counted_activation_replacement_selections(response, tuple(
+                event.payload['object_ref'] for event in batch.events
+            ))
         if action in {"suspend", "stage_cast_lifecycle"}:
             raw_journal = response.get("_mana_replacement_selections")
             if isinstance(raw_journal, Mapping):

@@ -37,6 +37,23 @@ def fixed_effect_payment_node_capabilities(*,effects:Sequence[Mapping[str,Any]],
     mechanics=set(mechanic_ids)
     if FIXED_EFFECT_PAYMENT_MECHANIC not in mechanics or len(effects)!=1:return ()
     wrapper=effects[0]
+    if isinstance(wrapper, Mapping) and wrapper.get('schema_version') == 3:
+        from ..source_maintenance import SOURCE_MAINTENANCE_MECHANIC, SourceMaintenanceSpec
+        if target_schema is not None or SOURCE_MAINTENANCE_MECHANIC not in mechanics:
+            return ()
+        try:
+            spec = SourceMaintenanceSpec.from_effect(wrapper)
+        except (KeyError, TypeError, ValueError):
+            return ()
+        if wrapper['player'] != '$controller' or wrapper['source'] != '$source.zone_object':
+            return ()
+        payment = spec.payment
+        if payment is not None and (
+            payment.kind == 'discard' and payment.predicate.owner != '$controller'
+            or payment.kind == 'sacrifice' and payment.predicate.controller != '$controller'
+        ):
+            return ()
+        return spec.capabilities
     fields={'op','schema_version','player','payment','effects'}
     if not isinstance(wrapper,Mapping) or set(wrapper) not in (fields,fields|{'cost'}) or wrapper.get('op')!=OPTIONAL_MANA_PAYMENT_OPERATION or type(wrapper.get('schema_version'))is not int or wrapper['schema_version']!=2 or wrapper.get('player')!='$controller':return ()
     try:payment=FixedEffectPaymentSpec.from_dict(wrapper['payment'])

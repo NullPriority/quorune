@@ -1226,7 +1226,7 @@ class CommanderEngine(
             str, Mapping[str, Any]
         ],
         reason: str,
-        transition_kind: ZoneTransitionKind = ZoneTransitionKind.ORDINARY, read_ahead_chapter: int | None = None,
+        transition_kind: ZoneTransitionKind = ZoneTransitionKind.ORDINARY, read_ahead_chapter: int | None = None, cast_option: str | None = None,
         trigger_batch: list[StackItem] | None = None,
         history_pre_recorded: bool = False,
     ) -> None:
@@ -1241,7 +1241,7 @@ class CommanderEngine(
                     logical_object_id=origin_logical_object_id,
                     characteristics=origin_data,
                     attachments=tuple(origin_attachments),
-                    attached_to=origin_attached_to,
+                    attached_to=origin_attached_to, cast_option=cast_option,
                     trigger_sources=DepartureTriggerSnapshot(
                         sources=tuple(departure_sources),
                         source_zones=dict(departure_source_zones),

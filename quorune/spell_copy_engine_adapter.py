@@ -41,6 +41,8 @@ def dispatch_normalized_spell_copy_event(
 ) -> list[str]:
     """Dispatch one typed occurrence after the canonical copy commit."""
 
+    from .rules.target_announcements import dispatch_target_announcements
+    dispatch_target_announcements(host, copied)
     if copied.kind != "spell_copy":
         return []
     if not copied.card_object_id:

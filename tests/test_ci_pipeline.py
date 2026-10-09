@@ -69,6 +69,7 @@ class CiPipelineTests(unittest.TestCase):
         self.assertIn("run: python scripts/finalize_generated.py --check", workflow)
         self.assertIn("Create exact-head certification receipt", workflow)
         self.assertIn("run: python scripts/verify_ci_needs.py", workflow)
+        self.assertIn("--require-support-delivery", plan)
 
     @staticmethod
     def _windows_result(suite: str, *, tests_run: int = 3) -> dict:

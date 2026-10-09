@@ -454,6 +454,15 @@ class FixedKickerRuntimeTests(unittest.TestCase):
         session = self.session(70233004, players=2)
         engine = session.engine
         card = self.add_card(session, name="Citanul Woodreaders", ref="KICK-PARTIAL")
+        # The printed kicked-entry card is now exact. Preserve a real partial
+        # admission by adding an independently unsupported sibling to its record.
+        record = replace(self.db.lookup("Citanul Woodreaders"),
+            oracle_text=self.db.lookup("Citanul Woodreaders").oracle_text + "\nWhenever a player sneezes, draw a card.")
+        for program in engine.semantics.programs_for_oracle(card.oracle_id):
+            engine.semantics.remove(program.key)
+        register_generated_programs(self.db, engine.semantics, (record,),
+            capability_registry=self.capabilities, capability_profile=engine.state.config.review_profile,
+            promote_exact_runtime_handlers=True, promote_exact_effect_programs=True)
         engine.state.players["B"].mana_pool.update({"C": 4, "G": 2})
         self.prepare_main(session)
         action = self.cast_action(engine, card)

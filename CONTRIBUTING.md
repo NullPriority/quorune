@@ -47,13 +47,20 @@ well-bounded issue; otherwise open the relevant issue form with a sanitized
 reproduction and the governing source. Coordinate before beginning a protocol,
 persistence, replay, schema, privacy, or broad rules change.
 
-A change should be one coherent subsystem-sized unit. It may include the
-implementation, removal of the superseded path, focused tests, generated
-artifacts, and the smallest documentation update needed to make that unit
-complete. Split unrelated cleanup, formatting, opportunistic refactors, and
-independent rules families into separate branches. Avoid both one-card patches
-that bypass generic ownership and broad rewrites that cross several owners at
-once.
+Card-support pull requests deliver at least 200 net newly capability-closed
+Commander cards from the pinned snapshot. Combine several measured mechanics
+in one delivery pull request when needed. Keep each mechanic scoped to its
+existing typed owners, with independently reviewable commits, behavior
+contracts, tests and unsupported boundaries. Count distinct Oracle IDs in the
+final combined corpus, subtract support losses, and preserve complete
+cross-mechanic interaction evidence. Per-family probe thresholds help select
+work; they do not authorize merging a smaller support delivery.
+
+Include implementation, removal of superseded paths, focused evidence,
+generated artifacts and the documentation needed for the delivery. Split
+unrelated cleanup, formatting and opportunistic refactors. Correctness-first
+work retains its existing priority. Avoid card-specific patches and broad
+rewrites without reviewed ownership boundaries.
 
 Branch names should use a short category and outcome, such as `fix/`,
 `rules/`, `docs/`, `test/`, or `chore/`. Start from the requested base and do

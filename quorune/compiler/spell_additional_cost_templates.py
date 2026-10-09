@@ -23,6 +23,7 @@ from ..object_predicate import ObjectQuerySpec
 from ..util import mana_cost_to_vector
 from .creature_subtypes import canonical_creature_subtype
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
+from .counted_zone_costs import fixed_counted_zone_change_cost_clause
 
 
 _COUNTER_NAME = (
@@ -222,12 +223,15 @@ class FixedSacrificeAdditionalCostTemplate:
 
 @dataclass(frozen=True, slots=True)
 class FixedZoneChangeAdditionalCostTemplate:
-    """One mandatory single-object zone change paid while casting."""
+    """One mandatory homogeneous zone-change cost paid while casting."""
 
     operation: str
     predicate: ObjectQuerySpec
+    count: int = 1
 
     def __post_init__(self) -> None:
+        if type(self.count) is not int or not 1 <= self.count <= 10:
+            raise ValueError('Selected zone costs require a fixed count from one through ten')
         if self.operation not in FIXED_ZONE_CHANGE_COST_CONTRACTS:
             raise ValueError("Zone-change additional-cost operation is unsupported")
         origin, _, _ = FIXED_ZONE_CHANGE_COST_CONTRACTS[self.operation]
@@ -255,6 +259,8 @@ class FixedZoneChangeAdditionalCostTemplate:
             terms.append("token" if self.predicate.token else "nontoken")
         if len(terms) == 1:
             terms.append("card")
+        if self.count != 1:
+            terms.append(str(self.count))
         return "spell-additional-cost-fixed-" + "-".join(terms) + "-v1"
 
     @property
@@ -264,7 +270,7 @@ class FixedZoneChangeAdditionalCostTemplate:
             "schema_version": 1,
             "kind": ZONE_CHANGE_COST_KIND,
             "operation": self.operation,
-            "count": 1,
+            "count": self.count,
             "choice_field": choice_field,
             "predicate": self.predicate.to_dict(),
         }
@@ -560,10 +566,23 @@ def _qualified_sacrifice_query(quality: str) -> ObjectQuerySpec | None:
 
 def fixed_zone_change_additional_cost_template(
     text: str,
+    *, allow_counted: bool = False,
 ) -> FixedZoneChangeAdditionalCostTemplate | None:
-    """Parse the closed fixed single-object zone-change cost family."""
+    """Parse one closed fixed homogeneous selected-object zone-change cost."""
 
     stripped = text.strip()
+    counted = fixed_counted_zone_change_cost_clause(stripped) if allow_counted else None
+    if counted is not None:
+        singular, count = counted
+        template = fixed_zone_change_additional_cost_template(singular)
+        if template is None:
+            legacy = fixed_sacrifice_additional_cost_template(singular)
+            if legacy is None:
+                return None
+            template = FixedZoneChangeAdditionalCostTemplate(
+                SACRIFICE_ONE_COST, ObjectQuerySpec.from_dict(legacy.descriptor['predicate'])
+            )
+        return FixedZoneChangeAdditionalCostTemplate(template.operation, template.predicate, count)
     match = _FIXED_DISCARD_COST.fullmatch(stripped)
     if match is not None:
         raw_quality = match.group("quality")

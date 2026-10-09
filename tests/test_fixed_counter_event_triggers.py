@@ -3300,7 +3300,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             "enters, you may draw a card.",
             "Whenever you cycle one or more cards, you may gain 1 life.",
             "Whenever one or more creatures you control attack, you may draw a card.",
-            "Whenever a creature you control becomes the target of a spell, you "
+            "Whenever a creature you control becomes the target of a spell for the first time each turn, you "
             "may draw a card.",
             "Whenever a creature you control becomes tapped, you may gain 1 life. This ability triggers only once each turn.",
             "Whenever one or more +1/+1 counters are put on this creature, you "
@@ -3498,7 +3498,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                 )
 
         with patch(
-            "quorune.compiler.fixed_counter_trigger_nodes."
+            "quorune.compiler.trigger_result_templates."
             "fixed_source_combat_growth_effect_template",
             return_value=(None, (), None, ()),
         ):

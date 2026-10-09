@@ -79,6 +79,7 @@ _PREDEFINED_CAPABILITIES = {
 }
 _AUXILIARY_MECHANICS = frozenset(
     {
+        'fixed-kicked-entry-trigger',
         "activated_ability",
         "granted_activated_ability",
         "granted_triggered_ability",

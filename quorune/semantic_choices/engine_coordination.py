@@ -349,6 +349,13 @@ class SemanticChoiceCoordinationMixin:
             cost_value = effect["_requirements"]
         elif isinstance(effect.get("cost"), Mapping):
             cost_value = effect["cost"]
+        elif effect.get('op') == 'offer_optional_mana_payment' and effect.get('schema_version') == 3:
+            from ..source_maintenance import SourceMaintenanceSpec
+            payment = SourceMaintenanceSpec.from_effect({
+                key: value for key, value in effect.items() if not key.startswith('_')
+            }).payment
+            if payment is not None and payment.kind == 'mana':
+                cost_value = payment.requirements
         elif str(effect.get("op") or "") == "remora_tax":
             cost_value = {"GENERIC": 4}
         elif (
@@ -490,7 +497,7 @@ class SemanticChoiceCoordinationMixin:
             )
         )
         condition_facts = {}
-        if choice_effect.get("op") == RESOLUTION_CONDITION_OPERATION:
+        if choice_effect.get("op") == RESOLUTION_CONDITION_OPERATION and choice_effect.get('schema_version') != 2:
             try:
                 condition, _effects = validate_resolution_condition_instruction(choice_effect)
                 if choice_effect["player"] != actor:

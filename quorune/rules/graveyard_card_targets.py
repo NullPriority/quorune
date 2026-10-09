@@ -548,8 +548,12 @@ def targeted_own_graveyard_return_node_capabilities(
     target_schema: Mapping[str, Any] | None,
     mechanic_ids: Iterable[str],
 ) -> tuple[str, ...]:
-    """Return capabilities only for the closed own-graveyard card grammar."""
-
+    """Return capabilities for closed targeted or event-bound graveyard cards."""
+    if len(effects) == 1 and effects[0].get('schema_version') == 2:
+        from ..event_card_return import EVENT_CARD_RETURN_CAPABILITY, EVENT_CARD_RETURN_MECHANIC, event_card_return_effect
+        if target_schema is None and EVENT_CARD_RETURN_MECHANIC in mechanic_ids and dict(effects[0]) == event_card_return_effect():
+            return (EVENT_CARD_RETURN_CAPABILITY, 'card.return.own_graveyard_to_owner_hand', 'zone.change.destination_replacement')
+        return ()
     mechanics = {str(value).casefold() for value in mechanic_ids}
     if (
         not {"return-to-owner-hand", "cr-115-targets"}.issubset(mechanics)

@@ -117,8 +117,10 @@ def public_trigger_binding_spec(material_line: str, *, card_name: str | None):
     from .fixed_public_event_trigger_bindings import fixed_public_event_binding_spec
     from .fixed_public_action_event_bindings import fixed_public_action_event_binding_spec
     from .fixed_public_multi_event_bindings import fixed_public_multi_event_binding_spec
+    from .target_announcement_bindings import target_announcement_binding_spec
+    from .event_card_return_templates import self_death_return_binding
     for parser in (fixed_public_event_binding_spec, fixed_public_action_event_binding_spec,
-                   tap_state_event_binding_spec, fixed_public_multi_event_binding_spec):
+                   tap_state_event_binding_spec, fixed_public_multi_event_binding_spec, target_announcement_binding_spec, self_death_return_binding):
         value = parser(material_line, card_name=card_name)
         if value is not None:
             return value

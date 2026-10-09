@@ -16,6 +16,8 @@ from .replacement.immutable import FrozenMap
 RESOLUTION_CONDITION_OPERATION = "apply_if_public_condition"
 RESOLUTION_CONDITION_MECHANIC = "fixed-resolution-public-condition"
 RESOLUTION_CONDITION_CAPABILITY = "resolution.effect.public_condition"
+CAST_FACT_CONDITION_CAPABILITY = 'resolution.effect.fixed_cast_fact'
+CAST_FACT_CONDITION_MECHANIC = 'fixed-cast-fact-condition'
 _DERIVED_RESULT_MECHANICS = frozenset({
     "declared-effect-amount", "public-query-effect-amount", "scalar-effect-amount",
 })
@@ -42,6 +44,16 @@ def resolution_result_is_fixed(effects: Any, mechanic_ids: Any) -> bool:
     return not _DERIVED_RESULT_MECHANICS.intersection(mechanic_ids) and not _contains_derived_result_value(effects)
 
 
+def cast_fact_result_is_fixed(effects: Any, mechanic_ids: Any) -> bool:
+    """A counter instruction's source attribution is not a result quantity."""
+    values = tuple(
+        {key: value for key, value in effect.items() if key != 'source'}
+        if effect.get('op') in {'place_counters_on_set', 'place_counter_set'} and effect.get('source') == '$source'
+        else effect for effect in effects
+    )
+    return resolution_result_is_fixed(values, mechanic_ids)
+
+
 @dataclass(frozen=True, slots=True)
 class ResolutionConditionBinding:
     """The resolving controller, independent of a source's current incarnation."""
@@ -50,6 +62,15 @@ class ResolutionConditionBinding:
     object_id: str = "resolution-controller"
     counters: FrozenMap = field(default_factory=FrozenMap)
     entered_battlefield_turn_sequence: int = 0
+
+
+@dataclass(frozen=True, slots=True)
+class KickedCastCondition:
+    kind: str = 'kicked_cast'
+    schema_version: int = 1
+
+    def to_dict(self) -> dict[str, Any]:
+        return {'schema_version': self.schema_version, 'kind': self.kind}
 
 
 def resolution_condition_is_closed(condition: FixedPublicStateConditionSpec) -> bool:
@@ -79,11 +100,16 @@ def resolution_condition_is_closed(condition: FixedPublicStateConditionSpec) -> 
 
 def validate_resolution_condition_instruction(
     effect: Mapping[str, Any],
-) -> tuple[FixedPublicStateConditionSpec, tuple[Mapping[str, Any], ...]]:
+) -> tuple[FixedPublicStateConditionSpec | KickedCastCondition, tuple[Mapping[str, Any], ...]]:
+    if not isinstance(effect, Mapping):
+        raise ValueError("Resolution condition instructions require an object")
     expected_fields = {
         "op", "player", "condition", "effects",
         "mechanic_ids", "prefix_mechanic_ids",
     }
+    cast_fact = effect.get('schema_version') == 2
+    if cast_fact:
+        expected_fields |= {'schema_version', 'cast_fact'}
     if (
         not isinstance(effect, Mapping)
         or set(effect) != expected_fields
@@ -105,8 +131,15 @@ def validate_resolution_condition_instruction(
         raise ValueError("Resolution condition result mechanics must be present")
     if "fixed-next-turn-upkeep-draw" in (*effect["mechanic_ids"], *effect["prefix_mechanic_ids"]):
         raise ValueError("Delayed draw remains outside conditional programs")
-    condition = FixedPublicStateConditionSpec.from_dict(effect["condition"])
-    if not resolution_condition_is_closed(condition):
+    if cast_fact:
+        if type(effect['schema_version']) is not int or effect['condition'] != KickedCastCondition().to_dict() or not (
+            type(effect['cast_fact']) is bool or effect['cast_fact'] == '$context.kicked'
+        ):
+            raise ValueError('Cast fact conditions require one sealed kicked marker')
+        condition = KickedCastCondition()
+    else:
+        condition = FixedPublicStateConditionSpec.from_dict(effect["condition"])
+    if not cast_fact and not resolution_condition_is_closed(condition):
         raise ValueError("Object-relative resolution conditions are unsupported")
     nested = effect["effects"]
     if not isinstance(nested, (list, tuple)) or not 1 <= len(nested) <= 8 or any(
@@ -114,6 +147,6 @@ def validate_resolution_condition_instruction(
         for value in nested
     ):
         raise ValueError("Resolution conditions require a bounded nonnested effect program")
-    if not resolution_result_is_fixed(nested, effect["mechanic_ids"]):
+    if not (cast_fact_result_is_fixed(nested, effect["mechanic_ids"]) if cast_fact else resolution_result_is_fixed(nested, effect["mechanic_ids"])):
         raise ValueError("Derived or source-relative results require a separate binding and timing boundary")
     return condition, tuple(nested)
