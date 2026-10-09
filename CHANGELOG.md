@@ -11,6 +11,12 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Deliver card support in combined mechanic batches with at least 200 net
+  distinct capability-closed Commander cards per pull request. The first batch
+  adds source maintenance, counted activation prices, paid-kicker results,
+  target occurrence triggers, departed-card returns and declared counter amounts
+  through existing authoritative owners and independently tested contracts.
+
 - Retain bounded intrinsic color and creature-type entry choices through the
   replacement journal, and apply fixed chosen-value creature bonuses through
   the existing characteristic queries. Copied permanents make fresh choices,
