@@ -1031,12 +1031,9 @@ class CapabilityRegistry:
 
 
 def load_default_capability_registry() -> CapabilityRegistry:
-    from .evidence import load_capability_evidence_index
+    from .evidence import _load_verified_default_capability_registry
 
-    registry = CapabilityRegistry.from_path(DEFAULT_CAPABILITY_REGISTRY)
-    _, fingerprint = load_capability_evidence_index(registry=registry)
-    registry.mark_evidence_verified(fingerprint)
-    return registry
+    return _load_verified_default_capability_registry(DEFAULT_CAPABILITY_REGISTRY)
 
 
 def _targeted_effect_capabilities(

@@ -686,6 +686,8 @@ cloud generation proceeds. Commit the generated bundle to resume normal
 exact-head certification. The generated job still performs the complete
 finalizer check; this early failure neither grants a receipt nor changes
 test selection, required jobs, or merge authority.
+This exact read-only planning check is the early exception to owner-check
+coordination; other writer and freshness commands remain finalizer-owned.
 
 `PR / Plan` runs `scripts/validate_pr_body.py` before change-impact planning or
 any expensive matrix job. It reads the pull-request event payload without a

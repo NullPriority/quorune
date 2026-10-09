@@ -5044,14 +5044,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v268-shared-corpus-compilation",
-      "compiler_version": "oracle-ir-v268",
+      "transition_id": "oracle-ir-v269-scoped-capability-validation",
+      "compiler_version": "oracle-ir-v269",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
       "expected_complete_card_gain": null,
-      "non_harvest_reason": "Reduce repeated validation, cohort setup, architecture scans and impossible regex compilation; compile each full-corpus record once into local IR and CardProgram values feeding the unchanged full and Commander report counters selected by the canonical database filter. Preserve original matching, trust validation, reviewed overlays, failure accounting and strict binding without adding grammar or gameplay trust."
+      "non_harvest_reason": "Reduce repeated compiler and validation work through shared corpus views and invocation-scoped read-only capability/evidence inputs during default component construction. Load fresh resolution-provenance inputs only for actions that actually resolve semantic programs; preserve every family dependency, trust, freshness, replay and binding check without adding supported grammar or gameplay trust."
     },
     "forecast_corrections": [
       {

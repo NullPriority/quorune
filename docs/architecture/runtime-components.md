@@ -59,6 +59,13 @@ duplicate ownership, and unknown capabilities fail closed. The aggregate
 registry provides discovery and a fingerprint only; family modules own
 validation and lowering.
 
+Default component construction validates its read-only capability and evidence
+inputs once within an evidence-owner synchronous validation batch. Every family still checks
+its registered dependencies against that validated snapshot. Nested batches
+reuse the same inputs; completion or failure discards the snapshot, and a later
+batch or ordinary load reads and validates current source and evidence again.
+The snapshot contains no game state and is not a persistent registry cache.
+
 Descriptors are part of the canonical CardProgram fingerprint. Historical
 records may use an explicit compatibility adapter, but the adapter cannot
 rewrite the recorded program or silently promote trust. Current records pin

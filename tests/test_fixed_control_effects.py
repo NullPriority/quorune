@@ -1056,10 +1056,12 @@ class FixedControlGameplayTests(unittest.TestCase):
         self.assertTrue(source.tapped)
         self.assertIsNotNone(source.source_continuity)
         self.assertIn("control_duration_snapshot", engine.state.stack[-1].context)
-        for _ in range(12):
-            if not engine.state.stack:
-                break
-            pass_current(session)
+        with patch("quorune.record_trust.load_default_capability_registry", wraps=load_default_capability_registry) as registry_load:
+            for _ in range(12):
+                if not engine.state.stack:
+                    break
+                pass_current(session)
+            registry_load.assert_called_once_with()
         self.assertFalse(engine.state.stack)
         self.assertEqual("A", target.controller)
         self.assertEqual("B", target.owner)

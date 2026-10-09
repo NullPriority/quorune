@@ -79,6 +79,94 @@ def _lightning_bolt_record() -> CardRecord:
     )
 
 
+class CapabilityValidationSnapshotTests(unittest.TestCase):
+    def test_separate_batches_reread_same_metadata_registry_and_evidence_edits(self):
+        from quorune.rules import capabilities, evidence
+        from quorune.rules.evidence import _capability_validation_snapshot, CapabilityEvidenceError
+
+        registry_text = REGISTRY_PATH.read_text(encoding="utf-8")
+        evidence_text = evidence.DEFAULT_CAPABILITY_EVIDENCE.read_text(encoding="utf-8")
+        original_loader = evidence.load_capability_evidence_index
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "registry.json"
+            index = root / "evidence.json"
+            source.write_text(registry_text, encoding="utf-8")
+            index.write_text(evidence_text, encoding="utf-8")
+            def load_index(*, registry):
+                return original_loader(index, registry=registry)
+            with patch.object(capabilities, "DEFAULT_CAPABILITY_REGISTRY", source), patch.object(
+                evidence, "load_capability_evidence_index", side_effect=load_index
+            ):
+                with _capability_validation_snapshot():
+                    load_default_capability_registry()
+                timestamp = source.stat().st_mtime_ns
+                raw = json.loads(registry_text)
+                changed = registry_text.replace('"registry_version": ' + str(raw['registry_version']),
+                    '"registry_version": ' + str(raw['registry_version'] + 1), 1)
+                self.assertNotEqual(registry_text, changed)
+                self.assertEqual(len(registry_text.encode()), len(changed.encode()))
+                source.write_text(changed, encoding="utf-8")
+                os.utime(source, ns=(timestamp,timestamp))
+                with self.assertRaisesRegex(CapabilityEvidenceError, "registry fingerprint is stale"):
+                    with _capability_validation_snapshot():
+                        load_default_capability_registry()
+                source.write_text(registry_text, encoding="utf-8")
+                raw = json.loads(evidence_text)
+                timestamp = index.stat().st_mtime_ns
+                changed = evidence_text.replace('"fingerprint": "' + raw['fingerprint'] + '"',
+                    '"fingerprint": "' + '0'*64 + '"', 1)
+                self.assertNotEqual(evidence_text, changed)
+                self.assertEqual(len(evidence_text.encode()), len(changed.encode()))
+                index.write_text(changed, encoding="utf-8")
+                os.utime(index, ns=(timestamp,timestamp))
+                with self.assertRaisesRegex(CapabilityEvidenceError, "fingerprint does not match"):
+                    with _capability_validation_snapshot():
+                        load_default_capability_registry()
+
+    def test_read_only_batch_reuses_validated_inputs_and_later_calls_are_fresh(self):
+        from quorune.rules.evidence import _capability_validation_snapshot, _VALIDATION_REGISTRY
+
+        with patch.object(CapabilityRegistry, "from_path", wraps=CapabilityRegistry.from_path) as loader:
+            with _capability_validation_snapshot():
+                first = load_default_capability_registry()
+                row = first.capability("damage.result.player_life")
+                row["status"] = "blocked"
+                with _capability_validation_snapshot():
+                    self.assertIs(first, load_default_capability_registry())
+                self.assertEqual("trusted", first.capability("damage.result.player_life")["status"])
+                self.assertIsNotNone(first.evidence_fingerprint)
+                self.assertEqual(1, loader.call_count)
+            self.assertIsNone(_VALIDATION_REGISTRY.get())
+            self.assertIsNot(first, load_default_capability_registry())
+            self.assertEqual(2, loader.call_count)
+            with _capability_validation_snapshot():
+                self.assertIsNot(first, load_default_capability_registry())
+            self.assertEqual(3, loader.call_count)
+            with self.assertRaisesRegex(RuntimeError, "batch failed"):
+                with _capability_validation_snapshot():
+                    load_default_capability_registry()
+                    raise RuntimeError("batch failed")
+            self.assertIsNone(_VALIDATION_REGISTRY.get())
+
+    def test_new_batch_rejects_changed_implementation_and_evidence(self):
+        from quorune.rules.evidence import _capability_validation_snapshot
+        from quorune.rules.evidence import CapabilityEvidenceError
+
+        with _capability_validation_snapshot():
+            load_default_capability_registry()
+        with patch("quorune.rules.capabilities.implementation_component_resolves", return_value=False):
+            with self.assertRaisesRegex(CapabilityRegistryError, "resolvable implementation"):
+                with _capability_validation_snapshot():
+                    load_default_capability_registry()
+        with patch("quorune.rules.evidence.load_capability_evidence_index",
+                   side_effect=CapabilityEvidenceError("changed evidence")):
+            with self.assertRaisesRegex(CapabilityEvidenceError, "changed evidence"):
+                with _capability_validation_snapshot():
+                    load_default_capability_registry()
+        self.assertIsNotNone(load_default_capability_registry().evidence_fingerprint)
+
+
 class ComponentResolutionTests(unittest.TestCase):
     def test_identical_source_reuses_exports_without_importing_the_module(self):
         source = (

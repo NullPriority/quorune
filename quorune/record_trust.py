@@ -14,6 +14,29 @@ from .semantics import SemanticRegistry
 from .stack_resolution import trusted_generic_empty_resolution
 
 
+def resolved_semantic_execution_provenance_rows(
+    engine: Any, *, events: Iterable[Any], before_event_sequence: int,
+    before_stack_items: Mapping[str, Any], capability_profile: str,
+) -> list[dict[str, Any]]:
+    """Bind actual resolution rows with fresh inputs only when they are needed."""
+    rows = []
+    capabilities = None
+    for event in events:
+        if event.event_id <= before_event_sequence or event.code != "stack.resolve":
+            continue
+        stack_ref = str(event.details.get("stack") or "")
+        item = before_stack_items.get(stack_ref)
+        if item is None or not item.semantic_key:
+            continue
+        if capabilities is None:
+            capabilities = load_default_capability_registry()
+        rows.append(semantic_execution_provenance_row(
+            engine, item.semantic_key, capability_registry=capabilities,
+            profile=capability_profile, stack_item=item,
+        ))
+    return rows
+
+
 def card_program_trust_provenance(
     semantics: SemanticRegistry,
 ) -> dict[str, dict[str, Any]]:

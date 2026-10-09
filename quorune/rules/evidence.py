@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from contextlib import contextmanager
+from contextvars import ContextVar
 import hashlib
 import json
 from pathlib import Path
@@ -260,3 +262,35 @@ def capability_evidence_fingerprint(value: Mapping[str, Any]) -> str:
     payload = dict(value)
     payload.pop("fingerprint", None)
     return _hash(payload)
+
+
+_VALIDATION_REGISTRY: ContextVar[dict[str, Any] | None] = ContextVar(
+    "validation_registry", default=None
+)
+
+
+@contextmanager
+def _capability_validation_snapshot():
+    """Share validated read-only inputs only within one component batch."""
+    if _VALIDATION_REGISTRY.get() is not None:
+        yield
+        return
+    token = _VALIDATION_REGISTRY.set({})
+    try:
+        yield
+    finally:
+        _VALIDATION_REGISTRY.reset(token)
+
+
+def _load_verified_default_capability_registry(registry_path):
+    from .capabilities import CapabilityRegistry
+
+    batch = _VALIDATION_REGISTRY.get()
+    if batch is not None and "registry" in batch:
+        return batch["registry"]
+    registry = CapabilityRegistry.from_path(registry_path)
+    _, fingerprint = load_capability_evidence_index(registry=registry)
+    registry.mark_evidence_verified(fingerprint)
+    if batch is not None:
+        batch["registry"] = registry
+    return registry
