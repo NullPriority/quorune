@@ -197,6 +197,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/zone_object_keyword_grants.py",
         "quorune/zone_object_subtype_grants.py",
         "quorune/counter_placement.py",
+        "quorune/counter_doubling.py",
         "quorune/counter_placement_sets.py",
         "quorune/counter_snapshot.py",
         "quorune/keyword_counters.py",
@@ -545,6 +546,7 @@ def _owner(relative: str, layer: str) -> str:
     if relative in {
         "quorune/amass.py",
         "quorune/counter_placement.py",
+        "quorune/counter_doubling.py",
         "quorune/counter_placement_sets.py",
         "quorune/keyword_counters.py",
         "quorune/entry_counter_coordination.py",
@@ -758,6 +760,7 @@ def build_classifications() -> dict[str, Any]:
                             "card_overrides/",
                             "effect_contracts.py",
                             "counter_placement.py",
+                            "counter_doubling.py",
                             "counter_placement_sets.py",
                             "counter_maximums.py",
                             "counter_names.py",

@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .counter_placement_capability_shapes import counter_placement_covered_mechanics
 from .control_capability_shapes import fixed_control_node_capabilities
 
 from dataclasses import dataclass
@@ -1514,18 +1515,7 @@ def capability_covered_mechanics(
         covered.add("cr-122-counters")
     if "counter.removal.all_effect" in supplied:
         covered.add("cr-122-counters")
-    if "counter.producer.fixed_effect" in supplied:
-        covered.add("cr-122-counters")
-    if "counter.producer.fixed_permanent_group_effect" in supplied:
-        covered.add("cr-122-counters")
-    if "counter.producer.fixed_multikind_effect" in supplied:
-        covered.add("cr-122-counters")
-    if "counter.producer.fixed_attached_effect" in supplied:
-        covered.add("cr-122-counters")
-    if "counter.producer.fixed_permanent_set_effect" in supplied:
-        covered.add("cr-122-counters")
-    if "counter.producer.fixed_permanent_target_set_effect" in supplied:
-        covered.add("cr-122-counters")
+    covered.update(counter_placement_covered_mechanics(supplied))
     if "counter.producer.support" in supplied:
         covered.update({"cr-115-targets", "cr-122-counters", "support"})
     if "counter.producer.bolster" in supplied:

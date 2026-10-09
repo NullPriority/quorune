@@ -394,6 +394,7 @@
       "status": "typed_precommit_owner_with_resumable_producer_coordinators",
       "owners": [
         "quorune/counter_placement.py",
+        "quorune/counter_doubling.py",
         "quorune/counter_placement_sets.py",
         "quorune/counter_state.py",
         "quorune/entry_counter_coordination.py",

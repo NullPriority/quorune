@@ -1893,6 +1893,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/counter_doubling_templates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/counter_keyword_activation_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -1969,6 +1984,21 @@
     },
     {
       "file": "quorune/compiler/counter_replacement_templates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/compiler/counter_resolution_effect_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
       "allowed_dependency_layers": [
@@ -4070,6 +4100,20 @@
       "card_specificity_policy": "generic_no_growth",
       "visibility_sensitivity": "authoritative_internal",
       "replay_participation": "none"
+    },
+    {
+      "file": "quorune/counter_doubling.py",
+      "layer": "rules",
+      "owning_subsystem": "counter_placement",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
     },
     {
       "file": "quorune/counter_keyword_abilities.py",
@@ -6962,6 +7006,20 @@
     },
     {
       "file": "quorune/rules/counter_capability_shapes.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/rules/counter_placement_capability_shapes.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
       "allowed_dependency_layers": [
@@ -10895,5 +10953,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "520b83c609cfe2e103d91c8eb7d53a81c3b46c8d627c5ded87011fcdd2c248ac"
+  "fingerprint": "ff7712848726d0e1bcdce57b631de3f34c187f26e31e76a1f52a7151db20a75e"
 }

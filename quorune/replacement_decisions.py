@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 from typing import Any, Mapping, Protocol, Sequence
+from .counter_doubling import named_counter_input_snapshot
 
 from .aura import AuraEntryChoiceRequired, issue_aura_entry_choice
 from .counter_placement import (
@@ -102,6 +103,10 @@ def issue_replacement_order_choice(
     pending = required.pending
     seat = pending.choice.chooser
     context = replacement_choice_payload(pending, required.effects)
+    sealed_effect = copy.deepcopy(dict(effect))
+    named_inputs = named_counter_input_snapshot(host, effect, actor=item.controller)
+    if named_inputs is not None:
+        sealed_effect["_named_counter_input_snapshot"] = named_inputs
     decision = host.permissions.issue(
         kind="replacement.order",
         role=_PILOT_ROLE,
@@ -110,7 +115,7 @@ def issue_replacement_order_choice(
         payload_by_actor={seat: context},
         continuation={
             "stack_ref": item.ref,
-            "effect": copy.deepcopy(dict(effect)),
+            "effect": sealed_effect,
             "remaining": [copy.deepcopy(dict(value)) for value in remaining],
             "destination": destination,
             "note": note,
@@ -469,6 +474,10 @@ def _resume_semantic_replacement(
     except CounterPlacementError as exc:
         raise error_type(str(exc)) from exc
     current_effect = restored.thaw_effect()
+    snapshot=current_effect.pop('_named_counter_input_snapshot',None)
+    current=named_counter_input_snapshot(host,current_effect,actor=item.controller)
+    if current is not None and current!=snapshot:
+        raise error_type('Named-counter quantity or membership changed before replacement resume')
     current_effect["_replacement_selections"] = [
         *list(current_effect.get("_replacement_selections") or []),
         selection,

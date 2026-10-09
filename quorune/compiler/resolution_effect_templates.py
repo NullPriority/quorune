@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .counter_resolution_effect_templates import counter_resolution_effect_template
 
 from typing import Any, Mapping, Sequence
 
@@ -14,14 +15,7 @@ from .fixed_control_templates import fixed_control_effect_template, fixed_contro
 from .linked_exile_return_templates import linked_exile_return_effect_template
 from .amass_templates import fixed_amass_effect_template
 from .bolster_templates import fixed_bolster_effect_template
-from .counter_placement_group_templates import (
-    fixed_counter_placement_group_effect_template,
-)
 from .counter_placement_templates import (
-    fixed_counter_placement_batch_effect_template,
-    fixed_counter_placement_effect_template,
-    fixed_counter_placement_set_effect_template,
-    fixed_counter_placement_target_set_effect_template,
     fixed_player_counter_placement_effect_template,
     support_counter_placement_effect_template,
 )
@@ -192,39 +186,10 @@ def typed_resolution_effect_template(
     )
     if fixed_homogeneous_target_set is not None:
         return fixed_homogeneous_target_set.compiled()
-    fixed_counter_placement_target_set = (
-        fixed_counter_placement_target_set_effect_template(text)
-    )
-    if fixed_counter_placement_target_set is not None:
-        return fixed_counter_placement_target_set.compiled()
-    fixed_counter_placement_set = fixed_counter_placement_set_effect_template(
-        text
-    )
-    if fixed_counter_placement_set is not None:
-        return fixed_counter_placement_set.compiled()
-    fixed_counter_placement_group = (
-        fixed_counter_placement_group_effect_template(
-            text,
-            card_name=card_name,
-            source_is_permanent=source_is_permanent,
-        )
-    )
-    if fixed_counter_placement_group is not None:
-        return fixed_counter_placement_group.compiled()
-    fixed_counter_placement_batch = fixed_counter_placement_batch_effect_template(
-        text,
-        card_name=card_name,
-        source_attachment_relation=source_attachment_relation,
-    )
-    if fixed_counter_placement_batch is not None:
-        return fixed_counter_placement_batch.compiled()
-    fixed_counter_placement = fixed_counter_placement_effect_template(
-        text,
-        card_name=card_name,
-        source_attachment_relation=source_attachment_relation,
-    )
-    if fixed_counter_placement is not None:
-        return fixed_counter_placement.compiled()
+    counter_placement = counter_resolution_effect_template(text, card_name=card_name,
+        source_is_permanent=source_is_permanent, source_attachment_relation=source_attachment_relation)
+    if counter_placement is not None:
+        return counter_placement
     all_counter_removal = all_counter_removal_effect_template(text)
     if all_counter_removal is not None:
         return all_counter_removal.compiled()

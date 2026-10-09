@@ -11,6 +11,11 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Resolve named-counter doubling through current per-permanent amounts and the
+  existing placement transaction, preserving printed order, zero-count no-ops,
+  quantity replacement, pending choice persistence and source identity. Fixed
+  printed entry counters declare their existing quantity replacement dependency.
+
 - Preserve counter-qualified zone triggers through sealed departure and entry
   facts. Fixed named-counter subjects use the existing zone, trigger, APNAP and
   effect owners; simultaneous departures retain the pre-event counters and

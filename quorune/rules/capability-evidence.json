@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "0622bc3739d8514a34708b101c0760826d934817238a28d7f3a53c5c3b0c179b",
-  "declaration_source_fingerprint": "25191bb3f5f537fd532449055f47be4e42acbeff8abb9afc70b2e1eb4d5a0113",
+  "registry_fingerprint": "528a5675799e00b2094c57b92812ad018743ba637e7ac4f95777f9db8f4922d5",
+  "declaration_source_fingerprint": "c5843a48bfeef0aea19431e35c5e52c1cf07e00f83de3fd836664f899faeb39e",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -38572,6 +38572,636 @@
         "commander_review"
       ],
       "applicability_note": "Replay target selection, optional acceptance, and replacement-aware counter commitment to the same authoritative hash."
+    },
+    {
+      "capability_id": "counter.producer.named_doubling",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_counter_doubling.CounterDoublingActionTests.test_actual_surge_adds_then_doubles_current_target_count_with_replay",
+      "official_rule_ids": [
+        "701.10e",
+        "122.1",
+        "122.6",
+        "608.2c",
+        "608.2h",
+        "400.7",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current named-counter amounts are captured at the printed instruction point and processed once by the ordinary counter replacement owner, with strict rejection and actual trusted cast, multiplayer, rollback and replay evidence."
+    },
+    {
+      "capability_id": "counter.producer.named_doubling",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_counter_doubling.CounterDoublingActionTests.test_fixed_entry_dependency_closes_original_hydras_and_landfall_replays",
+      "official_rule_ids": [
+        "701.10e",
+        "122.1",
+        "122.6",
+        "608.2c",
+        "608.2h",
+        "400.7",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current named-counter amounts are captured at the printed instruction point and processed once by the ordinary counter replacement owner, with strict rejection and actual trusted cast, multiplayer, rollback and replay evidence."
+    },
+    {
+      "capability_id": "counter.producer.named_doubling",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_counter_doubling.CounterDoublingActionTests.test_hydra_growth_reads_current_attachment_then_replays",
+      "official_rule_ids": [
+        "701.10e",
+        "122.1",
+        "122.6",
+        "608.2c",
+        "608.2h",
+        "400.7",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current named-counter amounts are captured at the printed instruction point and processed once by the ordinary counter replacement owner, with strict rejection and actual trusted cast, multiplayer, rollback and replay evidence."
+    },
+    {
+      "capability_id": "counter.producer.named_doubling",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_counter_doubling.CounterDoublingActionTests.test_named_count_replacement_choice_is_private_persistent_and_not_recomputed",
+      "official_rule_ids": [
+        "701.10e",
+        "122.1",
+        "122.6",
+        "608.2c",
+        "608.2h",
+        "400.7",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current named-counter amounts are captured at the printed instruction point and processed once by the ordinary counter replacement owner, with strict rejection and actual trusted cast, multiplayer, rollback and replay evidence."
+    },
+    {
+      "capability_id": "counter.producer.named_doubling",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_counter_doubling.CounterDoublingActionTests.test_quantity_replacement_modifies_additional_count_once",
+      "official_rule_ids": [
+        "701.10e",
+        "122.1",
+        "122.6",
+        "608.2c",
+        "608.2h",
+        "400.7",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current named-counter amounts are captured at the printed instruction point and processed once by the ordinary counter replacement owner, with strict rejection and actual trusted cast, multiplayer, rollback and replay evidence."
+    },
+    {
+      "capability_id": "counter.producer.named_doubling",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_counter_doubling.CounterDoublingActionTests.test_actual_surge_adds_then_doubles_current_target_count_with_replay",
+      "official_rule_ids": [
+        "701.10e",
+        "122.1",
+        "122.6",
+        "608.2c",
+        "608.2h",
+        "400.7",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current named-counter amounts are captured at the printed instruction point and processed once by the ordinary counter replacement owner, with strict rejection and actual trusted cast, multiplayer, rollback and replay evidence."
+    },
+    {
+      "capability_id": "counter.producer.named_doubling",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_counter_doubling.CounterDoublingActionTests.test_named_set_snapshots_heterogeneous_counts_and_zero_uses_no_event",
+      "official_rule_ids": [
+        "701.10e",
+        "122.1",
+        "122.6",
+        "608.2c",
+        "608.2h",
+        "400.7",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current named-counter amounts are captured at the printed instruction point and processed once by the ordinary counter replacement owner, with strict rejection and actual trusted cast, multiplayer, rollback and replay evidence."
+    },
+    {
+      "capability_id": "counter.producer.named_doubling",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_counter_doubling.CounterDoublingActionTests.test_current_count_omission_mutant_is_killed_by_actual_action",
+      "official_rule_ids": [
+        "701.10e",
+        "122.1",
+        "122.6",
+        "608.2c",
+        "608.2h",
+        "400.7",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current named-counter amounts are captured at the printed instruction point and processed once by the ordinary counter replacement owner, with strict rejection and actual trusted cast, multiplayer, rollback and replay evidence."
+    },
+    {
+      "capability_id": "counter.producer.named_doubling",
+      "evidence_class": "negative",
+      "test_id": "tests.test_counter_doubling.CounterDoublingActionTests.test_stale_named_counter_choice_rolls_back_after_quantity_changes",
+      "official_rule_ids": [
+        "701.10e",
+        "122.1",
+        "122.6",
+        "608.2c",
+        "608.2h",
+        "400.7",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current named-counter amounts are captured at the printed instruction point and processed once by the ordinary counter replacement owner, with strict rejection and actual trusted cast, multiplayer, rollback and replay evidence."
+    },
+    {
+      "capability_id": "counter.producer.named_doubling",
+      "evidence_class": "negative",
+      "test_id": "tests.test_counter_doubling.CounterDoublingActionTests.test_zero_named_counter_activation_pays_tap_without_placement_event",
+      "official_rule_ids": [
+        "701.10e",
+        "122.1",
+        "122.6",
+        "608.2c",
+        "608.2h",
+        "400.7",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current named-counter amounts are captured at the printed instruction point and processed once by the ordinary counter replacement owner, with strict rejection and actual trusted cast, multiplayer, rollback and replay evidence."
+    },
+    {
+      "capability_id": "counter.producer.named_doubling",
+      "evidence_class": "negative",
+      "test_id": "tests.test_counter_doubling.CounterDoublingCompilerTests.test_named_counter_requests_reject_unknown_invalid_or_unpinned_subjects",
+      "official_rule_ids": [
+        "701.10e",
+        "122.1",
+        "122.6",
+        "608.2c",
+        "608.2h",
+        "400.7",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current named-counter amounts are captured at the printed instruction point and processed once by the ordinary counter replacement owner, with strict rejection and actual trusted cast, multiplayer, rollback and replay evidence."
+    },
+    {
+      "capability_id": "counter.producer.named_doubling",
+      "evidence_class": "negative",
+      "test_id": "tests.test_counter_doubling.CounterDoublingCompilerTests.test_named_doubling_grammar_and_amount_shape_stay_closed",
+      "official_rule_ids": [
+        "701.10e",
+        "122.1",
+        "122.6",
+        "608.2c",
+        "608.2h",
+        "400.7",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current named-counter amounts are captured at the printed instruction point and processed once by the ordinary counter replacement owner, with strict rejection and actual trusted cast, multiplayer, rollback and replay evidence."
+    },
+    {
+      "capability_id": "counter.producer.named_doubling",
+      "evidence_class": "positive",
+      "test_id": "tests.test_counter_doubling.CounterDoublingActionTests.test_actual_surge_adds_then_doubles_current_target_count_with_replay",
+      "official_rule_ids": [
+        "701.10e",
+        "122.1",
+        "122.6",
+        "608.2c",
+        "608.2h",
+        "400.7",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current named-counter amounts are captured at the printed instruction point and processed once by the ordinary counter replacement owner, with strict rejection and actual trusted cast, multiplayer, rollback and replay evidence."
+    },
+    {
+      "capability_id": "counter.producer.named_doubling",
+      "evidence_class": "positive",
+      "test_id": "tests.test_counter_doubling.CounterDoublingActionTests.test_fixed_entry_dependency_closes_original_hydras_and_landfall_replays",
+      "official_rule_ids": [
+        "701.10e",
+        "122.1",
+        "122.6",
+        "608.2c",
+        "608.2h",
+        "400.7",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current named-counter amounts are captured at the printed instruction point and processed once by the ordinary counter replacement owner, with strict rejection and actual trusted cast, multiplayer, rollback and replay evidence."
+    },
+    {
+      "capability_id": "counter.producer.named_doubling",
+      "evidence_class": "positive",
+      "test_id": "tests.test_counter_doubling.CounterDoublingActionTests.test_named_set_snapshots_heterogeneous_counts_and_zero_uses_no_event",
+      "official_rule_ids": [
+        "701.10e",
+        "122.1",
+        "122.6",
+        "608.2c",
+        "608.2h",
+        "400.7",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current named-counter amounts are captured at the printed instruction point and processed once by the ordinary counter replacement owner, with strict rejection and actual trusted cast, multiplayer, rollback and replay evidence."
+    },
+    {
+      "capability_id": "counter.producer.named_doubling",
+      "evidence_class": "positive",
+      "test_id": "tests.test_counter_doubling.CounterDoublingActionTests.test_zero_named_counter_activation_pays_tap_without_placement_event",
+      "official_rule_ids": [
+        "701.10e",
+        "122.1",
+        "122.6",
+        "608.2c",
+        "608.2h",
+        "400.7",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current named-counter amounts are captured at the printed instruction point and processed once by the ordinary counter replacement owner, with strict rejection and actual trusted cast, multiplayer, rollback and replay evidence."
+    },
+    {
+      "capability_id": "counter.producer.named_doubling",
+      "evidence_class": "positive",
+      "test_id": "tests.test_counter_doubling.CounterDoublingCompilerTests.test_named_counter_request_snapshots_add_original_counts_and_skip_zero",
+      "official_rule_ids": [
+        "701.10e",
+        "122.1",
+        "122.6",
+        "608.2c",
+        "608.2h",
+        "400.7",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current named-counter amounts are captured at the printed instruction point and processed once by the ordinary counter replacement owner, with strict rejection and actual trusted cast, multiplayer, rollback and replay evidence."
+    },
+    {
+      "capability_id": "counter.producer.named_doubling",
+      "evidence_class": "positive",
+      "test_id": "tests.test_counter_doubling.CounterDoublingCompilerTests.test_named_doubling_grammar_and_amount_shape_stay_closed",
+      "official_rule_ids": [
+        "701.10e",
+        "122.1",
+        "122.6",
+        "608.2c",
+        "608.2h",
+        "400.7",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current named-counter amounts are captured at the printed instruction point and processed once by the ordinary counter replacement owner, with strict rejection and actual trusted cast, multiplayer, rollback and replay evidence."
+    },
+    {
+      "capability_id": "counter.producer.named_doubling",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_counter_doubling.CounterDoublingActionTests.test_actual_surge_adds_then_doubles_current_target_count_with_replay",
+      "official_rule_ids": [
+        "701.10e",
+        "122.1",
+        "122.6",
+        "608.2c",
+        "608.2h",
+        "400.7",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current named-counter amounts are captured at the printed instruction point and processed once by the ordinary counter replacement owner, with strict rejection and actual trusted cast, multiplayer, rollback and replay evidence."
+    },
+    {
+      "capability_id": "counter.producer.named_doubling",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_counter_doubling.CounterDoublingActionTests.test_named_count_replacement_choice_is_private_persistent_and_not_recomputed",
+      "official_rule_ids": [
+        "701.10e",
+        "122.1",
+        "122.6",
+        "608.2c",
+        "608.2h",
+        "400.7",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current named-counter amounts are captured at the printed instruction point and processed once by the ordinary counter replacement owner, with strict rejection and actual trusted cast, multiplayer, rollback and replay evidence."
+    },
+    {
+      "capability_id": "counter.producer.named_doubling",
+      "evidence_class": "replay",
+      "test_id": "tests.test_counter_doubling.CounterDoublingActionTests.test_actual_surge_adds_then_doubles_current_target_count_with_replay",
+      "official_rule_ids": [
+        "701.10e",
+        "122.1",
+        "122.6",
+        "608.2c",
+        "608.2h",
+        "400.7",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current named-counter amounts are captured at the printed instruction point and processed once by the ordinary counter replacement owner, with strict rejection and actual trusted cast, multiplayer, rollback and replay evidence."
+    },
+    {
+      "capability_id": "counter.producer.named_doubling",
+      "evidence_class": "replay",
+      "test_id": "tests.test_counter_doubling.CounterDoublingActionTests.test_fixed_entry_dependency_closes_original_hydras_and_landfall_replays",
+      "official_rule_ids": [
+        "701.10e",
+        "122.1",
+        "122.6",
+        "608.2c",
+        "608.2h",
+        "400.7",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current named-counter amounts are captured at the printed instruction point and processed once by the ordinary counter replacement owner, with strict rejection and actual trusted cast, multiplayer, rollback and replay evidence."
+    },
+    {
+      "capability_id": "counter.producer.named_doubling",
+      "evidence_class": "replay",
+      "test_id": "tests.test_counter_doubling.CounterDoublingActionTests.test_hydra_growth_reads_current_attachment_then_replays",
+      "official_rule_ids": [
+        "701.10e",
+        "122.1",
+        "122.6",
+        "608.2c",
+        "608.2h",
+        "400.7",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current named-counter amounts are captured at the printed instruction point and processed once by the ordinary counter replacement owner, with strict rejection and actual trusted cast, multiplayer, rollback and replay evidence."
+    },
+    {
+      "capability_id": "counter.producer.named_doubling",
+      "evidence_class": "replay",
+      "test_id": "tests.test_counter_doubling.CounterDoublingActionTests.test_named_count_replacement_choice_is_private_persistent_and_not_recomputed",
+      "official_rule_ids": [
+        "701.10e",
+        "122.1",
+        "122.6",
+        "608.2c",
+        "608.2h",
+        "400.7",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current named-counter amounts are captured at the printed instruction point and processed once by the ordinary counter replacement owner, with strict rejection and actual trusted cast, multiplayer, rollback and replay evidence."
+    },
+    {
+      "capability_id": "counter.producer.named_doubling",
+      "evidence_class": "replay",
+      "test_id": "tests.test_counter_doubling.CounterDoublingActionTests.test_named_set_snapshots_heterogeneous_counts_and_zero_uses_no_event",
+      "official_rule_ids": [
+        "701.10e",
+        "122.1",
+        "122.6",
+        "608.2c",
+        "608.2h",
+        "400.7",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current named-counter amounts are captured at the printed instruction point and processed once by the ordinary counter replacement owner, with strict rejection and actual trusted cast, multiplayer, rollback and replay evidence."
+    },
+    {
+      "capability_id": "counter.producer.named_doubling",
+      "evidence_class": "replay",
+      "test_id": "tests.test_counter_doubling.CounterDoublingActionTests.test_quantity_replacement_modifies_additional_count_once",
+      "official_rule_ids": [
+        "701.10e",
+        "122.1",
+        "122.6",
+        "608.2c",
+        "608.2h",
+        "400.7",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current named-counter amounts are captured at the printed instruction point and processed once by the ordinary counter replacement owner, with strict rejection and actual trusted cast, multiplayer, rollback and replay evidence."
+    },
+    {
+      "capability_id": "counter.producer.named_doubling",
+      "evidence_class": "replay",
+      "test_id": "tests.test_counter_doubling.CounterDoublingActionTests.test_zero_named_counter_activation_pays_tap_without_placement_event",
+      "official_rule_ids": [
+        "701.10e",
+        "122.1",
+        "122.6",
+        "608.2c",
+        "608.2h",
+        "400.7",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current named-counter amounts are captured at the printed instruction point and processed once by the ordinary counter replacement owner, with strict rejection and actual trusted cast, multiplayer, rollback and replay evidence."
+    },
+    {
+      "capability_id": "counter.producer.named_doubling",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_counter_doubling.CounterDoublingActionTests.test_actual_surge_adds_then_doubles_current_target_count_with_replay",
+      "official_rule_ids": [
+        "701.10e",
+        "122.1",
+        "122.6",
+        "608.2c",
+        "608.2h",
+        "400.7",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current named-counter amounts are captured at the printed instruction point and processed once by the ordinary counter replacement owner, with strict rejection and actual trusted cast, multiplayer, rollback and replay evidence."
+    },
+    {
+      "capability_id": "counter.producer.named_doubling",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_counter_doubling.CounterDoublingActionTests.test_named_count_replacement_choice_is_private_persistent_and_not_recomputed",
+      "official_rule_ids": [
+        "701.10e",
+        "122.1",
+        "122.6",
+        "608.2c",
+        "608.2h",
+        "400.7",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current named-counter amounts are captured at the printed instruction point and processed once by the ordinary counter replacement owner, with strict rejection and actual trusted cast, multiplayer, rollback and replay evidence."
+    },
+    {
+      "capability_id": "counter.producer.named_doubling",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_counter_doubling.CounterDoublingActionTests.test_stale_named_counter_choice_rolls_back_after_quantity_changes",
+      "official_rule_ids": [
+        "701.10e",
+        "122.1",
+        "122.6",
+        "608.2c",
+        "608.2h",
+        "400.7",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current named-counter amounts are captured at the printed instruction point and processed once by the ordinary counter replacement owner, with strict rejection and actual trusted cast, multiplayer, rollback and replay evidence."
     },
     {
       "capability_id": "counter.producer.optional_fixed_event_trigger",
@@ -83951,5 +84581,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "8e20e8307a74fbb82417360b94abf4d824b30e2169031157ec5ef143462abc0d"
+  "fingerprint": "dab031a7d691185e0ba19ca3e1301296340766956da7596860ce0dbbaa432bb8"
 }

@@ -31,6 +31,23 @@ payload, object identifier, replacement batch, and prior journal remain in the
 authoritative continuation. Exact replay reconstructs and validates the path,
 chooser, and selected effect.
 
+Named-counter doubling uses one versioned `existing_named_counter_count`
+amount descriptor on the existing placement operations. The typed intent
+bridge reads each selected permanent's current public count at that printed
+instruction, then delegates one complete placement batch to the same owner.
+It places the existing number rather than multiplying the request in advance;
+quantity replacements modify that additional placement once. Zero counts
+produce no event. Sets capture all member counts before replacements, while
+earlier instructions may change the count used by a later doubling instruction.
+Unknown quantities reject before mutation.
+Pending replacement continuations seal the exact named-counter input counts
+and member incarnations, including zero-count members; quantity or membership
+changes behind a sealed choice reject before resume rather than resampling.
+Source incarnations, reciprocal
+attachments, target legality, pending choice projection and replay retain their
+existing authorities. All-kind, chosen and player counter doubling remains
+outside this named-permanent grammar.
+
 Token preparation uses that same nested zone-entry replacement tree for
 represented intrinsic and self-entry counter components. Prospective objects
 are explicit new outside-zone tokens; they remain absent from live state until

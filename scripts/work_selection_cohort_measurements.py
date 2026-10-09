@@ -238,6 +238,7 @@ _PROBE_TAP_STATE_EVENT = "normalized-tap-state-event-existing-owner-v1"
 _PROBE_PUBLIC_COLLECTION_QUANTITY = "public-collection-quantity-existing-owner-v1"
 _PROBE_QUALIFIED_ZONE_EVENT = "qualified-zone-event-query-existing-owner-v1"
 _PROBE_COUNTER_QUALIFIED_ZONE_EVENT = "counter-qualified-zone-event-existing-owner-v1"
+_PROBE_NAMED_COUNTER_DOUBLING = "named-counter-doubling-existing-owner-v1"
 _PROBE_FIXED_CONTROLLED_CHARACTERISTIC = (
     "fixed-controlled-characteristic-effect-existing-owner-v1"
 )
@@ -619,6 +620,7 @@ _PROBE_IDS = {
     _PROBE_PUBLIC_COLLECTION_QUANTITY,
     _PROBE_QUALIFIED_ZONE_EVENT,
     _PROBE_COUNTER_QUALIFIED_ZONE_EVENT,
+    _PROBE_NAMED_COUNTER_DOUBLING,
     _PROBE_OPTIONAL_EFFECT,
     _PROBE_OPTIONAL_MANA_PAYMENT,
     _PROBE_PUBLIC_STATIC_CAST_COST_MODIFIER,
@@ -1317,6 +1319,8 @@ def _matches_probe(
         # binding below determine whether any card closes.
         return bool(card_record is not None and not card_record.faces
                     and re.search(r"\bX\b", source))
+    if probe_id == _PROBE_NAMED_COUNTER_DOUBLING:
+        return bool(re.search(r"double the number of [^\n.]+ counters on ",source,re.I))
     if probe_id in {_PROBE_QUALIFIED_ZONE_EVENT, _PROBE_COUNTER_QUALIFIED_ZONE_EVENT}:
         if card_record is None:
             raise WorkSelectionCohortMeasurementError("Qualified zone query measurement requires card context")
@@ -5441,7 +5445,7 @@ def _measurement(
             cards_by_oracle_id=cards_by_oracle_id, coverage=coverage,
             cohort_fingerprint=cohort_fingerprint, database=database,
         )
-    if probe_id in {_PROBE_BOUND_EFFECT_PROGRAM, _PROBE_FIXED_CONTROL_UNTAP, _PROBE_ENTRY_DESIGNATIONS, _PROBE_ENTRY_DESIGNATIONS_V2, _PROBE_QUALIFIED_ZONE_EVENT, _PROBE_COUNTER_QUALIFIED_ZONE_EVENT,
+    if probe_id in {_PROBE_BOUND_EFFECT_PROGRAM, _PROBE_FIXED_CONTROL_UNTAP, _PROBE_ENTRY_DESIGNATIONS, _PROBE_ENTRY_DESIGNATIONS_V2, _PROBE_QUALIFIED_ZONE_EVENT, _PROBE_COUNTER_QUALIFIED_ZONE_EVENT, _PROBE_NAMED_COUNTER_DOUBLING,
                     _PROBE_DECLARED_EFFECT_AMOUNT, _PROBE_FIXED_ANIMATION, _PROBE_FIXED_EFFECT_PAYMENT, _PROBE_STACK_CONTROLLER_PAYMENT, _PROBE_LINKED_EXILE_RETURN, _PROBE_SCALAR_EFFECT_AMOUNT, _PROBE_TOKEN_COPY_RECIPE, _PROBE_TAP_STATE_EVENT, _PROBE_PUBLIC_COLLECTION_QUANTITY, _PROBE_SOURCE_SELF_REFERENCES, _PROBE_SOURCE_MAINTENANCE, _PROBE_COUNTED_ACTIVATION_COST, _PROBE_KICKED_ENTRY, _PROBE_TARGET_ANNOUNCEMENT, _PROBE_KICKED_SPELL, _PROBE_EVENT_CARD_RETURN, _PROBE_BATCHED_SUPPORT, _PROBE_PERMANENT_PRICE, _PROBE_CAST_CREATURE_TARGET}:
         return _bound_effect_program_measurement(
             frontier=frontier, bundle_id=bundle_id, probe_id=probe_id,
@@ -8252,6 +8256,7 @@ def _bound_effect_program_measurement(
     capability = {
         _PROBE_QUALIFIED_ZONE_EVENT: QUALIFIED_ZONE_CAPABILITY,
         _PROBE_COUNTER_QUALIFIED_ZONE_EVENT: COUNTER_QUALIFIED_ZONE_CAPABILITY,
+        _PROBE_NAMED_COUNTER_DOUBLING: "counter.producer.named_doubling",
         _PROBE_BOUND_EFFECT_PROGRAM: BOUND_EFFECT_PROGRAM_CAPABILITY,
         _PROBE_FIXED_CONTROL_UNTAP: "continuous.control.fixed_resolution",
         _PROBE_ENTRY_DESIGNATIONS: "zone.entry.public_designation",

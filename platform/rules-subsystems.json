@@ -375,6 +375,22 @@
       },
       "candidate_bundles": [
         {
+          "bundle_id": "bundle:named-counter-doubling",
+          "member_family_ids": ["effect_clause:ordered-effect-composition", "activated_effect:unparsed-double-the-number", "activated_effect:put-counter", "effect_clause:put-counter", "quantity_expression:dynamic-quantity"],
+          "canonical_owner_ids": ["capability:counter.producer.named_doubling", "component:quorune.counter_doubling.snapshot_named_counter_doubling", "component:quorune.counter_placement.place_counters"],
+          "source_contexts": ["activated", "spell", "triggered"],
+          "normalized_literal_parameters": ["one-named-counter-kind", "current-per-instruction-counts", "canonical-placement-batch"],
+          "shared_dependencies": ["counter.producer.fixed_effect", "counter.producer.fixed_permanent_set_effect"],
+          "shared_grammar": "Double one named counter over existing public permanent source, target, attachment or affected-set references, preserving printed order and pending quantity provenance.",
+          "estimated_implementation_hours": 3,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Retain measured original whole-card closure within the combined net-200 delivery; independent unsupported siblings remain blocked.",
+          "explicit_exclusions": ["All-kind, chosen and player counter quantities", "Unknown counter facts", "Unrepresented reference domains and unsupported siblings"],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "named-counter-doubling-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:counter-qualified-zone-event",
           "member_family_ids": ["event_binding:intervening-if-and-reflexive-trigger-grammar", "event_binding:normalized-event-binding"],
           "canonical_owner_ids": [

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Any, Mapping
+from ..counter_names import EXISTING_COUNTER_AMOUNT, is_existing_counter_amount
 
 from ..affected_permanents import (
     AffectedPermanentSetError,
@@ -24,6 +25,14 @@ from .intents import (
 
 
 _REASON_FIELD = "reason"
+
+
+def _placement_amount(value, *, allow_zero=False):
+    if is_existing_counter_amount(value):
+        return EXISTING_COUNTER_AMOUNT
+    if type(value) is not int or value < (0 if allow_zero else 1):
+        raise SemanticNodeError("Counter placement amount must be an exact integer or a closed named-counter amount")
+    return value
 
 
 def _fixed_counter_group_intent(
@@ -155,11 +164,7 @@ class FixedCounterPlacementHandler:
             raise SemanticNodeError(
                 "Counter placement requires one nonempty counter name"
             )
-        amount = effect.get("amount")
-        if type(amount) is not int or amount < 0:
-            raise SemanticNodeError(
-                "Counter placement amount must be a nonnegative exact integer"
-            )
+        amount = _placement_amount(effect.get("amount"), allow_zero=True)
         source_ref = effect.get("source")
         if type(source_ref) is not str or not source_ref:
             raise SemanticNodeError(
@@ -330,11 +335,7 @@ class FixedCounterPlacementSetHandler:
             raise SemanticNodeError(
                 "Counter-set placement requires one nonempty counter name"
             )
-        amount = effect.get("amount")
-        if type(amount) is not int or amount <= 0:
-            raise SemanticNodeError(
-                "Counter-set amount must be a positive exact integer"
-            )
+        amount = _placement_amount(effect.get("amount"))
         source_ref = effect.get("source")
         if type(source_ref) is not str or not source_ref:
             raise SemanticNodeError(

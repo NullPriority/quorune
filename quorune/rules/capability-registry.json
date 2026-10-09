@@ -9753,6 +9753,33 @@
       "implementation_mutation_rationale": "Removing sealed departure counters is rejected by the actual accepted sacrifice action and its expected trigger consequence.",
       "blockers": [],
       "status": "trusted"
+    },
+    {
+      "id": "counter.producer.named_doubling",
+      "version": 1,
+      "official_rules": ["701.10e", "122.1", "122.6", "608.2c", "608.2h", "400.7", "614.16", "616.1"],
+      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "applicability": {
+        "summary": "Place each permanent's current count of one fixed named counter through the canonical replacement-aware counter placement owner.",
+        "inputs": ["One exact named-counter doubling instruction", "Existing permanent source, target, attachment or affected-set query", "Current public counter facts at the instruction point"],
+        "outputs": ["One snapshot of per-permanent existing counts", "Zero-count no-op", "One canonical placement batch before quantity replacements", "Printed order and ordinary source/target identity, rollback and replay"],
+        "exclusions": ["All-kind, chosen, player and variable counter predicates", "Unknown or malformed counter facts", "Unrepresented subjects, optional target quantities and unsupported siblings"]
+      },
+      "dependencies": ["counter.producer.fixed_effect", "counter.producer.fixed_permanent_set_effect"],
+      "implementation_components": ["quorune.counter_doubling.snapshot_named_counter_doubling", "quorune.counter_doubling.resolve_effect_counters_on_refs", "quorune.counter_doubling.resolve_effect_counter_set", "quorune.compiler.counter_doubling_templates.named_counter_doubling_effect_template", "quorune.rules.counter_placement_capability_shapes.fixed_counter_placement_node_capabilities", "quorune.semantic_runtime.counter_placement_handlers.FixedCounterPlacementHandler"],
+      "positive_tests": ["test_named_counter_request_snapshots_add_original_counts_and_skip_zero", "test_named_doubling_grammar_and_amount_shape_stay_closed", "test_actual_surge_adds_then_doubles_current_target_count_with_replay"],
+      "negative_tests": ["test_named_counter_requests_reject_unknown_invalid_or_unpinned_subjects", "test_named_doubling_grammar_and_amount_shape_stay_closed"],
+      "interaction_tests": ["test_actual_surge_adds_then_doubles_current_target_count_with_replay", "test_quantity_replacement_modifies_additional_count_once"],
+      "multiplayer_tests": ["test_actual_surge_adds_then_doubles_current_target_count_with_replay"],
+      "privacy_tests": ["test_actual_surge_adds_then_doubles_current_target_count_with_replay"],
+      "replay_tests": ["test_actual_surge_adds_then_doubles_current_target_count_with_replay", "test_quantity_replacement_modifies_additional_count_once"],
+      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Blocking the named-count capability retains a material compiler residual.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Doubling the requested amount in advance is rejected by the actual printed-order cast result.",
+      "blockers": [],
+      "status": "trusted"
     }
   ]
 }

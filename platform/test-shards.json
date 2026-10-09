@@ -350,6 +350,7 @@
       "test_concession_rules",
       "test_counted_activation_costs",
       "test_counted_library_searches",
+      "test_counter_doubling",
       "test_counter_qualified_zone_events",
       "test_cumulative_upkeep_counter_placement",
       "test_damage_result_events",

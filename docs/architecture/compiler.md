@@ -988,6 +988,12 @@ fixed counter-placement grammar. Source-self recipients use the existing
 `$source.zone_object` resolver so a queued result cannot modify a returned new
 incarnation. The separate source provenance reference keeps its existing
 meaning, and unavailable source instructions leave independent results intact.
+`counter_doubling_templates.py` admits one fixed named-counter kind over those
+same source, attachment, direct-target and affected-set subjects. It emits a
+closed amount descriptor and the dedicated named-doubling capability. The
+runtime reads current counts at each instruction and uses the ordinary placement
+owner; no new operation or targeting grammar is introduced. Unknown, all-kind,
+chosen, player and independently unsupported sibling forms remain residual.
 Direct targets lower once to
 `DirectPermanentTargetSpec`, whose deterministic runtime schema supports the
 represented type conjunctions and canonical disjunctions of up to four

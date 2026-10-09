@@ -966,7 +966,7 @@ class PlaceCountersIntent:
     actor: str
     object_refs: tuple[str, ...]
     counter_name: str
-    amount: int
+    amount: int | Literal["existing_named_counter_count"]
     reason: str
     source_ref: str | None = None
     replacement_selections: tuple[str | FrozenMap, ...] = ()
@@ -1106,7 +1106,7 @@ class PlaceCountersOnSetIntent:
     actor: str
     spec: AffectedPermanentSetSpec
     counter_name: str
-    amount: int
+    amount: int | Literal["existing_named_counter_count"]
     reason: str
     source_ref: str | None = None
     replacement_selections: tuple[str | FrozenMap, ...] = ()
@@ -1128,7 +1128,7 @@ class PlaceCountersOnSetIntent:
             raise ValueError(
                 "Counter-set intents require a typed affected set"
             )
-        if type(self.amount) is not int or self.amount <= 0:
+        if self.amount != "existing_named_counter_count" and (type(self.amount) is not int or self.amount <= 0):
             raise ValueError(
                 "Counter-set intent amount must be a positive exact integer"
             )
