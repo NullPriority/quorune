@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
+from tempfile import TemporaryDirectory
 import unittest
 from unittest import mock
 
@@ -15,6 +17,30 @@ from scripts.update_architecture_audit import (
 
 def _json(relative: str) -> dict:
     return json.loads((ROOT / relative).read_text(encoding="utf-8"))
+
+
+class ArchitectureTestImportInventoryTests(unittest.TestCase):
+    def test_shared_import_inventory_keeps_matching_and_rereads_after_edits(self):
+        from scripts.architecture_observability import _test_import_inventory, _tests_for_modules
+
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            tests = root / "tests"
+            tests.mkdir()
+            first = tests / "test_first.py"
+            first.write_text("import quorune.damage.child\nfrom quorune.draw import owner\n", encoding="utf-8")
+            second = tests / "test_second.py"
+            second.write_text("import quorune.damage_extra\ndef test_nested():\n    import quorune.damage\n", encoding="utf-8")
+            (tests / "test_malformed.py").write_text("def (\n", encoding="utf-8")
+            inventory = _test_import_inventory(root)
+            with mock.patch("scripts.architecture_observability.ast.parse", side_effect=AssertionError("reparsed inventory")):
+                self.assertEqual(["test_first", "test_second"], _tests_for_modules(root, {"quorune.damage"}, inventory=inventory))
+                self.assertEqual(["test_first"], _tests_for_modules(root, {"quorune.draw"}, inventory=inventory))
+                self.assertEqual([], _tests_for_modules(root, {"quorune.damage.child.other"}, inventory=inventory))
+            first.write_text("import quorune.life\n", encoding="utf-8")
+            second.unlink()
+            self.assertEqual([], _tests_for_modules(root, {"quorune.damage"}))
+            self.assertEqual(["test_first"], _tests_for_modules(root, {"quorune.life"}))
 
 
 class ArchitectureAuditTests(unittest.TestCase):

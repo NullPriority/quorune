@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from copy import deepcopy
+from dataclasses import replace
 import gzip
 import hashlib
 import json
@@ -118,6 +119,77 @@ from scripts.work_selection_cohort_measurements import (
 
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+class CohortPrefilterTests(unittest.TestCase):
+    def record(self):
+        return CardRecord(
+            oracle_id="fixture:cohort-cache", name="Cohort Cache Witness",
+            mana_cost="{R}", mana_value=1, type_line="Instant",
+            oracle_text="Cohort Cache Witness deals 3 damage to any target.",
+            power=None, toughness=None, loyalty=None, defense=None,
+            colors=("R",), color_identity=("R",), keywords=(), produced_mana=(),
+            layout="normal", released_at="2026-01-01", legalities={"commander":"legal"},
+            faces=(), raw={},
+        )
+
+    def test_source_pronoun_prefilter_skips_only_grammar_already_excluded(self):
+        from scripts import work_selection_cohort_measurements as measurements
+
+        record = replace(self.record(), oracle_text="When this creature enters, you gain 2 life.")
+        ability = {"face_id":"front", "ability_id":"a1", "source_line":1,
+                   "status":"unresolved", "blockers":{"canonical_family_ids":["fixture:family"]}}
+        arguments = dict(frontier={"cards":[{"oracle_id":record.oracle_id,"abilities":[ability]}]},
+            bundle_id="bundle:fixed-source-pronoun-damage-triggers",
+            probe_id="fixed-source-pronoun-damage-trigger-existing-owner-v1",
+            member_ids={"fixture:family"}, cards_by_oracle_id={record.oracle_id:record},
+            coverage={"minimum_complete_card_gain":50,"minimum_exact_ability_gain":100,
+                      "minimum_material_residual_reduction":100}, cohort_fingerprint="fixture")
+        with mock.patch.object(measurements, "compile_oracle_card", side_effect=AssertionError("unneeded compilation")):
+            self.assertEqual(0, measurements._fixed_source_pronoun_damage_trigger_measurement(**arguments)["exact_ability_gain"])
+        accepted = replace(record, oracle_text="When this creature enters, it deals 1 damage to any target.")
+        node = SimpleNamespace(node_id="a1", exact=True, event="permanent.enter.self")
+        compiled = SimpleNamespace(faces=[SimpleNamespace(nodes=[node])], status="exact")
+        with mock.patch.object(measurements, "compile_oracle_card", return_value=compiled) as compiler:
+            measured = measurements._fixed_source_pronoun_damage_trigger_measurement(
+                **{**arguments, "cards_by_oracle_id":{record.oracle_id:accepted}}
+            )
+            self.assertEqual(1, measured["complete_card_gain"])
+            compiler.assert_called_once()
+
+    def test_target_set_prefilter_retains_counts_contexts_faces_and_whitespace(self):
+        from scripts import work_selection_cohort_measurements as measurements
+        from quorune.compiler.fixed_homogeneous_target_sets import fixed_homogeneous_target_set_effect_template
+
+        record = self.record()
+        ability = {"face_id":"front", "ability_id":"a1", "status":"unresolved",
+                   "blockers":{"canonical_family_ids":["fixture:family"]}}
+        arguments = dict(frontier={"cards":[{"oracle_id":record.oracle_id,"abilities":[ability]}]},
+            bundle_id="bundle:fixed-homogeneous-target-sets", probe_id="fixture",
+            member_ids={"fixture:family"}, cards_by_oracle_id={record.oracle_id:record},
+            coverage={"minimum_complete_card_gain":50,"minimum_exact_ability_gain":100,
+                      "minimum_material_residual_reduction":100}, cohort_fingerprint="fixture")
+        compiled = SimpleNamespace(faces=[], status="unresolved")
+        with mock.patch.object(measurements, "compile_oracle_card", return_value=compiled) as compiler:
+            for count in ("two", "three", "four", "five", "six", "up to two", "one or two"):
+                body = f"Destroy {count} target creatures."
+                self.assertIsNotNone(fixed_homogeneous_target_set_effect_template(body))
+                for text in (body, "{T}: " + body, "When this creature enters, " + body,
+                             body.replace(" target ", "\n target\t")):
+                    compiler.reset_mock()
+                    measurements._fixed_homogeneous_target_set_measurement(
+                        **{**arguments, "cards_by_oracle_id":{record.oracle_id:replace(record, oracle_text=text)}}
+                    )
+                    compiler.assert_called_once()
+            compiler.reset_mock()
+            measurements._fixed_homogeneous_target_set_measurement(**arguments)
+            compiler.assert_not_called()
+            compiler.reset_mock()
+            measurements._fixed_homogeneous_target_set_measurement(
+                **{**arguments, "cards_by_oracle_id":{record.oracle_id:replace(record,
+                    faces=({"oracle_text":"Untap two other target creatures."},))}}
+            )
+            compiler.assert_called_once()
 
 
 def _json(relative: str):

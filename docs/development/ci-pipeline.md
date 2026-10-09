@@ -35,6 +35,15 @@ cards. Separate measurements construct fresh registries, and probes with no
 whole-program candidates avoid that setup. Compilation and strict binding
 still run independently for every original complete card.
 
+The source-pronoun damage-trigger probe applies its existing grammar exclusion
+before compiling the card, avoiding compilation for candidates that the same
+predicate would reject afterward. Every admitted candidate still goes through
+the original-card compiler and exact-node checks.
+The homogeneous target-set probe similarly skips compilation only when the
+original card and all faces lack the plural-target phrase required by every
+admitted production. Counts, trigger and activation contexts, and whitespace
+normalization retain the existing compiler and exact-node checks.
+
 Capability-evidence validation similarly takes one defensive registry snapshot
 per invocation rather than serializing the same capability for each declaration.
 Every declaration, required evidence class, supported profile, registry identity,
@@ -44,6 +53,11 @@ The compiler-identity sentinel reads immutable base Python sources through one
 validated `git cat-file --batch` response, shared by import-closure traversal
 and version-literal checks. It retains the same source paths and blob identity
 comparison, including removed imports, instead of starting Git for each module.
+
+Architecture capsule generation reads and parses the current test import
+inventory once per report, then applies each subsystem's unchanged import
+matching rule to that snapshot. Later reports reread the files, so edits and
+deletions cannot reuse an older test inventory.
 
 Use the existing duration-driven shard rebalance only when module timings show
 a scheduling bottleneck. Simplifying labels or metadata is useful when it

@@ -7774,6 +7774,15 @@ def _fixed_source_pronoun_damage_trigger_measurement(
             raise WorkSelectionCohortMeasurementError(
                 f"Cohort measurement lacks pinned card {oracle_id}"
             )
+        candidates = [
+            ability for ability in candidates
+            if _matches_probe(
+                probe_id, _source_line(record, ability),
+                card_record=record, ability=ability,
+            )
+        ]
+        if not candidates:
+            continue
         compiled = compile_oracle_card(
             record,
             capability_registry=registry,
@@ -8384,6 +8393,15 @@ def _fixed_homogeneous_target_set_measurement(
             raise WorkSelectionCohortMeasurementError(
                 f"Cohort measurement lacks pinned card {oracle_id}"
             )
+        # Every admitted production contains this plural-target phrase after
+        # whitespace normalization, including activated and triggered bodies.
+        if not re.search(
+            r"\b(?:two|three|four|five|six)(?: other)? target\b",
+            " ".join(" ".join((record.oracle_text, *(str(face.get("oracle_text") or "")
+                                               for face in record.faces))).split()),
+            re.IGNORECASE,
+        ):
+            continue
         compiled = compile_oracle_card(
             record,
             capability_registry=registry,

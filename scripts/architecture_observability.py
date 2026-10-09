@@ -457,7 +457,9 @@ def _module_name(relative: str) -> str:
     return ".".join(parts)
 
 
-def _tests_for_modules(root: Path, module_names: set[str]) -> list[str]:
+def _test_import_inventory(root: Path) -> tuple[tuple[str, frozenset[str]], ...]:
+    """Read the current test import inventory once per architecture report."""
+
     values = []
     for path in sorted((root / "tests").glob("test_*.py")):
         try:
@@ -470,13 +472,21 @@ def _tests_for_modules(root: Path, module_names: set[str]) -> list[str]:
                 imports.update(alias.name for alias in node.names)
             elif isinstance(node, ast.ImportFrom) and node.module:
                 imports.add(node.module)
+        values.append((path.stem, frozenset(imports)))
+    return tuple(values)
+
+
+def _tests_for_modules(root: Path, module_names: set[str], *,
+                       inventory: Sequence[tuple[str, frozenset[str]]] | None = None) -> list[str]:
+    return [
+        name
+        for name, imports in (_test_import_inventory(root) if inventory is None else inventory)
         if any(
             imported == module or imported.startswith(module + ".")
             for imported in imports
             for module in module_names
-        ):
-            values.append(path.stem)
-    return values
+        )
+    ]
 
 
 def _engine_methods_for_subsystem(
@@ -571,6 +581,7 @@ def build_subsystem_capsules(
     declared_text_subsystems = _declared_runtime_text_subsystems(
         source, runtime_text
     )
+    test_imports = _test_import_inventory(root)
     capsules = []
     for owner in source["subsystem_ownership"]:
         subsystem = str(owner["id"])
@@ -647,7 +658,7 @@ def build_subsystem_capsules(
             )
         ]
         reusable_piece_ids = sorted(str(row["piece_id"]) for row in piece_rows)
-        primary_tests = _tests_for_modules(root, module_names)
+        primary_tests = _tests_for_modules(root, module_names, inventory=test_imports)
         oversized_symbols = [
             row
             for row in oversized_functions
