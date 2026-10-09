@@ -187,8 +187,8 @@ def build_plan(
             steps.append(QuickStep(
                 "event-return-legacy-overlay-contract",
                 (python, "-m", "unittest", "discover", "-s", "tests",
-                 "-p", "test_exact_deck_triggers.py", "-k",
-                 "test_spine_destroys_target_then_returns_from_graveyard"),
+                 "-p", "test_event_card_return.py", "-k",
+                 "test_event_return_overlay_requires_identical_self_event_and_bound_sources"),
             ))
         if "scripts/update_work_selection_cohort_measurements.py" in paths:
             steps.append(QuickStep(
