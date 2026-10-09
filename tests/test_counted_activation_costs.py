@@ -195,7 +195,7 @@ class CountedActivationActionTests(unittest.TestCase):
         self.add(engine, 'Generic Payment Competing Replacement', owner='C', ref='EXILE-TWO')
         action = next(row for row in self.ready(session, source, {'B': 1, 'C': 2}) if row['id'].startswith('activate:EATER:') and row['cost_summary'].get('choose_cost', [{}])[0].get('n') == 2)
         self.checkpoint(session)
-        result = session.act('pilot:A', {'action_id': action['id'], 'cost_cards': [card.ref for card in cards], 'targets': [target.ref], 'pay': 'auto'})
+        result = session.act('pilot:A', {'action_id': action['id'], 'cost_cards': [card.ref for card in reversed(cards)], 'targets': [target.ref], 'pay': 'auto'})
         self.assertTrue(result.ok, result.summary)
         self.assertIn('replacement', session.state.pending_decision.kind)
         self.assertTrue(all(session.state.cards[card.object_id].zone == 'battlefield' for card in cards))

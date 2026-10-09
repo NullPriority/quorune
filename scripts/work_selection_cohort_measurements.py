@@ -220,6 +220,7 @@ _PROBE_TYPED_GRANT_CARRIERS = "typed-layer-six-grant-carriers-existing-owner-v1"
 _PROBE_SOURCE_SELF_REFERENCES = "source-self-reference-closure-existing-owner-v1"
 _PROBE_SOURCE_MAINTENANCE = "fixed-source-maintenance-existing-owner-v1"
 _PROBE_COUNTED_ACTIVATION_COST = "fixed-counted-activation-zone-cost-existing-owner-v1"
+_PROBE_KICKED_ENTRY = "fixed-kicked-entry-result-existing-owner-v1"
 _PROBE_DECLARED_EFFECT_AMOUNT = "declared-effect-amount-existing-owner-v1"
 _PROBE_FIXED_ANIMATION = "fixed-resolution-animation-existing-owner-v1"
 _PROBE_FIXED_EFFECT_PAYMENT = "fixed-resolution-payment-existing-owner-v1"
@@ -593,6 +594,7 @@ _PROBE_IDS = {
     _PROBE_SOURCE_SELF_REFERENCES,
     _PROBE_SOURCE_MAINTENANCE,
     _PROBE_COUNTED_ACTIVATION_COST,
+    _PROBE_KICKED_ENTRY,
     _PROBE_DECLARED_EFFECT_AMOUNT,
     _PROBE_FIXED_ANIMATION,
     _PROBE_FIXED_EFFECT_PAYMENT,
@@ -670,6 +672,9 @@ def _matches_query_self_characteristic_probe(
     *,
     source_name: str,
 ) -> bool:
+    if probe_id == _PROBE_KICKED_ENTRY:
+        texts = (source, *(str(face.get('oracle_text') or '') for face in card_record.faces)) if card_record is not None else (source,)
+        return any('enters, if it was kicked,' in text.casefold() for text in texts)
     if probe_id == _PROBE_COUNTED_ACTIVATION_COST:
         texts = (source, *(str(face.get('oracle_text') or '') for face in card_record.faces)) if card_record is not None else (source,)
         return any(re.search(r'\b(?:sacrifice|discard|exile|return) (?:two|three|four|five|six|seven|eight|nine|ten|[2-9]|10)\b', text, re.I) for text in texts)
@@ -5401,7 +5406,7 @@ def _measurement(
             cohort_fingerprint=cohort_fingerprint, database=database,
         )
     if probe_id in {_PROBE_BOUND_EFFECT_PROGRAM, _PROBE_FIXED_CONTROL_UNTAP, _PROBE_ENTRY_DESIGNATIONS, _PROBE_ENTRY_DESIGNATIONS_V2, _PROBE_QUALIFIED_ZONE_EVENT,
-                    _PROBE_DECLARED_EFFECT_AMOUNT, _PROBE_FIXED_ANIMATION, _PROBE_FIXED_EFFECT_PAYMENT, _PROBE_STACK_CONTROLLER_PAYMENT, _PROBE_LINKED_EXILE_RETURN, _PROBE_SCALAR_EFFECT_AMOUNT, _PROBE_TOKEN_COPY_RECIPE, _PROBE_TAP_STATE_EVENT, _PROBE_PUBLIC_COLLECTION_QUANTITY, _PROBE_SOURCE_SELF_REFERENCES, _PROBE_SOURCE_MAINTENANCE, _PROBE_COUNTED_ACTIVATION_COST}:
+                    _PROBE_DECLARED_EFFECT_AMOUNT, _PROBE_FIXED_ANIMATION, _PROBE_FIXED_EFFECT_PAYMENT, _PROBE_STACK_CONTROLLER_PAYMENT, _PROBE_LINKED_EXILE_RETURN, _PROBE_SCALAR_EFFECT_AMOUNT, _PROBE_TOKEN_COPY_RECIPE, _PROBE_TAP_STATE_EVENT, _PROBE_PUBLIC_COLLECTION_QUANTITY, _PROBE_SOURCE_SELF_REFERENCES, _PROBE_SOURCE_MAINTENANCE, _PROBE_COUNTED_ACTIVATION_COST, _PROBE_KICKED_ENTRY}:
         return _bound_effect_program_measurement(
             frontier=frontier, bundle_id=bundle_id, probe_id=probe_id,
             cards_by_oracle_id=cards_by_oracle_id, coverage=coverage,
@@ -8226,6 +8231,7 @@ def _bound_effect_program_measurement(
         _PROBE_SOURCE_SELF_REFERENCES: None,
         _PROBE_SOURCE_MAINTENANCE: 'trigger.source.fixed_maintenance',
         _PROBE_COUNTED_ACTIVATION_COST: 'activation.selected_zone_change.fixed',
+        _PROBE_KICKED_ENTRY: 'trigger.entry.fixed_kicked_result',
     }[probe_id]
     capabilities = {capability} if capability is not None else {
         "continuous.characteristics.query_count_modifier",

@@ -364,6 +364,7 @@
       "test_fixed_source_effect_sequences",
       "test_fixed_token_creation_effects",
       "test_intrinsic_basic_land_mana",
+      "test_kicked_entry_triggers",
       "test_library_search_qualifiers",
       "test_maximum_counter_state_action",
       "test_proliferate_compiler",

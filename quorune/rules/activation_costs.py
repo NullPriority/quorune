@@ -76,11 +76,7 @@ def pay_counted_zone_change_activation_cost(
         owned_only=cost.origin_zone != 'battlefield',
     ) for ref in raw)
     from .activation_zone_change_costs import counted_activation_replacement_selections
-    raw_selections = counted_activation_replacement_selections(response, tuple(card.ref for card in cards))
-    selections = tuple(
-        {'effect_id': value['effect_id'], 'event_id': f"zone.change:{host.state.revision}:{host.state.event_sequence + 1}:{value['object_ref']}"}
-        if isinstance(value, Mapping) else value for value in raw_selections
-    )
+    selections = counted_activation_replacement_selections(response, tuple(card.ref for card in cards))
     host._move_cards_simultaneously(
         tuple((card.object_id, cost.destination_zone) for card in cards),
         reason='activated ability cost', replacement_selections=tuple(selections),

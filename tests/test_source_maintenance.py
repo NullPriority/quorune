@@ -285,7 +285,10 @@ class SourceMaintenanceActionTests(unittest.TestCase):
         engine = session.engine
         engine.permissions.invalidate_current(); engine.state.pending_decision = None
         engine.state.priority_player = None; engine.state.priority_passes = []
-        register_generated_programs(self.db, engine.semantics, tuple(self.db.iter_cards()), trust_level='trusted', capability_registry=self.registry, capability_profile='commander_review', promote_exact_runtime_handlers=True, promote_exact_trigger_programs=True, promote_exact_effect_programs=True, promote_exact_capability_declarations=True)
+        records = tuple(record for record in self.db.iter_cards() if compile_oracle_card(
+            record, capability_registry=self.registry, capability_profile='commander_review',
+        ).status == 'exact')
+        register_generated_programs(self.db, engine.semantics, records, trust_level='provisional', capability_registry=self.registry, capability_profile='commander_review', promote_exact_runtime_handlers=True, promote_exact_trigger_programs=True, promote_exact_effect_programs=True, promote_exact_capability_declarations=True)
         return session
 
     def add(self, engine, name, *, ref, zone='battlefield', seat='A'):

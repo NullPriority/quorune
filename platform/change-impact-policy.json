@@ -1441,7 +1441,12 @@
         "quorune/replacement_decisions.py",
         "quorune/replacement/replay.py",
         "tests/test_counted_activation_costs.py",
-        "tests/fixtures/counted-activation-costs.json"
+        "tests/fixtures/counted-activation-costs.json",
+        "quorune/compiler/kicked_entry_trigger_nodes.py",
+        "tests/test_kicked_entry_triggers.py",
+        "tests/fixtures/kicked-entry-triggers.json",
+        "quorune/zone_transitions.py",
+        "quorune/rules/token_creation_capability_shapes.py"
       ],
       "test_modules": [
         "test_activated_draw_abilities",
@@ -1453,7 +1458,10 @@
         "test_high_risk_interaction_assurance",
         "test_fixed_activated_zone_change_costs",
         "test_fixed_zone_change_additional_costs",
-        "test_counted_activation_costs"
+        "test_counted_activation_costs",
+        "test_kicked_entry_triggers",
+        "test_kicker_rules",
+        "test_zone_trigger_events"
       ]
     },
     {

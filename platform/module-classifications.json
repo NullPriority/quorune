@@ -2883,6 +2883,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/kicked_entry_trigger_nodes.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/kicker_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -10776,5 +10791,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "04b9a2d529ca45f2726940c96700c583250757d59b872a06cdf1ce2929502e98"
+  "fingerprint": "a0eb927f0761d8024c4c41aeaaf4cbe8a863d0ff27a25be97cebbddb00744b76"
 }

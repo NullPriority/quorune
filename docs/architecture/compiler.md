@@ -492,6 +492,15 @@ Alternative/compound/dynamic costs, random/named payments, paid-object or linked
 results, reflexive triggers, nested/repeated choices, unsupported leaf owners
 and wider grammar remain residual.
 
+`compiler/kicked_entry_trigger_nodes.py` binds a self-entry `if it was
+kicked` ability to the sealed entry occurrence's paid cast option. Casting pays
+one fixed kicker through its existing owner; target placement, token creation,
+private choices and other consequences retain their independently closed
+owners. The original trigger retains the entry fact when its source leaves or
+changes controller. A blinked object or token copy has no paid kicker fact and
+creates no new kicked trigger. Multiple kicker costs, Multikicker, cost-specific
+conditions and independently unsupported results or siblings remain residual.
+
 `compiler/source_maintenance_nodes.py` recognizes self-entry and fixed upkeep
 or end-step triggers whose only result is sacrificing the source, optionally
 unless the triggering controller pays one existing closed fixed cost. Its v3

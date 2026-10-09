@@ -8517,6 +8517,94 @@
       "status": "trusted"
     },
     {
+      "id": "trigger.entry.fixed_kicked_result",
+      "version": 1,
+      "official_rules": [
+        "400.7",
+        "603.3a",
+        "603.4",
+        "603.6d",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Bind one kicked self-entry trigger to its sealed zone-occurrence cast option and delegate independently closed consequences and target selection to their existing owners.",
+        "inputs": [
+          "one self-entry if-it-was-kicked ability",
+          "sealed paid single-kicker entry fact",
+          "independently represented typed result and targets"
+        ],
+        "outputs": [
+          "trigger only after actually kicked entry",
+          "immutable entry fact survives source departure and control changes",
+          "ordinary locked controller, target placement and replay"
+        ],
+        "exclusions": [
+          "Multikicker, repeated or multiple kicker costs",
+          "Conditional replacement spell results and paid-cost-specific variants",
+          "Unrepresented results, alternative-cost composition or whole-card siblings"
+        ]
+      },
+      "dependencies": [
+        "casting.kicker.fixed_mana",
+        "trigger.event.normalized_zone_change",
+        "trigger.placement.apnap"
+      ],
+      "implementation_components": [
+        "quorune.compiler.kicked_entry_trigger_nodes.fixed_kicked_entry_trigger_node",
+        "quorune.zone_trigger_events.normalized_zone_trigger_events",
+        "quorune.trigger_discovery.semantic_event_condition_matches",
+        "quorune.zone_transitions.ZoneTransitionOwner"
+      ],
+      "positive_tests": [
+        "test_kicked_entry_condition_and_independent_targets_keep_source_spans",
+        "test_actual_kicked_and_unkicked_druid_casts_pay_exact_cost_and_replay",
+        "test_actual_kicked_warhorse_creates_one_token_after_paid_entry",
+        "test_kicked_optional_targets_allow_zero_without_hiding_legal_targets"
+      ],
+      "negative_tests": [
+        "test_kicked_entry_unknown_payment_results_and_siblings_remain_residual",
+        "test_kicked_entry_condition_and_dependency_mutants_fail_closed",
+        "test_kicked_targets_are_chosen_only_on_paid_entry_and_illegal_choices_roll_back"
+      ],
+      "interaction_tests": [
+        "test_actual_kicked_entry_trigger_survives_blink_and_new_entry_has_no_kicker",
+        "test_actual_kicked_relic_copies_do_not_inherit_kicker_and_create_no_loop"
+      ],
+      "multiplayer_tests": [
+        "test_actual_kicked_private_library_choice_rolls_back_and_loads_pending"
+      ],
+      "privacy_tests": [
+        "test_actual_kicked_private_library_choice_rolls_back_and_loads_pending"
+      ],
+      "replay_tests": [
+        "test_actual_kicked_and_unkicked_druid_casts_pay_exact_cost_and_replay",
+        "test_actual_kicked_entry_trigger_survives_blink_and_new_entry_has_no_kicker",
+        "test_actual_kicked_private_library_choice_rolls_back_and_loads_pending"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Independent tests block kicker cost, normalized entry facts, APNAP and the kicked-result capability; unknown result and whole-card siblings remain residual.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Removing the kicked condition causes an actually unkicked Druid cast to trigger and is killed; removing the production independently prevents compiler admission.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
       "id": "trigger.source.fixed_maintenance",
       "version": 1,
       "official_rules": [

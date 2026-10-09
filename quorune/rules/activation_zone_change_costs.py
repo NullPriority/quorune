@@ -114,13 +114,6 @@ def counted_activation_replacement_selections(response: Mapping[str, Any], objec
         selection = row['selection']
         if type(selection) is str and selection:
             selections.append(selection)
-        elif isinstance(selection, Mapping) and set(selection) == {'effect_id', 'event_id'} and type(selection['effect_id']) is str and selection['effect_id']:
-            event_id = selection['event_id']
-            if type(event_id) is not str or not event_id.startswith('zone.change:') or not event_id.endswith(':' + row['object_ref']):
-                raise ReplacementEffectError('Counted activation replacement event is malformed')
-            # Batch IDs advance after issuing choices. The zone owner recreates
-            # that prefix from the current event/timestamp sequences.
-            selections.append({'effect_id': selection['effect_id'], 'object_ref': row['object_ref']})
         else:
             raise ReplacementEffectError('Counted activation replacement selection is malformed')
     return tuple(selections)

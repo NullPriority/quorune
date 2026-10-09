@@ -4740,6 +4740,43 @@
           "measurement_probe_id": "stack-controller-payment-existing-owner-v1"
         },
         {
+          "bundle_id": "bundle:fixed-kicked-entry-result",
+          "member_family_ids": [
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding"
+          ],
+          "canonical_owner_ids": [
+            "capability:trigger.entry.fixed_kicked_result",
+            "component:quorune.compiler.kicked_entry_trigger_nodes.fixed_kicked_entry_trigger_node",
+            "component:quorune.zone_transitions.ZoneTransitionOwner"
+          ],
+          "source_contexts": [
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "one-self-entry-if-it-was-kicked",
+            "sealed-entry-cast-option",
+            "independent-result-and-target-owners"
+          ],
+          "shared_dependencies": [
+            "casting.kicker.fixed_mana",
+            "trigger.event.normalized_zone_change",
+            "trigger.placement.apnap"
+          ],
+          "shared_grammar": "One kicked self-entry subscription over the immutable paid cast fact, shared independently closed result owners and ordinary principal-correct trigger placement.",
+          "estimated_implementation_hours": 3,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Measure actual complete CardPrograms and stage the retained kicked result component in a distinct-net200 multi-mechanic delivery batch.",
+          "explicit_exclusions": [
+            "Multikicker and multiple or nonmana kicker costs",
+            "Cost-specific and conditional spell replacement results",
+            "Unsupported independent costs, results and whole-card siblings"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "fixed-kicked-entry-result-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:fixed-counted-activation-zone-cost",
           "member_family_ids": [
             "activated_cost:complete-alternate-additional-cost-grammar",

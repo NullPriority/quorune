@@ -377,10 +377,9 @@ def _resume_mana_replacement(
         raise error_type(str(exc)) from exc
     if restored.priority_action == 'activate' and len(restored.batch.events) > 1:
         pending = next_batch_replacement_choice(restored.batch, restored.effects)
-        if pending is None:
+        if pending is None or pending.event_order_options or type(selection) is not str:
             raise error_type('Counted activation replacement choice disappeared')
-        selected_event = selection.get('event_id') if isinstance(selection, Mapping) else pending.event_id
-        event = next(value for value in restored.batch.events if value.event_id == selected_event)
+        event = restored.batch.events[pending.event_index]
         sequence = response.get('_counted_cost_replacement_sequence', [])
         if not isinstance(sequence, (list, tuple)):
             raise error_type('Counted activation replacement sequence is malformed')

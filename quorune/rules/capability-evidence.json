@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "195aa703a9dc4b829b851b135cb32e35b38fd0589e634c16151f184afc008c52",
-  "declaration_source_fingerprint": "ff3cbd7731c1387b9416e64b1b60ab9613f1680a5806d704290fc27b48b3b80b",
+  "registry_fingerprint": "ab5e65ac7193dda52861a1826876d65be6522198131819a3b8ac41517e873a3f",
+  "declaration_source_fingerprint": "cee930a82b4302b0e69ac0e62954f6d3a3692ade917011b4426ca9635deba2b7",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -69515,6 +69515,384 @@
       "applicability_note": "Replay the last-known-controller source-graveyard trigger and ordinary draw result to the identical authoritative hash."
     },
     {
+      "capability_id": "trigger.entry.fixed_kicked_result",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_entry_triggers.KickedEntryActionTests.test_actual_kicked_entry_trigger_survives_blink_and_new_entry_has_no_kicker",
+      "official_rule_ids": [
+        "400.7",
+        "603.3a",
+        "603.4",
+        "603.6d",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual source-spanned kicked entry results use the sealed paid cast option, retain independent result owners and preserve locked controller, principal privacy, rollback and replay."
+    },
+    {
+      "capability_id": "trigger.entry.fixed_kicked_result",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_entry_triggers.KickedEntryActionTests.test_actual_kicked_relic_copies_do_not_inherit_kicker_and_create_no_loop",
+      "official_rule_ids": [
+        "400.7",
+        "603.3a",
+        "603.4",
+        "603.6d",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual admitted casts distinguish paid kicker from unpaid entry; copied or returned objects lack payment history, target placement remains principal correct and complete, and accepted outcomes replay from before cast."
+    },
+    {
+      "capability_id": "trigger.entry.fixed_kicked_result",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_entry_triggers.KickedEntryActionTests.test_kicked_targets_are_chosen_only_on_paid_entry_and_illegal_choices_roll_back",
+      "official_rule_ids": [
+        "400.7",
+        "603.3a",
+        "603.4",
+        "603.6d",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual admitted casts distinguish paid kicker from unpaid entry; copied or returned objects lack payment history, target placement remains principal correct and complete, and accepted outcomes replay from before cast."
+    },
+    {
+      "capability_id": "trigger.entry.fixed_kicked_result",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_kicked_entry_triggers.KickedEntryActionTests.test_actual_kicked_private_library_choice_rolls_back_and_loads_pending",
+      "official_rule_ids": [
+        "400.7",
+        "603.3a",
+        "603.4",
+        "603.6d",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual source-spanned kicked entry results use the sealed paid cast option, retain independent result owners and preserve locked controller, principal privacy, rollback and replay."
+    },
+    {
+      "capability_id": "trigger.entry.fixed_kicked_result",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_kicked_entry_triggers.KickedEntryActionTests.test_kicked_condition_omission_mutant_is_killed_by_actual_unkicked_cast",
+      "official_rule_ids": [
+        "400.7",
+        "603.3a",
+        "603.4",
+        "603.6d",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual admitted casts distinguish paid kicker from unpaid entry; copied or returned objects lack payment history, target placement remains principal correct and complete, and accepted outcomes replay from before cast."
+    },
+    {
+      "capability_id": "trigger.entry.fixed_kicked_result",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_kicked_entry_triggers.KickedEntryCompilerTests.test_kicked_entry_condition_and_dependency_mutants_fail_closed",
+      "official_rule_ids": [
+        "400.7",
+        "603.3a",
+        "603.4",
+        "603.6d",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Removing the kicked-entry production or independently blocking each sealed cast and trigger dependency prevents source-spanned exactness."
+    },
+    {
+      "capability_id": "trigger.entry.fixed_kicked_result",
+      "evidence_class": "negative",
+      "test_id": "tests.test_kicked_entry_triggers.KickedEntryActionTests.test_kicked_targets_are_chosen_only_on_paid_entry_and_illegal_choices_roll_back",
+      "official_rule_ids": [
+        "400.7",
+        "603.3a",
+        "603.4",
+        "603.6d",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual admitted casts distinguish paid kicker from unpaid entry; copied or returned objects lack payment history, target placement remains principal correct and complete, and accepted outcomes replay from before cast."
+    },
+    {
+      "capability_id": "trigger.entry.fixed_kicked_result",
+      "evidence_class": "negative",
+      "test_id": "tests.test_kicked_entry_triggers.KickedEntryCompilerTests.test_kicked_entry_unknown_payment_results_and_siblings_remain_residual",
+      "official_rule_ids": [
+        "400.7",
+        "603.3a",
+        "603.4",
+        "603.6d",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual source-spanned kicked entry results use the sealed paid cast option, retain independent result owners and preserve locked controller, principal privacy, rollback and replay."
+    },
+    {
+      "capability_id": "trigger.entry.fixed_kicked_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_entry_triggers.KickedEntryActionTests.test_actual_kicked_and_unkicked_druid_casts_pay_exact_cost_and_replay",
+      "official_rule_ids": [
+        "400.7",
+        "603.3a",
+        "603.4",
+        "603.6d",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual source-spanned kicked entry results use the sealed paid cast option, retain independent result owners and preserve locked controller, principal privacy, rollback and replay."
+    },
+    {
+      "capability_id": "trigger.entry.fixed_kicked_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_entry_triggers.KickedEntryActionTests.test_actual_kicked_warhorse_creates_one_token_after_paid_entry",
+      "official_rule_ids": [
+        "400.7",
+        "603.3a",
+        "603.4",
+        "603.6d",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual admitted casts distinguish paid kicker from unpaid entry; copied or returned objects lack payment history, target placement remains principal correct and complete, and accepted outcomes replay from before cast."
+    },
+    {
+      "capability_id": "trigger.entry.fixed_kicked_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_entry_triggers.KickedEntryActionTests.test_kicked_optional_targets_allow_zero_without_hiding_legal_targets",
+      "official_rule_ids": [
+        "400.7",
+        "603.3a",
+        "603.4",
+        "603.6d",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual admitted casts distinguish paid kicker from unpaid entry; copied or returned objects lack payment history, target placement remains principal correct and complete, and accepted outcomes replay from before cast."
+    },
+    {
+      "capability_id": "trigger.entry.fixed_kicked_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_entry_triggers.KickedEntryCompilerTests.test_kicked_entry_condition_and_independent_targets_keep_source_spans",
+      "official_rule_ids": [
+        "400.7",
+        "603.3a",
+        "603.4",
+        "603.6d",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual source-spanned kicked entry results use the sealed paid cast option, retain independent result owners and preserve locked controller, principal privacy, rollback and replay."
+    },
+    {
+      "capability_id": "trigger.entry.fixed_kicked_result",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_kicked_entry_triggers.KickedEntryActionTests.test_actual_kicked_private_library_choice_rolls_back_and_loads_pending",
+      "official_rule_ids": [
+        "400.7",
+        "603.3a",
+        "603.4",
+        "603.6d",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual source-spanned kicked entry results use the sealed paid cast option, retain independent result owners and preserve locked controller, principal privacy, rollback and replay."
+    },
+    {
+      "capability_id": "trigger.entry.fixed_kicked_result",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_entry_triggers.KickedEntryActionTests.test_actual_kicked_and_unkicked_druid_casts_pay_exact_cost_and_replay",
+      "official_rule_ids": [
+        "400.7",
+        "603.3a",
+        "603.4",
+        "603.6d",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual source-spanned kicked entry results use the sealed paid cast option, retain independent result owners and preserve locked controller, principal privacy, rollback and replay."
+    },
+    {
+      "capability_id": "trigger.entry.fixed_kicked_result",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_entry_triggers.KickedEntryActionTests.test_actual_kicked_entry_trigger_survives_blink_and_new_entry_has_no_kicker",
+      "official_rule_ids": [
+        "400.7",
+        "603.3a",
+        "603.4",
+        "603.6d",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual source-spanned kicked entry results use the sealed paid cast option, retain independent result owners and preserve locked controller, principal privacy, rollback and replay."
+    },
+    {
+      "capability_id": "trigger.entry.fixed_kicked_result",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_entry_triggers.KickedEntryActionTests.test_actual_kicked_private_library_choice_rolls_back_and_loads_pending",
+      "official_rule_ids": [
+        "400.7",
+        "603.3a",
+        "603.4",
+        "603.6d",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual source-spanned kicked entry results use the sealed paid cast option, retain independent result owners and preserve locked controller, principal privacy, rollback and replay."
+    },
+    {
+      "capability_id": "trigger.entry.fixed_kicked_result",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_entry_triggers.KickedEntryActionTests.test_actual_kicked_relic_copies_do_not_inherit_kicker_and_create_no_loop",
+      "official_rule_ids": [
+        "400.7",
+        "603.3a",
+        "603.4",
+        "603.6d",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual admitted casts distinguish paid kicker from unpaid entry; copied or returned objects lack payment history, target placement remains principal correct and complete, and accepted outcomes replay from before cast."
+    },
+    {
+      "capability_id": "trigger.entry.fixed_kicked_result",
+      "evidence_class": "replay",
+      "test_id": "tests.test_kicked_entry_triggers.KickedEntryActionTests.test_kicked_optional_targets_allow_zero_without_hiding_legal_targets",
+      "official_rule_ids": [
+        "400.7",
+        "603.3a",
+        "603.4",
+        "603.6d",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual admitted casts distinguish paid kicker from unpaid entry; copied or returned objects lack payment history, target placement remains principal correct and complete, and accepted outcomes replay from before cast."
+    },
+    {
       "capability_id": "trigger.event.normalized_card_draw",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_draw_and_second_draw_counter_triggers_share_one_batch",
@@ -80766,5 +81144,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "a45fc62cc5350b84b7a9fd1c2512528a1f8b24eea1344b1ee5f0313bbb08e86f"
+  "fingerprint": "06d24be50da355b4c7cb90a00ea57554809ca04f19d7b915337921cc1c6bdeea"
 }
