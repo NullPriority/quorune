@@ -31,6 +31,21 @@ flowchart LR
 `compiler/program_generation.py` owns lowering exact nodes into registry
 programs. `card_programs/adapters.py` combines abilities, face identity,
 source hashes, residuals, and capability closure into the canonical artifact.
+For one CardProgram compilation, the adapter passes its locally compiled IR to
+the existing program-generation lowering owner. Lowering still validates trust
+and constructs fresh semantic programs; it does not parse the same record a
+second time. The standalone generated-program API continues to compile its own
+IR. No IR result persists across calls or card records.
+The frontier owner passes the same original IR used for its node inventory to
+CardProgram lowering, retaining independent trust and construction-failure
+checks while avoiding a second parse of the same record.
+The governed corpus writer uses one pass over the full pinned database to feed
+the canonical Oracle and CardProgram report counters. It obtains Commander
+membership from the same database iterator used by standalone coverage commands
+and feeds those records to separate Commander counters. Each view preserves its
+own source order, examples, target-effect assurance, trust/residual counts,
+construction failures, and snapshot identity. A failed CardProgram remains a
+failure in its applicable views without removing the card's Oracle evidence.
 The local card database is a compiler input; the engine does not query it while
 performing a transition.
 

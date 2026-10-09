@@ -501,9 +501,41 @@ def program_from_generated_node_group(
     )
 
 
+def programs_from_generated_ir(
+    *, record: CardRecord, ir: Any, rulings_hash: str, authored_by: str,
+    trust_level: str, capability_registry: CapabilityRegistry | None,
+    capability_profile: str, generated_ability_id: Callable[..., str | None],
+    is_static_declaration: Callable[[Any], bool],
+    is_independently_exact: Callable[[Any], bool],
+    represented_mechanics_for: Callable[[Any], Iterable[str]],
+    generated_coverage: Callable[..., str],
+) -> list[SemanticProgram]:
+    """Lower all source-ordered groups from the invocation's validated IR."""
+    programs = []
+    for face in ir.faces:
+        ability_id_for = lambda node: generated_ability_id(
+            kind=node.kind, face_id=face.face_id, line=node.span.line,
+            static_declaration=is_static_declaration(node), node_id=node.node_id,
+        )
+        for nodes in generated_node_groups(face, ability_id_for=ability_id_for):
+            program = program_from_generated_node_group(
+                record=record, face=face, nodes=nodes, ir=ir, rulings_hash=rulings_hash,
+                authored_by=authored_by, trust_level=trust_level,
+                capability_registry=capability_registry, capability_profile=capability_profile,
+                ability_id_for=ability_id_for, is_static_declaration=is_static_declaration,
+                is_independently_exact=is_independently_exact,
+                represented_mechanics_for=represented_mechanics_for,
+                generated_coverage=generated_coverage,
+            )
+            if program is not None:
+                programs.append(program)
+    return programs
+
+
 __all__ = [
     "COMPOSED_SPELL_EFFECT_SEQUENCE",
     "generated_node_groups",
     "is_closed_composed_spell_effect_program",
     "program_from_generated_node_group",
+    "programs_from_generated_ir",
 ]

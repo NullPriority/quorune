@@ -4,9 +4,12 @@ from ..rules.control_capability_shapes import fixed_control_node_capabilities
 from collections import Counter
 from dataclasses import asdict, replace
 import hashlib
-from typing import Any, Iterable, Mapping
+from typing import Any, Iterable, Mapping, TYPE_CHECKING
 
 from ..carddb import CardDatabase, CardRecord
+
+if TYPE_CHECKING:
+    from .ir_model import OracleCardIR
 from ..card_programs.reviewed_overlay import (
     shadowed_reviewed_program_keys,
 )
@@ -126,9 +129,8 @@ from .generated_program_identity import (
     generated_coverage as _generated_coverage,
 )
 from .program_composition import (
-    generated_node_groups,
     is_closed_composed_spell_effect_program,
-    program_from_generated_node_group,
+    programs_from_generated_ir,
 )
 
 
@@ -1381,7 +1383,7 @@ def generated_programs(
 
     # Imported lazily so oracle_ir can retain its stable public compatibility
     # functions without creating a module-initialization cycle.
-    from ..oracle_ir import ORACLE_COMPILER_VERSION, compile_oracle_card
+    from ..oracle_ir import compile_oracle_card
 
     ir = compile_oracle_card(
         record,
@@ -1389,53 +1391,46 @@ def generated_programs(
         capability_registry=capability_registry,
         capability_profile=capability_profile,
     )
+    return _generated_programs_from_ir(
+        db, record, ir,
+        trust_level=trust_level,
+        capability_registry=capability_registry,
+        capability_profile=capability_profile,
+        has_rules_derived_trust_carrier=has_rules_derived_trust_carrier,
+    )
+
+
+def _generated_programs_from_ir(
+    db: CardDatabase,
+    record: CardRecord,
+    ir: OracleCardIR,
+    *,
+    trust_level: str,
+    capability_registry: CapabilityRegistry | None,
+    capability_profile: str,
+    has_rules_derived_trust_carrier: bool,
+) -> list[SemanticProgram]:
+    """Lower the invocation's compiled IR through the existing trust boundary."""
+    from ..oracle_ir import ORACLE_COMPILER_VERSION
+
     _validate_generated_program_trust(
         ir,
         trust_level=trust_level,
         has_rules_derived_trust_carrier=has_rules_derived_trust_carrier,
     )
-    programs: list[SemanticProgram] = []
     rulings_hash = rulings_source_hash(db, record)
-    for face in ir.faces:
-        ability_id_for = lambda node: _generated_ability_id(
-            kind=node.kind,
-            face_id=face.face_id,
-            line=node.span.line,
-            static_declaration=_generated_static_declaration(node),
-            node_id=node.node_id,
-        )
-        for nodes in generated_node_groups(
-            face,
-            ability_id_for=ability_id_for,
-        ):
-            program = program_from_generated_node_group(
-                record=record,
-                face=face,
-                nodes=nodes,
-                ir=ir,
-                rulings_hash=rulings_hash,
-                authored_by=ORACLE_COMPILER_VERSION,
-                trust_level=trust_level,
-                capability_registry=capability_registry,
-                capability_profile=capability_profile,
-                ability_id_for=ability_id_for,
-                is_static_declaration=_generated_static_declaration,
-                is_independently_exact=(
-                    _generated_node_is_independently_exact
-                ),
-                represented_mechanics_for=lambda node: (
-                    capability_covered_mechanics(
-                        node.capability_dependencies
-                    )
-                    if trust_level == "trusted"
-                    and not node.exact
-                    and _independently_exact_protection_handler(node)
-                    else node.mechanics
-                ),
-                generated_coverage=_generated_coverage,
-            )
-            if program is not None:
-                programs.append(program)
+    programs = programs_from_generated_ir(
+        record=record, ir=ir, rulings_hash=rulings_hash, authored_by=ORACLE_COMPILER_VERSION,
+        trust_level=trust_level, capability_registry=capability_registry, capability_profile=capability_profile,
+        generated_ability_id=_generated_ability_id, is_static_declaration=_generated_static_declaration,
+        is_independently_exact=_generated_node_is_independently_exact,
+        represented_mechanics_for=lambda node: (
+            capability_covered_mechanics(node.capability_dependencies)
+            if trust_level == "trusted" and not node.exact and _independently_exact_protection_handler(node)
+            else node.mechanics
+        ),
+        generated_coverage=_generated_coverage,
+    )
     return list(
         with_activated_ability_catalog(
             record,

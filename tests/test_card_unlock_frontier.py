@@ -6,6 +6,7 @@ import json
 from math import comb
 from pathlib import Path
 import unittest
+from unittest.mock import patch
 
 from common import DB_PATH
 from quorune.carddb import CardDatabase
@@ -297,6 +298,18 @@ class CardUnlockFrontierTests(unittest.TestCase):
                 self.assertNotEqual(False, ability.get("lowerable"))
                 if "template_id" in ability:
                     self.assertIsNotNone(ability["template_id"])
+
+    def test_frontier_compiles_original_ir_once_per_card_before_program_lowering(self):
+        from quorune.compiler import unlock_frontier
+
+        with patch.object(unlock_frontier, "compile_oracle_card", wraps=unlock_frontier.compile_oracle_card) as compiler, patch(
+            "quorune.card_programs.adapters.compile_oracle_card", side_effect=AssertionError("frontier reparsed record")
+        ):
+            report = build_card_unlock_frontier(self.db, registry=SemanticRegistry(),
+                capabilities=self.capabilities, mechanic_contracts=_contracts(), limit=20)
+        self.assertEqual(20, compiler.call_count)
+        self.assertEqual(self.report, report)
+        validate_card_unlock_frontier(report)
 
     def test_frontier_snapshot_excludes_environment_specific_database_provenance(self):
         metadata = {

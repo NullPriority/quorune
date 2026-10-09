@@ -7,7 +7,7 @@ from typing import Any, Iterable, Mapping
 
 from ..carddb import CardDatabase, CardRecord
 from ..compiler.program_generation import (
-    generated_programs,
+    _generated_programs_from_ir,
     rulings_source_hash,
     runtime_handler_footprint,
 )
@@ -241,6 +241,20 @@ def compile_card_program(
         capability_registry=capability_registry,
         capability_profile=capability_profile,
     )
+    return _compile_card_program_from_ir(
+        db, record, ir, semantic_registry=semantic_registry,
+        capability_registry=capability_registry, capability_profile=capability_profile,
+        trust_level=trust_level,
+    )
+
+
+def _compile_card_program_from_ir(
+    db: CardDatabase, record: CardRecord, ir: Any, *,
+    semantic_registry: SemanticRegistry | None,
+    capability_registry: CapabilityRegistry | None,
+    capability_profile: str, trust_level: str,
+) -> CardProgram:
+    """Build a fresh CardProgram from this invocation's original compiled IR."""
     faces = _record_faces(
         record,
         compiled_face_ids=(face.face_id for face in ir.faces),
@@ -251,11 +265,11 @@ def compile_card_program(
     )
     programs = {
         program.key: program
-        for program in generated_programs(
+        for program in _generated_programs_from_ir(
             db,
             record,
+            ir,
             trust_level=trust_level,
-            trusted_mechanics=trusted_mechanics,
             capability_registry=capability_registry,
             capability_profile=capability_profile,
             has_rules_derived_trust_carrier=bool(
@@ -355,23 +369,39 @@ def compile_best_available_card_program(
     """Compile trusted output when possible and preserve provisional IR otherwise."""
 
     capabilities = capability_registry or load_default_capability_registry()
+    ir = compile_oracle_card(record, capability_registry=capabilities,
+                             capability_profile=capability_profile)
+    return _compile_best_available_card_program_from_ir(
+        db, record, ir, semantic_registry=semantic_registry,
+        capability_registry=capabilities, capability_profile=capability_profile,
+    )
+
+
+def _compile_best_available_card_program_from_ir(
+    db: CardDatabase, record: CardRecord, ir: Any, *,
+    semantic_registry: SemanticRegistry,
+    capability_registry: CapabilityRegistry, capability_profile: str,
+) -> CardProgram:
+    """Retain trusted-to-provisional fallback without reparsing the record."""
     try:
-        return compile_card_program(
+        return _compile_card_program_from_ir(
             db,
             record,
+            ir,
             semantic_registry=semantic_registry,
-            capability_registry=capabilities,
+            capability_registry=capability_registry,
             capability_profile=capability_profile,
             trust_level="trusted",
         )
     except ValueError as exc:
         if "cannot be promoted to trusted generated semantics" not in str(exc):
             raise
-        return compile_card_program(
+        return _compile_card_program_from_ir(
             db,
             record,
+            ir,
             semantic_registry=semantic_registry,
-            capability_registry=capabilities,
+            capability_registry=capability_registry,
             capability_profile=capability_profile,
             trust_level="provisional",
         )

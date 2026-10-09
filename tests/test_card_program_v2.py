@@ -5,6 +5,7 @@ import contextlib
 import io
 import json
 from pathlib import Path
+from types import SimpleNamespace
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -118,6 +119,43 @@ def _multi_event_artifact() -> CardRecord:
         colors=(),
         color_identity=(),
     )
+
+
+class CardProgramIRReuseTests(unittest.TestCase):
+    def test_one_parse_per_compilation_preserves_exact_and_residual_programs(self):
+        from quorune import oracle_ir
+        from quorune.card_programs import adapters
+
+        capabilities = load_default_capability_registry()
+        database = SimpleNamespace(rulings=lambda _record: ())
+        semantics = SemanticRegistry(include_builtin_packs=False)
+        for record, basis in (
+            (_bolt(), "capability_closed"),
+            (replace(_bolt(), oracle_text=_bolt().oracle_text + "\nThe moon remembers this spell."), "unresolved"),
+        ):
+            with self.subTest(basis=basis), patch.object(
+                adapters, "compile_oracle_card", wraps=adapters.compile_oracle_card
+            ) as compiler, patch.object(
+                oracle_ir, "compile_oracle_card", side_effect=AssertionError("duplicate IR parse")
+            ):
+                program = adapters.compile_best_available_card_program(database, record,
+                    semantic_registry=semantics, capability_registry=capabilities, capability_profile="commander_review")
+                compiler.assert_called_once()
+                self.assertEqual(basis, program.trust_closure["trust_basis"])
+                self.assertEqual(basis == "unresolved", bool(program.residuals))
+                self.assertEqual(record.oracle_id, program.oracle_id)
+
+    def test_ir_reuse_keeps_lowering_trust_validation_and_unexpected_errors(self):
+        from quorune.card_programs import adapters
+
+        database = SimpleNamespace(rulings=lambda _record: ())
+        with patch("quorune.compiler.program_generation._validate_generated_program_trust",
+                   side_effect=ValueError("trust boundary diagnostic")) as validate:
+            with self.assertRaisesRegex(ValueError, "trust boundary diagnostic"):
+                adapters.compile_best_available_card_program(database, _bolt(),
+                    semantic_registry=SemanticRegistry(include_builtin_packs=False),
+                    capability_registry=load_default_capability_registry(), capability_profile="commander_review")
+            validate.assert_called_once()
 
 
 class CardProgramV2Tests(unittest.TestCase):
@@ -1061,7 +1099,7 @@ class CardProgramV2Tests(unittest.TestCase):
 
     def test_cli_does_not_downgrade_unexpected_compiler_errors(self):
         with patch(
-            "quorune.card_programs.adapters.compile_card_program",
+            "quorune.card_programs.adapters.CardProgram.create",
             side_effect=ValueError("broken CardProgram structure"),
         ) as compile_program:
             with self.assertRaisesRegex(ValueError, "broken CardProgram"):

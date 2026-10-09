@@ -5044,14 +5044,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v267-development-efficiency",
-      "compiler_version": "oracle-ir-v267",
+      "transition_id": "oracle-ir-v268-shared-corpus-compilation",
+      "compiler_version": "oracle-ir-v268",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
       "expected_complete_card_gain": null,
-      "non_harvest_reason": "Reduce repeated source validation, capability copies, cohort registry setup, architecture import scans, unnecessary excluded-cohort compilation, and dynamic source-name regex compilation through bounded exact-input reuse and necessary-condition guards; preserve the original matchers, evidence, complete-card compilation, and strict binding without adding supported grammar or gameplay trust."
+      "non_harvest_reason": "Reduce repeated validation, cohort setup, architecture scans and impossible regex compilation; compile each full-corpus record once into local IR and CardProgram values feeding the unchanged full and Commander report counters selected by the canonical database filter. Preserve original matching, trust validation, reviewed overlays, failure accounting and strict binding without adding grammar or gameplay trust."
     },
     "forecast_corrections": [
       {

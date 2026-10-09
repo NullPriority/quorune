@@ -51,6 +51,13 @@ per invocation rather than serializing the same capability for each declaration.
 Every declaration, required evidence class, supported profile, registry identity,
 and evidence fingerprint is still checked.
 
+The corpus owner compiles one local IR and CardProgram per full-corpus record,
+then feeds its full and Commander coverage views through their canonical
+counters. Commander membership uses the database's existing filter, not a second
+scope classifier. Standalone coverage commands retain their interface and the
+same counters. Complete report parity, construction-failure scope and the
+compiler-input identity check remain required before publishing this change.
+
 The compiler-identity sentinel reads immutable base Python sources through one
 validated `git cat-file --batch` response, shared by import-closure traversal
 and version-literal checks. It retains the same source paths and blob identity
