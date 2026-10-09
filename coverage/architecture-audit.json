@@ -5886,6 +5886,18 @@
         },
         {
           "classification": "rules_value",
+          "file": "quorune/work_selection_bundles.py",
+          "flow_id": "card-identity-flow:eb685c4956ba8ea4b7c7",
+          "line": 482,
+          "selector": null,
+          "sink_kind": "identity_as_data",
+          "source_field": "oracle_id",
+          "source_kind": "mapping_get",
+          "source_line": 482,
+          "symbol": "_bundle_measurement_fingerprint"
+        },
+        {
+          "classification": "rules_value",
           "file": "quorune/zone_object_state.py",
           "flow_id": "card-identity-flow:6165a3bed2be9381084c",
           "line": 258,
@@ -5976,9 +5988,9 @@
           "generated_provenance": 12,
           "reviewed_historical_compatibility": 1,
           "reviewed_override": 3,
-          "rules_value": 273
+          "rules_value": 274
         },
-        "classified_flow_count": 493,
+        "classified_flow_count": 494,
         "prohibited_identity_dispatch_count": 0
       },
       "external_dependencies": {
@@ -12947,7 +12959,7 @@
           "visibility": "public"
         }
       ],
-      "logical_lines": 242085,
+      "logical_lines": 242128,
       "methods": {
         "dunder": 608,
         "private": 972,
@@ -13600,6 +13612,13 @@
           "physical_lines": 778
         },
         {
+          "file": "quorune/work_selection_bundles.py",
+          "functions_and_methods": 19,
+          "language": "python",
+          "logical_lines": 705,
+          "physical_lines": 751
+        },
+        {
           "file": "web/src/ChoiceForm.tsx",
           "functions_and_methods": null,
           "language": "web",
@@ -13647,13 +13666,6 @@
           "language": "python",
           "logical_lines": 670,
           "physical_lines": 733
-        },
-        {
-          "file": "quorune/work_selection_bundles.py",
-          "functions_and_methods": 16,
-          "language": "python",
-          "logical_lines": 662,
-          "physical_lines": 702
         },
         {
           "file": "quorune/compiler/query_characteristic_templates.py",
@@ -18618,7 +18630,7 @@
           "physical_lines": 1697
         }
       ],
-      "physical_lines": 264638,
+      "physical_lines": 264687,
       "python_file_count": 743,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -18636,7 +18648,7 @@
           "web/src"
         ]
       },
-      "top_level_functions": 3654,
+      "top_level_functions": 3657,
       "web_file_count": 16
     },
     "runtime_oracle_text_access": {
@@ -34333,7 +34345,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "2cd7e63232266493f23ff2febd08f4cc24c4e854a750f3420ce8eb000dfa252b",
+      "fingerprint": "3aa3aa87efa57bb9d4563a16702d417015ead4c5312565ddeb71724b8c0b8f5a",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -35191,8 +35203,8 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 4829,
-      "discovered_total": 8138,
+      "conventional_ast_cases": 4831,
+      "discovered_total": 8140,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 256,
