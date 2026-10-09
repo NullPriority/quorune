@@ -48,6 +48,8 @@ jobs:
       - name: Validate pull request description and status provenance
         if: github.event_name == 'pull_request'
         run: python scripts/validate_pr_body.py
+      - name: Require current compiler corpus before expensive certification
+        run: python scripts/update_compiler_corpus_coverage.py --check
       - id: main_state
         name: Classify completed main regression state
         if: github.event_name == 'pull_request'

@@ -672,6 +672,14 @@ as pushes.
 
 ## Pull-request description gate
 
+Before change-impact planning launches a matrix, `PR / Plan` also runs the
+existing compiler-corpus freshness check. A source checkpoint with an obsolete
+compiler identity fails there with the same diagnostic while its independent
+cloud generation proceeds. Commit the generated bundle to resume normal
+exact-head certification. The generated job still performs the complete
+finalizer check; this early failure neither grants a receipt nor changes
+test selection, required jobs, or merge authority.
+
 `PR / Plan` runs `scripts/validate_pr_body.py` before change-impact planning or
 any expensive matrix job. It reads the pull-request event payload without a
 GitHub API call and fails deterministically when the tracked template is still
