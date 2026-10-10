@@ -910,8 +910,9 @@ class AbilityWordEventTriggerRuntimeTests(unittest.TestCase):
         trigger = next(
             item for item in engine.state.stack if item.semantic_key == program.key
         )
-        self.assertEqual(5, trigger.context["schema_version"])
+        self.assertEqual(6, trigger.context["schema_version"])
         self.assertEqual([source.ref], trigger.context["targets"])
+        self.assertEqual(["A"], trigger.context["creature_target_controllers"])
         for seat in engine.active_seats:
             projected = json.dumps(
                 StateProjector(self.db, engine.state)._snapshot(f"pilot:{seat}"),
