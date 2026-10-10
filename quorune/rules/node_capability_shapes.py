@@ -420,6 +420,8 @@ def fixed_self_counter_keyword_action_node_capabilities(
         return ("keyword_action.monstrosity.fixed",)
     if action == "renown" and "renown" in mechanics:
         return ("counter.producer.renown",)
+    if action == "fading" and "fading" in mechanics and effect["amount"] == 1:
+        return ("counter.lifecycle.fading",)
     return ()
 
 

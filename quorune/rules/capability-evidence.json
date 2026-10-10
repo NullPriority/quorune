@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "3f380614ba24048eb800b71acbf7be48b487bb3d01fb15c4bfeb3653975f353f",
-  "declaration_source_fingerprint": "519cc48c4d5b03c57815450b434c67a6d6c493081f84ced7bc6b6e75ed4c448e",
+  "registry_fingerprint": "c379dde0387cbf96eb89364fec600ed492b7bb206f7f6afad65fac2eae1ad0cb",
+  "declaration_source_fingerprint": "500788853dccae3cf1b5a7cffb651cf2fbff0c4069ee80b3058ad3fb577efe3e",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -33800,6 +33800,305 @@
         "commander_review"
       ],
       "applicability_note": "Replay replacement-expanded Flying-counter placement to the same authoritative state hash and effective characteristic."
+    },
+    {
+      "capability_id": "counter.lifecycle.fading",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fading_rules.FadingRuntimeTests.test_actual_cast_entry_last_counter_and_next_upkeep_sacrifice",
+      "official_rule_ids": [
+        "702.32a",
+        "603.1",
+        "603.2",
+        "603.3",
+        "113.7a",
+        "400.7",
+        "608.2c",
+        "608.2h",
+        "122.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Fading uses current fade counters and trigger-controller sacrifice permission, preserving old source identity and canonical replay."
+    },
+    {
+      "capability_id": "counter.lifecycle.fading",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fading_rules.FadingRuntimeTests.test_actual_counter_cost_exhaustion_waits_for_upkeep_and_replays",
+      "official_rule_ids": [
+        "702.32a",
+        "603.1",
+        "603.2",
+        "603.3",
+        "113.7a",
+        "400.7",
+        "608.2c",
+        "608.2h",
+        "122.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Fading uses current fade counters and trigger-controller sacrifice permission, preserving old source identity and canonical replay."
+    },
+    {
+      "capability_id": "counter.lifecycle.fading",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fading_rules.FadingRuntimeTests.test_actual_rusting_golem_last_removal_stabilizes_zero_toughness",
+      "official_rule_ids": [
+        "702.32a",
+        "603.1",
+        "603.2",
+        "603.3",
+        "113.7a",
+        "400.7",
+        "608.2c",
+        "608.2h",
+        "122.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Fading uses current fade counters and trigger-controller sacrifice permission, preserving old source identity and canonical replay."
+    },
+    {
+      "capability_id": "counter.lifecycle.fading",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fading_rules.FadingRuntimeTests.test_current_ability_loss_stops_future_upkeep_but_not_a_pending_trigger",
+      "official_rule_ids": [
+        "702.32a",
+        "603.1",
+        "603.2",
+        "603.3",
+        "113.7a",
+        "400.7",
+        "608.2c",
+        "608.2h",
+        "122.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Fading uses current fade counters and trigger-controller sacrifice permission, preserving old source identity and canonical replay."
+    },
+    {
+      "capability_id": "counter.lifecycle.fading",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fading_rules.FadingRuntimeTests.test_other_seat_upkeep_does_not_trigger_and_pending_source_does_not_follow_blink",
+      "official_rule_ids": [
+        "702.32a",
+        "603.1",
+        "603.2",
+        "603.3",
+        "113.7a",
+        "400.7",
+        "608.2c",
+        "608.2h",
+        "122.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Fading uses current fade counters and trigger-controller sacrifice permission, preserving old source identity and canonical replay."
+    },
+    {
+      "capability_id": "counter.lifecycle.fading",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fading_rules.FadingRuntimeTests.test_trigger_control_change_removes_counter_but_cannot_sacrifice_new_controller_permanent",
+      "official_rule_ids": [
+        "702.32a",
+        "603.1",
+        "603.2",
+        "603.3",
+        "113.7a",
+        "400.7",
+        "608.2c",
+        "608.2h",
+        "122.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Fading uses current fade counters and trigger-controller sacrifice permission, preserving old source identity and canonical replay."
+    },
+    {
+      "capability_id": "counter.lifecycle.fading",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fading_rules.FadingRuntimeTests.test_fading_last_counter_sacrifice_mutant_is_killed",
+      "official_rule_ids": [
+        "702.32a",
+        "603.1",
+        "603.2",
+        "603.3",
+        "113.7a",
+        "400.7",
+        "608.2c",
+        "608.2h",
+        "122.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Fading uses current fade counters and trigger-controller sacrifice permission, preserving old source identity and canonical replay."
+    },
+    {
+      "capability_id": "counter.lifecycle.fading",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fading_rules.FadingCompilerTests.test_fading_action_requires_its_own_capability_certificate",
+      "official_rule_ids": [
+        "702.32a",
+        "603.1",
+        "603.2",
+        "603.3",
+        "113.7a",
+        "400.7",
+        "608.2c",
+        "608.2h",
+        "122.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Fading uses current fade counters and trigger-controller sacrifice permission, preserving old source identity and canonical replay."
+    },
+    {
+      "capability_id": "counter.lifecycle.fading",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fading_rules.FadingCompilerTests.test_fading_shape_and_blocked_dependencies_fail_closed",
+      "official_rule_ids": [
+        "702.32a",
+        "603.1",
+        "603.2",
+        "603.3",
+        "113.7a",
+        "400.7",
+        "608.2c",
+        "608.2h",
+        "122.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Fading uses current fade counters and trigger-controller sacrifice permission, preserving old source identity and canonical replay."
+    },
+    {
+      "capability_id": "counter.lifecycle.fading",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fading_rules.FadingCompilerTests.test_resolution_revalidates_source_identity_controller_and_descriptor",
+      "official_rule_ids": [
+        "702.32a",
+        "603.1",
+        "603.2",
+        "603.3",
+        "113.7a",
+        "400.7",
+        "608.2c",
+        "608.2h",
+        "122.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Fading uses current fade counters and trigger-controller sacrifice permission, preserving old source identity and canonical replay."
+    },
+    {
+      "capability_id": "counter.lifecycle.fading",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fading_rules.FadingCompilerTests.test_fading_compiles_entry_and_upkeep_as_separate_closed_nodes",
+      "official_rule_ids": [
+        "702.32a",
+        "603.1",
+        "603.2",
+        "603.3",
+        "113.7a",
+        "400.7",
+        "608.2c",
+        "608.2h",
+        "122.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Fading uses current fade counters and trigger-controller sacrifice permission, preserving old source identity and canonical replay."
+    },
+    {
+      "capability_id": "counter.lifecycle.fading",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fading_rules.FadingRuntimeTests.test_actual_cast_entry_last_counter_and_next_upkeep_sacrifice",
+      "official_rule_ids": [
+        "702.32a",
+        "603.1",
+        "603.2",
+        "603.3",
+        "113.7a",
+        "400.7",
+        "608.2c",
+        "608.2h",
+        "122.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Fading uses current fade counters and trigger-controller sacrifice permission, preserving old source identity and canonical replay."
+    },
+    {
+      "capability_id": "counter.lifecycle.fading",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fading_rules.FadingRuntimeTests.test_actual_cast_entry_last_counter_and_next_upkeep_sacrifice",
+      "official_rule_ids": [
+        "702.32a",
+        "603.1",
+        "603.2",
+        "603.3",
+        "113.7a",
+        "400.7",
+        "608.2c",
+        "608.2h",
+        "122.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Fading uses current fade counters and trigger-controller sacrifice permission, preserving old source identity and canonical replay."
     },
     {
       "capability_id": "counter.placement.quantity_replacement",
@@ -89162,5 +89461,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "c440742a9f973f5f4f3488b4350fad3e8a44d62dddcc0e700401f343cff8997d"
+  "fingerprint": "d10d677d73dcbac3a6f849d78c638792538034378fd35034e283ce2d16aab649"
 }

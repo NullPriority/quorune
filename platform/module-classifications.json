@@ -2427,6 +2427,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/fading_nodes.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/fixed_all_damage_prevention.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -11470,5 +11485,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "6033261e3b5cf3c60f41333242c713b3e38bbfc87e1a2891941350e5b3b847b3"
+  "fingerprint": "911e0a910db6e757d1d98e3a6c952b92625d1bc86bb4b652084a65b7f9a676a3"
 }

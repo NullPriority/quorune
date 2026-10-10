@@ -327,6 +327,7 @@
       "test_exact_artifact_engines",
       "test_exact_keyword_families",
       "test_exile_rules",
+      "test_fading_rules",
       "test_fixed_effect_clause_sequences",
       "test_fixed_homogeneous_target_sets",
       "test_fixed_mana_value_target_predicates",

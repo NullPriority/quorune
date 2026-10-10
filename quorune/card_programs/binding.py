@@ -39,6 +39,15 @@ def bind_semantic_program_runtime(
     for effect in program.effects:
         operation = str(effect.get("op") or "")
         descriptor = semantic_handlers.describe(operation)
+        if operation == "fixed_self_counter_keyword_action" and effect.get("action") == "fading":
+            from ..rules.node_capability_shapes import fixed_self_counter_keyword_action_node_capabilities
+            variant = fixed_self_counter_keyword_action_node_capabilities(
+                effects=(effect,), target_schema=program.target_schema,
+                mechanic_ids=program.coverage,
+            )
+            if not variant:
+                blockers.add("runtime_effect:invalid_fading_action")
+            required.update(variant)
         if descriptor is None:
             unregistered_operations.add(operation)
             continue

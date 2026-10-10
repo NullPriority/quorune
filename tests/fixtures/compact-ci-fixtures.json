@@ -33,6 +33,7 @@
     "tests/fixtures/entry-designation-cards.json",
     "tests/fixtures/event-card-return.json",
     "tests/fixtures/explore-cards.json",
+    "tests/fixtures/fading-cards.json",
     "tests/fixtures/fixed-battlefield-query-characteristics-cards.json",
     "tests/fixtures/fixed-control-effects.json",
     "tests/fixtures/fixed-counter-keyword-activations.json",

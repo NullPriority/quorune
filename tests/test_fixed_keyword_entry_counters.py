@@ -138,10 +138,13 @@ class FixedKeywordEntryCompilerTests(unittest.TestCase):
                     if node.node_id.endswith(":lifecycle")
                 )
                 self.assertTrue(entry.exact)
-                self.assertEqual((FIXED_KEYWORD_ENTRY_CAPABILITY,), entry.capability_dependencies)
+                self.assertEqual(("counter.placement.quantity_replacement", FIXED_KEYWORD_ENTRY_CAPABILITY), entry.capability_dependencies)
                 self.assertEqual((mechanic,), entry.mechanics)
-                self.assertEqual((mechanic,), lifecycle.mechanics)
-                self.assertTrue(lifecycle.residual_ids)
+                self.assertEqual(
+                    (mechanic, "cr-122-counters") if mechanic == "fading" else (mechanic,),
+                    lifecycle.mechanics,
+                )
+                self.assertEqual(mechanic != "fading", bool(lifecycle.residual_ids))
                 keyword_end = record.oracle_text.index(" (")
                 self.assertEqual(
                     (0, keyword_end),
@@ -210,7 +213,6 @@ class FixedKeywordEntryCompilerTests(unittest.TestCase):
                 self.assertTrue(ir.material_residuals)
 
         for name in (
-            "Fading Entry Fixture",
             "Graft Entry Fixture",
             "Vanishing Entry Fixture",
         ):

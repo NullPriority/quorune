@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 189,
+  "registry_version": 190,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -124,6 +124,7 @@
     {
       "mechanic_id": "fading",
       "capabilities": [
+        "counter.lifecycle.fading",
         "counter.producer.fixed_keyword_entry"
       ]
     },
@@ -1564,6 +1565,90 @@
       "dependency_fail_closed_rationale": "Blocking toughness assignment or canonical combat assignment prevents current trusted closure.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Dropping the current rule restores power-based damage and fails the actual unequal-stat witness.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "counter.lifecycle.fading",
+      "version": 1,
+      "official_rules": [
+        "702.32a",
+        "603.1",
+        "603.2",
+        "603.3",
+        "113.7a",
+        "400.7",
+        "608.2c",
+        "608.2h",
+        "122.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Resolve each fixed Fading upkeep through the existing source-counter action and canonical counter-removal or sacrifice zone intent.",
+        "inputs": [
+          "current controller upkeep trigger",
+          "trigger source incarnation",
+          "resolution-time fade counters",
+          "trigger controller and current controller"
+        ],
+        "outputs": [
+          "remove one fade counter without sacrificing after the final removal",
+          "sacrifice only when no counter is available and trigger controller still controls the permanent",
+          "ordinary stack and exact replay"
+        ],
+        "exclusions": [
+          "nonfixed Fading grammar",
+          "independently unsupported sibling abilities",
+          "Vanishing and Graft lifecycle"
+        ]
+      },
+      "dependencies": [
+        "counter.placement.quantity_replacement",
+        "counter.removal.fixed_effect",
+        "zone.change.destination_replacement",
+        "trigger.placement.apnap"
+      ],
+      "implementation_components": [
+        "quorune.compiler.fading_nodes.fading_upkeep_node",
+        "quorune.semantic_choices.self_counter_keyword_actions.FixedSelfCounterKeywordActionHandler",
+        "quorune.counter_removal.commit_counter_removals",
+        "quorune.semantic_choices.intent_host.SemanticChoiceIntentHostMixin.move_object_intent"
+      ],
+      "positive_tests": [
+        "test_fading_compiles_entry_and_upkeep_as_separate_closed_nodes"
+      ],
+      "negative_tests": [
+        "test_fading_shape_and_blocked_dependencies_fail_closed"
+      ],
+      "interaction_tests": [
+        "test_actual_cast_entry_last_counter_and_next_upkeep_sacrifice"
+      ],
+      "multiplayer_tests": [
+        "test_trigger_control_change_removes_counter_but_cannot_sacrifice_new_controller_permanent"
+      ],
+      "privacy_tests": [
+        "test_actual_cast_entry_last_counter_and_next_upkeep_sacrifice"
+      ],
+      "replay_tests": [
+        "test_actual_cast_entry_last_counter_and_next_upkeep_sacrifice"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Blocking Fading upkeep, counter removal, or zone replacement rejects whole-card trusted closure.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Sacrificing after the final successful removal contradicts the independently pinned real-card upkeep witness.",
       "blockers": [],
       "status": "trusted"
     },

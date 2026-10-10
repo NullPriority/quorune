@@ -11,6 +11,8 @@ from ..semantic_runtime import (
     BecomeMonstrousIntent,
     BecomeRenownedIntent,
     PlaceCountersIntent,
+    RemoveCountersIntent,
+    ZoneMoveIntent,
 )
 from .context import SemanticChoiceContext, SemanticChoiceQuery
 from .model import (
@@ -23,7 +25,7 @@ from .model import (
 
 
 _EFFECT_FIELDS = {"op", "action", "amount", "source"}
-_ACTIONS = {"adapt", "monstrosity", "renown"}
+_ACTIONS = {"adapt", "monstrosity", "renown", "fading"}
 _COUNTER_NAME = "+1/+1"
 
 
@@ -46,6 +48,7 @@ def _validated_effect(
         or action not in _ACTIONS
         or type(amount) is not int
         or amount <= 0
+        or (action == "fading" and amount != 1)
         or type(source_ref) is not str
         or not source_ref
     ):
@@ -64,6 +67,26 @@ def _counter_amount(source: ObjectQueryResult) -> int:
     return raw
 
 
+def _fading_intents(
+    context: SemanticChoiceContext, source: ObjectQueryResult,
+) -> tuple[RemoveCountersIntent | ZoneMoveIntent, ...]:
+    counters = source.counters.get("fade", 0)
+    if type(counters) is not int or counters < 0:
+        raise SemanticChoiceError("The source permanent's fade counters are malformed")
+    if counters:
+        return (RemoveCountersIntent(
+            actor=context.actor, object_ref=source.ref, counter_name="fade",
+            amount=1, reason=context.stack_label, source_ref=source.ref,
+        ),)
+    if source.controller == context.actor:
+        return (ZoneMoveIntent(
+            actor=context.actor, object_ref=source.ref,
+            expected_zones=("battlefield",), destination="graveyard",
+            reason="Fading could not remove a fade counter", controlled_only=True,
+        ),)
+    return ()
+
+
 @dataclass(frozen=True, slots=True)
 class FixedSelfCounterKeywordActionHandler:
     operation: str = "fixed_self_counter_keyword_action"
@@ -80,6 +103,8 @@ class FixedSelfCounterKeywordActionHandler:
         "CR 702.112a",
         "CR 702.112b",
         "CR 702.112c",
+        "CR 702.32a",
+        "CR 701.21a",
     )
     capability_dependencies: tuple[str, ...] = (
         "counter.placement.quantity_replacement",
@@ -98,11 +123,16 @@ class FixedSelfCounterKeywordActionHandler:
         "permanent_designations.become_monstrous",
         "BecomeRenownedIntent",
         "permanent_designations.become_renowned",
+        "RemoveCountersIntent",
+        "counter_removal.commit_counter_removals",
+        "ZoneMoveIntent",
+        "semantic_choices.intent_host.SemanticChoiceIntentHostMixin.move_object_intent",
     )
     replay_fixture: str = "fixed-self-counter-keyword-actions"
     test_modules: tuple[str, ...] = (
         "tests.test_self_counter_keyword_actions",
         "tests.test_renown_rules",
+        "tests.test_fading_rules",
     )
 
     def prepare(
@@ -143,6 +173,12 @@ class FixedSelfCounterKeywordActionHandler:
                 ),
             )
         assert source is not None
+        if action == "fading":
+            return SemanticChoicePreparation(
+                request=None, continuation_effect=continuation_effect,
+                preparation_intents=_fading_intents(context, source),
+                auto_continue=AutoContinue(reason="resolved Fading upkeep"),
+            )
         current_counter_amount = _counter_amount(source)
         if action == "adapt" and current_counter_amount:
             return SemanticChoicePreparation(
