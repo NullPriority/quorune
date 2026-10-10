@@ -181,6 +181,7 @@
       "test_public_history_condition_closure",
       "test_public_query_action_registration",
       "test_public_query_effect_amounts",
+      "test_target_characteristic_sets",
       "test_targeting_v070",
       "test_unearth_rules"
     ],

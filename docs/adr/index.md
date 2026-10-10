@@ -126,3 +126,4 @@ deployment modes, or architecture review thresholds.
 - [ADR 0109 — typed trigger usage limits](0109-typed-trigger-usage-limits.md)
 - [ADR 0110 — static attached control](0110-static-attached-control.md)
 - [ADR 0111 — source counter scalar amounts](0111-source-counter-scalar-amounts.md)
+- [ADR 0112 — bounded target characteristics](0112-bounded-target-characteristics.md)

@@ -1,6 +1,7 @@
 from __future__ import annotations
 from ..rules.control_capability_shapes import fixed_control_node_capabilities
 from ..rules.scheduled_player_shapes import is_closed_scheduled_player_program
+from ..rules.target_characteristic_sets import is_closed_target_characteristic_set_program
 
 from collections import Counter
 from dataclasses import asdict, replace
@@ -1274,7 +1275,7 @@ def _is_closed_public_characteristic_set_program(program: SemanticProgram) -> bo
 
 def _closed_effect_recognizers():
     return (
-        is_closed_public_quantity_mana_program, is_closed_whole_hand_discard_program, _is_closed_fixed_control_program, is_closed_scheduled_player_program,
+        is_closed_public_quantity_mana_program, is_closed_whole_hand_discard_program, _is_closed_fixed_control_program, is_closed_scheduled_player_program, is_closed_target_characteristic_set_program,
         is_closed_fixed_modal_program,
         is_closed_fixed_effect_payment_program,
         is_closed_stack_controller_payment_program,

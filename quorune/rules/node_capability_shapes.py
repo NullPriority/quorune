@@ -882,6 +882,9 @@ def fixed_target_characteristics_node_capabilities(
 ) -> tuple[str, ...]:
     """Return ownership for one closed targeted fixed characteristic effect."""
 
+    if any(effect.get('schema_version') == 6 and effect.get('op') == 'apply_source_characteristics_until_end_of_turn' for effect in effects):
+        from .target_characteristic_sets import target_characteristic_set_capabilities
+        return target_characteristic_set_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
     mechanics = {str(value).casefold() for value in mechanic_ids}
     if not {
         "cr-115-targets",

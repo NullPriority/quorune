@@ -1324,6 +1324,9 @@ def apply_effect(
     operation: str,
     reason: str,
 ) -> Any:
+    if operation == 'apply_source_characteristics_until_end_of_turn' and effect.get('schema_version') == 6:
+        from ..continuous_effect_state import apply_target_characteristics
+        return apply_target_characteristics(host,effect,actor=actor,reason=reason)
     if operation == 'apply_source_characteristics_until_end_of_turn' and effect.get('schema_version') == 5:
         from ..rules.toughness_assignment_effect import apply_temporary_toughness_assignment
         return apply_temporary_toughness_assignment(host,effect,actor=actor,reason=reason)

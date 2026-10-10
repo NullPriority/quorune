@@ -4031,6 +4031,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/target_characteristic_sets.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/target_effect_corpus_assurance.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -8343,6 +8358,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/target_characteristic_sets.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/temporary_declaration_restrictions.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -11771,5 +11800,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "97f6e7c1ba02a141be6cf3ceb4a6dd9315d459421f04a515cb39cebe91f918c3"
+  "fingerprint": "c7f52319bcd3c8091cd3115208b6f6107f327171b3a46cb30b80e7393f537545"
 }

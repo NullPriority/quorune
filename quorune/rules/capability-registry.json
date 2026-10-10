@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 200,
+  "registry_version": 201,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -11551,6 +11551,85 @@
       "dependency_fail_closed_rationale": "Each independent result capability closes separately from the scheduled player binding.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Substituting the source controller is killed by the actual Seizan active-player life and private hand assertions.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "continuous.resolution.fixed_target_characteristic_set",
+      "version": 1,
+      "official_rules": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Apply one homogeneous fixed stat or keyword result to a printed bounded set of independently revalidated creature targets through the canonical continuous-effect owner.",
+        "inputs": [
+          "fixed source-spanned count range",
+          "one closed direct creature target predicate",
+          "identical fixed modifiers and keywords",
+          "surviving original target references"
+        ],
+        "outputs": [
+          "exact target cardinality",
+          "resolution-locked layer effects on surviving targets",
+          "ordinary expiry and replay"
+        ],
+        "exclusions": [
+          "dynamic quantities outside independently assured scalar amount composition",
+          "mixed target roles",
+          "chosen or protection abilities",
+          "base-setting and type conversion until represented",
+          "unclosed sibling effects"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.compiler.target_characteristic_sets.target_characteristic_set_template",
+        "quorune.rules.target_characteristic_sets.target_characteristic_set_capabilities",
+        "quorune.continuous_effect_state.apply_target_characteristics"
+      ],
+      "positive_tests": [
+        "test_fixed_target_sets_keep_count_range_modifier_and_source_span"
+      ],
+      "negative_tests": [
+        "test_descriptor_unknown_quantities_and_dynamic_variants_fail_closed",
+        "test_omitted_target_set_effect_mutant_is_killed_by_actual_nahiri"
+      ],
+      "interaction_tests": [
+        "test_actual_sick_and_tired_applies_to_surviving_original_target",
+        "test_up_to_one_entry_trigger_choice_saves_replays_and_applies_fixed_modifier",
+        "test_exact_scalar_amount_composes_with_optional_single_target_set",
+        "test_actual_wind_sail_grants_only_selected_original_creatures_and_expires"
+      ],
+      "multiplayer_tests": [
+        "test_actual_nahiri_accepts_zero_one_or_two_distinct_targets_and_replays"
+      ],
+      "privacy_tests": [],
+      "replay_tests": [
+        "test_actual_nahiri_accepts_zero_one_or_two_distinct_targets_and_replays"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "Fixed characteristic, target revalidation, and each keyword dependencies are required separately.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the v6 target-set effect is killed by an actual Nahiri cast resulting power assertion.",
       "blockers": [],
       "status": "trusted"
     }

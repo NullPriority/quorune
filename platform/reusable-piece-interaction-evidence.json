@@ -8414,6 +8414,36 @@
       ],
       "interaction_order": 2,
       "assertion": "An actual Selesnya Evangel activation taps its source and a distinct selected creature through the canonical cost owner before either normalized tap event is discovered; both observed events see the full paid group and pre-action replay agrees."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_sick_and_tired_applies_to_surviving_original_target",
+      "piece_ids": [
+        "capability.continuous.resolution.fixed_target_characteristic_set",
+        "capability.target.revalidate_resolution"
+      ],
+      "capability_ids": [
+        "continuous.resolution.fixed_target_characteristic_set",
+        "target.revalidate_resolution"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Sick and Tired requires two distinct creatures. A real Unsummon response invalidates one target; only the remaining original object receives the -1/-1 effect, with duplicate rollback and pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_exact_scalar_amount_composes_with_optional_single_target_set",
+      "piece_ids": [
+        "capability.continuous.resolution.fixed_target_characteristic_set",
+        "capability.quantity_expression.scalar_effect_amount"
+      ],
+      "capability_ids": [
+        "continuous.resolution.fixed_target_characteristic_set",
+        "quantity_expression.scalar_effect_amount"
+      ],
+      "interaction_order": 2,
+      "assertion": "A represented generic entry trigger uses an independently compiled current-turn life-gain scalar for an up-to-one -X/-X result. A real prior life-gain spell supplies two, pending target choice saves and replays, and the chosen creature receives exactly -2/-2."
     }
   ]
 }

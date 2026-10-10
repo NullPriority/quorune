@@ -93,6 +93,9 @@ def reviewed_effect_template_composition(
     atomic = compile_atomic(text)
     if atomic[0] is not None:
         return atomic
+    from .target_characteristic_sets import target_characteristic_set_template
+    targeted_set=target_characteristic_set_template(text)
+    if targeted_set is not None:return targeted_set
     if allow_conditions:
         from .kicked_spell_conditions import kicked_spell_condition_template
         kicked = kicked_spell_condition_template(text, compile_component=lambda body: reviewed_effect_template_composition(

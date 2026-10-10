@@ -1651,6 +1651,20 @@
       ]
     },
     {
+      "id": "bounded-target-characteristic-contract",
+      "patterns": [
+        "quorune/compiler/target_characteristic_sets.py",
+        "quorune/rules/target_characteristic_sets.py",
+        "tests/fixtures/target-characteristic-sets.json"
+      ],
+      "test_modules": [
+        "test_target_characteristic_sets",
+        "test_fixed_target_effect_sequences",
+        "test_card_program_trust",
+        "test_scalar_effect_amounts"
+      ]
+    },
+    {
       "id": "combined-source-selected-tap-contract",
       "patterns": [
         "quorune/compiler/activated_tap_costs.py",

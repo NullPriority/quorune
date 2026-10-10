@@ -9,6 +9,15 @@ maintenance: "hand-maintained"
 
 # Typed semantic handlers
 
+The existing characteristic operation accepts a closed version-six target-set
+instruction. Canonical target revalidation supplies each surviving original
+reference, and the continuous-effect state owner applies identical represented
+stat and keyword components to that set before stabilization. Printed up-to
+selection permits zero; exact count selection requires distinct references.
+Effects remain locked to those incarnations and expire through the ordinary
+duration owner. Base-setting, mixed roles, and unrepresented result semantics
+retain their residual boundaries.
+
 Bounded ordered effect programs can compose independently closed public-query
 and source-scalar result amounts. Each instruction reads its quantity at its
 printed resolution position: an earlier draw, counter placement, or token
