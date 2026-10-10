@@ -1651,6 +1651,21 @@
       ]
     },
     {
+      "id": "source-pronoun-result-contract",
+      "patterns": [
+        "quorune/compiler/source_self_effect_templates.py",
+        "quorune/compiler/trigger_result_templates.py",
+        "tests/fixtures/source-pronoun-results.json"
+      ],
+      "test_modules": [
+        "test_source_pronoun_results",
+        "test_fixed_counter_event_triggers",
+        "test_scalar_effect_amounts",
+        "test_card_program_trust",
+        "test_fixed_source_characteristic_effects"
+      ]
+    },
+    {
       "id": "optional-draw-discard-contract",
       "patterns": [
         "quorune/rules/optional_draw_discard.py",

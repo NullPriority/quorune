@@ -11,6 +11,14 @@ from .fixed_entry_return_requirements import fixed_entry_return_effect_template
 
 
 def binding_effect_template(binding, body: str, *, card_name: str, effect_template):
+    specialized = fixed_source_combat_growth_effect_template(body, event=binding.event.value, variant=binding.variant)
+    if specialized[0] is not None:return specialized,True
+    if binding.variant in {'source_attacks','this_creature_blocks','this_creature_becomes_blocked','source_public_tap_state_transition'}:
+        from .source_self_effect_templates import normalized_source_result_body, pin_source_result_incarnation
+        normalized=normalized_source_result_body(body)
+        if normalized is not None and not body.casefold().startswith(('it gets','him gets','her gets')):
+            value=effect_template(normalized,card_name=card_name)
+            if value[0] is not None:return pin_source_result_incarnation(value),True
     from .scheduled_player_triggers import scheduled_player_result
     scheduled=scheduled_player_result(binding,body,effect_template=effect_template,card_name=card_name)
     if scheduled is not None:return scheduled
@@ -35,9 +43,6 @@ def binding_effect_template(binding, body: str, *, card_name: str, effect_templa
     copy_recipe = token_copy_recipe_template(body, source_name=card_name, source_is_permanent=True, event=binding.event.value)
     if copy_recipe is not None:
         return copy_recipe.compiled(), False
-    specialized = fixed_source_combat_growth_effect_template(body, event=binding.event.value, variant=binding.variant)
-    if specialized[0] is not None:
-        return specialized, True
     if binding.variant == 'fixed_entry_return_requirement':
         entry_return = fixed_entry_return_effect_template(body)
         if entry_return[0] is not None:

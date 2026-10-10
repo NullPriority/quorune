@@ -169,7 +169,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v310"
+ORACLE_COMPILER_VERSION = "oracle-ir-v311"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -881,7 +881,7 @@ def _trigger_node(
             source_event=True, compile_fixed=lambda text: effect_template(text, card_name=card_name)) or source_self_contextual_effect_template(
             trigger.group("body"),
             card_name=card_name,
-            event_phrase=event_phrase,
+            event_phrase=event_phrase, compile_effect=effect_template,
         )
         template, effects, target_schema, mechanics = (
             source_bound_effect

@@ -22,6 +22,15 @@ Oracle IR, recognized semantic nodes, dependency declarations, material
 residuals, and a canonical `CardProgram`. For the same inputs and compiler
 version, the result must be deterministic.
 
+An independently bound source-self trigger can normalize a source-led result
+using “it,” “him,” or “her” before exact leaf compilation. This narrow production
+admits direct source stat, damage, and counter results. It preserves the full
+original source span and delegates incarnation and last known information to
+existing owners. Newly created token references, targeted anaphora, union-event
+subjects, and unrepresented complete bodies are not rebound to the source.
+Effects on the source itself carry the existing logical-object reference;
+damage source references retain their ordinary last known source information.
+
 Scheduled each-player and each-opponent upkeep triggers preserve the trigger
 source's controller separately from the active player. Fixed nontargeted
 draw, life, mill, and damage results bind to the recorded step player. A

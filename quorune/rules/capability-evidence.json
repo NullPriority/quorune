@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "27972d61b9ee4af878774ee576b2a5bbe31106608cc3fd74d8e54036926dbb62",
-  "declaration_source_fingerprint": "367db4acd5d512951053b29722bba3b81f457cd1c2790390e68ae0568aeb42f8",
+  "registry_fingerprint": "ec164342e7970f0ceea07dc66eb1002d75d339bb29e843db3e85203305679c1f",
+  "declaration_source_fingerprint": "7cd96428baa786849e9f5db1ca022970db4afdbe02720f17fed518a8f579a783",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -75436,6 +75436,31 @@
     },
     {
       "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_source_pronoun_results.SourcePronounRuntimeTests.test_actual_scorpion_death_deals_damage_and_gains_life_for_trigger_controller",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original source-self trigger bodies retain correct source incarnation, damage controller and optional counter choice through actual commands and pre-action replay; unrelated token/target references stay closed."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_ability_word_event_triggers.AbilityWordEventTriggerRuntimeTests.test_targeted_cast_projection_save_load_and_exact_replay",
       "official_rule_ids": [
@@ -75636,6 +75661,31 @@
     },
     {
       "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_source_pronoun_results.SourcePronounRuntimeTests.test_actual_scorpion_death_deals_damage_and_gains_life_for_trigger_controller",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original source-self trigger bodies retain correct source incarnation, damage controller and optional counter choice through actual commands and pre-action replay; unrelated token/target references stay closed."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_fixed_typed_event_effect_trigger_dependency_and_compiler_mutation_fail_closed",
       "official_rule_ids": [
@@ -75658,6 +75708,31 @@
         "commander_review"
       ],
       "applicability_note": "Kill removal of the single generic composition call before any represented event-bound effect can retain exact trust."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_source_pronoun_results.SourcePronounRuntimeTests.test_source_body_normalization_omission_mutant_is_killed_by_original_firstblade",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original source-self trigger bodies retain correct source incarnation, damage controller and optional counter choice through actual commands and pre-action replay; unrelated token/target references stay closed."
     },
     {
       "capability_id": "trigger.effect.fixed_event",
@@ -75886,6 +75961,31 @@
     },
     {
       "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "negative",
+      "test_id": "tests.test_source_pronoun_results.SourcePronounCompilerTests.test_new_token_or_target_pronoun_is_not_rebound_to_source",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original source-self trigger bodies retain correct source incarnation, damage controller and optional counter choice through actual commands and pre-action replay; unrelated token/target references stay closed."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "positive",
       "test_id": "tests.test_ability_word_event_triggers.AbilityWordEventTriggerCompilerTests.test_four_strict_ability_word_bindings_compile_through_shared_owner",
       "official_rule_ids": [
@@ -76083,6 +76183,31 @@
         "commander_review"
       ],
       "applicability_note": "Lower the bounded source-self, ordinal, mana-value, origin, turn, Kicker, Historic, fixed-color permanent, and Adventure grammar to immutable typed event predicates."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "positive",
+      "test_id": "tests.test_source_pronoun_results.SourcePronounCompilerTests.test_exact_self_event_body_keeps_original_span_and_source_reference",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original source-self trigger bodies retain correct source incarnation, damage controller and optional counter choice through actual commands and pre-action replay; unrelated token/target references stay closed."
     },
     {
       "capability_id": "trigger.effect.fixed_event",
@@ -76458,6 +76583,31 @@
         "commander_review"
       ],
       "applicability_note": "Replay the last-known-controller source-graveyard trigger and ordinary draw result to the identical authoritative hash."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "replay",
+      "test_id": "tests.test_source_pronoun_results.SourcePronounRuntimeTests.test_blinked_firstblade_does_not_receive_old_source_trigger_twice",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original source-self trigger bodies retain correct source incarnation, damage controller and optional counter choice through actual commands and pre-action replay; unrelated token/target references stay closed."
     },
     {
       "capability_id": "trigger.entry.fixed_kicked_result",
@@ -91820,5 +91970,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "8492956d9f74317f78deddb881c2a83016ca7468da2be5e272aa950d6f7299a6"
+  "fingerprint": "dcd662963b769942d59911c9678f40b701a77b9b107c897f415d7412088fc40f"
 }

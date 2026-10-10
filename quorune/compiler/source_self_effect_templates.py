@@ -50,9 +50,14 @@ def source_self_contextual_effect_template(
     *,
     card_name: str,
     event_phrase: str,
+    compile_effect: Any = None,
 ) -> tuple[Any, ...] | None:
     """Delegate one source-bound body to its closed typed leaf owner."""
 
+    normalized=normalized_source_result_body(text)
+    if normalized is not None and compile_effect is not None:
+        value=compile_effect(normalized,card_name=card_name)
+        if value[0] is not None:return pin_source_result_incarnation(value)
     explored = single_explore_effect_template(
         text,
         allow_source_pronoun=True,
@@ -78,6 +83,21 @@ def source_self_contextual_effect_template(
     return declared_effect_amount_template(
         text, source_name=card_name, compile_fixed=compile_fixed,
     )
+
+
+def normalized_source_result_body(body: str) -> str | None:
+    """Bind only a complete source-led result, never new-object anaphora."""
+    if re.search(r'\b(?:target|create|choose|another|that)\b',body,re.I):return None
+    if not (re.match(r'(?:it|him|her) (?:gets|gains|deals)\b',body,re.I)
+            or re.fullmatch(r'(?:(?:you may )?put .+? counter(?:s)? on|double the number of .+? counters on) (?:it|him|her)\.',body,re.I)):
+        return None
+    return re.sub(r'\b(?:it|him|her)\b','this creature',body,flags=re.I)
+
+
+def pin_source_result_incarnation(compiled):
+    template,effects,schema,mechanics=compiled
+    pinned=tuple({**effect,'card':'$source.zone_object'} if effect.get('card')=='$source' else effect for effect in effects)
+    return template,pinned,schema,mechanics
 
 
 __all__ = ["source_self_contextual_effect_template"]

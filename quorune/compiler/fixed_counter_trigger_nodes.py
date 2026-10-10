@@ -1263,8 +1263,7 @@ def fixed_counter_event_trigger_node(
             effect_template=effect_template,
         )
     else:
-        compiled = effect_template(body, card_name=card_name)
-        requires_current_ability = False
+        compiled, requires_current_ability = _binding_effect_template(binding,body,card_name=card_name,effect_template=effect_template)
     template, effects, target_schema, body_mechanics = compiled
     nested_counter_operations = _COUNTER_PLACEMENT_OPERATIONS.intersection(
         _nested_operations(effects)

@@ -83,6 +83,7 @@
     "tests/fixtures/scryfall-exact-lists.json",
     "tests/fixtures/source-counter-amounts.json",
     "tests/fixtures/source-maintenance-cards.json",
+    "tests/fixtures/source-pronoun-results.json",
     "tests/fixtures/source-reference-closure-cards.json",
     "tests/fixtures/spell-history-transformations-cards.json",
     "tests/fixtures/static-action-permission-cards.json",
