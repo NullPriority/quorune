@@ -311,6 +311,7 @@
       "test_activation_conditions",
       "test_as_unblocked_assignment",
       "test_attack_transitions",
+      "test_batched_support_measurement",
       "test_battlefield_rules",
       "test_beginning_phase_rules",
       "test_browser_gameplay_regressions",

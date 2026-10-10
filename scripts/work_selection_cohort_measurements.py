@@ -225,6 +225,7 @@ _PROBE_TARGET_ANNOUNCEMENT = 'fixed-target-announcement-existing-owner-v1'
 _PROBE_KICKED_SPELL = 'fixed-kicked-spell-condition-existing-owner-v1'
 _PROBE_EVENT_CARD_RETURN = 'fixed-event-card-return-existing-owner-v1'
 _PROBE_BATCHED_SUPPORT = 'batched-card-support-existing-owner-v1'
+_PROBE_BATCHED_SUPPORT_V2 = 'batched-card-support-current-census-v2'
 _PROBE_PERMANENT_PRICE = 'permanent-spell-additional-price-existing-owner-v1'
 _PROBE_CAST_CREATURE_TARGET = 'cast-creature-target-existing-owner-v1'
 _PROBE_DECLARED_EFFECT_AMOUNT = "declared-effect-amount-existing-owner-v1"
@@ -611,6 +612,7 @@ _PROBE_IDS = {
     _PROBE_KICKED_SPELL,
     _PROBE_EVENT_CARD_RETURN,
     _PROBE_BATCHED_SUPPORT,
+    _PROBE_BATCHED_SUPPORT_V2,
     _PROBE_PERMANENT_PRICE,
     _PROBE_CAST_CREATURE_TARGET,
     _PROBE_DECLARED_EFFECT_AMOUNT,
@@ -5441,6 +5443,13 @@ def _measurement(
     if probe_id not in _PROBE_IDS:
         raise WorkSelectionCohortMeasurementError(
             f"Unknown cohort measurement probe: {probe_id}"
+        )
+    if probe_id == _PROBE_BATCHED_SUPPORT_V2:
+        from scripts.batched_support_measurement import current_census_delivery_measurement
+        return current_census_delivery_measurement(
+            frontier=frontier, bundle_id=bundle_id, probe_id=probe_id,
+            cards_by_oracle_id=cards_by_oracle_id, coverage=coverage,
+            cohort_fingerprint=cohort_fingerprint, database=database,
         )
     if probe_id == _PROBE_TYPED_GRANT_CARRIERS:
         from scripts.typed_grant_carrier_measurement import typed_grant_carrier_measurement

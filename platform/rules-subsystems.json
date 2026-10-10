@@ -750,7 +750,7 @@
             "Lost support subtracts from final delivery"
           ],
           "measurement_status": "generated_probe",
-          "measurement_probe_id": "batched-card-support-existing-owner-v1"
+          "measurement_probe_id": "batched-card-support-current-census-v2"
         },
         {
           "bundle_id": "bundle:copiable-token-production-recipes",

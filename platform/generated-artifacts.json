@@ -379,6 +379,7 @@
         "scripts/update_work_selection_cohort_measurements.py",
         "scripts/work_selection_cohort_measurements.py",
         "scripts/controller_program_measurement.py",
+        "scripts/batched_support_measurement.py",
         "scripts/counted_library_search_measurement.py",
         "scripts/typed_grant_carrier_measurement.py"
       ],
