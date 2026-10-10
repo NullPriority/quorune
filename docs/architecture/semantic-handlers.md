@@ -9,6 +9,15 @@ maintenance: "hand-maintained"
 
 # Typed semantic handlers
 
+The existing optional-effect choice also represents fixed controller draw
+followed by “If you do, discard” instructions. Decline performs neither action.
+Acceptance resumes the draw and then the mandatory private discard through
+the same resolution cursor. Acceptance still requires discarding if a draw
+replacement changes or prevents the actual draw. The discard choice is issued
+after the draw, includes the resulting hand, and remains private to its chooser.
+Arbitrary linked conditions, random counts, and unrepresented player variants
+remain residuals.
+
 The existing characteristic operation accepts a closed version-six target-set
 instruction. Canonical target revalidation supplies each surviving original
 reference, and the continuous-effect state owner applies identical represented

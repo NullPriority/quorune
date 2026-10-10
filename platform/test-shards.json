@@ -281,6 +281,7 @@
       "test_limited_event_triggers",
       "test_linked_exile_return",
       "test_native_v3_slice",
+      "test_optional_draw_discard_sequences",
       "test_optional_object_action_counters",
       "test_ordered_quantity_results",
       "test_persist_undying_rules",

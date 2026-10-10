@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "4e08dcde852b0c07fd9a901f72fa706659f500a31bcc1523cbc9096e9914c265",
-  "declaration_source_fingerprint": "cb510be36f2de01d06c2d10ec1e19945024aedbde9b09279f9068a6d7144b687",
+  "registry_fingerprint": "27972d61b9ee4af878774ee576b2a5bbe31106608cc3fd74d8e54036926dbb62",
+  "declaration_source_fingerprint": "367db4acd5d512951053b29722bba3b81f457cd1c2790390e68ae0568aeb42f8",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -52067,6 +52067,23 @@
     },
     {
       "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_optional_draw_discard_sequences.OptionalDrawDiscardRuntimeTests.test_actual_koi_acceptance_draws_before_private_discard_and_saves_replays",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original optional draw-and-discard triggers execute one controller acceptance before draw and private discard, retain mandatory follow-up after a prevented draw, and persist the ordered continuation with exact replay."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_optional_effect_choices.FixedOptionalEffectIntegrationTests.test_optional_effect_choice_is_controller_scoped_atomic_private_and_replays",
       "official_rule_ids": [
@@ -52084,6 +52101,23 @@
     },
     {
       "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_optional_draw_discard_sequences.OptionalDrawDiscardRuntimeTests.test_actual_koi_acceptance_draws_before_private_discard_and_saves_replays",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original optional draw-and-discard triggers execute one controller acceptance before draw and private discard, retain mandatory follow-up after a prevented draw, and persist the ordered continuation with exact replay."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_optional_effect_choices.FixedOptionalEffectCompilerTests.test_optional_effect_shape_and_handler_mutants_fail_closed",
       "official_rule_ids": [
@@ -52098,6 +52132,23 @@
         "commander_review"
       ],
       "applicability_note": "Remove the generic optional compiler production and mutate every wrapper boundary so exact trust disappears instead of falling through to an unowned choice."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_optional_draw_discard_sequences.OptionalDrawDiscardRuntimeTests.test_omitted_followup_discard_mutant_is_killed_after_actual_acceptance",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original optional draw-and-discard triggers execute one controller acceptance before draw and private discard, retain mandatory follow-up after a prevented draw, and persist the ordered continuation with exact replay."
     },
     {
       "capability_id": "effect.choice.optional_fixed",
@@ -52132,6 +52183,23 @@
         "commander_review"
       ],
       "applicability_note": "Reject changed chooser identity, extra fields, missing or unknown nested effects, nested optional wrappers, absent target schemas, and unrepresented runtime instructions."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_optional_draw_discard_sequences.OptionalDrawDiscardCompilerTests.test_linked_dynamic_random_and_other_player_variants_stay_residual",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original optional draw-and-discard triggers execute one controller acceptance before draw and private discard, retain mandatory follow-up after a prevented draw, and persist the ordered continuation with exact replay."
     },
     {
       "capability_id": "effect.choice.optional_fixed",
@@ -52186,6 +52254,23 @@
     },
     {
       "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_optional_draw_discard_sequences.OptionalDrawDiscardCompilerTests.test_fixed_optional_draw_discard_compiles_original_order",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original optional draw-and-discard triggers execute one controller acceptance before draw and private discard, retain mandatory follow-up after a prevented draw, and persist the ordered continuation with exact replay."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_optional_effect_choices.FixedOptionalEffectIntegrationTests.test_optional_effect_choice_is_controller_scoped_atomic_private_and_replays",
       "official_rule_ids": [
@@ -52203,6 +52288,23 @@
     },
     {
       "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_optional_draw_discard_sequences.OptionalDrawDiscardRuntimeTests.test_actual_koi_acceptance_draws_before_private_discard_and_saves_replays",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original optional draw-and-discard triggers execute one controller acceptance before draw and private discard, retain mandatory follow-up after a prevented draw, and persist the ordered continuation with exact replay."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_optional_effect_choices.FixedOptionalEffectIntegrationTests.test_optional_effect_choice_is_controller_scoped_atomic_private_and_replays",
       "official_rule_ids": [
@@ -52217,6 +52319,23 @@
         "commander_review"
       ],
       "applicability_note": "Replay the controller-scoped choice, resumed typed effect, private draw, and final authoritative state exactly."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_optional_draw_discard_sequences.OptionalDrawDiscardRuntimeTests.test_actual_koi_acceptance_draws_before_private_discard_and_saves_replays",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original optional draw-and-discard triggers execute one controller acceptance before draw and private discard, retain mandatory follow-up after a prevented draw, and persist the ordered continuation with exact replay."
     },
     {
       "capability_id": "effect.choice.optional_fixed_mana_payment",
@@ -91701,5 +91820,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "65415e0e8f3280233f0207e41dc231ee4ea61a6cf49ef411fb9a82eca9d74f52"
+  "fingerprint": "8492956d9f74317f78deddb881c2a83016ca7468da2be5e272aa950d6f7299a6"
 }

@@ -1651,6 +1651,22 @@
       ]
     },
     {
+      "id": "optional-draw-discard-contract",
+      "patterns": [
+        "quorune/rules/optional_draw_discard.py",
+        "quorune/compiler/optional_effect_templates.py",
+        "quorune/semantic_choices/optional_effect.py",
+        "tests/fixtures/optional-draw-discard-sequences.json"
+      ],
+      "test_modules": [
+        "test_optional_draw_discard_sequences",
+        "test_fixed_optional_effect_choices",
+        "test_card_program_trust",
+        "test_draw_restrictions",
+        "test_limited_event_triggers"
+      ]
+    },
+    {
       "id": "bounded-target-characteristic-contract",
       "patterns": [
         "quorune/compiler/target_characteristic_sets.py",

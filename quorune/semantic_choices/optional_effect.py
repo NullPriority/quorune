@@ -34,6 +34,12 @@ def _represented_effect(
         )
     if operation == OPTIONAL_EFFECT_OPERATION:
         raise SemanticChoiceError("Optional effects cannot nest")
+    if operation == "choose_cards_apnap":
+        from ..rules.affected_player_discard_capability_shapes import fixed_affected_player_discard_node_capabilities
+        restored={**effect,'actor':'$controller','players':['$controller']}
+        if effect.get('actor')!=actor or not isinstance(effect.get('players'),(list,tuple)) or list(effect['players'])!=[actor] or not fixed_affected_player_discard_node_capabilities(effects=(restored,),target_schema=None,mechanic_ids=('fixed-affected-player-discard','cr-402-hand'),allow_controller=True):
+            raise SemanticChoiceError("Optional controller discard instruction is malformed")
+        return
     if operation == "search" and effect.get("schema_version") == 2:
         try:
             FixedCountedLibrarySearchTemplate.from_effect(effect)
@@ -101,10 +107,12 @@ def _validated_effects(
                 validate_linked_instruction(value)
         except ValueError as exc:
             raise SemanticChoiceError(str(exc)) from exc
+    from ..rules.optional_draw_discard import optional_draw_discard_is_closed
+    draw_discard=optional_draw_discard_is_closed(values,player=player)
     if (
         not isinstance(values, Sequence)
         or isinstance(values, (str, bytes))
-        or (len(values) != 1 and not linked_pair)
+        or (len(values) != 1 and not linked_pair and not draw_discard)
         or any(not isinstance(value, Mapping) for value in values)
     ):
         raise SemanticChoiceError(

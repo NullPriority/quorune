@@ -9,6 +9,7 @@ import re
 from typing import Any, Callable, Mapping
 
 from ..util import stable_json
+from ..rules.optional_draw_discard import optional_draw_discard_is_closed
 
 
 FIXED_OPTIONAL_EFFECT_MECHANIC = "fixed-optional-effect-choice"
@@ -38,7 +39,7 @@ class FixedOptionalEffectTemplate:
     def __post_init__(self) -> None:
         if (
             not self.component_template_id
-            or len(self._component_effects) != 1
+            or (len(self._component_effects) != 1 and not optional_draw_discard_is_closed(self._component_effects,player='$controller'))
             or not self.mechanic_ids
             or self.mechanic_ids[0] != FIXED_OPTIONAL_EFFECT_MECHANIC
             or any(
@@ -105,6 +106,14 @@ def fixed_optional_effect_template(
 ) -> FixedOptionalEffectTemplate | None:
     """Wrap one independently exact atomic body without widening its grammar."""
 
+    linked=re.fullmatch(r'you may (?P<draw>draw (?:a|one|two|three|[1-3]) cards?)\. If you do, (?P<discard>discard (?:a|one|two|three|[1-3]) cards?)\.',text.strip(),re.I)
+    if linked is not None:
+        from .fixed_controller_effect_sequences import fixed_controller_effect_clause
+        components=tuple(fixed_controller_effect_clause(linked[name]+'.') for name in ('draw','discard'))
+        if any(c is None for c in components):return None
+        return FixedOptionalEffectTemplate(component_template_id='fixed-optional-draw-discard-v1',
+            _component_effects=tuple(c[0] for c in components),_target_schema=None,
+            mechanic_ids=tuple(dict.fromkeys((FIXED_OPTIONAL_EFFECT_MECHANIC,*(m for c in components for m in c[1])))))
     match = _OPTIONAL_EFFECT.fullmatch(text.strip())
     if match is None:
         return None
