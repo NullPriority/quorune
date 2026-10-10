@@ -17,6 +17,17 @@ from scripts.work_selection_cohort_measurements import _measurement
 
 
 class BatchedSupportMeasurementTests(unittest.TestCase):
+    def test_current_delivery_identity_is_distinct_and_keeps_the_landed_policy(self):
+        from scripts.harvest_outcome_history import validated_semantic_transition_declaration
+        from quorune.work_selection_bundles import validate_bundle_policy
+        policy=json.loads((ROOT/'platform/rules-subsystems.json').read_text(encoding='utf-8'))['work_selection']
+        declaration=validated_semantic_transition_declaration(policy['semantic_transition_declaration'])
+        self.assertEqual('bundle:batched-card-support-v295',declaration['bundle_id'])
+        self.assertEqual('measurement:batched-card-support-v295',declaration['measurement_id'])
+        bundles,_weights=validate_bundle_policy(policy['coverage_family'])
+        by_id={row['bundle_id']:row for row in bundles}
+        self.assertIn('bundle:batched-card-support',by_id)
+        self.assertEqual(PROBE_ID,by_id[declaration['bundle_id']]['measurement_probe_id'])
     @classmethod
     def setUpClass(cls):
         cls.temporary = tempfile.TemporaryDirectory()
