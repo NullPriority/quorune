@@ -1867,6 +1867,8 @@
         "quorune/block_transitions.py",
         "quorune/compiler/fixed_counter_trigger_nodes.py",
         "quorune/compiler/fixed_public_action_event_bindings.py",
+        "tests/test_repeatable_object_action_triggers.py",
+        "tests/fixtures/repeatable-object-action-triggers.json",
         "quorune/compiler/fixed_public_event_trigger_bindings.py",
         "quorune/compiler/fixed_public_multi_event_bindings.py",
         "quorune/compiler/spell_cast_predicates.py",
@@ -1894,6 +1896,7 @@
         "test_fixed_counter_zone_triggers",
         "test_morph_rules",
         "test_ordinary_cycling",
+        "test_repeatable_object_action_triggers",
         "test_prowess_rules",
         "test_rules_scheduler",
         "test_storm_rules"

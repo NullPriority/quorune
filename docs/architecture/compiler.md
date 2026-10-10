@@ -1685,8 +1685,14 @@ a player or a planeswalker or battle; opponent noncombat damage; and exact
 one-or-more attack, combat-damage, token-entry, and graveyard-departure
 batches. These predicates consume only the existing attack, damage, Cycling,
 and cause-preserving zone occurrences. First-time, once-per-turn, aggregate
-sacrifice, tap-state, source-token damage, chosen, modified, and
-counter-bearing public-action forms remain residual.
+sacrifice, source-token damage, chosen and modified forms remain residual.
+Repeatable sacrifice and discard subscriptions also compose with independently
+exact counter-placement bodies. "Another" excludes the current source reference;
+sacrifice predicates consume pre-event custody and characteristics, while typed
+discard retains its cause after a visible destination replacement. Noncreature,
+nonland discard requires both type exclusions. The existing current ability,
+APNAP, source-incarnation and counter transaction owners execute the result;
+no aggregate or per-turn limiter is inferred.
 
 `compiler/qualified_zone_event_bindings.py` adds closed single-object public
 entry, death, graveyard, and leave subjects through that same event-effect

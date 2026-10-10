@@ -7875,6 +7875,66 @@
       ],
       "interaction_order": 2,
       "assertion": "The same original Chandra Ablaze carrier retains an unsupported target-predicate residual and fails canonical runtime admission; the declared pair proves fail-closed rejection rather than gameplay support."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_sacrifice_cost_queues_one_counter_per_object_and_replays",
+      "piece_ids": [
+        "capability.activation.selected_zone_change.fixed",
+        "capability.counter.producer.fixed_event_trigger"
+      ],
+      "capability_ids": [
+        "activation.selected_zone_change.fixed",
+        "counter.producer.fixed_event_trigger"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual offered Carrion Feeder sacrifice costs queue one counter result per sacrificed permanent through the normalized event owner; opponent observers do not qualify and wrong-principal commands reject atomically, with pre-action save/load and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_pending_sacrifice_trigger_does_not_modify_blinked_source",
+      "piece_ids": [
+        "capability.counter.producer.fixed_event_trigger",
+        "capability.trigger.event.normalized_zone_change"
+      ],
+      "capability_ids": [
+        "counter.producer.fixed_event_trigger",
+        "trigger.event.normalized_zone_change"
+      ],
+      "interaction_order": 2,
+      "assertion": "An actual sacrifice queues Gixian Infiltrator's counter trigger. A real Cloudshift response replaces its incarnation before resolution; the old trigger cannot modify the returned source, while the independent feeder result resolves and exact replay matches."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_another_excludes_self_sacrifice_while_foreign_owned_controlled_subject_counts",
+      "piece_ids": [
+        "capability.continuous.control.fixed_resolution",
+        "capability.counter.producer.fixed_event_trigger"
+      ],
+      "capability_ids": [
+        "continuous.control.fixed_resolution",
+        "counter.producer.fixed_event_trigger"
+      ],
+      "interaction_order": 2,
+      "assertion": "Canonical control grants borrowed custody of an opponent-owned creature. The accepted sacrifice observes its previous controller, moves to its owner's graveyard, and triggers the observer; sacrificing the observer itself fails the another predicate, with exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_noncreature_nonland_discard_trigger_uses_replaced_public_result_and_private_choice",
+      "piece_ids": [
+        "capability.trigger.event.normalized_zone_change",
+        "capability.zone.discard.typed_cause"
+      ],
+      "capability_ids": [
+        "trigger.event.normalized_zone_change",
+        "zone.discard.typed_cause"
+      ],
+      "interaction_order": 2,
+      "assertion": "An offered opponent-discard spell suspends for the correct player's private choice, rejects a wrong principal without mutation, and sends the chosen noncreature nonland card to visible exile under Dauthi's replacement. The cause-preserving discard still draws once and preserves other private cards, with exact replay."
     }
   ]
 }

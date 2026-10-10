@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "69ebfc84e946f762e359e8aaa6ef0585c4703014d835fd56a615621e17988906",
+  "registry_fingerprint": "ad2087caaf1c614098919f9a243a156167fbd945e15c518a3003f3a39c615c98",
   "declaration_source_fingerprint": "b5b5d8141c6b57949975977b9a7ebe258ee36f5d2ee5220641ea47f1579a33c9",
   "declarations": [
     {
@@ -90362,5 +90362,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "02c8b072215a19c5a8c2d18b19e70ce5c5d129cf108d29bb686d5649f138443a"
+  "fingerprint": "8ba39f2ede7fa37096ac51a250abbdee46645f74d7874550eb65cc71111c4554"
 }

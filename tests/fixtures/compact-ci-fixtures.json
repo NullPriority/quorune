@@ -67,6 +67,7 @@
     "tests/fixtures/query-power-toughness-definition-cards.json",
     "tests/fixtures/query-scaled-counter-cards.json",
     "tests/fixtures/read-ahead-saga-cards.json",
+    "tests/fixtures/repeatable-object-action-triggers.json",
     "tests/fixtures/resolution-public-condition-cards.json",
     "tests/fixtures/scalar-effect-amount-cards.json",
     "tests/fixtures/scryfall-exact-lists.json",

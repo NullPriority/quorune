@@ -3441,23 +3441,23 @@
     },
     {
       "id": "counter.producer.fixed_event_trigger",
-      "version": 6,
+      "version": 7,
       "official_rules": ["115.1", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c", "122.1", "122.6", "614.16", "616.1", "400.7", "608.2h"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
-        "summary": "Compile and resolve one mandatory exact counter-producing effect triggered by a represented beginning-of-step, fixed public permanent-entry or creature-death subject, single-subtype permanent entry, controlled-land-entry, closed spell-cast subject, source-self attack, Heroic, Magecraft, Constellation, Battalion, controller-life-gain, controller-card-draw, or controller-second-draw event through ordinary APNAP trigger placement and the canonical resumable counter transaction.",
+        "summary": "Compile and resolve one mandatory exact counter-producing effect triggered by a represented beginning-of-step, fixed public permanent-entry or creature-death subject, single-subtype permanent entry, controlled-land-entry, closed spell-cast subject, source-self attack, Heroic, Magecraft, Constellation, Battalion, controller-life-gain, controller-card-draw, controller-second-draw, repeatable public sacrifice, or typed discard event through ordinary APNAP trigger placement and the canonical resumable counter transaction.",
         "inputs": ["one source-spanned closed normalized-event trigger", "one already represented exact effect body containing a counter-placement operation", "current battlefield source and controller", "immutable normalized event facts", "closed source-controller, opponent, source-exclusion, token, one-word subtype, caster-relation, cast-card-type, source-target, cast-or-copy, controlled-enchantment, and sealed attacker-count predicates"],
         "outputs": ["one ordinary triggered CardProgram", "typed event predicate", "ordinary APNAP trigger placement", "body-specific target revalidation", "replacement-aware counter placement", "exact continuation replay"],
         "exclusions": ["spell copies and cast predicates outside the exact Magecraft or Heroic bindings", "opponent or arbitrary-player draws or life gains", "attack triggers for another object, attack-recipient predicates, attacks-alone or aggregate attack events outside exact Battalion, and objects put onto the battlefield attacking", "land entry outside the source controller relation", "multi-subtype, multiword-subtype, characteristic-qualified, one-or-more aggregated, alternate-zone, and combined zone-change events", "draw triggers that inspect hidden card identity", "intervening-if, reflexive, conditional, variable, linked, modal, repeated, delayed, and state triggers", "counter movement, removal, prevention, and prohibition", "granted, copied, or removed abilities outside the shared typed ability-presence boundary", "unsupported event or effect-body grammar"]
       },
       "dependencies": ["trigger.placement.apnap"],
       "implementation_components": ["quorune.compiler.fixed_counter_trigger_nodes.FixedCounterTriggerBinding", "quorune.compiler.fixed_counter_trigger_nodes.FixedSpellCastSubject", "quorune.compiler.fixed_counter_trigger_nodes.fixed_counter_event_trigger_node", "quorune.rules.casting.commit._dispatch_cast_events", "quorune.attack_transition_engine_adapter.attack_transition_stack_items", "quorune.zone_trigger_processing.dispatch_zone_change_occurrence", "quorune.player_result_events.dispatch_card_draw_event", "quorune.player_result_events.dispatch_life_gain_event", "quorune.trigger_discovery.dispatch_semantic_event", "quorune.semantic_runtime.counter_placement_handlers.FixedCounterPlacementHandler", "quorune.counter_placement.place_counters_on_refs"],
-      "positive_tests": ["test_closed_event_bindings_compile_exact_counter_effect_bodies", "test_closed_cast_and_source_attack_bindings_compile_exactly", "test_single_subtype_entry_counter_triggers_compile_exactly", "test_source_named_artifact_entry_player_counter_trigger_compiles_exactly", "test_four_strict_ability_word_bindings_compile_through_shared_owner"],
-      "negative_tests": ["test_adjacent_event_and_effect_variants_remain_material", "test_fixed_counter_event_trigger_dependencies_and_compiler_mutation_fail_closed", "test_new_event_bindings_fail_closed_with_event_capability", "test_stale_counter_target_rolls_back_trigger_resolution", "test_subtype_entry_counter_trigger_dependencies_fail_closed"],
-      "interaction_tests": ["test_cast_counter_trigger_uses_normalized_event", "test_source_attack_counter_trigger_uses_replacement_owner", "test_land_entry_counter_trigger_uses_normalized_event", "test_source_named_artifact_entry_player_counter_trigger_compiles_exactly", "test_subtype_entry_trigger_filters_and_uses_replacement_owner", "test_zone_entry_counter_triggers_apply_typed_subject_relations", "test_creature_death_counter_trigger_uses_lki_subject_filters", "test_any_death_trigger_observes_opponents_and_its_own_lki", "test_draw_counter_triggers_use_public_normalized_events", "test_life_gain_counter_trigger_uses_replacement_resolved_amount", "test_scheduled_counter_trigger_suspends_for_quantity_replacement", "test_multiple_scheduled_counter_triggers_use_one_apnap_batch", "test_targeted_cast_triggers_heroic_and_magecraft_in_one_batch", "test_battalion_uses_sealed_three_attacker_transition"],
-      "multiplayer_tests": ["test_four_player_counter_trigger_choice_is_private_and_replays_exactly", "test_opponent_death_counter_trigger_uses_previous_controller", "test_death_counter_replacement_is_private_and_replays_exactly"],
-      "privacy_tests": ["test_four_player_counter_trigger_choice_is_private_and_replays_exactly", "test_death_counter_replacement_is_private_and_replays_exactly"],
-      "replay_tests": ["test_four_player_counter_trigger_choice_is_private_and_replays_exactly", "test_death_counter_replacement_is_private_and_replays_exactly"],
+      "positive_tests": ["test_closed_event_bindings_compile_exact_counter_effect_bodies", "test_closed_cast_and_source_attack_bindings_compile_exactly", "test_single_subtype_entry_counter_triggers_compile_exactly", "test_source_named_artifact_entry_player_counter_trigger_compiles_exactly", "test_four_strict_ability_word_bindings_compile_through_shared_owner", "test_sacrifice_another_and_discard_counter_bodies_share_typed_events"],
+      "negative_tests": ["test_adjacent_event_and_effect_variants_remain_material", "test_fixed_counter_event_trigger_dependencies_and_compiler_mutation_fail_closed", "test_new_event_bindings_fail_closed_with_event_capability", "test_stale_counter_target_rolls_back_trigger_resolution", "test_subtype_entry_counter_trigger_dependencies_fail_closed", "test_aggregate_limited_and_malformed_action_grammar_remains_residual", "test_action_counter_dependency_and_parser_omission_fail_closed"],
+      "interaction_tests": ["test_cast_counter_trigger_uses_normalized_event", "test_source_attack_counter_trigger_uses_replacement_owner", "test_land_entry_counter_trigger_uses_normalized_event", "test_source_named_artifact_entry_player_counter_trigger_compiles_exactly", "test_subtype_entry_trigger_filters_and_uses_replacement_owner", "test_zone_entry_counter_triggers_apply_typed_subject_relations", "test_creature_death_counter_trigger_uses_lki_subject_filters", "test_any_death_trigger_observes_opponents_and_its_own_lki", "test_draw_counter_triggers_use_public_normalized_events", "test_life_gain_counter_trigger_uses_replacement_resolved_amount", "test_scheduled_counter_trigger_suspends_for_quantity_replacement", "test_multiple_scheduled_counter_triggers_use_one_apnap_batch", "test_targeted_cast_triggers_heroic_and_magecraft_in_one_batch", "test_battalion_uses_sealed_three_attacker_transition", "test_actual_sacrifice_cost_queues_one_counter_per_object_and_replays", "test_pending_sacrifice_trigger_does_not_modify_blinked_source", "test_another_excludes_self_sacrifice_while_foreign_owned_controlled_subject_counts", "test_noncreature_nonland_discard_trigger_uses_replaced_public_result_and_private_choice"],
+      "multiplayer_tests": ["test_four_player_counter_trigger_choice_is_private_and_replays_exactly", "test_opponent_death_counter_trigger_uses_previous_controller", "test_death_counter_replacement_is_private_and_replays_exactly", "test_another_excludes_self_sacrifice_while_foreign_owned_controlled_subject_counts"],
+      "privacy_tests": ["test_four_player_counter_trigger_choice_is_private_and_replays_exactly", "test_death_counter_replacement_is_private_and_replays_exactly", "test_noncreature_nonland_discard_trigger_uses_replaced_public_result_and_private_choice"],
+      "replay_tests": ["test_four_player_counter_trigger_choice_is_private_and_replays_exactly", "test_death_counter_replacement_is_private_and_replays_exactly", "test_actual_sacrifice_cost_queues_one_counter_per_object_and_replays", "test_pending_sacrifice_trigger_does_not_modify_blinked_source", "test_noncreature_nonland_discard_trigger_uses_replaced_public_result_and_private_choice"],
       "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "The source-spanned trigger remains material when normalized event production, APNAP placement, counter replacement, or any body-specific effect dependency is unavailable.",
@@ -7641,7 +7641,7 @@
     },
     {
       "id": "trigger.event.normalized_zone_change",
-      "version": 8,
+      "version": 9,
       "official_rules": [
         "603.2",
         "603.6",
@@ -7707,7 +7707,8 @@
         "test_public_zone_damage_and_cast_predicates_compile_exactly",
         "test_public_event_binding_closure_compiles_exact_bodies",
         "test_public_zone_trigger_uses_sealed_entry_power",
-        "test_two_simultaneous_copies_use_post_event_history_characteristics"
+        "test_two_simultaneous_copies_use_post_event_history_characteristics",
+        "test_sacrifice_another_and_discard_counter_bodies_share_typed_events"
       ],
       "negative_tests": [
         "test_public_action_event_suffixes_remain_fail_closed",
@@ -7715,7 +7716,9 @@
         "test_occurrence_rejects_malformed_and_non_event_moves_are_empty",
         "test_counter_transition_kind_is_closed_and_typed",
         "test_public_event_binding_closure_dependencies_and_parser_mutant_fail_closed",
-        "test_pre_history_characteristic_sealing_mutant_is_killed"
+        "test_pre_history_characteristic_sealing_mutant_is_killed",
+        "test_aggregate_limited_and_malformed_action_grammar_remains_residual",
+        "test_action_counter_dependency_and_parser_omission_fail_closed"
       ],
       "interaction_tests": [
         "test_sacrifice_and_discard_predicates_use_committed_lki",
@@ -7733,16 +7736,22 @@
         "test_closed_zone_event_predicates_use_lki_and_batching",
         "test_history_characteristic_distinguishing_controls",
         "test_replacement_adjusted_history_characteristic_quantity",
-        "test_history_precedes_final_power_and_keyword_sealing"
+        "test_history_precedes_final_power_and_keyword_sealing",
+        "test_actual_sacrifice_cost_queues_one_counter_per_object_and_replays",
+        "test_pending_sacrifice_trigger_does_not_modify_blinked_source",
+        "test_another_excludes_self_sacrifice_while_foreign_owned_controlled_subject_counts",
+        "test_noncreature_nonland_discard_trigger_uses_replaced_public_result_and_private_choice"
       ],
       "multiplayer_tests": [
         "test_sacrifice_and_discard_predicates_use_committed_lki",
         "test_normalized_batch_predicates_share_damage_zone_and_token_owners",
-        "test_simultaneous_semantic_triggers_use_apnap_and_owner_order"
+        "test_simultaneous_semantic_triggers_use_apnap_and_owner_order",
+        "test_another_excludes_self_sacrifice_while_foreign_owned_controlled_subject_counts"
       ],
       "privacy_tests": [
         "test_sacrifice_and_discard_predicates_use_committed_lki",
-        "test_private_library_to_hand_move_produces_no_public_trigger_event"
+        "test_private_library_to_hand_move_produces_no_public_trigger_event",
+        "test_noncreature_nonland_discard_trigger_uses_replaced_public_result_and_private_choice"
       ],
       "replay_tests": [
         "test_fixed_life_self_enter_trigger_replays_exactly",
@@ -7750,7 +7759,10 @@
         "test_simultaneous_death_history_replays_from_pre_action_checkpoint",
         "test_two_simultaneous_copies_use_post_event_history_characteristics",
         "test_history_characteristic_distinguishing_controls",
-        "test_replacement_adjusted_history_characteristic_quantity"
+        "test_replacement_adjusted_history_characteristic_quantity",
+        "test_actual_sacrifice_cost_queues_one_counter_per_object_and_replays",
+        "test_pending_sacrifice_trigger_does_not_modify_blinked_source",
+        "test_noncreature_nonland_discard_trigger_uses_replaced_public_result_and_private_choice"
       ],
       "required_evidence": [
         "positive",

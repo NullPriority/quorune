@@ -174,7 +174,7 @@ PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
         *{
             f"{actor}_discards_{subject}"
             for actor in ("controller", "opponent", "player")
-            for subject in ("card", "land", "creature", "nonland")
+            for subject in ("card", "land", "creature", "nonland", "noncreature_nonland")
         },
         *{
             "one_or_more_controller_"
@@ -1238,13 +1238,21 @@ def fixed_counter_event_trigger_node(
     )
     if binding is None:
         return None
-    if binding.variant in _NONCOUNTER_PUBLIC_EVENT_VARIANTS:
+    if binding.variant in _NONCOUNTER_PUBLIC_EVENT_VARIANTS and not (
+        binding.event in {FixedCounterTriggerEvent.PERMANENT_SACRIFICED, FixedCounterTriggerEvent.CARD_DISCARDED}
+        and binding.variant in PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS
+    ):
         return None
     optional_match = re.fullmatch(
         r"you may (?P<body>.+)",
         binding.body,
         re.IGNORECASE,
     )
+    if optional_match is not None and binding.event in {
+        FixedCounterTriggerEvent.PERMANENT_SACRIFICED,
+        FixedCounterTriggerEvent.CARD_DISCARDED,
+    } and binding.variant in PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS:
+        return None
     body = (
         optional_match.group("body")
         if optional_match is not None

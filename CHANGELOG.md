@@ -11,6 +11,11 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Compose repeatable public sacrifice and discard events with exact typed
+  counter bodies. Source exclusion, borrowed custody, replaced discard
+  destinations, private choice projection and blinked-source rejection use the
+  existing event and transaction owners.
+
 - Resolve complete Fading and Vanishing lifecycles through canonical counter,
   upkeep and separate last-removal trigger owners. Counter-removal discovery
   reads post-event characteristics before state-based actions.
