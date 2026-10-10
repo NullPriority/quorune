@@ -1252,7 +1252,7 @@ def _is_closed_fixed_public_zone_move_set_program(
                     "exile",
                     "return-to-owner-hand",
                     "fixed-public-zone-move",
-                    "fixed-public-zone-move-set",
+                    "fixed-public-zone-move-set", "fixed-private-hand-entry",
                     "cr-115-targets",
                 }
             ),

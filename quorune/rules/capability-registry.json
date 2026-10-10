@@ -5790,17 +5790,17 @@
     },
     {
       "id": "zone.move.fixed_private_hand_choice",
-      "version": 1,
-      "official_rules": ["108.3", "109.2", "400.2", "400.3", "400.7", "608.2c", "608.2d"],
+      "version": 2,
+      "official_rules": ["108.3", "109.2", "400.2", "400.3", "400.7", "608.2c", "608.2d", "303.4f", "303.4g", "303.4h", "303.4i", "614.12", "616.1", "700.6", "305.4"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
         "summary": "Compile and execute one optional resolving-controller choice of a card matching a closed fixed predicate from that player's private hand, then move the revalidated card toward the battlefield under that player's control through the canonical zone-change owner.",
-        "inputs": ["one source-spanned optional hand-entry clause", "one closed land, basic-land, creature, Equipment, fixed-color creature, multicolored creature, or Minotaur-permanent predicate", "actor-private current hand identities", "fixed tapped or ordinary entry policy", "represented destination-replacement selections"],
-        "outputs": ["one actor-private optional object choice", "offer/commit predicate parity", "replacement-aware battlefield entry", "new logical object identity", "normalized entry events", "principal-scoped projection", "exact replay"],
-        "exclusions": ["Aura, historic, generic artifact, generic permanent, nonpermanent, variable, chosen, linked, random, each-player, opponent-hand, library, graveyard, and command-zone selections", "attachment choices, additional entry counters, multiple cards, attacking entry, and later references to the selected identity", "copied, granted, text-changed, and independently unsupported ability carriers"]
+        "inputs": ["one source-spanned optional hand-entry clause or exact preceding fixed draw", "one closed land, basic-land, creature, Equipment, artifact, historic-permanent union, fixed-color creature, multicolored creature, or Minotaur-permanent predicate", "actor-private current hand identities", "fixed tapped or ordinary entry policy", "represented destination-replacement selections"],
+        "outputs": ["one actor-private optional object choice", "offer/commit predicate parity", "replacement-aware battlefield entry", "sealed old incarnation through private selection and entry suspension", "new logical object identity", "normalized entry events", "principal-scoped projection", "exact replay"],
+        "exclusions": ["Direct generic Aura, generic permanent, nonpermanent, variable, chosen, linked, random, each-player, opponent-hand, library, graveyard, and command-zone selections", "Unrepresented attachment domains, additional entry counters, multiple cards, attacking entry, and later linked references to the selected identity", "copied, granted, text-changed, and independently unsupported ability carriers"]
       },
       "dependencies": ["zone.change.destination_replacement"],
-      "implementation_components": ["quorune.compiler.hand_entry_templates.FixedPrivateHandEntryTemplate", "quorune.rules.public_zone_move_capability_shapes.fixed_private_hand_entry_node_capabilities", "quorune.semantic_choices.object_selection.PutTypedCardFromHandHandler", "quorune.semantic_runtime.intents.ZoneMoveIntent", "quorune.zone_transitions.ZoneTransitionOwner.move_card"],
+      "implementation_components": ["quorune.compiler.hand_entry_templates.FixedPrivateHandEntryTemplate", "quorune.rules.public_zone_move_capability_shapes.fixed_private_hand_entry_node_capabilities", "quorune.semantic_choices.object_selection.PutTypedCardFromHandHandler", "quorune.hand_entry_queries.decode_hand_entry_queries", "quorune.hand_entry_move.resolve_selected_hand_entry_card", "quorune.zone_transitions.ZoneTransitionOwner.move_card"],
       "positive_tests": ["test_private_hand_entry_matrix_compiles_through_one_choice_owner", "test_private_hand_entry_is_projected_revalidated_and_replays"],
       "negative_tests": ["test_private_hand_entry_matrix_compiles_through_one_choice_owner", "test_private_hand_entry_rejects_stale_selection_without_mutation"],
       "interaction_tests": ["test_private_hand_entry_is_projected_revalidated_and_replays"],

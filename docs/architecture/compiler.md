@@ -799,13 +799,23 @@ otherwise universal Oracle instruction.
 `compiler/hand_entry_templates.py` and
 `compiler/public_tap_state_set_templates.py` reuse that public-object query
 boundary for two adjacent fixed families. The former offers one actor-private,
-owner-pinned hand choice and revalidates the same current object before the
-ordinary replacement-aware battlefield move. The latter locks one current
+owner-pinned hand choice over represented land, creature, Equipment, artifact,
+and historic-permanent predicates. Historic entry uses a closed union of the
+existing object queries: artifact, legendary permanent, or Saga. Legendary
+nonpermanents do not qualify. A fixed draw may precede the optional choice;
+the committed draw runs once before current hand candidates are discovered.
+Selection seals the card's logical incarnation and revalidates its ownership
+and predicate before the ordinary replacement-aware battlefield move and
+after any entry suspension. A qualifying Aura uses the existing nontargeted
+attachment choice; Shroud does not prohibit that choice, while Protection and
+Enchant legality still apply. With no legal recipient, the Aura stays in hand.
+The latter locks one current
 public permanent set and delegates each fixed tap or untap result to the
 canonical tap-state owner, including stun-counter replacement. Choice options
 are ordered by stable object reference so checkpoint replay cannot depend on
-in-memory card insertion order. Aura entry, additional entry counters,
-attacking entry, wider hidden selection, continuous untap prohibitions, and
+in-memory card insertion order. Direct generic Aura selection, unrepresented
+attachment domains, additional entry counters, attacking entry, linked later
+references, wider hidden selection, continuous untap prohibitions, and
 dynamic or chosen tap predicates remain residual.
 
 `compiler/fixed_owner_zone_move_templates.py` owns the complementary closed

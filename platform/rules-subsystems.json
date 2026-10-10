@@ -4780,7 +4780,7 @@
           "estimated_generation_hours": 1,
           "expected_downstream_closure": "Promotes a normal-floor cross-era movement cohort across spells, triggers, activations, and modal programs while sharing current characteristic queries, APNAP public-set ordering, owner-relative destinations, prospective battlefield controller facts, private selection, stun-counter replacement, rollback, projection, and exact replay.",
           "explicit_exclusions": [
-            "attachment-dependent battlefield entry, including Auras, and additional entry-counter instructions",
+            "direct generic Aura selection, unrepresented attachment domains, and additional entry-counter instructions",
             "continuous untap prohibitions, next-untap-step schedules, remove-from-combat riders, and optional aggregate tap-or-untap choices",
             "independently unsupported sibling abilities, history-linked results, and unrepresented destination replacements",
             "library, opponent-hand, command, stack, attacking-entry, copied, granted, and text-changed private selections",

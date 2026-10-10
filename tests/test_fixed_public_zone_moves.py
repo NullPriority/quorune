@@ -424,7 +424,7 @@ class FixedPublicZoneMoveCompilerTests(unittest.TestCase):
                 )
 
         for text in (
-            "You may put a historic permanent card from your hand onto the battlefield.",
+            "You may put a historic card from your hand onto the battlefield.",
             "Each player may put a creature card from their hand onto the battlefield.",
             "You may put an Aura card from your hand onto the battlefield.",
             "You may put a creature card from your hand onto the battlefield with a +1/+1 counter on it.",

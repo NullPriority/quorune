@@ -2,6 +2,7 @@ from __future__ import annotations
 from .counter_resolution_effect_templates import counter_resolution_effect_template
 from .public_quantity_mana_effects import public_quantity_mana_effect_template
 from .whole_hand_discard_templates import whole_hand_discard_effect_template, whole_hand_discard_draw_sequence_template, whole_hand_discard_public_draw_sequence
+from .hand_entry_templates import fixed_draw_then_hand_entry_template
 
 from typing import Any, Mapping, Sequence
 
@@ -110,6 +111,8 @@ def _source_context_resolution_template(
     text: str, *, card_name: str, source_is_permanent: bool | None,
     source_card_types: Sequence[str],
 ) -> CompiledEffectTemplate | None:
+    hand_entry=fixed_draw_then_hand_entry_template(text)
+    if hand_entry is not None:return hand_entry
     discard = whole_hand_discard_effect_template(text) or whole_hand_discard_draw_sequence_template(text) or whole_hand_discard_public_draw_sequence(text,source_name=card_name)
     if discard is not None:
         return discard

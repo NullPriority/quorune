@@ -388,78 +388,12 @@ def fixed_private_hand_entry_node_capabilities(
         or type(effect.get("tapped")) is not bool
     ):
         return ()
+    from ..hand_entry_queries import decode_hand_entry_queries
     try:
-        query = ObjectQuerySpec.from_dict(effect["query"])
-    except (KeyError, TypeError, ObjectQueryError):
+        decode_hand_entry_queries(effect["query"])
+    except (KeyError, TypeError, ValueError):
         return ()
-    if (
-        query.zones != ("hand",)
-        or query.owner is not None
-        or query.controller is not None
-        or query.excluded_controllers
-        or query.excluded_types
-        or query.subtypes_any
-        or query.excluded_subtypes
-        or query.colors_all
-        or query.colorless is not None
-        or query.keywords_all
-        or query.keywords_none
-        or query.token is not None
-        or query.tapped is not None
-        or query.include_phased_out
-        or query.known_to_actor is not None
-        or query.exclude_ref is not None
-        or query.state_predicate is not None
-    ):
-        return ()
-    permanent_types = {
-        "artifact",
-        "battle",
-        "creature",
-        "enchantment",
-        "land",
-        "planeswalker",
-    }
-    allowed = any(
-        (
-            query.types_all == ("land",)
-            and not query.types_any
-            and not query.subtypes_all
-            and not query.colors_any
-            and query.minimum_color_count is None
-            and query.supertypes_all in {(), ("basic",)}
-        ,
-            query.types_all == ("creature",)
-            and not query.types_any
-            and not query.subtypes_all
-            and not query.supertypes_all
-            and len(query.colors_any) <= 2
-            and query.minimum_color_count in {None, 2}
-            and not (query.colors_any and query.minimum_color_count is not None)
-        ,
-            query.types_all == ("artifact",)
-            and query.subtypes_all == ("equipment",)
-            and not query.types_any
-            and not query.supertypes_all
-            and not query.colors_any
-            and query.minimum_color_count is None
-        ,
-            set(query.types_any) == permanent_types
-            and not query.types_all
-            and query.subtypes_all == ("minotaur",)
-            and not query.supertypes_all
-            and not query.colors_any
-            and query.minimum_color_count is None
-        )
-    )
-    return (
-        (
-            "zone.move.fixed_private_hand_choice",
-            "zone.change.destination_replacement",
-        )
-        if allowed
-        else ()
-    )
+    return ("zone.move.fixed_private_hand_choice", "zone.change.destination_replacement")
 
 
 def fixed_public_tap_state_set_node_capabilities(

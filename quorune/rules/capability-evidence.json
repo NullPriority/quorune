@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "67b143d67d4a66bfdf3ac877139c4fce8ca365fffa62e64fc31e24312f34b83f",
-  "declaration_source_fingerprint": "22e94da0570bb462bf82d99db6d2b3c96dde5d7253b7a298fefc9016d3e6a26e",
+  "registry_fingerprint": "5becff9dcea2acb8dc9f0eac8cac06e1b28213d7efe3793dd71343455225baa9",
+  "declaration_source_fingerprint": "29d2fa40043c6e3c86ea4e5651fe3c30ded08c7627bbca9b52c5414efe32f13d",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -84772,7 +84772,15 @@
         "400.3",
         "400.7",
         "608.2c",
-        "608.2d"
+        "608.2d",
+        "303.4f",
+        "303.4g",
+        "303.4h",
+        "303.4i",
+        "614.12",
+        "616.1",
+        "700.6",
+        "305.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -84780,6 +84788,146 @@
         "commander_review"
       ],
       "applicability_note": "Compose the private choice with current predicate revalidation and canonical replacement-aware battlefield entry."
+    },
+    {
+      "capability_id": "zone.move.fixed_private_hand_choice",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_hand_entry_expansion.HandEntryExpansionRuntimeTests.test_actual_chulane_draws_once_before_optional_land_entry_and_replays",
+      "official_rule_ids": [
+        "108.3",
+        "109.2",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2c",
+        "608.2d",
+        "303.4f",
+        "303.4g",
+        "303.4h",
+        "303.4i",
+        "614.12",
+        "616.1",
+        "700.6",
+        "305.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Selected private incarnation, canonical Aura/Riot entry and committed draw-prefix resumption."
+    },
+    {
+      "capability_id": "zone.move.fixed_private_hand_choice",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_hand_entry_expansion.HandEntryExpansionRuntimeTests.test_actual_copper_source_sacrifice_keeps_private_entry_ability",
+      "official_rule_ids": [
+        "108.3",
+        "109.2",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2c",
+        "608.2d",
+        "303.4f",
+        "303.4g",
+        "303.4h",
+        "303.4i",
+        "614.12",
+        "616.1",
+        "700.6",
+        "305.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical hand-entry predicates, historic union, selected incarnation, private choice and canonical entry continuations."
+    },
+    {
+      "capability_id": "zone.move.fixed_private_hand_choice",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_hand_entry_expansion.HandEntryExpansionRuntimeTests.test_hand_entry_actual_riot_choice_resumes_selected_move_and_replays",
+      "official_rule_ids": [
+        "108.3",
+        "109.2",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2c",
+        "608.2d",
+        "303.4f",
+        "303.4g",
+        "303.4h",
+        "303.4i",
+        "614.12",
+        "616.1",
+        "700.6",
+        "305.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Selected private incarnation, canonical Aura/Riot entry and committed draw-prefix resumption."
+    },
+    {
+      "capability_id": "zone.move.fixed_private_hand_choice",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_hand_entry_expansion.HandEntryExpansionRuntimeTests.test_hand_entry_aura_attachment_pending_save_load_and_replay",
+      "official_rule_ids": [
+        "108.3",
+        "109.2",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2c",
+        "608.2d",
+        "303.4f",
+        "303.4g",
+        "303.4h",
+        "303.4i",
+        "614.12",
+        "616.1",
+        "700.6",
+        "305.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical hand-entry predicates, historic union, selected incarnation, private choice and canonical entry continuations."
+    },
+    {
+      "capability_id": "zone.move.fixed_private_hand_choice",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_hand_entry_expansion.HandEntryExpansionRuntimeTests.test_hand_entry_aura_ignores_shroud_and_enforces_protection",
+      "official_rule_ids": [
+        "108.3",
+        "109.2",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2c",
+        "608.2d",
+        "303.4f",
+        "303.4g",
+        "303.4h",
+        "303.4i",
+        "614.12",
+        "616.1",
+        "700.6",
+        "305.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Selected private incarnation, canonical Aura/Riot entry and committed draw-prefix resumption."
     },
     {
       "capability_id": "zone.move.fixed_private_hand_choice",
@@ -84792,7 +84940,15 @@
         "400.3",
         "400.7",
         "608.2c",
-        "608.2d"
+        "608.2d",
+        "303.4f",
+        "303.4g",
+        "303.4h",
+        "303.4i",
+        "614.12",
+        "616.1",
+        "700.6",
+        "305.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -84800,6 +84956,34 @@
         "commander_review"
       ],
       "applicability_note": "Resolve the actor-scoped private choice in four-player state without exposing the candidate to other seats."
+    },
+    {
+      "capability_id": "zone.move.fixed_private_hand_choice",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_hand_entry_expansion.HandEntryExpansionRuntimeTests.test_actual_gateway_offers_only_historic_permanents_and_enters_selected_artifact",
+      "official_rule_ids": [
+        "108.3",
+        "109.2",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2c",
+        "608.2d",
+        "303.4f",
+        "303.4g",
+        "303.4h",
+        "303.4i",
+        "614.12",
+        "616.1",
+        "700.6",
+        "305.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical hand-entry predicates, historic union, selected incarnation, private choice and canonical entry continuations."
     },
     {
       "capability_id": "zone.move.fixed_private_hand_choice",
@@ -84812,7 +84996,15 @@
         "400.3",
         "400.7",
         "608.2c",
-        "608.2d"
+        "608.2d",
+        "303.4f",
+        "303.4g",
+        "303.4h",
+        "303.4i",
+        "614.12",
+        "616.1",
+        "700.6",
+        "305.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -84820,6 +85012,34 @@
         "commander_review"
       ],
       "applicability_note": "Remove the typed compiler production or alter its closed operation and predicate shape; capability admission fails."
+    },
+    {
+      "capability_id": "zone.move.fixed_private_hand_choice",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_hand_entry_expansion.HandEntryExpansionRuntimeTests.test_hand_entry_predicate_mutant_is_killed",
+      "official_rule_ids": [
+        "108.3",
+        "109.2",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2c",
+        "608.2d",
+        "303.4f",
+        "303.4g",
+        "303.4h",
+        "303.4i",
+        "614.12",
+        "616.1",
+        "700.6",
+        "305.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical hand-entry predicates, historic union, selected incarnation, private choice and canonical entry continuations."
     },
     {
       "capability_id": "zone.move.fixed_private_hand_choice",
@@ -84832,7 +85052,15 @@
         "400.3",
         "400.7",
         "608.2c",
-        "608.2d"
+        "608.2d",
+        "303.4f",
+        "303.4g",
+        "303.4h",
+        "303.4i",
+        "614.12",
+        "616.1",
+        "700.6",
+        "305.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -84840,6 +85068,146 @@
         "commander_review"
       ],
       "applicability_note": "Keep Aura, historic, each-player, and entry-counter forms outside the closed private choice grammar."
+    },
+    {
+      "capability_id": "zone.move.fixed_private_hand_choice",
+      "evidence_class": "negative",
+      "test_id": "tests.test_hand_entry_expansion.HandEntryExpansionCompilerTests.test_hand_entry_disjunction_schema_and_unsupported_tails_stay_closed",
+      "official_rule_ids": [
+        "108.3",
+        "109.2",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2c",
+        "608.2d",
+        "303.4f",
+        "303.4g",
+        "303.4h",
+        "303.4i",
+        "614.12",
+        "616.1",
+        "700.6",
+        "305.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical hand-entry predicates, historic union, selected incarnation, private choice and canonical entry continuations."
+    },
+    {
+      "capability_id": "zone.move.fixed_private_hand_choice",
+      "evidence_class": "negative",
+      "test_id": "tests.test_hand_entry_expansion.HandEntryExpansionRuntimeTests.test_hand_entry_aura_with_no_recipient_stays_in_hand",
+      "official_rule_ids": [
+        "108.3",
+        "109.2",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2c",
+        "608.2d",
+        "303.4f",
+        "303.4g",
+        "303.4h",
+        "303.4i",
+        "614.12",
+        "616.1",
+        "700.6",
+        "305.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Selected private incarnation, canonical Aura/Riot entry and committed draw-prefix resumption."
+    },
+    {
+      "capability_id": "zone.move.fixed_private_hand_choice",
+      "evidence_class": "negative",
+      "test_id": "tests.test_hand_entry_expansion.HandEntryExpansionRuntimeTests.test_hand_entry_malformed_identity_map_is_rejected_and_decline_is_legal",
+      "official_rule_ids": [
+        "108.3",
+        "109.2",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2c",
+        "608.2d",
+        "303.4f",
+        "303.4g",
+        "303.4h",
+        "303.4i",
+        "614.12",
+        "616.1",
+        "700.6",
+        "305.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Selected private incarnation, canonical Aura/Riot entry and committed draw-prefix resumption."
+    },
+    {
+      "capability_id": "zone.move.fixed_private_hand_choice",
+      "evidence_class": "negative",
+      "test_id": "tests.test_hand_entry_expansion.HandEntryExpansionRuntimeTests.test_hand_entry_selected_incarnation_is_sealed_through_aura_choice",
+      "official_rule_ids": [
+        "108.3",
+        "109.2",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2c",
+        "608.2d",
+        "303.4f",
+        "303.4g",
+        "303.4h",
+        "303.4i",
+        "614.12",
+        "616.1",
+        "700.6",
+        "305.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Selected private incarnation, canonical Aura/Riot entry and committed draw-prefix resumption."
+    },
+    {
+      "capability_id": "zone.move.fixed_private_hand_choice",
+      "evidence_class": "negative",
+      "test_id": "tests.test_hand_entry_expansion.HandEntryExpansionRuntimeTests.test_hand_entry_stale_new_incarnation_is_rejected_before_mutation",
+      "official_rule_ids": [
+        "108.3",
+        "109.2",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2c",
+        "608.2d",
+        "303.4f",
+        "303.4g",
+        "303.4h",
+        "303.4i",
+        "614.12",
+        "616.1",
+        "700.6",
+        "305.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical hand-entry predicates, historic union, selected incarnation, private choice and canonical entry continuations."
     },
     {
       "capability_id": "zone.move.fixed_private_hand_choice",
@@ -84852,7 +85220,15 @@
         "400.3",
         "400.7",
         "608.2c",
-        "608.2d"
+        "608.2d",
+        "303.4f",
+        "303.4g",
+        "303.4h",
+        "303.4i",
+        "614.12",
+        "616.1",
+        "700.6",
+        "305.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -84860,6 +85236,34 @@
         "commander_review"
       ],
       "applicability_note": "Compile the closed land, creature, Equipment, color, and subtype predicates into one typed private hand-entry choice."
+    },
+    {
+      "capability_id": "zone.move.fixed_private_hand_choice",
+      "evidence_class": "positive",
+      "test_id": "tests.test_hand_entry_expansion.HandEntryExpansionCompilerTests.test_hand_entry_artifact_historic_and_draw_prefix_preserve_queries",
+      "official_rule_ids": [
+        "108.3",
+        "109.2",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2c",
+        "608.2d",
+        "303.4f",
+        "303.4g",
+        "303.4h",
+        "303.4i",
+        "614.12",
+        "616.1",
+        "700.6",
+        "305.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical hand-entry predicates, historic union, selected incarnation, private choice and canonical entry continuations."
     },
     {
       "capability_id": "zone.move.fixed_private_hand_choice",
@@ -84872,7 +85276,15 @@
         "400.3",
         "400.7",
         "608.2c",
-        "608.2d"
+        "608.2d",
+        "303.4f",
+        "303.4g",
+        "303.4h",
+        "303.4i",
+        "614.12",
+        "616.1",
+        "700.6",
+        "305.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -84880,6 +85292,34 @@
         "commander_review"
       ],
       "applicability_note": "Project eligible private hand identities only to the resolving controller until the selected card enters the public battlefield."
+    },
+    {
+      "capability_id": "zone.move.fixed_private_hand_choice",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_hand_entry_expansion.HandEntryExpansionRuntimeTests.test_actual_gateway_offers_only_historic_permanents_and_enters_selected_artifact",
+      "official_rule_ids": [
+        "108.3",
+        "109.2",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2c",
+        "608.2d",
+        "303.4f",
+        "303.4g",
+        "303.4h",
+        "303.4i",
+        "614.12",
+        "616.1",
+        "700.6",
+        "305.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical hand-entry predicates, historic union, selected incarnation, private choice and canonical entry continuations."
     },
     {
       "capability_id": "zone.move.fixed_private_hand_choice",
@@ -84892,7 +85332,15 @@
         "400.3",
         "400.7",
         "608.2c",
-        "608.2d"
+        "608.2d",
+        "303.4f",
+        "303.4g",
+        "303.4h",
+        "303.4i",
+        "614.12",
+        "616.1",
+        "700.6",
+        "305.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -84900,6 +85348,62 @@
         "commander_review"
       ],
       "applicability_note": "Replay activation, private selection, new incarnation, public entry, and final authoritative hash exactly."
+    },
+    {
+      "capability_id": "zone.move.fixed_private_hand_choice",
+      "evidence_class": "replay",
+      "test_id": "tests.test_hand_entry_expansion.HandEntryExpansionRuntimeTests.test_hand_entry_actual_riot_choice_resumes_selected_move_and_replays",
+      "official_rule_ids": [
+        "108.3",
+        "109.2",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2c",
+        "608.2d",
+        "303.4f",
+        "303.4g",
+        "303.4h",
+        "303.4i",
+        "614.12",
+        "616.1",
+        "700.6",
+        "305.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Selected private incarnation, canonical Aura/Riot entry and committed draw-prefix resumption."
+    },
+    {
+      "capability_id": "zone.move.fixed_private_hand_choice",
+      "evidence_class": "replay",
+      "test_id": "tests.test_hand_entry_expansion.HandEntryExpansionRuntimeTests.test_hand_entry_aura_attachment_pending_save_load_and_replay",
+      "official_rule_ids": [
+        "108.3",
+        "109.2",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2c",
+        "608.2d",
+        "303.4f",
+        "303.4g",
+        "303.4h",
+        "303.4i",
+        "614.12",
+        "616.1",
+        "700.6",
+        "305.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical hand-entry predicates, historic union, selected incarnation, private choice and canonical entry continuations."
     },
     {
       "capability_id": "zone.move.fixed_private_hand_choice",
@@ -84912,7 +85416,15 @@
         "400.3",
         "400.7",
         "608.2c",
-        "608.2d"
+        "608.2d",
+        "303.4f",
+        "303.4g",
+        "303.4h",
+        "303.4i",
+        "614.12",
+        "616.1",
+        "700.6",
+        "305.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -86162,5 +86674,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "fb59b63efa482320b271938392a3f285020559ea34575afc8df15f4044d7e7b0"
+  "fingerprint": "5ad6f8c1ae486d6602f2757ee90fa7e2ccfb1d5dca1e5e41212f0139ca413670"
 }
