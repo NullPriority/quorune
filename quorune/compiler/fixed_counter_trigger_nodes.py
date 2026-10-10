@@ -1248,11 +1248,6 @@ def fixed_counter_event_trigger_node(
         binding.body,
         re.IGNORECASE,
     )
-    if optional_match is not None and binding.event in {
-        FixedCounterTriggerEvent.PERMANENT_SACRIFICED,
-        FixedCounterTriggerEvent.CARD_DISCARDED,
-    } and binding.variant in PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS:
-        return None
     body = (
         optional_match.group("body")
         if optional_match is not None

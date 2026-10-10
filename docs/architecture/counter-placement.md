@@ -46,6 +46,14 @@ per-turn, off-battlefield removal and one-or-more-on-one-or-more-objects
 aggregation remain residual, as do independently unsupported result bodies.
 
 `counter_placement.py` is the focused authoritative owner for represented
+fixed optional results from normalized public sacrifice and discard triggers.
+The existing controller-owned put-or-decline choice places no counters on
+decline and delegates acceptance to the same replacement-aware transaction.
+A replaced discard destination retains its typed discard cause. Compound and
+linked follow-up bodies, unsupported targets, and independent sibling abilities
+remain outside this optional-result contract.
+
+`counter_placement.py` also owns represented
 effect-generated, cost-generated, and typed rule-result counters placed on
 players, battlefield permanents, and the already modeled card-zone counter
 children. It separates the operation into preparation and commit:

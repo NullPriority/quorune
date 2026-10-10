@@ -44,9 +44,9 @@ class RepeatableObjectActionCompilerTests(unittest.TestCase):
         registry=load_default_capability_registry()
         for text in (
             'Whenever you sacrifice one or more permanents, draw a card.',
-            'Whenever you sacrifice another permanent, draw a card. This ability triggers only once each turn.',
+            'Whenever you sacrifice another permanent, draw a card. This ability triggers only once during your turn.',
             'Whenever you sacrifice creature, draw a card.',
-            'Whenever you sacrifice another permanent, you may put a +1/+1 counter on this creature.',
+            'Whenever you sacrifice another permanent, you may put a +1/+1 counter on this creature. If you do, draw a card.',
             'Whenever you discard a card for the first time each turn, draw a card.',
             'Whenever you sacrifice another creature with power X or less, draw a card.',
         ):

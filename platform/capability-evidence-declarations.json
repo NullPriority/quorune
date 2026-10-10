@@ -18494,6 +18494,30 @@
     },
     {
       "capability_id": "counter.producer.optional_fixed_event_trigger",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_optional_object_action_counters.OptionalObjectActionCounterRuntimeTests.test_actual_sacrifice_can_decline_then_place_replaced_counter_and_replay",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "608.2b",
+        "608.2c",
+        "609.1",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A real Carrion Feeder sacrifice produces an optional Mortician Beetle choice; decline places nothing, accepted placement observes Hardened Scales, and the authenticated continuation saves and replays exactly."
+    },
+    {
+      "capability_id": "counter.producer.optional_fixed_event_trigger",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_optional_counter_trigger_choice_composes_with_replacement_and_replay",
       "official_rule_ids": ["115.1", "603.2", "603.3", "603.3b", "608.2b", "608.2c", "609.1", "122.1", "122.6", "614.16", "616.1"],
@@ -18542,6 +18566,30 @@
     },
     {
       "capability_id": "counter.producer.optional_fixed_event_trigger",
+      "evidence_class": "positive",
+      "test_id": "tests.test_optional_object_action_counters.OptionalObjectActionCounterCompilerTests.test_optional_public_action_counter_uses_existing_choice_owner",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "608.2b",
+        "608.2c",
+        "609.1",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A real Carrion Feeder sacrifice produces an optional Mortician Beetle choice; decline places nothing, accepted placement observes Hardened Scales, and the authenticated continuation saves and replays exactly."
+    },
+    {
+      "capability_id": "counter.producer.optional_fixed_event_trigger",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_optional_counter_trigger_choice_composes_with_replacement_and_replay",
       "official_rule_ids": ["115.1", "603.2", "603.3", "603.3b", "608.2b", "608.2c", "609.1", "122.1", "122.6", "614.16", "616.1"],
@@ -18550,11 +18598,59 @@
     },
     {
       "capability_id": "counter.producer.optional_fixed_event_trigger",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_optional_object_action_counters.OptionalObjectActionCounterRuntimeTests.test_actual_sacrifice_can_decline_then_place_replaced_counter_and_replay",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "608.2b",
+        "608.2c",
+        "609.1",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A real Carrion Feeder sacrifice produces an optional Mortician Beetle choice; decline places nothing, accepted placement observes Hardened Scales, and the authenticated continuation saves and replays exactly."
+    },
+    {
+      "capability_id": "counter.producer.optional_fixed_event_trigger",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_optional_counter_trigger_choice_composes_with_replacement_and_replay",
       "official_rule_ids": ["115.1", "603.2", "603.3", "603.3b", "608.2b", "608.2c", "609.1", "122.1", "122.6", "614.16", "616.1"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the accepted optional continuation and every subsequent replacement-order choice to the identical authoritative state hash."
+    },
+    {
+      "capability_id": "counter.producer.optional_fixed_event_trigger",
+      "evidence_class": "replay",
+      "test_id": "tests.test_optional_object_action_counters.OptionalObjectActionCounterRuntimeTests.test_actual_sacrifice_can_decline_then_place_replaced_counter_and_replay",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "608.2b",
+        "608.2c",
+        "609.1",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A real Carrion Feeder sacrifice produces an optional Mortician Beetle choice; decline places nothing, accepted placement observes Hardened Scales, and the authenticated continuation saves and replays exactly."
     },
     {
       "capability_id": "counter.producer.optional_self_entry",

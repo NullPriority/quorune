@@ -8174,6 +8174,36 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Turn to Frog removes the current trigger while a real counter event occurs; owner-diagnostic restoration preserves the prior use and another real event cannot trigger again. Subsequent action segments replay from their explicit checkpoints."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_sacrifice_can_decline_then_place_replaced_counter_and_replay",
+      "piece_ids": [
+        "capability.counter.placement.quantity_replacement",
+        "capability.counter.producer.optional_fixed_event_trigger"
+      ],
+      "capability_ids": [
+        "counter.placement.quantity_replacement",
+        "counter.producer.optional_fixed_event_trigger"
+      ],
+      "interaction_order": 2,
+      "assertion": "A real Carrion Feeder sacrifice issues Mortician Beetle a private controller-owned put-or-decline choice. Decline places nothing; accepted placement passes through Hardened Scales and places exactly two counters. Wrong-seat rejection is atomic, and pending save/load and action replay are exact."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_replaced_discard_retains_optional_counter_choice_and_private_replay",
+      "piece_ids": [
+        "capability.counter.producer.optional_fixed_event_trigger",
+        "capability.zone.discard.typed_cause"
+      ],
+      "capability_ids": [
+        "counter.producer.optional_fixed_event_trigger",
+        "zone.discard.typed_cause"
+      ],
+      "interaction_order": 2,
+      "assertion": "A represented private discard choice replaced by Dauthi exile retains its typed discard cause and issues the generic optional counter observer one controller-owned choice. Accepted placement adds one quest counter with exact pending and pre-action replay."
     }
   ]
 }

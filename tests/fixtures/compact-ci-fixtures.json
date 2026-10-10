@@ -57,6 +57,7 @@
     "tests/fixtures/library-search-qualifier-cards.json",
     "tests/fixtures/limited-event-triggers.json",
     "tests/fixtures/mayhem-cards.json",
+    "tests/fixtures/optional-object-action-counters.json",
     "tests/fixtures/partial-copy-targets-cards.json",
     "tests/fixtures/permanent-additional-costs.json",
     "tests/fixtures/power-up-cards.json",

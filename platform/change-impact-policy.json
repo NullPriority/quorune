@@ -1651,6 +1651,19 @@
       ]
     },
     {
+      "id": "optional-public-action-counter-contract",
+      "patterns": [
+        "quorune/compiler/fixed_counter_trigger_nodes.py",
+        "tests/fixtures/optional-object-action-counters.json"
+      ],
+      "test_modules": [
+        "test_optional_object_action_counters",
+        "test_repeatable_object_action_triggers",
+        "test_fixed_counter_event_triggers",
+        "test_card_program_trust"
+      ]
+    },
+    {
       "id": "typed-trigger-usage-limit-contract",
       "patterns": [
         "quorune/compiler/trigger_limit_nodes.py",

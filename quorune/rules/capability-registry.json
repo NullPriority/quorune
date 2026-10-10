@@ -3468,24 +3468,94 @@
     },
     {
       "id": "counter.producer.optional_fixed_event_trigger",
-      "version": 3,
-      "official_rules": ["115.1", "603.2", "603.3", "603.3b", "608.2b", "608.2c", "609.1", "122.1", "122.6", "614.16", "616.1"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 4,
+      "official_rules": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "608.2b",
+        "608.2c",
+        "609.1",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
-        "summary": "Compile and resolve one optional exact fixed counter-producing effect on a represented normalized step, zone, player-result, spell-cast, or source-self attack event by issuing a controller-owned semantic choice before the canonical resumable counter transaction.",
-        "inputs": ["one source-spanned closed normalized-event trigger", "the exact leading words you may", "one already represented fixed counter-placement effect", "current active source controller", "body-specific target choices and normalized event facts"],
-        "outputs": ["one ordinary triggered CardProgram", "one controller-scoped put-or-decline choice", "no mutation on decline", "ordinary replacement-aware counter placement on acceptance", "exact continuation replay"],
-        "exclusions": ["optional counter effects outside represented event triggers", "multiple or compound effect bodies", "if-you-do and linked follow-up instructions", "conditional, intervening-if, reflexive, variable, modal, repeated, and delayed triggers", "counter movement, removal, prevention, and prohibition", "unsupported event, target, source-reference, or counter-effect grammar"]
+        "summary": "Compile and resolve one optional exact fixed counter-producing effect on a represented normalized step, zone, player-result, spell-cast, or source-self attack event by issuing a controller-owned semantic choice before the canonical resumable counter transaction. Fixed public sacrifice and discard predicates use the same put-or-decline and counter replacement owners.",
+        "inputs": [
+          "one source-spanned closed normalized-event trigger",
+          "the exact leading words you may",
+          "one already represented fixed counter-placement effect",
+          "current active source controller",
+          "body-specific target choices and normalized event facts"
+        ],
+        "outputs": [
+          "one ordinary triggered CardProgram",
+          "one controller-scoped put-or-decline choice",
+          "no mutation on decline",
+          "ordinary replacement-aware counter placement on acceptance",
+          "exact continuation replay"
+        ],
+        "exclusions": [
+          "optional counter effects outside represented event triggers",
+          "multiple or compound effect bodies",
+          "if-you-do and linked follow-up instructions",
+          "conditional, intervening-if, reflexive, variable, modal, repeated, and delayed triggers",
+          "counter movement, removal, prevention, and prohibition",
+          "unsupported event, target, source-reference, or counter-effect grammar"
+        ]
       },
-      "dependencies": ["trigger.placement.apnap"],
-      "implementation_components": ["quorune.compiler.fixed_counter_trigger_nodes.fixed_counter_event_trigger_node", "quorune.rules.optional_counter_capability_shapes.optional_fixed_counter_event_trigger_node_capabilities", "quorune.semantic_choices.optional_counter_placement.OptionalCounterPlacementHandler", "quorune.semantic_runtime.counter_placement_handlers.FixedCounterPlacementHandler", "quorune.counter_placement.place_counters_on_refs"],
-      "positive_tests": ["test_closed_cast_and_source_attack_bindings_compile_exactly", "test_optional_fixed_counter_event_triggers_compile_exactly", "test_single_subtype_entry_counter_triggers_compile_exactly"],
-      "negative_tests": ["test_adjacent_event_and_effect_variants_remain_material", "test_optional_counter_event_trigger_dependencies_and_mutations_fail_closed", "test_optional_counter_choice_rejects_malformed_nested_effect"],
-      "interaction_tests": ["test_optional_counter_trigger_choice_composes_with_replacement_and_replay"],
-      "multiplayer_tests": ["test_optional_counter_trigger_choice_composes_with_replacement_and_replay"],
-      "privacy_tests": ["test_optional_counter_trigger_choice_composes_with_replacement_and_replay"],
-      "replay_tests": ["test_optional_counter_trigger_choice_composes_with_replacement_and_replay"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "trigger.placement.apnap"
+      ],
+      "implementation_components": [
+        "quorune.compiler.fixed_counter_trigger_nodes.fixed_counter_event_trigger_node",
+        "quorune.rules.optional_counter_capability_shapes.optional_fixed_counter_event_trigger_node_capabilities",
+        "quorune.semantic_choices.optional_counter_placement.OptionalCounterPlacementHandler",
+        "quorune.semantic_runtime.counter_placement_handlers.FixedCounterPlacementHandler",
+        "quorune.counter_placement.place_counters_on_refs"
+      ],
+      "positive_tests": [
+        "test_closed_cast_and_source_attack_bindings_compile_exactly",
+        "test_optional_fixed_counter_event_triggers_compile_exactly",
+        "test_single_subtype_entry_counter_triggers_compile_exactly",
+        "test_optional_public_action_counter_uses_existing_choice_owner"
+      ],
+      "negative_tests": [
+        "test_adjacent_event_and_effect_variants_remain_material",
+        "test_optional_counter_event_trigger_dependencies_and_mutations_fail_closed",
+        "test_optional_counter_choice_rejects_malformed_nested_effect"
+      ],
+      "interaction_tests": [
+        "test_optional_counter_trigger_choice_composes_with_replacement_and_replay",
+        "test_actual_sacrifice_can_decline_then_place_replaced_counter_and_replay"
+      ],
+      "multiplayer_tests": [
+        "test_optional_counter_trigger_choice_composes_with_replacement_and_replay"
+      ],
+      "privacy_tests": [
+        "test_optional_counter_trigger_choice_composes_with_replacement_and_replay",
+        "test_actual_sacrifice_can_decline_then_place_replaced_counter_and_replay"
+      ],
+      "replay_tests": [
+        "test_optional_counter_trigger_choice_composes_with_replacement_and_replay",
+        "test_actual_sacrifice_can_decline_then_place_replaced_counter_and_replay"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "The optional trigger remains material when the choice owner, normalized event, APNAP placement, body-specific counter producer, target revalidation, or quantity-replacement closure is unavailable.",
       "implementation_mutation_status": "killed",
