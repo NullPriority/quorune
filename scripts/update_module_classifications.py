@@ -213,6 +213,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/counter_placement.py",
         "quorune/counter_placement_events.py",
         "quorune/counter_doubling.py",
+        "quorune/counter_removal_events.py",
         "quorune/counter_placement_sets.py",
         "quorune/counter_snapshot.py",
         "quorune/keyword_counters.py",
@@ -495,6 +496,7 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/counter_names.py",
         "quorune/counter_removal.py",
         "quorune/counter_state.py",
+        "quorune/counter_removal_events.py",
     }:
         return "counter_state"
     if relative == "quorune/counter_maximums.py":
@@ -792,6 +794,7 @@ def build_classifications() -> dict[str, Any]:
                             "counter_placement.py",
                             "counter_doubling.py",
                             "counter_placement_events.py",
+                            "counter_removal_events.py",
                             "counter_placement_sets.py",
                             "counter_maximums.py",
                             "counter_names.py",

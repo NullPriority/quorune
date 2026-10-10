@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "c379dde0387cbf96eb89364fec600ed492b7bb206f7f6afad65fac2eae1ad0cb",
-  "declaration_source_fingerprint": "500788853dccae3cf1b5a7cffb651cf2fbff0c4069ee80b3058ad3fb577efe3e",
+  "registry_fingerprint": "6c34efdedce5c48d96c2161732b6a0f7ae8d965985cdec39df8dea299ec51629",
+  "declaration_source_fingerprint": "158c864d5f0b34f2734b0a0d064e3068b0d5ee0a84a71c1aeba298f08aac2fa9",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -34099,6 +34099,237 @@
         "commander_review"
       ],
       "applicability_note": "Fixed Fading uses current fade counters and trigger-controller sacrifice permission, preserving old source identity and canonical replay."
+    },
+    {
+      "capability_id": "counter.lifecycle.vanishing",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_vanishing_rules.VanishingRuntimeTests.test_actual_riftwatcher_single_and_all_counter_effects_preserve_separate_trigger",
+      "official_rule_ids": [
+        "702.63a",
+        "702.63b",
+        "702.63c",
+        "603.4",
+        "113.7a",
+        "400.7",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Distinct Vanishing upkeep and sacrifice triggers consume sealed actual removals and preserve current ability, incarnation, controller and ordinary stack timing."
+    },
+    {
+      "capability_id": "counter.lifecycle.vanishing",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_vanishing_rules.VanishingRuntimeTests.test_countered_sacrifice_trigger_leaves_zero_counters_without_future_upkeep",
+      "official_rule_ids": [
+        "702.63a",
+        "702.63b",
+        "702.63c",
+        "603.4",
+        "113.7a",
+        "400.7",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Distinct Vanishing upkeep and sacrifice triggers consume sealed actual removals and preserve current ability, incarnation, controller and ordinary stack timing."
+    },
+    {
+      "capability_id": "counter.lifecycle.vanishing",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_vanishing_rules.VanishingRuntimeTests.test_repeated_vanishing_instances_queue_distinct_last_removal_triggers",
+      "official_rule_ids": [
+        "702.63a",
+        "702.63b",
+        "702.63c",
+        "603.4",
+        "113.7a",
+        "400.7",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Distinct Vanishing upkeep and sacrifice triggers consume sealed actual removals and preserve current ability, incarnation, controller and ordinary stack timing."
+    },
+    {
+      "capability_id": "counter.lifecycle.vanishing",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_vanishing_rules.VanishingRuntimeTests.test_upkeep_intervening_condition_and_current_ability_loss",
+      "official_rule_ids": [
+        "702.63a",
+        "702.63b",
+        "702.63c",
+        "603.4",
+        "113.7a",
+        "400.7",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Distinct Vanishing upkeep and sacrifice triggers consume sealed actual removals and preserve current ability, incarnation, controller and ordinary stack timing."
+    },
+    {
+      "capability_id": "counter.lifecycle.vanishing",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_vanishing_rules.VanishingRuntimeTests.test_upkeep_last_counter_and_separate_sacrifice_replay",
+      "official_rule_ids": [
+        "702.63a",
+        "702.63b",
+        "702.63c",
+        "603.4",
+        "113.7a",
+        "400.7",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Distinct Vanishing upkeep and sacrifice triggers consume sealed actual removals and preserve current ability, incarnation, controller and ordinary stack timing."
+    },
+    {
+      "capability_id": "counter.lifecycle.vanishing",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_vanishing_rules.VanishingRuntimeTests.test_pending_sacrifice_control_change_blink_and_new_counters",
+      "official_rule_ids": [
+        "702.63a",
+        "702.63b",
+        "702.63c",
+        "603.4",
+        "113.7a",
+        "400.7",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Distinct Vanishing upkeep and sacrifice triggers consume sealed actual removals and preserve current ability, incarnation, controller and ordinary stack timing."
+    },
+    {
+      "capability_id": "counter.lifecycle.vanishing",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_vanishing_rules.VanishingRuntimeTests.test_missing_counter_event_mutant_is_killed",
+      "official_rule_ids": [
+        "702.63a",
+        "702.63b",
+        "702.63c",
+        "603.4",
+        "113.7a",
+        "400.7",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Distinct Vanishing upkeep and sacrifice triggers consume sealed actual removals and preserve current ability, incarnation, controller and ordinary stack timing."
+    },
+    {
+      "capability_id": "counter.lifecycle.vanishing",
+      "evidence_class": "negative",
+      "test_id": "tests.test_vanishing_rules.VanishingCompilerTests.test_lifecycle_dependencies_and_variant_certificates_fail_closed",
+      "official_rule_ids": [
+        "702.63a",
+        "702.63b",
+        "702.63c",
+        "603.4",
+        "113.7a",
+        "400.7",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Distinct Vanishing upkeep and sacrifice triggers consume sealed actual removals and preserve current ability, incarnation, controller and ordinary stack timing."
+    },
+    {
+      "capability_id": "counter.lifecycle.vanishing",
+      "evidence_class": "positive",
+      "test_id": "tests.test_vanishing_rules.VanishingCompilerTests.test_fixed_bare_zero_and_repeated_vanishing_programs_are_closed",
+      "official_rule_ids": [
+        "702.63a",
+        "702.63b",
+        "702.63c",
+        "603.4",
+        "113.7a",
+        "400.7",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Distinct Vanishing upkeep and sacrifice triggers consume sealed actual removals and preserve current ability, incarnation, controller and ordinary stack timing."
+    },
+    {
+      "capability_id": "counter.lifecycle.vanishing",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_vanishing_rules.VanishingRuntimeTests.test_upkeep_last_counter_and_separate_sacrifice_replay",
+      "official_rule_ids": [
+        "702.63a",
+        "702.63b",
+        "702.63c",
+        "603.4",
+        "113.7a",
+        "400.7",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Distinct Vanishing upkeep and sacrifice triggers consume sealed actual removals and preserve current ability, incarnation, controller and ordinary stack timing."
+    },
+    {
+      "capability_id": "counter.lifecycle.vanishing",
+      "evidence_class": "replay",
+      "test_id": "tests.test_vanishing_rules.VanishingRuntimeTests.test_upkeep_last_counter_and_separate_sacrifice_replay",
+      "official_rule_ids": [
+        "702.63a",
+        "702.63b",
+        "702.63c",
+        "603.4",
+        "113.7a",
+        "400.7",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Distinct Vanishing upkeep and sacrifice triggers consume sealed actual removals and preserve current ability, incarnation, controller and ordinary stack timing."
     },
     {
       "capability_id": "counter.placement.quantity_replacement",
@@ -76362,6 +76593,206 @@
       "applicability_note": "Committed counter occurrence quantities, subject/placing-player distinction, current source and canonical trigger continuation."
     },
     {
+      "capability_id": "trigger.event.normalized_counter_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_vanishing_rules.VanishingRuntimeTests.test_actual_counter_cost_places_last_removal_trigger_above_activation",
+      "official_rule_ids": [
+        "122.1",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.10",
+        "113.7a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Distinct Vanishing upkeep and sacrifice triggers consume sealed actual removals and preserve current ability, incarnation, controller and ordinary stack timing."
+    },
+    {
+      "capability_id": "trigger.event.normalized_counter_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_vanishing_rules.VanishingRuntimeTests.test_actual_riftwatcher_single_and_all_counter_effects_preserve_separate_trigger",
+      "official_rule_ids": [
+        "122.1",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.10",
+        "113.7a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Distinct Vanishing upkeep and sacrifice triggers consume sealed actual removals and preserve current ability, incarnation, controller and ordinary stack timing."
+    },
+    {
+      "capability_id": "trigger.event.normalized_counter_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_vanishing_rules.VanishingRuntimeTests.test_counter_removal_reads_post_event_characteristics_before_stabilization",
+      "official_rule_ids": [
+        "122.1",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.10",
+        "113.7a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Distinct Vanishing upkeep and sacrifice triggers consume sealed actual removals and preserve current ability, incarnation, controller and ordinary stack timing."
+    },
+    {
+      "capability_id": "trigger.event.normalized_counter_removal",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_vanishing_rules.VanishingRuntimeTests.test_upkeep_intervening_condition_and_current_ability_loss",
+      "official_rule_ids": [
+        "122.1",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.10",
+        "113.7a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Distinct Vanishing upkeep and sacrifice triggers consume sealed actual removals and preserve current ability, incarnation, controller and ordinary stack timing."
+    },
+    {
+      "capability_id": "trigger.event.normalized_counter_removal",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_vanishing_rules.VanishingRuntimeTests.test_upkeep_last_counter_and_separate_sacrifice_replay",
+      "official_rule_ids": [
+        "122.1",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.10",
+        "113.7a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Distinct Vanishing upkeep and sacrifice triggers consume sealed actual removals and preserve current ability, incarnation, controller and ordinary stack timing."
+    },
+    {
+      "capability_id": "trigger.event.normalized_counter_removal",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_vanishing_rules.VanishingRuntimeTests.test_missing_counter_event_mutant_is_killed",
+      "official_rule_ids": [
+        "122.1",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.10",
+        "113.7a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Distinct Vanishing upkeep and sacrifice triggers consume sealed actual removals and preserve current ability, incarnation, controller and ordinary stack timing."
+    },
+    {
+      "capability_id": "trigger.event.normalized_counter_removal",
+      "evidence_class": "negative",
+      "test_id": "tests.test_vanishing_rules.VanishingRuntimeTests.test_zero_other_kind_and_stale_identity_do_not_queue_last_counter_trigger",
+      "official_rule_ids": [
+        "122.1",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.10",
+        "113.7a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Distinct Vanishing upkeep and sacrifice triggers consume sealed actual removals and preserve current ability, incarnation, controller and ordinary stack timing."
+    },
+    {
+      "capability_id": "trigger.event.normalized_counter_removal",
+      "evidence_class": "positive",
+      "test_id": "tests.test_vanishing_rules.VanishingRuntimeTests.test_removal_batch_seals_actual_transitions_and_discovers_after_commit",
+      "official_rule_ids": [
+        "122.1",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.10",
+        "113.7a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Distinct Vanishing upkeep and sacrifice triggers consume sealed actual removals and preserve current ability, incarnation, controller and ordinary stack timing."
+    },
+    {
+      "capability_id": "trigger.event.normalized_counter_removal",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_vanishing_rules.VanishingRuntimeTests.test_upkeep_last_counter_and_separate_sacrifice_replay",
+      "official_rule_ids": [
+        "122.1",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.10",
+        "113.7a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Distinct Vanishing upkeep and sacrifice triggers consume sealed actual removals and preserve current ability, incarnation, controller and ordinary stack timing."
+    },
+    {
+      "capability_id": "trigger.event.normalized_counter_removal",
+      "evidence_class": "replay",
+      "test_id": "tests.test_vanishing_rules.VanishingRuntimeTests.test_actual_counter_cost_places_last_removal_trigger_above_activation",
+      "official_rule_ids": [
+        "122.1",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.10",
+        "113.7a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Distinct Vanishing upkeep and sacrifice triggers consume sealed actual removals and preserve current ability, incarnation, controller and ordinary stack timing."
+    },
+    {
       "capability_id": "trigger.event.normalized_damage",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_combat_damage_batch_scope_preserves_temporal_apnap_and_replay",
@@ -89461,5 +89892,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "d10d677d73dcbac3a6f849d78c638792538034378fd35034e283ce2d16aab649"
+  "fingerprint": "43e70b98c94274fb49296a881546ab6b667ac046965c5830ce78bcb08e338ca6"
 }

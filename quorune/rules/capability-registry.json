@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 190,
+  "registry_version": 191,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -137,6 +137,7 @@
     {
       "mechanic_id": "vanishing",
       "capabilities": [
+        "counter.lifecycle.vanishing",
         "counter.producer.fixed_keyword_entry"
       ]
     },
@@ -1653,6 +1654,90 @@
       "status": "trusted"
     },
     {
+      "id": "counter.lifecycle.vanishing",
+      "version": 1,
+      "official_rules": [
+        "702.63a",
+        "702.63b",
+        "702.63c",
+        "603.4",
+        "113.7a",
+        "400.7",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Compile fixed, bare and zero Vanishing into separately identified upkeep and last-counter sacrifice triggers using canonical counter and zone owners.",
+        "inputs": [
+          "current controller upkeep",
+          "current time counters",
+          "sealed last time-counter removal",
+          "current ability presence",
+          "source incarnation and trigger controller"
+        ],
+        "outputs": [
+          "upkeep intervening-if recheck",
+          "separate sacrifice trigger on any represented last removal",
+          "pending sacrifice remains applicable after adding counters",
+          "exact replay"
+        ],
+        "exclusions": [
+          "unsupported sibling abilities and costs",
+          "unrepresented ability-grant grammar"
+        ]
+      },
+      "dependencies": [
+        "counter.placement.quantity_replacement",
+        "counter.removal.fixed_effect",
+        "trigger.condition.fixed_public_state",
+        "trigger.event.normalized_counter_removal",
+        "trigger.placement.apnap",
+        "zone.change.destination_replacement"
+      ],
+      "implementation_components": [
+        "quorune.compiler.vanishing_nodes.vanishing_lifecycle_nodes",
+        "quorune.semantic_choices.self_counter_keyword_actions.FixedSelfCounterKeywordActionHandler",
+        "quorune.card_programs.binding.bind_semantic_program_runtime"
+      ],
+      "positive_tests": [
+        "test_fixed_bare_zero_and_repeated_vanishing_programs_are_closed"
+      ],
+      "negative_tests": [
+        "test_lifecycle_dependencies_and_variant_certificates_fail_closed"
+      ],
+      "interaction_tests": [
+        "test_upkeep_last_counter_and_separate_sacrifice_replay"
+      ],
+      "multiplayer_tests": [
+        "test_pending_sacrifice_control_change_blink_and_new_counters"
+      ],
+      "privacy_tests": [
+        "test_upkeep_last_counter_and_separate_sacrifice_replay"
+      ],
+      "replay_tests": [
+        "test_upkeep_last_counter_and_separate_sacrifice_replay"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Every lifecycle node closes through removal events, counter transaction, intervening condition, APNAP and zone owners; borrowed certificates reject.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Suppressing the canonical last-removal event prevents the separate sacrifice trigger and fails the real upkeep witness.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
       "id": "library.search.fixed_counted",
       "version": 1,
       "official_rules": [
@@ -1809,6 +1894,87 @@
       "dependency_fail_closed_rationale": "This bounded life-effect producer delegates to the shared replacement substrate and has no capability dependency.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "test_life_effect_commit_mutant_is_killed removes the typed life commit, test_tampered_semantic_life_intent_fails_closed_without_mutation changes the resumable amount, and test_life_capability_dependencies_and_compiler_mutation_fail_closed removes the closed compiler production; resolved-life, rollback, and exact-node assertions reject all survivors.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "trigger.event.normalized_counter_removal",
+      "version": 1,
+      "official_rules": [
+        "122.1",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.10",
+        "113.7a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Seal actual positive battlefield counter removals at the canonical transaction boundary and discover resulting listeners after the entire batch commits.",
+        "inputs": [
+          "committed CounterRemovalPlan transitions",
+          "public battlefield subject identity",
+          "actual counter before/after count",
+          "post-removal listener and subject characteristics"
+        ],
+        "outputs": [
+          "one actual removal occurrence per changed permanent/counter kind",
+          "post-removal ability presence before state-based actions",
+          "one ordinary APNAP trigger batch",
+          "silent zero removal and absent subscribers",
+          "exact replay"
+        ],
+        "exclusions": [
+          "player counters",
+          "private or exile-card counter removals",
+          "unrepresented generic removed-counter listener grammar"
+        ]
+      },
+      "dependencies": [
+        "counter.removal.rule_generated",
+        "trigger.placement.apnap"
+      ],
+      "implementation_components": [
+        "quorune.counter_removal_events.CounterRemovalEventBatch",
+        "quorune.counter_removal_events.capture_counter_removal_events",
+        "quorune.counter_removal_events.dispatch_counter_removal_events",
+        "quorune.counter_removal.commit_counter_removals"
+      ],
+      "positive_tests": [
+        "test_removal_batch_seals_actual_transitions_and_discovers_after_commit"
+      ],
+      "negative_tests": [
+        "test_zero_other_kind_and_stale_identity_do_not_queue_last_counter_trigger"
+      ],
+      "interaction_tests": [
+        "test_actual_counter_cost_places_last_removal_trigger_above_activation"
+      ],
+      "multiplayer_tests": [
+        "test_upkeep_last_counter_and_separate_sacrifice_replay"
+      ],
+      "privacy_tests": [
+        "test_upkeep_last_counter_and_separate_sacrifice_replay"
+      ],
+      "replay_tests": [
+        "test_actual_counter_cost_places_last_removal_trigger_above_activation"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "A lifecycle requiring last-removal events cannot obtain trusted closure when the canonical counter owner or APNAP owner is blocked.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Dropping dispatch leaves the last counter removed without the required separate trigger.",
       "blockers": [],
       "status": "trusted"
     },

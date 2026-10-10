@@ -349,6 +349,7 @@
       "test_typed_activated_ability_catalog",
       "test_typed_dynamic_characteristics",
       "test_typed_query_self_characteristics",
+      "test_vanishing_rules",
       "test_zone_replacement_compiler"
     ],
     "functional-12": [

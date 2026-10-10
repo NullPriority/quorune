@@ -426,6 +426,19 @@ def plan_all_counter_removal_effect(
     )
 
 
+def _commit_removal_counter_plan(
+    host: CounterRemovalHost, plan: CounterStatePlan,
+) -> tuple[CounterTransition, ...]:
+    from .counter_removal_events import capture_counter_removal_events, dispatch_counter_removal_events
+    try:
+        transitions = commit_counter_changes(host, plan)
+    except CounterStateError as exc:
+        raise CounterRemovalError(str(exc)) from exc
+    events = capture_counter_removal_events(host, transitions)
+    dispatch_counter_removal_events(host, events)
+    return transitions
+
+
 def commit_counter_removals(
     host: CounterRemovalHost,
     plan: CounterRemovalPlan,
@@ -433,10 +446,7 @@ def commit_counter_removals(
     """Commit an exact preflighted removal batch through counter state."""
 
     validate_counter_removal_plan(host, plan)
-    try:
-        return commit_counter_changes(host, plan.counter_plan)
-    except CounterStateError as exc:
-        raise CounterRemovalError(str(exc)) from exc
+    return _commit_removal_counter_plan(host, plan.counter_plan)
 
 
 def validate_counter_removal_plan(
@@ -485,10 +495,7 @@ def commit_counter_removal_effect(
     """Commit one preflighted fixed removal through counter state."""
 
     validate_counter_removal_effect_plan(host, plan)
-    try:
-        transitions = commit_counter_changes(host, plan.counter_plan)
-    except CounterStateError as exc:
-        raise CounterRemovalError(str(exc)) from exc
+    transitions = _commit_removal_counter_plan(host, plan.counter_plan)
     if len(transitions) != 1:
         raise CounterRemovalError(
             "Counter-removal effect committed an invalid transition shape"

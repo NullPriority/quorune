@@ -46,6 +46,11 @@ def generated_ability_id(
     if kind == "triggered_ability":
         base = f"trigger:{face_id}:n{line}"
         parts = str(node_id or "").split(":")
+        if parts[-1] in {"lifecycle", "last-time-counter"}:
+            if len(parts) >= 3 and parts[-2].isdigit() and parts[-3] in FIXED_KEYWORD_ENTRY_MECHANICS:
+                return f"{base}:{parts[-3]}:{parts[-2]}:{parts[-1]}"
+            if parts[-1] == "last-time-counter":
+                return f"{base}:last-time-counter"
         if (
             len(parts) >= 2
             and parts[-1].isdigit()

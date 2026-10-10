@@ -422,6 +422,8 @@ def fixed_self_counter_keyword_action_node_capabilities(
         return ("counter.producer.renown",)
     if action == "fading" and "fading" in mechanics and effect["amount"] == 1:
         return ("counter.lifecycle.fading",)
+    if action in {"vanishing_upkeep", "vanishing_sacrifice"} and "vanishing" in mechanics and effect["amount"] == 1:
+        return ("counter.lifecycle.vanishing",)
     return ()
 
 

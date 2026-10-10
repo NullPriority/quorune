@@ -25,7 +25,7 @@ from .model import (
 
 
 _EFFECT_FIELDS = {"op", "action", "amount", "source"}
-_ACTIONS = {"adapt", "monstrosity", "renown", "fading"}
+_ACTIONS = {"adapt", "monstrosity", "renown", "fading", "vanishing_upkeep", "vanishing_sacrifice"}
 _COUNTER_NAME = "+1/+1"
 
 
@@ -48,7 +48,7 @@ def _validated_effect(
         or action not in _ACTIONS
         or type(amount) is not int
         or amount <= 0
-        or (action == "fading" and amount != 1)
+        or (action in {"fading", "vanishing_upkeep", "vanishing_sacrifice"} and amount != 1)
         or type(source_ref) is not str
         or not source_ref
     ):
@@ -87,6 +87,27 @@ def _fading_intents(
     return ()
 
 
+def _vanishing_intents(
+    context: SemanticChoiceContext, source: ObjectQueryResult, *, sacrifice: bool,
+) -> tuple[RemoveCountersIntent | ZoneMoveIntent, ...]:
+    if sacrifice:
+        if source.controller != context.actor:
+            return ()
+        return (ZoneMoveIntent(
+            actor=context.actor, object_ref=source.ref, expected_zones=("battlefield",),
+            destination="graveyard", reason="Vanishing last time counter removed", controlled_only=True,
+        ),)
+    counters = source.counters.get("time", 0)
+    if type(counters) is not int or counters < 0:
+        raise SemanticChoiceError("The source permanent's time counters are malformed")
+    if counters:
+        return (RemoveCountersIntent(
+            actor=context.actor, object_ref=source.ref, counter_name="time", amount=1,
+            reason=context.stack_label, source_ref=source.ref,
+        ),)
+    return ()
+
+
 @dataclass(frozen=True, slots=True)
 class FixedSelfCounterKeywordActionHandler:
     operation: str = "fixed_self_counter_keyword_action"
@@ -105,6 +126,10 @@ class FixedSelfCounterKeywordActionHandler:
         "CR 702.112c",
         "CR 702.32a",
         "CR 701.21a",
+        "CR 702.63a",
+        "CR 702.63b",
+        "CR 702.63c",
+        "CR 603.4",
     )
     capability_dependencies: tuple[str, ...] = (
         "counter.placement.quantity_replacement",
@@ -133,6 +158,7 @@ class FixedSelfCounterKeywordActionHandler:
         "tests.test_self_counter_keyword_actions",
         "tests.test_renown_rules",
         "tests.test_fading_rules",
+        "tests.test_vanishing_rules",
     )
 
     def prepare(
@@ -173,6 +199,12 @@ class FixedSelfCounterKeywordActionHandler:
                 ),
             )
         assert source is not None
+        if action in {"vanishing_upkeep", "vanishing_sacrifice"}:
+            return SemanticChoicePreparation(
+                request=None, continuation_effect=continuation_effect,
+                preparation_intents=_vanishing_intents(context, source, sacrifice=action == "vanishing_sacrifice"),
+                auto_continue=AutoContinue(reason="resolved Vanishing lifecycle action"),
+            )
         if action == "fading":
             return SemanticChoicePreparation(
                 request=None, continuation_effect=continuation_effect,

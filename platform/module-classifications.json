@@ -4167,6 +4167,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/compiler/vanishing_nodes.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/ward_cost_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -4427,6 +4442,20 @@
     },
     {
       "file": "quorune/counter_removal.py",
+      "layer": "rules",
+      "owning_subsystem": "counter_state",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
+      "file": "quorune/counter_removal_events.py",
       "layer": "rules",
       "owning_subsystem": "counter_state",
       "allowed_dependency_layers": [
@@ -11485,5 +11514,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "911e0a910db6e757d1d98e3a6c952b92625d1bc86bb4b652084a65b7f9a676a3"
+  "fingerprint": "858aad5b4e48f7d3096ebba4846971b472c26b7f732e079393de9625aa53b55b"
 }

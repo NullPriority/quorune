@@ -141,10 +141,10 @@ class FixedKeywordEntryCompilerTests(unittest.TestCase):
                 self.assertEqual(("counter.placement.quantity_replacement", FIXED_KEYWORD_ENTRY_CAPABILITY), entry.capability_dependencies)
                 self.assertEqual((mechanic,), entry.mechanics)
                 self.assertEqual(
-                    (mechanic, "cr-122-counters") if mechanic == "fading" else (mechanic,),
+                    (mechanic, "cr-122-counters") if mechanic in {"fading", "vanishing"} else (mechanic,),
                     lifecycle.mechanics,
                 )
-                self.assertEqual(mechanic != "fading", bool(lifecycle.residual_ids))
+                self.assertEqual(mechanic == "graft", bool(lifecycle.residual_ids))
                 keyword_end = record.oracle_text.index(" (")
                 self.assertEqual(
                     (0, keyword_end),
@@ -196,7 +196,6 @@ class FixedKeywordEntryCompilerTests(unittest.TestCase):
     def test_nonfixed_forms_and_remaining_lifecycles_stay_material(self):
         source = self.db.lookup("Vanishing Entry Fixture")
         for text, keyword in (
-            ("Vanishing", "Vanishing"),
             ("Vanishing X", "Vanishing"),
             ("Fading 0", "Fading"),
             ("Graft X", "Graft"),
@@ -214,7 +213,6 @@ class FixedKeywordEntryCompilerTests(unittest.TestCase):
 
         for name in (
             "Graft Entry Fixture",
-            "Vanishing Entry Fixture",
         ):
             ir = compile_oracle_card(
                 self.db.lookup(name),
