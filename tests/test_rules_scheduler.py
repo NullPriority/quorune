@@ -3899,15 +3899,36 @@ class RulesSchedulerTests(unittest.TestCase):
             history.write_text(json.dumps({'entries': [prior]}), encoding='utf-8')
             policy.write_text(json.dumps({'work_selection': {'semantic_transition_declaration': {
                 'transition_id': 'batch-after-revision', 'bundle_id': 'bundle:batch'}}}), encoding='utf-8')
-            with mock.patch.object(owner, 'HARVEST_HISTORY', history), mock.patch.object(owner, 'POLICY', policy), mock.patch.object(
+            with mock.patch.object(owner, '_prior_frontier_is_current_main', return_value=False), mock.patch.object(owner, 'HARVEST_HISTORY', history), mock.patch.object(owner, 'POLICY', policy), mock.patch.object(
                 owner.subprocess, 'run', side_effect=[SimpleNamespace(returncode=0, stdout=('b' * 40 + '\n').encode()),
                     SimpleNamespace(returncode=0, stdout=encoded), SimpleNamespace(returncode=0, stdout=encoded)]):
                 self.assertEqual('pre-batch-frontier', owner._source_checkpoint_frontier('batch-after-revision')['fingerprint'])
             unrelated = gzip.compress(json.dumps({'fingerprint': 'unrelated-checkpoint', 'cards': []}).encode('utf-8'), mtime=0)
-            with mock.patch.object(owner, 'HARVEST_HISTORY', history), mock.patch.object(owner, 'POLICY', policy), mock.patch.object(
+            with mock.patch.object(owner, '_prior_frontier_is_current_main', return_value=False), mock.patch.object(owner, 'HARVEST_HISTORY', history), mock.patch.object(owner, 'POLICY', policy), mock.patch.object(
                 owner.subprocess, 'run', side_effect=[SimpleNamespace(returncode=0, stdout=('c' * 40 + '\n').encode()),
                     SimpleNamespace(returncode=0, stdout=unrelated)]):
                 self.assertEqual('unrelated-checkpoint', owner._source_checkpoint_frontier('batch-after-revision')['fingerprint'])
+
+    def test_new_batch_does_not_inherit_the_completed_previous_batch_base(self):
+        import scripts.update_work_selection_cohort_measurements as owner
+        prior = {'transition_id': 'landed-before', 'bundle_id': 'bundle:batch', 'receipt_identity_kind': 'semantic_content',
+                 'head_receipt': {'blobs': {'coverage/card-unlock-frontier.json.gz': {'git_blob_oid': 'b' * 40}}}}
+        current = gzip.compress(json.dumps({'fingerprint': 'current-main', 'cards': []}).encode(), mtime=0)
+        with tempfile.TemporaryDirectory() as directory:
+            history = Path(directory) / 'history.json'; policy = Path(directory) / 'policy.json'
+            history.write_text(json.dumps({'entries': [prior]}), encoding='utf-8')
+            policy.write_text(json.dumps({'work_selection': {'semantic_transition_declaration': {'transition_id': 'new-batch', 'bundle_id': 'bundle:batch'}}}), encoding='utf-8')
+            with mock.patch.object(owner, 'HARVEST_HISTORY', history), mock.patch.object(owner, 'POLICY', policy), mock.patch.object(owner, '_prior_frontier_is_current_main', return_value=True), mock.patch.object(owner.subprocess, 'run', return_value=SimpleNamespace(returncode=0, stdout=current)) as git:
+                self.assertEqual('current-main', owner._source_checkpoint_frontier('new-batch')['fingerprint'])
+            self.assertEqual(['git', 'show', 'HEAD:coverage/card-unlock-frontier.json.gz'], git.call_args.args[0])
+
+    def test_prior_frontier_main_comparison_uses_exact_blob_identity(self):
+        import scripts.update_work_selection_cohort_measurements as owner
+        prior = {'head_receipt': {'blobs': {'coverage/card-unlock-frontier.json.gz': {'git_blob_oid': 'b' * 40}}}}
+        with mock.patch.dict(owner.os.environ, {'GITHUB_EVENT_PATH': ''}), mock.patch.object(owner.subprocess, 'run', return_value=SimpleNamespace(returncode=0, stdout=('b' * 40 + '\n').encode())):
+            self.assertTrue(owner._prior_frontier_is_current_main(prior))
+        with mock.patch.dict(owner.os.environ, {'GITHUB_EVENT_PATH': ''}), mock.patch.object(owner.subprocess, 'run', return_value=SimpleNamespace(returncode=0, stdout=('c' * 40 + '\n').encode())):
+            self.assertFalse(owner._prior_frontier_is_current_main(prior))
 
     def test_transition_probe_recovers_receipt_blob_in_shallow_checkout(self):
         outcome = self.work_inputs["harvest_outcome_history"]["entries"][-1]
