@@ -87,12 +87,12 @@ class QualifiedZoneEventCompilerTests(unittest.TestCase):
 
     def test_qualified_zone_event_exclusions_remain_residual(self):
         excluded = (
-            "Whenever one or more legendary creatures you control enter, draw a card.",
+            "Whenever one or more legendary creatures you control enter, draw a card for each of them.",
             "Whenever a creature with two +1/+1 counters on it dies, draw a card.",
             "Whenever a creature of the chosen type enters, draw a card.",
             "Whenever a creature with power greater than this creature's power dies, draw a card.",
             "Whenever a creature card is put into your graveyard from anywhere, draw a card.",
-            "Whenever another red creature you control enters, draw a card. This ability triggers only once each turn.",
+            "Whenever another red creature you control enters, draw a card. This ability triggers only once during your turn.",
             "Whenever another legendary creature you control enters, choose a card at random.",
         )
         for text in excluded:

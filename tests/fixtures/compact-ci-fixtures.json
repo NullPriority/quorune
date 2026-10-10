@@ -3,6 +3,7 @@
   "fixture_kind": "compact_ci_card_database_inputs",
   "fixtures": [
     "tests/fixtures/affinity-rules-cards.json",
+    "tests/fixtures/aggregated-zone-event-triggers.json",
     "tests/fixtures/amass-rules-cards.json",
     "tests/fixtures/as-unblocked-assignment-cards.json",
     "tests/fixtures/attached-characteristic-closure-cards.json",

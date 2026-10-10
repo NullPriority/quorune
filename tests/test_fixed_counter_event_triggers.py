@@ -227,7 +227,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
     def test_tap_state_parser_exclusions_and_mutant_are_fail_closed(self):
         for text in (
             "Whenever this creature becomes tapped for the first time each turn, draw a card.",
-            "Whenever this creature becomes tapped, draw a card. This ability triggers only once each turn.",
+            "Whenever this creature becomes tapped, draw a card. This ability triggers only once during your turn.",
             "Whenever a creature with power 2 or less becomes tapped, draw a card.",
         ):
             with self.subTest(text=text):

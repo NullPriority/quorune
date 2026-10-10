@@ -233,6 +233,7 @@
       "test_untap_step_rules"
     ],
     "functional-08": [
+      "test_aggregated_zone_event_triggers",
       "test_bound_effect_programs",
       "test_casting_payment_keywords",
       "test_closed_effect_programs",

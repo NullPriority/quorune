@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "7f1bceacbaef3eba950a6daeb98c8a397f8fde5671589c7f9c87fc046239da12",
-  "declaration_source_fingerprint": "1a05b57691bd73446b9fe680b9729eed8876b800aefb39b6f8fdd1d4300f0924",
+  "registry_fingerprint": "afdbcb1be159af4baba731c76858a3bf4880d90b625aac972981eef158f52423",
+  "declaration_source_fingerprint": "d2f4f90fffa4f05cbdd3114c9b163e570327c0efae363af32aebcba085507ebb",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -80387,6 +80387,27 @@
     {
       "capability_id": "trigger.event.qualified_zone_change",
       "evidence_class": "interaction",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerRuntimeTests.test_actual_token_batch_triggers_once_and_limiter_rejects_later_batch",
+      "official_rule_ids": [
+        "109.2",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A real simultaneous Raise the Alarm batch produces one matching aggregate occurrence; a separate batch remains distinct, and the independently printed current-turn limit and authenticated command checks preserve replay."
+    },
+    {
+      "capability_id": "trigger.event.qualified_zone_change",
+      "evidence_class": "interaction",
       "test_id": "tests.test_qualified_zone_event_queries.QualifiedZoneEventRuntimeTests.test_departure_queries_preserve_lki_controller_and_replacement_destinations",
       "official_rule_ids": [
         "109.2",
@@ -80429,6 +80450,27 @@
     {
       "capability_id": "trigger.event.qualified_zone_change",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerRuntimeTests.test_actual_token_batch_triggers_once_and_limiter_rejects_later_batch",
+      "official_rule_ids": [
+        "109.2",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A real simultaneous Raise the Alarm batch produces one matching aggregate occurrence; a separate batch remains distinct, and the independently printed current-turn limit and authenticated command checks preserve replay."
+    },
+    {
+      "capability_id": "trigger.event.qualified_zone_change",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_qualified_zone_event_queries.QualifiedZoneEventRuntimeTests.test_simultaneous_qualified_deaths_keep_apnap_and_full_consequences",
       "official_rule_ids": [
         "109.2",
@@ -80450,6 +80492,27 @@
     {
       "capability_id": "trigger.event.qualified_zone_change",
       "evidence_class": "mutation",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerRuntimeTests.test_omitted_aggregation_mutant_is_killed_by_two_token_batch",
+      "official_rule_ids": [
+        "109.2",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A real simultaneous Raise the Alarm batch produces one matching aggregate occurrence; a separate batch remains distinct, and the independently printed current-turn limit and authenticated command checks preserve replay."
+    },
+    {
+      "capability_id": "trigger.event.qualified_zone_change",
+      "evidence_class": "mutation",
       "test_id": "tests.test_qualified_zone_event_queries.QualifiedZoneEventCompilerTests.test_qualified_zone_dependencies_and_parser_mutation_fail_closed",
       "official_rule_ids": [
         "109.2",
@@ -80467,6 +80530,27 @@
         "commander_review"
       ],
       "applicability_note": "Remove the shared qualified subscription production and kill the mutation with the exact-admission assertion."
+    },
+    {
+      "capability_id": "trigger.event.qualified_zone_change",
+      "evidence_class": "negative",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerCompilerTests.test_open_plural_references_and_unsupported_limiting_departures_stay_residual",
+      "official_rule_ids": [
+        "109.2",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A real simultaneous Raise the Alarm batch produces one matching aggregate occurrence; a separate batch remains distinct, and the independently printed current-turn limit and authenticated command checks preserve replay."
     },
     {
       "capability_id": "trigger.event.qualified_zone_change",
@@ -80513,6 +80597,27 @@
     {
       "capability_id": "trigger.event.qualified_zone_change",
       "evidence_class": "positive",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerCompilerTests.test_aggregate_query_preserves_source_span_and_batch_coverage",
+      "official_rule_ids": [
+        "109.2",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A real simultaneous Raise the Alarm batch produces one matching aggregate occurrence; a separate batch remains distinct, and the independently printed current-turn limit and authenticated command checks preserve replay."
+    },
+    {
+      "capability_id": "trigger.event.qualified_zone_change",
+      "evidence_class": "positive",
       "test_id": "tests.test_qualified_zone_event_queries.QualifiedZoneEventCompilerTests.test_qualified_zone_event_grammar_preserves_domains",
       "official_rule_ids": [
         "109.2",
@@ -80555,6 +80660,27 @@
     {
       "capability_id": "trigger.event.qualified_zone_change",
       "evidence_class": "privacy",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerRuntimeTests.test_actual_token_batch_triggers_once_and_limiter_rejects_later_batch",
+      "official_rule_ids": [
+        "109.2",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A real simultaneous Raise the Alarm batch produces one matching aggregate occurrence; a separate batch remains distinct, and the independently printed current-turn limit and authenticated command checks preserve replay."
+    },
+    {
+      "capability_id": "trigger.event.qualified_zone_change",
+      "evidence_class": "privacy",
       "test_id": "tests.test_qualified_zone_event_queries.QualifiedZoneEventRuntimeTests.test_simultaneous_qualified_deaths_keep_apnap_and_full_consequences",
       "official_rule_ids": [
         "109.2",
@@ -80572,6 +80698,27 @@
         "commander_review"
       ],
       "applicability_note": "The four-seat public occurrence and trigger projection preserves the ordinary private-hand boundary."
+    },
+    {
+      "capability_id": "trigger.event.qualified_zone_change",
+      "evidence_class": "replay",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerRuntimeTests.test_actual_token_batch_triggers_once_and_limiter_rejects_later_batch",
+      "official_rule_ids": [
+        "109.2",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A real simultaneous Raise the Alarm batch produces one matching aggregate occurrence; a separate batch remains distinct, and the independently printed current-turn limit and authenticated command checks preserve replay."
     },
     {
       "capability_id": "trigger.event.qualified_zone_change",
@@ -90818,5 +90965,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "bf42587a494f0ca8ac1d5c63500478048851a0c65b6a4e34869bf6c2abd5ef0f"
+  "fingerprint": "8eca17739e20198c1c64bb958e00b5c960f28e0b3776cac1f9614c7ab980857f"
 }

@@ -9,6 +9,14 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+Closed one-or-more public entry and departure subjects reuse the singular
+typed characteristic query grammar. The compiler marks their generated
+trigger for one occurrence per committed simultaneous batch, scoped to source
+incarnation and ability identity. Separate batches remain separate events.
+The once-each-turn descriptor independently limits qualifying entry triggers.
+Result references that require the entire matching object set remain
+residuals, as do unsupported sibling abilities.
+
 The compiler transforms a pinned local card and rulings snapshot into typed
 Oracle IR, recognized semantic nodes, dependency declarations, material
 residuals, and a canonical `CardProgram`. For the same inputs and compiler

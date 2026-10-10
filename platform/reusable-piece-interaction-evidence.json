@@ -8249,6 +8249,36 @@
       ],
       "interaction_order": 2,
       "assertion": "A supported generic temporary animation and ability-removal spell targeting the controlling Aura removes its static ability and makes it a creature. State-based actions remove the illegally attached creature Aura, and initial recipient custody restores with exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_token_batch_triggers_once_and_limiter_rejects_later_batch",
+      "piece_ids": [
+        "capability.trigger.event.qualified_zone_change",
+        "capability.trigger.usage.once_per_turn"
+      ],
+      "capability_ids": [
+        "trigger.event.qualified_zone_change",
+        "trigger.usage.once_per_turn"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Tocasia's Welcome observes two real simultaneously created Soldier tokens as one matching event and draws once. A second separate batch is limited independently; wrong-seat rejection preserves the authoritative hash and current usage replays exactly."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_mass_death_batch_produces_one_source_counter",
+      "piece_ids": [
+        "capability.counter.producer.fixed_event_trigger",
+        "capability.trigger.event.qualified_zone_change"
+      ],
+      "capability_ids": [
+        "counter.producer.fixed_event_trigger",
+        "trigger.event.qualified_zone_change"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Vengeful Townsfolk sees two other controlled creatures die in one damage-and-stabilization event, then receives exactly one canonical +1/+1 counter with save/load and pre-action replay."
     }
   ]
 }

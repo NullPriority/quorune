@@ -1651,6 +1651,20 @@
       ]
     },
     {
+      "id": "aggregate-zone-event-query-contract",
+      "patterns": [
+        "quorune/compiler/aggregated_zone_event_bindings.py",
+        "quorune/compiler/fixed_counter_trigger_nodes.py",
+        "tests/fixtures/aggregated-zone-event-triggers.json"
+      ],
+      "test_modules": [
+        "test_aggregated_zone_event_triggers",
+        "test_qualified_zone_event_queries",
+        "test_limited_event_triggers",
+        "test_card_program_trust"
+      ]
+    },
+    {
       "id": "static-attached-control-contract",
       "patterns": [
         "quorune/attached_control.py",

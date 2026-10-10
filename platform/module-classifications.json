@@ -1571,6 +1571,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/aggregated_zone_event_bindings.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/amass_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -11713,5 +11728,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "66b261c44c8a36daad4c8c4e04b8ed321e0f5c13c5d01a32cd03d8bed252618c"
+  "fingerprint": "71470b50d60893ed983956bf7dd10cc7a0266cc55aeec662ceb11e74a30b9dbf"
 }
