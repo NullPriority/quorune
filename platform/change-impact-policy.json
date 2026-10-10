@@ -1423,13 +1423,18 @@
         "quorune/resolution_characteristic_model.py",
         "quorune/rules/resolution_characteristic_shapes.py",
         "tests/test_continuous_effect_duration.py",
-        "tests/test_fixed_source_characteristic_effects.py"
+        "tests/test_fixed_source_characteristic_effects.py",
+        "tests/test_fixed_evasion_grants.py",
+        "tests/fixtures/fixed-evasion-grants.json"
       ],
       "test_modules": [
         "test_continuous_effect_duration",
         "test_fixed_source_characteristic_effects",
         "test_fixed_target_effect_sequences",
         "test_fixed_query_keyword_grants",
+        "test_fixed_evasion_grants",
+        "test_landwalk",
+        "test_temporary_target_interactions",
         "test_query_power_toughness_definitions",
         "test_rules_scheduler"
       ]

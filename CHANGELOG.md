@@ -11,6 +11,11 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Grant fixed basic landwalk and Horsemanship through typed current
+  characteristics and shared offered/accepted block legality. Source departure,
+  recipient changes, defending land types and temporary expiration retain the
+  existing continuous-effect owners.
+
 - Compose repeatable public sacrifice and discard events with exact typed
   counter bodies. Source exclusion, borrowed custody, replaced discard
   destinations, private choice projection and blinked-source rejection use the

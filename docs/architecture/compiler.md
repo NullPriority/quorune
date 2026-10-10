@@ -1252,6 +1252,12 @@ source-spanned residuals or explicit unsupported-interaction boundaries.
 
 ## Invariants
 
+Fixed keyword producers admit the five basic landwalk variants and ordinary
+Horsemanship through their existing block-legality capability owners. Live
+queried and attached grants use current recipient relationships, while exact
+resolution-locked grants retain their existing incarnation and duration rules.
+Chosen or qualified landwalk and as-though evasion overrides remain residual.
+
 Fading and Vanishing lower their separate entry and lifecycle abilities to
 the current counter and trigger owners. Vanishing retains its intervening-if
 upkeep and separate last-counter sacrifice trigger; ordinary counter removals

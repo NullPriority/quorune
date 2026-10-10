@@ -78,7 +78,6 @@ class TemporaryTargetInteractionCompilerTests(unittest.TestCase):
         ))
         bodies = (
             "Target creature gets +1/+1 and gains flying, first strike, and trample until end of turn.",
-            "Target creature gains horsemanship until end of turn.",
             "Target creature gains protection from artifacts until end of turn.",
             "Target creature you control gains protection from the color of your choice until end of turn.",
             "Target creature gains protection from the color of its controller's choice until end of turn.",
@@ -89,8 +88,6 @@ class TemporaryTargetInteractionCompilerTests(unittest.TestCase):
               for condition in ("it's legendary", "it's an artifact creature", "it's a Goblin or Orc", "it's a Vampire", "it's a Spirit")),
             "Target creature gets +2/+0 until end of turn. Regenerate it.",
             "Another target creature you control with power 2 or less gains lifelink until end of turn and can't be blocked this turn.",
-            *(f"Target creature gains {land}walk until end of turn."
-              for land in ("plains", "island", "swamp", "mountain", "forest")),
         )
         for body in bodies:
             for text, type_line in (
@@ -105,6 +102,23 @@ class TemporaryTargetInteractionCompilerTests(unittest.TestCase):
                     nodes = [n for f in ir.faces for n in f.nodes]
                     self.assertTrue(any(CAPABILITY in n.capability_dependencies for n in nodes))
                     self.assertTrue(all(n.text == text[n.span.start:n.span.end] for n in nodes))
+
+    def test_fixed_evasion_grants_use_canonical_temporary_leaf_across_contexts(self):
+        for keyword in ('horsemanship','plainswalk','islandwalk','swampwalk','mountainwalk','forestwalk'):
+            body=f'Target creature gains {keyword} until end of turn.'
+            expected='combat.block.horsemanship' if keyword=='horsemanship' else 'combat.block.landwalk.basic_type'
+            for text,type_line in ((body,'Instant'),('{1}, {T}: '+body,'Artifact'),
+                                   ('When this creature enters, '+body,'Creature — Test'),
+                                   ('Choose one —\n• '+body+'\n• Draw a card.','Sorcery')):
+                with self.subTest(text=text):
+                    ir=self.compile(text,type_line=type_line)
+                    self.assertEqual('exact',ir.status,ir.material_residuals)
+                    nodes=[n for f in ir.faces for n in f.nodes]
+                    self.assertTrue(any(expected in n.capability_dependencies and
+                        'continuous.resolution.fixed_characteristics_until_end_of_turn' in n.capability_dependencies for n in nodes))
+                    self.assertTrue(all(n.text==text[n.span.start:n.span.end] for n in nodes))
+
+    def test_variable_temporary_interactions_keep_their_independent_owner(self):
         for power, toughness in (("+X", "+0"), ("-X", "-X"), ("+X", "+X")):
             text = f"Target creature gets {power}/{toughness} until end of turn."
             self.assertIsNone(fixed_target_characteristics_effect_template(text))

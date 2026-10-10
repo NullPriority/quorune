@@ -1,0 +1,661 @@
+{
+  "cards": [
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying"
+      ],
+      "layout": "token",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "not_legal",
+        "competitivebrawl": "not_legal",
+        "duel": "not_legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "not_legal",
+        "modern": "not_legal",
+        "oathbreaker": "not_legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "not_legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Cloud Sprite",
+      "oracle_id": "5b04de5c-19b7-4767-a38f-d5420d5da472",
+      "oracle_text": "Flying\nCloud Sprite can block only creatures with flying.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2021-03-19",
+      "toughness": "1",
+      "type_line": "Token Creature \u2014 Faerie"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Enchant"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}",
+      "name": "Dryad's Favor",
+      "oracle_id": "af740170-af87-487c-abab-a6ccdea82d97",
+      "oracle_text": "Enchant creature\nEnchanted creature has forestwalk. (It can't be blocked as long as defending player controls a Forest.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2010-07-16",
+      "toughness": null,
+      "type_line": "Enchantment \u2014 Aura"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}{G}",
+      "name": "Elvish Champion",
+      "oracle_id": "7e40f37c-9a0c-40e0-b195-7ea94b12f798",
+      "oracle_text": "Other Elf creatures get +1/+1 and have forestwalk. (They can't be blocked as long as defending player controls a Forest.)",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Elf"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Enchant"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}",
+      "name": "Fishliver Oil",
+      "oracle_id": "75457fe5-4ab6-42c4-98e5-8ed6e8bf122c",
+      "oracle_text": "Enchant creature (Target a creature as you cast this. This card enters attached to that creature.)\nEnchanted creature has islandwalk. (It can't be blocked as long as defending player controls an Island.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2005-07-29",
+      "toughness": null,
+      "type_line": "Enchantment \u2014 Aura"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Reach"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{G}",
+      "name": "Giant Spider",
+      "oracle_id": "e740ce2f-2134-473c-afa1-1b6d2d1e38ef",
+      "oracle_text": "Reach (This creature can block creatures with flying.)",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2023-01-13",
+      "toughness": "4",
+      "type_line": "Creature \u2014 Spider"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Island",
+      "oracle_id": "b2c6aa39-2d2a-459c-a555-fb48ba993373",
+      "oracle_text": "({T}: Add {U}.)",
+      "power": null,
+      "produced_mana": [
+        "U"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land \u2014 Island"
+    },
+    {
+      "oracle_id": "68954295-54e3-4303-a6bc-fc4547a4e3a3",
+      "name": "Llanowar Elves",
+      "mana_cost": "{G}",
+      "cmc": 1.0,
+      "type_line": "Creature \u2014 Elf Druid",
+      "oracle_text": "{T}: Add {G}.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "G"
+      ],
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Master of the Pearl Trident",
+      "oracle_id": "9f6ea9fe-eee5-4dca-a34e-c66d3e218716",
+      "oracle_text": "Other Merfolk creatures you control get +1/+1 and have islandwalk. (They can't be blocked as long as defending player controls an Island.)",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2023-11-17",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Merfolk"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{U}{U}",
+      "name": "Sun Quan, Lord of Wu",
+      "oracle_id": "70503280-6bdf-431d-8213-367a9783463a",
+      "oracle_text": "Creatures you control have horsemanship. (They can't be blocked except by creatures with horsemanship.)",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2023-08-04",
+      "toughness": "4",
+      "type_line": "Legendary Creature \u2014 Human Soldier"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}",
+      "name": "Turn to Frog",
+      "oracle_id": "74c4c1e2-c50d-4c8f-889a-0d5674dc6d67",
+      "oracle_text": "Until end of turn, target creature loses all abilities and becomes a blue Frog with base power and toughness 1/1.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-02-23",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{B}",
+      "name": "Viscid Lemures",
+      "oracle_id": "738d8d1c-4ceb-4115-89e1-1f2149fb4f5f",
+      "oracle_text": "{0}: This creature gets -1/-0 and gains swampwalk until end of turn. (It can't be blocked as long as defending player controls a Swamp.)",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2006-10-06",
+      "toughness": "3",
+      "type_line": "Creature \u2014 Spirit"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "Despite the similarities between horsemanship and flying, horsemanship doesn\u2019t interact with flying or reach.",
+      "oracle_id": "70503280-6bdf-431d-8213-367a9783463a",
+      "published_at": "2009-10-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Sun Quan\u2019s ability affects Sun Quan itself.",
+      "oracle_id": "70503280-6bdf-431d-8213-367a9783463a",
+      "published_at": "2009-10-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Effects that modify a creature\u2019s power and/or toughness, such as the effect of Titanic Growth, will apply to the creature no matter when they started to take effect. The same is true for any counters that change its power and/or toughness and effects that switch its power and toughness.",
+      "oracle_id": "74c4c1e2-c50d-4c8f-889a-0d5674dc6d67",
+      "published_at": "2014-07-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If one of the Theros block Gods is affected by Turn to Frog, it will be a legendary 1/1 blue Frog enchantment creature with no abilities. If it stops being a creature, perhaps because your devotion to its color(s) decreased, it will be a legendary blue enchantment with no abilities. The way continuous effects work, the God\u2019s type-changing ability is applied before the effect that removes that ability is applied.",
+      "oracle_id": "74c4c1e2-c50d-4c8f-889a-0d5674dc6d67",
+      "published_at": "2014-07-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the affected creature gains an ability after Turn to Frog resolves, it will keep that ability.",
+      "oracle_id": "74c4c1e2-c50d-4c8f-889a-0d5674dc6d67",
+      "published_at": "2014-07-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "The creature will lose all other colors and creature types, but it will retain any other card types (such as artifact) or supertypes (such as legendary) it may have.",
+      "oracle_id": "74c4c1e2-c50d-4c8f-889a-0d5674dc6d67",
+      "published_at": "2014-07-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Turn to Frog doesn\u2019t counter abilities that have already triggered or been activated. In particular, there is no way to cast this spell to stop a creature\u2019s ability that says \u201cAt the beginning of your upkeep,\u201d \u201cWhen this creature enters the battlefield,\u201d or similar from triggering.",
+      "oracle_id": "74c4c1e2-c50d-4c8f-889a-0d5674dc6d67",
+      "published_at": "2014-07-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Turn to Frog overwrites all previous effects that set the creature\u2019s base power and toughness to specific values. Any power- or toughness-setting effects that start to apply after Turn to Frog resolves will overwrite this effect.",
+      "oracle_id": "74c4c1e2-c50d-4c8f-889a-0d5674dc6d67",
+      "published_at": "2014-07-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "It affects Elves controlled by all players, not just yours.",
+      "oracle_id": "7e40f37c-9a0c-40e0-b195-7ea94b12f798",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "This card is now an Elf but has been reworded so that it does not give itself the bonus.",
+      "oracle_id": "7e40f37c-9a0c-40e0-b195-7ea94b12f798",
+      "published_at": "2005-08-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Because damage remains marked on a creature until the damage is removed as the turn ends, nonlethal damage dealt to a Merfolk you control may become lethal if Master of the Pearl Trident leaves the battlefield during that turn.",
+      "oracle_id": "9f6ea9fe-eee5-4dca-a34e-c66d3e218716",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Forestwalk cares about lands with the land type Forest, not necessarily lands named Forest.",
+      "oracle_id": "af740170-af87-487c-abab-a6ccdea82d97",
+      "published_at": "2010-08-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "This card now uses the Reach keyword ability to enable the blocking of flying creatures. This works because a creature with flying can only be blocked by creatures with flying or reach.",
+      "oracle_id": "e740ce2f-2134-473c-afa1-1b6d2d1e38ef",
+      "published_at": "2008-04-01",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

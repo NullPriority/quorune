@@ -39,6 +39,7 @@
     "tests/fixtures/fixed-control-effects.json",
     "tests/fixtures/fixed-counter-keyword-activations.json",
     "tests/fixtures/fixed-effect-clause-sequence-cards.json",
+    "tests/fixtures/fixed-evasion-grants.json",
     "tests/fixtures/fixed-life-cumulative-upkeep-cards.json",
     "tests/fixtures/fixed-next-turn-draw-cards.json",
     "tests/fixtures/fixed-query-keyword-grant-cards.json",

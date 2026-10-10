@@ -7935,6 +7935,66 @@
       ],
       "interaction_order": 2,
       "assertion": "An offered opponent-discard spell suspends for the correct player's private choice, rejects a wrong principal without mutation, and sends the chosen noncreature nonland card to visible exile under Dauthi's replacement. The cause-preserving discard still draws once and preserves other private cards, with exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_elvish_champion_cast_affects_other_controllers_and_current_landwalk_blocks",
+      "piece_ids": [
+        "capability.combat.block.landwalk.basic_type",
+        "capability.continuous.ability.fixed_query_keyword_grant"
+      ],
+      "capability_ids": [
+        "combat.block.landwalk.basic_type",
+        "continuous.ability.fixed_query_keyword_grant"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Elvish Champion cast grants fixed Forestwalk and +1/+1 to other Elves across controllers, excluding itself. A nonbasic Forest prohibits offered/accepted opposing blocks; its departure restores a legal block with atomic rejection and exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_sun_quan_cast_grants_self_and_rejects_flying_reach_as_horsemanship",
+      "piece_ids": [
+        "capability.combat.block.horsemanship",
+        "capability.continuous.ability.fixed_query_keyword_grant"
+      ],
+      "capability_ids": [
+        "combat.block.horsemanship",
+        "continuous.ability.fixed_query_keyword_grant"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Sun Quan cast grants Horsemanship to itself and controlled creatures, excluding opponents. Reach fails the block predicate; source departure ends the grant and the accepted legal block replays."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_islandwalk_aura_cast_tracks_recipient_and_ends_on_source_departure",
+      "piece_ids": [
+        "capability.combat.block.landwalk.basic_type",
+        "capability.continuous.attached.fixed_characteristics"
+      ],
+      "capability_ids": [
+        "combat.block.landwalk.basic_type",
+        "continuous.attached.fixed_characteristics"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Fishliver Oil cast attaches to an opponent-controlled creature and grants Islandwalk only to that recipient. A real Unsummon returns the recipient, ordinary attachment cleanup removes the Aura, and the grant ends with pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_turn_to_frog_removes_source_grant_until_expiration_and_replays",
+      "piece_ids": [
+        "capability.continuous.ability.fixed_query_keyword_grant",
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "capability_ids": [
+        "continuous.ability.fixed_query_keyword_grant",
+        "continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Turn to Frog removes Sun Quan abilities and its currently sourced Horsemanship grant from other recipients. Exact pre-action replay preserves removal; existing end-of-turn expiration restores the live grant."
     }
   ]
 }
