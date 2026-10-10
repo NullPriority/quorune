@@ -1652,6 +1652,22 @@
       ]
     },
     {
+      "id": "counted-spell-price-contract",
+      "patterns": [
+        "quorune/compiler/spell_additional_cost_nodes.py",
+        "quorune/replacement/replay.py",
+        "tests/fixtures/counted-spell-additional-costs.json"
+      ],
+      "test_modules": [
+        "test_counted_spell_additional_costs",
+        "test_fixed_zone_change_additional_costs",
+        "test_fixed_sacrifice_additional_costs",
+        "test_permanent_additional_costs",
+        "test_replacement_model_hardening",
+        "test_card_program_trust"
+      ]
+    },
+    {
       "id": "source-pronoun-result-contract",
       "patterns": [
         "quorune/compiler/source_self_effect_templates.py",

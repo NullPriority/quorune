@@ -8606,6 +8606,51 @@
       ],
       "interaction_order": 2,
       "assertion": "An exactly registered generic Doctor companion with a fixed draw activation is paired with an actual Doctor during four-player setup. An offered and accepted activation draws privately without losing either commander designation, and pre-action replay reproduces the state."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_reunion_pays_two_private_discards_before_drawing_and_replays",
+      "piece_ids": [
+        "capability.casting.additional_cost.zone_change.fixed_discard",
+        "capability.zone.draw.library_to_hand"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.zone_change.fixed_discard",
+        "zone.draw.library_to_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Cathartic Reunion publishes a fixed two-card private discard price and draws only after accepted distinct discards. Underpayment, duplicate, foreign and source-card selections reject without mutation; replaced exile still pays the discard and pre-action replay is exact."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_bankrupt_commits_two_sacrifices_as_one_event_batch_and_replays",
+      "piece_ids": [
+        "capability.casting.additional_cost.fixed_sacrifice",
+        "capability.trigger.event.qualified_zone_change"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.fixed_sacrifice",
+        "trigger.event.qualified_zone_change"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Bankrupt in Blood pays two distinct creature sacrifices before drawing. Vengeful Townsfolk sees one simultaneous death batch and gets one counter, with exact pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_counted_discard_replacement_suspends_saves_and_replays",
+      "piece_ids": [
+        "capability.casting.additional_cost.zone_change.fixed_discard",
+        "capability.zone.change.destination_replacement"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.zone_change.fixed_discard",
+        "zone.change.destination_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual two-card discard cost suspends for competing Dauthi replacements on each object, rejects another principal atomically, survives pending save/load, and carries only prior selected-object journal identities into the second choice; both costs pay and replay exactly."
     }
   ]
 }

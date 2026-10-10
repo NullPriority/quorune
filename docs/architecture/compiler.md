@@ -1634,6 +1634,19 @@ return, life, counter, or binary alternative price. Whole-card admission remains
 required. Repeated declarations and independently unrepresented siblings retain
 material residuals, so a supported price cannot make an unsupported card exact.
 
+`compiler/spell_additional_cost_nodes.py` admits mandatory homogeneous selected
+zone-change prices of two through ten objects through the existing counted-cost
+descriptor. The isolated single-object leaf retains its narrower boundary;
+whole-spell composition opts into counted normalization. Distinct eligible
+selections, the spell's exclusion from its own price, simultaneous zone-cost
+commitment, replacement continuations and private hand projection remain owned
+by the canonical casting transaction. Variable, random, optional and mixed
+prices remain residuals, as do independently unsupported result clauses.
+Sequential replacement choices retain earlier selected-object cost journals
+across transactional replay. The continuation decoder admits only distinct
+selected refs with prior canonical event identities; the casting owner still
+revalidates every payer, zone, predicate and selected replacement at commitment.
+
 Single-subject `place_counters` results also bind declared or current public
 characteristic amounts through their existing counter owner. A resolved zero
 amount is a paid no-op; malformed and negative amounts are rejected. Counter

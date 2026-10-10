@@ -243,6 +243,7 @@
       "test_combat_damage_rules",
       "test_combat_keyword_rules",
       "test_copy_objects",
+      "test_counted_spell_additional_costs",
       "test_damage_prevention_shields",
       "test_damage_replacement_integration",
       "test_fixed_damage_history_targets",

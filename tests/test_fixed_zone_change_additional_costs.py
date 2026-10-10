@@ -172,10 +172,10 @@ class FixedZoneChangeAdditionalCostCompilerTests(unittest.TestCase):
 
     def test_fixed_zone_change_cost_grammar_fails_closed(self):
         unsupported = (
-            "discard two cards",
+            "discard two cards at random",
             "discard a card at random",
             "discard X land cards",
-            "exile two creature cards from your graveyard",
+            "exile two creature cards with different names from your graveyard",
             "exile X cards from your graveyard",
             "exile a modified creature you control",
             "return X Swamps you control to their owner's hand",
@@ -196,7 +196,7 @@ class FixedZoneChangeAdditionalCostCompilerTests(unittest.TestCase):
 
     def test_unsupported_cost_preserves_independent_result_residuals(self):
         supported_result = (
-            "As an additional cost to cast this spell, discard two cards.\n"
+            "As an additional cost to cast this spell, discard two cards at random.\n"
             "Draw three cards."
         )
         ir = self.compile(supported_result)
@@ -204,7 +204,7 @@ class FixedZoneChangeAdditionalCostCompilerTests(unittest.TestCase):
         cost_residual = ir.material_residuals[0]
         self.assertEqual("spell_additional_cost", cost_residual.kind)
         self.assertEqual(
-            "As an additional cost to cast this spell, discard two cards.",
+            "As an additional cost to cast this spell, discard two cards at random.",
             cost_residual.text,
         )
         self.assertEqual(
@@ -273,7 +273,7 @@ class FixedZoneChangeAdditionalCostCompilerTests(unittest.TestCase):
 
     def test_unsupported_cost_preserves_result_composition_blockers(self):
         text = (
-            "As an additional cost to cast this spell, discard two cards.\n"
+            "As an additional cost to cast this spell, discard two cards at random.\n"
             "Draw two cards.\n"
             "You gain 2 life."
         )
@@ -310,7 +310,7 @@ class FixedZoneChangeAdditionalCostCompilerTests(unittest.TestCase):
         registry = CapabilityRegistry(value)
         registry.mark_evidence_verified("0" * 64)
         text = (
-            "As an additional cost to cast this spell, discard two cards.\n"
+            "As an additional cost to cast this spell, discard two cards at random.\n"
             "Draw three cards."
         )
         ir = compile_oracle_card(

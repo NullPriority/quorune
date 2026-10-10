@@ -859,6 +859,33 @@ def _priority_action_cost_event_ids(
     return {event.event_id}
 
 
+def _prior_casting_zone_cost_event_ids(batch, response, *, seat):
+    """Retain prior selected-object choices across a rolled-back counted cast."""
+    journal=response.get('_mana_replacement_selections')
+    if not isinstance(journal,Mapping) or len(batch.events)!=1 or batch.events[0].kind!='zone.change':return set()
+    event=batch.events[0];origin=event.payload.get('origin');destination=event.payload.get('destination')
+    fields={field for start,end,field in FIXED_ZONE_CHANGE_COST_CONTRACTS.values() if start==origin and end==destination}
+    refs=next((response[field] for field in sorted(fields) if response.get(field) is not None),None)
+    if not isinstance(refs,(list,tuple)) or not 2<=len(refs)<=10 or any(type(ref) is not str or not ref for ref in refs) or len(set(refs))!=len(refs):return set()
+    if not _casting_zone_cost_event_is_valid(event,response,seat=seat):return set()
+    current=event.event_id[:-len(':'+event.payload['object_ref'])].split(':')
+    if len(current)!=3 or any(not n.isdecimal() for n in current[1:]):raise ReplacementEffectError('Current counted casting event identity is malformed')
+    boundary=tuple(map(int,current[1:]))
+    ids=set();seen=set()
+    for event_id in journal:
+        if type(event_id) is not str:raise ReplacementEffectError('Counted casting replacement journal is malformed')
+        matches=[ref for ref in refs if event_id.endswith(':'+ref)]
+        if len(matches)!=1:raise ReplacementEffectError('Counted casting replacement journal names an unselected object')
+        ref=matches[0];prefix=event_id[:-len(':'+ref)].split(':')
+        if len(prefix)!=3 or prefix[0]!='zone.change' or any(not n.isdecimal() for n in prefix[1:]) or ref in seen:
+            raise ReplacementEffectError('Counted casting replacement journal identity is malformed')
+        recorded=tuple(map(int,prefix[1:]))
+        if event_id!=event.event_id and (ref==event.payload['object_ref'] or recorded[0]>boundary[0] or recorded[1]>=boundary[1]):
+            raise ReplacementEffectError('Counted casting replacement journal is not prior to the pending object')
+        seen.add(ref);ids.add(event_id)
+    return ids
+
+
 def _counted_activation_cost_event_is_valid(
     event: ReplaceableEvent, response: Mapping[str, Any], *, seat: str,
 ) -> bool:
@@ -919,6 +946,7 @@ def _decode_mana_continuation(
             response=response,
             seat=seat,
         )
+        if action=='cast':event_ids.update(_prior_casting_zone_cost_event_ids(batch,response,seat=seat))
         if action == 'activate' and len(batch.events) > 1:
             from ..rules.activation_zone_change_costs import counted_activation_replacement_selections
             counted_activation_replacement_selections(response, tuple(

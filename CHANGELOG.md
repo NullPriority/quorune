@@ -31,6 +31,11 @@ maintenance: "hand-maintained"
 - Preserve explicit sacrifice provenance for Fading and Vanishing cleanup
   through zone replacements, normalized trigger occurrences, and turn history.
 
+- Compose mandatory fixed counted spell prices with their independently closed
+  results. Private discards and simultaneous sacrifices retain the casting
+  transaction, and later replacement choices preserve only validated prior
+  selected-object journals through save/load and replay.
+
 - Cast ordinary fixed-cost and bare Mayhem cards from their owner’s graveyard
   using current-turn discarded-card identity, existing timing, additional-cost
   and land-play owners. Prior lifecycle descriptor versions remain readable.

@@ -3818,200 +3818,919 @@
     {
       "capability_id": "casting.additional_cost.fixed_sacrifice",
       "evidence_class": "interaction",
+      "test_id": "tests.test_counted_spell_additional_costs.CountedSpellCostRuntimeTests.test_actual_bankrupt_commits_two_sacrifices_as_one_event_batch_and_replays",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual typed counted spell costs preserve distinct payer-owned selections, simultaneous events, replacement choices, privacy, pending persistence and replay; unsupported variants and omissions fail closed."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_sacrifice",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_sacrifice_additional_costs.FixedSacrificeAdditionalCostRuntimeTests.test_sacrifice_is_not_destruction_and_uses_owner_graveyard",
-      "official_rule_ids": ["601.2f", "601.2g", "601.2h", "601.2i", "614.1", "616.1", "701.21a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Sacrifice a controlled Indestructible permanent directly toward its owner's graveyard without invoking destruction prevention."
     },
     {
       "capability_id": "casting.additional_cost.fixed_sacrifice",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_sacrifice_additional_costs.FixedSacrificeAdditionalCostRuntimeTests.test_zone_replacement_suspends_cost_before_mutation_and_replays",
-      "official_rule_ids": ["601.2f", "601.2g", "601.2h", "601.2i", "614.1", "616.1", "701.21a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Suspend one mandatory sacrifice while two destination replacements compete, roll the complete casting transaction back, and resume the exact cost before stack placement."
     },
-    {"capability_id": "casting.additional_cost.fixed_sacrifice", "evidence_class": "interaction", "test_id": "tests.test_permanent_additional_costs.PermanentAdditionalCostActionTests.test_permanent_sacrifice_price_replacement_is_seat_locked_pending_and_replays", "official_rule_ids": ["601.2f", "601.2g", "601.2h", "601.2i", "614.1", "616.1", "701.21a"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Actual permanent casting sacrifice price retains chooser identity through two competing exile replacements, rejects the wrong principal, resumes after pending load and pays once with pre-action replay."},
+    {
+      "capability_id": "casting.additional_cost.fixed_sacrifice",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_permanent_additional_costs.PermanentAdditionalCostActionTests.test_permanent_sacrifice_price_replacement_is_seat_locked_pending_and_replays",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual permanent casting sacrifice price retains chooser identity through two competing exile replacements, rejects the wrong principal, resumes after pending load and pays once with pre-action replay."
+    },
     {
       "capability_id": "casting.additional_cost.fixed_sacrifice",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_sacrifice_additional_costs.FixedSacrificeAdditionalCostRuntimeTests.test_zone_replacement_suspends_cost_before_mutation_and_replays",
-      "official_rule_ids": ["601.2f", "601.2g", "601.2h", "601.2i", "614.1", "616.1", "701.21a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Resolve the affected caster's replacement order within four-player APNAP state without exposing or mutating another seat's private state."
     },
     {
       "capability_id": "casting.additional_cost.fixed_sacrifice",
       "evidence_class": "mutation",
+      "test_id": "tests.test_counted_spell_additional_costs.CountedSpellCostCompilerTests.test_counted_price_requires_its_cost_and_result_dependencies",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual typed counted spell costs preserve distinct payer-owned selections, simultaneous events, replacement choices, privacy, pending persistence and replay; unsupported variants and omissions fail closed."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_sacrifice",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_counted_spell_additional_costs.CountedSpellCostRuntimeTests.test_counted_admission_omission_mutant_is_killed_by_original_reunion",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual typed counted spell costs preserve distinct payer-owned selections, simultaneous events, replacement choices, privacy, pending persistence and replay; unsupported variants and omissions fail closed."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_sacrifice",
+      "evidence_class": "mutation",
       "test_id": "tests.test_fixed_sacrifice_additional_costs.FixedSacrificeAdditionalCostCompilerTests.test_fixed_sacrifice_compiler_mutant_is_killed",
-      "official_rule_ids": ["601.2f", "601.2g", "601.2h", "601.2i", "614.1", "616.1", "701.21a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Kill removal of the closed fixed-sacrifice compiler production rather than retaining a false exact spell promotion."
     },
     {
       "capability_id": "casting.additional_cost.fixed_sacrifice",
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_zone_change_additional_costs.FixedZoneChangeAdditionalCostCompilerTests.test_fixed_zone_change_compiler_mutant_is_killed",
-      "official_rule_ids": ["601.2f", "601.2g", "601.2h", "601.2i", "614.1", "616.1", "701.21a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Kill removal of the qualified single-permanent sacrifice grammar while preserving the legacy card-type-union production."
     },
     {
       "capability_id": "casting.additional_cost.fixed_sacrifice",
       "evidence_class": "negative",
+      "test_id": "tests.test_counted_spell_additional_costs.CountedSpellCostCompilerTests.test_random_variable_and_mixed_prices_remain_material",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual typed counted spell costs preserve distinct payer-owned selections, simultaneous events, replacement choices, privacy, pending persistence and replay; unsupported variants and omissions fail closed."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_sacrifice",
+      "evidence_class": "negative",
       "test_id": "tests.test_fixed_sacrifice_additional_costs.FixedSacrificeAdditionalCostCompilerTests.test_fixed_sacrifice_cost_grammar_fails_closed",
-      "official_rule_ids": ["601.2f", "601.2g", "601.2h", "601.2i", "614.1", "616.1", "701.21a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Leave optional, variable, multiple, dynamic, historical, and compound sacrifice wording outside both the direct leaf and typed binary alternative owners."
     },
     {
       "capability_id": "casting.additional_cost.fixed_sacrifice",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_sacrifice_additional_costs.FixedSacrificeAdditionalCostRuntimeTests.test_offer_and_submission_share_effective_type_legality",
-      "official_rule_ids": ["601.2f", "601.2g", "601.2h", "601.2i", "614.1", "616.1", "701.21a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Revalidate current effective card types and reject a stale sacrifice choice before mana, zone, stack, or journal mutation."
     },
     {
       "capability_id": "casting.additional_cost.fixed_sacrifice",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_zone_change_additional_costs.FixedZoneChangeAdditionalCostCompilerTests.test_fixed_zone_change_cost_grammar_fails_closed",
-      "official_rule_ids": ["601.2f", "601.2g", "601.2h", "601.2i", "614.1", "616.1", "701.21a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Reject dynamic and historical sacrifice qualities and variable or multiple payments while typed fixed binary alternatives remain separately owned."
     },
-    {"capability_id": "casting.additional_cost.fixed_sacrifice", "evidence_class": "negative", "test_id": "tests.test_permanent_additional_costs.PermanentAdditionalCostCompilerTests.test_price_capability_omission_keeps_whole_permanent_untrusted", "official_rule_ids": ["601.2f", "601.2g", "601.2h", "601.2i", "614.1", "616.1", "701.21a"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Blocking the required fixed-price capability leaves the original permanent card inexact; no cast-price omission grants whole-card trust."},
+    {
+      "capability_id": "casting.additional_cost.fixed_sacrifice",
+      "evidence_class": "negative",
+      "test_id": "tests.test_permanent_additional_costs.PermanentAdditionalCostCompilerTests.test_price_capability_omission_keeps_whole_permanent_untrusted",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Blocking the required fixed-price capability leaves the original permanent card inexact; no cast-price omission grants whole-card trust."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_sacrifice",
+      "evidence_class": "positive",
+      "test_id": "tests.test_counted_spell_additional_costs.CountedSpellCostCompilerTests.test_exact_counted_spell_price_keeps_cost_and_result_separate",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual typed counted spell costs preserve distinct payer-owned selections, simultaneous events, replacement choices, privacy, pending persistence and replay; unsupported variants and omissions fail closed."
+    },
     {
       "capability_id": "casting.additional_cost.fixed_sacrifice",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_sacrifice_additional_costs.FixedSacrificeAdditionalCostCompilerTests.test_fixed_sacrifice_cost_compiles_source_spanned_v2_program",
-      "official_rule_ids": ["601.2f", "601.2g", "601.2h", "601.2i", "614.1", "616.1", "701.21a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Lower every represented zero-, one-, and two-type union to one exact source-spanned CardProgram V2 cost descriptor."
     },
     {
       "capability_id": "casting.additional_cost.fixed_sacrifice",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_sacrifice_additional_costs.FixedSacrificeAdditionalCostRuntimeTests.test_fixed_sacrifice_cost_commits_and_replays",
-      "official_rule_ids": ["601.2f", "601.2g", "601.2h", "601.2i", "614.1", "616.1", "701.21a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Advertise and accept one effective controlled creature, sacrifice it, and place the represented spell on the stack through the shared casting path."
     },
     {
       "capability_id": "casting.additional_cost.fixed_sacrifice",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_zone_change_additional_costs.FixedZoneChangeAdditionalCostCompilerTests.test_fixed_zone_change_costs_compile_source_spanned_programs",
-      "official_rule_ids": ["601.2f", "601.2g", "601.2h", "601.2i", "614.1", "616.1", "701.21a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Lower subtype, supertype, color, and nonland single-permanent predicates to an exact source-spanned cost descriptor."
     },
     {
       "capability_id": "casting.additional_cost.fixed_sacrifice",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_zone_change_additional_costs.FixedZoneChangeAdditionalCostRuntimeTests.test_qualified_sacrifice_uses_pinned_subtype_predicate",
-      "official_rule_ids": ["601.2f", "601.2g", "601.2h", "601.2i", "614.1", "616.1", "701.21a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Offer and accept only a permanent matching the pinned creature-subtype predicate."
     },
     {
       "capability_id": "casting.additional_cost.fixed_sacrifice",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_sacrifice_additional_costs.FixedSacrificeAdditionalCostRuntimeTests.test_zone_replacement_suspends_cost_before_mutation_and_replays",
-      "official_rule_ids": ["601.2f", "601.2g", "601.2h", "601.2i", "614.1", "616.1", "701.21a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Project the cost replacement-order choice only to the affected caster and omit its continuation from all opposing seats."
     },
     {
       "capability_id": "casting.additional_cost.fixed_sacrifice",
       "evidence_class": "property",
       "test_id": "tests.test_fixed_sacrifice_additional_costs.FixedSacrificeAdditionalCostCompilerTests.test_fixed_sacrifice_template_is_canonical",
-      "official_rule_ids": ["601.2f", "601.2g", "601.2h", "601.2i", "614.1", "616.1", "701.21a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Equivalent represented wording lowers to the same sorted immutable permanent-type union and descriptor identity."
     },
     {
       "capability_id": "casting.additional_cost.fixed_sacrifice",
       "evidence_class": "replay",
+      "test_id": "tests.test_counted_spell_additional_costs.CountedSpellCostRuntimeTests.test_actual_bankrupt_commits_two_sacrifices_as_one_event_batch_and_replays",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual typed counted spell costs preserve distinct payer-owned selections, simultaneous events, replacement choices, privacy, pending persistence and replay; unsupported variants and omissions fail closed."
+    },
+    {
+      "capability_id": "casting.additional_cost.fixed_sacrifice",
+      "evidence_class": "replay",
       "test_id": "tests.test_fixed_sacrifice_additional_costs.FixedSacrificeAdditionalCostRuntimeTests.test_fixed_sacrifice_cost_commits_and_replays",
-      "official_rule_ids": ["601.2f", "601.2g", "601.2h", "601.2i", "614.1", "616.1", "701.21a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Replay the ordinary sacrifice payment, mana payment, departure events, and stack placement to the identical authoritative hash."
     },
     {
       "capability_id": "casting.additional_cost.fixed_sacrifice",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_sacrifice_additional_costs.FixedSacrificeAdditionalCostRuntimeTests.test_zone_replacement_suspends_cost_before_mutation_and_replays",
-      "official_rule_ids": ["601.2f", "601.2g", "601.2h", "601.2i", "614.1", "616.1", "701.21a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Replay a suspended four-player destination-replacement selection and resumed sacrifice cost to the identical authoritative hash."
     },
-    {"capability_id": "casting.additional_cost.fixed_sacrifice", "evidence_class": "replay", "test_id": "tests.test_permanent_additional_costs.PermanentAdditionalCostActionTests.test_permanent_sacrifice_price_replacement_is_seat_locked_pending_and_replays", "official_rule_ids": ["601.2f", "601.2g", "601.2h", "601.2i", "614.1", "616.1", "701.21a"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Actual permanent casting sacrifice price retains chooser identity through two competing exile replacements, rejects the wrong principal, resumes after pending load and pays once with pre-action replay."},
+    {
+      "capability_id": "casting.additional_cost.fixed_sacrifice",
+      "evidence_class": "replay",
+      "test_id": "tests.test_permanent_additional_costs.PermanentAdditionalCostActionTests.test_permanent_sacrifice_price_replacement_is_seat_locked_pending_and_replays",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual permanent casting sacrifice price retains chooser identity through two competing exile replacements, rejects the wrong principal, resumes after pending load and pays once with pre-action replay."
+    },
     {
       "capability_id": "casting.additional_cost.fixed_sacrifice",
       "evidence_class": "rollback",
       "test_id": "tests.test_fixed_sacrifice_additional_costs.FixedSacrificeAdditionalCostRuntimeTests.test_offer_and_submission_share_effective_type_legality",
-      "official_rule_ids": ["601.2f", "601.2g", "601.2h", "601.2i", "614.1", "616.1", "701.21a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Reject a stale effective-type selection with identical authoritative state before mana, zone, stack, or journal mutation."
     },
     {
       "capability_id": "casting.additional_cost.zone_change.fixed_discard",
       "evidence_class": "interaction",
+      "test_id": "tests.test_counted_spell_additional_costs.CountedSpellCostRuntimeTests.test_actual_counted_discard_replacement_suspends_saves_and_replays",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual typed counted spell costs preserve distinct payer-owned selections, simultaneous events, replacement choices, privacy, pending persistence and replay; unsupported variants and omissions fail closed."
+    },
+    {
+      "capability_id": "casting.additional_cost.zone_change.fixed_discard",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_zone_change_additional_costs.FixedZoneChangeAdditionalCostRuntimeTests.test_discard_replacement_suspends_before_mutation_and_replays",
-      "official_rule_ids": ["400.2", "400.7", "601.2f", "601.2g", "601.2h", "601.2i", "614.1", "616.1", "701.9a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Suspend a discard cost for competing destination replacements and resume it before stack placement."
     },
-    {"capability_id": "casting.additional_cost.zone_change.fixed_discard", "evidence_class": "interaction", "test_id": "tests.test_permanent_additional_costs.PermanentAdditionalCostActionTests.test_real_discard_and_owner_hand_return_prices_are_private_authoritative_and_replay", "official_rule_ids": ["400.2", "400.7", "601.2f", "601.2g", "601.2h", "601.2i", "614.1", "616.1", "701.9a"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Actual Lesser Masticore discard price is private and rejects another player card; the permanent enters only after the complete paid price and replays from before casting."},
+    {
+      "capability_id": "casting.additional_cost.zone_change.fixed_discard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_permanent_additional_costs.PermanentAdditionalCostActionTests.test_real_discard_and_owner_hand_return_prices_are_private_authoritative_and_replay",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Lesser Masticore discard price is private and rejects another player card; the permanent enters only after the complete paid price and replays from before casting."
+    },
+    {
+      "capability_id": "casting.additional_cost.zone_change.fixed_discard",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_counted_spell_additional_costs.CountedSpellCostRuntimeTests.test_actual_counted_discard_replacement_suspends_saves_and_replays",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual typed counted spell costs preserve distinct payer-owned selections, simultaneous events, replacement choices, privacy, pending persistence and replay; unsupported variants and omissions fail closed."
+    },
     {
       "capability_id": "casting.additional_cost.zone_change.fixed_discard",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_zone_change_additional_costs.FixedZoneChangeAdditionalCostRuntimeTests.test_discard_replacement_suspends_before_mutation_and_replays",
-      "official_rule_ids": ["400.2", "400.7", "601.2f", "601.2g", "601.2h", "601.2i", "614.1", "616.1", "701.9a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Resolve the affected caster's replacement order in four-player APNAP state."
     },
     {
       "capability_id": "casting.additional_cost.zone_change.fixed_discard",
       "evidence_class": "mutation",
+      "test_id": "tests.test_counted_spell_additional_costs.CountedSpellCostCompilerTests.test_counted_price_requires_its_cost_and_result_dependencies",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual typed counted spell costs preserve distinct payer-owned selections, simultaneous events, replacement choices, privacy, pending persistence and replay; unsupported variants and omissions fail closed."
+    },
+    {
+      "capability_id": "casting.additional_cost.zone_change.fixed_discard",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_counted_spell_additional_costs.CountedSpellCostRuntimeTests.test_counted_admission_omission_mutant_is_killed_by_original_reunion",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual typed counted spell costs preserve distinct payer-owned selections, simultaneous events, replacement choices, privacy, pending persistence and replay; unsupported variants and omissions fail closed."
+    },
+    {
+      "capability_id": "casting.additional_cost.zone_change.fixed_discard",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_counted_spell_additional_costs.CountedSpellCostRuntimeTests.test_prior_cast_selection_omission_mutant_is_killed_by_second_object_choice",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual typed counted spell costs preserve distinct payer-owned selections, simultaneous events, replacement choices, privacy, pending persistence and replay; unsupported variants and omissions fail closed."
+    },
+    {
+      "capability_id": "casting.additional_cost.zone_change.fixed_discard",
+      "evidence_class": "mutation",
       "test_id": "tests.test_fixed_zone_change_additional_costs.FixedZoneChangeAdditionalCostCompilerTests.test_fixed_zone_change_compiler_mutant_is_killed",
-      "official_rule_ids": ["400.2", "400.7", "601.2f", "601.2g", "601.2h", "601.2i", "614.1", "616.1", "701.9a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Kill removal of the typed fixed-discard compiler production."
     },
     {
       "capability_id": "casting.additional_cost.zone_change.fixed_discard",
       "evidence_class": "negative",
+      "test_id": "tests.test_counted_spell_additional_costs.CountedSpellCostCompilerTests.test_random_variable_and_mixed_prices_remain_material",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual typed counted spell costs preserve distinct payer-owned selections, simultaneous events, replacement choices, privacy, pending persistence and replay; unsupported variants and omissions fail closed."
+    },
+    {
+      "capability_id": "casting.additional_cost.zone_change.fixed_discard",
+      "evidence_class": "negative",
       "test_id": "tests.test_fixed_zone_change_additional_costs.FixedZoneChangeAdditionalCostCompilerTests.test_fixed_zone_change_cost_grammar_fails_closed",
-      "official_rule_ids": ["400.2", "400.7", "601.2f", "601.2g", "601.2h", "601.2i", "614.1", "616.1", "701.9a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Keep random, variable, multiple, optional, and non-binary discard costs as precise residuals."
     },
     {
       "capability_id": "casting.additional_cost.zone_change.fixed_discard",
       "evidence_class": "positive",
+      "test_id": "tests.test_counted_spell_additional_costs.CountedSpellCostCompilerTests.test_exact_counted_spell_price_keeps_cost_and_result_separate",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual typed counted spell costs preserve distinct payer-owned selections, simultaneous events, replacement choices, privacy, pending persistence and replay; unsupported variants and omissions fail closed."
+    },
+    {
+      "capability_id": "casting.additional_cost.zone_change.fixed_discard",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_zone_change_additional_costs.FixedZoneChangeAdditionalCostCompilerTests.test_fixed_zone_change_costs_compile_source_spanned_programs",
-      "official_rule_ids": ["400.2", "400.7", "601.2f", "601.2g", "601.2h", "601.2i", "614.1", "616.1", "701.9a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Lower unqualified, fixed card-type, and fixed color-union discards to exact source-spanned descriptors."
     },
     {
       "capability_id": "casting.additional_cost.zone_change.fixed_discard",
       "evidence_class": "privacy",
+      "test_id": "tests.test_counted_spell_additional_costs.CountedSpellCostRuntimeTests.test_actual_counted_discard_replacement_suspends_saves_and_replays",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual typed counted spell costs preserve distinct payer-owned selections, simultaneous events, replacement choices, privacy, pending persistence and replay; unsupported variants and omissions fail closed."
+    },
+    {
+      "capability_id": "casting.additional_cost.zone_change.fixed_discard",
+      "evidence_class": "privacy",
       "test_id": "tests.test_fixed_zone_change_additional_costs.FixedZoneChangeAdditionalCostRuntimeTests.test_private_discard_offer_is_seat_scoped",
-      "official_rule_ids": ["400.2", "400.7", "601.2f", "601.2g", "601.2h", "601.2i", "614.1", "616.1", "701.9a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Project private hand candidates only to the caster and omit their refs from opposing views."
     },
     {
       "capability_id": "casting.additional_cost.zone_change.fixed_discard",
       "evidence_class": "replay",
+      "test_id": "tests.test_counted_spell_additional_costs.CountedSpellCostRuntimeTests.test_actual_counted_discard_replacement_suspends_saves_and_replays",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual typed counted spell costs preserve distinct payer-owned selections, simultaneous events, replacement choices, privacy, pending persistence and replay; unsupported variants and omissions fail closed."
+    },
+    {
+      "capability_id": "casting.additional_cost.zone_change.fixed_discard",
+      "evidence_class": "replay",
       "test_id": "tests.test_fixed_zone_change_additional_costs.FixedZoneChangeAdditionalCostRuntimeTests.test_discard_replacement_suspends_before_mutation_and_replays",
-      "official_rule_ids": ["400.2", "400.7", "601.2f", "601.2g", "601.2h", "601.2i", "614.1", "616.1", "701.9a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Replay a suspended replacement-aware discard payment to the identical authoritative hash."
     },
-    {"capability_id": "casting.additional_cost.zone_change.fixed_discard", "evidence_class": "replay", "test_id": "tests.test_permanent_additional_costs.PermanentAdditionalCostActionTests.test_real_discard_and_owner_hand_return_prices_are_private_authoritative_and_replay", "official_rule_ids": ["400.2", "400.7", "601.2f", "601.2g", "601.2h", "601.2i", "614.1", "616.1", "701.9a"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Actual Lesser Masticore discard price is private and rejects another player card; the permanent enters only after the complete paid price and replays from before casting."},
+    {
+      "capability_id": "casting.additional_cost.zone_change.fixed_discard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_permanent_additional_costs.PermanentAdditionalCostActionTests.test_real_discard_and_owner_hand_return_prices_are_private_authoritative_and_replay",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Lesser Masticore discard price is private and rejects another player card; the permanent enters only after the complete paid price and replays from before casting."
+    },
     {
       "capability_id": "casting.additional_cost.zone_change.fixed_exile",
       "evidence_class": "interaction",

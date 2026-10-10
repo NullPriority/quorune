@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 205,
+  "registry_version": 206,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -1013,55 +1013,208 @@
     },
     {
       "id": "casting.additional_cost.fixed_sacrifice",
-      "version": 4,
-      "official_rules": ["601.2f", "601.2g", "601.2h", "601.2i", "614.1", "616.1", "701.21a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 5,
+      "official_rules": [
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
-        "summary": "Pay one typed additional-cost leaf by choosing and sacrificing exactly one permanent the caster controls that matches a closed effective type, subtype, supertype, color, or nonland predicate, before the spell is placed on the stack.",
-        "inputs": ["one source-spanned typed additional-cost descriptor", "one public phased-in permanent controlled by the caster", "one closed effective characteristic predicate", "current effective characteristics", "stable replacement-aware zone-change identity"],
-        "outputs": ["one payable cast offer with a seat-scoped object choice", "one replacement-aware battlefield departure as a casting cost", "normalized departure and dies events before cast-event dispatch", "spell stack placement only after the cost is paid", "transactional rollback, private replacement continuation, and exact replay"],
-        "exclusions": ["zero, multiple, optional, variable, or repeatable sacrifices", "dynamic or historical qualities such as modified, power thresholds, or damage dealt this turn", "alternative costs outside the typed binary fixed-cost owner", "composite additional costs", "sacrifice effects rather than casting costs", "nonpermanent objects and phased-out permanents", "multiple simultaneous sacrifice events", "copied spells and alternate casting procedures outside the represented ordinary cast path"]
+        "summary": "Pay a typed mandatory fixed sacrifice casting price: one legacy permanent or a homogeneous count of two through ten independently eligible controlled permanents. The existing casting transaction owns simultaneous cost events and replacement continuations.",
+        "inputs": [
+          "one source-spanned typed additional-cost descriptor",
+          "one through ten public phased-in controlled permanents from a homogeneous closed predicate",
+          "one closed effective characteristic predicate",
+          "current effective characteristics",
+          "stable replacement-aware zone-change identity"
+        ],
+        "outputs": [
+          "one payable cast offer with a seat-scoped object choice",
+          "replacement-aware selected battlefield departures committed before one shared cost-event discovery batch",
+          "normalized departure and dies events before cast-event dispatch",
+          "spell stack placement only after the cost is paid",
+          "transactional rollback, private replacement continuation, and exact replay"
+        ],
+        "exclusions": [
+          "dynamic or historical qualities such as modified, power thresholds, or damage dealt this turn",
+          "alternative costs outside the typed binary fixed-cost owner",
+          "composite additional costs",
+          "sacrifice effects rather than casting costs",
+          "nonpermanent objects and phased-out permanents",
+          "copied spells and alternate casting procedures outside the represented ordinary cast path",
+          "Variable, random, optional, heterogeneous and composite prices; unsupported result siblings",
+          "Zero, counts above ten, repeatable and nonhomogeneous selected-object prices"
+        ]
       },
-      "dependencies": ["trigger.event.normalized_zone_change", "zone.change.destination_replacement"],
-      "implementation_components": ["quorune.compiler.spell_additional_cost_templates.FixedSacrificeAdditionalCostTemplate", "quorune.compiler.spell_additional_cost_templates.FixedZoneChangeAdditionalCostTemplate", "quorune.compiler.spell_additional_cost_nodes.typed_additional_cost_spell_node", "quorune.rules.casting_additional_costs.FixedZoneChangeAdditionalCost", "quorune.rules.casting.costs._apply_additional_costs", "quorune.rules.casting.commit._resolve_fixed_zone_change_additional_cost", "quorune.mana_payment_continuations.issue_mana_payment_replacement_choice", "quorune.replacement.replay.ReplacementContinuation", "CommanderEngine.move_card"],
-      "positive_tests": ["test_fixed_sacrifice_cost_compiles_source_spanned_v2_program", "test_fixed_sacrifice_cost_commits_and_replays", "test_fixed_zone_change_costs_compile_source_spanned_programs", "test_qualified_sacrifice_uses_pinned_subtype_predicate"],
-      "negative_tests": ["test_fixed_sacrifice_cost_grammar_fails_closed", "test_offer_and_submission_share_effective_type_legality", "test_fixed_zone_change_cost_grammar_fails_closed"],
-      "interaction_tests": ["test_sacrifice_is_not_destruction_and_uses_owner_graveyard", "test_zone_replacement_suspends_cost_before_mutation_and_replays"],
-      "multiplayer_tests": ["test_zone_replacement_suspends_cost_before_mutation_and_replays"],
-      "privacy_tests": ["test_zone_replacement_suspends_cost_before_mutation_and_replays"],
-      "replay_tests": ["test_fixed_sacrifice_cost_commits_and_replays", "test_zone_replacement_suspends_cost_before_mutation_and_replays"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "trigger.event.normalized_zone_change",
+        "zone.change.destination_replacement"
+      ],
+      "implementation_components": [
+        "quorune.compiler.spell_additional_cost_templates.FixedSacrificeAdditionalCostTemplate",
+        "quorune.compiler.spell_additional_cost_templates.FixedZoneChangeAdditionalCostTemplate",
+        "quorune.compiler.spell_additional_cost_nodes.typed_additional_cost_spell_node",
+        "quorune.rules.casting_additional_costs.FixedZoneChangeAdditionalCost",
+        "quorune.rules.casting.costs._apply_additional_costs",
+        "quorune.rules.casting.commit._resolve_fixed_zone_change_additional_cost",
+        "quorune.mana_payment_continuations.issue_mana_payment_replacement_choice",
+        "quorune.replacement.replay.ReplacementContinuation",
+        "CommanderEngine.move_card",
+        "quorune.replacement.replay._prior_casting_zone_cost_event_ids"
+      ],
+      "positive_tests": [
+        "test_fixed_sacrifice_cost_compiles_source_spanned_v2_program",
+        "test_fixed_sacrifice_cost_commits_and_replays",
+        "test_fixed_zone_change_costs_compile_source_spanned_programs",
+        "test_qualified_sacrifice_uses_pinned_subtype_predicate",
+        "test_exact_counted_spell_price_keeps_cost_and_result_separate",
+        "test_actual_bankrupt_commits_two_sacrifices_as_one_event_batch_and_replays"
+      ],
+      "negative_tests": [
+        "test_fixed_sacrifice_cost_grammar_fails_closed",
+        "test_offer_and_submission_share_effective_type_legality",
+        "test_fixed_zone_change_cost_grammar_fails_closed",
+        "test_random_variable_and_mixed_prices_remain_material",
+        "test_prior_counted_cast_journal_rejects_foreign_future_and_duplicate_identities"
+      ],
+      "interaction_tests": [
+        "test_sacrifice_is_not_destruction_and_uses_owner_graveyard",
+        "test_zone_replacement_suspends_cost_before_mutation_and_replays",
+        "test_actual_bankrupt_commits_two_sacrifices_as_one_event_batch_and_replays"
+      ],
+      "multiplayer_tests": [
+        "test_zone_replacement_suspends_cost_before_mutation_and_replays"
+      ],
+      "privacy_tests": [
+        "test_zone_replacement_suspends_cost_before_mutation_and_replays"
+      ],
+      "replay_tests": [
+        "test_fixed_sacrifice_cost_commits_and_replays",
+        "test_zone_replacement_suspends_cost_before_mutation_and_replays",
+        "test_actual_bankrupt_commits_two_sacrifices_as_one_event_batch_and_replays"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
-      "dependency_fail_closed_rationale": "test_fixed_sacrifice_capability_dependency_fails_closed proves the source-spanned spell node remains inexact whenever canonical destination replacement is blocked; normalized zone-change event closure remains a second mandatory dependency.",
+      "dependency_fail_closed_rationale": "Existing cost and result dependency mutations plus counted-price dependency omissions prevent exact admission.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "test_fixed_sacrifice_compiler_mutant_is_killed and test_fixed_zone_change_compiler_mutant_is_killed independently remove the legacy type-union and qualified predicate grammar productions; source-spanned exact compiler assertions reject both survivors.",
+      "implementation_mutation_rationale": "Existing transaction mutations remain killed; counted grammar omission and prior-selection journal omission witnesses detect missing admission and broken second-object continuation.",
       "blockers": [],
       "status": "trusted"
     },
     {
       "id": "casting.additional_cost.zone_change.fixed_discard",
-      "version": 2,
-      "official_rules": ["400.2", "400.7", "601.2f", "601.2g", "601.2h", "601.2i", "614.1", "616.1", "701.9a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 3,
+      "official_rules": [
+        "400.2",
+        "400.7",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "601.2i",
+        "614.1",
+        "616.1",
+        "701.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
-        "summary": "Pay one typed additional-cost leaf by choosing exactly one owned card in the caster's hand that matches a closed card-type or color predicate and discarding it before stack placement.",
-        "inputs": ["one source-spanned typed zone-change cost descriptor", "one private card in the caster's hand", "an unqualified card, one card type, or one color union", "stable replacement-aware zone-change identity"],
-        "outputs": ["one seat-scoped payable cast offer", "one replacement-aware hand-to-graveyard move", "one normalized discard event before cast-event dispatch", "transactional rollback, private replacement continuation, and exact replay"],
-        "exclusions": ["random, variable, multiple, or optional discards", "alternative costs outside the typed binary fixed-cost owner", "discarding another player's card", "compound predicates outside the represented type and color family", "cost-order choices involving multiple nonmana costs", "copied spells and unrepresented alternate casting procedures"]
+        "summary": "Pay a typed mandatory fixed discard casting price of one through ten distinct eligible cards from the caster hand, excluding the spell itself. Costs precede results; private choices, replacement continuations and exact replay use canonical casting authority.",
+        "inputs": [
+          "one source-spanned typed zone-change cost descriptor",
+          "one through ten distinct private cards in the caster hand excluding the spell itself",
+          "an unqualified card, one card type, or one color union",
+          "stable replacement-aware zone-change identity"
+        ],
+        "outputs": [
+          "one seat-scoped payable cast offer",
+          "replacement-aware selected hand departures committed before shared discard-event discovery",
+          "normalized discard events before cast-event dispatch",
+          "transactional rollback, private replacement continuation, and exact replay"
+        ],
+        "exclusions": [
+          "alternative costs outside the typed binary fixed-cost owner",
+          "discarding another player's card",
+          "compound predicates outside the represented type and color family",
+          "copied spells and unrepresented alternate casting procedures",
+          "Variable, random, optional, heterogeneous and composite prices; unsupported result siblings",
+          "Zero, counts above ten, repeatable and nonhomogeneous selected-object prices"
+        ]
       },
-      "dependencies": ["trigger.event.normalized_zone_change", "zone.change.destination_replacement"],
-      "implementation_components": ["quorune.compiler.spell_additional_cost_templates.FixedZoneChangeAdditionalCostTemplate", "quorune.compiler.spell_additional_cost_nodes.typed_additional_cost_spell_node", "quorune.rules.casting_additional_costs.FixedZoneChangeAdditionalCost", "quorune.rules.casting.costs._apply_additional_costs", "quorune.rules.casting.commit._resolve_fixed_zone_change_additional_cost", "quorune.mana_payment_continuations.issue_mana_payment_replacement_choice", "CommanderEngine.move_card"],
-      "positive_tests": ["test_fixed_zone_change_costs_compile_source_spanned_programs", "test_each_fixed_zone_change_cost_commits_to_operation_destination"],
-      "negative_tests": ["test_fixed_zone_change_cost_grammar_fails_closed", "test_stale_zone_change_selection_rolls_back"],
-      "interaction_tests": ["test_discard_replacement_suspends_before_mutation_and_replays"],
-      "multiplayer_tests": ["test_discard_replacement_suspends_before_mutation_and_replays"],
-      "privacy_tests": ["test_private_discard_offer_is_seat_scoped"],
-      "replay_tests": ["test_discard_replacement_suspends_before_mutation_and_replays"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "trigger.event.normalized_zone_change",
+        "zone.change.destination_replacement"
+      ],
+      "implementation_components": [
+        "quorune.compiler.spell_additional_cost_templates.FixedZoneChangeAdditionalCostTemplate",
+        "quorune.compiler.spell_additional_cost_nodes.typed_additional_cost_spell_node",
+        "quorune.rules.casting_additional_costs.FixedZoneChangeAdditionalCost",
+        "quorune.rules.casting.costs._apply_additional_costs",
+        "quorune.rules.casting.commit._resolve_fixed_zone_change_additional_cost",
+        "quorune.mana_payment_continuations.issue_mana_payment_replacement_choice",
+        "CommanderEngine.move_card",
+        "quorune.replacement.replay._prior_casting_zone_cost_event_ids"
+      ],
+      "positive_tests": [
+        "test_fixed_zone_change_costs_compile_source_spanned_programs",
+        "test_each_fixed_zone_change_cost_commits_to_operation_destination",
+        "test_exact_counted_spell_price_keeps_cost_and_result_separate",
+        "test_actual_reunion_pays_two_private_discards_before_drawing_and_replays"
+      ],
+      "negative_tests": [
+        "test_fixed_zone_change_cost_grammar_fails_closed",
+        "test_stale_zone_change_selection_rolls_back",
+        "test_random_variable_and_mixed_prices_remain_material",
+        "test_prior_counted_cast_journal_rejects_foreign_future_and_duplicate_identities"
+      ],
+      "interaction_tests": [
+        "test_discard_replacement_suspends_before_mutation_and_replays",
+        "test_actual_counted_discard_replacement_suspends_saves_and_replays"
+      ],
+      "multiplayer_tests": [
+        "test_discard_replacement_suspends_before_mutation_and_replays",
+        "test_actual_counted_discard_replacement_suspends_saves_and_replays"
+      ],
+      "privacy_tests": [
+        "test_private_discard_offer_is_seat_scoped",
+        "test_actual_reunion_pays_two_private_discards_before_drawing_and_replays",
+        "test_actual_counted_discard_replacement_suspends_saves_and_replays"
+      ],
+      "replay_tests": [
+        "test_discard_replacement_suspends_before_mutation_and_replays",
+        "test_actual_reunion_pays_two_private_discards_before_drawing_and_replays",
+        "test_actual_counted_discard_replacement_suspends_saves_and_replays"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
-      "dependency_fail_closed_rationale": "test_fixed_zone_change_capability_dependencies_fail_closed blocks each canonical zone-change dependency and proves the source-spanned discard spell remains inexact.",
+      "dependency_fail_closed_rationale": "Existing cost and result dependency mutations plus counted-price dependency omissions prevent exact admission.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "test_fixed_zone_change_compiler_mutant_is_killed removes the closed zone-change grammar and the exact compiler assertion rejects the survivor.",
+      "implementation_mutation_rationale": "Existing transaction mutations remain killed; counted grammar omission and prior-selection journal omission witnesses detect missing admission and broken second-object continuation.",
       "blockers": [],
       "status": "trusted"
     },

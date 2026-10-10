@@ -25,6 +25,7 @@
     "tests/fixtures/copied-self-entry-counter-cards.json",
     "tests/fixtures/counted-activation-costs.json",
     "tests/fixtures/counted-library-search-cards.json",
+    "tests/fixtures/counted-spell-additional-costs.json",
     "tests/fixtures/counter-doubling-cards.json",
     "tests/fixtures/counter-placement-event-cards.json",
     "tests/fixtures/counter-qualified-zone-cards.json",
