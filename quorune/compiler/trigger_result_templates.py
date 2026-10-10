@@ -11,6 +11,9 @@ from .fixed_entry_return_requirements import fixed_entry_return_effect_template
 
 
 def binding_effect_template(binding, body: str, *, card_name: str, effect_template):
+    from .scheduled_player_triggers import scheduled_player_result
+    scheduled=scheduled_player_result(binding,body,effect_template=effect_template,card_name=card_name)
+    if scheduled is not None:return scheduled
     from .event_card_return_templates import event_card_return_template
     returned = event_card_return_template(binding, body, card_name=card_name)
     if returned is not None:

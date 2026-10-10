@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 197,
+  "registry_version": 198,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -11342,6 +11342,87 @@
       "dependency_fail_closed_rationale": "The attached control leaf declares its own capability; attachment legality and current whole-card trust remain independent boundaries.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Original Aura cast and bounce witnesses independently assert acquisition and restoration; source-control omission and owner substitution are killed by expected custody.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "trigger.event.scheduled_player_result",
+      "version": 1,
+      "official_rules": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Bind fixed nontargeted draw/life/mill/damage results to the sealed active player of each-player, each-opponent, or current enchanted-object controller upkeep while preserving the trigger source controller.",
+        "inputs": [
+          "one source-spanned scheduled trigger",
+          "normalized step player and step",
+          "closed fixed draw/life/mill result",
+          "trigger source controller"
+        ],
+        "outputs": [
+          "step predicate",
+          "sealed event-player result reference",
+          "ordinary APNAP source controller",
+          "private draw result and deterministic replay"
+        ],
+        "exclusions": [
+          "enchanted-player and monarch schedules",
+          "dynamic quantities",
+          "open or conditional results",
+          "new targets or arbitrary player references"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.compiler.scheduled_player_triggers.scheduled_player_binding_spec",
+        "quorune.compiler.scheduled_player_triggers.scheduled_player_result",
+        "quorune.rules.scheduled_player_shapes.scheduled_player_node_capabilities",
+        "quorune.trigger_discovery.dispatch_semantic_event",
+        "quorune.scheduled_player.current_attachment_controller"
+      ],
+      "positive_tests": [
+        "test_each_player_and_opponent_results_are_nontargeted_context_bound"
+      ],
+      "negative_tests": [
+        "test_unknown_bound_results_and_monarch_schedules_remain_residual",
+        "test_bound_player_damage_shape_requires_exact_player_and_positive_amount"
+      ],
+      "interaction_tests": [
+        "test_actual_seizan_upkeep_affects_active_player_not_source_controller",
+        "test_actual_aura_upkeep_uses_recipient_controller_and_keeps_queued_player",
+        "test_actual_copper_tablet_deals_damage_to_each_active_upkeep_player"
+      ],
+      "multiplayer_tests": [
+        "test_each_opponent_upkeep_filter_excludes_source_controller"
+      ],
+      "privacy_tests": [
+        "test_actual_seizan_upkeep_affects_active_player_not_source_controller"
+      ],
+      "replay_tests": [
+        "test_actual_seizan_upkeep_affects_active_player_not_source_controller",
+        "test_actual_aura_upkeep_uses_recipient_controller_and_keeps_queued_player"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "Each independent result capability closes separately from the scheduled player binding.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Substituting the source controller is killed by the actual Seizan active-player life and private hand assertions.",
       "blockers": [],
       "status": "trusted"
     }

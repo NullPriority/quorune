@@ -1651,6 +1651,21 @@
       ]
     },
     {
+      "id": "scheduled-player-result-contract",
+      "patterns": [
+        "quorune/compiler/scheduled_player_triggers.py",
+        "quorune/scheduled_player.py",
+        "quorune/rules/scheduled_player_shapes.py",
+        "tests/fixtures/scheduled-player-triggers.json"
+      ],
+      "test_modules": [
+        "test_scheduled_player_triggers",
+        "test_fixed_counter_event_triggers",
+        "test_upkeep_step_rules",
+        "test_card_program_trust"
+      ]
+    },
+    {
       "id": "source-counter-scalar-contract",
       "patterns": [
         "quorune/scalar_effect_amount_model.py",

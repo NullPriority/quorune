@@ -22,6 +22,14 @@ Oracle IR, recognized semantic nodes, dependency declarations, material
 residuals, and a canonical `CardProgram`. For the same inputs and compiler
 version, the result must be deterministic.
 
+Scheduled each-player and each-opponent upkeep triggers preserve the trigger
+source's controller separately from the active player. Fixed nontargeted
+draw, life, mill, and damage results bind to the recorded step player. A
+current enchanted-object controller schedule uses the reciprocal attachment
+and the recipient's controller at discovery. Changing custody later does not
+change the queued result's affected player. Unsupported player roles,
+dynamic quantities, and sibling abilities remain residuals.
+
 ```mermaid
 flowchart LR
     Input["Pinned card and rulings"] --> Normalize["Normalize faces and text"]

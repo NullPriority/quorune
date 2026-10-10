@@ -91,6 +91,7 @@ from .token_creation_capability_shapes import (
 )
 from .mill_capability_shapes import fixed_mill_node_capabilities
 from .tap_state_event_capability_shapes import tap_state_event_player_node_capabilities
+from .scheduled_player_shapes import scheduled_player_node_capabilities
 from .impulse_access_capability_shapes import (
     fixed_impulse_access_node_capabilities,
 )
@@ -400,6 +401,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     "trigger-event-normalized-public-action": ("trigger.event.normalized_public_action",),
     'trigger-event-normalized-counter-placement': ('trigger.event.normalized_counter_placement',),
     "tap-state-event-player-result": ("trigger.event.normalized_public_action",),
+    "scheduled-player-event-result": ("trigger.event.scheduled_player_result",),
     "trigger-event-normalized-damage": (
         "trigger.event.normalized_damage",
     ),
@@ -1078,7 +1080,7 @@ def _targeted_effect_capabilities(
         fixed_affected_player_discard_node_capabilities,
         fixed_affected_player_sacrifice_node_capabilities,
         fixed_entry_return_node_capabilities,
-        fixed_mill_node_capabilities, tap_state_event_player_node_capabilities,
+        fixed_mill_node_capabilities, tap_state_event_player_node_capabilities, scheduled_player_node_capabilities,
         fixed_impulse_access_node_capabilities,
         fixed_monarch_node_capabilities,
         source_transform_node_capabilities,

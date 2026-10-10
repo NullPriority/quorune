@@ -76,6 +76,7 @@
     "tests/fixtures/repeatable-object-action-triggers.json",
     "tests/fixtures/resolution-public-condition-cards.json",
     "tests/fixtures/scalar-effect-amount-cards.json",
+    "tests/fixtures/scheduled-player-triggers.json",
     "tests/fixtures/scryfall-exact-lists.json",
     "tests/fixtures/source-counter-amounts.json",
     "tests/fixtures/source-maintenance-cards.json",

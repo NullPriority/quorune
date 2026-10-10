@@ -117,6 +117,7 @@
   },
   "protected_rules_modules": [
     "quorune/attached_control.py",
+    "quorune/scheduled_player.py",
     "quorune/control_effects.py",
     "quorune/optional_untap.py",
     "quorune/abilities.py",

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "f3f8a5933f005859c5a61c4bbd431bb45b61c8849399fbbca888302d5c407b7e",
-  "declaration_source_fingerprint": "f1387ed01084492d12153165ceccf56d15c79ae82d3d6b0a67b53a91bcd217dc",
+  "registry_fingerprint": "637e5c02b1d22ed48a268f980152357b0a0961ef2e1b7bf55eff64fc7d31d4ca",
+  "declaration_source_fingerprint": "ac7c657bddadbf01d4062a0ddfe2f3ad5dde39c722cd983caa1c7f700c4882b2",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -80903,6 +80903,186 @@
       "applicability_note": "Replay from the checkpoint before an offered cast and verify the full entered permanent and trigger result."
     },
     {
+      "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerRuntimeTests.test_actual_aura_upkeep_uses_recipient_controller_and_keeps_queued_player",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The scheduled active-player reference is immutable, nontargeted and source-controller independent; exact registered damage and recipient-control interaction witnesses preserve authoritative replay."
+    },
+    {
+      "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerRuntimeTests.test_actual_copper_tablet_deals_damage_to_each_active_upkeep_player",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The scheduled active-player reference is immutable, nontargeted and source-controller independent; exact registered damage and recipient-control interaction witnesses preserve authoritative replay."
+    },
+    {
+      "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerRuntimeTests.test_actual_seizan_upkeep_affects_active_player_not_source_controller",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual source-controlled Seizan triggers on a different active player upkeep and applies life/draw to that recorded player with private projection and exact replay."
+    },
+    {
+      "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerRuntimeTests.test_each_opponent_upkeep_filter_excludes_source_controller",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual source-controlled Seizan triggers on a different active player upkeep and applies life/draw to that recorded player with private projection and exact replay."
+    },
+    {
+      "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerRuntimeTests.test_source_controller_substitution_mutant_is_killed_by_seizan",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual source-controlled Seizan triggers on a different active player upkeep and applies life/draw to that recorded player with private projection and exact replay."
+    },
+    {
+      "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "negative",
+      "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerCompilerTests.test_bound_player_damage_shape_requires_exact_player_and_positive_amount",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The scheduled active-player reference is immutable, nontargeted and source-controller independent; exact registered damage and recipient-control interaction witnesses preserve authoritative replay."
+    },
+    {
+      "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "negative",
+      "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerCompilerTests.test_unknown_bound_results_and_monarch_schedules_remain_residual",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual source-controlled Seizan triggers on a different active player upkeep and applies life/draw to that recorded player with private projection and exact replay."
+    },
+    {
+      "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerCompilerTests.test_each_player_and_opponent_results_are_nontargeted_context_bound",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual source-controlled Seizan triggers on a different active player upkeep and applies life/draw to that recorded player with private projection and exact replay."
+    },
+    {
+      "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerRuntimeTests.test_actual_seizan_upkeep_affects_active_player_not_source_controller",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual source-controlled Seizan triggers on a different active player upkeep and applies life/draw to that recorded player with private projection and exact replay."
+    },
+    {
+      "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "replay",
+      "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerRuntimeTests.test_actual_seizan_upkeep_affects_active_player_not_source_controller",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual source-controlled Seizan triggers on a different active player upkeep and applies life/draw to that recorded player with private projection and exact replay."
+    },
+    {
       "capability_id": "trigger.event.spell_cast_creature_target",
       "evidence_class": "interaction",
       "test_id": "tests.test_cast_creature_targets.CastCreatureTargetActionTests.test_actual_repartee_cast_checks_target_type_controller_and_invalid_command_rollback",
@@ -91105,5 +91285,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "dc0f1614bc9680544c73a96013788fe1aae772b05a81d09749a8ad0fc70adb49"
+  "fingerprint": "a7dbc720fe0e207c4da3629981b7717b5bd94368ae8674e4b91a54541c38e143"
 }

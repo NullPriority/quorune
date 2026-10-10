@@ -8309,6 +8309,51 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Maga is cast with X three, Hardened Scales makes its entry count four, and the independently targeted entry trigger removes exactly four life after pending-target save/load with pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_seizan_upkeep_affects_active_player_not_source_controller",
+      "piece_ids": [
+        "capability.trigger.event.scheduled_player_result",
+        "capability.zone.draw.library_to_hand"
+      ],
+      "capability_ids": [
+        "trigger.event.scheduled_player_result",
+        "zone.draw.library_to_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Seizan controlled by A triggers at B upkeep, then B loses two life and privately draws two cards while A is unchanged. The trigger remains controlled by A and its pre-action replay is exact."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_aura_upkeep_uses_recipient_controller_and_keeps_queued_player",
+      "piece_ids": [
+        "capability.continuous.control.fixed_resolution",
+        "capability.trigger.event.scheduled_player_result"
+      ],
+      "capability_ids": [
+        "continuous.control.fixed_resolution",
+        "trigger.event.scheduled_player_result"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Stab Wound triggers at the enchanted creature controller B upkeep. A generic represented instant control response changes the creature to A; the queued Aura ability still removes two life from B, with pending save/load and replay from explicit response setup."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_copper_tablet_deals_damage_to_each_active_upkeep_player",
+      "piece_ids": [
+        "capability.damage.result.player_life",
+        "capability.trigger.event.scheduled_player_result"
+      ],
+      "capability_ids": [
+        "damage.result.player_life",
+        "trigger.event.scheduled_player_result"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Copper Tablet triggers at D upkeep and its fixed nontargeted result deals one damage to D through the canonical damage owner, recording the exact public turn-history fact and replaying from before step advancement."
     }
   ]
 }
