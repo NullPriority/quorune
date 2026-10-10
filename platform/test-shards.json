@@ -82,6 +82,7 @@
       "test_mana_mode_effects",
       "test_menace_rules",
       "test_object_query",
+      "test_player_target_protection",
       "test_preflight_v080",
       "test_resolution_rules",
       "test_scheduled_player_triggers",

@@ -35572,6 +35572,351 @@
       "applicability_note": "Round-trip typed damage history through save, load, and exact Game Record replay without changing target admission."
     },
     {
+      "capability_id": "target.player.static_hexproof_shroud",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_player_target_protection.PlayerProtectionRuntimeTests.test_actual_control_change_moves_player_protection_and_replays",
+      "official_rule_ids": [
+        "702.11",
+        "702.11a",
+        "702.11c",
+        "702.11h",
+        "702.18",
+        "702.18a",
+        "702.18b",
+        "611.3a",
+        "611.3b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual source control changes move the player grant; an actual creature cast through Vedalken Orrery in response invalidates an already selected player target at resolution, with exact pre-action replay."
+    },
+    {
+      "capability_id": "target.player.static_hexproof_shroud",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_player_target_protection.PlayerProtectionRuntimeTests.test_actual_flash_entry_invalidates_existing_player_target_at_resolution",
+      "official_rule_ids": [
+        "702.11",
+        "702.11a",
+        "702.11c",
+        "702.11h",
+        "702.18",
+        "702.18a",
+        "702.18b",
+        "611.3a",
+        "611.3b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual source control changes move the player grant; an actual creature cast through Vedalken Orrery in response invalidates an already selected player target at resolution, with exact pre-action replay."
+    },
+    {
+      "capability_id": "target.player.static_hexproof_shroud",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_player_target_protection.PlayerProtectionRuntimeTests.test_actual_own_target_is_allowed_by_hexproof_and_rejected_by_shroud",
+      "official_rule_ids": [
+        "702.11",
+        "702.11a",
+        "702.11c",
+        "702.11h",
+        "702.18",
+        "702.18a",
+        "702.18b",
+        "611.3a",
+        "611.3b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current phased, removed or untrusted source components grant no keyword. Real own-controller Shock targets remain legal under player hexproof and reject atomically under shroud, with exact replay."
+    },
+    {
+      "capability_id": "target.player.static_hexproof_shroud",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_player_target_protection.PlayerProtectionRuntimeTests.test_actual_source_departure_restores_target_after_unsummon_and_replay",
+      "official_rule_ids": [
+        "702.11",
+        "702.11a",
+        "702.11c",
+        "702.11h",
+        "702.18",
+        "702.18a",
+        "702.18b",
+        "611.3a",
+        "611.3b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed current-controller player protection distinguishes opponent-only hexproof from all-controller shroud; actual registered actions retain shared offer/command legality, rollback and replay."
+    },
+    {
+      "capability_id": "target.player.static_hexproof_shroud",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_player_target_protection.PlayerProtectionRuntimeTests.test_actual_sources_share_offers_commands_privacy_and_replay",
+      "official_rule_ids": [
+        "702.11",
+        "702.11a",
+        "702.11c",
+        "702.11h",
+        "702.18",
+        "702.18a",
+        "702.18b",
+        "611.3a",
+        "611.3b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed current-controller player protection distinguishes opponent-only hexproof from all-controller shroud; actual registered actions retain shared offer/command legality, rollback and replay."
+    },
+    {
+      "capability_id": "target.player.static_hexproof_shroud",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_player_target_protection.PlayerProtectionCompilerTests.test_player_controller_grid_and_omission_mutant_distinguish_shroud",
+      "official_rule_ids": [
+        "702.11",
+        "702.11a",
+        "702.11c",
+        "702.11h",
+        "702.18",
+        "702.18a",
+        "702.18b",
+        "611.3a",
+        "611.3b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed current-controller player protection distinguishes opponent-only hexproof from all-controller shroud; actual registered actions retain shared offer/command legality, rollback and replay."
+    },
+    {
+      "capability_id": "target.player.static_hexproof_shroud",
+      "evidence_class": "negative",
+      "test_id": "tests.test_player_target_protection.PlayerProtectionCompilerTests.test_player_descriptor_dependency_and_malformed_shapes_fail_closed",
+      "official_rule_ids": [
+        "702.11",
+        "702.11a",
+        "702.11c",
+        "702.11h",
+        "702.18",
+        "702.18a",
+        "702.18b",
+        "611.3a",
+        "611.3b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed current-controller player protection distinguishes opponent-only hexproof from all-controller shroud; actual registered actions retain shared offer/command legality, rollback and replay."
+    },
+    {
+      "capability_id": "target.player.static_hexproof_shroud",
+      "evidence_class": "negative",
+      "test_id": "tests.test_player_target_protection.PlayerProtectionRuntimeTests.test_phased_removed_or_untrusted_source_component_does_not_grant_player_keywords",
+      "official_rule_ids": [
+        "702.11",
+        "702.11a",
+        "702.11c",
+        "702.11h",
+        "702.18",
+        "702.18a",
+        "702.18b",
+        "611.3a",
+        "611.3b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current phased, removed or untrusted source components grant no keyword. Real own-controller Shock targets remain legal under player hexproof and reject atomically under shroud, with exact replay."
+    },
+    {
+      "capability_id": "target.player.static_hexproof_shroud",
+      "evidence_class": "positive",
+      "test_id": "tests.test_player_target_protection.PlayerProtectionCompilerTests.test_fixed_player_keywords_have_closed_source_spans_and_shared_capability",
+      "official_rule_ids": [
+        "702.11",
+        "702.11a",
+        "702.11c",
+        "702.11h",
+        "702.18",
+        "702.18a",
+        "702.18b",
+        "611.3a",
+        "611.3b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed current-controller player protection distinguishes opponent-only hexproof from all-controller shroud; actual registered actions retain shared offer/command legality, rollback and replay."
+    },
+    {
+      "capability_id": "target.player.static_hexproof_shroud",
+      "evidence_class": "positive",
+      "test_id": "tests.test_player_target_protection.PlayerProtectionRuntimeTests.test_actual_sources_share_offers_commands_privacy_and_replay",
+      "official_rule_ids": [
+        "702.11",
+        "702.11a",
+        "702.11c",
+        "702.11h",
+        "702.18",
+        "702.18a",
+        "702.18b",
+        "611.3a",
+        "611.3b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed current-controller player protection distinguishes opponent-only hexproof from all-controller shroud; actual registered actions retain shared offer/command legality, rollback and replay."
+    },
+    {
+      "capability_id": "target.player.static_hexproof_shroud",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_player_target_protection.PlayerProtectionRuntimeTests.test_actual_sources_share_offers_commands_privacy_and_replay",
+      "official_rule_ids": [
+        "702.11",
+        "702.11a",
+        "702.11c",
+        "702.11h",
+        "702.18",
+        "702.18a",
+        "702.18b",
+        "611.3a",
+        "611.3b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed current-controller player protection distinguishes opponent-only hexproof from all-controller shroud; actual registered actions retain shared offer/command legality, rollback and replay."
+    },
+    {
+      "capability_id": "target.player.static_hexproof_shroud",
+      "evidence_class": "replay",
+      "test_id": "tests.test_player_target_protection.PlayerProtectionRuntimeTests.test_actual_control_change_moves_player_protection_and_replays",
+      "official_rule_ids": [
+        "702.11",
+        "702.11a",
+        "702.11c",
+        "702.11h",
+        "702.18",
+        "702.18a",
+        "702.18b",
+        "611.3a",
+        "611.3b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual source control changes move the player grant; an actual creature cast through Vedalken Orrery in response invalidates an already selected player target at resolution, with exact pre-action replay."
+    },
+    {
+      "capability_id": "target.player.static_hexproof_shroud",
+      "evidence_class": "replay",
+      "test_id": "tests.test_player_target_protection.PlayerProtectionRuntimeTests.test_actual_flash_entry_invalidates_existing_player_target_at_resolution",
+      "official_rule_ids": [
+        "702.11",
+        "702.11a",
+        "702.11c",
+        "702.11h",
+        "702.18",
+        "702.18a",
+        "702.18b",
+        "611.3a",
+        "611.3b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual source control changes move the player grant; an actual creature cast through Vedalken Orrery in response invalidates an already selected player target at resolution, with exact pre-action replay."
+    },
+    {
+      "capability_id": "target.player.static_hexproof_shroud",
+      "evidence_class": "replay",
+      "test_id": "tests.test_player_target_protection.PlayerProtectionRuntimeTests.test_actual_own_target_is_allowed_by_hexproof_and_rejected_by_shroud",
+      "official_rule_ids": [
+        "702.11",
+        "702.11a",
+        "702.11c",
+        "702.11h",
+        "702.18",
+        "702.18a",
+        "702.18b",
+        "611.3a",
+        "611.3b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current phased, removed or untrusted source components grant no keyword. Real own-controller Shock targets remain legal under player hexproof and reject atomically under shroud, with exact replay."
+    },
+    {
+      "capability_id": "target.player.static_hexproof_shroud",
+      "evidence_class": "replay",
+      "test_id": "tests.test_player_target_protection.PlayerProtectionRuntimeTests.test_actual_sources_share_offers_commands_privacy_and_replay",
+      "official_rule_ids": [
+        "702.11",
+        "702.11a",
+        "702.11c",
+        "702.11h",
+        "702.18",
+        "702.18a",
+        "702.18b",
+        "611.3a",
+        "611.3b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed current-controller player protection distinguishes opponent-only hexproof from all-controller shroud; actual registered actions retain shared offer/command legality, rollback and replay."
+    },
+    {
       "capability_id": "target.protection.hexproof_permanent",
       "evidence_class": "interaction",
       "test_id": "tests.test_hexproof_targeting.HexproofTargetingIntegrationTests.test_control_change_recomputes_offer_and_resolution_legality",

@@ -8816,6 +8816,36 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Word of Seizing changes the Extort source controller in response to its queued trigger. The original trigger still offers payment only to its locked controller after the split-second response resolves; actual source bounce likewise leaves the trigger, with exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_control_change_moves_player_protection_and_replays",
+      "piece_ids": [
+        "capability.continuous.control.fixed_resolution",
+        "capability.target.player.static_hexproof_shroud"
+      ],
+      "capability_ids": [
+        "continuous.control.fixed_resolution",
+        "target.player.static_hexproof_shroud"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Act of Treason moves player hexproof to the source current controller and restores targeting of its former controller, with accepted Shock and exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_flash_entry_invalidates_existing_player_target_at_resolution",
+      "piece_ids": [
+        "capability.casting.timing.fixed_query_static",
+        "capability.target.player.static_hexproof_shroud"
+      ],
+      "capability_ids": [
+        "casting.timing.fixed_query_static",
+        "target.player.static_hexproof_shroud"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual trusted Vedalken Orrery permits Aegis of the Gods in response to Shock; new current player hexproof invalidates the selected player at resolution, preserving life and exact replay."
     }
   ]
 }

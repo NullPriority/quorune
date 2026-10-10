@@ -9,6 +9,12 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+`compiler/player_target_protection_nodes.py` lowers only fixed "you have
+hexproof" and "you have shroud" lines to trusted source components. The
+existing ability-component registry validates the closed keyword descriptor;
+the target-protection owner derives the current controller's player grant.
+Conditional or qualified grants and unsupported card siblings remain residual.
+
 Closed one-or-more public entry and departure subjects reuse the singular
 typed characteristic query grammar. The compiler marks their generated
 trigger for one occurrence per committed simultaneous batch, scoped to source

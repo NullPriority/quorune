@@ -1652,6 +1652,21 @@
       ]
     },
     {
+      "id": "player-target-protection-contract",
+      "patterns": [
+        "quorune/compiler/player_target_protection_nodes.py",
+        "quorune/semantic_runtime/player_target_protection.py",
+        "tests/fixtures/player-target-protection-cards.json"
+      ],
+      "test_modules": [
+        "test_player_target_protection",
+        "test_hexproof_targeting",
+        "test_shroud_targeting",
+        "test_targeting_v070",
+        "test_card_program_trust"
+      ]
+    },
+    {
       "id": "extort-life-transfer-contract",
       "patterns": [
         "quorune/compiler/extort_nodes.py",

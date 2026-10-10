@@ -42,6 +42,7 @@ from ..rules.capabilities import load_default_capability_registry
 from ..trigger_participation import TriggerMultiplierSpec, WardSpec
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
+from .player_target_protection import PlayerTargetProtectionHandler
 
 
 ENCHANT_FRAGMENT_HANDLER_ID = "ability.static.enchant.v1"
@@ -1360,6 +1361,7 @@ def default_ability_fragment_registry() -> AbilityFragmentRegistry:
             MeleeAbilityFragmentHandler(),
             MentorAbilityFragmentHandler(),
             ProtectionAbilityFragmentHandler(),
+            PlayerTargetProtectionHandler(),
             PartnerWithAbilityFragmentHandler(),
             ProwessAbilityFragmentHandler(),
             RenownAbilityFragmentHandler(),

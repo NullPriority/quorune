@@ -31,6 +31,10 @@ maintenance: "hand-maintained"
 - Preserve explicit sacrifice provenance for Fading and Vanishing cleanup
   through zone replacements, normalized trigger occurrences, and turn history.
 
+- Apply fixed player hexproof and shroud through shared target legality,
+  following current trusted source abilities and control without persisting
+  player keyword state. Source departure and entry update target revalidation.
+
 - Resolve ordinary Extort instances with optional white or black payment,
   simultaneous opponent life loss and gain equal to actual total life lost.
   Replacement continuations preserve committed stages, and canonical cast-source

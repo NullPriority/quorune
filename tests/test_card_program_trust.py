@@ -216,6 +216,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "ability.static.dynamic_power_toughness",
                 "ability.static.component_scope",
                 "ability.static.protection",
+                "ability.static.player_target_protection",
                 "ability.static.partner_with",
                 "ability.static.query_characteristic_modifier",
                 "ability.static.query_power_toughness_definition",

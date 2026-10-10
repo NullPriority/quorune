@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 210,
+  "registry_version": 211,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -12530,6 +12530,94 @@
       "dependency_fail_closed_rationale": "Omitting canonical life-change capability prevents exact Extort admission.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Replacing the actual total loss with a fixed one-life gain fails the four-player accepted-payment witness. The insertion-order mutation also fails exact two-source command replay.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "target.player.static_hexproof_shroud",
+      "version": 1,
+      "official_rules": [
+        "702.11",
+        "702.11a",
+        "702.11c",
+        "702.11h",
+        "702.18",
+        "702.18a",
+        "702.18b",
+        "611.3a",
+        "611.3b",
+        "608.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Current trusted battlefield sources grant fixed ordinary hexproof or shroud to their current controller through the shared target-protection snapshot.",
+        "inputs": [
+          "current effective static-component identity",
+          "trusted source program and controller",
+          "acting spell or ability controller"
+        ],
+        "outputs": [
+          "shared offered, accepted and revalidated player-target legality"
+        ],
+        "exclusions": [
+          "conditional or qualified player keyword grants",
+          "unsupported sibling abilities",
+          "runtime Oracle interpretation",
+          "persisted player keyword state"
+        ]
+      },
+      "dependencies": [
+        "target.revalidate_resolution"
+      ],
+      "implementation_components": [
+        "quorune.compiler.player_target_protection_nodes.player_target_protection_node",
+        "quorune.semantic_runtime.player_target_protection.PlayerTargetProtectionHandler",
+        "quorune.semantic_runtime.player_target_protection.current_player_target_keywords",
+        "quorune.target_protection.target_protection_verdict",
+        "quorune.target_protection_engine_adapter.target_protection_verdict_for_row"
+      ],
+      "positive_tests": [
+        "test_fixed_player_keywords_have_closed_source_spans_and_shared_capability",
+        "test_actual_sources_share_offers_commands_privacy_and_replay"
+      ],
+      "negative_tests": [
+        "test_player_descriptor_dependency_and_malformed_shapes_fail_closed",
+        "test_phased_removed_or_untrusted_source_component_does_not_grant_player_keywords"
+      ],
+      "interaction_tests": [
+        "test_actual_source_departure_restores_target_after_unsummon_and_replay",
+        "test_actual_control_change_moves_player_protection_and_replays",
+        "test_actual_flash_entry_invalidates_existing_player_target_at_resolution",
+        "test_actual_own_target_is_allowed_by_hexproof_and_rejected_by_shroud"
+      ],
+      "multiplayer_tests": [
+        "test_actual_sources_share_offers_commands_privacy_and_replay"
+      ],
+      "privacy_tests": [
+        "test_actual_sources_share_offers_commands_privacy_and_replay"
+      ],
+      "replay_tests": [
+        "test_actual_sources_share_offers_commands_privacy_and_replay",
+        "test_actual_control_change_moves_player_protection_and_replays",
+        "test_actual_flash_entry_invalidates_existing_player_target_at_resolution",
+        "test_actual_own_target_is_allowed_by_hexproof_and_rejected_by_shroud"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Omitting target revalidation blocks exact player protection compilation.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting player protection fails the controller-grid keyword verdict witness.",
       "blockers": [],
       "status": "trusted"
     }

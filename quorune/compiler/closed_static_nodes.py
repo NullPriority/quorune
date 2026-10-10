@@ -9,6 +9,7 @@ from .declaration_nodes import (
 )
 from .intrinsic_counter_nodes import intrinsic_counter_prohibition_node
 from .maximum_hand_size_nodes import no_maximum_hand_size_node
+from .player_target_protection_nodes import player_target_protection_node
 from .defender_permission_templates import static_defender_permission_handler
 from .as_unblocked_templates import static_as_unblocked_handler
 from .toughness_assignment_templates import static_toughness_assignment_handler
@@ -77,6 +78,12 @@ def closed_static_or_replacement_node(
     )
     if alternative_cost is not None:
         return alternative_cost
+    player_protection = player_target_protection_node(
+        node_id=node_id,line=line,material_line=material_line,span=span,
+        capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals,
+    )
+    if player_protection is not None:
+        return player_protection
     no_maximum = no_maximum_hand_size_node(
         node_id=node_id,
         line=line,
