@@ -8054,6 +8054,51 @@
       ],
       "interaction_order": 2,
       "assertion": "A real Revolt cast seals its two-counter amount before Hardened Scales/Branching Evolution ordering. Pending save/load retains the transaction, private choice rejects other principals atomically, and addition/doubling applies to the frozen amount with exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_discarded_spider_cast_uses_alternative_cost_and_ordinary_destination",
+      "piece_ids": [
+        "capability.casting.lifecycle.fixed_zone_cast",
+        "capability.zone.discard.typed_cause"
+      ],
+      "capability_ids": [
+        "casting.lifecycle.fixed_zone_cast",
+        "zone.discard.typed_cause"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Faithless Looting discards Spider-Islanders, after which only its fixed Mayhem branch is offered. Wrong-principal casting rejects atomically; the accepted Mayhem cost resolves to the ordinary battlefield destination and exact replay matches."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_mayhem_additional_cost_is_required_and_committed_before_entry",
+      "piece_ids": [
+        "capability.casting.additional_cost.fixed_sacrifice",
+        "capability.casting.lifecycle.fixed_zone_cast"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.fixed_sacrifice",
+        "casting.lifecycle.fixed_zone_cast"
+      ],
+      "interaction_order": 2,
+      "assertion": "An actually discarded trusted generic Mayhem creature retains its mandatory sacrifice casting price. Omitting the price rejects without mutation; a selected controlled creature is sacrificed before the spell enters and pre-action replay matches."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_mayhem_creature_normal_timing_and_flash_share_existing_offer_legality",
+      "piece_ids": [
+        "capability.casting.lifecycle.fixed_zone_cast",
+        "capability.timing.cast.printed_flash"
+      ],
+      "capability_ids": [
+        "casting.lifecycle.fixed_zone_cast",
+        "timing.cast.printed_flash"
+      ],
+      "interaction_order": 2,
+      "assertion": "Current-turn discarded Mayhem cards retain ordinary timing. On another player's turn, Spider-Islanders is absent from offered casts and a direct proposal rejects; Swarm remains offered through its independent current Flash permission."
     }
   ]
 }

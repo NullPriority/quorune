@@ -5,6 +5,8 @@ from __future__ import annotations
 from typing import Any
 
 from ..compiled_cast_lifecycles import compiled_fixed_zone_cast_permission
+from ..compiled_cast_lifecycles import compiled_mayhem_permission, compiled_fixed_cast_lifecycle_spec
+from ..cast_lifecycles import FixedCastLifecycleKind
 from ..compiled_flashback import (
     compiled_fixed_mana_flashback_spec,
     compiled_ordinary_zone_cast_permission,
@@ -27,6 +29,10 @@ def compiled_land_play_permission(host: Any, seat: str, card: Any) -> bool:
         return True
     if card.zone == "library":
         return controller_has_library_top_land_permission(host, seat, card)
+    if compiled_mayhem_permission(host, seat, card):
+        spec = compiled_fixed_cast_lifecycle_spec(host, card, FixedCastLifecycleKind.MAYHEM)
+        if spec is not None and spec.mana_cost is None:
+            return True
     return bool(
         card.zone == "graveyard"
         and controller_has_action_permission(

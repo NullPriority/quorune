@@ -1357,7 +1357,16 @@ Fixed ordinary-mana Buyback, Dash, Escape, Foretell, Plot, Warp, and
 positive-count Suspend, plus bare Jump-start, Rebound, and Retrace, lower
 through one typed cast-lifecycle owner. Every descriptor declares both public
 and zone-cast capabilities required by the registered shared handler, plus its
-kind-specific cost or combat dependencies. This conservative descriptor
+kind-specific cost or combat dependencies. Mayhem adds a version-four fixed or
+bare descriptor within this same registry. Current owner-graveyard permission
+requires an exact adjacent discard incarnation in the current turn journal.
+Fixed costs use the alternative branch; bare declarations use printed spell
+costs or normal land-play timing and limits. Mandatory additional costs,
+current-ability revalidation and ordinary destinations remain authoritative.
+Hybrid, variable, snow, Phyrexian and nonmana Mayhem costs remain residual.
+Every prior descriptor retains its original version and serialized shape.
+
+This conservative descriptor
 contract does not grant a new casting permission or bypass current-ability
 validation; unavailable dependencies keep admission fail-closed. Dash contributes
 an alternative cost whenever the canonical casting owner already authorizes the

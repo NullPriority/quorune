@@ -893,6 +893,8 @@
       "id": "fixed-zone-cast-lifecycle-contract",
       "patterns": [
         "mechanics/contracts/escape.json",
+        "tests/test_mayhem_rules.py",
+        "tests/fixtures/mayhem-cards.json",
         "mechanics/contracts/foretell.json",
         "mechanics/contracts/jump-start.json",
         "mechanics/contracts/plot.json",
@@ -926,6 +928,7 @@
         "test_card_program_trust",
         "test_fixed_casting_surface",
         "test_fixed_zone_cast_lifecycles",
+        "test_mayhem_rules",
         "test_fixed_zone_change_additional_costs",
         "test_flashback_rules",
         "test_game_record_v3",

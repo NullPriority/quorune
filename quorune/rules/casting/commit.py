@@ -20,7 +20,7 @@ from ...counter_placement import (
 from ...compiled_morph import compiled_fixed_mana_face_down_method_spec
 from ...compiled_flashback import compiled_fixed_mana_flashback_spec
 from ...compiled_madness import current_fixed_cast_lifecycle_spec
-from ...compiled_cast_lifecycles import compiled_fixed_cast_lifecycle_spec
+from ...compiled_cast_lifecycles import compiled_fixed_cast_lifecycle_spec, compiled_mayhem_permission
 from ...cast_lifecycles import (
     FixedCastLifecycleError,
     FixedCastLifecycleKind,
@@ -1226,6 +1226,7 @@ def _revalidate_fixed_lifecycle_contract(
         FixedCastLifecycleKind.PLOT: "exile",
         FixedCastLifecycleKind.WARP: "hand",
         FixedCastLifecycleKind.RETRACE: "graveyard",
+        FixedCastLifecycleKind.MAYHEM: "graveyard",
     }.get(proposed.kind)
     option_id = str(selected_option.get("id") or "")
     valid_id = (
@@ -1239,6 +1240,7 @@ def _revalidate_fixed_lifecycle_contract(
         != proposed.fingerprint
         or (expected_origin is not None and proposal.origin != expected_origin)
         or not valid_id
+        or (proposed.kind is FixedCastLifecycleKind.MAYHEM and not compiled_mayhem_permission(host, proposal.seat, card))
     ):
         raise CastProposalError(
             "The fixed cast-lifecycle contract changed before commit",
