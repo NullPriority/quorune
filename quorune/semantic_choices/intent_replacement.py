@@ -1,5 +1,6 @@
 from __future__ import annotations
 from ..semantic_runtime.life_batch_intent import LifeLossBatchIntent
+from ..semantic_runtime.counter_movement_intent import MoveCountersIntent, decode_counter_movement_identity
 
 from dataclasses import replace
 from typing import Any, Mapping, Sequence
@@ -361,6 +362,8 @@ def semantic_intent_identity(intent: Any) -> tuple[str, dict[str, Any]]:
         )
     if isinstance(intent, PlaceCountersIntent):
         return "place_counters", counter_intent_identity(intent)
+    if isinstance(intent, MoveCountersIntent):
+        return "move_counters", intent.identity()
     if isinstance(intent, PlaceCounterBatchIntent):
         return (
             "place_counter_batch",
@@ -750,6 +753,11 @@ def validate_semantic_intent_identity(
         return _validate_life_change_intent_identity(value)
     if kind == "place_counters":
         return validate_counter_intent_identity(value)
+    if kind == "move_counters":
+        try:
+            return decode_counter_movement_identity(value)
+        except (TypeError, ValueError) as exc:
+            raise SemanticChoiceError(str(exc)) from exc
     if kind == "place_counter_batch":
         return _validate_counter_batch_intent_identity(value)
     if kind == "place_counters_on_set":
@@ -1151,6 +1159,7 @@ def with_replacement_selections(
     selections: Sequence[str | FrozenMap | Mapping[str, Any]],
 ) -> (
     PlaceCountersIntent
+    | MoveCountersIntent
     | LifeChangeIntent
     | PlaceCounterBatchIntent
     | PlaceCountersOnSetIntent
@@ -1170,6 +1179,7 @@ def with_replacement_selections(
             PlaceCountersIntent,
             LifeChangeIntent,
             LifeLossBatchIntent,
+            MoveCountersIntent,
             PlaceCounterBatchIntent,
             PlaceCountersOnSetIntent,
             PlaceCountersOnTargetsIntent,

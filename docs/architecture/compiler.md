@@ -1323,8 +1323,11 @@ queried and attached grants use current recipient relationships, while exact
 resolution-locked grants retain their existing incarnation and duration rules.
 Chosen or qualified landwalk and as-though evasion overrides remain residual.
 
-Fading and Vanishing lower their separate entry and lifecycle abilities to
-the current counter and trigger owners. Vanishing retains its intervening-if
+Fading, Graft and Vanishing lower their separate entry and lifecycle abilities to
+the current counter and trigger owners. Graft emits a non-targeted optional
+counter-movement choice with the intervening source-counter condition and
+pinned source and entry identities; recipient replacements complete before
+the shared counter owner commits removal and placement. Vanishing retains its intervening-if
 upkeep and separate last-counter sacrifice trigger; ordinary counter removals
 observe post-event characteristics before stabilization. Both cleanup actions
 carry an explicit sacrifice transition through the ordinary zone-move intent

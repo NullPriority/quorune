@@ -1,4 +1,5 @@
 from __future__ import annotations
+from ..semantic_runtime.counter_movement_intent import MoveCountersIntent
 
 from typing import Any, Mapping, Protocol, Sequence
 
@@ -130,6 +131,7 @@ def _issue_semantic_intent_replacement_choice(
     response: Mapping[str, Any],
     intent: (
         PlaceCountersOnSetIntent
+        | MoveCountersIntent
         | LifeChangeIntent
         | PlaceCounterBatchIntent
         | PlaceCountersOnTargetsIntent
@@ -256,6 +258,7 @@ def continue_semantic_completion(
                 (
                     *DESTRUCTION_INTENT_TYPES,
                     PlaceCountersOnSetIntent,
+                    MoveCountersIntent,
                     LifeChangeIntent,
                     PlaceCounterBatchIntent,
                     PlaceCountersOnTargetsIntent,

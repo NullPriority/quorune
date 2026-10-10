@@ -31,6 +31,10 @@ maintenance: "hand-maintained"
 - Preserve explicit sacrifice provenance for Fading and Vanishing cleanup
   through zone replacements, normalized trigger occurrences, and turn history.
 
+- Resolve fixed Graft's optional counter movement through one atomic counter
+  transaction with source and recipient incarnation checks, replacement-order
+  continuation and replay.
+
 - Start and retain player speed through canonical state-based actions and
   source-free own-turn opponent life-loss triggers. Gate Max Speed abilities
   by current controller speed across battlefield and graveyard contexts.

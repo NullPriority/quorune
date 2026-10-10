@@ -19060,6 +19060,446 @@
       "applicability_note": "Failed fade removal commits sacrifice history and resolves an unrestricted observer draw."
     },
     {
+      "capability_id": "counter.lifecycle.graft",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_graft_rules.GraftRuntimeTests.test_actual_foreign_entry_is_nontargeted_and_pending_reload_replays",
+      "official_rule_ids": [
+        "702.58",
+        "702.58a",
+        "702.58b",
+        "122.5",
+        "603.4",
+        "400.7",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Graft entry counters and non-targeted optional identity-pinned movement of one current source counter onto another entering creature."
+    },
+    {
+      "capability_id": "counter.lifecycle.graft",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_graft_rules.GraftRuntimeTests.test_actual_graft_cast_and_other_entry_transfer_decline_and_replay",
+      "official_rule_ids": [
+        "702.58",
+        "702.58a",
+        "702.58b",
+        "122.5",
+        "603.4",
+        "400.7",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Graft entry counters and non-targeted optional identity-pinned movement of one current source counter onto another entering creature."
+    },
+    {
+      "capability_id": "counter.lifecycle.graft",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_graft_rules.GraftRuntimeTests.test_departed_recipient_does_not_remove_source_counter_and_replays",
+      "official_rule_ids": [
+        "702.58",
+        "702.58a",
+        "702.58b",
+        "122.5",
+        "603.4",
+        "400.7",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Graft entry counters and non-targeted optional identity-pinned movement of one current source counter onto another entering creature."
+    },
+    {
+      "capability_id": "counter.lifecycle.graft",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_graft_rules.GraftRuntimeTests.test_replacement_order_defers_removal_then_moves_one_and_places_replaced_amount",
+      "official_rule_ids": [
+        "702.58",
+        "702.58a",
+        "702.58b",
+        "122.5",
+        "603.4",
+        "400.7",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Graft entry counters and non-targeted optional identity-pinned movement of one current source counter onto another entering creature."
+    },
+    {
+      "capability_id": "counter.lifecycle.graft",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_graft_rules.GraftRuntimeTests.test_source_bounce_before_graft_resolution_keeps_recipient_unchanged_and_replays",
+      "official_rule_ids": [
+        "702.58",
+        "702.58a",
+        "702.58b",
+        "122.5",
+        "603.4",
+        "400.7",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Graft entry counters and non-targeted optional identity-pinned movement of one current source counter onto another entering creature."
+    },
+    {
+      "capability_id": "counter.lifecycle.graft",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_graft_rules.GraftRuntimeTests.test_actual_foreign_entry_is_nontargeted_and_pending_reload_replays",
+      "official_rule_ids": [
+        "702.58",
+        "702.58a",
+        "702.58b",
+        "122.5",
+        "603.4",
+        "400.7",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Graft entry counters and non-targeted optional identity-pinned movement of one current source counter onto another entering creature."
+    },
+    {
+      "capability_id": "counter.lifecycle.graft",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_graft_rules.GraftRuntimeTests.test_actual_graft_cast_and_other_entry_transfer_decline_and_replay",
+      "official_rule_ids": [
+        "702.58",
+        "702.58a",
+        "702.58b",
+        "122.5",
+        "603.4",
+        "400.7",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Graft entry counters and non-targeted optional identity-pinned movement of one current source counter onto another entering creature."
+    },
+    {
+      "capability_id": "counter.lifecycle.graft",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_graft_rules.GraftRuntimeTests.test_departed_recipient_does_not_remove_source_counter_and_replays",
+      "official_rule_ids": [
+        "702.58",
+        "702.58a",
+        "702.58b",
+        "122.5",
+        "603.4",
+        "400.7",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Graft entry counters and non-targeted optional identity-pinned movement of one current source counter onto another entering creature."
+    },
+    {
+      "capability_id": "counter.lifecycle.graft",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_graft_rules.GraftRuntimeTests.test_omitting_atomic_movement_mutant_is_killed",
+      "official_rule_ids": [
+        "702.58",
+        "702.58a",
+        "702.58b",
+        "122.5",
+        "603.4",
+        "400.7",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Graft entry counters and non-targeted optional identity-pinned movement of one current source counter onto another entering creature."
+    },
+    {
+      "capability_id": "counter.lifecycle.graft",
+      "evidence_class": "negative",
+      "test_id": "tests.test_graft_rules.GraftCompilerTests.test_graft_open_values_shapes_and_dependency_omission_fail_closed",
+      "official_rule_ids": [
+        "702.58",
+        "702.58a",
+        "702.58b",
+        "122.5",
+        "603.4",
+        "400.7",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Graft entry counters and non-targeted optional identity-pinned movement of one current source counter onto another entering creature."
+    },
+    {
+      "capability_id": "counter.lifecycle.graft",
+      "evidence_class": "negative",
+      "test_id": "tests.test_graft_rules.GraftRuntimeTests.test_choice_model_keeps_controller_and_both_incarnations_and_rejects_open_fields",
+      "official_rule_ids": [
+        "702.58",
+        "702.58a",
+        "702.58b",
+        "122.5",
+        "603.4",
+        "400.7",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Graft entry counters and non-targeted optional identity-pinned movement of one current source counter onto another entering creature."
+    },
+    {
+      "capability_id": "counter.lifecycle.graft",
+      "evidence_class": "negative",
+      "test_id": "tests.test_graft_rules.GraftRuntimeTests.test_model_movement_rejects_same_stale_phased_empty_and_zero_placement",
+      "official_rule_ids": [
+        "702.58",
+        "702.58a",
+        "702.58b",
+        "122.5",
+        "603.4",
+        "400.7",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Graft entry counters and non-targeted optional identity-pinned movement of one current source counter onto another entering creature."
+    },
+    {
+      "capability_id": "counter.lifecycle.graft",
+      "evidence_class": "positive",
+      "test_id": "tests.test_graft_rules.GraftCompilerTests.test_fixed_graft_has_independent_entry_and_nontargeted_movement",
+      "official_rule_ids": [
+        "702.58",
+        "702.58a",
+        "702.58b",
+        "122.5",
+        "603.4",
+        "400.7",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Graft entry counters and non-targeted optional identity-pinned movement of one current source counter onto another entering creature."
+    },
+    {
+      "capability_id": "counter.lifecycle.graft",
+      "evidence_class": "positive",
+      "test_id": "tests.test_graft_rules.GraftRuntimeTests.test_actual_graft_cast_and_other_entry_transfer_decline_and_replay",
+      "official_rule_ids": [
+        "702.58",
+        "702.58a",
+        "702.58b",
+        "122.5",
+        "603.4",
+        "400.7",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Graft entry counters and non-targeted optional identity-pinned movement of one current source counter onto another entering creature."
+    },
+    {
+      "capability_id": "counter.lifecycle.graft",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_graft_rules.GraftRuntimeTests.test_actual_foreign_entry_is_nontargeted_and_pending_reload_replays",
+      "official_rule_ids": [
+        "702.58",
+        "702.58a",
+        "702.58b",
+        "122.5",
+        "603.4",
+        "400.7",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Graft entry counters and non-targeted optional identity-pinned movement of one current source counter onto another entering creature."
+    },
+    {
+      "capability_id": "counter.lifecycle.graft",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_graft_rules.GraftRuntimeTests.test_actual_graft_cast_and_other_entry_transfer_decline_and_replay",
+      "official_rule_ids": [
+        "702.58",
+        "702.58a",
+        "702.58b",
+        "122.5",
+        "603.4",
+        "400.7",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Graft entry counters and non-targeted optional identity-pinned movement of one current source counter onto another entering creature."
+    },
+    {
+      "capability_id": "counter.lifecycle.graft",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_graft_rules.GraftRuntimeTests.test_departed_recipient_does_not_remove_source_counter_and_replays",
+      "official_rule_ids": [
+        "702.58",
+        "702.58a",
+        "702.58b",
+        "122.5",
+        "603.4",
+        "400.7",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Graft entry counters and non-targeted optional identity-pinned movement of one current source counter onto another entering creature."
+    },
+    {
+      "capability_id": "counter.lifecycle.graft",
+      "evidence_class": "replay",
+      "test_id": "tests.test_graft_rules.GraftRuntimeTests.test_actual_foreign_entry_is_nontargeted_and_pending_reload_replays",
+      "official_rule_ids": [
+        "702.58",
+        "702.58a",
+        "702.58b",
+        "122.5",
+        "603.4",
+        "400.7",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Graft entry counters and non-targeted optional identity-pinned movement of one current source counter onto another entering creature."
+    },
+    {
+      "capability_id": "counter.lifecycle.graft",
+      "evidence_class": "replay",
+      "test_id": "tests.test_graft_rules.GraftRuntimeTests.test_actual_graft_cast_and_other_entry_transfer_decline_and_replay",
+      "official_rule_ids": [
+        "702.58",
+        "702.58a",
+        "702.58b",
+        "122.5",
+        "603.4",
+        "400.7",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Graft entry counters and non-targeted optional identity-pinned movement of one current source counter onto another entering creature."
+    },
+    {
+      "capability_id": "counter.lifecycle.graft",
+      "evidence_class": "replay",
+      "test_id": "tests.test_graft_rules.GraftRuntimeTests.test_departed_recipient_does_not_remove_source_counter_and_replays",
+      "official_rule_ids": [
+        "702.58",
+        "702.58a",
+        "702.58b",
+        "122.5",
+        "603.4",
+        "400.7",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Graft entry counters and non-targeted optional identity-pinned movement of one current source counter onto another entering creature."
+    },
+    {
+      "capability_id": "counter.lifecycle.graft",
+      "evidence_class": "replay",
+      "test_id": "tests.test_graft_rules.GraftRuntimeTests.test_replacement_order_defers_removal_then_moves_one_and_places_replaced_amount",
+      "official_rule_ids": [
+        "702.58",
+        "702.58a",
+        "702.58b",
+        "122.5",
+        "603.4",
+        "400.7",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Graft entry counters and non-targeted optional identity-pinned movement of one current source counter onto another entering creature."
+    },
+    {
+      "capability_id": "counter.lifecycle.graft",
+      "evidence_class": "replay",
+      "test_id": "tests.test_graft_rules.GraftRuntimeTests.test_source_bounce_before_graft_resolution_keeps_recipient_unchanged_and_replays",
+      "official_rule_ids": [
+        "702.58",
+        "702.58a",
+        "702.58b",
+        "122.5",
+        "603.4",
+        "400.7",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Graft entry counters and non-targeted optional identity-pinned movement of one current source counter onto another entering creature."
+    },
+    {
       "capability_id": "counter.lifecycle.vanishing",
       "evidence_class": "interaction",
       "test_id": "tests.test_vanishing_rules.VanishingRuntimeTests.test_actual_riftwatcher_single_and_all_counter_effects_preserve_separate_trigger",

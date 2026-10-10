@@ -1,5 +1,6 @@
 from __future__ import annotations
 from .life_batch_intent import LifeLossBatchIntent
+from .counter_movement_intent import MoveCountersIntent
 from .life_execution import LIFE_INTENT_TYPES,execute_life_intent
 from .control_intents import GainControlIntent, GainControlSetIntent
 from ..whole_hand_discard_model import DiscardWholeHandsIntent
@@ -765,6 +766,10 @@ def execute_intent_plan(sink: SemanticIntentSink, plan: IntentPlan) -> object:
         if isinstance(intent, RemoveCountersIntent):
             result = sink.remove_counters_intent(intent)
             results.append((_COUNTER_RESULT_KEY, result))
+            continue
+        if isinstance(intent, MoveCountersIntent):
+            from ..rules.counter_movement import execute_counter_movement
+            results.append((_COUNTER_RESULT_KEY, execute_counter_movement(sink, intent)))
             continue
         if isinstance(intent, RemoveAllCountersIntent):
             result = sink.remove_all_counters_intent(intent)

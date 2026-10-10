@@ -662,7 +662,20 @@ def commit_counter_placement_plan(
         transitions = apply_counter_changes(host, plan.state_plan)
     except CounterStateError as exc:
         raise CounterPlacementError(str(exc)) from exc
+    return finish_counter_placement_commit(
+        host, plan, transitions, reason=reason, log=log, dispatch_events=dispatch_events)
 
+
+def finish_counter_placement_commit(
+    host: CounterPlacementHost,
+    plan: CounterPlacementCommitPlan,
+    transitions: Sequence[Any],
+    *,
+    reason: str,
+    log: bool = True,
+    dispatch_events: bool = True,
+) -> tuple[CounterPlacementResult, ...]:
+    """Publish placement results after the canonical counter plan was committed."""
     results: list[CounterPlacementResult] = []
     for row, transition in zip(
         plan.rows, transitions, strict=True

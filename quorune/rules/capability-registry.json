@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 215,
+  "registry_version": 216,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -13215,6 +13215,104 @@
       "dependency_fail_closed_rationale": "Omitting the player speed capability blocks exact keyword and conditional scope admission.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Omitting the inherent committed-life-loss trigger fails the actual four-player source cast and damage witness.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "counter.lifecycle.graft",
+      "version": 1,
+      "official_rules": [
+        "702.58",
+        "702.58a",
+        "702.58b",
+        "122.5",
+        "603.4",
+        "400.7",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Fixed Graft entry counters and non-targeted optional identity-pinned movement of one current source counter onto another entering creature.",
+        "inputs": [
+          "fixed positive Graft value",
+          "trusted entry trigger",
+          "source and entering creature incarnations",
+          "current source counter",
+          "ordinary placement replacement choices"
+        ],
+        "outputs": [
+          "optional controller choice",
+          "atomic source removal and recipient placement",
+          "ordinary placement events"
+        ],
+        "exclusions": [
+          "open Graft values",
+          "unrepresented sibling abilities",
+          "unknown counter prohibitions",
+          "runtime Oracle interpretation"
+        ]
+      },
+      "dependencies": [
+        "counter.producer.fixed_keyword_entry",
+        "counter.placement.quantity_replacement",
+        "trigger.condition.fixed_public_state",
+        "trigger.placement.apnap"
+      ],
+      "implementation_components": [
+        "quorune.compiler.graft_nodes.graft_lifecycle_node",
+        "quorune.semantic_choices.graft.GraftCounterMovementHandler",
+        "quorune.rules.counter_movement.execute_counter_movement",
+        "quorune.counter_state.commit_counter_changes"
+      ],
+      "positive_tests": [
+        "test_fixed_graft_has_independent_entry_and_nontargeted_movement",
+        "test_actual_graft_cast_and_other_entry_transfer_decline_and_replay"
+      ],
+      "negative_tests": [
+        "test_graft_open_values_shapes_and_dependency_omission_fail_closed",
+        "test_model_movement_rejects_same_stale_phased_empty_and_zero_placement",
+        "test_choice_model_keeps_controller_and_both_incarnations_and_rejects_open_fields"
+      ],
+      "interaction_tests": [
+        "test_actual_graft_cast_and_other_entry_transfer_decline_and_replay",
+        "test_actual_foreign_entry_is_nontargeted_and_pending_reload_replays",
+        "test_departed_recipient_does_not_remove_source_counter_and_replays",
+        "test_replacement_order_defers_removal_then_moves_one_and_places_replaced_amount",
+        "test_source_bounce_before_graft_resolution_keeps_recipient_unchanged_and_replays"
+      ],
+      "multiplayer_tests": [
+        "test_actual_graft_cast_and_other_entry_transfer_decline_and_replay",
+        "test_actual_foreign_entry_is_nontargeted_and_pending_reload_replays",
+        "test_departed_recipient_does_not_remove_source_counter_and_replays"
+      ],
+      "privacy_tests": [
+        "test_actual_graft_cast_and_other_entry_transfer_decline_and_replay",
+        "test_actual_foreign_entry_is_nontargeted_and_pending_reload_replays",
+        "test_departed_recipient_does_not_remove_source_counter_and_replays"
+      ],
+      "replay_tests": [
+        "test_actual_graft_cast_and_other_entry_transfer_decline_and_replay",
+        "test_actual_foreign_entry_is_nontargeted_and_pending_reload_replays",
+        "test_departed_recipient_does_not_remove_source_counter_and_replays",
+        "test_replacement_order_defers_removal_then_moves_one_and_places_replaced_amount",
+        "test_source_bounce_before_graft_resolution_keeps_recipient_unchanged_and_replays"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Omitting the Graft movement owner leaves the independent entry component exact while the whole keyword remains blocked.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the atomic movement fails source and recipient counts after a real cast and entering creature.",
       "blockers": [],
       "status": "trusted"
     }

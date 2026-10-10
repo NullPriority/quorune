@@ -9041,6 +9041,36 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Far Fortune Max Speed damage replacement is gated below four; Shock deals two at speed three and three at speed four, with ordinary speed triggering and exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_graft_rules.GraftRuntimeTests.test_replacement_order_defers_removal_then_moves_one_and_places_replaced_amount",
+      "piece_ids": [
+        "capability.counter.lifecycle.graft",
+        "capability.counter.placement.quantity_replacement"
+      ],
+      "capability_ids": [
+        "counter.lifecycle.graft",
+        "counter.placement.quantity_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Graft suspends before source removal, reloads replacement order, and removes one while placing the replaced quantity with exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_graft_rules.GraftRuntimeTests.test_source_bounce_before_graft_resolution_keeps_recipient_unchanged_and_replays",
+      "piece_ids": [
+        "capability.counter.lifecycle.graft",
+        "capability.trigger.condition.fixed_public_state"
+      ],
+      "capability_ids": [
+        "counter.lifecycle.graft",
+        "trigger.condition.fixed_public_state"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual source bounce leaves the Graft recipient unchanged when its intervening source-counter condition no longer holds, with exact replay."
     }
   ]
 }

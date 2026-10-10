@@ -32,6 +32,7 @@ from .self_counter_keyword_actions import (
 )
 from .bolster import BOLSTER_CHOICE_HANDLERS
 from .modular import MODULAR_CHOICE_HANDLERS
+from .graft import GraftCounterMovementHandler
 from .amass import AMASS_CHOICE_HANDLERS
 from .apnap_commit import APNAP_COMMIT_CHOICE_HANDLERS
 from .madness import MADNESS_CHOICE_HANDLERS
@@ -66,6 +67,7 @@ def default_semantic_choice_registry() -> SemanticChoiceRegistry:
             *SELF_COUNTER_KEYWORD_ACTION_HANDLERS,
             *BOLSTER_CHOICE_HANDLERS,
             *MODULAR_CHOICE_HANDLERS,
+            GraftCounterMovementHandler(),
             *AMASS_CHOICE_HANDLERS,
             *APNAP_COMMIT_CHOICE_HANDLERS,
             *MADNESS_CHOICE_HANDLERS,

@@ -995,6 +995,13 @@ def _semantic_trigger_context(
     }
     from .effect_runtime.temporary_ability_bundle import printed_backup_source_context
     stack_context.update(printed_backup_source_context(source,program))
+    if "identity_pinned_graft_counter_movement" in program.coverage:
+        recipient = next((card for card in host.state.cards.values()
+                          if card.ref == context.get("card")), None)
+        if recipient is None:
+            raise GameRuleError("Graft entry trigger lost its entering creature")
+        stack_context["source_logical_object_id"] = source.logical_object_id
+        stack_context["graft_recipient_identity"] = recipient.logical_object_id
     if "one_or_more_event_batch" in program.coverage:
         aggregation_scope = (
             {"damaged_player": context.get("player")}

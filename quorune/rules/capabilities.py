@@ -117,6 +117,7 @@ from .fixed_resolution_characteristic_shapes import (
 from .optional_counter_capability_shapes import (
     optional_fixed_counter_event_trigger_node_capabilities,
 )
+from .graft_capability_shapes import graft_node_capabilities
 from .fixed_controller_effect_shapes import (
     fixed_counter_controller_effect_sequence_node_capabilities,
     fixed_controller_effect_sequence_node_capabilities,
@@ -1103,6 +1104,7 @@ def _targeted_effect_capabilities(
         single_proliferate_node_capabilities,
         self_regeneration_node_capabilities,
         fixed_self_counter_keyword_action_node_capabilities,
+        graft_node_capabilities,
         fixed_bolster_node_capabilities,
         fixed_amass_node_capabilities,
         targeted_counter_node_capabilities,

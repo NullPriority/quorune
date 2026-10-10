@@ -90,6 +90,13 @@ commits through the player speed owner. Current Max Speed abilities use the
 same source applicability model in battlefield and graveyard contexts, with
 exact equality to four rather than a minimum threshold.
 
+Fixed Graft uses the existing semantic-choice registry for its optional,
+non-targeted move. Its immutable movement intent pins both incarnations and
+retains the trigger controller. The counter coordinator resolves recipient
+replacement choices before the canonical counter owner commits source removal
+and replaced placement together. Saved replacement continuations preserve
+that movement identity and cannot repeat or redirect the removal.
+
 The existing generic direct-control operations share the authoritative control
 and acquisition-history owner. An indefinite control instruction invalidates
 an older end-of-turn restoration even when it names the current controller.
