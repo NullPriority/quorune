@@ -3908,13 +3908,13 @@
     },
     {
       "id": "quantity_expression.public_query_effect_amount",
-      "version": 4,
+      "version": 5,
       "official_rules": ["608.2h", "611.2c", "613.1d", "613.1e", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
         "summary": "Resolve a closed current public quantity into an existing typed numeric result owner. Versioned quantities add distinct basic/card types and colors, maximum/total mana value, colored mana symbols, fixed positive multipliers and nonnegative offsets, or exactly two independent public leaf counts; instruction-scoped declarations retain one value.",
-        "inputs": ["one standalone source-spanned effect instruction", "stack object's locked controller", "controller or global battlefield, graveyard, or identity-free hand count", "cycle-safe layer-5 types, subtypes, supertypes, colors, colorlessness, and token state", "fixed signed coefficient", "existing fixed effect operation and target schema", "source-self or direct-target temporary power/toughness result, optionally beside fixed supported keywords"],
-        "outputs": ["one deterministic resolution-time integer", "unchanged typed life, damage, draw, token, or layer-7c characteristic instruction", "current layer-5 characteristic query", "copy-controller-correct and multiplayer-correct result", "current direct-target revalidation and granted-ability applicability", "hidden-identity-free hand count"],
+        "inputs": ["one source-spanned effect instruction, optionally in a closed existing ordered component program", "stack object's locked controller", "controller or global battlefield, graveyard, or identity-free hand count", "cycle-safe layer-5 types, subtypes, supertypes, colors, colorlessness, and token state", "fixed signed coefficient", "existing fixed effect operation and target schema", "source-self or direct-target temporary power/toughness result, optionally beside fixed supported keywords"],
+        "outputs": ["one deterministic resolution-time integer", "unchanged typed life, damage, draw, token, counter placement, or layer-7c characteristic instruction", "current layer-5 characteristic query", "copy-controller-correct and multiplayer-correct result", "current direct-target revalidation and granted-ability applicability", "hidden-identity-free hand count"],
         "exclusions": ["source-counter, attachment-derived, opponent-relative, source-excluding, ability-presence, combat-state, tapped-state, hidden-identity, and later-layer effect quantities", "linked-result, this-way, chosen, modal, optional, conditional, multiple-target, and unsupported compound sequences outside existing owners", "dynamic targets, coefficients or token definitions, negative/open arithmetic, nested sums, comparisons, power/toughness aggregates, Devotion and its modifiers, party, and unsupported collection fields", "base-setting, type, color, control, copy, name, text, variable-duration, dynamic-keyword, text-changed, and independently unsupported quoted or granted result abilities"]
       },
       "dependencies": [],

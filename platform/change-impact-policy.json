@@ -391,6 +391,11 @@
       ]
     },
     {
+      "id": "query-scaled-counter-contract",
+      "patterns": ["quorune/compiler/public_query_effect_amounts.py", "quorune/compiler/query_counter_sequences.py", "quorune/compiler/effect_template_composition.py", "quorune/abilities.py", "tests/fixtures/query-scaled-counter-cards.json"],
+      "test_modules": ["test_query_scaled_counters", "test_public_query_effect_amounts", "test_closed_effect_programs", "test_bound_effect_programs", "test_activated_abilities", "test_counter_placement_events", "test_card_program_trust"]
+    },
+    {
       "id": "defender-permission-contract",
       "patterns": ["quorune/defender.py", "quorune/defender_permission.py", "quorune/compiler/defender_permission_templates.py", "quorune/compiler/closed_static_nodes.py", "quorune/rules/defender_permission_effect.py", "tests/fixtures/defender-permission-cards.json"],
       "test_modules": ["test_defender_permission", "test_defender_rules", "test_combat_keyword_rules", "test_fixed_public_state_characteristics", "test_combat_declaration_restrictions", "test_card_program_trust", "test_rules_scheduler"]

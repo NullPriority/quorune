@@ -21,6 +21,16 @@ An unqualified one-or-more-counters subscription consumes only the first kind
 in that subject's simultaneous placement, so a multi-kind instruction does not
 duplicate its trigger.
 
+Query-scaled ordinary placement lowers to the same `place_counters` instruction
+with a typed public amount. The amount is read at its printed instruction
+boundary, after preceding closed components such as milling finish. A card
+matching several branches of an artifact-or-creature query counts once. Zero
+requests produce no placement occurrence or quantity-replacement choice.
+Replacement suspension seals the concrete requested amount and recipient
+incarnation; resumption neither repeats the prefix nor recounts changed zones.
+Source-counter last-known quantities, distributed results and independently
+unsupported costs or linked riders remain outside this query family.
+
 Ordinary effects dispatch from the placement owner. Physical and copied-token
 entry coordinators dispatch resolved entry-counter trees after all members
 enter and entry history is established. Damage and prevention aftermath retain

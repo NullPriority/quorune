@@ -246,6 +246,7 @@
       "test_madness_rules",
       "test_mana_abilities",
       "test_qualified_zone_event_queries",
+      "test_query_scaled_counters",
       "test_resolution_public_conditions",
       "test_self_zone_move_rules",
       "test_surveil_rules",

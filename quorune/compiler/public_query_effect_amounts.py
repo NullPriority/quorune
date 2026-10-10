@@ -19,6 +19,7 @@ from .declared_effect_amounts import (
     declared_amount_dependencies,
 )
 from .scalar_effect_amounts import scalar_amount_shape_context
+from .counter_placement_templates import FIXED_COUNTER_NAME_PATTERN
 from ..scalar_effect_amount_model import SCALAR_AMOUNT_MECHANIC, SCALAR_AMOUNT_CAPABILITY
 
 
@@ -80,6 +81,11 @@ _TOKEN_FOR_EACH = re.compile(
     r"^Create (?P<coefficient>a|an|one|two|three|four|five|[1-9]\d*) "
     r"(?P<definition>.+? tokens?) for each (?P<quantity>.+?)\.?$",
     re.IGNORECASE,
+)
+_COUNTER_FOR_EACH = re.compile(
+    rf"^Put (?P<coefficient>a|an|one|two|three|four|five|[1-9]\d*) "
+    rf"(?P<counter>{FIXED_COUNTER_NAME_PATTERN}) counters? on "
+    r"(?P<subject>.+?) for each (?P<quantity>.+?)\.?$", re.IGNORECASE,
 )
 _QUERY_CHARACTERISTIC_PATTERNS = (
     (
@@ -194,6 +200,10 @@ def _parsed_candidate(
             f"Create two {definition}.",
             False,
         )
+    counter = _COUNTER_FOR_EACH.fullmatch(text)
+    if counter is not None:
+        return ('counter', counter['quantity'], _coefficient(counter['coefficient']),
+            f"Put two {counter['counter']} counters on {counter['subject']}.", False)
     return None
 
 
@@ -256,6 +266,7 @@ _AMOUNT_FIELDS = {
     "damage": "amount",
     "draw": "count",
     "create_token": "quantity",
+    "place_counters": "amount",
 }
 
 
@@ -525,6 +536,21 @@ def _fixed_shape_effects(
     return tuple(projected)
 
 
+def _composed_query_shape_context(effects, mechanics):
+    if not {'closed-effect-program', 'bound-effect-program'}.intersection(mechanics):
+        return None
+    projected = []
+    for effect in effects:
+        if contains_public_query_effect_amount(effect):
+            fixed = _fixed_shape_effects((effect,))
+            if fixed is None:
+                return None
+            projected.extend(fixed)
+        else:
+            projected.append(deepcopy(dict(effect)))
+    return tuple(projected), mechanics - {PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC}
+
+
 def public_query_amount_program_is_closed(program: Any, *, required_dependencies) -> bool:
     """Keep scalar admission with its existing fixed shape and target owners."""
     from ..rules.node_capability_shapes import (
@@ -534,6 +560,7 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
     )
     from ..rules.fixed_controller_effect_shapes import fixed_life_node_capabilities
     from ..rules.token_creation_capability_shapes import fixed_token_creation_node_capabilities
+    from ..rules.counter_placement_capability_shapes import fixed_counter_placement_node_capabilities
 
     if not {PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC, SCALAR_AMOUNT_MECHANIC}.intersection(program.coverage):
         return False
@@ -556,6 +583,7 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
             fixed_token_creation_node_capabilities,
             fixed_target_characteristics_node_capabilities,
             fixed_source_characteristics_node_capabilities,
+            fixed_counter_placement_node_capabilities,
         )
     )
 
@@ -571,6 +599,8 @@ def public_query_amount_shape_context(
         return declared_amount_shape_context(effects, mechanics)
     if PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC not in mechanics:
         return tuple(effects), set(mechanics)
+    if len(effects) > 1 and (composed := _composed_query_shape_context(effects, mechanics)) is not None:
+        return composed
     projected = _fixed_shape_effects(effects)
     if projected is None:
         return None

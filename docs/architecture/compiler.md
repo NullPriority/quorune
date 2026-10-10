@@ -1484,6 +1484,12 @@ original fixed template identity is retained for runtime admission. Public
 declarations carry explicit Oracle-node-scoped identities and persist their
 first execution-time value across sibling results and replacement resumption.
 Independent quantity expressions retain their separate execution-time reads.
+One fixed counter placement may consume that existing public-query amount
+beside independently closed ordered components. The compiler preserves the
+original placement subject, counter kind and target schema; the canonical
+placement owner receives the concrete execution-time integer. Unrepresented
+Power-up activation pricing and usage remain explicit uncompiled costs, so a
+recognized result does not expose a cheaper or unlimited activation.
 The casting owner remains the sole authority for choosing and paying cost X.
 Target-qualified spell-cast predicates consume version-six public cast facts.
 The casting owner reads effective creature types and controllers only for

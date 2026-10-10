@@ -25853,6 +25853,78 @@
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_query_scaled_counters.QueryScaledCounterCompilerTests.test_query_counter_sequence_preserves_instruction_order_and_rejects_open_tail",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical query-scaled placement, printed instruction order, sealed replacement request, current target authority and private identity-free quantities."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_query_scaled_counters.QueryScaledCounterRuntimeTests.test_actual_millipede_counts_after_milling_and_replays",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical query-scaled placement, printed instruction order, sealed replacement request, current target authority and private identity-free quantities."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_query_scaled_counters.QueryScaledCounterRuntimeTests.test_actual_ooze_patrol_counts_overlapping_artifact_creature_once",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical query-scaled placement, printed instruction order, sealed replacement request, current target authority and private identity-free quantities."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_query_scaled_counters.QueryScaledCounterRuntimeTests.test_query_amount_is_sealed_after_instruction_before_replacement_resumption",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical query-scaled placement, printed instruction order, sealed replacement request, current target authority and private identity-free quantities."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_public_query_action_registration.PublicQueryActionRegistrationTests.test_existing_query_draw_is_current_trusted_and_casts_with_exact_replay",
       "official_rule_ids": ["608.2h", "611.2c", "613.1d", "613.1e", "613.4c"],
@@ -25895,6 +25967,24 @@
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_query_scaled_counters.QueryScaledCounterRuntimeTests.test_actual_magistrate_counts_only_controlled_elves_and_uses_real_targets",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical query-scaled placement, printed instruction order, sealed replacement request, current target authority and private identity-free quantities."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "mutation",
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountCompilerTests.test_public_query_amount_compiler_and_resolver_mutants_are_killed",
       "official_rule_ids": ["608.2h", "611.2c", "613.1d", "613.1e", "613.4c"],
@@ -25908,6 +25998,24 @@
       "official_rule_ids": ["608.2h", "611.2c", "613.1d", "613.1e", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replace the resolution-time quantity result and prove the locked-controller behavioral result detects the survivor."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_query_scaled_counters.QueryScaledCounterRuntimeTests.test_query_counter_coefficient_mutant_is_killed",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical query-scaled placement, printed instruction order, sealed replacement request, current target authority and private identity-free quantities."
     },
     {"capability_id": "quantity_expression.public_query_effect_amount", "evidence_class": "mutation", "test_id": "tests.test_typed_dynamic_characteristics.PublicCollectionReductionTests.test_collection_object_count_mutant_is_killed", "official_rule_ids": ["608.2h", "611.2c", "613.1d", "613.1e", "613.4c"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Kill replacement of the distinct public reduction with raw object count while preserving the shared layer-safe quantity owner."},
     {
@@ -25957,6 +26065,78 @@
       "official_rule_ids": ["608.2h", "611.2c", "613.1d", "613.1e", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Reject hidden, source-relative, ability-presence, stateful, linked, optional, modal, compound, and malformed quantity descriptors before runtime authority."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_query_scaled_counters.QueryScaledCounterCompilerTests.test_power_up_price_and_usage_cannot_be_stripped_into_unlimited_activation",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical query-scaled placement, printed instruction order, sealed replacement request, current target authority and private identity-free quantities."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_query_scaled_counters.QueryScaledCounterCompilerTests.test_query_counter_unknown_quantities_and_blocked_owner_fail_closed",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical query-scaled placement, printed instruction order, sealed replacement request, current target authority and private identity-free quantities."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_query_scaled_counters.QueryScaledCounterRuntimeTests.test_actual_power_up_carrier_is_untrusted_and_never_offers_unlimited_activation",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical query-scaled placement, printed instruction order, sealed replacement request, current target authority and private identity-free quantities."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_query_scaled_counters.QueryScaledCounterRuntimeTests.test_zero_query_placement_creates_no_counter_event_or_replacement_choice",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical query-scaled placement, printed instruction order, sealed replacement request, current target authority and private identity-free quantities."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
@@ -26029,6 +26209,24 @@
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_query_scaled_counters.QueryScaledCounterCompilerTests.test_public_query_counter_amounts_preserve_subject_counter_kind_and_query",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical query-scaled placement, printed instruction order, sealed replacement request, current target authority and private identity-free quantities."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "privacy",
       "test_id": "tests.test_public_query_action_registration.PublicQueryActionRegistrationTests.test_existing_query_draw_is_current_trusted_and_casts_with_exact_replay",
       "official_rule_ids": ["608.2h", "611.2c", "613.1d", "613.1e", "613.4c"],
@@ -26068,6 +26266,24 @@
       "official_rule_ids": ["608.2h", "611.2c", "613.1d", "613.1e", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Project only the public hand count and resolved life result, never the controller's hidden card identities."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_query_scaled_counters.QueryScaledCounterRuntimeTests.test_actual_magistrate_counts_only_controlled_elves_and_uses_real_targets",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical query-scaled placement, printed instruction order, sealed replacement request, current target authority and private identity-free quantities."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
@@ -26127,6 +26343,24 @@
       "official_rule_ids": ["608.2h", "611.2c", "613.1d", "613.1e", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Save, load, and exactly replay the typed query descriptor, locked controller, resolved amount, and final authoritative state."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_query_scaled_counters.QueryScaledCounterRuntimeTests.test_post_mill_query_pending_replacements_save_original_amount_and_replay",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical query-scaled placement, printed instruction order, sealed replacement request, current target authority and private identity-free quantities."
     },
     {
       "capability_id": "quantity_expression.scalar_effect_amount",

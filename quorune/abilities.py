@@ -1497,7 +1497,7 @@ def _parse_activated_line(
             loyalty_delta=cost.loyalty_delta,
             source_counter_removal_cost=cost.source_counter_removal_cost,
             choices=cost.choices,
-            uncompiled_costs=cost.uncompiled,
+            uncompiled_costs=(*cost.uncompiled, *(("power-up activation price and usage are unrepresented",) if prefix == "power-up" else ())),
             mana_ability=mana_ability,
             sorcery_speed=bool(_ACTIVATE_ONLY_SORCERY.search(effect_text)),
             generic_reduction_per_legendary_creature=int(
