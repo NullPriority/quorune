@@ -2,7 +2,7 @@
 title: "Rules dependency queue"
 status: "generated"
 authoritative_source: "coverage/rules-dependency-queue.json"
-verified: "56ed8d2962f76c8322fc9e88b51f4fa3970846c178b4f3e953f4a9a848fce40a"
+verified: "2d26a7e3c52d4ef4af1d86e3146ec10556c41f2060c5e2c05e91976e7e634e90"
 audience: "rules, compiler, and engine contributors"
 maintenance: "generated"
 generated_source: "coverage/rules-dependency-queue.json"
@@ -11,7 +11,7 @@ generation_command: ".\.venv\Scripts\python.exe scripts\update_rules_scheduler.p
 
 # Rules dependency queue
 
-Source fingerprint: `313518eef24f7c7edc3e6f37898f0b6575d00ec57659a504745b8e4b3ad1374b`
+Source fingerprint: `f69b5af1fe44a2c733a4979b7783019cca8880308b488fc4593a837c89531d5d`
 
 ## Current top-level state
 
@@ -20,9 +20,9 @@ Source fingerprint: `313518eef24f7c7edc3e6f37898f0b6575d00ec57659a504745b8e4b3ad
 - Subsystems: `21`
 - Selected subsystem: `replacement-prevention`
 - Selected batch: `counter-producer-replacement-closure`
-- Selected cross-program work: `none`
-- Selected work class: `none`
-- Selected work state: `none`
+- Selected cross-program work: `assurance:critical-interaction-recovery`
+- Selected work class: `interaction_assurance`
+- Selected work state: `implementation`
 - Measurement grants gameplay trust: `not_applicable`
 
 ## Cross-program work selection
@@ -34,13 +34,13 @@ Priority classes: `ci_correctness` → `replay_privacy_defect` → `prohibited_r
 
 | Rank | Selection | Work state | Implementation eligible | Candidate | Class | Members | Contexts | Complete cards | Residuals | Cards/hour | Runtime text | Direct writes |
 |---:|---|---|---|---|---|---:|---:|---:|---:|---:|---:|---:|
-| 1 | complete | implementation | false | `ci:compact-card-dependency-closure` | `ci_correctness` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
-| 2 | complete | implementation | false | `ci:materialize-harvest-outcome` | `ci_correctness` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
-| 3 | complete | implementation | false | `correctness:replay-privacy-recovery` | `replay_privacy_defect` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
-| 4 | complete | implementation | false | `architecture:dedicated-owner-extraction` | `architecture_owner_or_mutation_defect` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
-| 5 | blocked | implementation | false | `architecture:engine-mutation-and-specificity-debt` | `architecture_owner_or_mutation_defect` | 1 | 0 | 0 | 0 | unknown | 0 | 47 |
-| 6 | complete | implementation | false | `assurance:critical-interaction-recovery` | `interaction_assurance` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
-| 7 | blocked | implementation | false | `frontier:continuous_layer:continuous-effect-layers-and-dependencies` | `rules_foundation` | 1 | 0 | 1845 | 3871 | 30.245902 | 0 | 0 |
+| 1 | selected | implementation | true | `assurance:critical-interaction-recovery` | `interaction_assurance` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
+| 2 | complete | implementation | false | `ci:compact-card-dependency-closure` | `ci_correctness` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
+| 3 | complete | implementation | false | `ci:materialize-harvest-outcome` | `ci_correctness` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
+| 4 | complete | implementation | false | `correctness:replay-privacy-recovery` | `replay_privacy_defect` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
+| 5 | complete | implementation | false | `architecture:dedicated-owner-extraction` | `architecture_owner_or_mutation_defect` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
+| 6 | blocked | implementation | false | `architecture:engine-mutation-and-specificity-debt` | `architecture_owner_or_mutation_defect` | 1 | 0 | 0 | 0 | unknown | 0 | 47 |
+| 7 | blocked | implementation | false | `frontier:continuous_layer:continuous-effect-layers-and-dependencies` | `rules_foundation` | 1 | 0 | 1791 | 3772 | 29.360656 | 0 | 0 |
 | 8 | blocked | implementation | false | `interaction-implementation:residual.replacement.replacement-applicability` | `rules_foundation` | 1 | 0 | unknown | unknown | unknown | 0 | 0 |
 | 9 | blocked | implementation | false | `interaction-implementation:residual.replacement.self-replacement-and-prevention-ordering` | `rules_foundation` | 1 | 0 | unknown | unknown | unknown | 0 | 0 |
 | 10 | blocked | implementation | false | `interaction-implementation:residual.replacement.damage-prevention` | `rules_foundation` | 1 | 0 | unknown | unknown | unknown | 0 | 0 |
@@ -67,17 +67,25 @@ Priority classes: `ci_correctness` → `replay_privacy_defect` → `prohibited_r
 | 31 | blocked | implementation | false | `frontier:effect_clause:typed-spell-additional-cost-clause` | `compiler_harvest` | 1 | 3 | 22 | 106 | 1.047619 | 0 | 0 |
 | 32 | blocked | implementation | false | `bundle:fixed-exile-contexts` | `compiler_harvest` | 2 | 4 | 0 | 17 | 0.0 | 0 | 0 |
 | 33 | blocked | implementation | false | `bundle:fixed-token-creation-contexts` | `compiler_harvest` | 2 | 4 | 0 | 17 | 0.0 | 0 | 0 |
-| 34 | blocked | implementation | false | `frontier:effect_clause:unparsed-choose-one` | `compiler_harvest` | 1 | 3 | 0 | 171 | 0.0 | 0 | 0 |
-| 35 | blocked | implementation | false | `bundle:fixed-cast-lifecycles` | `compiler_harvest` | 1 | 2 | 0 | 0 | 0.0 | 0 | 0 |
-| 36 | blocked | implementation | false | `bundle:fixed-counted-activation-zone-cost` | `compiler_harvest` | 3 | 1 | 0 | 0 | 0.0 | 0 | 0 |
-| 37 | blocked | implementation | false | `bundle:fixed-event-card-return` | `compiler_harvest` | 3 | 1 | 0 | 0 | 0.0 | 0 | 0 |
-| 38 | blocked | implementation | false | `bundle:fixed-kicked-entry-result` | `compiler_harvest` | 2 | 1 | 0 | 0 | 0.0 | 0 | 0 |
-| 39 | blocked | implementation | false | `bundle:fixed-kicked-spell-condition` | `compiler_harvest` | 3 | 1 | 0 | 0 | 0.0 | 0 | 0 |
-| 40 | blocked | implementation | false | `bundle:fixed-source-maintenance` | `compiler_harvest` | 3 | 1 | 0 | 0 | 0.0 | 0 | 0 |
-| 41 | blocked | implementation | false | `bundle:fixed-target-announcement` | `compiler_harvest` | 2 | 1 | 0 | 0 | 0.0 | 0 | 0 |
-| 42 | blocked | implementation | false | `bundle:public-static-cast-cost-modifiers` | `compiler_harvest` | 1 | 1 | 0 | 0 | 0.0 | 0 | 0 |
+| 34 | blocked | implementation | false | `frontier:effect_clause:ordered-effect-composition` | `compiler_harvest` | 1 | 3 | 0 | 427 | 0.0 | 0 | 0 |
+| 35 | blocked | implementation | false | `frontier:effect_clause:unparsed-choose-one` | `compiler_harvest` | 1 | 3 | 0 | 171 | 0.0 | 0 | 0 |
+| 36 | blocked | implementation | false | `bundle:named-counter-doubling` | `compiler_harvest` | 5 | 3 | 0 | 0 | 0.0 | 0 | 0 |
+| 37 | blocked | implementation | false | `bundle:whole-hand-discard` | `compiler_harvest` | 3 | 3 | 0 | 0 | 0.0 | 0 | 0 |
+| 38 | blocked | implementation | false | `bundle:fixed-cast-lifecycles` | `compiler_harvest` | 1 | 2 | 0 | 0 | 0.0 | 0 | 0 |
+| 39 | blocked | implementation | false | `bundle:cast-creature-target` | `compiler_harvest` | 2 | 1 | 0 | 0 | 0.0 | 0 | 0 |
+| 40 | blocked | implementation | false | `bundle:counter-placement-events` | `compiler_harvest` | 2 | 1 | 0 | 0 | 0.0 | 0 | 0 |
+| 41 | blocked | implementation | false | `bundle:counter-qualified-zone-event` | `compiler_harvest` | 2 | 1 | 0 | 0 | 0.0 | 0 | 0 |
+| 42 | blocked | implementation | false | `bundle:fixed-counted-activation-zone-cost` | `compiler_harvest` | 3 | 1 | 0 | 0 | 0.0 | 0 | 0 |
+| 43 | blocked | implementation | false | `bundle:fixed-event-card-return` | `compiler_harvest` | 3 | 1 | 0 | 0 | 0.0 | 0 | 0 |
+| 44 | blocked | implementation | false | `bundle:fixed-kicked-entry-result` | `compiler_harvest` | 2 | 1 | 0 | 0 | 0.0 | 0 | 0 |
+| 45 | blocked | implementation | false | `bundle:fixed-kicked-spell-condition` | `compiler_harvest` | 3 | 1 | 0 | 0 | 0.0 | 0 | 0 |
+| 46 | blocked | implementation | false | `bundle:fixed-source-maintenance` | `compiler_harvest` | 3 | 1 | 0 | 0 | 0.0 | 0 | 0 |
+| 47 | blocked | implementation | false | `bundle:fixed-static-characteristic-setting` | `compiler_harvest` | 1 | 1 | 0 | 0 | 0.0 | 0 | 0 |
+| 48 | blocked | implementation | false | `bundle:fixed-target-announcement` | `compiler_harvest` | 2 | 1 | 0 | 0 | 0.0 | 0 | 0 |
+| 49 | blocked | implementation | false | `bundle:permanent-spell-additional-price` | `compiler_harvest` | 1 | 1 | 0 | 0 | 0.0 | 0 | 0 |
+| 50 | blocked | implementation | false | `bundle:public-static-cast-cost-modifiers` | `compiler_harvest` | 1 | 1 | 0 | 0 | 0.0 | 0 | 0 |
 
-Selected reason: No serious candidate currently meets the generated eligibility policy; retain visible deferred pressure and recompute after the next measured frontier classification.
+Selected reason: Uncovered high-risk interactions remain above the verified stabilization baseline.
 
 ## Top blockers
 
