@@ -1652,6 +1652,28 @@
       ]
     },
     {
+      "id": "commander-characteristic-query-contract",
+      "patterns": [
+        "quorune/object_predicate.py",
+        "quorune/object_query.py",
+        "quorune/continuous_effects.py",
+        "quorune/characteristic_evaluation.py",
+        "quorune/compiler/public_state_queries.py",
+        "quorune/compiler/continuous_templates.py",
+        "quorune/semantic_runtime/continuous_components.py",
+        "tests/fixtures/commander-characteristic-grants.json"
+      ],
+      "test_modules": [
+        "test_commander_characteristic_grants",
+        "test_object_query",
+        "test_continuous_effect_components",
+        "test_fixed_query_keyword_grants",
+        "test_fixed_query_quoted_ability_grants",
+        "test_fixed_zone_change_additional_costs",
+        "test_card_program_trust"
+      ]
+    },
+    {
       "id": "global-plural-characteristic-contract",
       "patterns": [
         "quorune/compiler/public_state_queries.py",

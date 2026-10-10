@@ -42,6 +42,7 @@ _RELATIONAL_QUERY_FIELDS = _EXTENDED_QUERY_FIELDS | {
 _NEGATIVE_KEYWORD_QUERY_FIELDS = _RELATIONAL_QUERY_FIELDS | {
     "keywords_none",
 }
+_DESIGNATION_QUERY_FIELDS = _NEGATIVE_KEYWORD_QUERY_FIELDS | {"commander"}
 _LEGACY_PERMANENT_STATE_FIELDS = frozenset(
     {
         "entered_this_turn",
@@ -313,6 +314,7 @@ class ObjectQuerySpec:
     minimum_color_count: int | None = None
     keywords_all: tuple[str, ...] = ()
     keywords_none: tuple[str, ...] = ()
+    commander: bool | None = None
     token: bool | None = None
     tapped: bool | None = None
     include_phased_out: bool = False
@@ -387,6 +389,7 @@ class ObjectQuerySpec:
             "tapped",
             "known_to_actor",
             "colorless",
+            "commander",
         ):
             value = getattr(self, field_name)
             if value is not None and type(value) is not bool:
@@ -421,17 +424,19 @@ class ObjectQuerySpec:
             or self.colorless is not None
             or self.state_predicate is not None
         )
-        if self.keywords_none and self._serialization_version in {1, 2, 3, 4}:
+        if self.commander is not None:
+            object.__setattr__(self, "_serialization_version", 6)
+        elif self.keywords_none and self._serialization_version in {1, 2, 3, 4}:
             object.__setattr__(self, "_serialization_version", 5)
         elif relational and self._serialization_version in {1, 2, 3}:
             object.__setattr__(self, "_serialization_version", 4)
         elif extended and self._serialization_version == 2:
             object.__setattr__(self, "_serialization_version", 3)
-        if self._serialization_version not in {1, 2, 3, 4, 5}:
+        if type(self._serialization_version) is not int or self._serialization_version not in {1, 2, 3, 4, 5, 6}:
             raise ObjectQueryError(
                 "Object query serialization version is unsupported"
             )
-        if extended and self._serialization_version not in {3, 4, 5}:
+        if extended and self._serialization_version not in {3, 4, 5, 6}:
             raise ObjectQueryError(
                 "Extended object predicates require serialization version 3"
             )
@@ -470,7 +475,7 @@ class ObjectQuerySpec:
                     ),
                 }
             )
-        elif self._serialization_version in {4, 5}:
+        elif self._serialization_version in {4, 5, 6}:
             value.update(
                 {
                     "subtypes_any": list(self.subtypes_any),
@@ -487,8 +492,10 @@ class ObjectQuerySpec:
                     "minimum_color_count": self.minimum_color_count,
                 }
             )
-            if self._serialization_version == 5:
+            if self._serialization_version in {5, 6}:
                 value["keywords_none"] = list(self.keywords_none)
+            if self._serialization_version == 6:
+                value["commander"] = self.commander
         return value
 
     def to_dict(self) -> dict[str, Any]:
@@ -510,9 +517,12 @@ class ObjectQuerySpec:
             _EXTENDED_QUERY_FIELDS,
             _RELATIONAL_QUERY_FIELDS,
             _NEGATIVE_KEYWORD_QUERY_FIELDS,
+            _DESIGNATION_QUERY_FIELDS,
         }:
             expected = (
-                _NEGATIVE_KEYWORD_QUERY_FIELDS
+                _DESIGNATION_QUERY_FIELDS
+                if 'commander' in actual
+                else _NEGATIVE_KEYWORD_QUERY_FIELDS
                 if actual.intersection(
                     _NEGATIVE_KEYWORD_QUERY_FIELDS
                     - _RELATIONAL_QUERY_FIELDS
@@ -559,6 +569,7 @@ class ObjectQuerySpec:
             minimum_color_count=value.get("minimum_color_count"),
             keywords_all=value["keywords_all"],
             keywords_none=value.get("keywords_none", ()),
+            commander=value.get("commander"),
             token=value["token"],
             tapped=value["tapped"],
             include_phased_out=value["include_phased_out"],
@@ -566,7 +577,9 @@ class ObjectQuerySpec:
             exclude_ref=value["exclude_ref"],
             state_predicate=state_predicate,
             _serialization_version=(
-                5
+                6
+                if actual == _DESIGNATION_QUERY_FIELDS
+                else 5
                 if actual == _NEGATIVE_KEYWORD_QUERY_FIELDS
                 else 4
                 if actual == _RELATIONAL_QUERY_FIELDS

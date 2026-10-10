@@ -718,6 +718,7 @@ def evaluate_card_characteristics(
         "controller": card.controller,
         "zone": card.zone,
         "token": card.is_token,
+        "commander": card.is_commander,
         "tapped": card.tapped,
         "phased_out": card.phased_out,
         "known_to_actor": True,

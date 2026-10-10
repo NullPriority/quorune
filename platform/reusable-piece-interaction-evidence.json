@@ -8666,6 +8666,66 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Lord of Atlantis cast grants islandwalk to an opponent Merfolk. A defending Island removes its block offers and rejects submitted blocks atomically; after that Island leaves, offered and accepted blocks agree, with exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_clan_crafter_owned_borrowed_commander_activates_for_current_controller",
+      "piece_ids": [
+        "capability.continuous.ability.fixed_query_grant",
+        "capability.state_query.commander.designation"
+      ],
+      "capability_ids": [
+        "continuous.ability.fixed_query_grant",
+        "state_query.commander.designation"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Clan Crafter grants its closed sacrifice/counter/draw activation to an owned commander after another player controls it. Only the current controller may submit the offered activation, pays its artifact, receives private draw, and exact replay preserves the original designation."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_bastion_applies_only_to_current_controlled_designated_creatures",
+      "piece_ids": [
+        "capability.continuous.power_toughness.fixed_anthem",
+        "capability.state_query.commander.designation"
+      ],
+      "capability_ids": [
+        "continuous.power_toughness.fixed_anthem",
+        "state_query.commander.designation"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Bastion Protector grants fixed stats and indestructible only to currently controlled designated creature cards, including a foreign-owned borrowed commander. Its own source and an ordinary copy do not qualify; pending save/load and replay preserve physical status."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_real_partner_commanders_both_receive_bastion_without_designating_copies",
+      "piece_ids": [
+        "capability.format.commander.pairing.partner",
+        "capability.state_query.commander.designation"
+      ],
+      "capability_ids": [
+        "format.commander.pairing.partner",
+        "state_query.commander.designation"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Thrasios and Tymna paired setup creates distinct physical commander designations. Both current battlefield commanders receive the actual Bastion grant, with pending save/load and pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_copy_of_actual_commander_controlled_by_grant_player_remains_undesignated",
+      "piece_ids": [
+        "capability.continuous.ability.fixed_query_keyword_grant",
+        "capability.state_query.commander.designation"
+      ],
+      "capability_ids": [
+        "continuous.ability.fixed_query_keyword_grant",
+        "state_query.commander.designation"
+      ],
+      "interaction_order": 2,
+      "assertion": "A real copy token of a designated commander remains undesignated. Actual commander bounce with declined command-zone replacement and Act of Treason bring the copy under the grant player without making it eligible for Bastion indestructible, with exact replay."
     }
   ]
 }

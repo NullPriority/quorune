@@ -1653,6 +1653,16 @@ restriction and excludes only the source when `Other` is printed. Both fixed
 stats and keyword grants consume that same predicate. Unknown nouns, open union
 clauses and Class level context retain their existing fail-closed boundaries.
 
+Commander-creature characteristic sets use the version-six designation field
+in the existing object query. The field reads the authoritative physical-card
+designation and current creature type; it is not a subtype or copiable value.
+`you control` binds the source controller as recipient controller, while
+`you own` binds that player as recipient owner and includes borrowed commanders.
+Stats, keywords and independently closed quoted abilities use the same live
+query and require `state_query.commander.designation`. Prior query versions keep
+their exact serialized shapes; unrepresented quantity and cost grammars reject
+the new designation qualifier.
+
 Single-subject `place_counters` results also bind declared or current public
 characteristic amounts through their existing counter owner. A resolved zero
 amount is a paid no-op; malformed and negative amounts are rejected. Counter

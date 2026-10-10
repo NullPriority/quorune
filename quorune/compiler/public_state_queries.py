@@ -656,6 +656,10 @@ def _global_battlefield_query(
     text: str,
 ) -> tuple[str, ObjectQuerySpec, bool] | None:
     fields: dict[str, Any] = {"zones": ("battlefield",)}
+    commander=re.fullmatch(r'(?P<other>Other )?Commander creatures you (?P<relation>own|control)',text,re.I)
+    if commander is not None:
+        return ('source_owner' if commander['relation'].casefold()=='own' else 'source_controller',
+            ObjectQuerySpec(zones=('battlefield',),types_all=('creature',),commander=True),bool(commander['other']))
     if _OPPONENT_CONTROLLED_CREATURES.fullmatch(text):
         return (
             "source_opponents",

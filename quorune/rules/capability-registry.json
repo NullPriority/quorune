@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 207,
+  "registry_version": 208,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -12264,6 +12264,92 @@
       "dependency_fail_closed_rationale": "Fixed characteristic, target revalidation, and each keyword dependencies are required separately.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Omitting the v6 target-set effect is killed by an actual Nahiri cast resulting power assertion.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "state_query.commander.designation",
+      "version": 1,
+      "official_rules": [
+        "903.3",
+        "903.3a",
+        "903.3b",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Query current battlefield creature objects carrying authoritative physical commander designation, relative to the grant source controller by owner or current controller. Copies do not inherit designation and source changes recompute the same canonical live set.",
+        "inputs": [
+          "typed ObjectQuerySpec designation field",
+          "authoritative physical commander designation",
+          "current effective creature types",
+          "source controller and recipient owner/controller"
+        ],
+        "outputs": [
+          "immutable designated creature predicate",
+          "same recipient set for fixed stats, keywords and independently closed granted abilities"
+        ],
+        "exclusions": [
+          "unknown source-owner relations",
+          "noncreature designated objects",
+          "ordinary copies without designation",
+          "command-zone objects",
+          "unsupported whole-card siblings"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.object_predicate.ObjectQuerySpec",
+        "quorune.object_query.object_query_result",
+        "quorune.object_query.object_matches_query",
+        "quorune.continuous_effects._matches",
+        "quorune.characteristic_evaluation.evaluate_card_characteristics",
+        "quorune.semantic_runtime.continuous_components._fixed_query_effect_predicate",
+        "quorune.compiler.public_state_queries.fixed_characteristic_battlefield_query_subject"
+      ],
+      "positive_tests": [
+        "test_designation_query_serializes_additively_and_matches_physical_status",
+        "test_owner_and_controller_shells_retain_distinct_relations_and_original_span"
+      ],
+      "negative_tests": [
+        "test_designation_query_serializes_additively_and_matches_physical_status",
+        "test_owner_and_controller_shells_retain_distinct_relations_and_original_span"
+      ],
+      "interaction_tests": [
+        "test_actual_clan_crafter_owned_borrowed_commander_activates_for_current_controller",
+        "test_actual_source_bounce_removes_commander_grants_and_replays"
+      ],
+      "multiplayer_tests": [
+        "test_actual_bastion_applies_only_to_current_controlled_designated_creatures",
+        "test_real_partner_commanders_both_receive_bastion_without_designating_copies"
+      ],
+      "privacy_tests": [
+        "test_actual_clan_crafter_owned_borrowed_commander_activates_for_current_controller"
+      ],
+      "replay_tests": [
+        "test_actual_bastion_applies_only_to_current_controlled_designated_creatures",
+        "test_actual_clan_crafter_owned_borrowed_commander_activates_for_current_controller",
+        "test_real_partner_commanders_both_receive_bastion_without_designating_copies"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "This read-only designation query has no capability dependencies; the complete producer program independently requires its static grant, keyword, activation or result consumers.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "test_designation_query_omission_mutant_is_killed_by_actual_bastion removes the designation filter and wrongly grants an undesignated copy or the Bastion source.",
       "blockers": [],
       "status": "trusted"
     }

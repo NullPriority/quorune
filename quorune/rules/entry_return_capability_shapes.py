@@ -58,6 +58,7 @@ def _choice_is_closed(effect: Mapping[str, Any]) -> bool:
         predicate.zones == ("battlefield",)
         and predicate.controller is None
         and predicate.owner is None
+        and predicate.commander is None
         and predicate.known_to_actor is None
         and predicate.exclude_ref is None
         and not predicate.include_phased_out

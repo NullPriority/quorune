@@ -52,6 +52,7 @@ def fixed_resolution_characteristic_query_is_closed(
 
     if (
         query.zones != ("battlefield",)
+        or query.commander is not None
         or query.owner is not None
         or query.types_any
         or query.colors_any

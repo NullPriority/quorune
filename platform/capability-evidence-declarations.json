@@ -34589,6 +34589,166 @@
       "applicability_note": "Resolve a pending chapter and replay the resulting typed Saga sacrifice to the same authoritative state hash."
     },
     {
+      "capability_id": "state_query.commander.designation",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_commander_characteristic_grants.CommanderCharacteristicGrantRuntimeTests.test_actual_source_bounce_removes_commander_grants_and_replays",
+      "official_rule_ids": [
+        "903.3",
+        "903.3a",
+        "903.3b",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Physical commander designation is not copied; current creature type and explicit own/control relations determine real recipients. Actual grants, borrowed commander activations, paired setup and source departure preserve actions, privacy and replay."
+    },
+    {
+      "capability_id": "state_query.commander.designation",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_commander_characteristic_grants.CommanderCharacteristicGrantRuntimeTests.test_real_partner_commanders_both_receive_bastion_without_designating_copies",
+      "official_rule_ids": [
+        "903.3",
+        "903.3a",
+        "903.3b",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Physical commander designation is not copied; current creature type and explicit own/control relations determine real recipients. Actual grants, borrowed commander activations, paired setup and source departure preserve actions, privacy and replay."
+    },
+    {
+      "capability_id": "state_query.commander.designation",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_commander_characteristic_grants.CommanderCharacteristicGrantRuntimeTests.test_designation_query_omission_mutant_is_killed_by_actual_bastion",
+      "official_rule_ids": [
+        "903.3",
+        "903.3a",
+        "903.3b",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Physical commander designation is not copied; current creature type and explicit own/control relations determine real recipients. Actual grants, borrowed commander activations, paired setup and source departure preserve actions, privacy and replay."
+    },
+    {
+      "capability_id": "state_query.commander.designation",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_commander_characteristic_grants.CommanderCharacteristicQueryTests.test_commander_designation_dependency_omission_rejects_grants",
+      "official_rule_ids": [
+        "903.3",
+        "903.3a",
+        "903.3b",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Physical commander designation is not copied; current creature type and explicit own/control relations determine real recipients. Actual grants, borrowed commander activations, paired setup and source departure preserve actions, privacy and replay."
+    },
+    {
+      "capability_id": "state_query.commander.designation",
+      "evidence_class": "negative",
+      "test_id": "tests.test_commander_characteristic_grants.CommanderCharacteristicQueryTests.test_owner_and_controller_shells_retain_distinct_relations_and_original_span",
+      "official_rule_ids": [
+        "903.3",
+        "903.3a",
+        "903.3b",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Physical commander designation is not copied; current creature type and explicit own/control relations determine real recipients. Actual grants, borrowed commander activations, paired setup and source departure preserve actions, privacy and replay."
+    },
+    {
+      "capability_id": "state_query.commander.designation",
+      "evidence_class": "positive",
+      "test_id": "tests.test_commander_characteristic_grants.CommanderCharacteristicQueryTests.test_designation_query_serializes_additively_and_matches_physical_status",
+      "official_rule_ids": [
+        "903.3",
+        "903.3a",
+        "903.3b",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Physical commander designation is not copied; current creature type and explicit own/control relations determine real recipients. Actual grants, borrowed commander activations, paired setup and source departure preserve actions, privacy and replay."
+    },
+    {
+      "capability_id": "state_query.commander.designation",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_commander_characteristic_grants.CommanderCharacteristicGrantRuntimeTests.test_actual_clan_crafter_owned_borrowed_commander_activates_for_current_controller",
+      "official_rule_ids": [
+        "903.3",
+        "903.3a",
+        "903.3b",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Physical commander designation is not copied; current creature type and explicit own/control relations determine real recipients. Actual grants, borrowed commander activations, paired setup and source departure preserve actions, privacy and replay."
+    },
+    {
+      "capability_id": "state_query.commander.designation",
+      "evidence_class": "replay",
+      "test_id": "tests.test_commander_characteristic_grants.CommanderCharacteristicGrantRuntimeTests.test_actual_clan_crafter_owned_borrowed_commander_activates_for_current_controller",
+      "official_rule_ids": [
+        "903.3",
+        "903.3a",
+        "903.3b",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Physical commander designation is not copied; current creature type and explicit own/control relations determine real recipients. Actual grants, borrowed commander activations, paired setup and source departure preserve actions, privacy and replay."
+    },
+    {
       "capability_id": "state_query.permanent.public_state_predicate",
       "evidence_class": "interaction",
       "test_id": "tests.test_continuous_effect_duration.ContinuousEffectEngineTests.test_fixed_public_characteristic_sets_lock_multiplayer_membership",

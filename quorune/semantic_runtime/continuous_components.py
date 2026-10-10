@@ -204,6 +204,7 @@ def _fixed_query_effect_predicate(
     return replace(
         predicate,
         zones=("battlefield",),
+        owner=context.source_controller if target_controller=='source_owner' else None,
         controller=(
             context.source_controller
             if target_controller == "source_controller"
@@ -419,6 +420,7 @@ class FixedQueryPowerToughnessAnthemHandler:
             "any",
             "source_controller",
             "source_opponents",
+            "source_owner",
         }:
             raise SemanticNodeError(
                 "fixed query anthem requires a closed controller relation"
@@ -431,6 +433,8 @@ class FixedQueryPowerToughnessAnthemHandler:
             predicate = ObjectQuerySpec.from_dict(condition["predicate"])
         except ObjectQueryError as exc:
             raise SemanticNodeError(str(exc)) from exc
+        if (condition['target_controller']=='source_owner' or predicate.commander is not None) and (predicate.commander is not True or predicate.types_all!=('creature',) or condition['target_controller'] not in {'source_owner','source_controller'}):
+            raise SemanticNodeError('Owner-relative characteristic grants require designated commander creatures')
         if (
             predicate.owner is not None
             or predicate.controller is not None
@@ -672,6 +676,7 @@ class FixedQueryAbilityGrantHandler:
             "source_controller",
             "source_opponents",
             "any",
+            "source_owner",
         }:
             raise SemanticNodeError(
                 "fixed query ability grants require a supported public controller relation"
@@ -684,6 +689,8 @@ class FixedQueryAbilityGrantHandler:
             predicate = ObjectQuerySpec.from_dict(condition["predicate"])
         except ObjectQueryError as exc:
             raise SemanticNodeError(str(exc)) from exc
+        if (condition['target_controller']=='source_owner' or predicate.commander is not None) and (predicate.commander is not True or predicate.types_all!=('creature',) or condition['target_controller'] not in {'source_owner','source_controller'}):
+            raise SemanticNodeError('Owner-relative ability grants require designated commander creatures')
         if (
             predicate.owner is not None
             or predicate.controller is not None
@@ -859,6 +866,7 @@ class FixedQueryKeywordGrantHandler:
             "any",
             "source_controller",
             "source_opponents",
+            "source_owner",
         }:
             raise SemanticNodeError(
                 "fixed query keyword grants require a closed controller relation"
@@ -871,6 +879,8 @@ class FixedQueryKeywordGrantHandler:
             predicate = ObjectQuerySpec.from_dict(condition["predicate"])
         except ObjectQueryError as exc:
             raise SemanticNodeError(str(exc)) from exc
+        if (condition['target_controller']=='source_owner' or predicate.commander is not None) and (predicate.commander is not True or predicate.types_all!=('creature',) or condition['target_controller'] not in {'source_owner','source_controller'}):
+            raise SemanticNodeError('Owner-relative keyword grants require designated commander creatures')
         if (
             predicate.owner is not None
             or predicate.controller is not None

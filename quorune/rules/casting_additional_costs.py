@@ -362,6 +362,7 @@ class FixedZoneChangeAdditionalCost:
             )
         if (
             self.predicate.zones != (origin,)
+            or self.predicate.commander is not None
             or self.predicate.owner != expected_owner
             or self.predicate.controller != expected_controller
             or self.predicate.known_to_actor is not True

@@ -31,6 +31,11 @@ maintenance: "hand-maintained"
 - Preserve explicit sacrifice provenance for Fading and Vanishing cleanup
   through zone replacements, normalized trigger occurrences, and turn history.
 
+- Apply fixed stats, keywords and closed quoted abilities to commander creatures
+  through physical designation and distinct owner/control live queries. Partner
+  commanders remain separate, copies do not inherit designation, and borrowed
+  commanders use their current controller's accepted actions.
+
 - Compose mandatory fixed counted spell prices with their independently closed
   results. Private discards and simultaneous sacrifices retain the casting
   transaction, and later replacement choices preserve only validated prior

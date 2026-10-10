@@ -44,6 +44,7 @@ class ObjectQueryResult:
     enchanted: bool = False
     equipped: bool = False
     modified: bool = False
+    commander: bool = False
 
     def __post_init__(self) -> None:
         if not isinstance(self.counters, FrozenMap):
@@ -64,6 +65,7 @@ class ObjectQueryResult:
             "enchanted",
             "equipped",
             "modified",
+            "commander",
         ):
             if type(getattr(self, field_name)) is not bool:
                 raise ValueError(
@@ -155,6 +157,7 @@ def object_query_result(
             card, effective, "toughness"
         ),
         token=bool(card.is_token),
+        commander=bool(getattr(card,'is_commander',False)),
         tapped=bool(card.tapped),
         phased_out=bool(card.phased_out),
         known_to_actor=known_to_actor,
@@ -190,6 +193,7 @@ def object_matches_query(
         (not spec.zones or row.zone in spec.zones)
         and (spec.owner is None or row.owner == spec.owner)
         and (spec.controller is None or row.controller == spec.controller)
+        and (spec.commander is None or row.commander is spec.commander)
         and row.controller not in spec.excluded_controllers
         and set(spec.types_all).issubset(types)
         and (not spec.types_any or not types.isdisjoint(spec.types_any))
