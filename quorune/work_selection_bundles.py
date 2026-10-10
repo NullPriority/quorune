@@ -600,10 +600,16 @@ def candidate_frontier_measurements(
         if len(missing) == len(member_ids):
             continue
         if missing:
-            raise WorkSelectionBundleError(
-                f"Candidate bundle {bundle_id} references missing families: "
-                + ", ".join(missing)
-            )
+            outcome = cohort_measurements.get(bundle_id)
+            if _current_empty_cohort_retires_bundle(frontier, bundle_policy, outcome):
+                continue
+            if _current_retired_cohort_covers_completed_members(frontier, bundle_policy, outcome):
+                member_ids = [value for value in member_ids if value in family_rows]
+            else:
+                raise WorkSelectionBundleError(
+                    f"Candidate bundle {bundle_id} references missing families: "
+                    + ", ".join(missing)
+                )
         members = [family_rows[value] for value in member_ids]
         frontier_gains = _bundle_frontier_gains(cards, set(member_ids))
         outcome = cohort_measurements.get(bundle_id)
@@ -703,6 +709,38 @@ def candidate_frontier_measurements(
             }
         )
     return result
+
+
+def _current_empty_cohort_retires_bundle(frontier, bundle_policy, outcome) -> bool:
+    """Only a current independently measured empty scope retires partial debt."""
+    if not isinstance(outcome, Mapping):
+        return False
+    return bool(
+        outcome.get("probe_id") == bundle_policy.get("measurement_probe_id")
+        and outcome.get("cohort_fingerprint") == bundle_measurement_fingerprint(frontier, bundle_policy)
+        and outcome.get("decision") == "retired_below_harvest_floor"
+        and all(type(outcome.get(field)) is int and outcome[field] == 0 for field in (
+            "affected_commander_cards", "complete_card_gain", "exact_ability_gain",
+            "material_residual_reduction", "one_additional_blocker_cards", "two_additional_blocker_cards",
+        ))
+        and outcome.get("grants_gameplay_trust") is False
+    )
+
+
+def _current_retired_cohort_covers_completed_members(frontier, bundle_policy, outcome) -> bool:
+    if not isinstance(outcome, Mapping):
+        return False
+    return bool(
+        outcome.get("probe_id") == bundle_policy.get("measurement_probe_id")
+        and outcome.get("cohort_fingerprint") == bundle_measurement_fingerprint(frontier, bundle_policy)
+        and outcome.get("decision") == "retired_below_harvest_floor"
+        and outcome.get("grants_gameplay_trust") is False
+        and type(outcome.get("complete_card_gain")) is int and outcome["complete_card_gain"] == 0
+        and all(type(outcome.get(field)) is int and outcome[field] >= 0 for field in (
+            "affected_commander_cards", "exact_ability_gain", "material_residual_reduction",
+            "one_additional_blocker_cards", "two_additional_blocker_cards",
+        ))
+    )
 
 
 def validated_candidate_frontier_measurements(

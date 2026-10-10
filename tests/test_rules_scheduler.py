@@ -6148,6 +6148,36 @@ class RulesSchedulerTests(unittest.TestCase):
         ):
             candidate_frontier_measurements(frontier, policies, weights, {})
 
+    def test_partially_missing_bundle_retires_only_with_current_empty_probe_evidence(self):
+        frontier, policies, weights = _bounded_candidate_bundle_fixture()
+        frontier['family_candidates'].pop()
+        bundle=policies[0];bundle['measurement_probe_id']='empty-current-fixture'
+        outcome={'probe_id':bundle['measurement_probe_id'],'cohort_fingerprint':bundle_measurement_fingerprint(frontier,bundle),
+                 'decision':'retired_below_harvest_floor','affected_commander_cards':0,'complete_card_gain':0,
+                 'exact_ability_gain':0,'material_residual_reduction':0,'one_additional_blocker_cards':0,
+                 'two_additional_blocker_cards':0,'grants_gameplay_trust':False}
+        self.assertEqual([],candidate_frontier_measurements(frontier,policies,weights,{bundle['bundle_id']:outcome}))
+        for mutation in ({'cohort_fingerprint':'stale'},{'probe_id':'different'},{'affected_commander_cards':True},
+                         {'complete_card_gain':1},{'exact_ability_gain':True},{'grants_gameplay_trust':True}):
+            with self.assertRaises(WorkSelectionBundleError):
+                candidate_frontier_measurements(frontier,policies,weights,{bundle['bundle_id']:{**outcome,**mutation}})
+
+    def test_current_retired_partial_cohort_keeps_only_live_family_rows(self):
+        frontier, policies, weights = _bounded_candidate_bundle_fixture()
+        frontier['family_candidates'].pop()
+        bundle=policies[0];bundle['measurement_probe_id']='current-retired-fixture'
+        outcome={'probe_id':bundle['measurement_probe_id'],'cohort_fingerprint':bundle_measurement_fingerprint(frontier,bundle),
+                 'decision':'retired_below_harvest_floor','affected_commander_cards':4,'complete_card_gain':0,
+                 'exact_ability_gain':0,'material_residual_reduction':0,'one_additional_blocker_cards':0,
+                 'two_additional_blocker_cards':0,'grants_gameplay_trust':False}
+        result=candidate_frontier_measurements(frontier,policies,weights,{bundle['bundle_id']:outcome})
+        self.assertEqual(1,len(result))
+        self.assertEqual(1,len(result[0]['members']))
+        self.assertEqual(0,result[0]['gains']['exact_cards'])
+        for mutation in ({'cohort_fingerprint':'stale'},{'decision':'bounded_executable'},{'complete_card_gain':1}):
+            with self.assertRaises(WorkSelectionBundleError):
+                candidate_frontier_measurements(frontier,policies,weights,{bundle['bundle_id']:{**outcome,**mutation}})
+
         self.assertEqual(
             [],
             candidate_frontier_measurements(
