@@ -26359,6 +26359,386 @@
       "applicability_note": "Reject a malformed effective-keyword snapshot without changing the authoritative state hash."
     },
     {
+      "capability_id": "permanent.destroy.umbra_armor",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_umbra_armor.UmbraArmorRepresentationReplayTests.test_canonical_owner_simultaneous_aura_and_recipient_destroy_only_aura_once",
+      "official_rule_ids": [
+        "702.89a",
+        "701.8a",
+        "701.8b",
+        "616.1",
+        "616.1g",
+        "704.5g",
+        "704.5h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Aura-owned coupled destruction preserves affected-controller choices, damage removal, simultaneous Aura destruction and exact authenticated replay."
+    },
+    {
+      "capability_id": "permanent.destroy.umbra_armor",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_umbra_armor.UmbraArmorRepresentationReplayTests.test_competing_regeneration_and_shield_choice_uses_one_resource",
+      "official_rule_ids": [
+        "702.89a",
+        "701.8a",
+        "701.8b",
+        "616.1",
+        "616.1g",
+        "704.5g",
+        "704.5h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Aura-owned coupled destruction preserves affected-controller choices, damage removal, simultaneous Aura destruction and exact authenticated replay."
+    },
+    {
+      "capability_id": "permanent.destroy.umbra_armor",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_umbra_armor.UmbraArmorRepresentationReplayTests.test_deathtouch_state_based_replacement_keeps_combat_and_does_not_regenerate",
+      "official_rule_ids": [
+        "702.89a",
+        "701.8a",
+        "701.8b",
+        "616.1",
+        "616.1g",
+        "704.5g",
+        "704.5h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Aura-owned coupled destruction preserves affected-controller choices, damage removal, simultaneous Aura destruction and exact authenticated replay."
+    },
+    {
+      "capability_id": "permanent.destroy.umbra_armor",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_umbra_armor.UmbraArmorRepresentationReplayTests.test_indestructible_aura_still_protects_and_zero_toughness_does_not_use_umbra",
+      "official_rule_ids": [
+        "702.89a",
+        "701.8a",
+        "701.8b",
+        "616.1",
+        "616.1g",
+        "704.5g",
+        "704.5h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Aura-owned coupled destruction preserves affected-controller choices, damage removal, simultaneous Aura destruction and exact authenticated replay."
+    },
+    {
+      "capability_id": "permanent.destroy.umbra_armor",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_umbra_armor.UmbraArmorRepresentationReplayTests.test_lethal_state_based_destruction_choice_preserves_damage_until_selected_and_replays",
+      "official_rule_ids": [
+        "702.89a",
+        "701.8a",
+        "701.8b",
+        "616.1",
+        "616.1g",
+        "704.5g",
+        "704.5h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Aura-owned coupled destruction preserves affected-controller choices, damage removal, simultaneous Aura destruction and exact authenticated replay."
+    },
+    {
+      "capability_id": "permanent.destroy.umbra_armor",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_umbra_armor.UmbraArmorRepresentationTests.test_coupled_destruction_expands_chosen_aura_and_deduplicates_simultaneous_request",
+      "official_rule_ids": [
+        "702.89a",
+        "701.8a",
+        "701.8b",
+        "616.1",
+        "616.1g",
+        "704.5g",
+        "704.5h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Aura-owned coupled destruction preserves affected-controller choices, damage removal, simultaneous Aura destruction and exact authenticated replay."
+    },
+    {
+      "capability_id": "permanent.destroy.umbra_armor",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_umbra_armor.UmbraArmorRepresentationTests.test_recursive_aura_cycle_cannot_reapply_the_same_replacement",
+      "official_rule_ids": [
+        "702.89a",
+        "701.8a",
+        "701.8b",
+        "616.1",
+        "616.1g",
+        "704.5g",
+        "704.5h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Aura-owned coupled destruction preserves affected-controller choices, damage removal, simultaneous Aura destruction and exact authenticated replay."
+    },
+    {
+      "capability_id": "permanent.destroy.umbra_armor",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_umbra_armor.UmbraArmorRepresentationReplayTests.test_offered_destroy_spell_suspends_for_recipient_choice_and_replays",
+      "official_rule_ids": [
+        "702.89a",
+        "701.8a",
+        "701.8b",
+        "616.1",
+        "616.1g",
+        "704.5g",
+        "704.5h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Aura-owned coupled destruction preserves affected-controller choices, damage removal, simultaneous Aura destruction and exact authenticated replay."
+    },
+    {
+      "capability_id": "permanent.destroy.umbra_armor",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_umbra_armor.UmbraArmorRepresentationReplayTests.test_missing_damage_clear_mutant_is_killed",
+      "official_rule_ids": [
+        "702.89a",
+        "701.8a",
+        "701.8b",
+        "616.1",
+        "616.1g",
+        "704.5g",
+        "704.5h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Aura-owned coupled destruction preserves affected-controller choices, damage removal, simultaneous Aura destruction and exact authenticated replay."
+    },
+    {
+      "capability_id": "permanent.destroy.umbra_armor",
+      "evidence_class": "negative",
+      "test_id": "tests.test_umbra_armor.UmbraArmorRepresentationReplayTests.test_canonical_owner_stale_attachment_rejects_without_mutation",
+      "official_rule_ids": [
+        "702.89a",
+        "701.8a",
+        "701.8b",
+        "616.1",
+        "616.1g",
+        "704.5g",
+        "704.5h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Aura-owned coupled destruction preserves affected-controller choices, damage removal, simultaneous Aura destruction and exact authenticated replay."
+    },
+    {
+      "capability_id": "permanent.destroy.umbra_armor",
+      "evidence_class": "negative",
+      "test_id": "tests.test_umbra_armor.UmbraArmorRepresentationReplayTests.test_stale_aura_ability_and_borrowed_choice_state_reject_without_mutation",
+      "official_rule_ids": [
+        "702.89a",
+        "701.8a",
+        "701.8b",
+        "616.1",
+        "616.1g",
+        "704.5g",
+        "704.5h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Aura-owned coupled destruction preserves affected-controller choices, damage removal, simultaneous Aura destruction and exact authenticated replay."
+    },
+    {
+      "capability_id": "permanent.destroy.umbra_armor",
+      "evidence_class": "negative",
+      "test_id": "tests.test_umbra_armor.UmbraArmorRepresentationReplayTests.test_stale_pending_sba_choice_rejects_atomically_and_preserves_capability",
+      "official_rule_ids": [
+        "702.89a",
+        "701.8a",
+        "701.8b",
+        "616.1",
+        "616.1g",
+        "704.5g",
+        "704.5h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Aura-owned coupled destruction preserves affected-controller choices, damage removal, simultaneous Aura destruction and exact authenticated replay."
+    },
+    {
+      "capability_id": "permanent.destroy.umbra_armor",
+      "evidence_class": "negative",
+      "test_id": "tests.test_umbra_armor.UmbraArmorRepresentationTests.test_full_umbra_dependency_gate_and_malformed_destruction_identity_fail_closed",
+      "official_rule_ids": [
+        "702.89a",
+        "701.8a",
+        "701.8b",
+        "616.1",
+        "616.1g",
+        "704.5g",
+        "704.5h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Aura-owned coupled destruction preserves affected-controller choices, damage removal, simultaneous Aura destruction and exact authenticated replay."
+    },
+    {
+      "capability_id": "permanent.destroy.umbra_armor",
+      "evidence_class": "positive",
+      "test_id": "tests.test_umbra_armor.UmbraArmorRepresentationReplayTests.test_actual_hyena_cast_attaches_and_protects_without_manual_rule_grant",
+      "official_rule_ids": [
+        "702.89a",
+        "701.8a",
+        "701.8b",
+        "616.1",
+        "616.1g",
+        "704.5g",
+        "704.5h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Aura-owned coupled destruction preserves affected-controller choices, damage removal, simultaneous Aura destruction and exact authenticated replay."
+    },
+    {
+      "capability_id": "permanent.destroy.umbra_armor",
+      "evidence_class": "positive",
+      "test_id": "tests.test_umbra_armor.UmbraArmorRepresentationReplayTests.test_canonical_owner_replaces_destruction_and_clears_damage_without_tapping",
+      "official_rule_ids": [
+        "702.89a",
+        "701.8a",
+        "701.8b",
+        "616.1",
+        "616.1g",
+        "704.5g",
+        "704.5h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Aura-owned coupled destruction preserves affected-controller choices, damage removal, simultaneous Aura destruction and exact authenticated replay."
+    },
+    {
+      "capability_id": "permanent.destroy.umbra_armor",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_umbra_armor.UmbraArmorRepresentationReplayTests.test_offered_destroy_spell_suspends_for_recipient_choice_and_replays",
+      "official_rule_ids": [
+        "702.89a",
+        "701.8a",
+        "701.8b",
+        "616.1",
+        "616.1g",
+        "704.5g",
+        "704.5h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Aura-owned coupled destruction preserves affected-controller choices, damage removal, simultaneous Aura destruction and exact authenticated replay."
+    },
+    {
+      "capability_id": "permanent.destroy.umbra_armor",
+      "evidence_class": "replay",
+      "test_id": "tests.test_umbra_armor.UmbraArmorRepresentationReplayTests.test_actual_hyena_cast_attaches_and_protects_without_manual_rule_grant",
+      "official_rule_ids": [
+        "702.89a",
+        "701.8a",
+        "701.8b",
+        "616.1",
+        "616.1g",
+        "704.5g",
+        "704.5h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Aura-owned coupled destruction preserves affected-controller choices, damage removal, simultaneous Aura destruction and exact authenticated replay."
+    },
+    {
+      "capability_id": "permanent.destroy.umbra_armor",
+      "evidence_class": "replay",
+      "test_id": "tests.test_umbra_armor.UmbraArmorRepresentationReplayTests.test_lethal_state_based_destruction_choice_preserves_damage_until_selected_and_replays",
+      "official_rule_ids": [
+        "702.89a",
+        "701.8a",
+        "701.8b",
+        "616.1",
+        "616.1g",
+        "704.5g",
+        "704.5h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Aura-owned coupled destruction preserves affected-controller choices, damage removal, simultaneous Aura destruction and exact authenticated replay."
+    },
+    {
+      "capability_id": "permanent.destroy.umbra_armor",
+      "evidence_class": "replay",
+      "test_id": "tests.test_umbra_armor.UmbraArmorRepresentationReplayTests.test_offered_destroy_spell_suspends_for_recipient_choice_and_replays",
+      "official_rule_ids": [
+        "702.89a",
+        "701.8a",
+        "701.8b",
+        "616.1",
+        "616.1g",
+        "704.5g",
+        "704.5h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Aura-owned coupled destruction preserves affected-controller choices, damage removal, simultaneous Aura destruction and exact authenticated replay."
+    },
+    {
       "capability_id": "permanent.exile.effect",
       "evidence_class": "interaction",
       "test_id": "tests.test_permanent_exile_rules.PermanentExileRuleTests.test_compiled_tapped_exile_filters_and_revalidates_target",

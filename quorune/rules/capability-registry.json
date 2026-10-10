@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 192,
+  "registry_version": 193,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -1944,17 +1944,40 @@
       },
       "dependencies": [
         "ability.umbra_armor.fragment",
-        "permanent.destroy.effect"
+        "permanent.destroy.effect",
+        "trigger.placement.apnap",
+        "zone.change.destination_replacement"
       ],
       "implementation_components": [
-        "quorune.compiler.umbra_armor_nodes.umbra_armor_keyword_node"
+        "quorune.umbra_armor.current_umbra_armor_protections",
+        "quorune.destruction_replacement_planning.resolve_destruction_replacements",
+        "quorune.destruction_replacement_adapter.prepare_replaced_destructions",
+        "quorune.destruction.prepare_destructions",
+        "quorune.destruction.commit_destruction_plan",
+        "quorune.damage_results.clear_permanent_damage",
+        "quorune.state_based_replacement_coordination.resume_state_based_replacement"
       ],
-      "positive_tests": [],
-      "negative_tests": [],
-      "interaction_tests": [],
-      "multiplayer_tests": [],
-      "privacy_tests": [],
-      "replay_tests": [],
+      "positive_tests": [
+        "test_canonical_owner_replaces_destruction_and_clears_damage_without_tapping"
+      ],
+      "negative_tests": [
+        "test_full_umbra_dependency_gate_and_malformed_destruction_identity_fail_closed",
+        "test_canonical_owner_stale_attachment_rejects_without_mutation"
+      ],
+      "interaction_tests": [
+        "test_canonical_owner_simultaneous_aura_and_recipient_destroy_only_aura_once",
+        "test_lethal_state_based_destruction_choice_preserves_damage_until_selected_and_replays"
+      ],
+      "multiplayer_tests": [
+        "test_offered_destroy_spell_suspends_for_recipient_choice_and_replays"
+      ],
+      "privacy_tests": [
+        "test_offered_destroy_spell_suspends_for_recipient_choice_and_replays"
+      ],
+      "replay_tests": [
+        "test_offered_destroy_spell_suspends_for_recipient_choice_and_replays",
+        "test_lethal_state_based_destruction_choice_preserves_damage_until_selected_and_replays"
+      ],
       "required_evidence": [
         "positive",
         "negative",
@@ -1963,14 +1986,12 @@
         "privacy",
         "replay"
       ],
-      "dependency_fail_closed_status": "not_run",
-      "dependency_fail_closed_rationale": "Coupled destruction, competing choice and recursive replacement owner remains unfinished.",
-      "implementation_mutation_status": "not_run",
-      "implementation_mutation_rationale": "Gameplay evidence is pending complete destruction ownership.",
-      "blockers": [
-        "coupled Umbra damage-clear/Aura-destruction and competing replacement choices incomplete"
-      ],
-      "status": "blocked"
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Blocking complete Umbra destruction ownership makes whole-card closure unavailable; malformed and stale source/choice inputs reject before commit.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Suppressing the canonical damage clear fails the independent damage-removal witness.",
+      "blockers": [],
+      "status": "trusted"
     },
     {
       "id": "protection.typed.debt",

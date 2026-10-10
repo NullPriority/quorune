@@ -4942,7 +4942,35 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/destruction_replacement_adapter.py",
+      "layer": "rules",
+      "owning_subsystem": "destruction",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/destruction_replacement_options.py",
+      "layer": "rules",
+      "owning_subsystem": "destruction",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/destruction_replacement_planning.py",
       "layer": "rules",
       "owning_subsystem": "destruction",
       "allowed_dependency_layers": [
@@ -8786,6 +8814,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_choices/destruction_intent_identity.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_choices",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_choices/engine_coordination.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_choices",
@@ -10709,6 +10752,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/state_based_replacement_coordination.py",
+      "layer": "rules",
+      "owning_subsystem": "destruction",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/state_planner.py",
       "layer": "rules",
       "owning_subsystem": "state_change_planning",
@@ -11569,5 +11626,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "8baaae488ff4f26fd4ebcc259dd26a1e7f3cf71a637996f08b3c24698899f887"
+  "fingerprint": "5764c4bd1251b8d751fcd516406553c398f86fe84e6f9d34199f1c34f6e6c33c"
 }

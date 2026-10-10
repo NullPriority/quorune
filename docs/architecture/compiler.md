@@ -1244,6 +1244,15 @@ source-spanned residuals or explicit unsupported-interaction boundaries.
 
 ## Invariants
 
+Fading and Vanishing lower their separate entry and lifecycle abilities to
+the current counter and trigger owners. Vanishing retains its intervening-if
+upkeep and separate last-counter sacrifice trigger; ordinary counter removals
+observe post-event characteristics before stabilization. Umbra armor lowers
+an Aura-owned current fragment and requires the complete coupled destruction
+capability. Current relationship tracking and compiler recognition alone do
+not make a card supported. See [ADR 0107](../adr/0107-typed-coupled-umbra-destruction.md)
+for replacement choice, recursive Aura destruction and replay ownership.
+
 - Every lowered node retains its exact source provenance.
 - Unknown or ambiguous grammar becomes a source-spanned residual, never
   guessed behavior.

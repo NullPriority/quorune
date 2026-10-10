@@ -6866,7 +6866,10 @@ class CommanderEngine(
                 permanents=self._permanent_sba_snapshots(),
                 objects=self._object_sba_snapshots(),
             )
-            execution = prepare_state_based_execution(self, sba_batch)
+            from .state_based_replacement_coordination import prepare_state_based_execution_or_choice
+            execution = prepare_state_based_execution_or_choice(self, sba_batch)
+            if execution is None:
+                return True
             consume_deathtouch_damage_checks(
                 self, sba_batch.deathtouch_checks
             )
@@ -7023,24 +7026,8 @@ class CommanderEngine(
                         changed_objects=detached,
                     )
                 if counter_changes:
-                    self._log(
-                        None,
-                        "state.counters_annihilated",
-                        (
-                            "State-based actions removed opposing "
-                            "+1/+1 and -1/-1 counters."
-                        ),
-                        {"changes": counter_changes},
-                        importance=2,
-                        changed_objects=[
-                            object_id
-                            for object_id, _ in (
-                                sba_batch.counter_pairs_to_remove
-                            )
-                            if self.state.cards[object_id].zone
-                            == "battlefield"
-                        ],
-                    )
+                    from .state_based_replacement_coordination import log_state_based_counter_annihilation
+                    log_state_based_counter_annihilation(self, sba_batch, counter_changes)
                 if maximum_counter_changes:
                     self._log(
                         None,

@@ -11,6 +11,14 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Resolve complete Fading and Vanishing lifecycles through canonical counter,
+  upkeep and separate last-removal trigger owners. Counter-removal discovery
+  reads post-event characteristics before state-based actions.
+- Resolve Aura-owned Umbra protection with affected-controller replacement
+  choices, canonical damage clearing and simultaneous Aura destruction.
+  Ordinary competing regeneration/shield choices now suspend and replay through
+  the same replacement authority.
+
 - Resolve named-counter doubling through current per-permanent amounts and the
   existing placement transaction, preserving printed order, zero-count no-ops,
   quantity replacement, pending choice persistence and source identity. Fixed

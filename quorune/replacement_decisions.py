@@ -532,6 +532,10 @@ def complete_replacement_order_choice(
     selection = _replacement_selection(
         response, pending, error_type=error_type
     )
+    if restored.resume_kind == "state_based_destruction":
+        from .state_based_replacement_coordination import resume_state_based_replacement
+        resume_state_based_replacement(host, restored, selection, error_type=error_type)
+        return
     if restored.resume_kind == "combat_damage":
         _resume_combat_replacement(host, restored, selection)
         return
