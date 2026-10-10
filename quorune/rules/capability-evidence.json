@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "de5441644758aec2d4418ac895022c3d1e23d6777ec7e9737d4450575dfecd61",
-  "declaration_source_fingerprint": "c80c71baad2d42935a74caec3d0938d841552fe9cdac8b7cee5358c9023a801f",
+  "registry_fingerprint": "7f1bceacbaef3eba950a6daeb98c8a397f8fde5671589c7f9c87fc046239da12",
+  "declaration_source_fingerprint": "1a05b57691bd73446b9fe680b9729eed8876b800aefb39b6f8fdd1d4300f0924",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -29352,6 +29352,240 @@
         "commander_review"
       ],
       "applicability_note": "Reload the typed all-zone definition and replay subsequent priority commands to the exact authoritative hash."
+    },
+    {
+      "capability_id": "continuous.control.attached_source",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_attached_control.StaticAttachedControlRuntimeTests.test_actual_aura_cast_controls_recipient_and_bounce_restores_initial_custody",
+      "official_rule_ids": [
+        "303.4e",
+        "611.3b",
+        "613.1b",
+        "613.7e",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Mind Control casting acquires a foreign-owned recipient and an actual Aura bounce restores its previous controller, with authenticated rejection and exact pre-action replay."
+    },
+    {
+      "capability_id": "continuous.control.attached_source",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_attached_control.StaticAttachedControlRuntimeTests.test_controlling_the_aura_changes_its_recipient_control_and_restores_chain",
+      "official_rule_ids": [
+        "303.4e",
+        "611.3b",
+        "613.1b",
+        "613.7e",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Steal Enchantment changes Mind Control and its recipient to the new Aura controller; bouncing the outer Aura restores the chain without owner substitution."
+    },
+    {
+      "capability_id": "continuous.control.attached_source",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_attached_control.StaticAttachedControlRuntimeTests.test_later_layer_aura_ability_loss_keeps_prior_layer_two_control",
+      "official_rule_ids": [
+        "303.4e",
+        "611.3b",
+        "613.1b",
+        "613.7e",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed diagnostic layer-six removal leaves the already-applied layer-two control intact while preserving reciprocal attachment."
+    },
+    {
+      "capability_id": "continuous.control.attached_source",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_attached_control.StaticAttachedControlRuntimeTests.test_overlapping_static_auras_and_later_resolution_share_timestamp_order",
+      "official_rule_ids": [
+        "303.4e",
+        "611.3b",
+        "613.1b",
+        "613.7e",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual overlapping Aura casts share timestamp order with later resolved control; removing an Aura preserves the newer resolution effect and exposes earlier static custody only after its expiry."
+    },
+    {
+      "capability_id": "continuous.control.attached_source",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_static_attached_control.StaticAttachedControlRuntimeTests.test_actual_aura_cast_controls_recipient_and_bounce_restores_initial_custody",
+      "official_rule_ids": [
+        "303.4e",
+        "611.3b",
+        "613.1b",
+        "613.7e",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Mind Control casting acquires a foreign-owned recipient and an actual Aura bounce restores its previous controller, with authenticated rejection and exact pre-action replay."
+    },
+    {
+      "capability_id": "continuous.control.attached_source",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_static_attached_control.StaticAttachedControlRuntimeTests.test_departing_aura_owner_restores_recipient_in_surviving_game",
+      "official_rule_ids": [
+        "303.4e",
+        "611.3b",
+        "613.1b",
+        "613.7e",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual confirmed concession removes the controlling Aura and restores recipient custody in the surviving four-player game."
+    },
+    {
+      "capability_id": "continuous.control.attached_source",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_static_attached_control.StaticAttachedControlRuntimeTests.test_static_source_omission_mutant_is_killed_by_actual_aura_cast",
+      "official_rule_ids": [
+        "303.4e",
+        "611.3b",
+        "613.1b",
+        "613.7e",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Omitting current static control from canonical custody calculation leaves the actual Mind Control recipient with its old controller and fails the independent custody assertion."
+    },
+    {
+      "capability_id": "continuous.control.attached_source",
+      "evidence_class": "negative",
+      "test_id": "tests.test_static_attached_control.StaticAttachedControlCompilerTests.test_malformed_and_conditional_static_control_remain_closed",
+      "official_rule_ids": [
+        "303.4e",
+        "611.3b",
+        "613.1b",
+        "613.7e",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Mind Control casting acquires a foreign-owned recipient and an actual Aura bounce restores its previous controller, with authenticated rejection and exact pre-action replay."
+    },
+    {
+      "capability_id": "continuous.control.attached_source",
+      "evidence_class": "negative",
+      "test_id": "tests.test_static_attached_control.StaticAttachedControlRuntimeTests.test_original_aura_with_unsupported_sibling_stays_out_of_runtime",
+      "official_rule_ids": [
+        "303.4e",
+        "611.3b",
+        "613.1b",
+        "613.7e",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Take Possession retains exact static-control leaf and unresolved Split Second sibling; complete canonical runtime binding remains closed."
+    },
+    {
+      "capability_id": "continuous.control.attached_source",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_attached_control.StaticAttachedControlCompilerTests.test_exact_attached_control_descriptor_and_source_span",
+      "official_rule_ids": [
+        "303.4e",
+        "611.3b",
+        "613.1b",
+        "613.7e",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Mind Control casting acquires a foreign-owned recipient and an actual Aura bounce restores its previous controller, with authenticated rejection and exact pre-action replay."
+    },
+    {
+      "capability_id": "continuous.control.attached_source",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_static_attached_control.StaticAttachedControlRuntimeTests.test_actual_aura_cast_controls_recipient_and_bounce_restores_initial_custody",
+      "official_rule_ids": [
+        "303.4e",
+        "611.3b",
+        "613.1b",
+        "613.7e",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Mind Control casting acquires a foreign-owned recipient and an actual Aura bounce restores its previous controller, with authenticated rejection and exact pre-action replay."
+    },
+    {
+      "capability_id": "continuous.control.attached_source",
+      "evidence_class": "replay",
+      "test_id": "tests.test_static_attached_control.StaticAttachedControlRuntimeTests.test_actual_aura_cast_controls_recipient_and_bounce_restores_initial_custody",
+      "official_rule_ids": [
+        "303.4e",
+        "611.3b",
+        "613.1b",
+        "613.7e",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Mind Control casting acquires a foreign-owned recipient and an actual Aura bounce restores its previous controller, with authenticated rejection and exact pre-action replay."
+    },
+    {
+      "capability_id": "continuous.control.attached_source",
+      "evidence_class": "replay",
+      "test_id": "tests.test_static_attached_control.StaticAttachedControlRuntimeTests.test_controlling_the_aura_changes_its_recipient_control_and_restores_chain",
+      "official_rule_ids": [
+        "303.4e",
+        "611.3b",
+        "613.1b",
+        "613.7e",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Save/load and pre-action replay preserve current attached-source custody through an actual nested control-and-bounce sequence."
     },
     {
       "capability_id": "continuous.control.fixed_resolution",
@@ -90584,5 +90818,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "766f5291f4180f245dd42fccdb90ae1157dbb0ecf57228f52d271f6b080cbf4d"
+  "fingerprint": "bf42587a494f0ca8ac1d5c63500478048851a0c65b6a4e34869bf6c2abd5ef0f"
 }

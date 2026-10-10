@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 194,
+  "registry_version": 195,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -11114,6 +11114,90 @@
       "dependency_fail_closed_rationale": "The limit is independently required in addition to the complete event/result dependency closure.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Bypassing trigger usage permits the second real counter-placement draw and is killed by the exact hand-size assertion.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "continuous.control.attached_source",
+      "version": 1,
+      "official_rules": [
+        "303.4e",
+        "611.3b",
+        "613.1b",
+        "613.7e",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Static current Aura control participates in layer two with current source controller, attachment timestamp, canonical initial custody, and restoration after loss of the source relationship.",
+        "inputs": [
+          "one trusted intrinsic unconditional Aura control descriptor",
+          "current reciprocal attachment incarnation",
+          "current source controller",
+          "attachment timestamp",
+          "canonical resolution-control journal",
+          "source intrinsic applicability at layer two before later ability-removal layers"
+        ],
+        "outputs": [
+          "layer-two control effect",
+          "authoritative custody with acquisition history",
+          "restored prior custody after source or attachment disappears"
+        ],
+        "exclusions": [
+          "conditional and enchanted-player scopes",
+          "unrepresented static ability grants",
+          "historical execution without current control-history ownership"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.rules.attached_control.AttachedControlSpec",
+        "quorune.semantic_runtime.attached_control.AttachedControlHandler",
+        "quorune.compiler.attached_control_templates.attached_control_handler",
+        "quorune.attached_control.layer_two_controller_map",
+        "quorune.control_effects.synchronize_control_effects"
+      ],
+      "positive_tests": [
+        "test_exact_attached_control_descriptor_and_source_span",
+        "test_actual_aura_cast_controls_recipient_and_bounce_restores_initial_custody"
+      ],
+      "negative_tests": [
+        "test_malformed_and_conditional_static_control_remain_closed",
+        "test_original_aura_with_unsupported_sibling_stays_out_of_runtime"
+      ],
+      "interaction_tests": [
+        "test_actual_aura_cast_controls_recipient_and_bounce_restores_initial_custody",
+        "test_overlapping_static_auras_and_later_resolution_share_timestamp_order",
+        "test_controlling_the_aura_changes_its_recipient_control_and_restores_chain",
+        "test_later_layer_aura_ability_loss_keeps_prior_layer_two_control"
+      ],
+      "multiplayer_tests": [
+        "test_actual_aura_cast_controls_recipient_and_bounce_restores_initial_custody",
+        "test_departing_aura_owner_restores_recipient_in_surviving_game"
+      ],
+      "privacy_tests": [
+        "test_actual_aura_cast_controls_recipient_and_bounce_restores_initial_custody"
+      ],
+      "replay_tests": [
+        "test_actual_aura_cast_controls_recipient_and_bounce_restores_initial_custody",
+        "test_controlling_the_aura_changes_its_recipient_control_and_restores_chain"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The attached control leaf declares its own capability; attachment legality and current whole-card trust remain independent boundaries.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Original Aura cast and bounce witnesses independently assert acquisition and restoration; source-control omission and owner substitution are killed by expected custody.",
       "blockers": [],
       "status": "trusted"
     }

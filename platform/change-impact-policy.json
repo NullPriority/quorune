@@ -1651,6 +1651,24 @@
       ]
     },
     {
+      "id": "static-attached-control-contract",
+      "patterns": [
+        "quorune/attached_control.py",
+        "quorune/control_effects.py",
+        "quorune/rules/attached_control.py",
+        "quorune/compiler/attached_control_templates.py",
+        "quorune/semantic_runtime/attached_control.py",
+        "tests/fixtures/static-attached-control.json"
+      ],
+      "test_modules": [
+        "test_static_attached_control",
+        "test_fixed_control_effects",
+        "test_card_program_trust",
+        "test_card_program_v2",
+        "test_continuous_effect_duration"
+      ]
+    },
+    {
       "id": "optional-public-action-counter-contract",
       "patterns": [
         "quorune/compiler/fixed_counter_trigger_nodes.py",

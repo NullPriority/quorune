@@ -68,6 +68,16 @@ program before that choice is offered. Missing typed cast semantics fail closed.
 
 ## Trust and replay
 
+Unconditional static Aura control lowers into a closed attached-source
+descriptor in the shared continuous-component registry. Runtime discovery
+uses the current reciprocal attachment, source ability at layer two, and attachment
+timestamp. The layer-two control owner composes this effect with existing
+resolved control and retains initial custody for restoration. Changing the
+Aura's controller changes its recipient-control effect. Source loss and a new
+recipient incarnation end applicability. A later layer-six ability removal
+does not undo the prior layer-two effect. Conditional and
+enchanted-player scopes remain residuals.
+
 A represented battlefield trigger may carry a closed optional `trigger_limit`
 descriptor. The compiler composes the exact once-each-turn suffix with an
 independently closed event and result, and retains the full source span.

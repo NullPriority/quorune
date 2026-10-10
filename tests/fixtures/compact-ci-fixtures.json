@@ -80,6 +80,7 @@
     "tests/fixtures/source-reference-closure-cards.json",
     "tests/fixtures/spell-history-transformations-cards.json",
     "tests/fixtures/static-action-permission-cards.json",
+    "tests/fixtures/static-attached-control.json",
     "tests/fixtures/static-characteristic-labels.json",
     "tests/fixtures/static-characteristic-setting-cards.json",
     "tests/fixtures/station-rules-cards.json",

@@ -124,3 +124,4 @@ deployment modes, or architecture review thresholds.
 - [ADR 0107 — typed coupled Umbra destruction replacement](0107-typed-coupled-umbra-destruction.md)
 - [ADR 0108 — typed current-turn Mayhem](0108-typed-current-turn-mayhem.md)
 - [ADR 0109 — typed trigger usage limits](0109-typed-trigger-usage-limits.md)
+- [ADR 0110 — static attached control](0110-static-attached-control.md)

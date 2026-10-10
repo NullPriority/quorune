@@ -8204,6 +8204,51 @@
       ],
       "interaction_order": 2,
       "assertion": "A represented private discard choice replaced by Dauthi exile retains its typed discard cause and issues the generic optional counter observer one controller-owned choice. Accepted placement adds one quest counter with exact pending and pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_aura_cast_controls_recipient_and_bounce_restores_initial_custody",
+      "piece_ids": [
+        "capability.attachment.aura.typed_restriction",
+        "capability.continuous.control.attached_source"
+      ],
+      "capability_ids": [
+        "attachment.aura.typed_restriction",
+        "continuous.control.attached_source"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Mind Control acquires a foreign-owned recipient whose prior controller differs from its owner. A real Aura bounce restores prior custody; acquisition suppresses immediate tap activation, wrong-seat commands are atomic, and pre-action replay and save/load are exact."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_overlapping_static_auras_and_later_resolution_share_timestamp_order",
+      "piece_ids": [
+        "capability.continuous.control.attached_source",
+        "capability.continuous.control.fixed_resolution"
+      ],
+      "capability_ids": [
+        "continuous.control.attached_source",
+        "continuous.control.fixed_resolution"
+      ],
+      "interaction_order": 2,
+      "assertion": "Two real Mind Control casts share attachment-timestamp ordering with a later Act of Treason. Bouncing the newer Aura preserves the later resolved controller; expiry exposes the older Aura, and bouncing that Aura restores initial custody."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_losing_aura_ability_restores_control_and_blink_breaks_attachment",
+      "piece_ids": [
+        "capability.continuous.control.attached_source",
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "capability_ids": [
+        "continuous.control.attached_source",
+        "continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "interaction_order": 2,
+      "assertion": "A supported generic temporary animation and ability-removal spell targeting the controlling Aura removes its static ability and makes it a creature. State-based actions remove the illegally attached creature Aura, and initial recipient custody restores with exact replay."
     }
   ]
 }

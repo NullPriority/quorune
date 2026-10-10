@@ -122,6 +122,7 @@
       "test_state_based_actions",
       "test_static_action_permissions",
       "test_static_action_rules",
+      "test_static_attached_control",
       "test_sunburst_rules",
       "test_suspend_rules"
     ],
