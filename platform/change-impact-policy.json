@@ -1651,6 +1651,23 @@
       ]
     },
     {
+      "id": "typed-trigger-usage-limit-contract",
+      "patterns": [
+        "quorune/compiler/trigger_limit_nodes.py",
+        "quorune/rules/trigger_limits.py",
+        "quorune/activation_usage.py",
+        "quorune/trigger_discovery.py",
+        "tests/fixtures/limited-event-triggers.json"
+      ],
+      "test_modules": [
+        "test_limited_event_triggers",
+        "test_counter_placement_events",
+        "test_card_program_v2",
+        "test_card_program_trust",
+        "test_trigger_processing_owner"
+      ]
+    },
+    {
       "id": "source-self-reference-closure-contract",
       "patterns": [
         "quorune/compiler/source_self_effect_templates.py",

@@ -310,7 +310,7 @@
       "quorune/control_effects.py": "typed retained control journal and source continuity mutation owner",
       "quorune/optional_untap.py": "retained physical untap choice and controller continuation owner",
       "quorune/commander.py": "Commander game setup and stable physical designation state owner",
-      "quorune/activation_usage.py": "typed per-object activated-ability usage journal owner behind the activation transaction",
+      "quorune/activation_usage.py": "typed per-object activated and triggered ability usage journal owner behind canonical transactions and trigger discovery",
       "quorune/engine.py": "legacy authoritative transaction and mutation boundary",
       "quorune/permissions.py": "decision and capability lifecycle owned by the transaction boundary",
       "quorune/record.py": "replay hydration, verification copies, and versioned migration",

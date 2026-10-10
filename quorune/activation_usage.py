@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Typed activation-usage limits owned by a permanent incarnation.
+"""Typed ability-usage limits owned by a permanent incarnation.
 
 Usage state lives on the source object so control changes and phasing preserve
 it, while the canonical zone-change reset gives a returning card a new limit.
@@ -27,6 +27,32 @@ class ActivationLimit(str, Enum):
 
 _ONCE_PER_TURN_FIELD = "once_per_turn_activations"
 _EXHAUST_FIELD = "exhaust_activations"
+_TRIGGER_ONCE_PER_TURN_FIELD = "once_per_turn_triggers"
+
+
+def trigger_usage_available(source: Any, *, ability_id: str, turn_sequence: int) -> bool:
+    """Read one intrinsic triggered ability's current-turn allowance."""
+
+    identity = _ability_id(ability_id)
+    if type(turn_sequence) is not int or turn_sequence < 0:
+        raise ActivationUsageError("Trigger usage requires a nonnegative turn sequence")
+    raw = _annotations(source).get(_TRIGGER_ONCE_PER_TURN_FIELD, {})
+    if not isinstance(raw, Mapping) or any(
+        type(key) is not str or not key or type(value) is not int or value < 0
+        for key, value in raw.items()
+    ):
+        raise ActivationUsageError("Once-per-turn trigger usage is malformed")
+    return raw.get(identity) != turn_sequence
+
+
+def commit_trigger_usage(source: Any, *, ability_id: str, turn_sequence: int) -> None:
+    """Consume an allowance when the ability triggers, before stack placement."""
+
+    if not trigger_usage_available(source, ability_id=ability_id, turn_sequence=turn_sequence):
+        raise ActivationUsageError("Trigger usage limit was already consumed")
+    values = dict(source.annotations.get(_TRIGGER_ONCE_PER_TURN_FIELD, {}))
+    values[ability_id] = turn_sequence
+    source.annotations[_TRIGGER_ONCE_PER_TURN_FIELD] = values
 
 
 @dataclass(frozen=True, slots=True)
@@ -138,4 +164,6 @@ __all__ = [
     "ActivationUsageVerdict",
     "activation_usage_verdict",
     "commit_activation_usage",
+    "trigger_usage_available",
+    "commit_trigger_usage",
 ]

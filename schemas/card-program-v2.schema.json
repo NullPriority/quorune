@@ -192,6 +192,12 @@
         "tests": {"$ref": "#/$defs/strings"},
         "handlers": {"$ref": "#/$defs/objects"},
         "event_condition": {"$ref": "#/$defs/nullable_object"},
+        "trigger_limit": {
+          "type": "object",
+          "properties": {"schema_version": {"const": 1}, "kind": {"const": "once_per_turn"}},
+          "required": ["schema_version", "kind"],
+          "additionalProperties": false
+        },
         "coverage": {"$ref": "#/$defs/strings"}
       }
     },

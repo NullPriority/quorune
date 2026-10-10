@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 193,
+  "registry_version": 194,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -10964,6 +10964,86 @@
       "dependency_fail_closed_rationale": "Blocking the named-count capability retains a material compiler residual.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Doubling the requested amount in advance is rejected by the actual printed-order cast result.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "trigger.usage.once_per_turn",
+      "version": 1,
+      "official_rules": [
+        "400.7",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Compose one printed once-each-turn limit with a closed current battlefield trigger; consume per intrinsic ability and logical incarnation at discovery, preserve same-object continuity, and prohibit additional-trigger multiplication.",
+        "inputs": [
+          "source-spanned typed trigger limit",
+          "current intrinsic ability identity",
+          "canonical source incarnation",
+          "global turn sequence",
+          "independently exact event and result"
+        ],
+        "outputs": [
+          "once-per-turn trigger descriptor",
+          "canonical per-ability use journal",
+          "one occurrence despite additional-trigger effects",
+          "same-object continuity and new-object reset"
+        ],
+        "exclusions": [
+          "action-dependent Do this only once each turn",
+          "first-time history conditions",
+          "departure and nonbattlefield subscriptions",
+          "granted or copied printed abilities outside represented discovery"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.rules.trigger_limits.TriggerLimitSpec",
+        "quorune.compiler.trigger_limit_nodes.limited_trigger_node",
+        "quorune.activation_usage.trigger_usage_available",
+        "quorune.activation_usage.commit_trigger_usage",
+        "quorune.trigger_discovery.dispatch_semantic_event"
+      ],
+      "positive_tests": [
+        "test_closed_limit_preserves_span_and_dependency",
+        "test_actual_counter_events_draw_once_and_replay"
+      ],
+      "negative_tests": [
+        "test_unsupported_action_limits_and_departures_remain_residual",
+        "test_codec_rejects_malformed_limit_and_preserves_old_shape"
+      ],
+      "interaction_tests": [
+        "test_actual_counter_events_draw_once_and_replay"
+      ],
+      "multiplayer_tests": [
+        "test_actual_counter_events_draw_once_and_replay"
+      ],
+      "privacy_tests": [
+        "test_actual_counter_events_draw_once_and_replay"
+      ],
+      "replay_tests": [
+        "test_actual_counter_events_draw_once_and_replay"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "The limit is independently required in addition to the complete event/result dependency closure.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Bypassing trigger usage permits the second real counter-placement draw and is killed by the exact hand-size assertion.",
       "blockers": [],
       "status": "trusted"
     }

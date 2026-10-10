@@ -8099,6 +8099,81 @@
       ],
       "interaction_order": 2,
       "assertion": "Current-turn discarded Mayhem cards retain ordinary timing. On another player's turn, Spider-Islanders is absent from offered casts and a direct proposal rejects; Swarm remains offered through its independent current Flash permission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_counter_events_draw_once_and_replay",
+      "piece_ids": [
+        "capability.trigger.event.normalized_counter_placement",
+        "capability.trigger.usage.once_per_turn"
+      ],
+      "capability_ids": [
+        "trigger.event.normalized_counter_placement",
+        "trigger.usage.once_per_turn"
+      ],
+      "interaction_order": 2,
+      "assertion": "Two real counter-placement spell resolutions put four counters on Dusk Legion Duelist while its limited ability draws only once; authenticated wrong-seat rejection preserves the authoritative hash and saved current-turn usage replays exactly."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_trigger_multiplier_does_not_bypass_limit_but_stack_copy_resolves",
+      "piece_ids": [
+        "capability.trigger.multiplier.another_creature_of_chosen_type",
+        "capability.trigger.usage.once_per_turn"
+      ],
+      "capability_ids": [
+        "trigger.multiplier.another_creature_of_chosen_type",
+        "trigger.usage.once_per_turn"
+      ],
+      "interaction_order": 2,
+      "assertion": "Roaming Throne cannot multiply the limited Dusk Legion Duelist occurrence. An actual offered Strionic Resonator activation copies the existing stack ability, so both stack abilities draw with exact pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_false_intervening_condition_does_not_consume_limit",
+      "piece_ids": [
+        "capability.trigger.condition.fixed_public_state",
+        "capability.trigger.usage.once_per_turn"
+      ],
+      "capability_ids": [
+        "trigger.condition.fixed_public_state",
+        "trigger.usage.once_per_turn"
+      ],
+      "interaction_order": 2,
+      "assertion": "A real life-gain spell fails the independently false intervening creature-count condition and does not consume the trigger allowance. A later qualifying real life-gain spell triggers and draws once."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_control_change_and_next_players_turn_use_same_object_allowance",
+      "piece_ids": [
+        "capability.continuous.control.fixed_resolution",
+        "capability.trigger.usage.once_per_turn"
+      ],
+      "capability_ids": [
+        "continuous.control.fixed_resolution",
+        "trigger.usage.once_per_turn"
+      ],
+      "interaction_order": 2,
+      "assertion": "The canonical control owner preserves consumed intrinsic-trigger usage on the same object; a further real counter spell draws nothing, while a later global turn permits one draw for the new controller, with replay from explicit setup checkpoints."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_ability_loss_and_restoration_do_not_clear_consumed_use",
+      "piece_ids": [
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "capability.trigger.usage.once_per_turn"
+      ],
+      "capability_ids": [
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "trigger.usage.once_per_turn"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Turn to Frog removes the current trigger while a real counter event occurs; owner-diagnostic restoration preserves the prior use and another real event cannot trigger again. Subsequent action segments replay from their explicit checkpoints."
     }
   ]
 }

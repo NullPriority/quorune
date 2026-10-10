@@ -55,6 +55,7 @@
     "tests/fixtures/kicked-spell-conditions.json",
     "tests/fixtures/leveler-bands-cards.json",
     "tests/fixtures/library-search-qualifier-cards.json",
+    "tests/fixtures/limited-event-triggers.json",
     "tests/fixtures/mayhem-cards.json",
     "tests/fixtures/partial-copy-targets-cards.json",
     "tests/fixtures/permanent-additional-costs.json",

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "2de3e8092d784f6a791d357415926eb6ffb851b3de6b111560e5e50479458776",
-  "declaration_source_fingerprint": "b5b5d8141c6b57949975977b9a7ebe258ee36f5d2ee5220641ea47f1579a33c9",
+  "registry_fingerprint": "8ace271c8c0e20e7f4f12f91d8437c0635b4d1cdd3b050ddfdbd5e337a95e81b",
+  "declaration_source_fingerprint": "72e6b733caa733f4c435b0f70c41284effde77b0e9863561a80f963e870e1723",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -84091,6 +84091,132 @@
       "applicability_note": "Save, load, and replay the previous-turn summary, intervening condition, source identity, transform snapshot, and resulting face."
     },
     {
+      "capability_id": "trigger.usage.once_per_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_limited_event_triggers.LimitedEventTriggerRuntimeTests.test_actual_counter_events_draw_once_and_replay",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One closed intrinsic trigger consumes its current-turn allowance at event discovery, with exact replay and authenticated command rejection."
+    },
+    {
+      "capability_id": "trigger.usage.once_per_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_limited_event_triggers.LimitedEventTriggerRuntimeTests.test_actual_counter_events_draw_once_and_replay",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One closed intrinsic trigger consumes its current-turn allowance at event discovery, with exact replay and authenticated command rejection."
+    },
+    {
+      "capability_id": "trigger.usage.once_per_turn",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_limited_event_triggers.LimitedEventTriggerRuntimeTests.test_missing_usage_mutant_is_killed_by_second_real_event",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Omitting current-turn use allows the second real counter-placement draw, killed by the exact expected hand-size consequence."
+    },
+    {
+      "capability_id": "trigger.usage.once_per_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_limited_event_triggers.LimitedEventTriggerCompilerTests.test_unsupported_action_limits_and_departures_remain_residual",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One closed intrinsic trigger consumes its current-turn allowance at event discovery, with exact replay and authenticated command rejection."
+    },
+    {
+      "capability_id": "trigger.usage.once_per_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_limited_event_triggers.LimitedEventTriggerCompilerTests.test_closed_limit_preserves_span_and_dependency",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One closed intrinsic trigger consumes its current-turn allowance at event discovery, with exact replay and authenticated command rejection."
+    },
+    {
+      "capability_id": "trigger.usage.once_per_turn",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_limited_event_triggers.LimitedEventTriggerRuntimeTests.test_actual_counter_events_draw_once_and_replay",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One closed intrinsic trigger consumes its current-turn allowance at event discovery, with exact replay and authenticated command rejection."
+    },
+    {
+      "capability_id": "trigger.usage.once_per_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_limited_event_triggers.LimitedEventTriggerRuntimeTests.test_actual_counter_events_draw_once_and_replay",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One closed intrinsic trigger consumes its current-turn allowance at event discovery, with exact replay and authenticated command rejection."
+    },
+    {
       "capability_id": "untap.step.optional_source",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_control_effects.FixedControlGameplayTests.test_manual_untap_mode_preserves_tapped_sources_without_optional_choice",
@@ -90362,5 +90488,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "aaa3387b2411f8de8cc9a4ded6962d8eeb1fbef1c2e5a296cdd5c0a3a3e5afc8"
+  "fingerprint": "b0348782411c27f9821029203111ea690feb21566f91bc4e8cfc6928b0a02025"
 }

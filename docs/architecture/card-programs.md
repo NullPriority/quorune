@@ -68,6 +68,16 @@ program before that choice is offered. Missing typed cast semantics fail closed.
 
 ## Trust and replay
 
+A represented battlefield trigger may carry a closed optional `trigger_limit`
+descriptor. The compiler composes the exact once-each-turn suffix with an
+independently closed event and result, and retains the full source span.
+Trigger discovery consumes the intrinsic ability's use when it triggers,
+before stack placement. Countering it does not renew usage, and additional-
+trigger effects cannot exceed the limit. Copying its stack ability retains
+ordinary copy semantics. Current ability loss and control changes preserve
+usage; a new logical object or global turn sequence renews the allowance.
+Historical payloads without this descriptor retain their original shape.
+
 - Parsing success does not imply complete rules support.
 - Trust cannot exceed the closure of targets, costs, zones, events,
   replacements, runtime operations, and the selected rules profile.

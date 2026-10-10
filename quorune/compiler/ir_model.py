@@ -73,6 +73,7 @@ class OracleNode:
     handlers: tuple[Mapping[str, Any], ...] = ()
     target_schema: Mapping[str, Any] | None = None
     event_condition: Mapping[str, Any] | None = None
+    trigger_limit: Mapping[str, Any] | None = None
     runtime_coverage: tuple[str, ...] = ()
     mechanics: tuple[str, ...] = ()
     residual_ids: tuple[str, ...] = ()
@@ -110,6 +111,8 @@ class OracleNode:
         }
         if self.runtime_coverage:
             value["runtime_coverage"] = list(self.runtime_coverage)
+        if self.trigger_limit is not None:
+            value["trigger_limit"] = dict(self.trigger_limit)
         if self.capability_dependencies:
             value["capability_dependencies"] = list(
                 self.capability_dependencies
