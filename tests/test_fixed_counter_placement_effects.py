@@ -240,7 +240,7 @@ class FixedCounterPlacementCompilerTests(unittest.TestCase):
                 self.assertIs(CounterPlacementSubject.SOURCE, template.subject)
                 self.assertEqual(card_type, template.permanent_type)
                 self.assertIsNone(template.target_schema)
-                self.assertEqual("$source", template.effects[0]["card"])
+                self.assertEqual("$source.zone_object", template.effects[0]["card"])
 
     def test_pinned_source_descriptors_lower_across_trigger_and_activation_contexts(
         self,

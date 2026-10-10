@@ -1758,6 +1758,8 @@
         "test_capability_evidence", "test_card_program_trust",
         "test_counter_qualified_zone_events",
         "test_counter_doubling",
+        "test_fixed_counter_placement_effects",
+        "test_fixed_multikind_counter_batches",
         "test_exact_mishra_closure",
         "test_fixed_counter_event_triggers", "test_fixed_counter_zone_triggers",
         "test_fixed_query_quoted_ability_grants", "test_fixed_token_production", "test_game_record_v3",

@@ -22,7 +22,7 @@ from quorune.rules.capabilities import CapabilityRegistry, load_default_capabili
 from quorune.semantics import SemanticRegistry
 from quorune.record import authoritative_state_hash
 from scripts.build_test_database import build_fixture_database
-from test_fading_rules import FadingRuntimeTests
+import test_fading_rules as fading_witnesses
 
 
 CAP = "counter.lifecycle.vanishing"
@@ -106,13 +106,13 @@ class VanishingRuntimeTests(unittest.TestCase):
         cls.db.close()
         cls.temporary.cleanup()
 
-    session = FadingRuntimeTests.session
-    add = FadingRuntimeTests.add
-    ready = FadingRuntimeTests.ready
-    resolve = FadingRuntimeTests.resolve
-    checkpoint = FadingRuntimeTests.checkpoint
-    replay = FadingRuntimeTests.replay
-    upkeep = FadingRuntimeTests.upkeep
+    session = fading_witnesses.FadingRuntimeTests.session
+    add = fading_witnesses.FadingRuntimeTests.add
+    ready = fading_witnesses.FadingRuntimeTests.ready
+    resolve = fading_witnesses.FadingRuntimeTests.resolve
+    checkpoint = fading_witnesses.FadingRuntimeTests.checkpoint
+    replay = fading_witnesses.FadingRuntimeTests.replay
+    upkeep = fading_witnesses.FadingRuntimeTests.upkeep
 
     def resolve_top(self, session):
         top = session.state.stack[-1].stack_id

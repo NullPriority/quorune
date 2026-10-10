@@ -19,7 +19,7 @@ from quorune.rules.capabilities import load_default_capability_registry
 from quorune.record import authoritative_state_hash
 from scripts.build_test_database import build_fixture_database
 import test_bound_effect_programs as witnesses
-from test_as_unblocked_assignment import AsUnblockedAssignmentRuntimeTests
+import test_as_unblocked_assignment as assignment_witnesses
 
 
 class ToughnessAssignmentCompilerTests(unittest.TestCase):
@@ -96,7 +96,7 @@ class ToughnessAssignmentRuntimeTests(unittest.TestCase):
     resolve=witnesses.BoundEffectProgramRuntimeTests.resolve
     checkpoint=witnesses.BoundEffectProgramRuntimeTests.checkpoint
     replay=witnesses.BoundEffectProgramRuntimeTests.replay
-    damage=AsUnblockedAssignmentRuntimeTests.damage
+    damage=assignment_witnesses.AsUnblockedAssignmentRuntimeTests.damage
 
     def test_actual_doran_changes_both_sides_combat_assignment_and_replays(self):
         session=self.session(292001);engine=session.engine
