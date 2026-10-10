@@ -11,6 +11,28 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Cast ordinary fixed-cost and bare Mayhem cards from their owner’s graveyard
+  using current-turn discarded-card identity, existing timing, additional-cost
+  and land-play owners. Prior lifecycle descriptor versions remain readable.
+
+- Calculate entry counters from committed controller-relative departures,
+  creature deaths and life gained this turn. Counter amounts freeze before
+  replacement ordering and reject unavailable new-history provenance.
+
+- Normalize decorative labels on independently closed static characteristic
+  abilities while retaining source spans and semantic marker boundaries.
+  Wolf/Werewolf public unions use canonical subtype vocabulary.
+
+- Grant fixed basic landwalk and Horsemanship through typed current
+  characteristics and shared offered/accepted block legality. Source departure,
+  recipient changes, defending land types and temporary expiration retain the
+  existing continuous-effect owners.
+
+- Compose repeatable public sacrifice and discard events with exact typed
+  counter bodies. Source exclusion, borrowed custody, replaced discard
+  destinations, private choice projection and blinked-source rejection use the
+  existing event and transaction owners.
+
 - Resolve complete Fading and Vanishing lifecycles through canonical counter,
   upkeep and separate last-removal trigger owners. Counter-removal discovery
   reads post-event characteristics before state-based actions.

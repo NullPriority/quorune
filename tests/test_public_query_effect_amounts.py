@@ -364,6 +364,30 @@ class PublicQueryEffectAmountCompilerTests(unittest.TestCase):
                 )
                 self.assertTrue(ability.capability_closure["trusted"])
 
+    def test_ordered_query_and_target_set_compositions_keep_meaning_bearing_fields(self):
+        cases=(
+            ('You gain 1 life for each creature you control, then draw a card.',['life','draw'],None),
+            ('Up to two target creatures each get +X/+X until end of turn, where X is the number of creatures you control.',
+             ['apply_source_characteristics_until_end_of_turn'],2),
+            ('Target creature gets +X/+X until end of turn, where X is the number of creatures you control, then draw a card.',
+             ['modify_stats_until_end_of_turn','draw'],1),
+        )
+        for index,(text,operations,count) in enumerate(cases):
+            with self.subTest(text=text):
+                program=self.compile(query_amount_record(text,suffix=172009000+index))
+                self.assertEqual((),program.residuals)
+                ability=next(a for a in program.abilities if _contains_query_amount(a.effects))
+                self.assertEqual(operations,[e['op'] for e in ability.effects])
+                self.assertIn(PUBLIC_QUERY_AMOUNT_CAPABILITY,ability.capability_dependencies)
+                self.assertTrue(ability.capability_closure['trusted'])
+                if count==2:
+                    self.assertEqual(2,ability.target_schema['up_to'])
+                    self.assertEqual(6,ability.effects[0]['schema_version'])
+                    self.assertEqual('$targets',ability.effects[0]['cards'])
+                    self.assertEqual(ability.effects[0]['power']['binding_id'],ability.effects[0]['toughness']['binding_id'])
+                elif count==1:self.assertEqual(1,ability.target_schema['count'])
+                else:self.assertIsNone(ability.target_schema)
+
     def test_public_query_amount_grammar_and_schema_fail_closed(self):
         excluded = (
             "You gain life equal to your life total.",
@@ -376,7 +400,7 @@ class PublicQueryEffectAmountCompilerTests(unittest.TestCase):
             "You gain 1 life for each charge counter on Generic Query Amount.",
             "You gain 1 life for each Aura attached to Generic Query Amount.",
             "You gain that much life.",
-            "You gain 1 life for each creature you control, then draw a card.",
+            "You gain 1 life for each different power among creatures you control, then draw a card.",
             "You may gain 1 life for each creature you control.",
             "Choose one —\n• You gain 1 life for each creature you control.\n"
             "• Draw a card.",
@@ -392,9 +416,9 @@ class PublicQueryEffectAmountCompilerTests(unittest.TestCase):
             "Target creature gets +X/+X until your next turn, where X is the "
             "number of creatures you control.",
             "Up to two target creatures each get +X/+X until end of turn, "
-            "where X is the number of creatures you control.",
+            "where X is the number of attacking creatures you control.",
             "Target creature gets +X/+X until end of turn, where X is the "
-            "number of creatures you control, then draw a card.",
+            "number of other creatures you control, then draw a card.",
         )
         for index, text in enumerate(excluded):
             with self.subTest(text=text):

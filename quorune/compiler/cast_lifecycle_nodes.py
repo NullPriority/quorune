@@ -107,6 +107,8 @@ def _lifecycle_face_blocker(
             "Cast lifecycle is not supported on a land face",
             "nonland fixed cast lifecycle",
         )
+    if spec.kind is FixedCastLifecycleKind.MAYHEM and spec.mana_cost is not None and "land" in card_types:
+        return ("Costed Mayhem requires a nonland face", "nonland fixed Mayhem")
     if spec.kind in {
         FixedCastLifecycleKind.JUMP_START,
         FixedCastLifecycleKind.REBOUND,
@@ -169,6 +171,11 @@ def _lifecycle_runtime_coverage(spec: Any) -> tuple[str, ...]:
         FixedCastLifecycleKind.RETRACE: (
             "owner_graveyard_cast_permission",
             "typed_land_discard_additional_cost",
+        ),
+        FixedCastLifecycleKind.MAYHEM: (
+            "current_turn_identity_pinned_discard",
+            "owner_graveyard_cast_permission",
+            "fixed_or_printed_mana_cost",
         ),
         FixedCastLifecycleKind.SUSPEND: (
             "hand_timing_special_action",
@@ -239,6 +246,7 @@ def fixed_cast_lifecycle_keyword_node(
             blockers=(face_blocker[1],),
         )
     zone_cast_kinds = {
+        FixedCastLifecycleKind.MAYHEM,
         FixedCastLifecycleKind.ESCAPE,
         FixedCastLifecycleKind.FORETELL,
         FixedCastLifecycleKind.JUMP_START,

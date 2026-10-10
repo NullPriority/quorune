@@ -1,0 +1,260 @@
+{
+  "cards": [
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Defender"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{U}",
+      "name": "Academy Wall",
+      "oracle_id": "0cd77ee1-408c-4c51-ac87-24f4fc50083d",
+      "oracle_text": "Defender\nWhenever you cast an instant or sorcery spell, you may draw a card. If you do, discard a card. This ability triggers only once each turn.",
+      "power": "0",
+      "produced_mana": [],
+      "released_at": "2022-09-09",
+      "toughness": "5",
+      "type_line": "Creature \u2014 Wall"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{U}",
+      "name": "Skyswimmer Koi",
+      "oracle_id": "53b9a2cf-2e6e-4ce0-bb9f-f33fb27b7b5e",
+      "oracle_text": "Flying\nWhenever an artifact you control enters, you may draw a card. If you do, discard a card.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2022-02-18",
+      "toughness": "3",
+      "type_line": "Creature \u2014 Fish"
+    },
+    {
+      "oracle_id": "1463795b-ec0c-44d6-ae1a-55f78d9843ec",
+      "name": "Spirit of the Labyrinth",
+      "mana_cost": "{1}{W}",
+      "cmc": 2.0,
+      "type_line": "Enchantment Creature \u2014 Spirit",
+      "oracle_text": "Each player can't draw more than one card each turn.",
+      "power": "3",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-02-07",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      }
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "fixture:optional-draw-artifact",
+      "name": "Generic Optional Draw Artifact",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Artifact Creature \u2014 Golem",
+      "oracle_text": "Vigilance",
+      "power": "2",
+      "toughness": "6",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Vigilance"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "fixture:optional-prior-draw",
+      "name": "Generic Optional Prior Draw",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Sorcery",
+      "oracle_text": "Draw a card.",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "An ability that triggers when a player casts a spell resolves before the spell that caused it to trigger. The ability resolves even if that spell is countered.",
+      "oracle_id": "0cd77ee1-408c-4c51-ac87-24f4fc50083d",
+      "published_at": "2022-09-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "You draw a card and discard a card while Academy Wall's last ability is resolving. No player may take actions between those events, and nothing can happen.",
+      "oracle_id": "0cd77ee1-408c-4c51-ac87-24f4fc50083d",
+      "published_at": "2022-09-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a replacement effect would try to replace a card that you can't draw, that effect can't apply.",
+      "oracle_id": "1463795b-ec0c-44d6-ae1a-55f78d9843ec",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you draw a card, and then Spirit of the Labyrinth enters the battlefield, you won't be able to draw more cards that turn.",
+      "oracle_id": "1463795b-ec0c-44d6-ae1a-55f78d9843ec",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you haven't drawn any cards in a turn, and a spell or ability would cause you to draw multiple cards, you'll just draw one card.",
+      "oracle_id": "1463795b-ec0c-44d6-ae1a-55f78d9843ec",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can draw a maximum of one card on each player's turn. Subsequent card draws are ignored.",
+      "oracle_id": "1463795b-ec0c-44d6-ae1a-55f78d9843ec",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

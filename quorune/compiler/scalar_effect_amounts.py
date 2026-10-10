@@ -13,6 +13,7 @@ from ..scalar_effect_amount_model import (
 )
 from ..query_effect_amount_model import CAST_X_AMOUNT_KIND, CastXAmountSpec, PublicQueryAmountError
 from ..rules.source_references import SourceReferenceSpec
+from ..counter_names import normalized_counter_name
 from .declared_effect_amounts import declared_effect_amount_template, _result_slot
 from .fixed_target_effect_sequences import FixedSourceCharacteristicsTemplate
 
@@ -37,6 +38,14 @@ _HISTORY = {
 
 def _characteristic(value: str, *, source_name: str, body: str, schema: Any,
                     event: str | None, source_event: bool) -> ScalarEffectAmountSpec | None:
+    counter=re.fullmatch(r'(?:the )?number of (?P<counter>[A-Za-z0-9+/-]+) counters? on (?P<reference>.+)',value,re.I)
+    if counter is not None:
+        source=rf'(?:this (?:artifact|aura|creature|enchantment|equipment|land|permanent|token)|{SourceReferenceSpec(source_name).regex_pattern})'
+        direct=bool(re.fullmatch(source,counter['reference'],re.I))
+        pronoun=counter['reference'].casefold() in {'it','him','her'}
+        if not direct and not (pronoun and source_event):return None
+        try:return ScalarEffectAmountSpec(ScalarAmountOrigin.SOURCE,counter_name=normalized_counter_name(counter['counter']),schema_version=2)
+        except ValueError:return None
     match = re.fullmatch(r"(?P<reference>.+?) (?P<field>power|toughness|mana value)", value, re.I)
     if match is None:
         return None
@@ -73,6 +82,11 @@ def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed:
     multiplier = 1
     if definition is not None:
         body, quantity = definition["body"], definition["value"].rstrip(".")
+    elif (each:=re.fullmatch(r'(?P<head>Draw a card|(?:You |Target player |Target opponent )?gain 1 life|Create (?:a|one) .+? token) for each (?P<counter>[A-Za-z0-9+/-]+) counters? on (?P<reference>.+?)\.',normalized,re.I)) is not None:
+        body=re.sub(r'^Draw a card$','Draw X cards',each['head'],flags=re.I)
+        body=re.sub(r'\bgain 1 life\b','gain X life',body,flags=re.I)
+        body=re.sub(r'^Create (?:a|one) (.+) token$',r'Create X \1 tokens',body,flags=re.I)+'.'
+        quantity=f"the number of {each['counter']} counters on {each['reference']}"
     elif event in _AMOUNT_EVENTS and re.search(r"\bthat (?:many|much)\b", normalized, re.I):
         if re.search(r"\b(?:where|if|unless|for each|this way)\b", normalized, re.I):
             return None

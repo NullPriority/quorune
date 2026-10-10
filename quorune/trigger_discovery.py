@@ -49,6 +49,7 @@ from .death_return import (
     death_return_counter_snapshot,
 )
 from .model import CardInstance, StackItem
+from .activation_usage import commit_trigger_usage, trigger_usage_available
 from .renown import (
     RENOWN_EVENT_CONDITION_FIELD,
     RenownError,
@@ -476,6 +477,9 @@ def _semantic_condition_actual(
     if field == "source_attachment_target_ref":
         attached = host.state.cards.get(source.attached_to or "")
         return attached.ref if attached is not None else None
+    if field == "source_attachment_controller":
+        from .scheduled_player import current_attachment_controller
+        return current_attachment_controller(host,source,condition)
     if field == "source_controller_is_active_player":
         return source.controller == host.state.active_player
     return context.get(field)
@@ -1279,6 +1283,13 @@ def dispatch_semantic_event(
                     source=source,
                 )
                 return [item.ref for item in triggered]
+            if program.trigger_limit is not None:
+                live_source = host.state.cards.get(source.object_id)
+                if live_source is None or live_source.logical_object_id != source.logical_object_id:
+                    continue
+                if not trigger_usage_available(live_source, ability_id=program.ability_id,
+                                               turn_sequence=host.state.turn_sequence):
+                    continue
             ref = host._next_ref("S")
             stack_context = _semantic_trigger_context(
                 host,
@@ -1314,16 +1325,20 @@ def dispatch_semantic_event(
                 continue
             from .control_effects import pin_pending_control_duration
             pin_pending_control_duration(host, item)
+            if program.trigger_limit is not None:
+                commit_trigger_usage(live_source, ability_id=program.ability_id,
+                                     turn_sequence=host.state.turn_sequence)
             triggered.append(item)
-            triggered.extend(
-                _trigger_multiplier_copies(
-                    host,
-                    item=item,
-                    source=source,
-                    event=event,
-                    context=context,
+            if program.trigger_limit is None:
+                triggered.extend(
+                    _trigger_multiplier_copies(
+                        host,
+                        item=item,
+                        source=source,
+                        event=event,
+                        context=context,
+                    )
                 )
-            )
             if "consume_evoked_marker" in program.coverage:
                 source.annotations.pop("evoked", None)
     if trigger_batch is not None:

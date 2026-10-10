@@ -29,6 +29,23 @@ class EntryCharacteristicsQuery(Protocol):
     ) -> Mapping[str, Any]: ...
 
 
+def _current_history_entry_value(host: Any, source: DynamicEntryCounterValueSource, controller: str) -> int:
+    history = host.state.turn_history
+    if history is None or history.schema_version != 1 or history.turn_sequence != host.state.turn_sequence:
+        raise EntryCounterError("Entry turn history is unavailable")
+    kinds = {
+        DynamicEntryCounterValueSource.CONTROLLER_PERMANENTS_LEFT: "permanent_left",
+        DynamicEntryCounterValueSource.CONTROLLER_LIFE_GAINED: "player_gained_life",
+        DynamicEntryCounterValueSource.CONTROLLER_CREATURES_DIED: "creature_died",
+    }
+    if source is DynamicEntryCounterValueSource.CONTROLLER_PERMANENTS_LEFT and history.departure_history_version != 1:
+        raise EntryCounterError("Entry departure history is unavailable")
+    events = current_turn_history_events(history, turn_sequence=host.state.turn_sequence, kind=kinds[source])
+    if source is DynamicEntryCounterValueSource.CONTROLLER_LIFE_GAINED:
+        return sum(event.amount for event in events if event.target == controller)
+    return sum(event.actor == controller for event in events)
+
+
 def dynamic_entry_counter_amount(
     host: Any,
     *,
@@ -82,6 +99,12 @@ def dynamic_entry_counter_amount(
             prospective_source,
             amount_spec.quantity,
         )
+    elif source in {
+        DynamicEntryCounterValueSource.CONTROLLER_PERMANENTS_LEFT,
+        DynamicEntryCounterValueSource.CONTROLLER_LIFE_GAINED,
+        DynamicEntryCounterValueSource.CONTROLLER_CREATURES_DIED,
+    }:
+        value = _current_history_entry_value(host, source, destination_controller)
     else:
         events = {
             kind: current_turn_history_events(

@@ -122,3 +122,8 @@ deployment modes, or architecture review thresholds.
 - [ADR 0105 — typed fixed resolution control and optional source untap](0105-typed-fixed-resolution-control.md)
 - [ADR 0106 — typed public entry designations](0106-typed-public-entry-designations.md)
 - [ADR 0107 — typed coupled Umbra destruction replacement](0107-typed-coupled-umbra-destruction.md)
+- [ADR 0108 — typed current-turn Mayhem](0108-typed-current-turn-mayhem.md)
+- [ADR 0109 — typed trigger usage limits](0109-typed-trigger-usage-limits.md)
+- [ADR 0110 — static attached control](0110-static-attached-control.md)
+- [ADR 0111 — source counter scalar amounts](0111-source-counter-scalar-amounts.md)
+- [ADR 0112 — bounded target characteristics](0112-bounded-target-characteristics.md)

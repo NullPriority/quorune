@@ -9,6 +9,15 @@ maintenance: "hand-maintained"
 
 # Rules kernel
 
+Fixed selected-object tap costs may accompany a source tap symbol. The source
+and selected objects are distinct: the source cannot pay both costs. The source
+tap obeys creature acquisition timing; selected-object taps without a tap
+symbol may use newly controlled creatures. The canonical tap-cost owner pays
+the complete group before discovering tap events. Offers and commands share
+the same source-excluding predicate and reject incomplete, duplicate, stale,
+or ineligible selections atomically. Untap-symbol and mixed zone-change cost
+combinations retain their existing unsupported boundaries.
+
 ## Responsibility
 
 The kernel validates and applies deterministic game transitions: priority,

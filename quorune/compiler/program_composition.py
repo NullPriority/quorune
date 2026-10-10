@@ -546,6 +546,7 @@ def program_from_generated_node_group(
             if condition_node is not None
             else None
         ),
+        trigger_limit=_copy_mapping(first.trigger_limit),
         coverage=_ordered_unique(
             (
                 "generated_oracle_ir",

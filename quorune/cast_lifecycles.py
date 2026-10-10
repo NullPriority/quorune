@@ -59,6 +59,7 @@ class FixedCastLifecycleKind(str, Enum):
     FORETELL = "foretell"
     JUMP_START = "jump-start"
     MADNESS = "madness"
+    MAYHEM = "mayhem"
     PLOT = "plot"
     REBOUND = "rebound"
     WARP = "warp"
@@ -79,6 +80,10 @@ _FIXED_LIFECYCLE = re.compile(
 )
 _RETRACE = re.compile(
     r"^Retrace(?:\s+\(.*\))?\.?$",
+    re.IGNORECASE,
+)
+_MAYHEM = re.compile(
+    rf"^Mayhem(?: (?P<cost>{_ORDINARY_COST}))?(?:\s+\(.*\))?\.?$",
     re.IGNORECASE,
 )
 _SUSPEND = re.compile(
@@ -224,6 +229,7 @@ class FixedCastLifecycleSpec:
             1,
             2,
             3,
+            4,
         }:
             raise FixedCastLifecycleError(
                 "Unsupported fixed cast-lifecycle schema version"
@@ -248,6 +254,16 @@ class FixedCastLifecycleSpec:
             raise FixedCastLifecycleError(
                 "Fixed cast lifecycle kind is unsupported"
             )
+        if self.kind is FixedCastLifecycleKind.MAYHEM:
+            match = _MAYHEM.fullmatch(self.oracle_line.strip())
+            if match is None or self.schema_version != 4 or self.counter_count is not None or self.exile_count is not None:
+                raise FixedCastLifecycleError("Mayhem requires one closed fixed or bare lifecycle declaration")
+            if match.group('cost') is None:
+                if self.cost_text is not None or self.mana_cost is not None:
+                    raise FixedCastLifecycleError("Bare Mayhem uses the printed cost")
+            else:
+                _validate_fixed_lifecycle_mana(self, match)
+            return
         if self.kind in {
             FixedCastLifecycleKind.ESCAPE,
             FixedCastLifecycleKind.FORETELL,
@@ -378,7 +394,7 @@ class FixedCastLifecycleSpec:
         }
         if self.schema_version >= 2:
             value["counter_count"] = self.counter_count
-        if self.schema_version == 3:
+        if self.schema_version in {3, 4}:
             value["exile_count"] = self.exile_count
         return value
 
@@ -442,6 +458,9 @@ class FixedCastLifecycleSpec:
             option["x_value_policy"] = "zero"
         if self.kind is FixedCastLifecycleKind.MADNESS:
             option["source_zone"] = "exile"
+        if self.kind is FixedCastLifecycleKind.MAYHEM:
+            option["source_zone"] = "graveyard"
+            option["x_value_policy"] = "zero"
         return option
 
     def printed_zone_cost_option(
@@ -451,10 +470,13 @@ class FixedCastLifecycleSpec:
         if self.kind not in {
             FixedCastLifecycleKind.JUMP_START,
             FixedCastLifecycleKind.RETRACE,
+            FixedCastLifecycleKind.MAYHEM,
         }:
             raise FixedCastLifecycleError(
                 "This lifecycle does not decorate a printed cost"
             )
+        if self.kind is FixedCastLifecycleKind.MAYHEM and self.mana_cost is not None:
+            raise FixedCastLifecycleError("Fixed Mayhem cannot decorate a printed cost")
         option = copy.deepcopy(dict(base_option))
         base_id = str(option.get("id") or "normal")
         option.update(
@@ -470,7 +492,7 @@ class FixedCastLifecycleSpec:
                 FIXED_CAST_LIFECYCLE_CONTEXT_FIELD: self.to_dict(),
                 "fixed_cast_lifecycle_fingerprint": self.fingerprint,
                 "source_zone": "graveyard",
-                "_additional_option_costs": [
+                "_additional_option_costs": [] if self.kind is FixedCastLifecycleKind.MAYHEM else [
                     retrace_land_discard_cost_descriptor()
                     if self.kind is FixedCastLifecycleKind.RETRACE
                     else jump_start_discard_cost_descriptor()
@@ -506,6 +528,20 @@ def compile_fixed_cast_lifecycle(
     """Compile a fixed-mana public lifecycle or ordinary Retrace."""
 
     normalized = " ".join(material_line.strip().split())
+    mayhem = _MAYHEM.fullmatch(normalized)
+    if mayhem is not None:
+        cost = mayhem.group('cost')
+        mana_cost = None
+        if cost is not None:
+            mana, complex_symbols = mana_cost_to_vector(cost.upper())
+            if complex_symbols:
+                return None
+            mana_cost = FrozenMap(mana)
+        return FixedCastLifecycleSpec(
+            ability_id=f'ab{line_index + 1}', line_index=line_index, oracle_line=oracle_line,
+            kind=FixedCastLifecycleKind.MAYHEM, cost_text=cost.upper() if cost is not None else None,
+            mana_cost=mana_cost, schema_version=4,
+        )
     for pattern, kind in (
         (_FORETELL, FixedCastLifecycleKind.FORETELL),
         (_PLOT, FixedCastLifecycleKind.PLOT),

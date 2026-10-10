@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Resolution control through the canonical continuous-effect journal."""
+"""Resolution and attached-source control through the canonical layer-two owner."""
 
 from dataclasses import replace
 from typing import Any, Mapping, Protocol, Sequence
@@ -12,12 +12,13 @@ from .continuous_effect_model import (
 from .continuous_effect_state import (
     ResolutionEffectSource, active_resolution_effects, commit_continuous_effect,
 )
-from .continuous_effects import CharacteristicState, evaluate_continuous_effects, order_continuous_effects
+from .continuous_effects import order_continuous_effects
 from .object_predicate import ObjectQuerySpec
 from .source_continuity import SourceContinuityHistory, SourceContinuitySnapshot
 from .model import CONTROL_HISTORY_VERSION
 from . import control_history
 from .errors import GameRuleError
+from .attached_control import static_attachment_control_effects, layer_two_controller_map
 
 
 class ControlEffectError(ValueError):
@@ -304,25 +305,23 @@ def gain_control_of_refs(
     return tuple(card.ref for card in cards)
 
 
-def _controller_map(host: ControlEffectHost, journal: Sequence[ContinuousEffect]) -> dict[str, str]:
-    controllers = {}
-    for card in sorted(host.state.cards.values(), key=lambda value: (value.ref, value.object_id)):
-        if card.zone != "battlefield" or not has_control_origin(host.state, card):
-            continue
-        identity = ContinuousObjectIdentity(card.object_id, card.logical_object_id)
-        effects = tuple(effect for effect in journal if isinstance(effect, ContinuousEffect)
-                        and effect.layer is Layer.CONTROL and identity in effect.locked_objects)
-        result = evaluate_continuous_effects(
-            CharacteristicState(name=card.printed_name, controller=card.controller),
-            effects, context={"object_id": card.object_id,
-                              "logical_object_id": card.logical_object_id,
-                              "ref": card.ref, "zone": "battlefield", "owner": card.owner},
-        )
-        controller = result.characteristics["controller"]
-        if type(controller) is not str or controller not in host.state.players:
-            raise ControlEffectError("Layer-two control has an unavailable principal")
-        controllers[card.object_id] = controller
+def _controller_map(host: ControlEffectHost, journal: Sequence[ContinuousEffect], static: Sequence[ContinuousEffect]) -> dict[str, str]:
+    controllers=layer_two_controller_map(host,journal,static)
+    if any(type(controller) is not str or controller not in host.state.players for controller in controllers.values()):
+        raise ControlEffectError("Layer-two control has an unavailable principal")
     return controllers
+
+
+def _establish_static_control_origins(host: ControlEffectHost, static: Sequence[ContinuousEffect]) -> None:
+    """Retain initial custody before a live static attachment changes it."""
+    for effect in static:
+        identity=effect.related_object
+        if identity is None:continue
+        card=host.state.cards.get(identity.object_id)
+        if card is None or card.logical_object_id!=identity.logical_object_id or has_control_origin(host.state,card):continue
+        commit_continuous_effect(host.state,_control_effect(effect_id=_ORIGIN_PREFIX+identity.logical_object_id,
+            source_id=card.object_id,timestamp=0,identities=(identity,),controller=card.controller,
+            duration=ContinuousEffectDuration.ZONE_OBJECT))
 
 
 def _expired_source_duration(
@@ -363,6 +362,8 @@ def synchronize_control_effects(host: ControlEffectHost, *, reason: str) -> bool
     """Compute monotonic source expiration before committing resulting custody."""
     if host.state.control_history_version != CONTROL_HISTORY_VERSION:
         return False
+    static=static_attachment_control_effects(host)
+    _establish_static_control_origins(host,static)
     journal = host.state.continuous_effects
     if not journal:
         return False
@@ -371,7 +372,7 @@ def synchronize_control_effects(host: ControlEffectHost, *, reason: str) -> bool
     # Each changing pass removes at least one source-bound effect. Expired
     # durations never reappear, so source cycles terminate without guessing.
     for _ in range(len(journal) + 1):
-        controllers = _controller_map(host, retained)
+        controllers = _controller_map(host, retained, static)
         ending = [effect for effect in retained if isinstance(effect, ContinuousEffect)
                   and effect.duration.source_bound
                   and _expired_source_duration(host, effect, controllers)]

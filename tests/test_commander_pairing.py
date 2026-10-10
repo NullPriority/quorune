@@ -77,7 +77,7 @@ class CommanderPairingTests(unittest.TestCase):
     def setUpClass(cls):
         cls.temporary = tempfile.TemporaryDirectory()
         path = Path(cls.temporary.name) / "commander-pairing.sqlite3"
-        build_fixture_database(PAIRING_FIXTURE, path)
+        build_fixture_database([PAIRING_FIXTURE,ROOT/'tests/fixtures/batched-public-assurance-cards.json'], path)
         cls.db = CardDatabase(path)
         cls.capabilities = load_default_capability_registry()
 
@@ -1213,6 +1213,60 @@ class CommanderPairingTests(unittest.TestCase):
                 for node in face.nodes
             )
         )
+
+
+    def test_doctors_companion_activated_draw_keeps_both_commander_designations_and_replays(self):
+        name='Generic Doctor Companion Draw'
+        names=(name,'The Tenth Doctor')
+        registry=SemanticRegistry(include_builtin_packs=False)
+        register_generated_programs(self.db,registry,[self.db.lookup(n) for n in names],trust_level='provisional',
+            capability_registry=self.capabilities,capability_profile='commander_review',promote_exact_capability_declarations=True,
+            promote_exact_runtime_handlers=True,promote_exact_trigger_programs=True,promote_exact_effect_programs=True)
+        deck=pairing_deck(*names);deck.entries.append(DeckEntry('Rose Tyler',quantity=20))
+        session=CommanderSession.create(self.db,{s:deck for s in 'ABCD'},first_player='A',seed=311101,
+            config=GameConfig(seed=311101,auto_pass_empty_priority=False))
+        while session.state.pending_decision is not None and session.state.pending_decision.kind=='mulligan.declare':
+            for principal in tuple(session.pending_principals()):
+                result=session.act(principal,{'a':'keep'});self.assertTrue(result.ok,result.summary)
+        engine=session.engine
+        source=next(c for c in engine.state.cards.values() if c.owner=='A' and c.printed_name==name)
+        designation=source.commander_designation_id
+        engine.move_card(source.object_id,'battlefield',log=False)
+        engine.state.phase='precombat_main';engine.state.step='main';engine.state.active_player='A'
+        engine.permissions.invalidate_current();engine.state.pending_decision=None;engine._grant_priority('A');engine.pump()
+        session.initial_checkpoint=checkpoint_envelope(engine.state);session.commands.clear();session.decisions.clear()
+        hand=len(session.state.players['A'].zones['hand'])
+        action=next(a for a in session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions'] if a['id'].startswith('activate:'+source.ref+':'))
+        accepted=session.act('pilot:A',{'action_id':action['id']});self.assertTrue(accepted.ok,accepted.summary)
+        for _ in range(20):
+            if not session.state.stack:break
+            accepted=session.act(session.pending_principals()[0],{'action_id':'pass'});self.assertTrue(accepted.ok,accepted.summary)
+        self.assertFalse(session.state.stack)
+        self.assertEqual(hand+1,len(session.state.players['A'].zones['hand']))
+        self.assertEqual(designation,session.state.cards[source.object_id].commander_designation_id)
+        self.assertTrue(session.state.cards[source.object_id].is_commander)
+        self.assertEqual(2,len(session.state.commander_oracle_ids['A']))
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'doctor-companion-draw';session.save(path)
+            result=replay_record(path,self.db,verify=True)
+            self.assertTrue(result['ok'],result)
+            self.assertEqual(authoritative_state_hash(session.state),result['final_state_hash'])
+
+    def test_original_doctors_companion_draw_with_unrepresented_control_sibling_rejects_runtime_admission(self):
+        from high_risk_interaction_support import _observed_piece_ids
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.compiler.unlock_frontier import analyze_card_unlocks
+        record=self.db.lookup('Vislor Turlough')
+        ir=compile_oracle_card(record,capability_registry=self.capabilities,capability_profile='commander_review')
+        program=compile_best_available_card_program(self.db,record,semantic_registry=SemanticRegistry(),capability_registry=self.capabilities,capability_profile='commander_review')
+        row=analyze_card_unlocks(ir,program=program,program_error=None,capabilities=self.capabilities,profile='commander_review')
+        self.assertLessEqual({'capability.format.commander.pairing.doctors_companion','capability.zone.draw.library_to_hand'},_observed_piece_ids(row))
+        self.assertTrue(any(n.exact and any(e.get('op')=='draw' for e in n.effects) for f in ir.faces for n in f.nodes))
+        self.assertEqual('residual',row['card_program_status']);self.assertIsNone(row['hard_construction_failure'])
+        binding=bind_card_program_runtime(program,capability_registry=self.capabilities,profile='commander_review')
+        self.assertFalse(binding['strict_capability_ready']);self.assertFalse(binding['compatible_ready'])
+        self.assertIn('trust_basis:unresolved',binding['blockers'])
 
 
 if __name__ == "__main__":

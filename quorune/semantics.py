@@ -245,6 +245,7 @@ class SemanticProgram:
     target_schema: dict[str, Any] | None = None
     cost_schema: dict[str, Any] | None = None
     event_condition: dict[str, Any] | None = None
+    trigger_limit: dict[str, Any] | None = None
     coverage: list[str] = field(default_factory=list)
     capability_dependencies: list[str] = field(default_factory=list)
     capability_closure: dict[str, Any] | None = None
@@ -266,6 +267,8 @@ class SemanticProgram:
         ):
             raise ValueError("Capability dependencies must be unique")
         validate_runtime_handler_descriptors(self.handlers)
+        from .rules.trigger_limits import validate_program_trigger_limit
+        validate_program_trigger_limit(self)
         _validate_program_event_subscriptions(
             self.event,
             self.event_condition,
@@ -419,6 +422,8 @@ class SemanticProgram:
             "event_condition": self.event_condition,
             "coverage": self.coverage,
         }
+        if self.trigger_limit is not None:
+            value["trigger_limit"] = dict(self.trigger_limit)
         if self.capability_dependencies:
             value["capability_dependencies"] = (
                 self.capability_dependencies
@@ -428,6 +433,8 @@ class SemanticProgram:
 
     @classmethod
     def from_dict(cls, data: Mapping[str, Any]) -> "SemanticProgram":
+        if data.get("trigger_limit") is not None and not isinstance(data["trigger_limit"], Mapping):
+            raise ValueError("Trigger limit must be an object or null")
         return cls(
             key=str(data["key"]),
             label=str(data.get("label") or data["key"]),
@@ -460,6 +467,11 @@ class SemanticProgram:
             event_condition=(
                 dict(data["event_condition"])
                 if isinstance(data.get("event_condition"), Mapping)
+                else None
+            ),
+            trigger_limit=(
+                dict(data["trigger_limit"])
+                if isinstance(data.get("trigger_limit"), Mapping)
                 else None
             ),
             coverage=[str(value) for value in data.get("coverage", [])],

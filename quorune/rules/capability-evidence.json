@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "69ebfc84e946f762e359e8aaa6ef0585c4703014d835fd56a615621e17988906",
-  "declaration_source_fingerprint": "b5b5d8141c6b57949975977b9a7ebe258ee36f5d2ee5220641ea47f1579a33c9",
+  "registry_fingerprint": "ec164342e7970f0ceea07dc66eb1002d75d339bb29e843db3e85203305679c1f",
+  "declaration_source_fingerprint": "7cd96428baa786849e9f5db1ca022970db4afdbe02720f17fed518a8f579a783",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -3356,6 +3356,24 @@
     {
       "capability_id": "activation.selected_tap.fixed",
       "evidence_class": "interaction",
+      "test_id": "tests.test_combined_tap_activation_costs.CombinedTapCostRuntimeTests.test_actual_evangel_requires_distinct_taps_and_allows_new_selected_creature",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "602.2",
+        "602.2b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Selesnya Evangel consumes distinct source and selected tap costs, preserves tap-symbol acquisition timing, and observes the complete cost group with atomic rejection and exact replay."
+    },
+    {
+      "capability_id": "activation.selected_tap.fixed",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_activation_tap_costs.FixedActivationTapCostRuntimeTests.test_offer_commit_and_replay_share_current_untapped_wizard_query",
       "official_rule_ids": [
         "205.1a",
@@ -3370,6 +3388,24 @@
         "commander_review"
       ],
       "applicability_note": "Compose current effective subtype, control, phasing, tapped state, ordinary activation, draw resolution, and exact replay without a family-specific characteristic path."
+    },
+    {
+      "capability_id": "activation.selected_tap.fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_combined_tap_activation_costs.CombinedTapCostRuntimeTests.test_actual_evangel_requires_distinct_taps_and_allows_new_selected_creature",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "602.2",
+        "602.2b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Selesnya Evangel consumes distinct source and selected tap costs, preserves tap-symbol acquisition timing, and observes the complete cost group with atomic rejection and exact replay."
     },
     {
       "capability_id": "activation.selected_tap.fixed",
@@ -3392,6 +3428,24 @@
     {
       "capability_id": "activation.selected_tap.fixed",
       "evidence_class": "mutation",
+      "test_id": "tests.test_combined_tap_activation_costs.CombinedTapCostRuntimeTests.test_omitted_source_tap_mutant_is_killed_by_actual_evangel_activation",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "602.2",
+        "602.2b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Selesnya Evangel consumes distinct source and selected tap costs, preserves tap-symbol acquisition timing, and observes the complete cost group with atomic rejection and exact replay."
+    },
+    {
+      "capability_id": "activation.selected_tap.fixed",
+      "evidence_class": "mutation",
       "test_id": "tests.test_fixed_activation_tap_costs.FixedActivationTapCostCompilerTests.test_selected_tap_cost_compiler_mutant_is_killed",
       "official_rule_ids": [
         "205.1a",
@@ -3406,6 +3460,24 @@
         "commander_review"
       ],
       "applicability_note": "Remove the shared fixed tap-cost compiler production and require the exact source-spanned witness to kill the survivor."
+    },
+    {
+      "capability_id": "activation.selected_tap.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_combined_tap_activation_costs.CombinedTapCostRuntimeTests.test_new_source_is_unavailable_even_with_new_eligible_selected_creature",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "602.2",
+        "602.2b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Selesnya Evangel consumes distinct source and selected tap costs, preserves tap-symbol acquisition timing, and observes the complete cost group with atomic rejection and exact replay."
     },
     {
       "capability_id": "activation.selected_tap.fixed",
@@ -3446,6 +3518,24 @@
     {
       "capability_id": "activation.selected_tap.fixed",
       "evidence_class": "positive",
+      "test_id": "tests.test_combined_tap_activation_costs.CombinedTapCostCompilerTests.test_source_and_selected_tap_cost_excludes_same_source",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "602.2",
+        "602.2b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Selesnya Evangel consumes distinct source and selected tap costs, preserves tap-symbol acquisition timing, and observes the complete cost group with atomic rejection and exact replay."
+    },
+    {
+      "capability_id": "activation.selected_tap.fixed",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_activation_tap_costs.FixedActivationTapCostCompilerTests.test_fixed_type_and_subtype_tap_costs_compile_source_spanned",
       "official_rule_ids": [
         "205.1a",
@@ -3478,6 +3568,24 @@
         "commander_review"
       ],
       "applicability_note": "Advertise and tap one current untapped controlled Wizard, including the summoning-sick source for an ordinary-word tap cost, before stack placement."
+    },
+    {
+      "capability_id": "activation.selected_tap.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_combined_tap_activation_costs.CombinedTapCostRuntimeTests.test_actual_evangel_requires_distinct_taps_and_allows_new_selected_creature",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "602.2",
+        "602.2b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Selesnya Evangel consumes distinct source and selected tap costs, preserves tap-symbol acquisition timing, and observes the complete cost group with atomic rejection and exact replay."
     },
     {
       "capability_id": "activation.selected_tap.fixed",
@@ -29354,6 +29462,240 @@
       "applicability_note": "Reload the typed all-zone definition and replay subsequent priority commands to the exact authoritative hash."
     },
     {
+      "capability_id": "continuous.control.attached_source",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_attached_control.StaticAttachedControlRuntimeTests.test_actual_aura_cast_controls_recipient_and_bounce_restores_initial_custody",
+      "official_rule_ids": [
+        "303.4e",
+        "611.3b",
+        "613.1b",
+        "613.7e",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Mind Control casting acquires a foreign-owned recipient and an actual Aura bounce restores its previous controller, with authenticated rejection and exact pre-action replay."
+    },
+    {
+      "capability_id": "continuous.control.attached_source",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_attached_control.StaticAttachedControlRuntimeTests.test_controlling_the_aura_changes_its_recipient_control_and_restores_chain",
+      "official_rule_ids": [
+        "303.4e",
+        "611.3b",
+        "613.1b",
+        "613.7e",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Steal Enchantment changes Mind Control and its recipient to the new Aura controller; bouncing the outer Aura restores the chain without owner substitution."
+    },
+    {
+      "capability_id": "continuous.control.attached_source",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_attached_control.StaticAttachedControlRuntimeTests.test_later_layer_aura_ability_loss_keeps_prior_layer_two_control",
+      "official_rule_ids": [
+        "303.4e",
+        "611.3b",
+        "613.1b",
+        "613.7e",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed diagnostic layer-six removal leaves the already-applied layer-two control intact while preserving reciprocal attachment."
+    },
+    {
+      "capability_id": "continuous.control.attached_source",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_attached_control.StaticAttachedControlRuntimeTests.test_overlapping_static_auras_and_later_resolution_share_timestamp_order",
+      "official_rule_ids": [
+        "303.4e",
+        "611.3b",
+        "613.1b",
+        "613.7e",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual overlapping Aura casts share timestamp order with later resolved control; removing an Aura preserves the newer resolution effect and exposes earlier static custody only after its expiry."
+    },
+    {
+      "capability_id": "continuous.control.attached_source",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_static_attached_control.StaticAttachedControlRuntimeTests.test_actual_aura_cast_controls_recipient_and_bounce_restores_initial_custody",
+      "official_rule_ids": [
+        "303.4e",
+        "611.3b",
+        "613.1b",
+        "613.7e",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Mind Control casting acquires a foreign-owned recipient and an actual Aura bounce restores its previous controller, with authenticated rejection and exact pre-action replay."
+    },
+    {
+      "capability_id": "continuous.control.attached_source",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_static_attached_control.StaticAttachedControlRuntimeTests.test_departing_aura_owner_restores_recipient_in_surviving_game",
+      "official_rule_ids": [
+        "303.4e",
+        "611.3b",
+        "613.1b",
+        "613.7e",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual confirmed concession removes the controlling Aura and restores recipient custody in the surviving four-player game."
+    },
+    {
+      "capability_id": "continuous.control.attached_source",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_static_attached_control.StaticAttachedControlRuntimeTests.test_static_source_omission_mutant_is_killed_by_actual_aura_cast",
+      "official_rule_ids": [
+        "303.4e",
+        "611.3b",
+        "613.1b",
+        "613.7e",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Omitting current static control from canonical custody calculation leaves the actual Mind Control recipient with its old controller and fails the independent custody assertion."
+    },
+    {
+      "capability_id": "continuous.control.attached_source",
+      "evidence_class": "negative",
+      "test_id": "tests.test_static_attached_control.StaticAttachedControlCompilerTests.test_malformed_and_conditional_static_control_remain_closed",
+      "official_rule_ids": [
+        "303.4e",
+        "611.3b",
+        "613.1b",
+        "613.7e",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Mind Control casting acquires a foreign-owned recipient and an actual Aura bounce restores its previous controller, with authenticated rejection and exact pre-action replay."
+    },
+    {
+      "capability_id": "continuous.control.attached_source",
+      "evidence_class": "negative",
+      "test_id": "tests.test_static_attached_control.StaticAttachedControlRuntimeTests.test_original_aura_with_unsupported_sibling_stays_out_of_runtime",
+      "official_rule_ids": [
+        "303.4e",
+        "611.3b",
+        "613.1b",
+        "613.7e",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Take Possession retains exact static-control leaf and unresolved Split Second sibling; complete canonical runtime binding remains closed."
+    },
+    {
+      "capability_id": "continuous.control.attached_source",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_attached_control.StaticAttachedControlCompilerTests.test_exact_attached_control_descriptor_and_source_span",
+      "official_rule_ids": [
+        "303.4e",
+        "611.3b",
+        "613.1b",
+        "613.7e",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Mind Control casting acquires a foreign-owned recipient and an actual Aura bounce restores its previous controller, with authenticated rejection and exact pre-action replay."
+    },
+    {
+      "capability_id": "continuous.control.attached_source",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_static_attached_control.StaticAttachedControlRuntimeTests.test_actual_aura_cast_controls_recipient_and_bounce_restores_initial_custody",
+      "official_rule_ids": [
+        "303.4e",
+        "611.3b",
+        "613.1b",
+        "613.7e",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Mind Control casting acquires a foreign-owned recipient and an actual Aura bounce restores its previous controller, with authenticated rejection and exact pre-action replay."
+    },
+    {
+      "capability_id": "continuous.control.attached_source",
+      "evidence_class": "replay",
+      "test_id": "tests.test_static_attached_control.StaticAttachedControlRuntimeTests.test_actual_aura_cast_controls_recipient_and_bounce_restores_initial_custody",
+      "official_rule_ids": [
+        "303.4e",
+        "611.3b",
+        "613.1b",
+        "613.7e",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Mind Control casting acquires a foreign-owned recipient and an actual Aura bounce restores its previous controller, with authenticated rejection and exact pre-action replay."
+    },
+    {
+      "capability_id": "continuous.control.attached_source",
+      "evidence_class": "replay",
+      "test_id": "tests.test_static_attached_control.StaticAttachedControlRuntimeTests.test_controlling_the_aura_changes_its_recipient_control_and_restores_chain",
+      "official_rule_ids": [
+        "303.4e",
+        "611.3b",
+        "613.1b",
+        "613.7e",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Save/load and pre-action replay preserve current attached-source custody through an actual nested control-and-bounce sequence."
+    },
+    {
       "capability_id": "continuous.control.fixed_resolution",
       "evidence_class": "interaction",
       "test_id": "tests.test_cast_creature_targets.CastCreatureTargetActionTests.test_partial_invalid_support_group_preserves_the_separate_control_clause_and_replays",
@@ -33338,6 +33680,195 @@
         "commander_review"
       ],
       "applicability_note": "A returned new source incarnation receives no effect from the old activation; malformed nonboolean retention changes no authoritative state."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_target_characteristic_sets.TargetCharacteristicSetRuntimeTests.test_actual_sick_and_tired_applies_to_surviving_original_target",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original bounded target characteristic spells retain exact cardinality, authenticated rejection, independent target revalidation, resulting fixed stats and pre-action replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_target_characteristic_sets.TargetCharacteristicSetRuntimeTests.test_actual_wind_sail_grants_only_selected_original_creatures_and_expires",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Bounded target characteristic results preserve exact count and independently revalidated targets; pending entry choice and scalar result composition save and replay through existing owners."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_target_characteristic_sets.TargetCharacteristicSetRuntimeTests.test_exact_scalar_amount_composes_with_optional_single_target_set",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Bounded target characteristic results preserve exact count and independently revalidated targets; pending entry choice and scalar result composition save and replay through existing owners."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_target_characteristic_sets.TargetCharacteristicSetRuntimeTests.test_up_to_one_entry_trigger_choice_saves_replays_and_applies_fixed_modifier",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Bounded target characteristic results preserve exact count and independently revalidated targets; pending entry choice and scalar result composition save and replay through existing owners."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_target_characteristic_sets.TargetCharacteristicSetRuntimeTests.test_actual_nahiri_accepts_zero_one_or_two_distinct_targets_and_replays",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original bounded target characteristic spells retain exact cardinality, authenticated rejection, independent target revalidation, resulting fixed stats and pre-action replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_target_characteristic_sets.TargetCharacteristicSetRuntimeTests.test_omitted_target_set_effect_mutant_is_killed_by_actual_nahiri",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original bounded target characteristic spells retain exact cardinality, authenticated rejection, independent target revalidation, resulting fixed stats and pre-action replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "negative",
+      "test_id": "tests.test_target_characteristic_sets.TargetCharacteristicSetCompilerTests.test_descriptor_unknown_quantities_and_dynamic_variants_fail_closed",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original bounded target characteristic spells retain exact cardinality, authenticated rejection, independent target revalidation, resulting fixed stats and pre-action replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "positive",
+      "test_id": "tests.test_target_characteristic_sets.TargetCharacteristicSetCompilerTests.test_fixed_target_sets_keep_count_range_modifier_and_source_span",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original bounded target characteristic spells retain exact cardinality, authenticated rejection, independent target revalidation, resulting fixed stats and pre-action replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_target_characteristic_set",
+      "evidence_class": "replay",
+      "test_id": "tests.test_target_characteristic_sets.TargetCharacteristicSetRuntimeTests.test_actual_nahiri_accepts_zero_one_or_two_distinct_targets_and_replays",
+      "official_rule_ids": [
+        "115.1a",
+        "601.2c",
+        "608.2b",
+        "608.2c",
+        "611.2c",
+        "613.1f",
+        "613.4c",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original bounded target characteristic spells retain exact cardinality, authenticated rejection, independent target revalidation, resulting fixed stats and pre-action replay."
     },
     {
       "capability_id": "continuous.resolution.temporary_target_interactions",
@@ -42545,6 +43076,30 @@
     },
     {
       "capability_id": "counter.producer.optional_fixed_event_trigger",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_optional_object_action_counters.OptionalObjectActionCounterRuntimeTests.test_actual_sacrifice_can_decline_then_place_replaced_counter_and_replay",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "608.2b",
+        "608.2c",
+        "609.1",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A real Carrion Feeder sacrifice produces an optional Mortician Beetle choice; decline places nothing, accepted placement observes Hardened Scales, and the authenticated continuation saves and replays exactly."
+    },
+    {
+      "capability_id": "counter.producer.optional_fixed_event_trigger",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_optional_counter_trigger_choice_composes_with_replacement_and_replay",
       "official_rule_ids": [
@@ -42689,6 +43244,30 @@
     },
     {
       "capability_id": "counter.producer.optional_fixed_event_trigger",
+      "evidence_class": "positive",
+      "test_id": "tests.test_optional_object_action_counters.OptionalObjectActionCounterCompilerTests.test_optional_public_action_counter_uses_existing_choice_owner",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "608.2b",
+        "608.2c",
+        "609.1",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A real Carrion Feeder sacrifice produces an optional Mortician Beetle choice; decline places nothing, accepted placement observes Hardened Scales, and the authenticated continuation saves and replays exactly."
+    },
+    {
+      "capability_id": "counter.producer.optional_fixed_event_trigger",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_optional_counter_trigger_choice_composes_with_replacement_and_replay",
       "official_rule_ids": [
@@ -42713,6 +43292,30 @@
     },
     {
       "capability_id": "counter.producer.optional_fixed_event_trigger",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_optional_object_action_counters.OptionalObjectActionCounterRuntimeTests.test_actual_sacrifice_can_decline_then_place_replaced_counter_and_replay",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "608.2b",
+        "608.2c",
+        "609.1",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A real Carrion Feeder sacrifice produces an optional Mortician Beetle choice; decline places nothing, accepted placement observes Hardened Scales, and the authenticated continuation saves and replays exactly."
+    },
+    {
+      "capability_id": "counter.producer.optional_fixed_event_trigger",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_optional_counter_trigger_choice_composes_with_replacement_and_replay",
       "official_rule_ids": [
@@ -42734,6 +43337,30 @@
         "commander_review"
       ],
       "applicability_note": "Replay the accepted optional continuation and every subsequent replacement-order choice to the identical authoritative state hash."
+    },
+    {
+      "capability_id": "counter.producer.optional_fixed_event_trigger",
+      "evidence_class": "replay",
+      "test_id": "tests.test_optional_object_action_counters.OptionalObjectActionCounterRuntimeTests.test_actual_sacrifice_can_decline_then_place_replaced_counter_and_replay",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "608.2b",
+        "608.2c",
+        "609.1",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A real Carrion Feeder sacrifice produces an optional Mortician Beetle choice; decline places nothing, accepted placement observes Hardened Scales, and the authenticated continuation saves and replays exactly."
     },
     {
       "capability_id": "counter.producer.optional_self_entry",
@@ -51440,6 +52067,23 @@
     },
     {
       "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_optional_draw_discard_sequences.OptionalDrawDiscardRuntimeTests.test_actual_koi_acceptance_draws_before_private_discard_and_saves_replays",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original optional draw-and-discard triggers execute one controller acceptance before draw and private discard, retain mandatory follow-up after a prevented draw, and persist the ordered continuation with exact replay."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_optional_effect_choices.FixedOptionalEffectIntegrationTests.test_optional_effect_choice_is_controller_scoped_atomic_private_and_replays",
       "official_rule_ids": [
@@ -51457,6 +52101,23 @@
     },
     {
       "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_optional_draw_discard_sequences.OptionalDrawDiscardRuntimeTests.test_actual_koi_acceptance_draws_before_private_discard_and_saves_replays",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original optional draw-and-discard triggers execute one controller acceptance before draw and private discard, retain mandatory follow-up after a prevented draw, and persist the ordered continuation with exact replay."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_optional_effect_choices.FixedOptionalEffectCompilerTests.test_optional_effect_shape_and_handler_mutants_fail_closed",
       "official_rule_ids": [
@@ -51471,6 +52132,23 @@
         "commander_review"
       ],
       "applicability_note": "Remove the generic optional compiler production and mutate every wrapper boundary so exact trust disappears instead of falling through to an unowned choice."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_optional_draw_discard_sequences.OptionalDrawDiscardRuntimeTests.test_omitted_followup_discard_mutant_is_killed_after_actual_acceptance",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original optional draw-and-discard triggers execute one controller acceptance before draw and private discard, retain mandatory follow-up after a prevented draw, and persist the ordered continuation with exact replay."
     },
     {
       "capability_id": "effect.choice.optional_fixed",
@@ -51505,6 +52183,23 @@
         "commander_review"
       ],
       "applicability_note": "Reject changed chooser identity, extra fields, missing or unknown nested effects, nested optional wrappers, absent target schemas, and unrepresented runtime instructions."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_optional_draw_discard_sequences.OptionalDrawDiscardCompilerTests.test_linked_dynamic_random_and_other_player_variants_stay_residual",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original optional draw-and-discard triggers execute one controller acceptance before draw and private discard, retain mandatory follow-up after a prevented draw, and persist the ordered continuation with exact replay."
     },
     {
       "capability_id": "effect.choice.optional_fixed",
@@ -51559,6 +52254,23 @@
     },
     {
       "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_optional_draw_discard_sequences.OptionalDrawDiscardCompilerTests.test_fixed_optional_draw_discard_compiles_original_order",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original optional draw-and-discard triggers execute one controller acceptance before draw and private discard, retain mandatory follow-up after a prevented draw, and persist the ordered continuation with exact replay."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_optional_effect_choices.FixedOptionalEffectIntegrationTests.test_optional_effect_choice_is_controller_scoped_atomic_private_and_replays",
       "official_rule_ids": [
@@ -51576,6 +52288,23 @@
     },
     {
       "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_optional_draw_discard_sequences.OptionalDrawDiscardRuntimeTests.test_actual_koi_acceptance_draws_before_private_discard_and_saves_replays",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original optional draw-and-discard triggers execute one controller acceptance before draw and private discard, retain mandatory follow-up after a prevented draw, and persist the ordered continuation with exact replay."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_optional_effect_choices.FixedOptionalEffectIntegrationTests.test_optional_effect_choice_is_controller_scoped_atomic_private_and_replays",
       "official_rule_ids": [
@@ -51590,6 +52319,23 @@
         "commander_review"
       ],
       "applicability_note": "Replay the controller-scoped choice, resumed typed effect, private draw, and final authoritative state exactly."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_optional_draw_discard_sequences.OptionalDrawDiscardRuntimeTests.test_actual_koi_acceptance_draws_before_private_discard_and_saves_replays",
+      "official_rule_ids": [
+        "109.5",
+        "608.2c",
+        "608.2d",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original optional draw-and-discard triggers execute one controller acceptance before draw and private discard, retain mandatory follow-up after a prevented draw, and persist the ordered continuation with exact replay."
     },
     {
       "capability_id": "effect.choice.optional_fixed_mana_payment",
@@ -63299,6 +64045,26 @@
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
       "evidence_class": "interaction",
+      "test_id": "tests.test_source_counter_amounts.SourceCounterAmountRuntimeTests.test_actual_death_draw_uses_predeparture_counters_and_replays",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Marketback Walker sacrifice and Culling Dais activation preserve original source counter look-back after canonical reset, with authenticated rejection, current response changes, blink, and exact save/load replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "interaction",
       "test_id": "tests.test_whole_hand_discard.WholeHandDiscardRuntimeTests.test_actual_discard_history_counts_redirection_from_opponent_controller",
       "official_rule_ids": [
         "107.1b",
@@ -63335,6 +64101,26 @@
         "commander_review"
       ],
       "applicability_note": "Actual trusted actions use the normal four-seat offered-action and committed-result paths."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_source_counter_amounts.SourceCounterAmountRuntimeTests.test_actual_death_draw_uses_predeparture_counters_and_replays",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Marketback Walker sacrifice and Culling Dais activation preserve original source counter look-back after canonical reset, with authenticated rejection, current response changes, blink, and exact save/load replay."
     },
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
@@ -63375,6 +64161,26 @@
         "commander_review"
       ],
       "applicability_note": "A mutant that falsely binds an unrelated departure to the future scalar exposes the prohibited phased-reference evaluation."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_source_counter_amounts.SourceCounterAmountRuntimeTests.test_missing_counter_lki_mutant_is_killed_by_actual_source_sacrifice",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Marketback Walker sacrifice and Culling Dais activation preserve original source counter look-back after canonical reset, with authenticated rejection, current response changes, blink, and exact save/load replay."
     },
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
@@ -63435,6 +64241,26 @@
         "commander_review"
       ],
       "applicability_note": "The scalar's own source, target or event-object read still rejects unavailable phased information; relevance filtering does not invent phasing support or substitute zero."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_source_counter_amounts.SourceCounterAmountCompilerTests.test_v2_counter_codec_keeps_v1_shape_and_rejects_ambiguous_origins",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Marketback Walker sacrifice and Culling Dais activation preserve original source counter look-back after canonical reset, with authenticated rejection, current response changes, blink, and exact save/load replay."
     },
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
@@ -63499,6 +64325,26 @@
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
       "evidence_class": "positive",
+      "test_id": "tests.test_source_counter_amounts.SourceCounterAmountCompilerTests.test_source_counter_amounts_preserve_typed_identity_and_span",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Marketback Walker sacrifice and Culling Dais activation preserve original source counter look-back after canonical reset, with authenticated rejection, current response changes, blink, and exact save/load replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "positive",
       "test_id": "tests.test_whole_hand_discard.WholeHandDiscardRuntimeTests.test_actual_discard_history_counts_redirection_from_opponent_controller",
       "official_rule_ids": [
         "107.1b",
@@ -63535,6 +64381,26 @@
         "commander_review"
       ],
       "applicability_note": "Each principal receives the ordinary projection, never an authoritative checkpoint."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_source_counter_amounts.SourceCounterAmountRuntimeTests.test_actual_death_draw_uses_predeparture_counters_and_replays",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Marketback Walker sacrifice and Culling Dais activation preserve original source counter look-back after canonical reset, with authenticated rejection, current response changes, blink, and exact save/load replay."
     },
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
@@ -63635,6 +64501,26 @@
         "commander_review"
       ],
       "applicability_note": "An actual return-to-owner-hand command uses the single-object zone owner successfully from a constructed pre-action checkpoint and reproduces the exact resulting state on load and replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_source_counter_amounts.SourceCounterAmountRuntimeTests.test_actual_death_draw_uses_predeparture_counters_and_replays",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Marketback Walker sacrifice and Culling Dais activation preserve original source counter look-back after canonical reset, with authenticated rejection, current response changes, blink, and exact save/load replay."
     },
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
@@ -64869,6 +65755,23 @@
     },
     {
       "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_ordered_quantity_results.OrderedQuantityRuntimeTests.test_actual_union_counts_hand_after_its_draw_and_replays",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual ordered draw, counter placement, and token results read subsequent quantities at the printed instruction position; pending replacement continuation preserves exact once-only replay."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_closed_effect_programs.ClosedEffectProgramRuntimeTests.test_private_scry_suspends_draw_and_life_then_replays",
       "official_rule_ids": [
@@ -64886,6 +65789,23 @@
     },
     {
       "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_ordered_quantity_results.OrderedQuantityRuntimeTests.test_actual_rotwidow_created_token_contributes_to_later_opponent_loss",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual ordered draw, counter placement, and token results read subsequent quantities at the printed instruction position; pending replacement continuation preserves exact once-only replay."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
       "evidence_class": "mutation",
       "test_id": "tests.test_closed_effect_programs.ClosedEffectProgramCompilerTests.test_parser_shape_and_compiler_fail_closed",
       "official_rule_ids": [
@@ -64900,6 +65820,23 @@
         "commander_review"
       ],
       "applicability_note": "Remove the closed program production and prove the exact source returns to a material residual with changed semantic and CardProgram fingerprints."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_ordered_quantity_results.OrderedQuantityRuntimeTests.test_source_counter_quantity_early_read_mutant_is_killed",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual ordered draw, counter placement, and token results read subsequent quantities at the printed instruction position; pending replacement continuation preserves exact once-only replay."
     },
     {
       "capability_id": "resolution.effect_program.closed_components",
@@ -64937,6 +65874,23 @@
     },
     {
       "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "negative",
+      "test_id": "tests.test_ordered_quantity_results.OrderedQuantityCompilerTests.test_conditional_linked_and_ambiguous_sequences_remain_residual",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual ordered draw, counter placement, and token results read subsequent quantities at the printed instruction position; pending replacement continuation preserves exact once-only replay."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
       "evidence_class": "positive",
       "test_id": "tests.test_closed_effect_programs.ClosedEffectProgramCompilerTests.test_closed_program_compiles_across_contexts_and_component_shapes",
       "official_rule_ids": [
@@ -64971,6 +65925,23 @@
     },
     {
       "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "positive",
+      "test_id": "tests.test_ordered_quantity_results.OrderedQuantityCompilerTests.test_independent_query_results_share_ordered_program_owner",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual ordered draw, counter placement, and token results read subsequent quantities at the printed instruction position; pending replacement continuation preserves exact once-only replay."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
       "evidence_class": "privacy",
       "test_id": "tests.test_closed_effect_programs.ClosedEffectProgramRuntimeTests.test_private_scry_suspends_draw_and_life_then_replays",
       "official_rule_ids": [
@@ -64988,6 +65959,23 @@
     },
     {
       "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_ordered_quantity_results.OrderedQuantityRuntimeTests.test_actual_union_counts_hand_after_its_draw_and_replays",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual ordered draw, counter placement, and token results read subsequent quantities at the printed instruction position; pending replacement continuation preserves exact once-only replay."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
       "evidence_class": "replay",
       "test_id": "tests.test_closed_effect_programs.ClosedEffectProgramRuntimeTests.test_private_scry_suspends_draw_and_life_then_replays",
       "official_rule_ids": [
@@ -65002,6 +65990,23 @@
         "commander_review"
       ],
       "applicability_note": "Replay private Scry response, subsequent draws, life loss, and stack completion to the identical authoritative final hash."
+    },
+    {
+      "capability_id": "resolution.effect_program.closed_components",
+      "evidence_class": "replay",
+      "test_id": "tests.test_ordered_quantity_results.OrderedQuantityRuntimeTests.test_pending_counter_replacement_resumes_once_before_later_quantity",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual ordered draw, counter placement, and token results read subsequent quantities at the printed instruction position; pending replacement continuation preserves exact once-only replay."
     },
     {
       "capability_id": "resolution.effect_program.closed_components",
@@ -74431,6 +75436,31 @@
     },
     {
       "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_source_pronoun_results.SourcePronounRuntimeTests.test_actual_scorpion_death_deals_damage_and_gains_life_for_trigger_controller",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original source-self trigger bodies retain correct source incarnation, damage controller and optional counter choice through actual commands and pre-action replay; unrelated token/target references stay closed."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_ability_word_event_triggers.AbilityWordEventTriggerRuntimeTests.test_targeted_cast_projection_save_load_and_exact_replay",
       "official_rule_ids": [
@@ -74631,6 +75661,31 @@
     },
     {
       "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_source_pronoun_results.SourcePronounRuntimeTests.test_actual_scorpion_death_deals_damage_and_gains_life_for_trigger_controller",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original source-self trigger bodies retain correct source incarnation, damage controller and optional counter choice through actual commands and pre-action replay; unrelated token/target references stay closed."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_fixed_typed_event_effect_trigger_dependency_and_compiler_mutation_fail_closed",
       "official_rule_ids": [
@@ -74653,6 +75708,31 @@
         "commander_review"
       ],
       "applicability_note": "Kill removal of the single generic composition call before any represented event-bound effect can retain exact trust."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_source_pronoun_results.SourcePronounRuntimeTests.test_source_body_normalization_omission_mutant_is_killed_by_original_firstblade",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original source-self trigger bodies retain correct source incarnation, damage controller and optional counter choice through actual commands and pre-action replay; unrelated token/target references stay closed."
     },
     {
       "capability_id": "trigger.effect.fixed_event",
@@ -74881,6 +75961,31 @@
     },
     {
       "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "negative",
+      "test_id": "tests.test_source_pronoun_results.SourcePronounCompilerTests.test_new_token_or_target_pronoun_is_not_rebound_to_source",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original source-self trigger bodies retain correct source incarnation, damage controller and optional counter choice through actual commands and pre-action replay; unrelated token/target references stay closed."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "positive",
       "test_id": "tests.test_ability_word_event_triggers.AbilityWordEventTriggerCompilerTests.test_four_strict_ability_word_bindings_compile_through_shared_owner",
       "official_rule_ids": [
@@ -75078,6 +76183,31 @@
         "commander_review"
       ],
       "applicability_note": "Lower the bounded source-self, ordinal, mana-value, origin, turn, Kicker, Historic, fixed-color permanent, and Adventure grammar to immutable typed event predicates."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "positive",
+      "test_id": "tests.test_source_pronoun_results.SourcePronounCompilerTests.test_exact_self_event_body_keeps_original_span_and_source_reference",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original source-self trigger bodies retain correct source incarnation, damage controller and optional counter choice through actual commands and pre-action replay; unrelated token/target references stay closed."
     },
     {
       "capability_id": "trigger.effect.fixed_event",
@@ -75453,6 +76583,31 @@
         "commander_review"
       ],
       "applicability_note": "Replay the last-known-controller source-graveyard trigger and ordinary draw result to the identical authoritative hash."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "replay",
+      "test_id": "tests.test_source_pronoun_results.SourcePronounRuntimeTests.test_blinked_firstblade_does_not_receive_old_source_trigger_twice",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original source-self trigger bodies retain correct source incarnation, damage controller and optional counter choice through actual commands and pre-action replay; unrelated token/target references stay closed."
     },
     {
       "capability_id": "trigger.entry.fixed_kicked_result",
@@ -80057,6 +81212,27 @@
     {
       "capability_id": "trigger.event.qualified_zone_change",
       "evidence_class": "interaction",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerRuntimeTests.test_actual_token_batch_triggers_once_and_limiter_rejects_later_batch",
+      "official_rule_ids": [
+        "109.2",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A real simultaneous Raise the Alarm batch produces one matching aggregate occurrence; a separate batch remains distinct, and the independently printed current-turn limit and authenticated command checks preserve replay."
+    },
+    {
+      "capability_id": "trigger.event.qualified_zone_change",
+      "evidence_class": "interaction",
       "test_id": "tests.test_qualified_zone_event_queries.QualifiedZoneEventRuntimeTests.test_departure_queries_preserve_lki_controller_and_replacement_destinations",
       "official_rule_ids": [
         "109.2",
@@ -80099,6 +81275,27 @@
     {
       "capability_id": "trigger.event.qualified_zone_change",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerRuntimeTests.test_actual_token_batch_triggers_once_and_limiter_rejects_later_batch",
+      "official_rule_ids": [
+        "109.2",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A real simultaneous Raise the Alarm batch produces one matching aggregate occurrence; a separate batch remains distinct, and the independently printed current-turn limit and authenticated command checks preserve replay."
+    },
+    {
+      "capability_id": "trigger.event.qualified_zone_change",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_qualified_zone_event_queries.QualifiedZoneEventRuntimeTests.test_simultaneous_qualified_deaths_keep_apnap_and_full_consequences",
       "official_rule_ids": [
         "109.2",
@@ -80120,6 +81317,27 @@
     {
       "capability_id": "trigger.event.qualified_zone_change",
       "evidence_class": "mutation",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerRuntimeTests.test_omitted_aggregation_mutant_is_killed_by_two_token_batch",
+      "official_rule_ids": [
+        "109.2",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A real simultaneous Raise the Alarm batch produces one matching aggregate occurrence; a separate batch remains distinct, and the independently printed current-turn limit and authenticated command checks preserve replay."
+    },
+    {
+      "capability_id": "trigger.event.qualified_zone_change",
+      "evidence_class": "mutation",
       "test_id": "tests.test_qualified_zone_event_queries.QualifiedZoneEventCompilerTests.test_qualified_zone_dependencies_and_parser_mutation_fail_closed",
       "official_rule_ids": [
         "109.2",
@@ -80137,6 +81355,27 @@
         "commander_review"
       ],
       "applicability_note": "Remove the shared qualified subscription production and kill the mutation with the exact-admission assertion."
+    },
+    {
+      "capability_id": "trigger.event.qualified_zone_change",
+      "evidence_class": "negative",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerCompilerTests.test_open_plural_references_and_unsupported_limiting_departures_stay_residual",
+      "official_rule_ids": [
+        "109.2",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A real simultaneous Raise the Alarm batch produces one matching aggregate occurrence; a separate batch remains distinct, and the independently printed current-turn limit and authenticated command checks preserve replay."
     },
     {
       "capability_id": "trigger.event.qualified_zone_change",
@@ -80183,6 +81422,27 @@
     {
       "capability_id": "trigger.event.qualified_zone_change",
       "evidence_class": "positive",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerCompilerTests.test_aggregate_query_preserves_source_span_and_batch_coverage",
+      "official_rule_ids": [
+        "109.2",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A real simultaneous Raise the Alarm batch produces one matching aggregate occurrence; a separate batch remains distinct, and the independently printed current-turn limit and authenticated command checks preserve replay."
+    },
+    {
+      "capability_id": "trigger.event.qualified_zone_change",
+      "evidence_class": "positive",
       "test_id": "tests.test_qualified_zone_event_queries.QualifiedZoneEventCompilerTests.test_qualified_zone_event_grammar_preserves_domains",
       "official_rule_ids": [
         "109.2",
@@ -80225,6 +81485,27 @@
     {
       "capability_id": "trigger.event.qualified_zone_change",
       "evidence_class": "privacy",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerRuntimeTests.test_actual_token_batch_triggers_once_and_limiter_rejects_later_batch",
+      "official_rule_ids": [
+        "109.2",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A real simultaneous Raise the Alarm batch produces one matching aggregate occurrence; a separate batch remains distinct, and the independently printed current-turn limit and authenticated command checks preserve replay."
+    },
+    {
+      "capability_id": "trigger.event.qualified_zone_change",
+      "evidence_class": "privacy",
       "test_id": "tests.test_qualified_zone_event_queries.QualifiedZoneEventRuntimeTests.test_simultaneous_qualified_deaths_keep_apnap_and_full_consequences",
       "official_rule_ids": [
         "109.2",
@@ -80242,6 +81523,27 @@
         "commander_review"
       ],
       "applicability_note": "The four-seat public occurrence and trigger projection preserves the ordinary private-hand boundary."
+    },
+    {
+      "capability_id": "trigger.event.qualified_zone_change",
+      "evidence_class": "replay",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerRuntimeTests.test_actual_token_batch_triggers_once_and_limiter_rejects_later_batch",
+      "official_rule_ids": [
+        "109.2",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6a",
+        "603.6c",
+        "603.10",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A real simultaneous Raise the Alarm batch produces one matching aggregate occurrence; a separate batch remains distinct, and the independently printed current-turn limit and authenticated command checks preserve replay."
     },
     {
       "capability_id": "trigger.event.qualified_zone_change",
@@ -80284,6 +81586,186 @@
         "commander_review"
       ],
       "applicability_note": "Replay from the checkpoint before an offered cast and verify the full entered permanent and trigger result."
+    },
+    {
+      "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerRuntimeTests.test_actual_aura_upkeep_uses_recipient_controller_and_keeps_queued_player",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The scheduled active-player reference is immutable, nontargeted and source-controller independent; exact registered damage and recipient-control interaction witnesses preserve authoritative replay."
+    },
+    {
+      "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerRuntimeTests.test_actual_copper_tablet_deals_damage_to_each_active_upkeep_player",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The scheduled active-player reference is immutable, nontargeted and source-controller independent; exact registered damage and recipient-control interaction witnesses preserve authoritative replay."
+    },
+    {
+      "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerRuntimeTests.test_actual_seizan_upkeep_affects_active_player_not_source_controller",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual source-controlled Seizan triggers on a different active player upkeep and applies life/draw to that recorded player with private projection and exact replay."
+    },
+    {
+      "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerRuntimeTests.test_each_opponent_upkeep_filter_excludes_source_controller",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual source-controlled Seizan triggers on a different active player upkeep and applies life/draw to that recorded player with private projection and exact replay."
+    },
+    {
+      "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerRuntimeTests.test_source_controller_substitution_mutant_is_killed_by_seizan",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual source-controlled Seizan triggers on a different active player upkeep and applies life/draw to that recorded player with private projection and exact replay."
+    },
+    {
+      "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "negative",
+      "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerCompilerTests.test_bound_player_damage_shape_requires_exact_player_and_positive_amount",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The scheduled active-player reference is immutable, nontargeted and source-controller independent; exact registered damage and recipient-control interaction witnesses preserve authoritative replay."
+    },
+    {
+      "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "negative",
+      "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerCompilerTests.test_unknown_bound_results_and_monarch_schedules_remain_residual",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual source-controlled Seizan triggers on a different active player upkeep and applies life/draw to that recorded player with private projection and exact replay."
+    },
+    {
+      "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerCompilerTests.test_each_player_and_opponent_results_are_nontargeted_context_bound",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual source-controlled Seizan triggers on a different active player upkeep and applies life/draw to that recorded player with private projection and exact replay."
+    },
+    {
+      "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerRuntimeTests.test_actual_seizan_upkeep_affects_active_player_not_source_controller",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual source-controlled Seizan triggers on a different active player upkeep and applies life/draw to that recorded player with private projection and exact replay."
+    },
+    {
+      "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "replay",
+      "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerRuntimeTests.test_actual_seizan_upkeep_affects_active_player_not_source_controller",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual source-controlled Seizan triggers on a different active player upkeep and applies life/draw to that recorded player with private projection and exact replay."
     },
     {
       "capability_id": "trigger.event.spell_cast_creature_target",
@@ -84089,6 +85571,132 @@
         "commander_review"
       ],
       "applicability_note": "Save, load, and replay the previous-turn summary, intervening condition, source identity, transform snapshot, and resulting face."
+    },
+    {
+      "capability_id": "trigger.usage.once_per_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_limited_event_triggers.LimitedEventTriggerRuntimeTests.test_actual_counter_events_draw_once_and_replay",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One closed intrinsic trigger consumes its current-turn allowance at event discovery, with exact replay and authenticated command rejection."
+    },
+    {
+      "capability_id": "trigger.usage.once_per_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_limited_event_triggers.LimitedEventTriggerRuntimeTests.test_actual_counter_events_draw_once_and_replay",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One closed intrinsic trigger consumes its current-turn allowance at event discovery, with exact replay and authenticated command rejection."
+    },
+    {
+      "capability_id": "trigger.usage.once_per_turn",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_limited_event_triggers.LimitedEventTriggerRuntimeTests.test_missing_usage_mutant_is_killed_by_second_real_event",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Omitting current-turn use allows the second real counter-placement draw, killed by the exact expected hand-size consequence."
+    },
+    {
+      "capability_id": "trigger.usage.once_per_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_limited_event_triggers.LimitedEventTriggerCompilerTests.test_unsupported_action_limits_and_departures_remain_residual",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One closed intrinsic trigger consumes its current-turn allowance at event discovery, with exact replay and authenticated command rejection."
+    },
+    {
+      "capability_id": "trigger.usage.once_per_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_limited_event_triggers.LimitedEventTriggerCompilerTests.test_closed_limit_preserves_span_and_dependency",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One closed intrinsic trigger consumes its current-turn allowance at event discovery, with exact replay and authenticated command rejection."
+    },
+    {
+      "capability_id": "trigger.usage.once_per_turn",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_limited_event_triggers.LimitedEventTriggerRuntimeTests.test_actual_counter_events_draw_once_and_replay",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One closed intrinsic trigger consumes its current-turn allowance at event discovery, with exact replay and authenticated command rejection."
+    },
+    {
+      "capability_id": "trigger.usage.once_per_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_limited_event_triggers.LimitedEventTriggerRuntimeTests.test_actual_counter_events_draw_once_and_replay",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One closed intrinsic trigger consumes its current-turn allowance at event discovery, with exact replay and authenticated command rejection."
     },
     {
       "capability_id": "untap.step.optional_source",
@@ -90362,5 +91970,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "02c8b072215a19c5a8c2d18b19e70ce5c5d129cf108d29bb686d5649f138443a"
+  "fingerprint": "dcd662963b769942d59911c9678f40b701a77b9b107c897f415d7412088fc40f"
 }

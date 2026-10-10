@@ -39,6 +39,7 @@ from .spell_cast_predicates import (
 )
 from .public_state_queries import fixed_public_state_condition
 from .qualified_zone_event_bindings import QUALIFIED_ZONE_VARIANT, qualified_public_zone_event_binding_spec, public_binding_from_spec
+from .aggregated_zone_event_bindings import AGGREGATED_ZONE_VARIANT, aggregated_public_zone_event_binding_spec
 from .counter_placement_event_bindings import COUNTER_EVENT_VARIANTS
 from .tap_state_event_bindings import (
     TAP_STATE_EVENT_VARIANT, TAP_STATE_EVENT_VARIANTS,
@@ -174,7 +175,7 @@ PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
         *{
             f"{actor}_discards_{subject}"
             for actor in ("controller", "opponent", "player")
-            for subject in ("card", "land", "creature", "nonland")
+            for subject in ("card", "land", "creature", "nonland", "noncreature_nonland")
         },
         *{
             "one_or_more_controller_"
@@ -233,6 +234,7 @@ _ALL_PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
 _NONCOUNTER_PUBLIC_EVENT_VARIANTS = _ALL_PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS - TAP_STATE_EVENT_VARIANTS - COUNTER_EVENT_VARIANTS
 _ONE_OR_MORE_PUBLIC_EVENT_VARIANTS = frozenset(
     {
+        AGGREGATED_ZONE_VARIANT,
         "controller_attack_batch",
         "controller_attack_batch_at_least_2",
         "controller_attack_batch_at_least_3",
@@ -1160,7 +1162,7 @@ def fixed_counter_trigger_binding(
     result = _zone_change_trigger_binding(
         material_line,
         card_name=card_name,
-    ) or public_binding_from_spec(qualified_public_zone_event_binding_spec(material_line, card_name=card_name),
+    ) or public_binding_from_spec(aggregated_public_zone_event_binding_spec(material_line, card_name=card_name) or qualified_public_zone_event_binding_spec(material_line, card_name=card_name),
                                  binding_type=FixedCounterTriggerBinding, event_type=FixedCounterTriggerEvent)
     normalized = normalized_source_event_line(material_line, source_name=card_name) if not result and not _source_normalized and card_name else None
     return result or (fixed_counter_trigger_binding(normalized, card_name=card_name, _source_normalized=True) if normalized is not None else None)
@@ -1186,7 +1188,7 @@ def _event_runtime_coverage(
     current_ability: bool,
 ) -> tuple[str, ...]:
     values: list[str] = []
-    if current_ability or binding.variant == QUALIFIED_ZONE_VARIANT or binding.variant in {
+    if current_ability or binding.variant in {QUALIFIED_ZONE_VARIANT, AGGREGATED_ZONE_VARIANT} or binding.variant in {
         *_ABILITY_WORD_PUBLIC_EVENT_VARIANTS,
         *PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS,
         *PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS,
@@ -1238,7 +1240,10 @@ def fixed_counter_event_trigger_node(
     )
     if binding is None:
         return None
-    if binding.variant in _NONCOUNTER_PUBLIC_EVENT_VARIANTS:
+    if binding.variant in _NONCOUNTER_PUBLIC_EVENT_VARIANTS and not (
+        binding.event in {FixedCounterTriggerEvent.PERMANENT_SACRIFICED, FixedCounterTriggerEvent.CARD_DISCARDED}
+        and binding.variant in PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS
+    ):
         return None
     optional_match = re.fullmatch(
         r"you may (?P<body>.+)",
@@ -1258,8 +1263,7 @@ def fixed_counter_event_trigger_node(
             effect_template=effect_template,
         )
     else:
-        compiled = effect_template(body, card_name=card_name)
-        requires_current_ability = False
+        compiled, requires_current_ability = _binding_effect_template(binding,body,card_name=card_name,effect_template=effect_template)
     template, effects, target_schema, body_mechanics = compiled
     nested_counter_operations = _COUNTER_PLACEMENT_OPERATIONS.intersection(
         _nested_operations(effects)

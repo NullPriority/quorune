@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import re
+
 from dataclasses import dataclass
 from typing import Any, Mapping
 
@@ -341,6 +343,10 @@ def _continuous_static_runtime_template(
 ) -> StaticRuntimeTemplate | None:
     """Select one closed continuous-characteristic production."""
 
+    label = re.fullmatch(r"(?P<label>[A-Za-z][A-Za-z ',-]*[A-Za-z])\s+—\s+(?P<body>.+)", text)
+    if label is not None and label['label'].casefold() not in {'solved', 'solve'} and not source_is_class:
+        text = label['body']
+
     declaration_grant = _static_declaration_runtime_template(
         text,
         source_name=source_name,
@@ -477,6 +483,11 @@ def _continuous_static_runtime_template(
 
 
 def _constant_static_characteristic_template(text, *, source_name, source_is_class):
+    from .attached_control_templates import attached_control_handler
+    control = attached_control_handler(text)
+    if control is not None:
+        return StaticRuntimeTemplate(compiled=control, kind="static_ability", event="characteristics.evaluate",
+            dependency_reason="Static attached control requires its typed layer-two capability")
     attached = attached_fixed_characteristics_handler(text, source_name=source_name or "source")
     if attached is not None:
         return StaticRuntimeTemplate(compiled=attached, kind="static_ability", event="characteristics.evaluate",

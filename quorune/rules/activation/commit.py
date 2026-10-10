@@ -225,7 +225,7 @@ def _commit_symbol_costs(
     source: Any,
     ability: ActivatedAbility,
 ) -> None:
-    if ability.tap_source:
+    if ability.tap_source and not any(choice.fixed_tap_cost() is not None for choice in ability.choices):
         set_permanent_tapped(
             host,
             source.ref,
@@ -424,6 +424,7 @@ def _pay_object_and_mana_costs(
                 source=source,
                 choice=ability.choices[0],
                 response=response,
+                tap_source=ability.tap_source,
             )
         except FixedTapActivationCostError as exc:
             raise ActivationProposalError(

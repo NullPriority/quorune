@@ -7,6 +7,7 @@ from enum import StrEnum
 from typing import Any, Mapping
 
 from .query_effect_amount_model import PublicQueryAmountError
+from .counter_names import normalized_counter_name
 
 SCALAR_AMOUNT_KIND = "scalar_effect_amount"
 SCALAR_AMOUNT_CAPABILITY = "quantity_expression.scalar_effect_amount"
@@ -38,10 +39,19 @@ class ScalarEffectAmountSpec:
     coefficient: int = 1
     binding_id: str | None = None
     schema_version: int = 1
+    counter_name: str | None = None
 
     def __post_init__(self):
-        if type(self.schema_version) is not int or self.schema_version != 1:
+        if type(self.schema_version) is not int or self.schema_version not in {1,2}:
             raise PublicQueryAmountError("Unsupported scalar effect amount version")
+        counter_origin = self.schema_version == 2
+        if counter_origin:
+            if self.origin is not ScalarAmountOrigin.SOURCE or self.characteristic is not None or self.history_fact is not None:
+                raise PublicQueryAmountError("Counter scalar requires only its source origin")
+            if type(self.counter_name) is not str or normalized_counter_name(self.counter_name) != self.counter_name:
+                raise PublicQueryAmountError("Counter scalar requires a canonical counter name")
+        elif self.counter_name is not None:
+            raise PublicQueryAmountError("Legacy scalar amounts do not carry counters")
         if not isinstance(self.origin, ScalarAmountOrigin):
             raise PublicQueryAmountError("Scalar amount requires a typed origin")
         if type(self.coefficient) is not int or self.coefficient not in {-2, -1, 1, 2}:
@@ -51,9 +61,9 @@ class ScalarEffectAmountSpec:
         characteristic_origin = self.origin in {
             ScalarAmountOrigin.SOURCE, ScalarAmountOrigin.TARGET, ScalarAmountOrigin.EVENT_OBJECT,
         }
-        if characteristic_origin != (type(self.characteristic) is str and self.characteristic in CHARACTERISTICS):
+        if not counter_origin and characteristic_origin != (type(self.characteristic) is str and self.characteristic in CHARACTERISTICS):
             raise PublicQueryAmountError("Scalar characteristic does not match its origin")
-        if not characteristic_origin and self.characteristic is not None:
+        if (not characteristic_origin or counter_origin) and self.characteristic is not None:
             raise PublicQueryAmountError("This scalar origin has no characteristic")
         if self.origin is ScalarAmountOrigin.HISTORY:
             if type(self.history_fact) is not str or self.history_fact not in HISTORY_FACTS:
@@ -64,7 +74,7 @@ class ScalarEffectAmountSpec:
     @property
     def producer_identity(self) -> dict[str, Any]:
         return {"origin": self.origin.value, "characteristic": self.characteristic,
-                "history_fact": self.history_fact}
+                "history_fact": self.history_fact, **({"counter_name":self.counter_name} if self.schema_version==2 else {})}
 
     def to_dict(self) -> dict[str, Any]:
         return {"kind": SCALAR_AMOUNT_KIND, "schema_version": self.schema_version,
@@ -74,6 +84,8 @@ class ScalarEffectAmountSpec:
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> "ScalarEffectAmountSpec":
         fields = {"kind", "schema_version", "origin", "characteristic", "history_fact", "coefficient", "binding_id"}
+        if isinstance(value,Mapping) and value.get('schema_version')==2:
+            fields.add('counter_name')
         if not isinstance(value, Mapping) or set(value) != fields or value.get("kind") != SCALAR_AMOUNT_KIND:
             raise PublicQueryAmountError("Scalar amount fields are incomplete or unknown")
         try:
@@ -81,7 +93,7 @@ class ScalarEffectAmountSpec:
         except (TypeError, ValueError) as exc:
             raise PublicQueryAmountError("Scalar amount origin is unsupported") from exc
         return cls(origin=origin, characteristic=value["characteristic"], history_fact=value["history_fact"],
-                   coefficient=value["coefficient"], binding_id=value["binding_id"], schema_version=value["schema_version"])
+                   coefficient=value["coefficient"], binding_id=value["binding_id"], schema_version=value["schema_version"],counter_name=value.get('counter_name'))
 
 
 def scalar_amount_specs(value: Any) -> tuple[ScalarEffectAmountSpec, ...]:

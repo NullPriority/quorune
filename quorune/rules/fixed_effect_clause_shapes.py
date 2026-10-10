@@ -324,6 +324,11 @@ def fixed_optional_effect_node_capabilities(
     )
     if linked:
         return tuple(sorted({FIXED_OPTIONAL_EFFECT_CAPABILITY, *linked}))
+    from .optional_draw_discard import optional_draw_discard_is_closed
+    if target_schema is None and optional_draw_discard_is_closed(nested,player='$controller'):
+        components=(closed_effect_component_capabilities((nested[0],),target_schema=None,mechanics=mechanics-{FIXED_OPTIONAL_EFFECT_MECHANIC}),
+            fixed_affected_player_discard_node_capabilities(effects=(nested[1],),target_schema=None,mechanic_ids=mechanics,allow_controller=True))
+        return tuple(sorted({FIXED_OPTIONAL_EFFECT_CAPABILITY,*(cap for caps in components for cap in caps)})) if all(components) else ()
     if (
         not isinstance(nested, (list, tuple))
         or len(nested) != 1

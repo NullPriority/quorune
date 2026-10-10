@@ -68,6 +68,26 @@ program before that choice is offered. Missing typed cast semantics fail closed.
 
 ## Trust and replay
 
+Unconditional static Aura control lowers into a closed attached-source
+descriptor in the shared continuous-component registry. Runtime discovery
+uses the current reciprocal attachment, source ability at layer two, and attachment
+timestamp. The layer-two control owner composes this effect with existing
+resolved control and retains initial custody for restoration. Changing the
+Aura's controller changes its recipient-control effect. Source loss and a new
+recipient incarnation end applicability. A later layer-six ability removal
+does not undo the prior layer-two effect. Conditional and
+enchanted-player scopes remain residuals.
+
+A represented battlefield trigger may carry a closed optional `trigger_limit`
+descriptor. The compiler composes the exact once-each-turn suffix with an
+independently closed event and result, and retains the full source span.
+Trigger discovery consumes the intrinsic ability's use when it triggers,
+before stack placement. Countering it does not renew usage, and additional-
+trigger effects cannot exceed the limit. Copying its stack ability retains
+ordinary copy semantics. Current ability loss and control changes preserve
+usage; a new logical object or global turn sequence renews the allowance.
+Historical payloads without this descriptor retain their original shape.
+
 - Parsing success does not imply complete rules support.
 - Trust cannot exceed the closure of targets, costs, zones, events,
   replacements, runtime operations, and the selected rules profile.

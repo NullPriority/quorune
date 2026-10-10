@@ -618,6 +618,9 @@
         "quorune/characteristic_evaluation_host.py",
         "quorune/compiler/continuous_templates.py",
         "quorune/compiler/conditional_granted_ability_templates.py",
+        "quorune/creature_subtypes.py",
+        "tests/test_static_characteristic_labels.py",
+        "tests/fixtures/static-characteristic-labels.json",
         "quorune/compiler/public_state_fact_queries.py",
         "quorune/compiler/public_state_queries.py",
         "quorune/compiler/runtime_templates.py",
@@ -643,6 +646,7 @@
         "test_continuous_effect_duration",
         "test_fixed_public_state_characteristics",
         "test_fixed_query_keyword_grants",
+        "test_static_characteristic_labels",
         "test_token_creation_replacements",
         "test_turn_history_rules",
         "test_zone_trigger_events"
@@ -889,6 +893,8 @@
       "id": "fixed-zone-cast-lifecycle-contract",
       "patterns": [
         "mechanics/contracts/escape.json",
+        "tests/test_mayhem_rules.py",
+        "tests/fixtures/mayhem-cards.json",
         "mechanics/contracts/foretell.json",
         "mechanics/contracts/jump-start.json",
         "mechanics/contracts/plot.json",
@@ -922,6 +928,7 @@
         "test_card_program_trust",
         "test_fixed_casting_surface",
         "test_fixed_zone_cast_lifecycles",
+        "test_mayhem_rules",
         "test_fixed_zone_change_additional_costs",
         "test_flashback_rules",
         "test_game_record_v3",
@@ -1121,6 +1128,8 @@
         "tests/fixtures/fixed-self-entry-counter-cards.json",
         "tests/test_card_program_trust.py",
         "tests/test_fixed_keyword_entry_counters.py",
+        "tests/test_history_entry_counters.py",
+        "tests/fixtures/history-entry-counters.json",
         "tests/test_high_risk_interaction_assurance.py"
       ],
       "test_modules": [
@@ -1135,6 +1144,7 @@
         "test_game_record_v3",
         "test_high_risk_interaction_assurance",
         "test_history_entry_characteristics",
+        "test_history_entry_counters",
         "test_intrinsic_entry_counters",
         "test_kicker_rules",
         "test_riot_rules",
@@ -1423,13 +1433,18 @@
         "quorune/resolution_characteristic_model.py",
         "quorune/rules/resolution_characteristic_shapes.py",
         "tests/test_continuous_effect_duration.py",
-        "tests/test_fixed_source_characteristic_effects.py"
+        "tests/test_fixed_source_characteristic_effects.py",
+        "tests/test_fixed_evasion_grants.py",
+        "tests/fixtures/fixed-evasion-grants.json"
       ],
       "test_modules": [
         "test_continuous_effect_duration",
         "test_fixed_source_characteristic_effects",
         "test_fixed_target_effect_sequences",
         "test_fixed_query_keyword_grants",
+        "test_fixed_evasion_grants",
+        "test_landwalk",
+        "test_temporary_target_interactions",
         "test_query_power_toughness_definitions",
         "test_rules_scheduler"
       ]
@@ -1633,6 +1648,179 @@
         "test_cast_creature_targets",
         "test_persist_undying_rules",
         "test_source_maintenance"
+      ]
+    },
+    {
+      "id": "source-pronoun-result-contract",
+      "patterns": [
+        "quorune/compiler/source_self_effect_templates.py",
+        "quorune/compiler/trigger_result_templates.py",
+        "tests/fixtures/source-pronoun-results.json"
+      ],
+      "test_modules": [
+        "test_source_pronoun_results",
+        "test_fixed_counter_event_triggers",
+        "test_scalar_effect_amounts",
+        "test_card_program_trust",
+        "test_fixed_source_characteristic_effects"
+      ]
+    },
+    {
+      "id": "optional-draw-discard-contract",
+      "patterns": [
+        "quorune/rules/optional_draw_discard.py",
+        "quorune/compiler/optional_effect_templates.py",
+        "quorune/semantic_choices/optional_effect.py",
+        "tests/fixtures/optional-draw-discard-sequences.json"
+      ],
+      "test_modules": [
+        "test_optional_draw_discard_sequences",
+        "test_fixed_optional_effect_choices",
+        "test_card_program_trust",
+        "test_draw_restrictions",
+        "test_limited_event_triggers"
+      ]
+    },
+    {
+      "id": "bounded-target-characteristic-contract",
+      "patterns": [
+        "quorune/compiler/target_characteristic_sets.py",
+        "quorune/rules/target_characteristic_sets.py",
+        "tests/fixtures/target-characteristic-sets.json"
+      ],
+      "test_modules": [
+        "test_target_characteristic_sets",
+        "test_fixed_target_effect_sequences",
+        "test_card_program_trust",
+        "test_scalar_effect_amounts"
+      ]
+    },
+    {
+      "id": "combined-source-selected-tap-contract",
+      "patterns": [
+        "quorune/compiler/activated_tap_costs.py",
+        "quorune/rules/activation_costs.py",
+        "quorune/rules/activation/commit.py",
+        "tests/fixtures/combined-tap-activation-costs.json"
+      ],
+      "test_modules": [
+        "test_combined_tap_activation_costs",
+        "test_fixed_activation_tap_costs",
+        "test_card_program_trust",
+        "test_activating_abilities_rules"
+      ]
+    },
+    {
+      "id": "ordered-result-quantity-contract",
+      "patterns": [
+        "quorune/compiler/query_counter_sequences.py",
+        "quorune/compiler/public_query_effect_amounts.py",
+        "quorune/compiler/effect_template_composition.py",
+        "tests/fixtures/ordered-quantity-results.json"
+      ],
+      "test_modules": [
+        "test_ordered_quantity_results",
+        "test_fixed_controller_effect_sequences",
+        "test_public_query_effect_amounts",
+        "test_source_counter_amounts",
+        "test_scalar_effect_amounts",
+        "test_card_program_trust",
+        "test_closed_effect_programs"
+      ]
+    },
+    {
+      "id": "scheduled-player-result-contract",
+      "patterns": [
+        "quorune/compiler/scheduled_player_triggers.py",
+        "quorune/scheduled_player.py",
+        "quorune/rules/scheduled_player_shapes.py",
+        "tests/fixtures/scheduled-player-triggers.json"
+      ],
+      "test_modules": [
+        "test_scheduled_player_triggers",
+        "test_fixed_counter_event_triggers",
+        "test_upkeep_step_rules",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "source-counter-scalar-contract",
+      "patterns": [
+        "quorune/scalar_effect_amount_model.py",
+        "quorune/scalar_effect_amounts.py",
+        "quorune/compiler/scalar_effect_amounts.py",
+        "tests/fixtures/source-counter-amounts.json"
+      ],
+      "test_modules": [
+        "test_source_counter_amounts",
+        "test_scalar_effect_amounts",
+        "test_declared_effect_amounts",
+        "test_card_program_trust",
+        "test_counter_qualified_zone_events"
+      ]
+    },
+    {
+      "id": "aggregate-zone-event-query-contract",
+      "patterns": [
+        "quorune/compiler/aggregated_zone_event_bindings.py",
+        "quorune/compiler/fixed_counter_trigger_nodes.py",
+        "tests/fixtures/aggregated-zone-event-triggers.json"
+      ],
+      "test_modules": [
+        "test_aggregated_zone_event_triggers",
+        "test_qualified_zone_event_queries",
+        "test_fixed_counter_event_triggers",
+        "test_ability_word_event_triggers",
+        "test_limited_event_triggers",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "static-attached-control-contract",
+      "patterns": [
+        "quorune/attached_control.py",
+        "quorune/control_effects.py",
+        "quorune/rules/attached_control.py",
+        "quorune/compiler/attached_control_templates.py",
+        "quorune/semantic_runtime/attached_control.py",
+        "tests/fixtures/static-attached-control.json"
+      ],
+      "test_modules": [
+        "test_static_attached_control",
+        "test_fixed_control_effects",
+        "test_card_program_trust",
+        "test_card_program_v2",
+        "test_continuous_effect_duration"
+      ]
+    },
+    {
+      "id": "optional-public-action-counter-contract",
+      "patterns": [
+        "quorune/compiler/fixed_counter_trigger_nodes.py",
+        "tests/fixtures/optional-object-action-counters.json"
+      ],
+      "test_modules": [
+        "test_optional_object_action_counters",
+        "test_repeatable_object_action_triggers",
+        "test_fixed_counter_event_triggers",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "typed-trigger-usage-limit-contract",
+      "patterns": [
+        "quorune/compiler/trigger_limit_nodes.py",
+        "quorune/rules/trigger_limits.py",
+        "quorune/activation_usage.py",
+        "quorune/trigger_discovery.py",
+        "tests/fixtures/limited-event-triggers.json"
+      ],
+      "test_modules": [
+        "test_limited_event_triggers",
+        "test_counter_placement_events",
+        "test_card_program_v2",
+        "test_card_program_trust",
+        "test_trigger_processing_owner"
       ]
     },
     {
@@ -1867,6 +2055,8 @@
         "quorune/block_transitions.py",
         "quorune/compiler/fixed_counter_trigger_nodes.py",
         "quorune/compiler/fixed_public_action_event_bindings.py",
+        "tests/test_repeatable_object_action_triggers.py",
+        "tests/fixtures/repeatable-object-action-triggers.json",
         "quorune/compiler/fixed_public_event_trigger_bindings.py",
         "quorune/compiler/fixed_public_multi_event_bindings.py",
         "quorune/compiler/spell_cast_predicates.py",
@@ -1894,6 +2084,7 @@
         "test_fixed_counter_zone_triggers",
         "test_morph_rules",
         "test_ordinary_cycling",
+        "test_repeatable_object_action_triggers",
         "test_prowess_rules",
         "test_rules_scheduler",
         "test_storm_rules"

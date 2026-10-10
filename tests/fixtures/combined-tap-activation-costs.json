@@ -1,0 +1,245 @@
+{
+  "cards": [
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}",
+      "name": "Devout Chaplain",
+      "oracle_id": "1e575a82-e128-4637-87cd-f075654bc41b",
+      "oracle_text": "{T}, Tap two untapped Humans you control: Exile target artifact or enchantment.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2020-04-17",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Human Cleric"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{U}",
+      "name": "Keeper of the Nine Gales",
+      "oracle_id": "39c4357b-6093-486b-8131-041a3f89af75",
+      "oracle_text": "Flying\n{T}, Tap two untapped Birds you control: Return target permanent to its owner's hand.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2003-02-03",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Bird Wizard"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}{W}",
+      "name": "Selesnya Evangel",
+      "oracle_id": "4a2fea39-99d6-4766-9f2c-0a63925349cb",
+      "oracle_text": "{1}, {T}, Tap an untapped creature you control: Create a 1/1 green Saproling creature token.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2024-01-12",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Elf Shaman"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Cohort"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{B}",
+      "name": "Zulaport Chainmage",
+      "oracle_id": "017f4471-db5a-4ad0-97b3-b1f12b52578a",
+      "oracle_text": "Cohort \u2014 {T}, Tap an untapped Ally you control: Target opponent loses 2 life.",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2016-01-22",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Human Shaman Ally"
+    },
+    {
+      "oracle_id": "fixture:combined-tap-artifact",
+      "name": "Generic Combined Tap Artifact",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "type_line": "Artifact",
+      "oracle_text": "",
+      "power": null,
+      "toughness": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Vigilance"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "To activate a cohort ability, the Ally with that ability must have been under your control continuously since the beginning of your most recent turn. Informally, it can\u2019t have \u201csummoning sickness.\u201d However, the other Ally you tap can be one that just came under your control. (Note that tapping the second Ally doesn\u2019t use {T} [the tap symbol].)",
+      "oracle_id": "017f4471-db5a-4ad0-97b3-b1f12b52578a",
+      "published_at": "2016-01-22",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can tap any two untapped Humans you control, including ones you haven\u2019t controlled continuously since the beginning of your most recent turn, to pay the cost of Devout Chaplain\u2019s activated ability. You must have controlled Devout Chaplain continuously since the beginning of your most recent turn, however.",
+      "oracle_id": "1e575a82-e128-4637-87cd-f075654bc41b",
+      "published_at": "2012-05-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can tap any untapped creature you control, including one you haven't controlled continuously since the beginning of your most recent turn, to pay the cost of Selesnya Evangel's activated ability. You must have controlled Selesnya Evangel continuously since the beginning of your most recent turn, however.",
+      "oracle_id": "4a2fea39-99d6-4766-9f2c-0a63925349cb",
+      "published_at": "2024-01-12",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

@@ -168,6 +168,8 @@ def _x_dynamic_amount_body(
             normalized = " ".join(definition.casefold().split())
             if normalized == "the total life lost by your opponents this turn":
                 value_source = DynamicEntryCounterValueSource.OPPONENTS_LIFE_LOST
+            elif normalized in {"the amount of life you've gained this turn", "the amount of life you gained this turn"}:
+                value_source = DynamicEntryCounterValueSource.CONTROLLER_LIFE_GAINED
             else:
                 query_match = re.fullmatch(
                     r"the number of (?P<quantity>.+)",
@@ -232,8 +234,10 @@ def _counted_dynamic_amount_body(
         quantity = None
         if normalized == "color of mana spent to cast it":
             value_source = DynamicEntryCounterValueSource.MANA_COLORS_SPENT
-        elif normalized == "creature that died this turn":
+        elif normalized in {"creature that died this turn", "creatures that died this turn"}:
             value_source = DynamicEntryCounterValueSource.CREATURES_DIED
+        elif normalized == "creature that died under your control this turn":
+            value_source = DynamicEntryCounterValueSource.CONTROLLER_CREATURES_DIED
         elif normalized == "other spell cast this turn":
             value_source = DynamicEntryCounterValueSource.OTHER_SPELLS_CAST
         else:
@@ -320,6 +324,10 @@ def _conditional_dynamic_amount_body(
                 .split()
             )
             conditions = {
+                "a permanent left the battlefield under your control this turn": (
+                    DynamicEntryCounterValueSource.CONTROLLER_PERMANENTS_LEFT,
+                    1,
+                ),
                 "you attacked this turn": (
                     DynamicEntryCounterValueSource.CONTROLLER_ATTACKED,
                     1,

@@ -19,6 +19,14 @@ current counts and residual inventories.
 
 ## Compiler result
 
+Source-self counter result quantities use the existing scalar amount owner.
+The closed version-two descriptor names one canonical counter kind. Current
+resolution reads the original source object's counters; departure uses the
+sealed last known snapshot, including before sacrifice activation costs.
+A returning incarnation never substitutes. Missing snapshots fail closed,
+while a known empty counter map yields zero. Version-one scalar descriptors
+retain their original field set and serialization.
+
 For each Oracle face and material ability, compilation records:
 
 - Oracle ID, face identity, stable ability key, and active zones;

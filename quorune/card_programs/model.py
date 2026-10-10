@@ -338,6 +338,7 @@ def ability_to_card_dict(program: "SemanticProgram") -> dict[str, Any]:
             "handlers": _clone(program.handlers),
             "event_condition": _clone(program.event_condition),
             "coverage": list(program.coverage),
+            **({"trigger_limit": _clone(program.trigger_limit)} if program.trigger_limit is not None else {}),
         },
     }
 
@@ -353,7 +354,9 @@ def ability_from_card_dict(
     runtime = value.get("runtime")
     if not isinstance(runtime, Mapping):
         raise CardProgramError("ability.runtime must be an object")
-    _exact_fields(runtime, _RUNTIME_FIELDS, field="ability.runtime")
+    _exact_fields(runtime, _RUNTIME_FIELDS | ({"trigger_limit"} if "trigger_limit" in runtime else set()), field="ability.runtime")
+    if "trigger_limit" in runtime and not isinstance(runtime["trigger_limit"], Mapping):
+        raise CardProgramError("ability.runtime.trigger_limit must be an object")
     if type(runtime.get("requires_arbiter")) is not bool:
         raise CardProgramError(
             "ability.runtime.requires_arbiter must be boolean"
@@ -419,6 +422,11 @@ def ability_from_card_dict(
         handlers=list(_objects(runtime.get("handlers"), field="handlers")),
         target_schema=_clone(dict(targets)) if targets is not None else None,
         cost_schema=_clone(dict(costs)) if costs is not None else None,
+        trigger_limit=(
+            _clone(dict(runtime["trigger_limit"]))
+            if isinstance(runtime.get("trigger_limit"), Mapping)
+            else None
+        ),
         event_condition=(
             _clone(dict(runtime["event_condition"]))
             if isinstance(runtime.get("event_condition"), Mapping)

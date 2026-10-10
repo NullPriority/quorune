@@ -99,6 +99,8 @@ def compiled_fixed_zone_cast_permission(
 
     if fixed_zone_cast_designation(host.state, card, actor=seat) is not None:
         return True
+    if compiled_mayhem_permission(host, seat, card):
+        return True
     return bool(
         card.owner == seat
         and card.zone == "graveyard"
@@ -111,6 +113,22 @@ def compiled_fixed_zone_cast_permission(
             )
         )
     )
+
+
+def compiled_mayhem_permission(host: Any, seat: str, card: Any) -> bool:
+    """Bind Mayhem to the current owner-graveyard incarnation and discard turn."""
+
+    if card.owner != seat or card.zone != "graveyard" or card.zone_change_counter < 1:
+        return False
+    if compiled_fixed_cast_lifecycle_spec(host, card, FixedCastLifecycleKind.MAYHEM) is None:
+        return False
+    history = host.state.turn_history
+    if history is None or history.schema_version != 1 or history.turn_sequence != host.state.turn_sequence:
+        return False
+    from .turn_history import current_turn_history_events
+    discarded_identity = f"{card.object_id}@{card.zone_change_counter - 1}"
+    return any(event.actor == seat and event.object_incarnation == discarded_identity
+               for event in current_turn_history_events(history, turn_sequence=host.state.turn_sequence, kind="card_discarded"))
 
 
 def compiled_sneak_timing_permissions(

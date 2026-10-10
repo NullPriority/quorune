@@ -169,7 +169,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v295"
+ORACLE_COMPILER_VERSION = "oracle-ir-v311"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -881,7 +881,7 @@ def _trigger_node(
             source_event=True, compile_fixed=lambda text: effect_template(text, card_name=card_name)) or source_self_contextual_effect_template(
             trigger.group("body"),
             card_name=card_name,
-            event_phrase=event_phrase,
+            event_phrase=event_phrase, compile_effect=effect_template,
         )
         template, effects, target_schema, mechanics = (
             source_bound_effect
@@ -1023,6 +1023,13 @@ def _activated_or_fixed_event_trigger_node(
     effect_template: Any,
     trigger_effect_template: Any | None = None,
 ) -> OracleNode | None:
+    from .compiler.trigger_limit_nodes import limited_trigger_node
+    limited = limited_trigger_node(line=line, material_line=material_line, compile_inner=_activated_or_fixed_event_trigger_node,
+        arguments=dict(node_id=node_id, span=span, card_name=card_name, type_line=type_line, keywords=keywords,
+            trusted_mechanics=trusted_mechanics, capability_registry=capability_registry, capability_profile=capability_profile,
+            residuals=residuals, effect_template=effect_template, trigger_effect_template=trigger_effect_template))
+    if limited is not None:
+        return limited
     activated = activated_oracle_node(
         node_id=node_id, line=line, span=span,
         card_name=card_name, type_line=type_line,

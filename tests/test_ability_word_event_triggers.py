@@ -169,13 +169,23 @@ class AbilityWordEventTriggerCompilerTests(unittest.TestCase):
                          node.effects[0])
         self.assertIn("trigger.event.spell_cast_creature_target", node.capability_dependencies)
 
+    def test_decorative_ability_word_retains_aggregate_event_and_original_span(self):
+        text='Constellation — Whenever one or more enchantments you control enter, draw a card.'
+        record=replace(self.db.lookup('Heroic Counter Fixture'),name='Aggregate Ability Word Fixture',oracle_text=text,keywords=())
+        ir=compile_oracle_card(record,capability_registry=self.capabilities,capability_profile='commander_review')
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        node=next(n for f in ir.faces for n in f.nodes if n.exact)
+        self.assertEqual((0,len(text)),(node.span.start,node.span.end))
+        self.assertIn('one_or_more_event_batch',node.runtime_coverage)
+        self.assertEqual('draw',node.effects[0]['op'])
+
     def test_adjacent_event_and_body_grammar_remain_material(self):
         base = self.db.lookup("Heroic Counter Fixture")
         cases = (
             "Heroic — Whenever you cast a spell that targets two or more creatures, draw a card.",
             "Heroic — Whenever an opponent casts a spell that targets this creature, draw a card.",
             "Magecraft — Whenever you cast or copy a permanent spell, draw a card.",
-            "Constellation — Whenever one or more enchantments you control enter, draw a card.",
+            "Constellation — Whenever one or more enchantments you control enter, put a charge counter on each of them.",
             "Battalion — Whenever this creature and two other creatures attack, draw a card.",
             "Heroic — Whenever you cast a spell that targets this creature, exchange control of all permanents.",
         )

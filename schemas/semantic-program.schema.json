@@ -37,6 +37,12 @@
     "target_schema": {"type": ["object", "null"]},
     "cost_schema": {"type": ["object", "null"]},
     "event_condition": {"type": ["object", "null"]},
+    "trigger_limit": {
+      "type": ["object", "null"],
+      "properties": {"schema_version": {"const": 1}, "kind": {"const": "once_per_turn"}},
+      "required": ["schema_version", "kind"],
+      "additionalProperties": false
+    },
     "coverage": {"type": "array", "items": {"type": "string"}},
     "capability_dependencies": {
       "type": "array",

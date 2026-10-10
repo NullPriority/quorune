@@ -268,6 +268,25 @@ def apply_fixed_resolution_characteristics(
     return refs
 
 
+def apply_target_characteristics(host,effect,*,actor,reason):
+    from .rules.target_characteristic_sets import decode_target_characteristics
+    from .errors import GameRuleError
+    instruction={k:v for k,v in effect.items() if k!='_runtime_source'}
+    try:keywords=decode_target_characteristics(instruction)
+    except (ValueError,TypeError,KeyError) as exc:raise GameRuleError(str(exc)) from exc
+    refs=instruction['cards']
+    if not isinstance(refs,(list,tuple)) or any(type(r) is not str or not r for r in refs) or len(set(refs))!=len(refs) or len(refs)>instruction['maximum_targets']:
+        raise GameRuleError('Target characteristic references are malformed')
+    cards=tuple(host._resolve_object(actor,ref,zones={'battlefield'}) for ref in refs)
+    components=[]
+    if keywords:components.append(ResolutionContinuousComponent(Layer.ABILITY,'6',tuple(ContinuousOperation('add_ability',k) for k in keywords)))
+    if instruction['power'] or instruction['toughness']:
+        components.append(ResolutionContinuousComponent(Layer.POWER_TOUGHNESS,'7c',(ContinuousOperation('modify_power_toughness',(instruction['power'],instruction['toughness'])),)))
+    create_resolution_continuous_effect_components(host,source=resolution_effect_source(host,effect,fallback_card=cards[0] if cards else None),targets=cards,components=tuple(components))
+    host._log(actor,'permanent.target_characteristics',reason,{'objects':list(refs),'reason':reason},importance=1,changed_objects=[c.object_id for c in cards])
+    return tuple(refs)
+
+
 def create_resolution_continuous_effect(
     host: ContinuousEffectStateHost,
     *,

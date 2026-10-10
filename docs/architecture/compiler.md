@@ -9,10 +9,35 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+Closed one-or-more public entry and departure subjects reuse the singular
+typed characteristic query grammar. The compiler marks their generated
+trigger for one occurrence per committed simultaneous batch, scoped to source
+incarnation and ability identity. Separate batches remain separate events.
+The once-each-turn descriptor independently limits qualifying entry triggers.
+Result references that require the entire matching object set remain
+residuals, as do unsupported sibling abilities.
+
 The compiler transforms a pinned local card and rulings snapshot into typed
 Oracle IR, recognized semantic nodes, dependency declarations, material
 residuals, and a canonical `CardProgram`. For the same inputs and compiler
 version, the result must be deterministic.
+
+An independently bound source-self trigger can normalize a source-led result
+using “it,” “him,” or “her” before exact leaf compilation. This narrow production
+admits direct source stat, damage, and counter results. It preserves the full
+original source span and delegates incarnation and last known information to
+existing owners. Newly created token references, targeted anaphora, union-event
+subjects, and unrepresented complete bodies are not rebound to the source.
+Effects on the source itself carry the existing logical-object reference;
+damage source references retain their ordinary last known source information.
+
+Scheduled each-player and each-opponent upkeep triggers preserve the trigger
+source's controller separately from the active player. Fixed nontargeted
+draw, life, mill, and damage results bind to the recorded step player. A
+current enchanted-object controller schedule uses the reciprocal attachment
+and the recipient's controller at discovery. Changing custody later does not
+change the queued result's affected player. Unsupported player roles,
+dynamic quantities, and sibling abilities remain residuals.
 
 ```mermaid
 flowchart LR
@@ -1121,9 +1146,13 @@ inexact chapter material remains residual. Each ordinary chapter program also
 contributes its semantic identity to the shared current layer-6 ability
 snapshot. Threshold dispatch and final-chapter cleanup therefore suppress a
 removed or absent current-face chapter without stopping lore progression or
-replaying a threshold after the ability returns. Other nontrigger ability words,
-quoted text, and unsupported event or effect grammar also remain material and
-fail closed through their existing owners.
+replaying a threshold after the ability returns. Closed static characteristic
+productions also remove one decorative ability or flavor label before their
+existing grammar runs, while retaining the original text and span. Solved,
+Solve, Class, chapter and modal markers retain their semantic boundaries.
+Unknown body grammar and quoted text without a separately exact inner owner
+remain material. Pinned subtype vocabulary includes the irregular plural
+"Werewolves"; a Wolf/Werewolf union selects each current recipient once.
 
 `compiler/fixed_counter_trigger_nodes.py` owns one shared closed normalized-
 event binding for represented beginnings of steps; a land entering under the
@@ -1252,6 +1281,12 @@ source-spanned residuals or explicit unsupported-interaction boundaries.
 
 ## Invariants
 
+Fixed keyword producers admit the five basic landwalk variants and ordinary
+Horsemanship through their existing block-legality capability owners. Live
+queried and attached grants use current recipient relationships, while exact
+resolution-locked grants retain their existing incarnation and duration rules.
+Chosen or qualified landwalk and as-though evasion overrides remain residual.
+
 Fading and Vanishing lower their separate entry and lifecycle abilities to
 the current counter and trigger owners. Vanishing retains its intervening-if
 upkeep and separate last-counter sacrifice trigger; ordinary counter removals
@@ -1347,7 +1382,16 @@ Fixed ordinary-mana Buyback, Dash, Escape, Foretell, Plot, Warp, and
 positive-count Suspend, plus bare Jump-start, Rebound, and Retrace, lower
 through one typed cast-lifecycle owner. Every descriptor declares both public
 and zone-cast capabilities required by the registered shared handler, plus its
-kind-specific cost or combat dependencies. This conservative descriptor
+kind-specific cost or combat dependencies. Mayhem adds a version-four fixed or
+bare descriptor within this same registry. Current owner-graveyard permission
+requires an exact adjacent discard incarnation in the current turn journal.
+Fixed costs use the alternative branch; bare declarations use printed spell
+costs or normal land-play timing and limits. Mandatory additional costs,
+current-ability revalidation and ordinary destinations remain authoritative.
+Hybrid, variable, snow, Phyrexian and nonmana Mayhem costs remain residual.
+Every prior descriptor retains its original version and serialized shape.
+
+This conservative descriptor
 contract does not grant a new casting permission or bypass current-ability
 validation; unavailable dependencies keep admission fail-closed. Dash contributes
 an alternative cost whenever the canonical casting owner already authorizes the
@@ -1685,8 +1729,14 @@ a player or a planeswalker or battle; opponent noncombat damage; and exact
 one-or-more attack, combat-damage, token-entry, and graveyard-departure
 batches. These predicates consume only the existing attack, damage, Cycling,
 and cause-preserving zone occurrences. First-time, once-per-turn, aggregate
-sacrifice, tap-state, source-token damage, chosen, modified, and
-counter-bearing public-action forms remain residual.
+sacrifice, source-token damage, chosen and modified forms remain residual.
+Repeatable sacrifice and discard subscriptions also compose with independently
+exact counter-placement bodies. "Another" excludes the current source reference;
+sacrifice predicates consume pre-event custody and characteristics, while typed
+discard retains its cause after a visible destination replacement. Noncreature,
+nonland discard requires both type exclusions. The existing current ability,
+APNAP, source-incarnation and counter transaction owners execute the result;
+no aggregate or per-turn limiter is inferred.
 
 `compiler/qualified_zone_event_bindings.py` adds closed single-object public
 entry, death, graveyard, and leave subjects through that same event-effect

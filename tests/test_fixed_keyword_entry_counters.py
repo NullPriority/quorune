@@ -565,13 +565,24 @@ class FixedKeywordEntryCompilerTests(unittest.TestCase):
                     ),
                 )
 
+    def test_public_turn_history_entry_amounts_promote_complete_composition(self):
+        source=self.db.lookup('Dynamic X Entrant')
+        for text in ('This creature enters with two +1/+1 counters on it if a permanent left the battlefield under your control this turn.',
+                     "This creature enters with X +1/+1 counters on it, where X is the amount of life you've gained this turn."):
+            with self.subTest(text=text):
+                ir=compile_oracle_card(replace(source,oracle_text=text),capability_registry=self.capabilities,capability_profile='commander_review')
+                self.assertEqual('exact',ir.status,ir.material_residuals)
+                node=next(n for f in ir.faces for n in f.nodes if n.template_id==DYNAMIC_SELF_ENTRY_COUNTER_TEMPLATE)
+                self.assertEqual('replacement_effect',node.kind)
+                self.assertIn(DYNAMIC_SELF_ENTRY_COUNTER_CAPABILITY,node.capability_dependencies)
+
     def test_dynamic_self_entry_counter_exclusions_fail_closed(self):
         source = self.db.lookup("Dynamic X Entrant")
         unsupported = (
             "This creature enters with X +1/+1 counters on it, where X is its power.",
             "This creature enters with a +1/+1 counter on it for each time it was kicked.",
-            "This creature enters with two +1/+1 counters on it if a permanent left the battlefield under your control this turn.",
-            "This creature enters with X +1/+1 counters on it, where X is the amount of life you've gained this turn.",
+            "This creature enters with two +1/+1 counters on it if a permanent left the battlefield under your control last turn.",
+            "This creature enters with X +1/+1 counters on it, where X is the amount of life opponents have lost this turn.",
             "This creature enters with your choice of a flying counter or a reach counter on it.",
             "Each other creature you control enters with an additional +1/+1 counter on it.",
             "This creature enters with a +1/+1 counter and a shield counter on it.",

@@ -27,7 +27,8 @@ _PUBLIC_SACRIFICE_TRIGGER = re.compile(
     r"(?P<another>another )?"
     r"(?P<object>a Clue|a Food|a Blood token|a token|a land|a creature|"
     r"an artifact|an enchantment|a permanent|an artifact or creature|"
-    r"another creature or artifact), (?P<body>.+)$",
+    r"another creature or artifact|Clue|Food|Blood token|token|land|creature|"
+    r"artifact|enchantment|permanent), (?P<body>.+)$",
     re.IGNORECASE,
 )
 _SOURCE_SACRIFICE_TRIGGER = re.compile(
@@ -38,7 +39,7 @@ _SOURCE_SACRIFICE_TRIGGER = re.compile(
 _PUBLIC_DISCARD_TRIGGER = re.compile(
     r"^Whenever (?P<actor>you|an opponent|a player) "
     r"(?P<verb>discard|discards) "
-    r"(?P<object>a card|a land card|a creature card|a nonland card), "
+    r"(?P<object>a card|a land card|a creature card|a nonland card|a noncreature, nonland card), "
     r"(?P<body>.+)$",
     re.IGNORECASE,
 )
@@ -154,6 +155,8 @@ def _public_sacrifice_spec(
     exclude_source = bool(match.group("another")) or raw_object.startswith(
         "another "
     )
+    if not exclude_source and not raw_object.startswith(("a ", "an ")):
+        return None
     subject = raw_object.removeprefix("a ").removeprefix("an ")
     subject = subject.removeprefix("another ")
     conditions: list[Mapping[str, Any] | None] = [
@@ -239,13 +242,13 @@ def _public_discard_spec(
                 "value": [subject.removesuffix(" card")],
             }
         )
-    elif subject == "nonland card":
+    elif subject in {"nonland card", "noncreature, nonland card"}:
         conditions.append(
             {
                 "not": {
                     "field": "types",
                     "op": "contains_any",
-                    "value": ["land"],
+                    "value": ["creature", "land"] if subject == "noncreature, nonland card" else ["land"],
                 }
             }
         )
@@ -258,7 +261,7 @@ def _public_discard_spec(
     }[actor]
     return _spec(
         "card.discarded",
-        f"{actor_variant}_discards_{subject.removesuffix(' card')}",
+        f"{actor_variant}_discards_{subject.removesuffix(' card').replace(', ', '_')}",
         match.group("body"),
         "fixed-counter-public-zone-trigger-v1",
         "trigger-event-normalized-zone-change",

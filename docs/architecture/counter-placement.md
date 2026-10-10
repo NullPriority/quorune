@@ -46,6 +46,14 @@ per-turn, off-battlefield removal and one-or-more-on-one-or-more-objects
 aggregation remain residual, as do independently unsupported result bodies.
 
 `counter_placement.py` is the focused authoritative owner for represented
+fixed optional results from normalized public sacrifice and discard triggers.
+The existing controller-owned put-or-decline choice places no counters on
+decline and delegates acceptance to the same replacement-aware transaction.
+A replaced discard destination retains its typed discard cause. Compound and
+linked follow-up bodies, unsupported targets, and independent sibling abilities
+remain outside this optional-result contract.
+
+`counter_placement.py` also owns represented
 effect-generated, cost-generated, and typed rule-result counters placed on
 players, battlefield permanents, and the already modeled card-zone counter
 children. It separates the operation into preparation and commit:
@@ -85,7 +93,14 @@ existing authorities. All-kind, chosen and player counter doubling remains
 outside this named-permanent grammar.
 
 Token preparation uses that same nested zone-entry replacement tree for
-represented intrinsic and self-entry counter components. Prospective objects
+represented intrinsic and self-entry counter components. Entry preparation
+can calculate counter amounts from committed current-turn departure, life-gain
+and creature-death facts. Departure and death use the prior controller, while
+life gain sums actual gains for the prospective entry controller independently
+of later losses. The amount freezes before replacement ordering; an unavailable
+or stale journal rejects these new descriptors before entry. Historical
+descriptors retain their existing compatibility behavior.
+Prospective objects
 are explicit new outside-zone tokens; they remain absent from live state until
 every affected-player selection is complete. The shared layer-6 component
 query evaluates their copiable abilities at the prospective battlefield

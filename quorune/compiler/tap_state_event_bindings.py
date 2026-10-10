@@ -120,8 +120,9 @@ def public_trigger_binding_spec(material_line: str, *, card_name: str | None):
     from .target_announcement_bindings import target_announcement_binding_spec
     from .event_card_return_templates import self_death_return_binding
     from .counter_placement_event_bindings import counter_placement_event_binding_spec
+    from .scheduled_player_triggers import scheduled_player_binding_spec
     for parser in (fixed_public_event_binding_spec, fixed_public_action_event_binding_spec,
-                   tap_state_event_binding_spec, counter_placement_event_binding_spec, fixed_public_multi_event_binding_spec, target_announcement_binding_spec, self_death_return_binding):
+                   tap_state_event_binding_spec, counter_placement_event_binding_spec, fixed_public_multi_event_binding_spec, target_announcement_binding_spec, self_death_return_binding, scheduled_player_binding_spec):
         value = parser(material_line, card_name=card_name)
         if value is not None:
             return value

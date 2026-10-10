@@ -11,6 +11,7 @@ from ...cast_lifecycles import fixed_zone_cast_designation
 from ...compiled_cast_lifecycles import (
     compiled_fixed_cast_lifecycle_spec,
     compiled_fixed_cast_lifecycle_specs,
+    compiled_mayhem_permission,
 )
 from .alternative_costs import (
     alternative_cost_condition_met,
@@ -55,6 +56,7 @@ def with_fixed_cast_lifecycle_costs(
     for spec in specs:
         if spec.kind in {
             FixedCastLifecycleKind.MADNESS,
+            FixedCastLifecycleKind.MAYHEM,
             FixedCastLifecycleKind.ESCAPE,
             FixedCastLifecycleKind.FORETELL,
             FixedCastLifecycleKind.JUMP_START,
@@ -137,6 +139,14 @@ def zone_lifecycle_base_options(
     if card.zone != "graveyard":
         return []
     result: list[dict[str, Any]] = []
+    if compiled_mayhem_permission(host, seat, card):
+        mayhem = compiled_fixed_cast_lifecycle_spec(host, card, FixedCastLifecycleKind.MAYHEM)
+        if mayhem is not None:
+            if mayhem.mana_cost is not None:
+                result.append(mayhem.fixed_cost_option())
+            else:
+                result.extend(mayhem.printed_zone_cost_option(option) for option in printed
+                              if str(option.get('id') or '') == 'normal')
     escape = compiled_fixed_cast_lifecycle_spec(
         host,
         card,

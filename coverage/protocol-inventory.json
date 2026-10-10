@@ -876,6 +876,7 @@
         "semantic_schema_version",
         "target_schema",
         "tests",
+        "trigger_limit",
         "trust_level",
         "version"
       ],
@@ -897,7 +898,7 @@
       "type": "object"
     }
   ],
-  "source_fingerprint": "f34b66eb749c269f83116206d63bb7f1d991d4e4e01d712d145ccbd5b3698422",
+  "source_fingerprint": "7346343d4a1dddb57b408c40c7d82596e47100b4d5e7b7f26cb1d83cb682c8cb",
   "top_blockers": [],
   "websocket_routes": [
     "/api/v1/games/{game_id}/stream"

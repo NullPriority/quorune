@@ -259,6 +259,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "continuous.attached.fixed_characteristics",
                 "continuous.characteristics.fixed_public_state",
                 "continuous.characteristics.fixed_public_setting",
+                "continuous.control.attached_source",
                 "continuous.ability.fixed_public_state_grant",
                 "continuous.defender_permission.public_state",
                 "continuous.as_unblocked_assignment.public_state",
