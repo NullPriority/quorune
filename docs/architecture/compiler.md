@@ -1121,9 +1121,13 @@ inexact chapter material remains residual. Each ordinary chapter program also
 contributes its semantic identity to the shared current layer-6 ability
 snapshot. Threshold dispatch and final-chapter cleanup therefore suppress a
 removed or absent current-face chapter without stopping lore progression or
-replaying a threshold after the ability returns. Other nontrigger ability words,
-quoted text, and unsupported event or effect grammar also remain material and
-fail closed through their existing owners.
+replaying a threshold after the ability returns. Closed static characteristic
+productions also remove one decorative ability or flavor label before their
+existing grammar runs, while retaining the original text and span. Solved,
+Solve, Class, chapter and modal markers retain their semantic boundaries.
+Unknown body grammar and quoted text without a separately exact inner owner
+remain material. Pinned subtype vocabulary includes the irregular plural
+"Werewolves"; a Wolf/Werewolf union selects each current recipient once.
 
 `compiler/fixed_counter_trigger_nodes.py` owns one shared closed normalized-
 event binding for represented beginnings of steps; a land entering under the

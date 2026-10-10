@@ -55,7 +55,7 @@ _IRREGULAR_CREATURE_PLURALS = dict(
         "faeries:faerie|heroes:hero|kithkin:kithkin|merfolk:merfolk|"
         "mice:mouse|myr:myr|octopuses:octopus|oxen:ox|pegasi:pegasus|"
         "phyrexians:phyrexian|treefolk:treefolk|"
-        "wolves:wolf"
+        "wolves:wolf|werewolves:werewolf"
     ).split("|")
 )
 

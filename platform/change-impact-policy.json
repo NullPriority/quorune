@@ -618,6 +618,9 @@
         "quorune/characteristic_evaluation_host.py",
         "quorune/compiler/continuous_templates.py",
         "quorune/compiler/conditional_granted_ability_templates.py",
+        "quorune/creature_subtypes.py",
+        "tests/test_static_characteristic_labels.py",
+        "tests/fixtures/static-characteristic-labels.json",
         "quorune/compiler/public_state_fact_queries.py",
         "quorune/compiler/public_state_queries.py",
         "quorune/compiler/runtime_templates.py",
@@ -643,6 +646,7 @@
         "test_continuous_effect_duration",
         "test_fixed_public_state_characteristics",
         "test_fixed_query_keyword_grants",
+        "test_static_characteristic_labels",
         "test_token_creation_replacements",
         "test_turn_history_rules",
         "test_zone_trigger_events"

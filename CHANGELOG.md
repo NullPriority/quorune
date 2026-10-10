@@ -11,6 +11,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Normalize decorative labels on independently closed static characteristic
+  abilities while retaining source spans and semantic marker boundaries.
+  Wolf/Werewolf public unions use canonical subtype vocabulary.
+
 - Grant fixed basic landwalk and Horsemanship through typed current
   characteristics and shared offered/accepted block legality. Source departure,
   recipient changes, defending land types and temporary expiration retain the
