@@ -1122,6 +1122,31 @@
       ]
     },
     {
+      "id": "public-quantity-mana-contract",
+      "patterns": [
+        "quorune/public_quantity_mana*.py",
+        "quorune/compiler/public_quantity_mana*.py",
+        "quorune/rules/public_quantity_mana_shapes.py",
+        "quorune/semantic_runtime/public_quantity_mana.py",
+        "quorune/mana_ability_runtime.py",
+        "quorune/mana_activation.py",
+        "quorune/choice_forms.py",
+        "tests/test_public_quantity_mana.py",
+        "tests/fixtures/public-quantity-mana-cards.json"
+      ],
+      "test_modules": [
+        "test_public_quantity_mana",
+        "test_fixed_mana_abilities",
+        "test_color_set_mana_abilities",
+        "test_fixed_source_counter_activation_costs",
+        "test_choice_forms",
+        "test_card_program_trust"
+      ],
+      "test_suites": [
+        "casting-costs-mana"
+      ]
+    },
+    {
       "id": "fixed-constrained-mana-contract",
       "patterns": [
         "platform/reusable-piece-interaction-evidence.json",

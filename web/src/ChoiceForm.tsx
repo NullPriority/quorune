@@ -253,6 +253,31 @@ function ManaModes({
   onValue: (value: JsonValue) => void;
 }) {
   const selected = JSON.stringify(value ?? {});
+  const allowed = list(field.allowed_colors).map(String);
+  if (allowed.length) {
+    const total = Number(field.total ?? 0);
+    const allocation = record(value);
+    return (
+      <fieldset className="choice-field mana-modes">
+        <legend><FieldLabel field={field} /></legend>
+        <p>Add {total} mana{field.single_color ? " of one color" : " in any combination"}.</p>
+        {allowed.map((color) => (
+          <label key={color} className="choice-option">
+            {field.single_color ? (
+              <input type="radio" name={text(field.name)}
+                checked={Number(allocation[color] ?? 0) === total && Object.keys(allocation).includes(color)}
+                onChange={() => onValue({ [color]: total })} />
+            ) : (
+              <input type="number" min={0} max={total} step={1}
+                value={Number(allocation[color] ?? 0)} aria-label={`${color} mana to add`}
+                onChange={(event) => onValue({ ...allocation, [color]: Number(event.target.value) })} />
+            )}
+            <span>{color}</span>
+          </label>
+        ))}
+      </fieldset>
+    );
+  }
   return (
     <fieldset className="choice-field mana-modes">
       <legend><FieldLabel field={field} /></legend>

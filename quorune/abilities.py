@@ -13,6 +13,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 import re
 from typing import Any, Iterable, Mapping, Sequence
+from .public_quantity_mana_model import validate_dynamic_mana_output as _validate_dynamic_mana_output
 
 from .activation_usage import ActivationLimit
 from .activation_mana_cost import ActivationManaCostOption
@@ -298,7 +299,7 @@ class ActivatedAbility:
     activation_limit: ActivationLimit | None = None
     library_search_types: tuple[str, ...] = ()
     activation_conditions: tuple[ActivationCondition, ...] = ()
-    dynamic_mana_output: str | None = None
+    dynamic_mana_output: str | FrozenMap | None = None
     mana_spend_restriction: str | None = None
 
     def __post_init__(self) -> None:
@@ -357,7 +358,7 @@ class ActivatedAbility:
             "activation_conditions": [
                 condition.to_dict() for condition in self.activation_conditions
             ],
-            "dynamic_mana_output": self.dynamic_mana_output,
+            "dynamic_mana_output": thaw_value(self.dynamic_mana_output) if isinstance(self.dynamic_mana_output, Mapping) else self.dynamic_mana_output,
             "mana_spend_restriction": self.mana_spend_restriction,
         }
         if self.mana_cost_options:
@@ -662,11 +663,7 @@ def _validate_ability_closed_vocabulary(ability: ActivatedAbility) -> None:
         )
     ):
         raise ValueError("library_search_types are unsupported")
-    if ability.dynamic_mana_output is not None and (
-        not isinstance(ability.dynamic_mana_output, str)
-        or ability.dynamic_mana_output not in _DYNAMIC_MANA_OUTPUTS
-    ):
-        raise ValueError("dynamic_mana_output is unsupported")
+    _validate_dynamic_mana_output(ability)
     if ability.mana_spend_restriction is not None and (
         not valid_mana_spend_restriction(ability.mana_spend_restriction)
     ):

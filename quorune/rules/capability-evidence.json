@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "528a5675799e00b2094c57b92812ad018743ba637e7ac4f95777f9db8f4922d5",
-  "declaration_source_fingerprint": "c5843a48bfeef0aea19431e35c5e52c1cf07e00f83de3fd836664f899faeb39e",
+  "registry_fingerprint": "d6fd660551e65760e11bd8558f446d9a0593828a2ca065312abc846d2f0c6986",
+  "declaration_source_fingerprint": "6cefc04d09cf1df44701c59ef7525207c660f81e152fe3f2cf54d02e92ca3b93",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -54324,6 +54324,266 @@
       "applicability_note": "Replay the selected subtype identity, stackless tap cost, controller-scoped mana result, and final state hash exactly."
     },
     {
+      "capability_id": "mana.production.public_quantity",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_quantity_mana.PublicQuantityManaRuntimeTests.test_quantity_mana_counter_cost_is_removed_before_counting",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "107.1b",
+        "601.2g",
+        "605.1a",
+        "605.3b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public quantities, postcost source information, allowed allocations and transactional trusted actions."
+    },
+    {
+      "capability_id": "mana.production.public_quantity",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_quantity_mana.PublicQuantityManaRuntimeTests.test_quantity_mana_mixed_allocation_and_zero_output_are_legal",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "107.1b",
+        "601.2g",
+        "605.1a",
+        "605.3b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public quantities, postcost source information, allowed allocations and transactional trusted actions."
+    },
+    {
+      "capability_id": "mana.production.public_quantity",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_quantity_mana.PublicQuantityManaRuntimeTests.test_quantity_mana_source_cost_uses_postcost_and_predeparture_values",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "107.1b",
+        "601.2g",
+        "605.1a",
+        "605.3b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public quantities, postcost source information, allowed allocations and transactional trusted actions."
+    },
+    {
+      "capability_id": "mana.production.public_quantity",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_quantity_mana.PublicQuantityManaRuntimeTests.test_quantity_mana_controller_query_is_offered_accepted_and_replayed",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "107.1b",
+        "601.2g",
+        "605.1a",
+        "605.3b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public quantities, postcost source information, allowed allocations and transactional trusted actions."
+    },
+    {
+      "capability_id": "mana.production.public_quantity",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_public_quantity_mana.PublicQuantityManaRuntimeTests.test_quantity_mana_cleared_source_mutant_is_killed",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "107.1b",
+        "601.2g",
+        "605.1a",
+        "605.3b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public quantities, postcost source information, allowed allocations and transactional trusted actions."
+    },
+    {
+      "capability_id": "mana.production.public_quantity",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_quantity_mana.PublicQuantityManaCompilerTests.test_quantity_mana_missing_producer_and_handler_dependencies_fail_closed",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "107.1b",
+        "601.2g",
+        "605.1a",
+        "605.3b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public quantities, postcost source information, allowed allocations and transactional trusted actions."
+    },
+    {
+      "capability_id": "mana.production.public_quantity",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_quantity_mana.PublicQuantityManaRuntimeTests.test_quantity_mana_invalid_allocation_rolls_back",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "107.1b",
+        "601.2g",
+        "605.1a",
+        "605.3b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public quantities, postcost source information, allowed allocations and transactional trusted actions."
+    },
+    {
+      "capability_id": "mana.production.public_quantity",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_quantity_mana.PublicQuantityManaCompilerTests.test_quantity_mana_compiler_and_codec_close_existing_producers",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "107.1b",
+        "601.2g",
+        "605.1a",
+        "605.3b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public quantities, postcost source information, allowed allocations and transactional trusted actions."
+    },
+    {
+      "capability_id": "mana.production.public_quantity",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_quantity_mana.PublicQuantityManaRuntimeTests.test_quantity_mana_spell_counts_at_resolution_and_replays",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "107.1b",
+        "601.2g",
+        "605.1a",
+        "605.3b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public quantities, postcost source information, allowed allocations and transactional trusted actions."
+    },
+    {
+      "capability_id": "mana.production.public_quantity",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_public_quantity_mana.PublicQuantityManaRuntimeTests.test_quantity_mana_controller_query_is_offered_accepted_and_replayed",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "107.1b",
+        "601.2g",
+        "605.1a",
+        "605.3b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public quantities, postcost source information, allowed allocations and transactional trusted actions."
+    },
+    {
+      "capability_id": "mana.production.public_quantity",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_quantity_mana.PublicQuantityManaRuntimeTests.test_quantity_mana_controller_query_is_offered_accepted_and_replayed",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "107.1b",
+        "601.2g",
+        "605.1a",
+        "605.3b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public quantities, postcost source information, allowed allocations and transactional trusted actions."
+    },
+    {
+      "capability_id": "mana.production.public_quantity",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_quantity_mana.PublicQuantityManaRuntimeTests.test_quantity_mana_source_cost_uses_postcost_and_predeparture_values",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "107.1b",
+        "601.2g",
+        "605.1a",
+        "605.3b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public quantities, postcost source information, allowed allocations and transactional trusted actions."
+    },
+    {
+      "capability_id": "mana.production.public_quantity",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_quantity_mana.PublicQuantityManaRuntimeTests.test_quantity_mana_spell_counts_at_resolution_and_replays",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "107.1b",
+        "601.2g",
+        "605.1a",
+        "605.3b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed public quantities, postcost source information, allowed allocations and transactional trusted actions."
+    },
+    {
       "capability_id": "permanent.class.fixed_lifecycle",
       "evidence_class": "interaction",
       "test_id": "tests.test_class_lifecycle.ClassLifecycleRuntimeTests.test_class_level_trigger_and_no_maximum_hand_size_complete_generic_program",
@@ -84581,5 +84841,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "dab031a7d691185e0ba19ca3e1301296340766956da7596860ce0dbbaa432bb8"
+  "fingerprint": "38d6eff81411a53f806b49823d1c6c98b54c1dab687c1b286f6508222d64e28b"
 }

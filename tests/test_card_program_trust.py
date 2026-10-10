@@ -189,6 +189,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "ability.activated.class-level",
                 "ability.activated.mana.color-set",
                 "ability.activated.mana.fixed-output",
+                "ability.activated.mana.public-quantity",
                 "ability.activated.fixed-counter-keyword",
                 "ability.activated.cycling",
                 "ability.activated.crew",

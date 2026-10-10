@@ -412,6 +412,10 @@ def _activation_choice_schema(
     hint: Mapping[str, Any],
 ) -> dict[str, Any] | None:
     if ability.mana_ability:
+        from ...public_quantity_mana_runtime import public_quantity_mana_choice_schema
+        quantity_choice = public_quantity_mana_choice_schema(host, seat, source, ability)
+        if quantity_choice is not None:
+            return quantity_choice
         modes = host._mana_modes_for_ability(seat, source, ability)
         if len(modes) > 1:
             return {

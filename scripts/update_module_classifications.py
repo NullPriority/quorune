@@ -155,6 +155,9 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         )
     ) or relative in {
         "quorune/activation_mana_cost.py",
+        "quorune/public_quantity_mana_model.py",
+        "quorune/public_quantity_mana_abilities.py",
+        "quorune/public_quantity_mana_runtime.py",
         "quorune/activation_usage.py",
         "quorune/activation_condition_model.py",
         "quorune/abilities.py",
@@ -522,6 +525,9 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/color_set_mana_abilities.py",
         "quorune/fixed_mana_abilities.py",
         "quorune/intrinsic_basic_land_mana.py",
+        "quorune/public_quantity_mana_abilities.py",
+        "quorune/public_quantity_mana_runtime.py",
+        "quorune/public_quantity_mana_model.py",
         "quorune/mana_ability_runtime.py",
         "quorune/mana_source_discovery.py",
         "quorune/mana_mode_effects.py",
@@ -812,6 +818,7 @@ def build_classifications() -> dict[str, Any]:
                             "crew.py",
                             "cycling_abilities.py",
                             "fixed_mana_abilities.py",
+                            "public_quantity_mana",
                             "intrinsic_basic_land_mana.py",
                             "impulse_access_model.py",
                             "mana_ability_runtime.py",

@@ -375,6 +375,22 @@
       },
       "candidate_bundles": [
         {
+          "bundle_id": "bundle:public-quantity-mana",
+          "member_family_ids": ["quantity_expression:dynamic-quantity", "activated_effect:intrinsic-mana-ability", "effect_clause:unparsed-add"],
+          "canonical_owner_ids": ["capability:mana.production.public_quantity", "component:quorune.dynamic_characteristics.query_characteristic_count", "component:quorune.scalar_effect_amounts.resolve_scalar_effect_amount"],
+          "source_contexts": ["activated", "spell", "triggered"],
+          "normalized_literal_parameters": ["existing-public-quantity", "postcost-source-information", "closed-color-allocation"],
+          "shared_dependencies": ["quantity_expression.public_query_effect_amount", "quantity_expression.scalar_effect_amount", "activation.tap_untap_cost.haste"],
+          "shared_grammar": "Resolve one fixed or chosen-color mana output using existing public quantities, paid canonical costs and source information.",
+          "estimated_implementation_hours": 3,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Retain measured distinct whole-card closure in the combined delivery while preserving unsupported siblings.",
+          "explicit_exclusions": ["Targeted or loyalty mana abilities", "Unknown, linked and chosen quantities", "Variable allocation spell continuations", "Unrepresented costs and siblings"],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "public-quantity-mana-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:named-counter-doubling",
           "member_family_ids": ["effect_clause:ordered-effect-composition", "activated_effect:unparsed-double-the-number", "activated_effect:put-counter", "effect_clause:put-counter", "quantity_expression:dynamic-quantity"],
           "canonical_owner_ids": ["capability:counter.producer.named_doubling", "component:quorune.counter_doubling.snapshot_named_counter_doubling", "component:quorune.counter_placement.place_counters"],

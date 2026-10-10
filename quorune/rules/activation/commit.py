@@ -781,6 +781,8 @@ def commit_activation(
             )
     except ActivationUsageError as exc:
         raise GameRuleError(str(exc)) from exc
+    from ...public_quantity_mana_runtime import capture_mana_source_information
+    mana_source_information = capture_mana_source_information(host, proposal.seat, source, ability)
     origin = _commit_source_cost(host, source, ability, response)
     encore_source_context = None
     if program is not None and any(
@@ -805,6 +807,7 @@ def commit_activation(
             paid_objects=paid_objects,
             payment_activations=activations,
             source_was_snow=source_was_snow,
+            source_information=mana_source_information,
         )
         return
     item = _activation_stack_item(

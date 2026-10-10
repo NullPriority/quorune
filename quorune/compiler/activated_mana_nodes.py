@@ -59,6 +59,7 @@ from .ir_model import (
 )
 from .modal_templates import FIXED_NONREPEATING_MODAL_MECHANIC
 from . import temporary_declaration_templates as declaration_templates
+from .public_quantity_mana_nodes import public_quantity_activated_mana_node
 
 
 def fixed_activated_mana_node(
@@ -69,6 +70,8 @@ def fixed_activated_mana_node(
     capability_registry: CapabilityRegistry | None,
     capability_profile: str,
     residuals: list[OracleResidual],
+    *,
+    source_name: str = "",
 ) -> tuple[Any, OracleNode | None]:
     ability = replace(
         ability,
@@ -85,7 +88,10 @@ def fixed_activated_mana_node(
         else compile_fixed_activated_mana_ability(ability)
     )
     if spec is None:
-        return ability, None
+        return public_quantity_activated_mana_node(
+            ability, node_id, line, span, capability_registry,
+            capability_profile, residuals, source_name=source_name,
+        )
     capabilities = list(FIXED_MANA_HANDLER_CAPABILITIES)
     if ability.activation_limit is ActivationLimit.EXHAUST_ONCE:
         capabilities.append("activation.exhaust.once_per_object")
@@ -676,6 +682,7 @@ def activated_oracle_node(
         capability_registry,
         capability_profile,
         residuals,
+        source_name=card_name,
     )
     if fixed_mana is not None:
         return fixed_mana

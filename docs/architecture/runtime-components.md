@@ -34,6 +34,28 @@ requesting principal's authorized projection.
 
 ## Descriptor and registry contract
 
+`ability.activated.mana.public-quantity.v1` shares the existing activated mana
+registry and fixed-family cost boundary. Its versioned output reads a closed
+public zone quantity, source counter quantity, source power or toughness, or
+public turn history. The activation owner pays costs first, captures source
+information immediately before a source sacrifice, and resolves the output
+without the stack. Controller-relative quantities use the activating player;
+source characteristics use current information or the retained departing
+incarnation. Unknown information fails closed, while known zero and negative
+result amounts add no mana and still pay legal activation costs.
+
+Fixed-color, any-one-color, and allowed-color combination outputs validate the
+complete current amount. Combination choices carry allowed colors and a total
+instead of enumerating allocations. Source-sacrifice, counter-removal,
+mana-priced, and combination abilities remain explicit activations so automatic
+payment cannot skip their cost or choice authority. The same compiler amount
+producers lower fixed-color spell instructions through the existing `mana`
+effect owner; they read collections when the instruction resolves. Spending
+restrictions retain the canonical mana provenance. Targeted or loyalty mana
+abilities, linked sacrificed-object counts, unknown conditional tails, variable
+allocation spell continuations, and unsupported sibling abilities remain
+residual.
+
 `replacement.zone.entry-designation.v1` represents a mandatory intrinsic
 one-color or creature-type choice before battlefield entry. The existing
 replacement journal retains the destination controller's selection, and the

@@ -53,6 +53,7 @@
     "tests/fixtures/public-activation-condition-cards.json",
     "tests/fixtures/public-collection-quantity-cards.json",
     "tests/fixtures/public-library-action-permission-cards.json",
+    "tests/fixtures/public-quantity-mana-cards.json",
     "tests/fixtures/public-static-action-rule-cards.json",
     "tests/fixtures/qualified-enchant-cards.json",
     "tests/fixtures/query-gated-self-characteristics-cards.json",

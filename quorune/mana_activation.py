@@ -7,6 +7,7 @@ from .errors import GameRuleError
 from .haste import summoning_sickness_prohibits_tap_or_untap_cost
 from .mana import ManaMode
 from .mana_ability_runtime import (
+    mana_output_for_ability,
     payable_mana_modes,
     typed_mana_modes_for_abilities,
 )
@@ -84,10 +85,12 @@ def complete_mana_activation(
     paid_objects: Sequence[str],
     payment_activations: Sequence[Mapping[str, Any]],
     source_was_snow: bool,
+    source_information=None,
 ) -> None:
     """Commit one activated mana ability and its reversible UI boundary."""
 
-    bundle = host._mana_output_for_ability(seat, source, ability, response)
+    bundle = mana_output_for_ability(host, seat, source, ability, response,
+        source_information=source_information)
     restriction = ability.mana_spend_restriction
     host._add_mana_to_pool(
         seat,

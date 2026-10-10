@@ -5203,6 +5203,96 @@
       "status": "trusted"
     },
     {
+      "id": "mana.production.public_quantity",
+      "version": 1,
+      "official_rules": [
+        "106.1",
+        "106.4",
+        "107.1b",
+        "601.2g",
+        "605.1a",
+        "605.3b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Resolve a closed mana output from an existing typed public quantity after costs, retaining source last known information and validating its complete color allocation.",
+        "inputs": [
+          "source-spanned closed output",
+          "existing public query or source/history scalar",
+          "locked controller",
+          "canonical paid costs",
+          "source predeparture information",
+          "bounded color allocation"
+        ],
+        "outputs": [
+          "exact nonnegative mana amount",
+          "fixed, one-color, or arbitrary allowed-color allocation",
+          "canonical mana provenance",
+          "atomic rollback and replay"
+        ],
+        "exclusions": [
+          "targeted or loyalty mana abilities",
+          "linked sacrificed or exiled card quantities",
+          "unrepresented conditional tails and costs",
+          "unrepresented mana-production replacement or trigger effects"
+        ]
+      },
+      "dependencies": [
+        "activation.tap_untap_cost.haste",
+        "quantity_expression.public_query_effect_amount",
+        "quantity_expression.scalar_effect_amount"
+      ],
+      "implementation_components": [
+        "quorune.compiler.public_quantity_mana.public_quantity_mana_template",
+        "quorune.public_quantity_mana_model.PublicQuantityManaOutput",
+        "quorune.public_quantity_mana_abilities.compile_public_quantity_activated_mana_ability",
+        "quorune.semantic_runtime.public_quantity_mana.PublicQuantityActivatedManaHandler",
+        "quorune.public_quantity_mana_runtime.public_quantity_mana_amount",
+        "quorune.public_quantity_mana_runtime.select_public_quantity_mana",
+        "quorune.mana_activation.complete_mana_activation"
+      ],
+      "positive_tests": [
+        "test_quantity_mana_compiler_and_codec_close_existing_producers",
+        "test_quantity_mana_controller_query_is_offered_accepted_and_replayed"
+      ],
+      "negative_tests": [
+        "test_quantity_mana_grammar_cost_and_codec_boundaries",
+        "test_quantity_mana_invalid_allocation_rolls_back"
+      ],
+      "interaction_tests": [
+        "test_quantity_mana_source_cost_uses_postcost_and_predeparture_values"
+      ],
+      "multiplayer_tests": [
+        "test_quantity_mana_controller_query_is_offered_accepted_and_replayed"
+      ],
+      "privacy_tests": [
+        "test_quantity_mana_controller_query_is_offered_accepted_and_replayed"
+      ],
+      "replay_tests": [
+        "test_quantity_mana_controller_query_is_offered_accepted_and_replayed",
+        "test_quantity_mana_source_cost_uses_postcost_and_predeparture_values"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Missing typed producer or source-cost capability rejects whole-program registration before mutation.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "The postcost and source-departure witness rejects premature and cleared-source quantity evaluation.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
       "id": "mana.activated.fixed_output",
       "version": 1,
       "official_rules": ["106.1", "106.4", "605.1a", "605.2", "605.3a", "605.3b"],

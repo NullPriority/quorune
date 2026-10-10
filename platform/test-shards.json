@@ -270,6 +270,7 @@
       "test_persist_undying_rules",
       "test_prevention_immediate_sequencing",
       "test_prevention_trigger_stack",
+      "test_public_quantity_mana",
       "test_regeneration_rules",
       "test_scalar_effect_amounts",
       "test_targeted_tap_state_effect_clauses",

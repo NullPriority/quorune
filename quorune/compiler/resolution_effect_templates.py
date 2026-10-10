@@ -1,5 +1,6 @@
 from __future__ import annotations
 from .counter_resolution_effect_templates import counter_resolution_effect_template
+from .public_quantity_mana_effects import public_quantity_mana_effect_template
 
 from typing import Any, Mapping, Sequence
 
@@ -108,6 +109,9 @@ def _source_context_resolution_template(
     text: str, *, card_name: str, source_is_permanent: bool | None,
     source_card_types: Sequence[str],
 ) -> CompiledEffectTemplate | None:
+    mana = public_quantity_mana_effect_template(text, source_name=card_name)
+    if mana is not None:
+        return mana
     control = fixed_control_effect_template(
         text, card_name=card_name, source_is_permanent=source_is_permanent,
         source_card_types=tuple(source_card_types),

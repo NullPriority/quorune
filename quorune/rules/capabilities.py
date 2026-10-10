@@ -315,6 +315,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
         for mechanic in _FIXED_CAST_LIFECYCLE_MECHANICS
     },
     "self-zone-move": ("zone.self_move.activated",), "madness": ("casting.madness.fixed_mana",), "typed-discard-cause": ("zone.discard.typed_cause",),
+    'public-quantity-mana': ('mana.production.public_quantity',),
     **{
         mechanic: ("combat.block.landwalk.basic_type",)
         for mechanic in _BASIC_LANDWALK_MECHANICS
@@ -1193,6 +1194,9 @@ def capability_dependencies_for_node(
 
     mechanic_values = tuple(str(value).casefold() for value in mechanic_ids)
     mechanics = set(mechanic_values)
+    if 'public-quantity-mana' in mechanics:
+        from .public_quantity_mana_shapes import public_quantity_mana_node_capabilities
+        return public_quantity_mana_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
     from ..resolution_conditions import RESOLUTION_CONDITION_MECHANIC, RESOLUTION_CONDITION_OPERATION
     if RESOLUTION_CONDITION_MECHANIC in mechanics or RESOLUTION_CONDITION_OPERATION in _nested_effect_operations(effects):
         from .resolution_condition_shapes import resolution_condition_node_capabilities

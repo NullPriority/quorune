@@ -116,6 +116,7 @@ from ..rules.closed_effect_program_shapes import (
     closed_effect_program_node_capabilities,
 )
 from ..rules.echo_capability_shapes import fixed_mana_echo_node_capabilities
+from ..rules.public_quantity_mana_shapes import is_closed_public_quantity_mana_program
 from ..semantics import SemanticProgram, SemanticRegistry
 from ..util import stable_json
 from ..semantic_runtime.activated_abilities import (
@@ -1272,15 +1273,14 @@ def _is_closed_public_characteristic_set_program(program: SemanticProgram) -> bo
 
 def _closed_effect_recognizers():
     return (
-        _is_closed_fixed_control_program,
+        is_closed_public_quantity_mana_program, _is_closed_fixed_control_program,
         is_closed_fixed_modal_program,
         is_closed_fixed_effect_payment_program,
         is_closed_stack_controller_payment_program,
         _is_closed_declared_amount_program,
         _is_closed_public_query_amount_program,
         _is_closed_fixed_creature_power_damage_program,
-        _is_closed_fixed_damage_program,
-        _is_closed_fixed_next_turn_draw_program,
+        _is_closed_fixed_damage_program, _is_closed_fixed_next_turn_draw_program,
         _is_closed_fixed_draw_program,
         _is_closed_fixed_mill_program,
         is_closed_fixed_impulse_access_program,
