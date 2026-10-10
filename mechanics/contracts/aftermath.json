@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "contract_version": 1,
+  "mechanic_id": "aftermath",
+  "official_name": "Aftermath",
+  "effective_date": "2026-08-07",
+  "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
+  "rule_references": [
+    "702.127",
+    "702.127a",
+    "709.3",
+    "709.3a",
+    "709.3b",
+    "709.4",
+    "601.2b",
+    "601.2f",
+    "614.1a"
+  ],
+  "glossary_references": [
+    "aftermath"
+  ],
+  "dependencies": [
+    "casting-spells",
+    "resolving-spells-and-abilities",
+    "replacement-ordering",
+    "object-zone-identity"
+  ],
+  "coverage_status": "tested",
+  "trust_level": "untrusted",
+  "behavior": {
+    "zones": [
+      "owner graveyard for the Aftermath half",
+      "ordinary hand zone for the other half",
+      "stack for the actually cast selected half"
+    ],
+    "objects": [
+      "one physical split card",
+      "one selected spell half",
+      "uncast spell copy distinguished from actual graveyard casting"
+    ],
+    "events": [
+      "selected half casting",
+      "cast cost commitment",
+      "any stack departure"
+    ],
+    "state_reads": [
+      "trusted complete-card lifecycle declaration",
+      "prospective selected face and printed cost",
+      "source owner and zone",
+      "actual graveyard cast context"
+    ],
+    "state_writes": [
+      "canonical cost payment and stack construction",
+      "existing fixed-lifecycle stack designation",
+      "canonical mandatory exile replacement"
+    ],
+    "costs": [
+      "printed cost of the selected half; other costs and free-cast permissions retain their owners"
+    ],
+    "timing": [
+      "ordinary instant or sorcery timing of the selected half",
+      "graveyard permission adds no timing override"
+    ],
+    "targets": [
+      "the selected half result owns its normal target schema and revalidation"
+    ],
+    "choices": [
+      "distinct supported face action offers",
+      "ordinary private result and replacement choices"
+    ],
+    "hidden_information": [
+      "private draw/discard continuations remain visible only to the correct principal"
+    ],
+    "apnap": [
+      "ordinary priority and trigger placement remain unchanged"
+    ],
+    "layers": [
+      "current stack spell uses only selected-half characteristics; other zones retain combined split values"
+    ],
+    "replacement_effects": [
+      "mandatory self-exile applies whenever an actually graveyard-cast card leaves the stack, including countering"
+    ],
+    "copy": [
+      "an uncast spell copy receives no Aftermath leaving-stack replacement"
+    ],
+    "control_change": [
+      "spell controller changes do not remove actual graveyard cast provenance"
+    ],
+    "zone_change": [
+      "an external casting permission never overrides the half other-zone prohibition"
+    ],
+    "source_leaves": [
+      "stack departure commits through the existing zone replacement owner"
+    ]
+  },
+  "variants": [
+    "graveyard Aftermath half",
+    "ordinary first half",
+    "distinct printed face costs and colors",
+    "countered spell",
+    "free-cast permission boundary",
+    "pending private result save/load",
+    "uncast copy boundary"
+  ],
+  "witness_cards": [
+    {
+      "name": "Claim // Fame",
+      "oracle_id": "16da9e4b-c6ee-4e70-8653-31ca147f3b01"
+    },
+    {
+      "name": "Farm // Market",
+      "oracle_id": "2ab857cc-64b9-4115-8fa5-6dfae9edbdb5"
+    },
+    {
+      "name": "Spring // Mind",
+      "oracle_id": "6dd7e861-7ae2-49e6-a9ab-8fd761939e22"
+    },
+    {
+      "name": "Consign // Oblivion",
+      "oracle_id": "8fe7436b-2467-486e-8a2d-7cbf21a65da9"
+    }
+  ],
+  "test_ids": [
+    "test_selected_half_has_bare_lifecycle_and_other_face_remains_ordinary",
+    "test_aftermath_descriptor_rejects_costs_wrong_shapes_and_nonsplit_carrier",
+    "test_zone_cast_dependency_omission_blocks_aftermath_half",
+    "test_both_split_faces_publish_and_accept_own_costs_with_rollback_and_replay",
+    "test_actual_aftermath_only_offers_its_half_from_graveyard_resolves_and_replays",
+    "test_hand_half_is_ordinary_and_aftermath_cannot_override_its_offer",
+    "test_actual_countered_aftermath_exiles_and_uncast_copy_has_no_replacement",
+    "test_actual_market_pending_private_discard_reloads_without_repeating_draw",
+    "test_canonical_free_cast_permission_never_overrides_other_zone_prohibition",
+    "test_selected_half_color_cost_query_ignores_other_half_and_replays",
+    "test_omitting_selected_face_cost_mutant_is_killed",
+    "test_omitting_aftermath_stack_designation_mutant_is_killed",
+    "test_modal_back_spell_uses_own_cost_and_permanent_destination_and_replays",
+    "test_strict_modal_unknown_face_is_hidden_and_rejected_before_mutation"
+  ],
+  "implementation": {
+    "component": "quorune.rules.casting.aftermath.aftermath_cast_prohibition_reason",
+    "version": "selected-half-aftermath-v1",
+    "capability_ids": [
+      "casting.aftermath.selected_half"
+    ],
+    "supported_slice": "Ordinary printed selected-half Aftermath with complete independent result programs, shared face-specific casting authority and canonical leaving-stack exile."
+  },
+  "known_blockers": [
+    "unsupported result bodies or sibling mechanics keep complete cards untrusted",
+    "fused split spells and unrepresented acquired keyword producers remain outside the slice",
+    "aggregate mechanic trust does not imply universal card or match support"
+  ],
+  "review_status": "reviewed"
+}

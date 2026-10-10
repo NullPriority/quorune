@@ -83,6 +83,7 @@ def mark_card_fixed_cast_lifecycle(
         not in {
             FixedCastLifecycleKind.ESCAPE,
             FixedCastLifecycleKind.JUMP_START,
+            FixedCastLifecycleKind.AFTERMATH,
             FixedCastLifecycleKind.REBOUND,
         }
         or card.annotations.get(FIXED_CAST_LIFECYCLE_STACK_ANNOTATION)

@@ -1652,6 +1652,26 @@
       ]
     },
     {
+      "id": "selected-face-aftermath-casting-contract",
+      "patterns": [
+        "quorune/rules/casting/aftermath.py",
+        "quorune/rules/casting/face_queries.py",
+        "quorune/rules/casting/fixed_zone_validation.py",
+        "quorune/rules/face_characteristic_values.py",
+        "quorune/compiler/public_zone_program_closure.py",
+        "mechanics/contracts/aftermath.json",
+        "tests/fixtures/aftermath-cards.json"
+      ],
+      "test_modules": [
+        "test_aftermath_rules",
+        "test_fixed_casting_surface",
+        "test_fixed_zone_cast_lifecycles",
+        "test_fixed_target_reanimation",
+        "test_targeted_graveyard_return_effect_clauses",
+        "test_card_program_trust"
+      ]
+    },
+    {
       "id": "printed-backup-ability-contract",
       "patterns": [
         "quorune/compiler/backup_nodes.py",

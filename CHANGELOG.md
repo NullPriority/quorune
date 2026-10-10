@@ -31,6 +31,14 @@ maintenance: "hand-maintained"
 - Preserve explicit sacrifice provenance for Fading and Vanishing cleanup
   through zone replacements, normalized trigger occurrences, and turn history.
 
+- Offer supported split and modal spell faces separately and charge each
+  selected face's own cost. Preserve its spell characteristics and cost queries.
+  Aftermath halves cast only from graveyards and retain mandatory exile through
+  countering, free-cast permissions and pending private resolution choices.
+
+- Promote the existing closed fixed reanimation grammar during ordinary
+  trusted runtime registration, preserving its target and capability checks.
+
 - Resolve fixed Backup instances through complete printed ability bundles,
   canonical counter placement and temporary recipient ability grants. Typed
   donated activations and triggers use their recipient, including opponent

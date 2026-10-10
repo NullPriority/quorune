@@ -22,6 +22,7 @@ from ...compiled_morph import compiled_fixed_mana_face_down_method_spec
 from ...compiled_flashback import compiled_fixed_mana_flashback_spec
 from ...compiled_madness import current_fixed_cast_lifecycle_spec
 from ...compiled_cast_lifecycles import compiled_fixed_cast_lifecycle_spec, compiled_mayhem_permission
+from .face_queries import prospective_cast_card
 from ...cast_lifecycles import (
     FixedCastLifecycleError,
     FixedCastLifecycleKind,
@@ -785,6 +786,7 @@ def _cast_lifecycle_stack_specs(
     card: Any,
     selected_option: Mapping[str, Any],
 ) -> tuple[FixedCastLifecycleSpec | None, FixedCastLifecycleSpec | None]:
+    card=prospective_cast_card(host,card,proposal.face)
     rebound = (
         compiled_fixed_cast_lifecycle_spec(
             host,
@@ -809,6 +811,7 @@ def _mark_selected_cast_lifecycle(
     rebound: FixedCastLifecycleSpec | None,
 ) -> None:
     if spec is not None and spec.kind in {
+        FixedCastLifecycleKind.AFTERMATH,
         FixedCastLifecycleKind.ESCAPE,
         FixedCastLifecycleKind.JUMP_START,
     }:
@@ -1218,8 +1221,10 @@ def _revalidate_fixed_lifecycle_contract(
             str(exc),
             reason="stale_fixed_cast_lifecycle_contract",
         ) from exc
+    card=prospective_cast_card(host,card,proposal.face)
     current = current_fixed_cast_lifecycle_spec(host, card, proposed.kind)
     expected_origin = {
+        FixedCastLifecycleKind.AFTERMATH: "graveyard",
         FixedCastLifecycleKind.ESCAPE: "graveyard",
         FixedCastLifecycleKind.FORETELL: "exile",
         FixedCastLifecycleKind.JUMP_START: "graveyard",
@@ -1230,11 +1235,9 @@ def _revalidate_fixed_lifecycle_contract(
         FixedCastLifecycleKind.MAYHEM: "graveyard",
     }.get(proposed.kind)
     option_id = str(selected_option.get("id") or "")
-    valid_id = (
-        option_id == "retrace"
-        if proposed.kind is FixedCastLifecycleKind.RETRACE
-        else option_id == proposed.kind.value
-    )
+    if proposed.kind is FixedCastLifecycleKind.AFTERMATH:valid_id=True
+    elif proposed.kind is FixedCastLifecycleKind.RETRACE:valid_id=option_id=='retrace'
+    else:valid_id=option_id==proposed.kind.value
     if (
         current != proposed
         or selected_option.get("fixed_cast_lifecycle_fingerprint")

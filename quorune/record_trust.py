@@ -92,7 +92,9 @@ def implicit_semantic_execution_provenance(
         record = engine.card_record(item.card_object_id)
         if record is None:
             continue
-        expected_key = f"{record.oracle_id}:spell:front"
+        face=next((f for f in record.faces if f.get('name')==item.chosen_face),None) if record.faces else None
+        if record.faces and face is None:continue
+        expected_key = f"{record.oracle_id}:spell:{face['name'] if face else 'front'}"
         if semantic_key != expected_key:
             continue
         resolution = trusted_generic_empty_resolution(engine, item, None)

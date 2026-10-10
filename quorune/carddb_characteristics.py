@@ -5,6 +5,7 @@ from typing import Any, Mapping
 
 from .carddb import CardRecord
 from .model import CardInstance
+from .rules.face_characteristic_values import printed_face_mana_value,printed_face_colors
 
 
 def _custom_object_characteristics(card: CardInstance) -> Mapping[str, Any]:
@@ -119,10 +120,11 @@ def base_card_characteristics(
             ),
             None,
         )
+    selected=face is not None and (record.layout!='split' or card.zone=='stack' or card.annotations.get('prospective_cast_face') is True)
     return {
         "name": str(face.get("name")) if face else record.name,
         "mana_cost": str(face.get("mana_cost") or "") if face else record.mana_cost,
-        "mana_value": record.mana_value,
+        "mana_value": printed_face_mana_value(face) if selected else record.mana_value,
         "type_line": str(face.get("type_line") or "") if face else record.type_line,
         "oracle_text": str(face.get("oracle_text") or "") if face else record.oracle_text,
         "executable_oracle_text": (
@@ -135,7 +137,7 @@ def base_card_characteristics(
         "loyalty": face.get("loyalty") if face else record.loyalty,
         "defense": face.get("defense") if face else record.defense,
         "keywords": list(record.keywords),
-        "colors": list(record.colors),
+        "colors": printed_face_colors(face) if selected else list(record.colors),
         "produced_mana": list(record.produced_mana),
         "ability_fragments": [],
     }

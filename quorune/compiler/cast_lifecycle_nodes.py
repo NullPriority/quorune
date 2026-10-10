@@ -86,6 +86,8 @@ def _lifecycle_face_blocker(
     face_id: str,
     spec: Any,
 ) -> tuple[str, str] | None:
+    if spec.kind is FixedCastLifecycleKind.AFTERMATH and (record.layout!='split' or len(record.faces)!=2):
+        return ('Aftermath requires a half of a split card','selected split half')
     card_types = set(
         _face_type_line(record, face_id)
         .replace("—", "-")
@@ -110,6 +112,7 @@ def _lifecycle_face_blocker(
     if spec.kind is FixedCastLifecycleKind.MAYHEM and spec.mana_cost is not None and "land" in card_types:
         return ("Costed Mayhem requires a nonland face", "nonland fixed Mayhem")
     if spec.kind in {
+        FixedCastLifecycleKind.AFTERMATH,
         FixedCastLifecycleKind.JUMP_START,
         FixedCastLifecycleKind.REBOUND,
     } and not card_types.intersection({"instant", "sorcery"}):
@@ -122,6 +125,7 @@ def _lifecycle_face_blocker(
 
 def _lifecycle_runtime_coverage(spec: Any) -> tuple[str, ...]:
     return {
+        FixedCastLifecycleKind.AFTERMATH: ('selected_half_graveyard_permission','other_zone_cast_prohibition','mandatory_stack_leave_exile'),
         FixedCastLifecycleKind.BUYBACK: (
             "fixed_mana_optional_additional_cost",
             "replacement_aware_resolution_destination",
@@ -246,6 +250,7 @@ def fixed_cast_lifecycle_keyword_node(
             blockers=(face_blocker[1],),
         )
     zone_cast_kinds = {
+        FixedCastLifecycleKind.AFTERMATH,
         FixedCastLifecycleKind.MAYHEM,
         FixedCastLifecycleKind.ESCAPE,
         FixedCastLifecycleKind.FORETELL,
@@ -254,6 +259,7 @@ def fixed_cast_lifecycle_keyword_node(
         FixedCastLifecycleKind.REBOUND,
     }
     dependencies = (
+        *(('casting.aftermath.selected_half',) if spec.kind is FixedCastLifecycleKind.AFTERMATH else ()),
         *FIXED_CAST_LIFECYCLE_HANDLER_CAPABILITIES,
         (
             FIXED_COMBAT_ENTRY_LIFECYCLE_CAPABILITY_ID

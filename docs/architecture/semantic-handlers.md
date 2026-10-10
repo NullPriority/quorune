@@ -67,6 +67,21 @@ stable inventory. A handler may request a narrowly defined continuation for a
 choice or replacement-aware transaction, but it may not retain mutable state
 or commit around the canonical owner. Rollback must leave no partial mutation.
 
+Casting offers and accepted commands use the same prospective selected-face
+view for printed costs and cost predicates. Face values enter before current
+characteristic layers, so an intrinsic Devoid definition still affects the
+cost query. Current split spells expose only
+the chosen half's mana value and colors; other zones retain combined split-card
+values. Aftermath uses the existing fixed lifecycle descriptor and canonical
+stack-departure self-replacement, including when countered. Pending private
+results preserve that lifecycle through save/load without replaying prior
+instructions.
+
+Implicit ordinary permanent-spell provenance binds the exact selected face
+name and its permanent type. Another face's permanent type cannot authorize an
+unsupported spell half under the trusted-only policy; offers and proposals
+share that same trust predicate.
+
 The existing generic direct-control operations share the authoritative control
 and acquisition-history owner. An indefinite control instruction invalidates
 an older end-of-turn restoration even when it names the current controller.

@@ -3193,7 +3193,7 @@ class CommanderEngine(
         record = self.card_record(card)
         if record is None:
             return [], False
-        face = self._front_face(record)
+        face = self._select_cast_face(record,card.active_face)
         mana_cost = (
             str(face.get("mana_cost") or "")
             if face is not None

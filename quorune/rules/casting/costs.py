@@ -591,7 +591,8 @@ def _initial_options(
     if alternative_expansion is None:
         return None
     expanded, mandatory = alternative_expansion
-    return expanded, mandatory, mechanics, has_x
+    from .aftermath import with_aftermath_stack_context
+    return with_aftermath_stack_context(host,card,expanded), mandatory, mechanics, has_x
 
 
 def _apply_static_reductions(

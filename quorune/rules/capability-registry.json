@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 213,
+  "registry_version": 214,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -7293,23 +7293,92 @@
     {
       "id": "zone.reanimate.fixed_target",
       "version": 1,
-      "official_rules": ["110.2a", "115.1", "115.1a", "303.4f", "303.4g", "400.2", "400.7", "608.2b", "608.2c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rules": [
+        "110.2a",
+        "115.1",
+        "115.1a",
+        "303.4f",
+        "303.4g",
+        "400.2",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Compile and execute one mandatory or up-to-one target permanent-card move from a public graveyard to the battlefield under the resolving controller or card owner through canonical target, Aura-entry, and replacement-aware zone owners.",
-        "inputs": ["one source-spanned fixed reanimation clause", "one public graveyard card matching the closed permanent, type, subtype, supertype, fixed mana-value, or exact represented fixed-power predicate", "resolution-time physical and logical target identity", "requested controller and tapped state", "represented destination-replacement and Aura-entry choices"],
-        "outputs": ["public graveyard target", "resolution-time target revalidation", "replacement-aware battlefield entry with a new logical identity", "specified controller and tapped state", "ordinary entry events, state-based actions, projection, and exact replay"],
-        "exclusions": ["untargeted, each-player, all-card, mass, random, linked-result, reflexive, delayed, self-return, or top-graveyard selection", "variable, exact-value, history, chosen, different-name, total-value, or cross-field target predicates", "unrepresentable characteristic-defining or cyclic power and type-changing interactions outside the shared exact-characteristic boundary", "entry counters, gained abilities, type changes, attachment instructions, life changes, sacrifice or exile riders, and other compound results", "destinations other than the battlefield and source zones other than public graveyards", "more than one target, copied or granted wording, and independently unsupported costs, events, modes, or sibling abilities"]
+        "inputs": [
+          "one source-spanned fixed reanimation clause",
+          "one public graveyard card matching the closed permanent, type, subtype, supertype, fixed mana-value, or exact represented fixed-power predicate",
+          "resolution-time physical and logical target identity",
+          "requested controller and tapped state",
+          "represented destination-replacement and Aura-entry choices"
+        ],
+        "outputs": [
+          "public graveyard target",
+          "resolution-time target revalidation",
+          "replacement-aware battlefield entry with a new logical identity",
+          "specified controller and tapped state",
+          "ordinary entry events, state-based actions, projection, and exact replay"
+        ],
+        "exclusions": [
+          "untargeted, each-player, all-card, mass, random, linked-result, reflexive, delayed, self-return, or top-graveyard selection",
+          "variable, exact-value, history, chosen, different-name, total-value, or cross-field target predicates",
+          "unrepresentable characteristic-defining or cyclic power and type-changing interactions outside the shared exact-characteristic boundary",
+          "entry counters, gained abilities, type changes, attachment instructions, life changes, sacrifice or exile riders, and other compound results",
+          "destinations other than the battlefield and source zones other than public graveyards",
+          "more than one target, copied or granted wording, and independently unsupported costs, events, modes, or sibling abilities"
+        ]
       },
-      "dependencies": ["attachment.aura.typed_restriction", "target.revalidate_resolution", "zone.change.destination_replacement"],
-      "implementation_components": ["quorune.compiler.reanimation_templates.FixedTargetReanimationTemplate", "quorune.compiler.reanimation_templates.fixed_target_reanimation_effect_template", "quorune.rules.reanimation_capability_shapes.fixed_target_reanimation_node_capabilities", "quorune.effect_runtime.zones_and_attachments._apply_reanimate", "quorune.zone_transitions.ZoneTransitionOwner.move_card"],
-      "positive_tests": ["test_fixed_target_reanimation_compiles_across_spell_trigger_activation_and_modal_contexts", "test_reanimation_target_domains_controller_and_tapped_state_are_typed", "test_reanimation_closed_type_and_power_qualities_are_typed", "test_reanimation_controller_tapped_and_characteristic_variants_resolve"],
-      "negative_tests": ["test_reanimation_unsupported_and_malformed_shapes_fail_closed", "test_reanimation_target_revalidates_and_rolls_back"],
-      "interaction_tests": ["test_reanimation_destination_replacement_and_aura_entry_choices_resume_once", "test_reanimation_current_graveyard_characteristics_and_source_control_compose"],
-      "multiplayer_tests": ["test_reanimation_four_player_projection_and_apnap_are_stable"],
-      "privacy_tests": ["test_reanimation_four_player_projection_and_apnap_are_stable"],
-      "replay_tests": ["test_reanimation_destination_replacement_and_aura_entry_choices_resume_once", "test_reanimation_four_player_projection_and_apnap_are_stable"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "attachment.aura.typed_restriction",
+        "target.revalidate_resolution",
+        "zone.change.destination_replacement"
+      ],
+      "implementation_components": [
+        "quorune.compiler.reanimation_templates.FixedTargetReanimationTemplate",
+        "quorune.compiler.reanimation_templates.fixed_target_reanimation_effect_template",
+        "quorune.rules.reanimation_capability_shapes.fixed_target_reanimation_node_capabilities",
+        "quorune.effect_runtime.zones_and_attachments._apply_reanimate",
+        "quorune.zone_transitions.ZoneTransitionOwner.move_card",
+        "quorune.compiler.public_zone_program_closure.is_closed_reanimation_effect_program"
+      ],
+      "positive_tests": [
+        "test_fixed_target_reanimation_compiles_across_spell_trigger_activation_and_modal_contexts",
+        "test_reanimation_target_domains_controller_and_tapped_state_are_typed",
+        "test_reanimation_closed_type_and_power_qualities_are_typed",
+        "test_reanimation_controller_tapped_and_characteristic_variants_resolve"
+      ],
+      "negative_tests": [
+        "test_reanimation_unsupported_and_malformed_shapes_fail_closed",
+        "test_reanimation_target_revalidates_and_rolls_back"
+      ],
+      "interaction_tests": [
+        "test_reanimation_destination_replacement_and_aura_entry_choices_resume_once",
+        "test_reanimation_current_graveyard_characteristics_and_source_control_compose"
+      ],
+      "multiplayer_tests": [
+        "test_reanimation_four_player_projection_and_apnap_are_stable"
+      ],
+      "privacy_tests": [
+        "test_reanimation_four_player_projection_and_apnap_are_stable"
+      ],
+      "replay_tests": [
+        "test_reanimation_destination_replacement_and_aura_entry_choices_resume_once",
+        "test_reanimation_four_player_projection_and_apnap_are_stable"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Blocking target revalidation, typed Aura entry, or destination replacement prevents the source-spanned reanimation node from becoming trusted.",
       "implementation_mutation_status": "killed",
@@ -10412,23 +10481,147 @@
     {
       "id": "casting.lifecycle.fixed_zone_cast",
       "version": 2,
-      "official_rules": ["601.2b", "601.2f", "601.2h", "702.88", "702.88a", "702.88b", "702.88c", "702.133", "702.133a", "702.138", "702.138a", "702.138b", "702.143", "702.143a", "702.143b", "702.143c", "702.143e", "702.143f", "702.170", "702.170a", "702.170b", "702.170d", "702.170e"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rules": [
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "702.88",
+        "702.88a",
+        "702.88b",
+        "702.88c",
+        "702.133",
+        "702.133a",
+        "702.138",
+        "702.138a",
+        "702.138b",
+        "702.143",
+        "702.143a",
+        "702.143b",
+        "702.143c",
+        "702.143e",
+        "702.143f",
+        "702.170",
+        "702.170a",
+        "702.170b",
+        "702.170d",
+        "702.170e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
-        "summary": "Compile fixed Foretell, Plot, Escape, Jump-start, and Rebound plus fixed or bare current-turn Mayhem through one typed zone-cast lifecycle extension of the canonical casting surface.",
-        "inputs": ["one complete-card-admitted physical source", "one source-spanned fixed lifecycle declaration", "current ability applicability while that ability governs", "one identity-pinned rules-created exile designation where applicable", "canonical priority, timing, target, cost, replacement, trigger, projection, and replay authority"],
-        "outputs": ["private Foretell and public Plot no-stack staging", "later-turn designated exile casting", "fixed-count Escape other-card payment", "Jump-start typed discard and stack self-exile", "successful hand-cast Rebound exile and next-upkeep optional free cast", "stale-contract rollback and exact replay"],
-        "exclusions": ["variable, hybrid, Phyrexian, snow, nonmana, conditional, modified, copied, granted, text-changed, or repeated lifecycle forms", "Escape any-number and compound payments plus escapes-with counters, abilities, and linked triggers", "external foretell or plot effects and Foretell cost or timing modifiers", "alternative-cost combinations, incomplete cards, tokens, spell copies, inactive faces, lands outside bare Mayhem, and independently unsupported spell bodies", "replacement, prohibition, or permission interactions outside canonical typed owners"]
+        "summary": "Compile fixed Foretell, Plot, Escape, bare selected-half Aftermath, Jump-start, and Rebound plus fixed or bare current-turn Mayhem through one typed zone-cast lifecycle extension of the canonical casting surface.",
+        "inputs": [
+          "one complete-card-admitted physical source",
+          "one source-spanned fixed lifecycle declaration",
+          "current ability applicability while that ability governs",
+          "one identity-pinned rules-created exile designation where applicable",
+          "canonical priority, timing, target, cost, replacement, trigger, projection, and replay authority"
+        ],
+        "outputs": [
+          "private Foretell and public Plot no-stack staging",
+          "later-turn designated exile casting",
+          "fixed-count Escape other-card payment",
+          "Jump-start typed discard and stack self-exile",
+          "successful hand-cast Rebound exile and next-upkeep optional free cast",
+          "stale-contract rollback and exact replay"
+        ],
+        "exclusions": [
+          "variable, hybrid, Phyrexian, snow, nonmana, conditional, modified, copied, granted, text-changed, or repeated lifecycle forms",
+          "Escape any-number and compound payments plus escapes-with counters, abilities, and linked triggers",
+          "external foretell or plot effects and Foretell cost or timing modifiers",
+          "alternative-cost combinations, incomplete cards, tokens, spell copies, inactive faces, lands outside bare Mayhem, and independently unsupported spell bodies",
+          "replacement, prohibition, or permission interactions outside canonical typed owners"
+        ]
       },
-      "dependencies": ["casting.additional_cost.zone_change.fixed_discard", "casting.additional_cost.zone_change.fixed_exile", "casting.lifecycle.fixed_public", "casting.permission.one_shot_exile_without_mana", "trigger.event.normalized_zone_change", "trigger.placement.apnap", "zone.change.destination_replacement"],
-      "implementation_components": ["quorune.cast_lifecycles.FixedCastLifecycleSpec", "quorune.cast_lifecycles.FixedZoneCastDesignation", "quorune.compiler.cast_lifecycle_nodes.fixed_cast_lifecycle_keyword_node", "quorune.semantic_runtime.cast_lifecycles.FixedCastLifecycleHandler", "quorune.compiled_cast_lifecycles.compiled_fixed_cast_lifecycle_specs", "quorune.rules.staged_cast_lifecycles.build_staged_cast_offer", "quorune.rules.staged_cast_lifecycles.commit_staged_cast_lifecycle", "quorune.rules.staged_cast_lifecycles.resolve_rebound_cast_trigger", "CommanderEngine._compiled_zone_cast_permission", "CommanderEngine._effective_static_component_keys", "quorune.rules.action_catalog.build_priority_action_catalog", "quorune.rules.casting.lifecycle_costs.zone_lifecycle_base_options", "quorune.rules.casting.costs.build_cast_cost_options", "quorune.rules.casting_additional_costs.FixedZoneChangeAdditionalCost", "quorune.rules.casting.commit.commit_cast", "quorune.zone_object_state.mark_card_fixed_cast_lifecycle", "quorune.zone_object_state.mark_fixed_zone_cast_designation", "quorune.semantic_runtime.zone_replacements.capture_zone_change_replacement_snapshot", "quorune.stack_resolution.complete_stack_resolution", "quorune.trigger_processing.schedule_delayed_trigger", "quorune.selection.exile_cast.OneShotExileCastChoiceOwnerMixin", "quorune.projection.StateProjector"],
-      "positive_tests": ["test_five_fixed_zone_cast_lifecycles_compile_through_shared_owner", "test_foretell_private_staging_persists_without_current_ability_and_replays", "test_plot_uses_both_special_action_and_later_cast_timing", "test_escape_pays_fixed_other_card_set_and_revalidates_current_ability", "test_jump_start_discards_then_self_exiles_when_countered", "test_rebound_schedules_identity_pinned_optional_free_cast", "test_mayhem_fixed_and_bare_descriptors_round_trip_and_reject_open_costs"],
-      "negative_tests": ["test_open_zone_cast_forms_remain_residual", "test_staging_timing_stale_offer_and_payment_fail_without_mutation", "test_escape_insufficient_and_duplicate_other_card_payments_fail_closed", "test_countered_and_stale_rebound_cards_do_not_receive_a_cast", "test_mayhem_permission_requires_same_discard_turn_actor_and_adjacent_incarnation", "test_mayhem_stale_discard_turn_rejects_prepared_cast_atomically", "test_mayhem_creature_normal_timing_and_flash_share_existing_offer_legality", "test_replaced_discard_to_exile_and_later_graveyard_move_does_not_grant_mayhem", "test_mayhem_permission_omission_mutant_is_killed_by_real_discard_cast"],
-      "interaction_tests": ["test_escape_pays_fixed_other_card_set_and_revalidates_current_ability", "test_jump_start_discards_then_self_exiles_when_countered", "test_countered_and_stale_rebound_cards_do_not_receive_a_cast", "test_actual_discarded_spider_cast_uses_alternative_cost_and_ordinary_destination", "test_mayhem_additional_cost_is_required_and_committed_before_entry", "test_bare_mayhem_land_uses_existing_land_play_timing_and_limit"],
-      "multiplayer_tests": ["test_foretell_private_staging_persists_without_current_ability_and_replays", "test_actual_discarded_spider_cast_uses_alternative_cost_and_ordinary_destination", "test_mayhem_creature_normal_timing_and_flash_share_existing_offer_legality"],
-      "privacy_tests": ["test_foretell_private_staging_persists_without_current_ability_and_replays", "test_actual_discarded_spider_cast_uses_alternative_cost_and_ordinary_destination"],
-      "replay_tests": ["test_foretell_private_staging_persists_without_current_ability_and_replays", "test_jump_start_resolution_departure_replays_exactly", "test_rebound_schedules_identity_pinned_optional_free_cast", "test_actual_discarded_spider_cast_uses_alternative_cost_and_ordinary_destination", "test_mayhem_additional_cost_is_required_and_committed_before_entry", "test_bare_mayhem_land_uses_existing_land_play_timing_and_limit"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "casting.additional_cost.zone_change.fixed_discard",
+        "casting.additional_cost.zone_change.fixed_exile",
+        "casting.lifecycle.fixed_public",
+        "casting.permission.one_shot_exile_without_mana",
+        "trigger.event.normalized_zone_change",
+        "trigger.placement.apnap",
+        "zone.change.destination_replacement"
+      ],
+      "implementation_components": [
+        "quorune.cast_lifecycles.FixedCastLifecycleSpec",
+        "quorune.cast_lifecycles.FixedZoneCastDesignation",
+        "quorune.compiler.cast_lifecycle_nodes.fixed_cast_lifecycle_keyword_node",
+        "quorune.semantic_runtime.cast_lifecycles.FixedCastLifecycleHandler",
+        "quorune.compiled_cast_lifecycles.compiled_fixed_cast_lifecycle_specs",
+        "quorune.rules.staged_cast_lifecycles.build_staged_cast_offer",
+        "quorune.rules.staged_cast_lifecycles.commit_staged_cast_lifecycle",
+        "quorune.rules.staged_cast_lifecycles.resolve_rebound_cast_trigger",
+        "CommanderEngine._compiled_zone_cast_permission",
+        "CommanderEngine._effective_static_component_keys",
+        "quorune.rules.action_catalog.build_priority_action_catalog",
+        "quorune.rules.casting.lifecycle_costs.zone_lifecycle_base_options",
+        "quorune.rules.casting.costs.build_cast_cost_options",
+        "quorune.rules.casting_additional_costs.FixedZoneChangeAdditionalCost",
+        "quorune.rules.casting.commit.commit_cast",
+        "quorune.zone_object_state.mark_card_fixed_cast_lifecycle",
+        "quorune.zone_object_state.mark_fixed_zone_cast_designation",
+        "quorune.semantic_runtime.zone_replacements.capture_zone_change_replacement_snapshot",
+        "quorune.stack_resolution.complete_stack_resolution",
+        "quorune.trigger_processing.schedule_delayed_trigger",
+        "quorune.selection.exile_cast.OneShotExileCastChoiceOwnerMixin",
+        "quorune.projection.StateProjector"
+      ],
+      "positive_tests": [
+        "test_five_fixed_zone_cast_lifecycles_compile_through_shared_owner",
+        "test_foretell_private_staging_persists_without_current_ability_and_replays",
+        "test_plot_uses_both_special_action_and_later_cast_timing",
+        "test_escape_pays_fixed_other_card_set_and_revalidates_current_ability",
+        "test_jump_start_discards_then_self_exiles_when_countered",
+        "test_rebound_schedules_identity_pinned_optional_free_cast",
+        "test_mayhem_fixed_and_bare_descriptors_round_trip_and_reject_open_costs"
+      ],
+      "negative_tests": [
+        "test_open_zone_cast_forms_remain_residual",
+        "test_staging_timing_stale_offer_and_payment_fail_without_mutation",
+        "test_escape_insufficient_and_duplicate_other_card_payments_fail_closed",
+        "test_countered_and_stale_rebound_cards_do_not_receive_a_cast",
+        "test_mayhem_permission_requires_same_discard_turn_actor_and_adjacent_incarnation",
+        "test_mayhem_stale_discard_turn_rejects_prepared_cast_atomically",
+        "test_mayhem_creature_normal_timing_and_flash_share_existing_offer_legality",
+        "test_replaced_discard_to_exile_and_later_graveyard_move_does_not_grant_mayhem",
+        "test_mayhem_permission_omission_mutant_is_killed_by_real_discard_cast"
+      ],
+      "interaction_tests": [
+        "test_escape_pays_fixed_other_card_set_and_revalidates_current_ability",
+        "test_jump_start_discards_then_self_exiles_when_countered",
+        "test_countered_and_stale_rebound_cards_do_not_receive_a_cast",
+        "test_actual_discarded_spider_cast_uses_alternative_cost_and_ordinary_destination",
+        "test_mayhem_additional_cost_is_required_and_committed_before_entry",
+        "test_bare_mayhem_land_uses_existing_land_play_timing_and_limit"
+      ],
+      "multiplayer_tests": [
+        "test_foretell_private_staging_persists_without_current_ability_and_replays",
+        "test_actual_discarded_spider_cast_uses_alternative_cost_and_ordinary_destination",
+        "test_mayhem_creature_normal_timing_and_flash_share_existing_offer_legality"
+      ],
+      "privacy_tests": [
+        "test_foretell_private_staging_persists_without_current_ability_and_replays",
+        "test_actual_discarded_spider_cast_uses_alternative_cost_and_ordinary_destination"
+      ],
+      "replay_tests": [
+        "test_foretell_private_staging_persists_without_current_ability_and_replays",
+        "test_jump_start_resolution_departure_replays_exactly",
+        "test_rebound_schedules_identity_pinned_optional_free_cast",
+        "test_actual_discarded_spider_cast_uses_alternative_cost_and_ordinary_destination",
+        "test_mayhem_additional_cost_is_required_and_committed_before_entry",
+        "test_bare_mayhem_land_uses_existing_land_play_timing_and_limit"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Blocking fixed typed discard or exile costs, the base lifecycle owner, one-shot exile casting, normalized zone events, APNAP trigger placement, or destination replacement removes exact admission; complete-card trust, the shared current-component query, and rules-created designation identities independently fail closed.",
       "implementation_mutation_status": "killed",
@@ -12810,6 +13003,109 @@
       "dependency_fail_closed_rationale": "Omitting fixed counter placement prevents exact Backup compilation.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Including an earlier printed Flash ability in the donated bundle fails the source-order witness.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "casting.aftermath.selected_half",
+      "version": 1,
+      "official_rules": [
+        "702.127",
+        "702.127a",
+        "709.3",
+        "709.3a",
+        "709.3b",
+        "709.4",
+        "601.2b",
+        "601.2f",
+        "614.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Selected Aftermath split half is permitted from its owner graveyard, forbidden from other zones and exiled whenever that actually cast card leaves the stack. Both halves retain their own cost and ordinary timing/targets.",
+        "inputs": [
+          "trusted source-spanned selected-half lifecycle declaration",
+          "prospective selected-face identity and printed cost",
+          "owner source-zone permission",
+          "actual graveyard cast provenance"
+        ],
+        "outputs": [
+          "shared complete face offers and accepted costs",
+          "mandatory self-replacement on stack departure"
+        ],
+        "exclusions": [
+          "unrepresented whole-card siblings",
+          "fused split spells",
+          "Aftermath replacement on an uncast spell copy",
+          "runtime Oracle interpretation"
+        ]
+      },
+      "dependencies": [
+        "casting.lifecycle.fixed_zone_cast"
+      ],
+      "implementation_components": [
+        "quorune.compiler.cast_lifecycle_nodes.fixed_cast_lifecycle_keyword_node",
+        "quorune.rules.casting.aftermath.aftermath_cast_prohibition_reason",
+        "quorune.rules.casting.aftermath.with_aftermath_stack_context",
+        "quorune.rules.casting.face_queries.prospective_cast_card",
+        "quorune.rules.casting.face_queries.offered_cast_methods",
+        "quorune.cast_lifecycles.fixed_cast_lifecycle_stack_replacement",
+        "quorune.rules.face_characteristic_values.printed_face_colors",
+        "quorune.zone_object_state.mark_card_fixed_cast_lifecycle",
+        "quorune.rules.casting.face_queries.cast_resolution_is_trusted"
+      ],
+      "positive_tests": [
+        "test_selected_half_has_bare_lifecycle_and_other_face_remains_ordinary",
+        "test_actual_aftermath_only_offers_its_half_from_graveyard_resolves_and_replays"
+      ],
+      "negative_tests": [
+        "test_aftermath_descriptor_rejects_costs_wrong_shapes_and_nonsplit_carrier",
+        "test_hand_half_is_ordinary_and_aftermath_cannot_override_its_offer",
+        "test_zone_cast_dependency_omission_blocks_aftermath_half",
+        "test_strict_modal_unknown_face_is_hidden_and_rejected_before_mutation"
+      ],
+      "interaction_tests": [
+        "test_both_split_faces_publish_and_accept_own_costs_with_rollback_and_replay",
+        "test_actual_countered_aftermath_exiles_and_uncast_copy_has_no_replacement",
+        "test_actual_market_pending_private_discard_reloads_without_repeating_draw",
+        "test_canonical_free_cast_permission_never_overrides_other_zone_prohibition",
+        "test_selected_half_color_cost_query_ignores_other_half_and_replays",
+        "test_modal_back_spell_uses_own_cost_and_permanent_destination_and_replays",
+        "test_strict_modal_unknown_face_is_hidden_and_rejected_before_mutation",
+        "test_prospective_face_values_preserve_devoid_layer_before_cost_query"
+      ],
+      "multiplayer_tests": [
+        "test_actual_aftermath_only_offers_its_half_from_graveyard_resolves_and_replays"
+      ],
+      "privacy_tests": [
+        "test_actual_aftermath_only_offers_its_half_from_graveyard_resolves_and_replays",
+        "test_actual_market_pending_private_discard_reloads_without_repeating_draw"
+      ],
+      "replay_tests": [
+        "test_actual_aftermath_only_offers_its_half_from_graveyard_resolves_and_replays",
+        "test_actual_countered_aftermath_exiles_and_uncast_copy_has_no_replacement",
+        "test_actual_market_pending_private_discard_reloads_without_repeating_draw",
+        "test_selected_half_color_cost_query_ignores_other_half_and_replays",
+        "test_modal_back_spell_uses_own_cost_and_permanent_destination_and_replays",
+        "test_strict_modal_unknown_face_is_hidden_and_rejected_before_mutation",
+        "test_prospective_face_values_preserve_devoid_layer_before_cost_query"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Complete source admission and the fixed zone-cast owner are mandatory for the selected half permission.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Replacing prospective selected-face pricing with the front-half cost fails the independent split-face offer/payment witness. Omitting the Aftermath stack designation also fails the actual countered-spell exile witness.",
       "blockers": [],
       "status": "trusted"
     }

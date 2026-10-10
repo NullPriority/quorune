@@ -1410,7 +1410,7 @@ variable, Phyrexian, snow, granted, removed, and equivalent-text forms remain
 outside this compiler family.
 
 Fixed ordinary-mana Buyback, Dash, Escape, Foretell, Plot, Warp, and
-positive-count Suspend, plus bare Jump-start, Rebound, and Retrace, lower
+positive-count Suspend, plus bare Aftermath, Jump-start, Rebound, and Retrace, lower
 through one typed cast-lifecycle owner. Every descriptor declares both public
 and zone-cast capabilities required by the registered shared handler, plus its
 kind-specific cost or combat dependencies. Mayhem adds a version-four fixed or
@@ -1450,6 +1450,20 @@ hand-cast instant or sorcery resolution, then schedules one identity-pinned
 next-upkeep optional cast through the existing one-shot exile owner. A
 countered initial spell and an exile card that left and returned do not
 Rebound.
+
+Aftermath binds only its selected split-card half. It grants owner-graveyard
+casting and prohibits that half from all other zones, including under another
+casting permission. Every actual graveyard cast retains its mandatory
+stack-departure exile context even when a separate permission waives the mana
+cost. An uncast spell copy receives no such replacement. Split and modal
+double-faced spell offers use distinct face identities and the selected face's
+printed cost, colors, mana value, type and result program. Their prospective
+card views are read-only; ordinary zone objects retain their own characteristics.
+
+The fixed single-target reanimation shape joins the existing closed effect
+promotion predicates. Compiler recognition and capability closure therefore
+reach ordinary trusted runtime registration through the same validated target
+and zone owners; no arbitrary reanimation program is promoted.
 
 Fixed-output mana nodes also declare the unchanged shared handler's complete
 capability contract. This does not restrict otherwise unrestricted mana or add

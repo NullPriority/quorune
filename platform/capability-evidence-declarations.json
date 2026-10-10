@@ -5233,6 +5233,578 @@
     },
     {"capability_id": "casting.additional_cost.zone_change.fixed_return_to_owner_hand", "evidence_class": "replay", "test_id": "tests.test_permanent_additional_costs.PermanentAdditionalCostActionTests.test_real_discard_and_owner_hand_return_prices_are_private_authoritative_and_replay", "official_rule_ids": ["400.2", "400.3", "400.7", "601.2f", "601.2g", "601.2h", "601.2i", "614.1", "616.1"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Actual Fear of Isolation casting price returns a controlled opposing-owned permanent to its owner hand, independently of optional entry targets, with rollback rejection and pre-action replay."},
     {
+      "capability_id": "casting.aftermath.selected_half",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_aftermath_rules.AftermathRuntimeTests.test_actual_countered_aftermath_exiles_and_uncast_copy_has_no_replacement",
+      "official_rule_ids": [
+        "702.127",
+        "702.127a",
+        "709.3",
+        "709.3a",
+        "709.3b",
+        "709.4",
+        "601.2b",
+        "601.2f",
+        "614.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Selected-half Aftermath preserves actual graveyard casts, own costs and colors, other-zone prohibition, mandatory countered-spell exile and pending private draw/discard save/load. Canonical free-cast permission and uncast-copy boundaries are scoped separately; exact command witnesses replay from before the action."
+    },
+    {
+      "capability_id": "casting.aftermath.selected_half",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_aftermath_rules.AftermathRuntimeTests.test_actual_market_pending_private_discard_reloads_without_repeating_draw",
+      "official_rule_ids": [
+        "702.127",
+        "702.127a",
+        "709.3",
+        "709.3a",
+        "709.3b",
+        "709.4",
+        "601.2b",
+        "601.2f",
+        "614.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Selected-half Aftermath preserves actual graveyard casts, own costs and colors, other-zone prohibition, mandatory countered-spell exile and pending private draw/discard save/load. Canonical free-cast permission and uncast-copy boundaries are scoped separately; exact command witnesses replay from before the action."
+    },
+    {
+      "capability_id": "casting.aftermath.selected_half",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_aftermath_rules.AftermathRuntimeTests.test_both_split_faces_publish_and_accept_own_costs_with_rollback_and_replay",
+      "official_rule_ids": [
+        "702.127",
+        "702.127a",
+        "709.3",
+        "709.3a",
+        "709.3b",
+        "709.4",
+        "601.2b",
+        "601.2f",
+        "614.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Trusted selected-half Aftermath uses its own face cost, graveyard permission and mandatory stack-departure replacement. Shared offers and submitted face identity, underpayment, wrong-principal rollback and exact replay retain authority."
+    },
+    {
+      "capability_id": "casting.aftermath.selected_half",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_aftermath_rules.AftermathRuntimeTests.test_canonical_free_cast_permission_never_overrides_other_zone_prohibition",
+      "official_rule_ids": [
+        "702.127",
+        "702.127a",
+        "709.3",
+        "709.3a",
+        "709.3b",
+        "709.4",
+        "601.2b",
+        "601.2f",
+        "614.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Selected-half Aftermath preserves actual graveyard casts, own costs and colors, other-zone prohibition, mandatory countered-spell exile and pending private draw/discard save/load. Canonical free-cast permission and uncast-copy boundaries are scoped separately; exact command witnesses replay from before the action."
+    },
+    {
+      "capability_id": "casting.aftermath.selected_half",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_aftermath_rules.AftermathRuntimeTests.test_modal_back_spell_uses_own_cost_and_permanent_destination_and_replays",
+      "official_rule_ids": [
+        "702.127",
+        "702.127a",
+        "709.3",
+        "709.3a",
+        "709.3b",
+        "709.4",
+        "601.2b",
+        "601.2f",
+        "614.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Generic modal face witnesses prove selected cost, selected permanent destination and named-face implicit replay provenance. A trusted-only unsupported sorcery half is hidden and rejected before mutation while its ordinary permanent half remains available."
+    },
+    {
+      "capability_id": "casting.aftermath.selected_half",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_aftermath_rules.AftermathRuntimeTests.test_prospective_face_values_preserve_devoid_layer_before_cost_query",
+      "official_rule_ids": [
+        "702.127",
+        "702.127a",
+        "709.3",
+        "709.3a",
+        "709.3b",
+        "709.4",
+        "601.2b",
+        "601.2f",
+        "614.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The shared prospective face view establishes printed values before existing characteristic layers. A generic modal Devoid spell remains colorless for a real Pearl Medallion cost query and replays its accepted selected-face cast; this is adjacent face-boundary evidence, not an Aftermath/Devoid card support claim."
+    },
+    {
+      "capability_id": "casting.aftermath.selected_half",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_aftermath_rules.AftermathRuntimeTests.test_selected_half_color_cost_query_ignores_other_half_and_replays",
+      "official_rule_ids": [
+        "702.127",
+        "702.127a",
+        "709.3",
+        "709.3a",
+        "709.3b",
+        "709.4",
+        "601.2b",
+        "601.2f",
+        "614.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Selected-half Aftermath preserves actual graveyard casts, own costs and colors, other-zone prohibition, mandatory countered-spell exile and pending private draw/discard save/load. Canonical free-cast permission and uncast-copy boundaries are scoped separately; exact command witnesses replay from before the action."
+    },
+    {
+      "capability_id": "casting.aftermath.selected_half",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_aftermath_rules.AftermathRuntimeTests.test_strict_modal_unknown_face_is_hidden_and_rejected_before_mutation",
+      "official_rule_ids": [
+        "702.127",
+        "702.127a",
+        "709.3",
+        "709.3a",
+        "709.3b",
+        "709.4",
+        "601.2b",
+        "601.2f",
+        "614.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Generic modal face witnesses prove selected cost, selected permanent destination and named-face implicit replay provenance. A trusted-only unsupported sorcery half is hidden and rejected before mutation while its ordinary permanent half remains available."
+    },
+    {
+      "capability_id": "casting.aftermath.selected_half",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_aftermath_rules.AftermathRuntimeTests.test_actual_aftermath_only_offers_its_half_from_graveyard_resolves_and_replays",
+      "official_rule_ids": [
+        "702.127",
+        "702.127a",
+        "709.3",
+        "709.3a",
+        "709.3b",
+        "709.4",
+        "601.2b",
+        "601.2f",
+        "614.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Trusted selected-half Aftermath uses its own face cost, graveyard permission and mandatory stack-departure replacement. Shared offers and submitted face identity, underpayment, wrong-principal rollback and exact replay retain authority."
+    },
+    {
+      "capability_id": "casting.aftermath.selected_half",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_aftermath_rules.AftermathRuntimeTests.test_omitting_aftermath_stack_designation_mutant_is_killed",
+      "official_rule_ids": [
+        "702.127",
+        "702.127a",
+        "709.3",
+        "709.3a",
+        "709.3b",
+        "709.4",
+        "601.2b",
+        "601.2f",
+        "614.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Selected-half Aftermath preserves actual graveyard casts, own costs and colors, other-zone prohibition, mandatory countered-spell exile and pending private draw/discard save/load. Canonical free-cast permission and uncast-copy boundaries are scoped separately; exact command witnesses replay from before the action."
+    },
+    {
+      "capability_id": "casting.aftermath.selected_half",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_aftermath_rules.AftermathRuntimeTests.test_omitting_selected_face_cost_mutant_is_killed",
+      "official_rule_ids": [
+        "702.127",
+        "702.127a",
+        "709.3",
+        "709.3a",
+        "709.3b",
+        "709.4",
+        "601.2b",
+        "601.2f",
+        "614.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Trusted selected-half Aftermath uses its own face cost, graveyard permission and mandatory stack-departure replacement. Shared offers and submitted face identity, underpayment, wrong-principal rollback and exact replay retain authority."
+    },
+    {
+      "capability_id": "casting.aftermath.selected_half",
+      "evidence_class": "negative",
+      "test_id": "tests.test_aftermath_rules.AftermathCompilerTests.test_aftermath_descriptor_rejects_costs_wrong_shapes_and_nonsplit_carrier",
+      "official_rule_ids": [
+        "702.127",
+        "702.127a",
+        "709.3",
+        "709.3a",
+        "709.3b",
+        "709.4",
+        "601.2b",
+        "601.2f",
+        "614.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Trusted selected-half Aftermath uses its own face cost, graveyard permission and mandatory stack-departure replacement. Shared offers and submitted face identity, underpayment, wrong-principal rollback and exact replay retain authority."
+    },
+    {
+      "capability_id": "casting.aftermath.selected_half",
+      "evidence_class": "negative",
+      "test_id": "tests.test_aftermath_rules.AftermathCompilerTests.test_zone_cast_dependency_omission_blocks_aftermath_half",
+      "official_rule_ids": [
+        "702.127",
+        "702.127a",
+        "709.3",
+        "709.3a",
+        "709.3b",
+        "709.4",
+        "601.2b",
+        "601.2f",
+        "614.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Selected-half Aftermath preserves actual graveyard casts, own costs and colors, other-zone prohibition, mandatory countered-spell exile and pending private draw/discard save/load. Canonical free-cast permission and uncast-copy boundaries are scoped separately; exact command witnesses replay from before the action."
+    },
+    {
+      "capability_id": "casting.aftermath.selected_half",
+      "evidence_class": "negative",
+      "test_id": "tests.test_aftermath_rules.AftermathRuntimeTests.test_hand_half_is_ordinary_and_aftermath_cannot_override_its_offer",
+      "official_rule_ids": [
+        "702.127",
+        "702.127a",
+        "709.3",
+        "709.3a",
+        "709.3b",
+        "709.4",
+        "601.2b",
+        "601.2f",
+        "614.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Trusted selected-half Aftermath uses its own face cost, graveyard permission and mandatory stack-departure replacement. Shared offers and submitted face identity, underpayment, wrong-principal rollback and exact replay retain authority."
+    },
+    {
+      "capability_id": "casting.aftermath.selected_half",
+      "evidence_class": "negative",
+      "test_id": "tests.test_aftermath_rules.AftermathRuntimeTests.test_strict_modal_unknown_face_is_hidden_and_rejected_before_mutation",
+      "official_rule_ids": [
+        "702.127",
+        "702.127a",
+        "709.3",
+        "709.3a",
+        "709.3b",
+        "709.4",
+        "601.2b",
+        "601.2f",
+        "614.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Generic modal face witnesses prove selected cost, selected permanent destination and named-face implicit replay provenance. A trusted-only unsupported sorcery half is hidden and rejected before mutation while its ordinary permanent half remains available."
+    },
+    {
+      "capability_id": "casting.aftermath.selected_half",
+      "evidence_class": "positive",
+      "test_id": "tests.test_aftermath_rules.AftermathCompilerTests.test_selected_half_has_bare_lifecycle_and_other_face_remains_ordinary",
+      "official_rule_ids": [
+        "702.127",
+        "702.127a",
+        "709.3",
+        "709.3a",
+        "709.3b",
+        "709.4",
+        "601.2b",
+        "601.2f",
+        "614.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Trusted selected-half Aftermath uses its own face cost, graveyard permission and mandatory stack-departure replacement. Shared offers and submitted face identity, underpayment, wrong-principal rollback and exact replay retain authority."
+    },
+    {
+      "capability_id": "casting.aftermath.selected_half",
+      "evidence_class": "positive",
+      "test_id": "tests.test_aftermath_rules.AftermathRuntimeTests.test_actual_aftermath_only_offers_its_half_from_graveyard_resolves_and_replays",
+      "official_rule_ids": [
+        "702.127",
+        "702.127a",
+        "709.3",
+        "709.3a",
+        "709.3b",
+        "709.4",
+        "601.2b",
+        "601.2f",
+        "614.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Trusted selected-half Aftermath uses its own face cost, graveyard permission and mandatory stack-departure replacement. Shared offers and submitted face identity, underpayment, wrong-principal rollback and exact replay retain authority."
+    },
+    {
+      "capability_id": "casting.aftermath.selected_half",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_aftermath_rules.AftermathRuntimeTests.test_actual_aftermath_only_offers_its_half_from_graveyard_resolves_and_replays",
+      "official_rule_ids": [
+        "702.127",
+        "702.127a",
+        "709.3",
+        "709.3a",
+        "709.3b",
+        "709.4",
+        "601.2b",
+        "601.2f",
+        "614.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Trusted selected-half Aftermath uses its own face cost, graveyard permission and mandatory stack-departure replacement. Shared offers and submitted face identity, underpayment, wrong-principal rollback and exact replay retain authority."
+    },
+    {
+      "capability_id": "casting.aftermath.selected_half",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_aftermath_rules.AftermathRuntimeTests.test_actual_market_pending_private_discard_reloads_without_repeating_draw",
+      "official_rule_ids": [
+        "702.127",
+        "702.127a",
+        "709.3",
+        "709.3a",
+        "709.3b",
+        "709.4",
+        "601.2b",
+        "601.2f",
+        "614.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Selected-half Aftermath preserves actual graveyard casts, own costs and colors, other-zone prohibition, mandatory countered-spell exile and pending private draw/discard save/load. Canonical free-cast permission and uncast-copy boundaries are scoped separately; exact command witnesses replay from before the action."
+    },
+    {
+      "capability_id": "casting.aftermath.selected_half",
+      "evidence_class": "replay",
+      "test_id": "tests.test_aftermath_rules.AftermathRuntimeTests.test_actual_aftermath_only_offers_its_half_from_graveyard_resolves_and_replays",
+      "official_rule_ids": [
+        "702.127",
+        "702.127a",
+        "709.3",
+        "709.3a",
+        "709.3b",
+        "709.4",
+        "601.2b",
+        "601.2f",
+        "614.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Trusted selected-half Aftermath uses its own face cost, graveyard permission and mandatory stack-departure replacement. Shared offers and submitted face identity, underpayment, wrong-principal rollback and exact replay retain authority."
+    },
+    {
+      "capability_id": "casting.aftermath.selected_half",
+      "evidence_class": "replay",
+      "test_id": "tests.test_aftermath_rules.AftermathRuntimeTests.test_actual_countered_aftermath_exiles_and_uncast_copy_has_no_replacement",
+      "official_rule_ids": [
+        "702.127",
+        "702.127a",
+        "709.3",
+        "709.3a",
+        "709.3b",
+        "709.4",
+        "601.2b",
+        "601.2f",
+        "614.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Selected-half Aftermath preserves actual graveyard casts, own costs and colors, other-zone prohibition, mandatory countered-spell exile and pending private draw/discard save/load. Canonical free-cast permission and uncast-copy boundaries are scoped separately; exact command witnesses replay from before the action."
+    },
+    {
+      "capability_id": "casting.aftermath.selected_half",
+      "evidence_class": "replay",
+      "test_id": "tests.test_aftermath_rules.AftermathRuntimeTests.test_actual_market_pending_private_discard_reloads_without_repeating_draw",
+      "official_rule_ids": [
+        "702.127",
+        "702.127a",
+        "709.3",
+        "709.3a",
+        "709.3b",
+        "709.4",
+        "601.2b",
+        "601.2f",
+        "614.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Selected-half Aftermath preserves actual graveyard casts, own costs and colors, other-zone prohibition, mandatory countered-spell exile and pending private draw/discard save/load. Canonical free-cast permission and uncast-copy boundaries are scoped separately; exact command witnesses replay from before the action."
+    },
+    {
+      "capability_id": "casting.aftermath.selected_half",
+      "evidence_class": "replay",
+      "test_id": "tests.test_aftermath_rules.AftermathRuntimeTests.test_modal_back_spell_uses_own_cost_and_permanent_destination_and_replays",
+      "official_rule_ids": [
+        "702.127",
+        "702.127a",
+        "709.3",
+        "709.3a",
+        "709.3b",
+        "709.4",
+        "601.2b",
+        "601.2f",
+        "614.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Generic modal face witnesses prove selected cost, selected permanent destination and named-face implicit replay provenance. A trusted-only unsupported sorcery half is hidden and rejected before mutation while its ordinary permanent half remains available."
+    },
+    {
+      "capability_id": "casting.aftermath.selected_half",
+      "evidence_class": "replay",
+      "test_id": "tests.test_aftermath_rules.AftermathRuntimeTests.test_prospective_face_values_preserve_devoid_layer_before_cost_query",
+      "official_rule_ids": [
+        "702.127",
+        "702.127a",
+        "709.3",
+        "709.3a",
+        "709.3b",
+        "709.4",
+        "601.2b",
+        "601.2f",
+        "614.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The shared prospective face view establishes printed values before existing characteristic layers. A generic modal Devoid spell remains colorless for a real Pearl Medallion cost query and replays its accepted selected-face cast; this is adjacent face-boundary evidence, not an Aftermath/Devoid card support claim."
+    },
+    {
+      "capability_id": "casting.aftermath.selected_half",
+      "evidence_class": "replay",
+      "test_id": "tests.test_aftermath_rules.AftermathRuntimeTests.test_selected_half_color_cost_query_ignores_other_half_and_replays",
+      "official_rule_ids": [
+        "702.127",
+        "702.127a",
+        "709.3",
+        "709.3a",
+        "709.3b",
+        "709.4",
+        "601.2b",
+        "601.2f",
+        "614.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Selected-half Aftermath preserves actual graveyard casts, own costs and colors, other-zone prohibition, mandatory countered-spell exile and pending private draw/discard save/load. Canonical free-cast permission and uncast-copy boundaries are scoped separately; exact command witnesses replay from before the action."
+    },
+    {
+      "capability_id": "casting.aftermath.selected_half",
+      "evidence_class": "replay",
+      "test_id": "tests.test_aftermath_rules.AftermathRuntimeTests.test_strict_modal_unknown_face_is_hidden_and_rejected_before_mutation",
+      "official_rule_ids": [
+        "702.127",
+        "702.127a",
+        "709.3",
+        "709.3a",
+        "709.3b",
+        "709.4",
+        "601.2b",
+        "601.2f",
+        "614.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Generic modal face witnesses prove selected cost, selected permanent destination and named-face implicit replay provenance. A trusted-only unsupported sorcery half is hidden and rejected before mutation while its ordinary permanent half remains available."
+    },
+    {
       "capability_id": "casting.alternative_cost.fixed_public",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_public_alternative_costs.FixedPublicAlternativeCostConditionTests.test_spectacle_surge_prowl_and_freerunning_use_authoritative_history",

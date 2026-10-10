@@ -20,6 +20,7 @@ from .action_proposals import (
 from .activation.proposal import build_activation_offer
 from .activation_costs import activation_choice_candidates
 from .casting.proposal import build_cast_offer
+from .casting.face_queries import offered_cast_methods,candidate_zone_cast_permission
 from ..morph import FACE_DOWN_CAST_METHODS
 from .morph_actions import build_turn_face_up_offer
 from ..suspend import build_suspend_offer
@@ -57,7 +58,7 @@ def _cast_candidates(host: ActionCatalogHost, seat: str) -> list[Any]:
             *(
                 player.zones["library"][-1:]
                 if player.zones["library"]
-                and host._compiled_zone_cast_permission(
+                and candidate_zone_cast_permission(host,
                     seat,
                     host.state.cards[player.zones["library"][-1]],
                 )
@@ -68,7 +69,7 @@ def _cast_candidates(host: ActionCatalogHost, seat: str) -> list[Any]:
                 for zone in ("graveyard", "exile")
                 for owner in host.active_seats
                 for object_id in host.state.players[owner].zones[zone]
-                if host._compiled_zone_cast_permission(
+                if candidate_zone_cast_permission(host,
                     seat, host.state.cards[object_id]
                 )
             ],
@@ -84,12 +85,13 @@ def _cast_offers(
     offers: list[dict[str, Any]] = []
     diagnostics: list[dict[str, Any]] = []
     for card in _cast_candidates(host, seat):
-        for cast_method in (None, *FACE_DOWN_CAST_METHODS):
+        for cast_method,face_name in offered_cast_methods(host,card):
             result = build_cast_offer(
                 host,
                 seat,
                 card,
                 cast_method=cast_method,
+                face_name=face_name,
             )
             if result.status == "payable":
                 assert result.offer is not None

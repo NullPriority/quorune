@@ -1,0 +1,1239 @@
+{
+  "cards": [
+    {
+      "card_faces": [
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{B}",
+          "name": "Claim",
+          "oracle_text": "Return target creature card with mana value 2 or less from your graveyard to the battlefield.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Sorcery"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{R}",
+          "name": "Fame",
+          "oracle_text": "Aftermath (Cast this spell only from your graveyard. Then exile it.)\nTarget creature gets +2/+0 and gains haste until end of turn.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Sorcery"
+        }
+      ],
+      "cmc": 3.0,
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Aftermath"
+      ],
+      "layout": "split",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{B} // {1}{R}",
+      "name": "Claim // Fame",
+      "oracle_id": "16da9e4b-c6ee-4e70-8653-31ca147f3b01",
+      "oracle_text": "Claim: Return target creature card with mana value 2 or less from your graveyard to the battlefield.\n//\nFame: Aftermath (Cast this spell only from your graveyard. Then exile it.)\nTarget creature gets +2/+0 and gains haste until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2017-07-14",
+      "toughness": null,
+      "type_line": "Sorcery // Sorcery"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{U}",
+          "name": "Consign",
+          "oracle_text": "Return target nonland permanent to its owner's hand.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Instant"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{4}{B}",
+          "name": "Oblivion",
+          "oracle_text": "Aftermath (Cast this spell only from your graveyard. Then exile it.)\nTarget opponent discards two cards.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Sorcery"
+        }
+      ],
+      "cmc": 7.0,
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Aftermath"
+      ],
+      "layout": "split",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U} // {4}{B}",
+      "name": "Consign // Oblivion",
+      "oracle_id": "8fe7436b-2467-486e-8a2d-7cbf21a65da9",
+      "oracle_text": "Consign: Return target nonland permanent to its owner's hand.\n//\nOblivion: Aftermath (Cast this spell only from your graveyard. Then exile it.)\nTarget opponent discards two cards.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2017-07-14",
+      "toughness": null,
+      "type_line": "Instant // Sorcery"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Counterspell",
+      "oracle_id": "cc187110-1148-4090-bbb8-e205694a39f5",
+      "oracle_text": "Counter target spell.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Shadow"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{B}{B}",
+      "name": "Dauthi Voidwalker",
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "oracle_text": "Shadow (This creature can block or be blocked by only creatures with shadow.)\nIf a card would be put into an opponent's graveyard from anywhere, instead exile it with a void counter on it.\n{T}, Sacrifice this creature: Choose an exiled card an opponent owns with a void counter on it. You may play it this turn without paying its mana cost.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2025-04-11",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Dauthi Rogue"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{W}",
+          "name": "Farm",
+          "oracle_text": "Destroy target attacking or blocking creature.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Instant"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{U}",
+          "name": "Market",
+          "oracle_text": "Aftermath (Cast this spell only from your graveyard. Then exile it.)\nDraw two cards, then discard two cards.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Sorcery"
+        }
+      ],
+      "cmc": 6.0,
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Aftermath"
+      ],
+      "layout": "split",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W} // {2}{U}",
+      "name": "Farm // Market",
+      "oracle_id": "2ab857cc-64b9-4115-8fa5-6dfae9edbdb5",
+      "oracle_text": "Farm: Destroy target attacking or blocking creature.\n//\nMarket: Aftermath (Cast this spell only from your graveyard. Then exile it.)\nDraw two cards, then discard two cards.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2019-08-23",
+      "toughness": null,
+      "type_line": "Instant // Sorcery"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Island",
+      "oracle_id": "b2c6aa39-2d2a-459c-a555-fb48ba993373",
+      "oracle_text": "({T}: Add {U}.)",
+      "power": null,
+      "produced_mana": [
+        "U"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land \u2014 Island"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "banned",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}",
+      "name": "Memory Lapse",
+      "oracle_id": "bbfb3e4a-b389-4391-8141-13b68c0ef2e0",
+      "oracle_text": "Counter target spell. If that spell is countered this way, put it on top of its owner's library instead of into that player's graveyard.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2016-06-10",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Silvercoat Lion",
+      "oracle_id": "e3c0b11e-7340-4e0a-98b7-91b38439d4f9",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2012-07-13",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Cat"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{G}",
+          "name": "Spring",
+          "oracle_text": "Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Sorcery"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{4}{U}{U}",
+          "name": "Mind",
+          "oracle_text": "Aftermath (Cast this spell only from your graveyard. Then exile it.)\nDraw two cards.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Instant"
+        }
+      ],
+      "cmc": 9.0,
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Aftermath"
+      ],
+      "layout": "split",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{G} // {4}{U}{U}",
+      "name": "Spring // Mind",
+      "oracle_id": "6dd7e861-7ae2-49e6-a9ab-8fd761939e22",
+      "oracle_text": "Spring: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.\n//\nMind: Aftermath (Cast this spell only from your graveyard. Then exile it.)\nDraw two cards.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2017-04-28",
+      "toughness": null,
+      "type_line": "Sorcery // Instant"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}",
+      "name": "Vedalken Orrery",
+      "oracle_id": "60d640a4-032b-4279-ac75-8f200ca776fb",
+      "oracle_text": "You may cast spells as though they had flash.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2022-07-08",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "oracle_id": "fixture:generic-split-draw",
+      "name": "Generic Split Draw",
+      "mana_cost": "{W}{3}{U}",
+      "cmc": 5,
+      "type_line": "Sorcery // Sorcery",
+      "oracle_text": "",
+      "colors": [
+        "W",
+        "U"
+      ],
+      "color_identity": [
+        "W",
+        "U"
+      ],
+      "keywords": [],
+      "layout": "split",
+      "legalities": {
+        "commander": "legal"
+      },
+      "card_faces": [
+        {
+          "name": "First Draw",
+          "mana_cost": "{W}",
+          "cmc": 1,
+          "type_line": "Sorcery",
+          "oracle_text": "Draw a card.",
+          "colors": [
+            "W"
+          ]
+        },
+        {
+          "name": "Second Draw",
+          "mana_cost": "{3}{U}",
+          "cmc": 4,
+          "type_line": "Sorcery",
+          "oracle_text": "Draw two cards.",
+          "colors": [
+            "U"
+          ]
+        }
+      ],
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "produced_mana": []
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}",
+      "name": "Pearl Medallion",
+      "oracle_id": "19015380-1332-4960-8cc6-0732009525a2",
+      "oracle_text": "White spells you cast cost {1} less to cast.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-06-14",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "oracle_id": "fixture:generic-modal-cast",
+      "name": "Generic Modal Cast",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "type_line": "Sorcery // Creature \u2014 Wizard",
+      "oracle_text": "",
+      "colors": [
+        "W",
+        "U"
+      ],
+      "color_identity": [
+        "W",
+        "U"
+      ],
+      "keywords": [],
+      "layout": "modal_dfc",
+      "legalities": {
+        "commander": "legal"
+      },
+      "card_faces": [
+        {
+          "name": "Modal Draw",
+          "mana_cost": "{W}",
+          "cmc": 1,
+          "type_line": "Sorcery",
+          "oracle_text": "Draw a card.",
+          "colors": [
+            "W"
+          ]
+        },
+        {
+          "name": "Modal Body",
+          "mana_cost": "{3}{U}",
+          "cmc": 4,
+          "type_line": "Creature \u2014 Wizard",
+          "oracle_text": "",
+          "colors": [
+            "U"
+          ],
+          "power": "2",
+          "toughness": "6"
+        }
+      ],
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "produced_mana": []
+    },
+    {
+      "oracle_id": "fixture:generic-modal-boundary",
+      "name": "Generic Modal Boundary",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "type_line": "Creature \u2014 Bird // Sorcery",
+      "oracle_text": "",
+      "colors": [
+        "W",
+        "U"
+      ],
+      "color_identity": [
+        "W",
+        "U"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "layout": "modal_dfc",
+      "legalities": {
+        "commander": "legal"
+      },
+      "card_faces": [
+        {
+          "name": "Boundary Bird",
+          "mana_cost": "{W}",
+          "cmc": 1,
+          "type_line": "Creature \u2014 Bird",
+          "oracle_text": "Flying",
+          "colors": [
+            "W"
+          ],
+          "power": "2",
+          "toughness": "6"
+        },
+        {
+          "name": "Unknown History",
+          "mana_cost": "{3}{U}",
+          "cmc": 4,
+          "type_line": "Sorcery",
+          "oracle_text": "This spell rewrites history.",
+          "colors": [
+            "U"
+          ],
+          "power": null,
+          "toughness": null
+        }
+      ],
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "produced_mana": []
+    },
+    {
+      "oracle_id": "fixture:generic-modal-devoid",
+      "name": "Generic Modal Devoid",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "type_line": "Sorcery // Creature \u2014 Wizard",
+      "oracle_text": "",
+      "colors": [
+        "W",
+        "U"
+      ],
+      "color_identity": [
+        "W",
+        "U"
+      ],
+      "keywords": [
+        "Devoid"
+      ],
+      "layout": "modal_dfc",
+      "legalities": {
+        "commander": "legal"
+      },
+      "card_faces": [
+        {
+          "name": "Devoid Boundary Draw",
+          "mana_cost": "{W}",
+          "cmc": 1,
+          "type_line": "Sorcery",
+          "oracle_text": "Draw a card.",
+          "colors": [
+            "W"
+          ]
+        },
+        {
+          "name": "Colorless Draw",
+          "mana_cost": "{3}{W}",
+          "cmc": 4,
+          "type_line": "Sorcery",
+          "oracle_text": "Devoid\nDraw two cards.",
+          "colors": [
+            "W"
+          ],
+          "power": null,
+          "toughness": null
+        }
+      ],
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "produced_mana": []
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}",
+      "name": "Jet Medallion",
+      "oracle_id": "bccb06f1-8839-4104-9ffa-c79a817f8378",
+      "oracle_text": "Black spells you cast cost {1} less to cast.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-06-14",
+      "toughness": null,
+      "type_line": "Artifact"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "A spell with aftermath cast from a graveyard will always be exiled afterward, whether it resolves, it\u2019s countered, or it leaves the stack in some other way.",
+      "oracle_id": "16da9e4b-c6ee-4e70-8653-31ca147f3b01",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "All split cards have two card faces on a single card, and you put a split card onto the stack with only the half you\u2019re casting. The characteristics of the half of the card you didn\u2019t cast are ignored while the spell is on the stack. For example, if an effect prevents you from casting green spells, you can cast Destined of Destined // Lead, but not Lead.",
+      "oracle_id": "16da9e4b-c6ee-4e70-8653-31ca147f3b01",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each split card has two names. If an effect instructs you to choose a card name, you may choose one, but not both.",
+      "oracle_id": "16da9e4b-c6ee-4e70-8653-31ca147f3b01",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each split card is a single card. For example, if you discard one, you\u2019ve discarded one card, not two. If an effect counts the number of instant and sorcery cards in your graveyard, Destined // Lead counts once, not twice.",
+      "oracle_id": "16da9e4b-c6ee-4e70-8653-31ca147f3b01",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If another effect allows you to cast a split card with aftermath from a graveyard, you may cast either half. If you cast the half that has aftermath, you\u2019ll exile the card if it would leave the stack.",
+      "oracle_id": "16da9e4b-c6ee-4e70-8653-31ca147f3b01",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If another effect allows you to cast a split card with aftermath from any zone other than a graveyard, you can\u2019t cast the half with aftermath.",
+      "oracle_id": "16da9e4b-c6ee-4e70-8653-31ca147f3b01",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast the first half of a split card with aftermath during your turn, you\u2019ll have priority immediately after it resolves. You can cast the half with aftermath from your graveyard before any player can take any other action if it\u2019s legal for you to do so.",
+      "oracle_id": "16da9e4b-c6ee-4e70-8653-31ca147f3b01",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Split cards with aftermath have a new frame treatment\u2014the half you can cast from your hand is oriented the same as other cards you\u2019d cast from your hand, while the half you can cast from your graveyard is a traditional split card half. This frame treatment is for your convenience and has no rules significance.",
+      "oracle_id": "16da9e4b-c6ee-4e70-8653-31ca147f3b01",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "While not on the stack, the characteristics of a split card are the combination of its two halves. For example, Destined // Lead is a green and black card, it is both an instant card and a sorcery card, and its mana value is 6. This means that if an effect allows you to cast a card with mana value 2 from your hand, you can\u2019t cast Destined. This is a change from the previous rules for split cards.",
+      "oracle_id": "16da9e4b-c6ee-4e70-8653-31ca147f3b01",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once you\u2019ve started to cast a spell with aftermath from your graveyard, the card is immediately moved to the stack. Opponents can\u2019t try to stop the ability by exiling the card with an effect such as that of Crook of Condemnation.",
+      "oracle_id": "16da9e4b-c6ee-4e70-8653-31ca147f3b01",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "A spell with aftermath cast from a graveyard will always be exiled afterward, whether it resolves, it's countered, or it leaves the stack in some other way.",
+      "oracle_id": "2ab857cc-64b9-4115-8fa5-6dfae9edbdb5",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "All split cards have two card faces on a single card, and you put a split card onto the stack with only the half you're casting. The characteristics of the half of the card you didn't cast are ignored while the spell is on the stack. For example, if an effect prevents you from casting green spells, you can cast Destined of Destined // Lead, but not Lead.",
+      "oracle_id": "2ab857cc-64b9-4115-8fa5-6dfae9edbdb5",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each split card has two names. If an effect instructs you to choose a card name, you may choose one, but not both.",
+      "oracle_id": "2ab857cc-64b9-4115-8fa5-6dfae9edbdb5",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each split card is a single card. For example, if you discard one, you've discarded one card, not two. If an effect counts the number of instant and sorcery cards in your graveyard, Destined // Lead counts once, not twice.",
+      "oracle_id": "2ab857cc-64b9-4115-8fa5-6dfae9edbdb5",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If another effect allows you to cast a split card with aftermath from a graveyard, you may cast either half. If you cast the half that has aftermath, you'll exile the card if it would leave the stack.",
+      "oracle_id": "2ab857cc-64b9-4115-8fa5-6dfae9edbdb5",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If another effect allows you to cast a split card with aftermath from any zone other than a graveyard, you can't cast the half with aftermath.",
+      "oracle_id": "2ab857cc-64b9-4115-8fa5-6dfae9edbdb5",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast the first half of a split card with aftermath during your turn, you'll have priority immediately after it resolves. You can cast the half with aftermath from your graveyard before any player can take any other action if it's legal for you to do so.",
+      "oracle_id": "2ab857cc-64b9-4115-8fa5-6dfae9edbdb5",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Split cards with aftermath have a new frame treatment\u2014the half you can cast from your hand is oriented the same as other cards you'd cast from your hand, while the half you can cast from your graveyard is a traditional split card half. This frame treatment is for your convenience and has no rules significance.",
+      "oracle_id": "2ab857cc-64b9-4115-8fa5-6dfae9edbdb5",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "While not on the stack, the characteristics of a split card are the combination of its two halves. For example, Destined // Lead is a green and black card, it is both an instant card and a sorcery card, and its mana value is 6. This means that if an effect allows you to cast a card with mana value 2 from your hand, you can't cast Destined. This is a change from the previous rules for split cards.",
+      "oracle_id": "2ab857cc-64b9-4115-8fa5-6dfae9edbdb5",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once you've started to cast a spell with aftermath from your graveyard, the card is immediately moved to the stack. Opponents can't try to stop the ability by exiling the card with an effect such as that of Crook of Condemnation.",
+      "oracle_id": "2ab857cc-64b9-4115-8fa5-6dfae9edbdb5",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "The controller of Vedalken Orrery can cast nonland artifact, creature, enchantment, and sorcery cards any time they could cast an instant. This includes on other players' turns and during the upkeep step, draw step, combat phase, and end step.",
+      "oracle_id": "60d640a4-032b-4279-ac75-8f200ca776fb",
+      "published_at": "2004-12-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "This applies only to casting spells. It does not, for example, change when you may activate abilities that can only be activated \"any time you could cast a sorcery\".",
+      "oracle_id": "60d640a4-032b-4279-ac75-8f200ca776fb",
+      "published_at": "2010-06-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "A spell with aftermath cast from a graveyard will always be exiled afterward, whether it resolves, it's countered, or it leaves the stack in some other way.",
+      "oracle_id": "6dd7e861-7ae2-49e6-a9ab-8fd761939e22",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "All split cards have two card faces on a single card, and you put a split card onto the stack with only the half you're casting. The characteristics of the half of the card you didn't cast are ignored while the spell is on the stack. For example, if an effect prevents you from casting green spells, you can cast Destined of Destined // Lead, but not Lead.",
+      "oracle_id": "6dd7e861-7ae2-49e6-a9ab-8fd761939e22",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each split card has two names. If an effect instructs you to choose a card name, you may choose one, but not both.",
+      "oracle_id": "6dd7e861-7ae2-49e6-a9ab-8fd761939e22",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each split card is a single card. For example, if you discard one, you've discarded one card, not two. If an effect counts the number of instant and sorcery cards in your graveyard, Destined // Lead counts once, not twice.",
+      "oracle_id": "6dd7e861-7ae2-49e6-a9ab-8fd761939e22",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If another effect allows you to cast a split card with aftermath from a graveyard, you may cast either half. If you cast the half that has aftermath, you'll exile the card if it would leave the stack.",
+      "oracle_id": "6dd7e861-7ae2-49e6-a9ab-8fd761939e22",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If another effect allows you to cast a split card with aftermath from any zone other than a graveyard, you can't cast the half with aftermath.",
+      "oracle_id": "6dd7e861-7ae2-49e6-a9ab-8fd761939e22",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast the first half of a split card with aftermath during your turn, you'll have priority immediately after it resolves. You can cast the half with aftermath from your graveyard before any player can take any other action if it's legal for you to do so.",
+      "oracle_id": "6dd7e861-7ae2-49e6-a9ab-8fd761939e22",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Split cards with aftermath have a new frame treatment\u2014the half you can cast from your hand is oriented the same as other cards you'd cast from your hand, while the half you can cast from your graveyard is a traditional split card half. This frame treatment is for your convenience and has no rules significance.",
+      "oracle_id": "6dd7e861-7ae2-49e6-a9ab-8fd761939e22",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "While not on the stack, the characteristics of a split card are the combination of its two halves. For example, Destined // Lead is a green and black card, it is both an instant card and a sorcery card, and its mana value is 6. This means that if an effect allows you to cast a card with mana value 2 from your hand, you can't cast Destined. This is a change from the previous rules for split cards.",
+      "oracle_id": "6dd7e861-7ae2-49e6-a9ab-8fd761939e22",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once you've started to cast a spell with aftermath from your graveyard, the card is immediately moved to the stack. Opponents can't try to stop the ability by exiling the card with an effect such as that of Crook of Condemnation.",
+      "oracle_id": "6dd7e861-7ae2-49e6-a9ab-8fd761939e22",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "A spell with aftermath cast from a graveyard will always be exiled afterward, whether it resolves, it's countered, or it leaves the stack in some other way.",
+      "oracle_id": "8fe7436b-2467-486e-8a2d-7cbf21a65da9",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "All split cards have two card faces on a single card, and you put a split card onto the stack with only the half you're casting. The characteristics of the half of the card you didn't cast are ignored while the spell is on the stack. For example, if an effect prevents you from casting green spells, you can cast Destined of Destined // Lead, but not Lead.",
+      "oracle_id": "8fe7436b-2467-486e-8a2d-7cbf21a65da9",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each split card has two names. If an effect instructs you to choose a card name, you may choose one, but not both.",
+      "oracle_id": "8fe7436b-2467-486e-8a2d-7cbf21a65da9",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each split card is a single card. For example, if you discard one, you've discarded one card, not two. If an effect counts the number of instant and sorcery cards in your graveyard, Destined // Lead counts once, not twice.",
+      "oracle_id": "8fe7436b-2467-486e-8a2d-7cbf21a65da9",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If another effect allows you to cast a split card with aftermath from a graveyard, you may cast either half. If you cast the half that has aftermath, you'll exile the card if it would leave the stack.",
+      "oracle_id": "8fe7436b-2467-486e-8a2d-7cbf21a65da9",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If another effect allows you to cast a split card with aftermath from any zone other than a graveyard, you can't cast the half with aftermath.",
+      "oracle_id": "8fe7436b-2467-486e-8a2d-7cbf21a65da9",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast the first half of a split card with aftermath during your turn, you'll have priority immediately after it resolves. You can cast the half with aftermath from your graveyard before any player can take any other action if it's legal for you to do so.",
+      "oracle_id": "8fe7436b-2467-486e-8a2d-7cbf21a65da9",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Split cards with aftermath have a new frame treatment\u2014the half you can cast from your hand is oriented the same as other cards you'd cast from your hand, while the half you can cast from your graveyard is a traditional split card half. This frame treatment is for your convenience and has no rules significance.",
+      "oracle_id": "8fe7436b-2467-486e-8a2d-7cbf21a65da9",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "While not on the stack, the characteristics of a split card are the combination of its two halves. For example, Destined // Lead is a green and black card, it is both an instant card and a sorcery card, and its mana value is 6. This means that if an effect allows you to cast a card with mana value 2 from your hand, you can't cast Destined. This is a change from the previous rules for split cards.",
+      "oracle_id": "8fe7436b-2467-486e-8a2d-7cbf21a65da9",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once you've started to cast a spell with aftermath from your graveyard, the card is immediately moved to the stack. Opponents can't try to stop the ability by exiling the card with an effect such as that of Crook of Condemnation.",
+      "oracle_id": "8fe7436b-2467-486e-8a2d-7cbf21a65da9",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Memory Lapse has a self-replacement effect that replaces the spell going to the graveyard before any other effect can replace that event. If the spell was cast using flashback, however, flashback will change the spell's destination from its owner's library to exile.",
+      "oracle_id": "bbfb3e4a-b389-4391-8141-13b68c0ef2e0",
+      "published_at": "2016-06-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost.",
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an attacking creature has multiple evasion abilities, such as shadow and flying, a creature can block it only if that creature satisfies all of the appropriate evasion abilities.",
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a card this way, you may not cast it for any other alternative costs it has, but you may pay for additional costs, such as kicker costs. If the spell requires an additional cost, you must pay that cost.",
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your opponent discards a card while you control Dauthi Voidwalker, abilities that function when that card is discarded still work, even though that card never reaches that player's graveyard. In addition, spells or abilities that check the characteristics of the discarded card can find that card in exile.",
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Playing a card with Dauthi Voidwalker's last ability is still subject to normal timing restrictions.",
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Tokens still die while Dauthi Voidwalker is on the battlefield.",
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "While Dauthi Voidwalker is on the battlefield, nontoken creatures your opponents control won't die. They'll be exiled instead. Abilities that would trigger when those creatures die won't trigger.",
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a spell you cast has {X} in its mana cost, you choose the value of X before calculating the spell's total cost.",
+      "oracle_id": "19015380-1332-4960-8cc6-0732009525a2",
+      "published_at": "2023-07-28",
+      "source": "wotc"
+    },
+    {
+      "comment": "If there are additional costs to cast a spell, or if the cost to cast a spell is increased by an effect (such as the one created by Thalia, Guardian of Thraben's ability), apply those increases before applying cost reductions.",
+      "oracle_id": "19015380-1332-4960-8cc6-0732009525a2",
+      "published_at": "2023-07-28",
+      "source": "wotc"
+    },
+    {
+      "comment": "The ability can't reduce the amount of colored mana you pay for a spell. It reduces only the generic mana component of that cost.",
+      "oracle_id": "19015380-1332-4960-8cc6-0732009525a2",
+      "published_at": "2023-07-28",
+      "source": "wotc"
+    },
+    {
+      "comment": "The ability doesn't change the mana cost or mana value of any spell. It changes only the total cost you pay.",
+      "oracle_id": "19015380-1332-4960-8cc6-0732009525a2",
+      "published_at": "2023-07-28",
+      "source": "wotc"
+    },
+    {
+      "comment": "The cost reduction can apply to alternative costs such as flashback costs.",
+      "oracle_id": "19015380-1332-4960-8cc6-0732009525a2",
+      "published_at": "2023-07-28",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a spell you cast has {X} in its mana cost, you choose the value of X before calculating the spell's total cost.",
+      "oracle_id": "bccb06f1-8839-4104-9ffa-c79a817f8378",
+      "published_at": "2023-07-28",
+      "source": "wotc"
+    },
+    {
+      "comment": "If there are additional costs to cast a spell, or if the cost to cast a spell is increased by an effect (such as the one created by Thalia, Guardian of Thraben's ability), apply those increases before applying cost reductions.",
+      "oracle_id": "bccb06f1-8839-4104-9ffa-c79a817f8378",
+      "published_at": "2023-07-28",
+      "source": "wotc"
+    },
+    {
+      "comment": "The ability can't reduce the amount of colored mana you pay for a spell. It reduces only the generic mana component of that cost.",
+      "oracle_id": "bccb06f1-8839-4104-9ffa-c79a817f8378",
+      "published_at": "2023-07-28",
+      "source": "wotc"
+    },
+    {
+      "comment": "The ability doesn't change the mana cost or mana value of any spell. It changes only the total cost you pay.",
+      "oracle_id": "bccb06f1-8839-4104-9ffa-c79a817f8378",
+      "published_at": "2023-07-28",
+      "source": "wotc"
+    },
+    {
+      "comment": "The cost reduction can apply to alternative costs such as flashback costs.",
+      "oracle_id": "bccb06f1-8839-4104-9ffa-c79a817f8378",
+      "published_at": "2023-07-28",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

@@ -8936,6 +8936,51 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Streetwise Negotiator Backup donates its independently represented toughness rule to its recipient; exact activation/target sequence replays before direct current-rule applicability checks."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_countered_aftermath_exiles_and_uncast_copy_has_no_replacement",
+      "piece_ids": [
+        "capability.casting.aftermath.selected_half",
+        "capability.stack.counter.effect"
+      ],
+      "capability_ids": [
+        "casting.aftermath.selected_half",
+        "stack.counter.effect"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Counterspell counters Fame cast from the graveyard; its intrinsic self-replacement sends the card to exile and the countered result never modifies the recipient, with exact replay. A separately scoped uncast-copy boundary receives no replacement."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_selected_half_color_cost_query_ignores_other_half_and_replays",
+      "piece_ids": [
+        "capability.casting.aftermath.selected_half",
+        "capability.casting.cost.modifier.fixed_query"
+      ],
+      "capability_ids": [
+        "casting.aftermath.selected_half",
+        "casting.cost.modifier.fixed_query"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Jet Medallion does not reduce red Fame cast through Aftermath because its other half is black. The selected cost query, accepted graveyard cast, mandatory exile and exact replay retain selected-half colors."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_market_pending_private_discard_reloads_without_repeating_draw",
+      "piece_ids": [
+        "capability.casting.aftermath.selected_half",
+        "capability.resolution.effect_sequence.fixed_controller"
+      ],
+      "capability_ids": [
+        "casting.aftermath.selected_half",
+        "resolution.effect_sequence.fixed_controller"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Market draws two cards before private discard suspension. Wrong-principal rollback and pending save/load retain the chosen half and mandatory exile without repeating draw; exact replay matches the result."
     }
   ]
 }

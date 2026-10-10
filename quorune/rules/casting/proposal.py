@@ -3,6 +3,8 @@ from __future__ import annotations
 import copy
 from collections.abc import Mapping
 from dataclasses import replace
+from .face_queries import prospective_cast_card,cast_resolution_is_trusted,cast_offer_id,selected_cast_program
+from .aftermath import aftermath_cast_prohibition_reason
 from typing import Any, Protocol
 
 from ...aura import EnchantSpec, enchant_spec_to_dict, is_aura_type_line
@@ -145,7 +147,7 @@ def _resolve_cast_source(host: CastProposalHost, request: CastProposalRequest) -
     if (
         card.zone not in {"hand", "command"}
         and not internally_authorized
-        and not host._compiled_zone_cast_permission(request.actor, card)
+        and not host._compiled_zone_cast_permission(request.actor, prospective_cast_card(host,card,request.required_face or request.face))
     ):
         raise CastProposalError(
             f"Casting {card.printed_name} from {card.zone} is not authorized by a compiled zone permission.",
@@ -266,6 +268,7 @@ def _validate_offer_fingerprint(
         request.actor,
         card,
         cast_method=request.cast_method,
+        face_name=request.required_face or request.face,
     )
     expiry_revision = int(
         response.get(
@@ -400,7 +403,7 @@ def _static_cast_rule_state(
 ) -> tuple[str | None, tuple[Any, ...]]:
     rule_face = _static_rule_face(face, face_down=face_down)
     return (
-        static_cast_prohibition_reason(host, actor, card, face=rule_face),
+        aftermath_cast_prohibition_reason(host,card) or static_cast_prohibition_reason(host, actor, card, face=rule_face),
         _combined_cast_timing_permissions(
             host,
             actor,
@@ -441,6 +444,7 @@ def _cast_program_and_cost(
     record: Any,
     face: Mapping[str, Any] | None,
 ) -> tuple[str, str, int, str, Any, CastCostOption]:
+    card=prospective_cast_card(host,card,str(face.get('name')) if face else None)
     response = request.response()
     method_spec = _required_face_down_method_spec(
         host,
@@ -516,12 +520,7 @@ def _cast_program_and_cost(
                 else "face_down_method_declared_cost"
             ),
         )
-    semantic_key = (
-        f"builtin:{request.cast_method}-face-down"
-        if method_spec is not None
-        else _spell_semantic_key(record, face)
-    )
-    program = None if method_spec is not None else host.semantics.get(semantic_key)
+    semantic_key,program=selected_cast_program(host,request,record,face,method_spec)
     alternative_base, suppress_source_costs = _rules_authorized_cost_base(
         request,
         method_spec,
@@ -864,6 +863,7 @@ def build_cast_offer(
     card: Any,
     *,
     cast_method: str | None = None,
+    face_name: str | None = None,
 ) -> CastProposalResult:
     """Use the casting proposal queries to advertise one executable action."""
 
@@ -877,7 +877,10 @@ def build_cast_offer(
     )
     if method_error is not None:
         return CastProposalResult("unavailable", method_error)
-    front = record.faces[0] if record.faces else None
+    front = host._select_cast_face(record,face_name) if record.faces else None
+    card=prospective_cast_card(host,card,face_name)
+    if card.zone not in {'hand','command'} and not host._compiled_zone_cast_permission(seat,card):
+        return CastProposalResult('unavailable','zone_permission')
     type_line = (
         "Creature"
         if method_spec is not None
@@ -929,10 +932,7 @@ def build_cast_offer(
         )
     except CastProposalError as exc:
         return CastProposalResult(exc.status, exc.reason)
-    if method_spec is None and host.state.config.semantic_policy == "trusted_only" and (
-        (program is not None and not host.semantic_program_is_current_trusted(program))
-        or (program is None and not host._trusted_generic_spell(record))
-    ):
+    if method_spec is None and host.state.config.semantic_policy == "trusted_only" and not cast_resolution_is_trusted(host,record,front,program):
         return CastProposalResult("unresolved", "semantic_policy_requires_trusted")
     options = tuple(
         CastCostOption.from_dict(value)
@@ -978,11 +978,7 @@ def build_cast_offer(
     cast_name = str(front.get("name") or "") if front else record.name
     cast_cost = str(front.get("mana_cost") or "") if front else record.mana_cost
     offer = ActionOffer(
-        action_id=(
-            f"cast-{cast_method}:{card.ref}"
-            if method_spec is not None
-            else f"cast:{card.ref}"
-        ),
+        action_id=cast_offer_id(card,record,front,cast_method if method_spec is not None else None),
         action="cast",
         seat=seat,
         label=(
