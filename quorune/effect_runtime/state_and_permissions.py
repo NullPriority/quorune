@@ -12,6 +12,7 @@ from ..permanent_designations import (
     advance_class_level,
 )
 from ..trigger_processing import schedule_delayed_trigger
+from .player_speed import apply_speed_increase
 
 
 OPERATIONS = effect_family_contract("state-and-permissions.v1").operations
@@ -436,6 +437,7 @@ def _apply_delayed_pact_payment(
 
 
 HANDLERS = {
+    'increase_speed': apply_speed_increase,
     'add_counter_selected': _apply_add_counter_selected,
     'delayed_mana': _apply_delayed_mana,
     'delayed_pact_payment': _apply_delayed_pact_payment,

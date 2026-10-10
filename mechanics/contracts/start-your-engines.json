@@ -1,0 +1,157 @@
+{
+  "schema_version": 1,
+  "contract_version": 1,
+  "mechanic_id": "start-your-engines",
+  "official_name": "Start Your Engines!",
+  "effective_date": "2026-08-07",
+  "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
+  "rule_references": [
+    "702.178",
+    "702.178a",
+    "702.179",
+    "702.179a",
+    "702.179b",
+    "702.179c",
+    "702.179d",
+    "702.179e",
+    "702.179f",
+    "704.5aa",
+    "603.3"
+  ],
+  "glossary_references": [
+    "start your engines!",
+    "max speed"
+  ],
+  "dependencies": [
+    "state-based-actions",
+    "handling-triggered-abilities",
+    "life",
+    "continuous-effects"
+  ],
+  "coverage_status": "tested",
+  "trust_level": "untrusted",
+  "behavior": {
+    "zones": [
+      "battlefield for a current trusted starter",
+      "all declared zones for current Max Speed child applicability",
+      "stack for the inherent source-free trigger"
+    ],
+    "objects": [
+      "persistent absent or nonnegative player speed designation",
+      "one inherent player-controlled trigger per qualifying own turn",
+      "independently compiled Max Speed child abilities"
+    ],
+    "events": [
+      "state-based speed start",
+      "committed opponent life loss",
+      "inherent speed trigger resolution"
+    ],
+    "state_reads": [
+      "current trusted starter and controller",
+      "current player speed and active turn",
+      "committed life transition group",
+      "once-per-turn inherent trigger usage"
+    ],
+    "state_writes": [
+      "canonical player speed",
+      "inherent usage recorded at trigger creation",
+      "ordinary APNAP pending trigger batch"
+    ],
+    "costs": [
+      "speed start and the inherent trigger have no cost; gated child costs keep their owners"
+    ],
+    "timing": [
+      "state-based start when a player without speed controls a starter",
+      "first qualifying opponent loss during the speed owner turn",
+      "inherent trigger resolves through ordinary priority"
+    ],
+    "targets": [
+      "the inherent speed trigger has no targets"
+    ],
+    "choices": [
+      "ordinary trigger ordering and independently gated activated ability choices"
+    ],
+    "hidden_information": [
+      "public speed adds no private card identity or capability; gated private results remain principal-correct"
+    ],
+    "apnap": [
+      "source-free inherent triggers enter ordinary APNAP placement"
+    ],
+    "layers": [
+      "Max Speed uses exact equality to four and live controller-speed parent/child applicability"
+    ],
+    "replacement_effects": [
+      "only actual committed positive life loss triggers speed; prevented or zero-resolved loss does not"
+    ],
+    "copy": [
+      "a copied inherent ability retains controller-bound effect substitution without a permanent source"
+    ],
+    "control_change": [
+      "a new starter controller without speed starts at one; the old controller designation persists"
+    ],
+    "zone_change": [
+      "speed remains after the starter leaves; Max Speed child zones remain explicit"
+    ],
+    "source_leaves": [
+      "the inherent triggered ability has no source and persists independently"
+    ]
+  },
+  "variants": [
+    "absent speed and speed zero",
+    "own-turn first loss and later losses",
+    "simultaneous opponent losses",
+    "countered inherent trigger",
+    "source departure/control",
+    "battlefield and graveyard Max Speed",
+    "speed above four boundary"
+  ],
+  "witness_cards": [
+    {
+      "name": "Goblin Surveyor",
+      "oracle_id": "237758f3-84b2-4e5b-a2c7-b28c893e2790"
+    },
+    {
+      "name": "Swiftwing Assailant",
+      "oracle_id": "46b36d25-25bd-48c5-9a53-75230bb27dee"
+    },
+    {
+      "name": "Far Fortune, End Boss",
+      "oracle_id": "8b9734c1-7185-40f6-8582-9f87109e3a09"
+    },
+    {
+      "name": "Muraganda Raceway",
+      "oracle_id": "b5fa5651-d714-44d6-867b-be0e3224b7ed"
+    }
+  ],
+  "test_ids": [
+    "test_start_marker_and_max_speed_fixed_stats_keep_independent_closed_scope",
+    "test_max_speed_graveyard_and_mana_children_have_live_parent_condition",
+    "test_speed_shapes_and_dependency_omission_reject_boolean_negative_or_open_values",
+    "test_actual_start_and_damage_trigger_increment_only_once_own_turn_and_replay",
+    "test_actual_max_speed_graveyard_ability_is_offered_only_at_four_and_replays",
+    "test_actual_max_speed_mana_mode_and_fixed_keyword_follow_controller_speed",
+    "test_actual_source_bounce_keeps_speed_and_later_damage_still_triggers",
+    "test_countered_inherent_trigger_consumes_turn_usage_and_pending_reload_replays",
+    "test_other_turn_and_self_loss_do_not_trigger_speed",
+    "test_actual_max_speed_damage_replacement_is_inactive_below_four",
+    "test_actual_simultaneous_opponent_losses_produce_one_inherent_trigger",
+    "test_actual_control_change_starts_new_controller_without_moving_old_speed",
+    "test_new_own_turn_can_trigger_again_while_absent_speed_still_cannot",
+    "test_zero_resolved_loss_does_not_trigger_and_direct_increase_creates_speed",
+    "test_omitting_speed_life_loss_trigger_mutant_is_killed"
+  ],
+  "implementation": {
+    "component": "quorune.rules.player_speed_state.commit_speed_increase",
+    "version": "typed-player-speed-v1",
+    "capability_ids": [
+      "variant.speed.player"
+    ],
+    "supported_slice": "Current trusted Start Your Engines sources and independently closed Max Speed ability bodies, with canonical player designation, inherent trigger usage and current-zone applicability."
+  },
+  "known_blockers": [
+    "unsupported speed-referencing quantities, searches and sibling bodies remain residual",
+    "unrepresented acquired starter or Max Speed producers require separate contracts",
+    "aggregate mechanic trust does not imply universal card or match support"
+  ],
+  "review_status": "reviewed"
+}

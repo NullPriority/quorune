@@ -9,6 +9,14 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+`compiler/player_speed_nodes.py` lowers Start Your Engines to a current trusted
+static marker. Max Speed fixed characteristic bodies use the public-state
+condition owner; `compiler/max_speed_nodes.py` independently compiles other
+closed ability bodies under the existing parent/child component scope. The
+scope follows current controller speed across zones. Unknown bodies remain
+residuals, and the Max Speed prefix is retained as a condition rather than
+discarded as decorative text.
+
 `compiler/backup_nodes.py` binds each fixed Backup instance to the complete
 printed ability bundle below it after the face's ordinary nodes are compiled.
 Keywords and typed declaration fragments retain their owners; activated and

@@ -45321,6 +45321,678 @@
       "applicability_note": "Designate one active player as monarch through the canonical unique public designation path."
     },
     {
+      "capability_id": "variant.speed.player",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_player_speed.PlayerSpeedRuntimeTests.test_actual_control_change_starts_new_controller_without_moving_old_speed",
+      "official_rule_ids": [
+        "702.178",
+        "702.178a",
+        "702.179",
+        "702.179a",
+        "702.179b",
+        "702.179c",
+        "702.179d",
+        "702.179e",
+        "702.179f",
+        "704.5aa",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual speed sources, ordinary damage, Extort simultaneous losses, source departure/control, Stifle countering and Max Speed battlefield/graveyard actions retain typed owners, pending persistence and exact replay. Direct turn-rollover and zero-resolved-loss checks are canonical model boundaries rather than complete turn-action witnesses."
+    },
+    {
+      "capability_id": "variant.speed.player",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_player_speed.PlayerSpeedRuntimeTests.test_actual_max_speed_damage_replacement_is_inactive_below_four",
+      "official_rule_ids": [
+        "702.178",
+        "702.178a",
+        "702.179",
+        "702.179a",
+        "702.179b",
+        "702.179c",
+        "702.179d",
+        "702.179e",
+        "702.179f",
+        "704.5aa",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual speed sources, ordinary damage, Extort simultaneous losses, source departure/control, Stifle countering and Max Speed battlefield/graveyard actions retain typed owners, pending persistence and exact replay. Direct turn-rollover and zero-resolved-loss checks are canonical model boundaries rather than complete turn-action witnesses."
+    },
+    {
+      "capability_id": "variant.speed.player",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_player_speed.PlayerSpeedRuntimeTests.test_actual_max_speed_graveyard_ability_is_offered_only_at_four_and_replays",
+      "official_rule_ids": [
+        "702.178",
+        "702.178a",
+        "702.179",
+        "702.179a",
+        "702.179b",
+        "702.179c",
+        "702.179d",
+        "702.179e",
+        "702.179f",
+        "704.5aa",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual speed sources, ordinary damage, Extort simultaneous losses, source departure/control, Stifle countering and Max Speed battlefield/graveyard actions retain typed owners, pending persistence and exact replay. Direct turn-rollover and zero-resolved-loss checks are canonical model boundaries rather than complete turn-action witnesses."
+    },
+    {
+      "capability_id": "variant.speed.player",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_player_speed.PlayerSpeedRuntimeTests.test_actual_max_speed_mana_mode_and_fixed_keyword_follow_controller_speed",
+      "official_rule_ids": [
+        "702.178",
+        "702.178a",
+        "702.179",
+        "702.179a",
+        "702.179b",
+        "702.179c",
+        "702.179d",
+        "702.179e",
+        "702.179f",
+        "704.5aa",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual speed sources, ordinary damage, Extort simultaneous losses, source departure/control, Stifle countering and Max Speed battlefield/graveyard actions retain typed owners, pending persistence and exact replay. Direct turn-rollover and zero-resolved-loss checks are canonical model boundaries rather than complete turn-action witnesses."
+    },
+    {
+      "capability_id": "variant.speed.player",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_player_speed.PlayerSpeedRuntimeTests.test_actual_simultaneous_opponent_losses_produce_one_inherent_trigger",
+      "official_rule_ids": [
+        "702.178",
+        "702.178a",
+        "702.179",
+        "702.179a",
+        "702.179b",
+        "702.179c",
+        "702.179d",
+        "702.179e",
+        "702.179f",
+        "704.5aa",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual speed sources, ordinary damage, Extort simultaneous losses, source departure/control, Stifle countering and Max Speed battlefield/graveyard actions retain typed owners, pending persistence and exact replay. Direct turn-rollover and zero-resolved-loss checks are canonical model boundaries rather than complete turn-action witnesses."
+    },
+    {
+      "capability_id": "variant.speed.player",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_player_speed.PlayerSpeedRuntimeTests.test_actual_source_bounce_keeps_speed_and_later_damage_still_triggers",
+      "official_rule_ids": [
+        "702.178",
+        "702.178a",
+        "702.179",
+        "702.179a",
+        "702.179b",
+        "702.179c",
+        "702.179d",
+        "702.179e",
+        "702.179f",
+        "704.5aa",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual speed sources, ordinary damage, Extort simultaneous losses, source departure/control, Stifle countering and Max Speed battlefield/graveyard actions retain typed owners, pending persistence and exact replay. Direct turn-rollover and zero-resolved-loss checks are canonical model boundaries rather than complete turn-action witnesses."
+    },
+    {
+      "capability_id": "variant.speed.player",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_player_speed.PlayerSpeedRuntimeTests.test_actual_start_and_damage_trigger_increment_only_once_own_turn_and_replay",
+      "official_rule_ids": [
+        "702.178",
+        "702.178a",
+        "702.179",
+        "702.179a",
+        "702.179b",
+        "702.179c",
+        "702.179d",
+        "702.179e",
+        "702.179f",
+        "704.5aa",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Player speed starts through a current trusted source, persists independently, and receives one source-free own-turn opponent-loss trigger. Actual registered actions retain principal authority and exact replay; Max Speed conditions remain independently gated."
+    },
+    {
+      "capability_id": "variant.speed.player",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_player_speed.PlayerSpeedRuntimeTests.test_countered_inherent_trigger_consumes_turn_usage_and_pending_reload_replays",
+      "official_rule_ids": [
+        "702.178",
+        "702.178a",
+        "702.179",
+        "702.179a",
+        "702.179b",
+        "702.179c",
+        "702.179d",
+        "702.179e",
+        "702.179f",
+        "704.5aa",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual speed sources, ordinary damage, Extort simultaneous losses, source departure/control, Stifle countering and Max Speed battlefield/graveyard actions retain typed owners, pending persistence and exact replay. Direct turn-rollover and zero-resolved-loss checks are canonical model boundaries rather than complete turn-action witnesses."
+    },
+    {
+      "capability_id": "variant.speed.player",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_player_speed.PlayerSpeedRuntimeTests.test_other_turn_and_self_loss_do_not_trigger_speed",
+      "official_rule_ids": [
+        "702.178",
+        "702.178a",
+        "702.179",
+        "702.179a",
+        "702.179b",
+        "702.179c",
+        "702.179d",
+        "702.179e",
+        "702.179f",
+        "704.5aa",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual speed sources, ordinary damage, Extort simultaneous losses, source departure/control, Stifle countering and Max Speed battlefield/graveyard actions retain typed owners, pending persistence and exact replay. Direct turn-rollover and zero-resolved-loss checks are canonical model boundaries rather than complete turn-action witnesses."
+    },
+    {
+      "capability_id": "variant.speed.player",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_player_speed.PlayerSpeedRuntimeTests.test_actual_start_and_damage_trigger_increment_only_once_own_turn_and_replay",
+      "official_rule_ids": [
+        "702.178",
+        "702.178a",
+        "702.179",
+        "702.179a",
+        "702.179b",
+        "702.179c",
+        "702.179d",
+        "702.179e",
+        "702.179f",
+        "704.5aa",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Player speed starts through a current trusted source, persists independently, and receives one source-free own-turn opponent-loss trigger. Actual registered actions retain principal authority and exact replay; Max Speed conditions remain independently gated."
+    },
+    {
+      "capability_id": "variant.speed.player",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_player_speed.PlayerSpeedRuntimeTests.test_omitting_speed_life_loss_trigger_mutant_is_killed",
+      "official_rule_ids": [
+        "702.178",
+        "702.178a",
+        "702.179",
+        "702.179a",
+        "702.179b",
+        "702.179c",
+        "702.179d",
+        "702.179e",
+        "702.179f",
+        "704.5aa",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Player speed starts through a current trusted source, persists independently, and receives one source-free own-turn opponent-loss trigger. Actual registered actions retain principal authority and exact replay; Max Speed conditions remain independently gated."
+    },
+    {
+      "capability_id": "variant.speed.player",
+      "evidence_class": "negative",
+      "test_id": "tests.test_player_speed.PlayerSpeedCompilerTests.test_speed_shapes_and_dependency_omission_reject_boolean_negative_or_open_values",
+      "official_rule_ids": [
+        "702.178",
+        "702.178a",
+        "702.179",
+        "702.179a",
+        "702.179b",
+        "702.179c",
+        "702.179d",
+        "702.179e",
+        "702.179f",
+        "704.5aa",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Player speed starts through a current trusted source, persists independently, and receives one source-free own-turn opponent-loss trigger. Actual registered actions retain principal authority and exact replay; Max Speed conditions remain independently gated."
+    },
+    {
+      "capability_id": "variant.speed.player",
+      "evidence_class": "negative",
+      "test_id": "tests.test_player_speed.PlayerSpeedRuntimeTests.test_new_own_turn_can_trigger_again_while_absent_speed_still_cannot",
+      "official_rule_ids": [
+        "702.178",
+        "702.178a",
+        "702.179",
+        "702.179a",
+        "702.179b",
+        "702.179c",
+        "702.179d",
+        "702.179e",
+        "702.179f",
+        "704.5aa",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual speed sources, ordinary damage, Extort simultaneous losses, source departure/control, Stifle countering and Max Speed battlefield/graveyard actions retain typed owners, pending persistence and exact replay. Direct turn-rollover and zero-resolved-loss checks are canonical model boundaries rather than complete turn-action witnesses."
+    },
+    {
+      "capability_id": "variant.speed.player",
+      "evidence_class": "negative",
+      "test_id": "tests.test_player_speed.PlayerSpeedRuntimeTests.test_other_turn_and_self_loss_do_not_trigger_speed",
+      "official_rule_ids": [
+        "702.178",
+        "702.178a",
+        "702.179",
+        "702.179a",
+        "702.179b",
+        "702.179c",
+        "702.179d",
+        "702.179e",
+        "702.179f",
+        "704.5aa",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual speed sources, ordinary damage, Extort simultaneous losses, source departure/control, Stifle countering and Max Speed battlefield/graveyard actions retain typed owners, pending persistence and exact replay. Direct turn-rollover and zero-resolved-loss checks are canonical model boundaries rather than complete turn-action witnesses."
+    },
+    {
+      "capability_id": "variant.speed.player",
+      "evidence_class": "negative",
+      "test_id": "tests.test_player_speed.PlayerSpeedRuntimeTests.test_zero_resolved_loss_does_not_trigger_and_direct_increase_creates_speed",
+      "official_rule_ids": [
+        "702.178",
+        "702.178a",
+        "702.179",
+        "702.179a",
+        "702.179b",
+        "702.179c",
+        "702.179d",
+        "702.179e",
+        "702.179f",
+        "704.5aa",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual speed sources, ordinary damage, Extort simultaneous losses, source departure/control, Stifle countering and Max Speed battlefield/graveyard actions retain typed owners, pending persistence and exact replay. Direct turn-rollover and zero-resolved-loss checks are canonical model boundaries rather than complete turn-action witnesses."
+    },
+    {
+      "capability_id": "variant.speed.player",
+      "evidence_class": "positive",
+      "test_id": "tests.test_player_speed.PlayerSpeedCompilerTests.test_max_speed_graveyard_and_mana_children_have_live_parent_condition",
+      "official_rule_ids": [
+        "702.178",
+        "702.178a",
+        "702.179",
+        "702.179a",
+        "702.179b",
+        "702.179c",
+        "702.179d",
+        "702.179e",
+        "702.179f",
+        "704.5aa",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Player speed starts through a current trusted source, persists independently, and receives one source-free own-turn opponent-loss trigger. Actual registered actions retain principal authority and exact replay; Max Speed conditions remain independently gated."
+    },
+    {
+      "capability_id": "variant.speed.player",
+      "evidence_class": "positive",
+      "test_id": "tests.test_player_speed.PlayerSpeedCompilerTests.test_start_marker_and_max_speed_fixed_stats_keep_independent_closed_scope",
+      "official_rule_ids": [
+        "702.178",
+        "702.178a",
+        "702.179",
+        "702.179a",
+        "702.179b",
+        "702.179c",
+        "702.179d",
+        "702.179e",
+        "702.179f",
+        "704.5aa",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Player speed starts through a current trusted source, persists independently, and receives one source-free own-turn opponent-loss trigger. Actual registered actions retain principal authority and exact replay; Max Speed conditions remain independently gated."
+    },
+    {
+      "capability_id": "variant.speed.player",
+      "evidence_class": "positive",
+      "test_id": "tests.test_player_speed.PlayerSpeedRuntimeTests.test_actual_start_and_damage_trigger_increment_only_once_own_turn_and_replay",
+      "official_rule_ids": [
+        "702.178",
+        "702.178a",
+        "702.179",
+        "702.179a",
+        "702.179b",
+        "702.179c",
+        "702.179d",
+        "702.179e",
+        "702.179f",
+        "704.5aa",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Player speed starts through a current trusted source, persists independently, and receives one source-free own-turn opponent-loss trigger. Actual registered actions retain principal authority and exact replay; Max Speed conditions remain independently gated."
+    },
+    {
+      "capability_id": "variant.speed.player",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_player_speed.PlayerSpeedRuntimeTests.test_actual_start_and_damage_trigger_increment_only_once_own_turn_and_replay",
+      "official_rule_ids": [
+        "702.178",
+        "702.178a",
+        "702.179",
+        "702.179a",
+        "702.179b",
+        "702.179c",
+        "702.179d",
+        "702.179e",
+        "702.179f",
+        "704.5aa",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Player speed starts through a current trusted source, persists independently, and receives one source-free own-turn opponent-loss trigger. Actual registered actions retain principal authority and exact replay; Max Speed conditions remain independently gated."
+    },
+    {
+      "capability_id": "variant.speed.player",
+      "evidence_class": "replay",
+      "test_id": "tests.test_player_speed.PlayerSpeedRuntimeTests.test_actual_control_change_starts_new_controller_without_moving_old_speed",
+      "official_rule_ids": [
+        "702.178",
+        "702.178a",
+        "702.179",
+        "702.179a",
+        "702.179b",
+        "702.179c",
+        "702.179d",
+        "702.179e",
+        "702.179f",
+        "704.5aa",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual speed sources, ordinary damage, Extort simultaneous losses, source departure/control, Stifle countering and Max Speed battlefield/graveyard actions retain typed owners, pending persistence and exact replay. Direct turn-rollover and zero-resolved-loss checks are canonical model boundaries rather than complete turn-action witnesses."
+    },
+    {
+      "capability_id": "variant.speed.player",
+      "evidence_class": "replay",
+      "test_id": "tests.test_player_speed.PlayerSpeedRuntimeTests.test_actual_max_speed_damage_replacement_is_inactive_below_four",
+      "official_rule_ids": [
+        "702.178",
+        "702.178a",
+        "702.179",
+        "702.179a",
+        "702.179b",
+        "702.179c",
+        "702.179d",
+        "702.179e",
+        "702.179f",
+        "704.5aa",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual speed sources, ordinary damage, Extort simultaneous losses, source departure/control, Stifle countering and Max Speed battlefield/graveyard actions retain typed owners, pending persistence and exact replay. Direct turn-rollover and zero-resolved-loss checks are canonical model boundaries rather than complete turn-action witnesses."
+    },
+    {
+      "capability_id": "variant.speed.player",
+      "evidence_class": "replay",
+      "test_id": "tests.test_player_speed.PlayerSpeedRuntimeTests.test_actual_max_speed_graveyard_ability_is_offered_only_at_four_and_replays",
+      "official_rule_ids": [
+        "702.178",
+        "702.178a",
+        "702.179",
+        "702.179a",
+        "702.179b",
+        "702.179c",
+        "702.179d",
+        "702.179e",
+        "702.179f",
+        "704.5aa",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual speed sources, ordinary damage, Extort simultaneous losses, source departure/control, Stifle countering and Max Speed battlefield/graveyard actions retain typed owners, pending persistence and exact replay. Direct turn-rollover and zero-resolved-loss checks are canonical model boundaries rather than complete turn-action witnesses."
+    },
+    {
+      "capability_id": "variant.speed.player",
+      "evidence_class": "replay",
+      "test_id": "tests.test_player_speed.PlayerSpeedRuntimeTests.test_actual_max_speed_mana_mode_and_fixed_keyword_follow_controller_speed",
+      "official_rule_ids": [
+        "702.178",
+        "702.178a",
+        "702.179",
+        "702.179a",
+        "702.179b",
+        "702.179c",
+        "702.179d",
+        "702.179e",
+        "702.179f",
+        "704.5aa",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual speed sources, ordinary damage, Extort simultaneous losses, source departure/control, Stifle countering and Max Speed battlefield/graveyard actions retain typed owners, pending persistence and exact replay. Direct turn-rollover and zero-resolved-loss checks are canonical model boundaries rather than complete turn-action witnesses."
+    },
+    {
+      "capability_id": "variant.speed.player",
+      "evidence_class": "replay",
+      "test_id": "tests.test_player_speed.PlayerSpeedRuntimeTests.test_actual_simultaneous_opponent_losses_produce_one_inherent_trigger",
+      "official_rule_ids": [
+        "702.178",
+        "702.178a",
+        "702.179",
+        "702.179a",
+        "702.179b",
+        "702.179c",
+        "702.179d",
+        "702.179e",
+        "702.179f",
+        "704.5aa",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual speed sources, ordinary damage, Extort simultaneous losses, source departure/control, Stifle countering and Max Speed battlefield/graveyard actions retain typed owners, pending persistence and exact replay. Direct turn-rollover and zero-resolved-loss checks are canonical model boundaries rather than complete turn-action witnesses."
+    },
+    {
+      "capability_id": "variant.speed.player",
+      "evidence_class": "replay",
+      "test_id": "tests.test_player_speed.PlayerSpeedRuntimeTests.test_actual_source_bounce_keeps_speed_and_later_damage_still_triggers",
+      "official_rule_ids": [
+        "702.178",
+        "702.178a",
+        "702.179",
+        "702.179a",
+        "702.179b",
+        "702.179c",
+        "702.179d",
+        "702.179e",
+        "702.179f",
+        "704.5aa",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual speed sources, ordinary damage, Extort simultaneous losses, source departure/control, Stifle countering and Max Speed battlefield/graveyard actions retain typed owners, pending persistence and exact replay. Direct turn-rollover and zero-resolved-loss checks are canonical model boundaries rather than complete turn-action witnesses."
+    },
+    {
+      "capability_id": "variant.speed.player",
+      "evidence_class": "replay",
+      "test_id": "tests.test_player_speed.PlayerSpeedRuntimeTests.test_actual_start_and_damage_trigger_increment_only_once_own_turn_and_replay",
+      "official_rule_ids": [
+        "702.178",
+        "702.178a",
+        "702.179",
+        "702.179a",
+        "702.179b",
+        "702.179c",
+        "702.179d",
+        "702.179e",
+        "702.179f",
+        "704.5aa",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Player speed starts through a current trusted source, persists independently, and receives one source-free own-turn opponent-loss trigger. Actual registered actions retain principal authority and exact replay; Max Speed conditions remain independently gated."
+    },
+    {
+      "capability_id": "variant.speed.player",
+      "evidence_class": "replay",
+      "test_id": "tests.test_player_speed.PlayerSpeedRuntimeTests.test_countered_inherent_trigger_consumes_turn_usage_and_pending_reload_replays",
+      "official_rule_ids": [
+        "702.178",
+        "702.178a",
+        "702.179",
+        "702.179a",
+        "702.179b",
+        "702.179c",
+        "702.179d",
+        "702.179e",
+        "702.179f",
+        "704.5aa",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual speed sources, ordinary damage, Extort simultaneous losses, source departure/control, Stifle countering and Max Speed battlefield/graveyard actions retain typed owners, pending persistence and exact replay. Direct turn-rollover and zero-resolved-loss checks are canonical model boundaries rather than complete turn-action witnesses."
+    },
+    {
+      "capability_id": "variant.speed.player",
+      "evidence_class": "replay",
+      "test_id": "tests.test_player_speed.PlayerSpeedRuntimeTests.test_other_turn_and_self_loss_do_not_trigger_speed",
+      "official_rule_ids": [
+        "702.178",
+        "702.178a",
+        "702.179",
+        "702.179a",
+        "702.179b",
+        "702.179c",
+        "702.179d",
+        "702.179e",
+        "702.179f",
+        "704.5aa",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual speed sources, ordinary damage, Extort simultaneous losses, source departure/control, Stifle countering and Max Speed battlefield/graveyard actions retain typed owners, pending persistence and exact replay. Direct turn-rollover and zero-resolved-loss checks are canonical model boundaries rather than complete turn-action witnesses."
+    },
+    {
       "capability_id": "zone.change.destination_replacement",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_affected_player_discards.FixedAffectedPlayerDiscardRuntimeTests.test_private_apnap_discard_aura_attachment_zone_replacement_and_replay",

@@ -1242,28 +1242,8 @@ def _fixed_hand_or_turn_event_condition(
 def _fixed_player_status_condition(
     normalized: str,
 ) -> FixedPublicStateConditionSpec | None:
-    if normalized.casefold() in {"you're the monarch", "you are the monarch"}:
-        return FixedPublicStateConditionSpec(
-            FixedPublicStateConditionKind.CONTROLLER_IS_MONARCH
-        )
-    poisoned = re.fullmatch(
-        r"an opponent (?:is poisoned|has (?P<count>three|[0-9]+) or more "
-        r"poison counters)",
-        normalized,
-        re.IGNORECASE,
-    )
-    if poisoned is None:
-        return None
-    amount = (
-        _fixed_condition_amount(poisoned.group("count"))
-        if poisoned.group("count")
-        else 1
-    )
-    assert amount is not None and amount > 0
-    return FixedPublicStateConditionSpec(
-        FixedPublicStateConditionKind.OPPONENT_POISON_COUNTER_AT_LEAST,
-        amount=amount,
-    )
+    from .player_status_conditions import fixed_player_status_condition
+    return fixed_player_status_condition(normalized)
 
 
 def _legacy_public_state_condition(
@@ -1532,6 +1512,9 @@ def fixed_public_state_parts(
     source_name: str,
 ) -> tuple[FixedPublicStateConditionSpec, str] | None:
     text = _TRAILING_REMINDER.sub("", oracle_line.strip()).strip()
+    from .player_status_conditions import max_speed_condition_parts
+    max_speed=max_speed_condition_parts(text)
+    if max_speed is not None:return max_speed
     ability_word = re.fullmatch(
         r"[A-Z][A-Za-z' ]{0,80} — (?P<body>.+)",
         text,

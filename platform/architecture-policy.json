@@ -363,6 +363,7 @@
       ,"quorune/selection/storm.py": "typed Storm copy-target selection and authoritative stack-copy commit owner"
       ,"quorune/selection/targeting.py": "typed target proposal, projection, completion, and resolution revalidation owner"
       ,"quorune/impulse_access.py": "typed fixed library-top exile, temporary ordinary-play permission, and duration-expiry owner delegating zone movement to the canonical zone-transition owner"
+      ,"quorune/rules/player_speed_state.py": "canonical typed persistent player speed and inherent once-per-own-turn trigger usage owner behind state-based stabilization and committed life transactions"
     },
     "read_only_consumers": {
       "quorune/projection.py": "principal-scoped projection",

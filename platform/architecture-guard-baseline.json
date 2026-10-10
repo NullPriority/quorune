@@ -1569,9 +1569,9 @@
     "physical_lines": 7416
   },
   "exception_binding": {
-    "adr": "docs/adr/0113-typed-extort-and-life-loss-batches.md",
-    "allowance_fingerprint": "86e87ce16254335aae11c5bc868d9b59843ccd21a730531fd71fd0a94e079e85",
-    "exception_id": "ARCH-EXC-0057"
+    "adr": "docs/adr/0114-player-speed-and-max-speed-applicability.md",
+    "allowance_fingerprint": "6600203bb39b80b67b47533c5222bb11e3dbb6748815b62f733aa7a765b660fe",
+    "exception_id": "ARCH-EXC-0058"
   },
   "legacy_card_specific_operations": [
     "daretti_exchange",
@@ -1891,6 +1891,7 @@
     "grant_play_without_mana_cost",
     "grant_uncounterable_hexproof_from_colors_until_end",
     "grant_zone_object_keyword",
+    "increase_speed",
     "life",
     "linked_exile_return",
     "look_reorder_top",

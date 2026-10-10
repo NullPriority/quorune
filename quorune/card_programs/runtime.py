@@ -22,6 +22,7 @@ from ..characteristic_fragments import CharacteristicQuantitySpec
 from ..drawing.restrictions import drawn_this_turn
 from ..object_query import ObjectQueryResult, object_matches_query
 from ..permanent_designations import permanent_numeric_designations
+from ..rules.player_speed_model import player_speed
 from ..replacement.immutable import FrozenMap
 from ..semantic_runtime import (
     ATTACHED_FIXED_CHARACTERISTICS_HANDLER_ID,
@@ -422,6 +423,7 @@ class _FixedPublicStateSnapshotResolver:
             opponent_poison_counter_counts=opponent_poison_counter_counts,
             player_hand_counts=player_hand_counts,
             controller_is_monarch=controller_is_monarch,
+            controller_speed=player_speed(controller) or 0,
             source_query_matches=(
                 self._query_matches(source, condition)
                 if condition.kind

@@ -1412,7 +1412,7 @@ def fixed_public_state_characteristics_handler(
         ("variant.monarch.designate",)
         if source_condition.kind
         is FixedPublicStateConditionKind.CONTROLLER_IS_MONARCH
-        else ()
+        else ('variant.speed.player',) if source_condition.kind is FixedPublicStateConditionKind.CONTROLLER_MAX_SPEED else ()
     )
     return (
         "continuous-fixed-public-state-characteristics-v1",

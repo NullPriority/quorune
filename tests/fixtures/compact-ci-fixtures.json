@@ -72,6 +72,7 @@
     "tests/fixtures/ordered-quantity-results.json",
     "tests/fixtures/partial-copy-targets-cards.json",
     "tests/fixtures/permanent-additional-costs.json",
+    "tests/fixtures/player-speed-cards.json",
     "tests/fixtures/player-target-protection-cards.json",
     "tests/fixtures/power-up-cards.json",
     "tests/fixtures/prowess-cards.json",

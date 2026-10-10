@@ -1652,6 +1652,32 @@
       ]
     },
     {
+      "id": "player-speed-and-max-speed-contract",
+      "patterns": [
+        "quorune/rules/player_speed_model.py",
+        "quorune/rules/player_speed_state.py",
+        "quorune/rules/source_speed_designations.py",
+        "quorune/rules/scoped_activated_abilities.py",
+        "quorune/compiler/player_speed_nodes.py",
+        "quorune/compiler/player_status_conditions.py",
+        "quorune/compiler/max_speed_nodes.py",
+        "quorune/semantic_runtime/player_speed.py",
+        "quorune/effect_runtime/player_speed.py",
+        "mechanics/contracts/start-your-engines.json",
+        "tests/fixtures/player-speed-cards.json"
+      ],
+      "test_modules": [
+        "test_player_speed",
+        "test_life_state",
+        "test_life_change",
+        "test_class_lifecycle",
+        "test_continuous_effect_components",
+        "test_extort_rules",
+        "test_card_program_trust",
+        "test_architecture_governance"
+      ]
+    },
+    {
       "id": "selected-face-aftermath-casting-contract",
       "patterns": [
         "quorune/rules/casting/aftermath.py",

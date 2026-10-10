@@ -154,6 +154,7 @@ VALID_EFFECT_OPERATIONS = {
     "station",
     "bestow_prepare",
     "become_monarch",
+    "increase_speed",
     "shuffle_into_library",
     "shuffle_graveyard_bottom_random",
     "sacrifice",

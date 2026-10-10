@@ -17,11 +17,11 @@ class StaticComponentApplicabilitySpec:
     minimum: int
 
     def __post_init__(self) -> None:
-        if self.kind != "source_numeric_designation_at_least":
+        if self.kind not in {'source_numeric_designation_at_least','controller_speed_equals'}:
             raise AbilityFragmentError(
                 "Static component applicability kind is unsupported"
             )
-        if self.designation != "class_level":
+        if self.designation != ('controller_speed' if self.kind=='controller_speed_equals' else 'class_level'):
             raise AbilityFragmentError(
                 "Static component applicability designation is unsupported"
             )
@@ -29,12 +29,14 @@ class StaticComponentApplicabilitySpec:
             raise AbilityFragmentError(
                 "Static component applicability minimum must be positive"
             )
+        if self.kind=='controller_speed_equals' and self.minimum!=4:
+            raise AbilityFragmentError('Max Speed applicability requires exactly four')
 
     def applies(self, source_designations: Mapping[str, Any] | None) -> bool:
         if not isinstance(source_designations, Mapping):
             return False
         value = source_designations.get(self.designation)
-        return bool(type(value) is int and value >= self.minimum)
+        return bool(type(value) is int and (value==4 if self.kind=='controller_speed_equals' else value>=self.minimum))
 
     def to_dict(self) -> dict[str, Any]:
         return {

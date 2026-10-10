@@ -44,6 +44,7 @@ from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
 from .player_target_protection import PlayerTargetProtectionHandler
 from .graveyard_copy_keyword import GraveyardCopyKeywordHandler
+from .player_speed import StartEnginesHandler
 
 
 ENCHANT_FRAGMENT_HANDLER_ID = "ability.static.enchant.v1"
@@ -1364,6 +1365,7 @@ def default_ability_fragment_registry() -> AbilityFragmentRegistry:
             ProtectionAbilityFragmentHandler(),
             PlayerTargetProtectionHandler(),
             GraveyardCopyKeywordHandler(),
+            StartEnginesHandler(),
             PartnerWithAbilityFragmentHandler(),
             ProwessAbilityFragmentHandler(),
             RenownAbilityFragmentHandler(),

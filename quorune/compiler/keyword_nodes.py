@@ -54,6 +54,7 @@ from .commander_pairing_nodes import (
 from .cascade_nodes import CASCADE_MECHANIC_ID, cascade_keyword_node
 from .storm_nodes import STORM_MECHANIC_ID, storm_keyword_node
 from .extort_nodes import extort_keyword_node
+from .player_speed_nodes import start_engines_keyword_node
 from .stack_static_keyword_nodes import split_second_keyword_node
 from .bestow_nodes import fixed_mana_bestow_keyword_node
 from .flashback_nodes import ordinary_fixed_mana_flashback_keyword_node
@@ -425,6 +426,7 @@ def closed_special_keyword_node(
     if renown is not None:
         return renown
     for lower in (
+        start_engines_keyword_node,
         extort_keyword_node,
         fixed_mana_evoke_keyword_node,
         cascade_keyword_node,

@@ -900,6 +900,7 @@ def static_damage_handler(
     """Lower a closed static damage/prevention wording family."""
 
     ability_word = _ABILITY_WORD.match(text)
+    if text.casefold().startswith('max speed'):return None
     normalized = ability_word.group("body") if ability_word else text
     redirection = _REDIRECT_TO_SOURCE.fullmatch(normalized)
     if redirection is not None:

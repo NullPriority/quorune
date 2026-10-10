@@ -273,7 +273,7 @@ def _heading_candidate(rule_id: str, body: str) -> str | None:
     if (
         len(body) <= 100
         and "\n" not in body
-        and not body.endswith((".", "!", "?"))
+        and (not body.endswith((".", "!", "?")) or bool(re.fullmatch(r'70[12]\.\d+',rule_id) and re.fullmatch(r"[A-Za-z][A-Za-z '’-]*!",body)))
     ):
         return body
     return None

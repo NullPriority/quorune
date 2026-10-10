@@ -1361,6 +1361,29 @@
         "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound",
         "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
       ]
+    },
+    {
+      "exception_id": "ARCH-EXC-0058",
+      "adr": "docs/adr/0114-player-speed-and-max-speed-applicability.md",
+      "artifact": "platform/architecture-guard-baseline.json",
+      "allowance_fingerprint": "6600203bb39b80b67b47533c5222bb11e3dbb6748815b62f733aa7a765b660fe",
+      "exact_allowance": "The exact structural baseline admitting only increase_speed; engine, unowned write, runtime Oracle access, identity dispatch and oversized ceilings retain their ratchets.",
+      "rationale": "Admit one reviewed closed increase_speed operation and one canonical typed player speed mutation owner. Source-free inherent triggers and live Max Speed scopes reuse existing APNAP, life, component and continuous owners. Cohesive extraction preserves oversized ceilings.",
+      "owner": "rules/compiler/replay maintainers through protected certification",
+      "maximum_scope": "One generic positive speed increase, state-based speed start and once-own-turn inherent trigger usage, with canonical speed stats mutation. No engine method, identity dispatch, runtime Oracle access, unowned write, registry duplication or size-growth allowance.",
+      "removal_condition": "Remove the binding when this operation is retired or a later exact reviewed baseline supersedes it; preserve persistent speed, trigger usage, current controller gating and exact replay.",
+      "target_milestone": "typed player speed and zone-correct Max Speed ability availability",
+      "replay_implications": "Current records persist ordinary player stats and pending source-free trigger state. Older payloads without speed remain unchanged and require matching execution provenance.",
+      "privacy_implications": "Only public player speed and public stack occurrences are added; no hidden card identity or capability enters the speed owner.",
+      "security_implications": "Clients retain ordinary principal-bound actions. Speed changes arise only through canonical state-based or trusted effect ownership; malformed amounts, Boolean values and unsupported child programs fail closed.",
+      "tests": [
+        "tests.test_player_speed.PlayerSpeedRuntimeTests.test_actual_start_and_damage_trigger_increment_only_once_own_turn_and_replay",
+        "tests.test_player_speed.PlayerSpeedRuntimeTests.test_actual_max_speed_graveyard_ability_is_offered_only_at_four_and_replays",
+        "tests.test_player_speed.PlayerSpeedRuntimeTests.test_countered_inherent_trigger_consumes_turn_usage_and_pending_reload_replays",
+        "tests.test_player_speed.PlayerSpeedCompilerTests.test_speed_shapes_and_dependency_omission_reject_boolean_negative_or_open_values",
+        "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound",
+        "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
+      ]
     }
   ]
 }

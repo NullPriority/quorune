@@ -130,6 +130,12 @@ class RulesCorpusTests(unittest.TestCase):
             by_id["100.1aa"]["text_sha256"],
         )
 
+    def test_keyword_heading_exclamation_is_indexed_without_subrule_sentences(self):
+        parsed=parse_comprehensive_rules(RULES_FIXTURE.replace('702.2. Flying','702.179. Start Your Engines!\n702.179a This is a complete sentence!\n702.2. Flying'),source_sha256='a'*64)
+        by_id={r['rule_id']:r for r in parsed['rules']}
+        self.assertEqual('Start Your Engines!',by_id['702.179']['heading']);self.assertIsNone(by_id['702.179a']['heading'])
+        self.assertIn('start-your-engines',{r['mechanic_id'] for r in parsed['mechanics']})
+
     def test_current_snapshot_indexes_august_additions_and_multi_letter_rule(self):
         root = Path(__file__).resolve().parents[1]
         manifest = json.loads(

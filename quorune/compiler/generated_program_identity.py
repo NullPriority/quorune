@@ -77,6 +77,7 @@ def generated_ability_id(
             return f"{base}:{MODULAR_MECHANIC_ID}:{parts[-2]}:departure"
         return base
     if static_declaration:
+        if str(node_id or '').endswith(':max-speed-scope'):return f'static:{face_id}:n{line}:max-speed-scope'
         parts = str(node_id or "").split(":")
         suffix = parts[-1]
         if suffix in {"unleash-entry", "unleash-block"}:

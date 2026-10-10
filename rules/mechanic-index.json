@@ -1349,6 +1349,23 @@
       "contract_path": null,
       "coverage_status": "unclassified",
       "dependencies": [
+        "702"
+      ],
+      "implementation_component": null,
+      "kind": "keyword_ability",
+      "mechanic_id": "for-mirrodin",
+      "official_name": "For Mirrodin!",
+      "rule_references": [
+        "702.163"
+      ],
+      "test_ids": [],
+      "trust_level": "untrusted"
+    },
+    {
+      "category": "additional_rules",
+      "contract_path": null,
+      "coverage_status": "unclassified",
+      "dependencies": [
         "702.5"
       ],
       "implementation_component": null,
@@ -3023,6 +3040,23 @@
       "official_name": "Squad",
       "rule_references": [
         "702.157"
+      ],
+      "test_ids": [],
+      "trust_level": "untrusted"
+    },
+    {
+      "category": "additional_rules",
+      "contract_path": null,
+      "coverage_status": "unclassified",
+      "dependencies": [
+        "702"
+      ],
+      "implementation_component": null,
+      "kind": "keyword_ability",
+      "mechanic_id": "start-your-engines",
+      "official_name": "Start Your Engines!",
+      "rule_references": [
+        "702.179"
       ],
       "test_ids": [],
       "trust_level": "untrusted"

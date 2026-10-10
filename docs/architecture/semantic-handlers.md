@@ -82,6 +82,14 @@ name and its permanent type. Another face's permanent type cannot authorize an
 unsupported spell half under the trusted-only policy; offers and proposals
 share that same trust predicate.
 
+Player speed starts through the canonical state-based owner and persists after
+its starter leaves. Committed opponent life losses queue one source-free
+inherent trigger during the speed owner's turn, recording usage at creation.
+The closed `increase_speed` instruction checks its intervening limit and
+commits through the player speed owner. Current Max Speed abilities use the
+same source applicability model in battlefield and graveyard contexts, with
+exact equality to four rather than a minimum threshold.
+
 The existing generic direct-control operations share the authoritative control
 and acquisition-history owner. An indefinite control instruction invalidates
 an older end-of-turn restoration even when it names the current controller.

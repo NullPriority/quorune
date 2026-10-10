@@ -8981,6 +8981,66 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Market draws two cards before private discard suspension. Wrong-principal rollback and pending save/load retain the chosen half and mandatory exile without repeating draw; exact replay matches the result."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_simultaneous_opponent_losses_produce_one_inherent_trigger",
+      "piece_ids": [
+        "capability.trigger.keyword.extort",
+        "capability.variant.speed.player"
+      ],
+      "capability_ids": [
+        "trigger.keyword.extort",
+        "variant.speed.player"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Extort loses life simultaneously for three opponents during the speed owner turn; only one source-free inherent speed trigger increases speed, with exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_countered_inherent_trigger_consumes_turn_usage_and_pending_reload_replays",
+      "piece_ids": [
+        "capability.stack.counter.effect",
+        "capability.variant.speed.player"
+      ],
+      "capability_ids": [
+        "stack.counter.effect",
+        "variant.speed.player"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Stifle counters the source-free inherent speed trigger after pending save/load. The next qualifying loss in that same turn cannot retrigger it, and exact replay preserves consumed usage."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_control_change_starts_new_controller_without_moving_old_speed",
+      "piece_ids": [
+        "capability.continuous.control.fixed_resolution",
+        "capability.variant.speed.player"
+      ],
+      "capability_ids": [
+        "continuous.control.fixed_resolution",
+        "variant.speed.player"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Act of Treason transfers a Start Your Engines permanent. State-based stabilization starts the new controller speed while retaining the former controller designation, with exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_max_speed_damage_replacement_is_inactive_below_four",
+      "piece_ids": [
+        "capability.damage.replacement.static_quantity",
+        "capability.variant.speed.player"
+      ],
+      "capability_ids": [
+        "damage.replacement.static_quantity",
+        "variant.speed.player"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Far Fortune Max Speed damage replacement is gated below four; Shock deals two at speed three and three at speed four, with ordinary speed triggering and exact replay."
     }
   ]
 }

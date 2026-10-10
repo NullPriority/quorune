@@ -31,6 +31,10 @@ maintenance: "hand-maintained"
 - Preserve explicit sacrifice provenance for Fading and Vanishing cleanup
   through zone replacements, normalized trigger occurrences, and turn history.
 
+- Start and retain player speed through canonical state-based actions and
+  source-free own-turn opponent life-loss triggers. Gate Max Speed abilities
+  by current controller speed across battlefield and graveyard contexts.
+
 - Offer supported split and modal spell faces separately and charge each
   selected face's own cost. Preserve its spell characteristics and cost queries.
   Aftermath halves cast only from graveyards and retain mandatory exile through

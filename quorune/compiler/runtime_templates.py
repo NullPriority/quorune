@@ -344,7 +344,7 @@ def _continuous_static_runtime_template(
     """Select one closed continuous-characteristic production."""
 
     label = re.fullmatch(r"(?P<label>[A-Za-z][A-Za-z ',-]*[A-Za-z])\s+—\s+(?P<body>.+)", text)
-    if label is not None and label['label'].casefold() not in {'solved', 'solve'} and not source_is_class:
+    if label is not None and label['label'].casefold() not in {'solved', 'solve','max speed'} and not source_is_class:
         text = label['body']
 
     declaration_grant = _static_declaration_runtime_template(
