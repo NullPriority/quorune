@@ -97,6 +97,7 @@ def _finish_preparation(
     continuation: SemanticChoiceContinuation,
     actor: str,
     preparation: SemanticChoicePreparation,
+    committed_results: Mapping[int,Any],
 ) -> None:
     if preparation.auto_continue is not None:
         host._continue_resolution(
@@ -104,7 +105,7 @@ def _finish_preparation(
             effects=[
                 *(
                     thaw_value(value)
-                    for value in preparation.auto_continue.prepend_effects
+                    for value in preparation.auto_continue.resolved_effects(committed_results)
                 ),
                 *(thaw_value(value) for value in continuation.remaining),
             ],
@@ -161,6 +162,7 @@ def continue_semantic_preparation(
             raise SemanticChoiceError(
                 "Semantic preparation intent disappeared before replacement resume"
             )
+    committed_results={}
     for index in range(start_index, len(intents)):
         intent = intents[index]
         selections = replacement_selections if index == start_index else ()
@@ -174,7 +176,7 @@ def continue_semantic_preparation(
                 )
             intent = with_replacement_selections(intent, selections)
         try:
-            execute_intent_plan(
+            committed_results[index]=execute_intent_plan(
                 host,
                 IntentPlan(
                     operation=str(continuation.effect.get("op") or ""),
@@ -200,6 +202,7 @@ def continue_semantic_preparation(
         continuation=continuation,
         actor=actor,
         preparation=preparation,
+        committed_results=committed_results,
     )
     return True
 

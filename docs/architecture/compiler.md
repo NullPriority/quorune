@@ -1670,6 +1670,15 @@ activations while retaining mana abilities, triggers, special actions and
 priority passes. The restriction remains active beneath triggered abilities
 and on copied spells, and disappears when its last stack source leaves.
 
+Each printed Extort instance lowers to an independently capability-closed cast
+trigger. The typed choice owner offers one white or black mana payment or
+decline. It delegates simultaneous opponent loss and later actual-total gain
+to existing life transactions, preserving replacement choices, locked trigger
+control, source departure, pending save/load and replay. Multiple instances
+retain separate payments. Unsupported outer grants and whole-card siblings
+remain material residuals; the ownership decision is in
+[ADR 0113](../adr/0113-typed-extort-and-life-loss-batches.md).
+
 Single-subject `place_counters` results also bind declared or current public
 characteristic amounts through their existing counter owner. A resolved zero
 amount is a paid no-op; malformed and negative amounts are rejected. Counter

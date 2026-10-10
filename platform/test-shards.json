@@ -392,6 +392,7 @@
       "test_entry_designations",
       "test_event_card_return",
       "test_exact_mishra_closure",
+      "test_extort_rules",
       "test_fabricate_compiler",
       "test_fixed_activated_zone_change_costs",
       "test_fixed_entry_conditions",

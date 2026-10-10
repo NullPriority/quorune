@@ -127,3 +127,4 @@ deployment modes, or architecture review thresholds.
 - [ADR 0110 — static attached control](0110-static-attached-control.md)
 - [ADR 0111 — source counter scalar amounts](0111-source-counter-scalar-amounts.md)
 - [ADR 0112 — bounded target characteristics](0112-bounded-target-characteristics.md)
+- [ADR 0113 — typed Extort and simultaneous life-loss batches](0113-typed-extort-and-life-loss-batches.md)

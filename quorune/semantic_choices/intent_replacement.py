@@ -1,4 +1,5 @@
 from __future__ import annotations
+from ..semantic_runtime.life_batch_intent import LifeLossBatchIntent
 
 from dataclasses import replace
 from typing import Any, Mapping, Sequence
@@ -343,6 +344,7 @@ def _create_token_intent_identity(
 def semantic_intent_identity(intent: Any) -> tuple[str, dict[str, Any]]:
     """Return the closed identity of a replacement-capable typed intent."""
 
+    if isinstance(intent,LifeLossBatchIntent):return 'life_loss_batch',intent.identity()
     if isinstance(intent, DESTRUCTION_INTENT_TYPES):
         return destruction_intent_identity(intent)
 
@@ -739,6 +741,11 @@ def validate_semantic_intent_identity(
 ) -> dict[str, Any]:
     if kind in {"destroy_permanent", "destroy_permanent_set", "destroy_permanent_targets"}:
         return validate_destruction_intent_identity(kind, value)
+    if kind=='life_loss_batch':
+        if not isinstance(value,Mapping) or set(value)!={'actor','players','amount','reason','source_ref'} or not isinstance(value['players'],(list,tuple)):
+            raise SemanticChoiceError('Life loss batch continuation identity is malformed')
+        try:return LifeLossBatchIntent(value['actor'],tuple(value['players']),value['amount'],value['reason'],value['source_ref']).identity()
+        except (TypeError,ValueError) as exc:raise SemanticChoiceError(str(exc)) from exc
     if kind == "life_change":
         return _validate_life_change_intent_identity(value)
     if kind == "place_counters":
@@ -1162,6 +1169,7 @@ def with_replacement_selections(
             *DESTRUCTION_INTENT_TYPES,
             PlaceCountersIntent,
             LifeChangeIntent,
+            LifeLossBatchIntent,
             PlaceCounterBatchIntent,
             PlaceCountersOnSetIntent,
             PlaceCountersOnTargetsIntent,

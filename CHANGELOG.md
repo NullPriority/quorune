@@ -31,6 +31,11 @@ maintenance: "hand-maintained"
 - Preserve explicit sacrifice provenance for Fading and Vanishing cleanup
   through zone replacements, normalized trigger occurrences, and turn history.
 
+- Resolve ordinary Extort instances with optional white or black payment,
+  simultaneous opponent life loss and gain equal to actual total life lost.
+  Replacement continuations preserve committed stages, and canonical cast-source
+  ordering keeps independent trigger decisions stable through replay.
+
 - Enforce Split second through shared cast and activation availability while
   preserving mana abilities, triggered abilities, face-up special actions and
   stack copies. The restriction lasts only while its spell remains on the stack.

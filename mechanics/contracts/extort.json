@@ -1,0 +1,148 @@
+{
+  "schema_version": 1,
+  "contract_version": 1,
+  "mechanic_id": "extort",
+  "official_name": "Extort",
+  "effective_date": "2026-08-07",
+  "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
+  "rule_references": [
+    "702.101",
+    "702.101a",
+    "702.101b",
+    "603.2",
+    "603.3",
+    "119.3",
+    "119.9",
+    "608.2c",
+    "118.12"
+  ],
+  "glossary_references": [
+    "extort"
+  ],
+  "dependencies": [
+    "casting-spells",
+    "handling-triggered-abilities",
+    "mana-abilities",
+    "resolving-spells-and-abilities",
+    "life"
+  ],
+  "coverage_status": "tested",
+  "trust_level": "untrusted",
+  "behavior": {
+    "zones": [
+      "battlefield for the source ability",
+      "stack for the locked trigger"
+    ],
+    "objects": [
+      "one independently represented printed Extort instance",
+      "the trigger controller and active opponents"
+    ],
+    "events": [
+      "completed spell cast by the source controller",
+      "optional hybrid payment",
+      "simultaneous life loss",
+      "actual-loss-derived life gain"
+    ],
+    "state_reads": [
+      "current applicable printed ability",
+      "locked trigger controller",
+      "payable white and black vectors",
+      "actual resolved loss returned by the canonical life batch"
+    ],
+    "state_writes": [
+      "canonical mana payment",
+      "canonical simultaneous life loss",
+      "canonical replacement-aware life gain"
+    ],
+    "costs": [
+      "one white or black mana per accepted instance; decline has no effect"
+    ],
+    "timing": [
+      "the loss instruction completes before gain begins",
+      "triggers caused by loss do not resolve between the two instructions"
+    ],
+    "targets": [
+      "Extort has no targets"
+    ],
+    "choices": [
+      "one independent scalar payment per trigger",
+      "ordinary affected-player replacement choices"
+    ],
+    "hidden_information": [
+      "payment belongs only to the trigger controller; life totals remain public"
+    ],
+    "apnap": [
+      "normal cast trigger placement and controller trigger-order choices"
+    ],
+    "layers": [
+      "source ability applicability uses current typed fragments"
+    ],
+    "replacement_effects": [
+      "actual total loss is computed after loss replacements",
+      "gain replacements resume after the prior loss remains committed"
+    ],
+    "copy": [
+      "copied triggers retain their locked controller and independently choose payment",
+      "unrepresented keyword-grant producers remain residual"
+    ],
+    "control_change": [
+      "a queued trigger does not change controller when the source changes control"
+    ],
+    "zone_change": [
+      "a queued trigger remains after the source leaves the battlefield"
+    ],
+    "source_leaves": [
+      "payment and loss do not require the source to remain in its original zone"
+    ]
+  },
+  "variants": [
+    "white or black payment",
+    "decline or unpayable cost",
+    "multiple independent instances",
+    "prevented or multiplied loss",
+    "gain multipliers",
+    "pending save/load"
+  ],
+  "witness_cards": [
+    {
+      "name": "Tithe Drinker",
+      "oracle_id": "06b1fd96-a3ad-4ebd-9ea4-b3cfb4c9c43d"
+    },
+    {
+      "name": "Basilica Screecher",
+      "oracle_id": "752ebcba-97fb-43a3-8811-d244164b3e16"
+    },
+    {
+      "name": "Syndic of Tithes",
+      "oracle_id": "8f5c52d2-0583-4c94-a043-15b2118877fa"
+    }
+  ],
+  "test_ids": [
+    "test_each_keyword_instance_has_independent_cast_trigger_and_fixed_hybrid_choice",
+    "test_extort_stage_shape_and_dependency_omissions_fail_closed",
+    "test_actual_extort_white_and_black_payments_transfer_total_opponent_loss_and_replay",
+    "test_decline_or_unpayable_extort_does_not_lose_life",
+    "test_prevented_opponent_loss_contributes_zero_to_gain",
+    "test_actual_gain_multiplier_applies_after_total_loss",
+    "test_pending_payment_and_gain_replacement_preserve_committed_loss_after_reload",
+    "test_two_actual_sources_choose_independent_payments_for_one_cast",
+    "test_loss_batch_replacement_suspends_before_any_loss_and_resumes_after_reload",
+    "test_queued_extort_retains_cast_controller_after_actual_source_bounce_or_control_change",
+    "test_omitting_actual_loss_gain_mutant_is_killed_by_four_player_transfer",
+    "test_source_order_omission_mutant_is_killed_by_two_source_replay"
+  ],
+  "implementation": {
+    "component": "quorune.semantic_choices.extort.ExtortChoiceHandler",
+    "version": "typed-ordered-extort-v1",
+    "capability_ids": [
+      "trigger.keyword.extort"
+    ],
+    "supported_slice": "Ordinary printed Extort instances with independently closed whole-card siblings and canonical hybrid payment and life transactions."
+  },
+  "known_blockers": [
+    "unrepresented outer Extort grants and copied/text-changed keyword producers need separate typed contracts",
+    "independently unsupported result or static siblings prevent whole-card admission",
+    "external unrepresented life-prohibition producers remain unsupported"
+  ],
+  "review_status": "reviewed"
+}

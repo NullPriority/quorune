@@ -1195,6 +1195,11 @@ def _shared_blitz_trigger_item(
     )
 
 
+def _ordered_event_sources(host,sources):
+    if sources is not None:return list(sources)
+    return sorted(host._semantic_event_sources(),key=lambda source:(source.zone_timestamp,source.object_id,source.logical_object_id))
+
+
 def dispatch_semantic_event(
     host: TriggerDiscoveryHost,
     event: str,
@@ -1210,9 +1215,7 @@ def dispatch_semantic_event(
     """Detect data-driven triggers for one normalized authoritative event."""
 
     triggered: list[StackItem] = []
-    candidates = (
-        list(sources) if sources is not None else host._semantic_event_sources()
-    )
+    candidates = _ordered_event_sources(host,sources)
     for source in candidates:
         evoke_item = _shared_evoke_trigger_item(host, source, event, context)
         if evoke_item is not None:

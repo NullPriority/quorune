@@ -146,7 +146,12 @@ cost payment suppresses the default even when a replacement redirects its cards.
 
 A fixed semantic-choice life gain uses `LifeChangeIntent` rather than writing a
 life total directly. The intent host prepares the canonical life-change batch;
-when multiple replacements apply, the ordinary private replacement task stores
+its life-intent delegate also accepts one immutable simultaneous loss batch.
+Extort pays one chosen white or black vector, commits distinct opponent losses
+as one batch, and derives its later gain from the actual instruction result.
+Replacement suspension preserves the stage and committed loss amount through the
+existing preparation journal. No client can submit those internal stages.
+When multiple replacements apply, the ordinary private replacement task stores
 a closed life-intent identity and resumes only that uncommitted intent. The
 continuation decoder rejects unknown intent kinds and changed identity, and
 exact replay reissues the same semantic response and replacement selection.

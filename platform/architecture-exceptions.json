@@ -1338,6 +1338,29 @@
         "tests.test_fixed_control_effects.FixedControlGameplayTests.test_printed_control_of_face_down_creature_preserves_principal_private_projection_and_replays",
         "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
       ]
+    },
+    {
+      "exception_id": "ARCH-EXC-0057",
+      "adr": "docs/adr/0113-typed-extort-and-life-loss-batches.md",
+      "artifact": "platform/architecture-guard-baseline.json",
+      "allowance_fingerprint": "86e87ce16254335aae11c5bc868d9b59843ccd21a730531fd71fd0a94e079e85",
+      "exact_allowance": "The exact structural baseline with only the reviewed extort operation; existing engine, mutation, identity and oversized-symbol allowances cannot grow.",
+      "rationale": "The ordered Extort operation delegates hybrid payment and simultaneous actual life loss to canonical intents and retains separate replacement-aware gain. Cohesive life commitment and dispatch extractions reduce oversized hosts and preserve existing paths.",
+      "owner": "rules/compiler/replay maintainers through protected PR certification",
+      "maximum_scope": "One closed Extort stage grammar and its generic simultaneous loss intent. No added direct or unowned state writes, engine methods, runtime Oracle parsing, fixed-card dispatch, callbacks, transport authority or size-growth allowance.",
+      "removal_condition": "Remove this binding when the operation is retired or a later exact reviewed baseline supersedes it; retain strict payment, life-batch, continuation, privacy and replay validation.",
+      "target_milestone": "typed optional hybrid payment and ordered actual-life transfer",
+      "replay_implications": "Prior descriptor and single-life intent shapes retain their exact behavior. New staged choices and canonical cast-source enumeration preserve pending persistence and command hashes for independently triggered sources.",
+      "privacy_implications": "Extort exposes only the active controller payment choices and public life totals. No private cards, library ordering or capability values enter the operation.",
+      "security_implications": "Clients submit only published scalar payment choices. Unknown stages, malformed batches or result bindings, duplicated players, unsupported dependencies, wrong principals and forged result fields fail closed before mutation.",
+      "tests": [
+        "tests.test_extort_rules.ExtortRuntimeTests.test_actual_extort_white_and_black_payments_transfer_total_opponent_loss_and_replay",
+        "tests.test_extort_rules.ExtortRuntimeTests.test_pending_payment_and_gain_replacement_preserve_committed_loss_after_reload",
+        "tests.test_extort_rules.ExtortRuntimeTests.test_two_actual_sources_choose_independent_payments_for_one_cast",
+        "tests.test_extort_rules.ExtortCompilerTests.test_extort_stage_shape_and_dependency_omissions_fail_closed",
+        "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound",
+        "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
+      ]
     }
   ]
 }

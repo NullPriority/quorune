@@ -1203,16 +1203,9 @@ def capability_dependencies_for_node(
 
     mechanic_values = tuple(str(value).casefold() for value in mechanic_ids)
     mechanics = set(mechanic_values)
-    if 'public-quantity-mana' in mechanics:
-        from .public_quantity_mana_shapes import public_quantity_mana_node_capabilities
-        return public_quantity_mana_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
-    from ..resolution_conditions import RESOLUTION_CONDITION_MECHANIC, RESOLUTION_CONDITION_OPERATION
-    if RESOLUTION_CONDITION_MECHANIC in mechanics or RESOLUTION_CONDITION_OPERATION in _nested_effect_operations(effects):
-        from .resolution_condition_shapes import resolution_condition_node_capabilities
-        return resolution_condition_node_capabilities(
-            effects=effects, target_schema=target_schema, mechanic_ids=mechanics,
-            cost_schema=cost_schema,
-        )
+    from .special_node_shapes import special_node_capabilities
+    special=special_node_capabilities(effects=effects,target_schema=target_schema,mechanics=mechanics,cost_schema=cost_schema)
+    if special is not None:return special
     if mechanics.intersection(
         {
             FIXED_CHOOSE_ONE_MODAL_MECHANIC,

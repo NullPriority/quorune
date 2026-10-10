@@ -344,6 +344,8 @@ class SemanticChoiceCoordinationMixin:
         effect: Mapping[str, Any],
         object_rows: tuple[ChoiceObjectView, ...],
     ) -> frozenset[str]:
+        if effect.get('op')=='extort' and effect.get('stage')=='pay':
+            return frozenset(SnapshotSemanticChoiceQuery._cost_key(actor,{color:1}) for color in ('W','B') if self._cost_is_affordable(actor,{color:1}))
         cost_value: Mapping[str, Any] | None = None
         if isinstance(effect.get("_requirements"), Mapping):
             cost_value = effect["_requirements"]

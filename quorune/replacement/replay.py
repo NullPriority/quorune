@@ -1134,6 +1134,7 @@ def _decode_semantic_intent_continuation(
             "destroy_permanent_targets",
             "create_token",
             "life_change",
+            "life_loss_batch",
             "library_selection",
             "move_objects_simultaneously",
             "place_counter_batch",

@@ -41469,6 +41469,358 @@
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the seat-scoped refusal and typed sacrifice to the identical authoritative state hash."
     },
+    {
+      "capability_id": "trigger.keyword.extort",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_extort_rules.ExtortRuntimeTests.test_actual_gain_multiplier_applies_after_total_loss",
+      "official_rule_ids": [
+        "702.101",
+        "702.101a",
+        "702.101b",
+        "119.3",
+        "119.9",
+        "608.2c",
+        "603.2",
+        "603.3",
+        "118.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Extort uses independent cast triggers, one white or black payment, simultaneous opponent loss and actual-total gain; declined, malformed and wrong-seat actions preserve state, multiplier interactions and replay."
+    },
+    {
+      "capability_id": "trigger.keyword.extort",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_extort_rules.ExtortRuntimeTests.test_loss_batch_replacement_suspends_before_any_loss_and_resumes_after_reload",
+      "official_rule_ids": [
+        "702.101",
+        "702.101a",
+        "702.101b",
+        "119.3",
+        "119.9",
+        "608.2c",
+        "603.2",
+        "603.3",
+        "118.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exact Extort stages retain one hybrid payment, canonical simultaneous actual loss, separate replaced gain and deterministic pending trigger order. Malformed batch identities and lost source provenance fail closed; source control and departure do not alter a queued controller."
+    },
+    {
+      "capability_id": "trigger.keyword.extort",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_extort_rules.ExtortRuntimeTests.test_prevented_opponent_loss_contributes_zero_to_gain",
+      "official_rule_ids": [
+        "702.101",
+        "702.101a",
+        "702.101b",
+        "119.3",
+        "119.9",
+        "608.2c",
+        "603.2",
+        "603.3",
+        "118.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exact Extort stages retain one hybrid payment, canonical simultaneous actual loss, separate replaced gain and deterministic pending trigger order. Malformed batch identities and lost source provenance fail closed; source control and departure do not alter a queued controller."
+    },
+    {
+      "capability_id": "trigger.keyword.extort",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_extort_rules.ExtortRuntimeTests.test_queued_extort_retains_cast_controller_after_actual_source_bounce_or_control_change",
+      "official_rule_ids": [
+        "702.101",
+        "702.101a",
+        "702.101b",
+        "119.3",
+        "119.9",
+        "608.2c",
+        "603.2",
+        "603.3",
+        "118.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exact Extort stages retain one hybrid payment, canonical simultaneous actual loss, separate replaced gain and deterministic pending trigger order. Malformed batch identities and lost source provenance fail closed; source control and departure do not alter a queued controller."
+    },
+    {
+      "capability_id": "trigger.keyword.extort",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_extort_rules.ExtortRuntimeTests.test_actual_extort_white_and_black_payments_transfer_total_opponent_loss_and_replay",
+      "official_rule_ids": [
+        "702.101",
+        "702.101a",
+        "702.101b",
+        "119.3",
+        "119.9",
+        "608.2c",
+        "603.2",
+        "603.3",
+        "118.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Extort uses independent cast triggers, one white or black payment, simultaneous opponent loss and actual-total gain; declined, malformed and wrong-seat actions preserve state, multiplier interactions and replay."
+    },
+    {
+      "capability_id": "trigger.keyword.extort",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_extort_rules.ExtortRuntimeTests.test_omitting_actual_loss_gain_mutant_is_killed_by_four_player_transfer",
+      "official_rule_ids": [
+        "702.101",
+        "702.101a",
+        "702.101b",
+        "119.3",
+        "119.9",
+        "608.2c",
+        "603.2",
+        "603.3",
+        "118.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Extort uses independent cast triggers, one white or black payment, simultaneous opponent loss and actual-total gain; declined, malformed and wrong-seat actions preserve state, multiplier interactions and replay."
+    },
+    {
+      "capability_id": "trigger.keyword.extort",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_extort_rules.ExtortRuntimeTests.test_source_order_omission_mutant_is_killed_by_two_source_replay",
+      "official_rule_ids": [
+        "702.101",
+        "702.101a",
+        "702.101b",
+        "119.3",
+        "119.9",
+        "608.2c",
+        "603.2",
+        "603.3",
+        "118.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exact Extort stages retain one hybrid payment, canonical simultaneous actual loss, separate replaced gain and deterministic pending trigger order. Malformed batch identities and lost source provenance fail closed; source control and departure do not alter a queued controller."
+    },
+    {
+      "capability_id": "trigger.keyword.extort",
+      "evidence_class": "negative",
+      "test_id": "tests.test_extort_rules.ExtortCompilerTests.test_actual_result_binding_rejects_malformed_values_and_preserves_unbound_continuations",
+      "official_rule_ids": [
+        "702.101",
+        "702.101a",
+        "702.101b",
+        "119.3",
+        "119.9",
+        "608.2c",
+        "603.2",
+        "603.3",
+        "118.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Bind only a canonical nonnegative integer intent result into an existing quantity field; reject missing, Boolean, negative, malformed and out-of-range bindings while preserving ordinary unbound continuations."
+    },
+    {
+      "capability_id": "trigger.keyword.extort",
+      "evidence_class": "negative",
+      "test_id": "tests.test_extort_rules.ExtortCompilerTests.test_extort_stage_shape_and_dependency_omissions_fail_closed",
+      "official_rule_ids": [
+        "702.101",
+        "702.101a",
+        "702.101b",
+        "119.3",
+        "119.9",
+        "608.2c",
+        "603.2",
+        "603.3",
+        "118.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Extort uses independent cast triggers, one white or black payment, simultaneous opponent loss and actual-total gain; declined, malformed and wrong-seat actions preserve state, multiplier interactions and replay."
+    },
+    {
+      "capability_id": "trigger.keyword.extort",
+      "evidence_class": "negative",
+      "test_id": "tests.test_extort_rules.ExtortCompilerTests.test_life_loss_batch_and_replacement_identity_reject_malformed_players_and_amounts",
+      "official_rule_ids": [
+        "702.101",
+        "702.101a",
+        "702.101b",
+        "119.3",
+        "119.9",
+        "608.2c",
+        "603.2",
+        "603.3",
+        "118.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exact Extort stages retain one hybrid payment, canonical simultaneous actual loss, separate replaced gain and deterministic pending trigger order. Malformed batch identities and lost source provenance fail closed; source control and departure do not alter a queued controller."
+    },
+    {
+      "capability_id": "trigger.keyword.extort",
+      "evidence_class": "negative",
+      "test_id": "tests.test_extort_rules.ExtortRuntimeTests.test_decline_or_unpayable_extort_does_not_lose_life",
+      "official_rule_ids": [
+        "702.101",
+        "702.101a",
+        "702.101b",
+        "119.3",
+        "119.9",
+        "608.2c",
+        "603.2",
+        "603.3",
+        "118.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Extort uses independent cast triggers, one white or black payment, simultaneous opponent loss and actual-total gain; declined, malformed and wrong-seat actions preserve state, multiplier interactions and replay."
+    },
+    {
+      "capability_id": "trigger.keyword.extort",
+      "evidence_class": "positive",
+      "test_id": "tests.test_extort_rules.ExtortCompilerTests.test_each_keyword_instance_has_independent_cast_trigger_and_fixed_hybrid_choice",
+      "official_rule_ids": [
+        "702.101",
+        "702.101a",
+        "702.101b",
+        "119.3",
+        "119.9",
+        "608.2c",
+        "603.2",
+        "603.3",
+        "118.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Extort uses independent cast triggers, one white or black payment, simultaneous opponent loss and actual-total gain; declined, malformed and wrong-seat actions preserve state, multiplier interactions and replay."
+    },
+    {
+      "capability_id": "trigger.keyword.extort",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_extort_rules.ExtortRuntimeTests.test_actual_extort_white_and_black_payments_transfer_total_opponent_loss_and_replay",
+      "official_rule_ids": [
+        "702.101",
+        "702.101a",
+        "702.101b",
+        "119.3",
+        "119.9",
+        "608.2c",
+        "603.2",
+        "603.3",
+        "118.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Extort uses independent cast triggers, one white or black payment, simultaneous opponent loss and actual-total gain; declined, malformed and wrong-seat actions preserve state, multiplier interactions and replay."
+    },
+    {
+      "capability_id": "trigger.keyword.extort",
+      "evidence_class": "replay",
+      "test_id": "tests.test_extort_rules.ExtortRuntimeTests.test_actual_extort_white_and_black_payments_transfer_total_opponent_loss_and_replay",
+      "official_rule_ids": [
+        "702.101",
+        "702.101a",
+        "702.101b",
+        "119.3",
+        "119.9",
+        "608.2c",
+        "603.2",
+        "603.3",
+        "118.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Extort uses independent cast triggers, one white or black payment, simultaneous opponent loss and actual-total gain; declined, malformed and wrong-seat actions preserve state, multiplier interactions and replay."
+    },
+    {
+      "capability_id": "trigger.keyword.extort",
+      "evidence_class": "replay",
+      "test_id": "tests.test_extort_rules.ExtortRuntimeTests.test_pending_payment_and_gain_replacement_preserve_committed_loss_after_reload",
+      "official_rule_ids": [
+        "702.101",
+        "702.101a",
+        "702.101b",
+        "119.3",
+        "119.9",
+        "608.2c",
+        "603.2",
+        "603.3",
+        "118.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exact Extort stages retain one hybrid payment, canonical simultaneous actual loss, separate replaced gain and deterministic pending trigger order. Malformed batch identities and lost source provenance fail closed; source control and departure do not alter a queued controller."
+    },
+    {
+      "capability_id": "trigger.keyword.extort",
+      "evidence_class": "replay",
+      "test_id": "tests.test_extort_rules.ExtortRuntimeTests.test_two_actual_sources_choose_independent_payments_for_one_cast",
+      "official_rule_ids": [
+        "702.101",
+        "702.101a",
+        "702.101b",
+        "119.3",
+        "119.9",
+        "608.2c",
+        "603.2",
+        "603.3",
+        "118.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exact Extort stages retain one hybrid payment, canonical simultaneous actual loss, separate replaced gain and deterministic pending trigger order. Malformed batch identities and lost source provenance fail closed; source control and departure do not alter a queued controller."
+    },
     {"capability_id":"trigger.keyword.firebending.fixed","evidence_class":"interaction","test_id":"tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectRuntimeTests.test_keyword_event_effect_runtime_boundaries","official_rule_ids":["702.189","603"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Exercise firebending through its canonical event, choice, replacement, and effect owners."},
     {"capability_id":"trigger.keyword.firebending.fixed","evidence_class":"multiplayer","test_id":"tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectRuntimeTests.test_keyword_event_effect_multiplayer_projection_and_replay","official_rule_ids":["702.189","603"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Preserve APNAP and seat-correct firebending behavior in four-player state."},
     {"capability_id":"trigger.keyword.firebending.fixed","evidence_class":"mutation","test_id":"tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectCompilerTests.test_keyword_event_effect_contract_matrix_and_exclusions","official_rule_ids":["702.189","603"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Removing the shared Firebending compiler owner restores the representative keyword line to a material residual."},

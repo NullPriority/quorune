@@ -1652,6 +1652,33 @@
       ]
     },
     {
+      "id": "extort-life-transfer-contract",
+      "patterns": [
+        "quorune/compiler/extort_nodes.py",
+        "quorune/semantic_choices/model.py",
+        "quorune/semantic_choices/preparation_coordination.py",
+        "quorune/semantic_choices/extort.py",
+        "quorune/semantic_choices/life_intent_commit.py",
+        "quorune/semantic_runtime/life_batch_intent.py",
+        "quorune/semantic_runtime/life_execution.py",
+        "quorune/rules/extort.py",
+        "quorune/rules/special_node_shapes.py",
+        "quorune/trigger_discovery.py",
+        "mechanics/contracts/extort.json",
+        "tests/fixtures/extort-cards.json"
+      ],
+      "test_modules": [
+        "test_extort_rules",
+        "test_life_change",
+        "test_life_effect_runtime",
+        "test_semantic_counter_replacement_continuations",
+        "test_source_maintenance",
+        "test_split_second_rules",
+        "test_card_program_trust",
+        "test_architecture_governance"
+      ]
+    },
+    {
       "id": "split-second-priority-contract",
       "patterns": [
         "quorune/semantic_runtime/static_cast_rules.py",

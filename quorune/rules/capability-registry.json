@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 209,
+  "registry_version": 210,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -12430,6 +12430,106 @@
       "dependency_fail_closed_rationale": "The stack-local rule has no capability dependencies; costs, results and mana-ability legality are independently closed by their existing owners.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Omitting the stack restriction republishes a response spell and nonmana activation during actual Sudden Shock priority and the offer witness rejects it.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "trigger.keyword.extort",
+      "version": 1,
+      "official_rules": [
+        "702.101",
+        "702.101a",
+        "702.101b",
+        "119.3",
+        "119.9",
+        "608.2c",
+        "603.2",
+        "603.3",
+        "118.12"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Each printed Extort instance triggers for its controller spell cast. One optional white or black payment precedes a simultaneous one-life opponent loss and separate gain equal to the actual committed total loss, through existing payment and life owners.",
+        "inputs": [
+          "source-spanned printed keyword instance",
+          "completed normalized spell cast",
+          "locked trigger controller",
+          "one payable W or B vector",
+          "active opponent life totals and committed life changes"
+        ],
+        "outputs": [
+          "one independent optional hybrid payment per instance",
+          "canonical simultaneous opponent life-loss batch",
+          "actual-loss-derived controller gain with ordinary replacements"
+        ],
+        "exclusions": [
+          "unsupported outer grants or whole-card siblings",
+          "multiple payments for one trigger",
+          "raw Oracle or card-identity runtime dispatch"
+        ]
+      },
+      "dependencies": [
+        "life.change.effect",
+        "trigger.event.normalized_spell_cast",
+        "trigger.placement.apnap"
+      ],
+      "implementation_components": [
+        "quorune.compiler.extort_nodes.extort_keyword_node",
+        "quorune.semantic_choices.extort.ExtortChoiceHandler",
+        "quorune.semantic_runtime.life_batch_intent.LifeLossBatchIntent",
+        "quorune.semantic_choices.intent_host.apply_life_loss_batch_intent",
+        "quorune.semantic_choices.life_intent_commit.apply_life_loss_batch_intent",
+        "quorune.semantic_runtime.life_execution.execute_life_intent",
+        "quorune.trigger_discovery._ordered_event_sources",
+        "quorune.semantic_choices.model.IntentResultAmount",
+        "quorune.semantic_choices.model.AutoContinue.resolved_effects",
+        "quorune.semantic_choices.preparation_coordination.continue_semantic_preparation"
+      ],
+      "positive_tests": [
+        "test_each_keyword_instance_has_independent_cast_trigger_and_fixed_hybrid_choice"
+      ],
+      "negative_tests": [
+        "test_extort_stage_shape_and_dependency_omissions_fail_closed",
+        "test_decline_or_unpayable_extort_does_not_lose_life",
+        "test_life_loss_batch_and_replacement_identity_reject_malformed_players_and_amounts",
+        "test_actual_result_binding_rejects_malformed_values_and_preserves_unbound_continuations"
+      ],
+      "interaction_tests": [
+        "test_actual_gain_multiplier_applies_after_total_loss",
+        "test_prevented_opponent_loss_contributes_zero_to_gain",
+        "test_pending_payment_and_gain_replacement_preserve_committed_loss_after_reload",
+        "test_loss_batch_replacement_suspends_before_any_loss_and_resumes_after_reload",
+        "test_queued_extort_retains_cast_controller_after_actual_source_bounce_or_control_change"
+      ],
+      "multiplayer_tests": [
+        "test_actual_extort_white_and_black_payments_transfer_total_opponent_loss_and_replay",
+        "test_two_actual_sources_choose_independent_payments_for_one_cast"
+      ],
+      "privacy_tests": [
+        "test_actual_extort_white_and_black_payments_transfer_total_opponent_loss_and_replay"
+      ],
+      "replay_tests": [
+        "test_actual_extort_white_and_black_payments_transfer_total_opponent_loss_and_replay",
+        "test_pending_payment_and_gain_replacement_preserve_committed_loss_after_reload",
+        "test_two_actual_sources_choose_independent_payments_for_one_cast",
+        "test_queued_extort_retains_cast_controller_after_actual_source_bounce_or_control_change"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Omitting canonical life-change capability prevents exact Extort admission.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Replacing the actual total loss with a fixed one-life gain fails the four-player accepted-payment witness. The insertion-order mutation also fails exact two-source command replay.",
       "blockers": [],
       "status": "trusted"
     }

@@ -8771,6 +8771,51 @@
       ],
       "interaction_order": 2,
       "assertion": "An exactly registered cast observer triggers above actual Sudden Shock and draws through ordinary APNAP placement and resolution; Split second remains active beneath it and exact pre-action replay reproduces the stack and hand."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_pending_payment_and_gain_replacement_preserve_committed_loss_after_reload",
+      "piece_ids": [
+        "capability.life.gain.replacement.static_multiplier",
+        "capability.trigger.keyword.extort"
+      ],
+      "capability_ids": [
+        "life.gain.replacement.static_multiplier",
+        "trigger.keyword.extort"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Extort pays once and commits each opponent loss before two real Boon Reflection replacements suspend its derived gain. Wrong-seat replacement input is atomic; pending payment and gain reload without repeating loss, and exact replay yields the replaced total."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_two_actual_sources_choose_independent_payments_for_one_cast",
+      "piece_ids": [
+        "capability.trigger.keyword.extort",
+        "capability.trigger.placement.apnap"
+      ],
+      "capability_ids": [
+        "trigger.keyword.extort",
+        "trigger.placement.apnap"
+      ],
+      "interaction_order": 2,
+      "assertion": "Two actual Extort sources trigger independently on one actual cast. The controller orders and pays one while declining the other; canonical cast-source enumeration keeps pending decisions and exact pre-action replay identical."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_queued_extort_retains_cast_controller_after_actual_source_bounce_or_control_change",
+      "piece_ids": [
+        "capability.priority.stack.split_second",
+        "capability.trigger.keyword.extort"
+      ],
+      "capability_ids": [
+        "priority.stack.split_second",
+        "trigger.keyword.extort"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Word of Seizing changes the Extort source controller in response to its queued trigger. The original trigger still offers payment only to its locked controller after the split-second response resolves; actual source bounce likewise leaves the trigger, with exact replay."
     }
   ]
 }

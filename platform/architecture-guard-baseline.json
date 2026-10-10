@@ -1,5 +1,5 @@
 {
-  "baseline_commit": "ff7ea586677abdbfd4ab32209916f786299fe228",
+  "baseline_commit": "0bb137fc2b8d10c1e92f3d33cf5b23d0fa028686",
   "card_named_helpers": [
     {
       "file": "quorune/engine.py",
@@ -438,7 +438,7 @@
     "quorune/zone_transitions.py": 3
   },
   "engine": {
-    "logical_lines": 6934,
+    "logical_lines": 6916,
     "methods": [
       {
         "kind": "method",
@@ -1566,12 +1566,12 @@
         "visibility": "public"
       }
     ],
-    "physical_lines": 7434
+    "physical_lines": 7416
   },
   "exception_binding": {
-    "adr": "docs/adr/0105-typed-fixed-resolution-control.md",
-    "allowance_fingerprint": "3a0cb8a6d9fc3e3cce0bd6c3b0929bd761aeeeb130492153fda28bae6099fca4",
-    "exception_id": "ARCH-EXC-0056"
+    "adr": "docs/adr/0113-typed-extort-and-life-loss-batches.md",
+    "allowance_fingerprint": "86e87ce16254335aae11c5bc868d9b59843ccd21a730531fd71fd0a94e079e85",
+    "exception_id": "ARCH-EXC-0057"
   },
   "legacy_card_specific_operations": [
     "daretti_exchange",
@@ -1664,11 +1664,6 @@
       "symbol": "_object_count_metric"
     },
     {
-      "file": "quorune/compiler/resolution_effect_templates.py",
-      "logical_lines": 155,
-      "symbol": "typed_resolution_effect_template"
-    },
-    {
       "file": "quorune/declaration_costs.py",
       "logical_lines": 249,
       "symbol": "parse_declaration_cost_line"
@@ -1695,7 +1690,7 @@
     },
     {
       "file": "quorune/engine.py",
-      "logical_lines": 257,
+      "logical_lines": 244,
       "symbol": "CommanderEngine._stabilize"
     },
     {
@@ -1760,7 +1755,7 @@
     },
     {
       "file": "quorune/session.py",
-      "logical_lines": 362,
+      "logical_lines": 348,
       "symbol": "CommanderSession.act"
     },
     {
@@ -1776,7 +1771,7 @@
     },
     {
       "file": "quorune/engine.py",
-      "logical_lines": 6934
+      "logical_lines": 6916
     },
     {
       "file": "quorune/record.py",
@@ -1877,6 +1872,7 @@
     "exile_public_graveyard_targets",
     "exile_top_library_card",
     "explore",
+    "extort",
     "extra_turn",
     "fabricate",
     "fixed_bolster",

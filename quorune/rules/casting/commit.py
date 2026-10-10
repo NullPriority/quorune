@@ -1,4 +1,5 @@
 from __future__ import annotations
+from ...trigger_discovery import _ordered_event_sources
 
 import copy
 from collections.abc import Mapping, Sequence
@@ -1174,7 +1175,7 @@ def _dispatch_cast_events(
         targets=proposal.targets,
         creature_target_controllers=_cast_creature_target_controllers(host, item),
     ).to_context()
-    event_sources = list(host._semantic_event_sources())
+    event_sources = _ordered_event_sources(host,None)
     if all(source.object_id != card.object_id for source in event_sources):
         event_sources.append(card)
     host._dispatch_semantic_event(

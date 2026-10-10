@@ -23,6 +23,7 @@ TRUST_LEVELS = {
 SEMANTIC_SCHEMA_VERSION = 3
 BUILTIN_PACK_DIRECTORY = Path(__file__).resolve().parent / "semantic_packs"
 VALID_EFFECT_OPERATIONS = {
+    'extort',
     "amass",
     "apply_source_characteristics_until_end_of_turn",
     "add_counter_selected",
