@@ -33,6 +33,9 @@ class DynamicEntryCounterValueSource(str, Enum):
     PUBLIC_QUERY = "public_query"
     CAST_FROM_HAND = "cast_from_hand"
     MANA_WAS_SPENT = "mana_was_spent"
+    CONTROLLER_PERMANENTS_LEFT = "controller_permanents_left"
+    CONTROLLER_LIFE_GAINED = "controller_life_gained"
+    CONTROLLER_CREATURES_DIED = "controller_creatures_died"
 
 
 class DynamicEntryCounterCalculation(str, Enum):
@@ -118,6 +121,15 @@ class DynamicEntryCounterAmountSpec:
             raise EntryCounterError(
                 "Only public-query entry counter amounts accept a quantity"
             )
+        if self.value_source is DynamicEntryCounterValueSource.CONTROLLER_PERMANENTS_LEFT and (
+            self.calculation is not DynamicEntryCounterCalculation.FIXED_IF_AT_LEAST or self.minimum != 1
+        ):
+            raise EntryCounterError("Departure entry counters require one fixed existence threshold")
+        if self.value_source in {
+            DynamicEntryCounterValueSource.CONTROLLER_LIFE_GAINED,
+            DynamicEntryCounterValueSource.CONTROLLER_CREATURES_DIED,
+        } and self.calculation is not DynamicEntryCounterCalculation.MULTIPLY:
+            raise EntryCounterError("Life-gain and controller-death entry counters require multiplication")
 
     def amount(self, value: int) -> int:
         if type(value) is not int or value < 0:

@@ -142,6 +142,7 @@
       "test_fixed_token_production",
       "test_hand_entry_expansion",
       "test_history_entry_characteristics",
+      "test_history_entry_counters",
       "test_leveler_bands",
       "test_main_phase_rules",
       "test_mass_destruction_effect_clauses",

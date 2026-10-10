@@ -1125,6 +1125,8 @@
         "tests/fixtures/fixed-self-entry-counter-cards.json",
         "tests/test_card_program_trust.py",
         "tests/test_fixed_keyword_entry_counters.py",
+        "tests/test_history_entry_counters.py",
+        "tests/fixtures/history-entry-counters.json",
         "tests/test_high_risk_interaction_assurance.py"
       ],
       "test_modules": [
@@ -1139,6 +1141,7 @@
         "test_game_record_v3",
         "test_high_risk_interaction_assurance",
         "test_history_entry_characteristics",
+        "test_history_entry_counters",
         "test_intrinsic_entry_counters",
         "test_kicker_rules",
         "test_riot_rules",

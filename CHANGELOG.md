@@ -11,6 +11,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Calculate entry counters from committed controller-relative departures,
+  creature deaths and life gained this turn. Counter amounts freeze before
+  replacement ordering and reject unavailable new-history provenance.
+
 - Normalize decorative labels on independently closed static characteristic
   abilities while retaining source spans and semantic marker boundaries.
   Wolf/Werewolf public unions use canonical subtype vocabulary.

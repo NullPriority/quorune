@@ -85,7 +85,14 @@ existing authorities. All-kind, chosen and player counter doubling remains
 outside this named-permanent grammar.
 
 Token preparation uses that same nested zone-entry replacement tree for
-represented intrinsic and self-entry counter components. Prospective objects
+represented intrinsic and self-entry counter components. Entry preparation
+can calculate counter amounts from committed current-turn departure, life-gain
+and creature-death facts. Departure and death use the prior controller, while
+life gain sums actual gains for the prospective entry controller independently
+of later losses. The amount freezes before replacement ordering; an unavailable
+or stale journal rejects these new descriptors before entry. Historical
+descriptors retain their existing compatibility behavior.
+Prospective objects
 are explicit new outside-zone tokens; they remain absent from live state until
 every affected-player selection is complete. The shared layer-6 component
 query evaluates their copiable abilities at the prospective battlefield

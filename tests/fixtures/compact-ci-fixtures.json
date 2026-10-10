@@ -49,6 +49,7 @@
     "tests/fixtures/flashback-cards.json",
     "tests/fixtures/hand-entry-expansion-cards.json",
     "tests/fixtures/history-entry-characteristic-cards.json",
+    "tests/fixtures/history-entry-counters.json",
     "tests/fixtures/intrinsic-basic-land-mana-cards.json",
     "tests/fixtures/kicked-entry-triggers.json",
     "tests/fixtures/kicked-spell-conditions.json",

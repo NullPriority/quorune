@@ -1,0 +1,896 @@
+{
+  "cards": [
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Flash"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{B}",
+      "name": "Bone Devourer",
+      "oracle_id": "0ee41ef9-0b39-4d00-a68e-7914839a7175",
+      "oracle_text": "Flash\nFlying\nThis creature enters with a number of +1/+1 counters on it equal to the number of creatures that died this turn.\nWhen this creature dies, you draw X cards and you lose X life, where X is the number of +1/+1 counters on it.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2025-04-11",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Dragon"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{G}",
+      "name": "Branching Evolution",
+      "oracle_id": "28fe909b-06e0-424c-9f75-c824a25f5865",
+      "oracle_text": "If one or more +1/+1 counters would be put on a creature you control, twice that many +1/+1 counters are put on that creature instead.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-06-14",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{B}",
+          "name": "Callous Sell-Sword",
+          "oracle_text": "This creature enters with a +1/+1 counter on it for each creature that died under your control this turn.",
+          "power": "2",
+          "toughness": "2",
+          "type_line": "Creature \u2014 Human Soldier"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{R}",
+          "name": "Burn Together",
+          "oracle_text": "Target creature you control deals damage equal to its power to any other target. Then sacrifice it.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Sorcery \u2014 Adventure"
+        }
+      ],
+      "cmc": 2.0,
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "adventure",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B} // {R}",
+      "name": "Callous Sell-Sword // Burn Together",
+      "oracle_id": "0e7405e3-e9e6-4213-a73f-e0c01a7d6721",
+      "oracle_text": "Callous Sell-Sword: This creature enters with a +1/+1 counter on it for each creature that died under your control this turn.\n//\nBurn Together: Target creature you control deals damage equal to its power to any other target. Then sacrifice it.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2023-09-08",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Human Soldier // Sorcery \u2014 Adventure"
+    },
+    {
+      "oracle_id": "a1cc5e37-b09a-4b7f-afd5-77c1c35aa425",
+      "name": "Carrion Feeder",
+      "mana_cost": "{B}",
+      "cmc": 1.0,
+      "type_line": "Creature \u2014 Zombie",
+      "oracle_text": "This creature can't block.\nSacrifice a creature: Put a +1/+1 counter on this creature.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2019-06-14",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "card_faces": []
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Chaplain's Blessing",
+      "oracle_id": "195837b4-e5e4-479d-8dab-6ac77f9fcd83",
+      "oracle_text": "You gain 5 life.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2016-04-08",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Shadow"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{B}{B}",
+      "name": "Dauthi Voidwalker",
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "oracle_text": "Shadow (This creature can block or be blocked by only creatures with shadow.)\nIf a card would be put into an opponent's graveyard from anywhere, instead exile it with a void counter on it.\n{T}, Sacrifice this creature: Choose an exiled card an opponent owns with a void counter on it. You may play it this turn without paying its mana cost.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2025-04-11",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Dauthi Rogue"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{B}",
+      "name": "Greed",
+      "oracle_id": "1ff62220-be95-4901-b8d8-812b9a1a1b0a",
+      "oracle_text": "{B}, Pay 2 life: Draw a card.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2021-06-18",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Revolt"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Greenwheel Liberator",
+      "oracle_id": "121a8717-4c5b-45a8-875a-2b802c1fe6f8",
+      "oracle_text": "Revolt \u2014 This creature enters with two +1/+1 counters on it if a permanent left the battlefield under your control this turn.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2017-01-20",
+      "toughness": "1",
+      "type_line": "Creature \u2014 Elf Warrior"
+    },
+    {
+      "oracle_id": "a1f3da21-af6d-450e-bf0b-985d158418e6",
+      "name": "Hardened Scales",
+      "mana_cost": "{G}",
+      "type_line": "Enchantment",
+      "oracle_text": "If one or more +1/+1 counters would be put on a creature you control, that many plus one +1/+1 counters are put on it instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2026-04-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "card_faces": []
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Revolt",
+        "Trample"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{G}",
+      "name": "Lifecraft Cavalry",
+      "oracle_id": "13db0230-b57e-47fd-9025-580d06cc88ee",
+      "oracle_text": "Trample\nRevolt \u2014 This creature enters with two +1/+1 counters on it if a permanent left the battlefield under your control this turn.",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2017-01-20",
+      "toughness": "4",
+      "type_line": "Creature \u2014 Elf Warrior"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Disappear",
+        "Deathtouch"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{B/G}{B/G}",
+      "name": "Putrid Pals",
+      "oracle_id": "3aa3b908-e8d3-4944-8ced-5219d4129594",
+      "oracle_text": "Deathtouch\nDisappear \u2014 This creature enters with two +1/+1 counters on it if a permanent left the battlefield under your control this turn.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2026-03-06",
+      "toughness": "3",
+      "type_line": "Creature \u2014 Human Ooze Mutant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Voracious Wurm",
+      "oracle_id": "2a249c4b-beaa-4e7f-b4f7-496d282327bd",
+      "oracle_text": "This creature enters with X +1/+1 counters on it, where X is the amount of life you've gained this turn.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2013-07-19",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Wurm"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "An adventurer card is a permanent card in every zone except the stack, as well as while on the stack if not cast as an Adventure. Ignore its alternative characteristics in those cases. For example, while it\u2019s in your graveyard, Questing Druid is a green creature card whose mana value is 2. It can\u2019t be the target of Tenacious Tomeseeker\u2019s triggered ability (\u201creturn target instant or sorcery card from your graveyard to your hand\u201d).",
+      "oracle_id": "0e7405e3-e9e6-4213-a73f-e0c01a7d6721",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "An effect may refer to a card, spell, or permanent that \u201chas an Adventure.\u201d This refers to a card, spell, or permanent that has an adventurer card\u2019s set of alternative characteristics, even if they\u2019re not being used and even if that card was never cast as an Adventure.",
+      "oracle_id": "0e7405e3-e9e6-4213-a73f-e0c01a7d6721",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Casting a card as an Adventure isn\u2019t casting it for an alternative cost. Effects that allow you to cast a spell for an alternative cost or without paying its mana cost may allow you to apply those to the Adventure.",
+      "oracle_id": "0e7405e3-e9e6-4213-a73f-e0c01a7d6721",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a spell is cast as an Adventure, its controller exiles it instead of putting it into its owner\u2019s graveyard as it resolves. For as long as it remains exiled, that player may cast it as a permanent spell. If an Adventure spell leaves the stack in any way other than resolving (most likely by being countered or by failing to resolve because its targets have all become illegal), that card won\u2019t be exiled and the spell\u2019s controller won\u2019t be able to cast it as a permanent later.",
+      "oracle_id": "0e7405e3-e9e6-4213-a73f-e0c01a7d6721",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an adventurer card ends up in exile for any other reason than by exiling itself while resolving, it won\u2019t give you permission to cast it as a permanent spell.",
+      "oracle_id": "0e7405e3-e9e6-4213-a73f-e0c01a7d6721",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect copies an Adventure spell, that copy is exiled as it resolves. It ceases to exist as a state-based action; it\u2019s not possible to cast the copy as a permanent.",
+      "oracle_id": "0e7405e3-e9e6-4213-a73f-e0c01a7d6721",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect instructs you to choose a card name, you may choose the alternative Adventure name. Consider only the alternative characteristics to determine whether that is an appropriate name to choose.",
+      "oracle_id": "0e7405e3-e9e6-4213-a73f-e0c01a7d6721",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect refers to a card, spell, or permanent that has an Adventure, it won\u2019t find an instant or sorcery spell on the stack that\u2019s been cast as an Adventure.",
+      "oracle_id": "0e7405e3-e9e6-4213-a73f-e0c01a7d6721",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an object becomes a copy of an object that has an Adventure, the copy also has an Adventure. If it changes zones, it will either cease to exist (if it\u2019s a token) or cease to be a copy (if it\u2019s a nontoken permanent), and so you won\u2019t be able to cast it as an Adventure.",
+      "oracle_id": "0e7405e3-e9e6-4213-a73f-e0c01a7d6721",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the first target of Burn Together is an illegal target as the spell resolves but the last target is still legal, Burn Together will resolve, but no damage will be dealt and nothing will be sacrificed.",
+      "oracle_id": "0e7405e3-e9e6-4213-a73f-e0c01a7d6721",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the last target of Burn Together is an illegal target as the spell resolves but the first target is still legal, Burn Together will still resolve and you'll still sacrifice the first target.",
+      "oracle_id": "0e7405e3-e9e6-4213-a73f-e0c01a7d6721",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast an adventurer card as an Adventure, use only its alternative characteristics to determine whether it\u2019s legal to cast that spell. For example, if you control Johann, Apprentice Sorcerer (\u201cOnce each turn, you may cast an instant or sorcery spell from the top of your library.\u201d) and Questing Druid is on top of your library, you can cast Seek the Beast, but not Questing Druid.",
+      "oracle_id": "0e7405e3-e9e6-4213-a73f-e0c01a7d6721",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "When casting a spell as an Adventure, use the alternative characteristics and ignore all of the card\u2019s normal characteristics. The spell\u2019s color, mana cost, mana value, and so on are determined by only those alternative characteristics. If the spell leaves the stack, it immediately resumes using its normal characteristics.",
+      "oracle_id": "0e7405e3-e9e6-4213-a73f-e0c01a7d6721",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "You must still follow any timing restrictions and permissions for the permanent spell you cast from exile. Normally, you\u2019ll be able to cast it only during your main phase while the stack is empty.",
+      "oracle_id": "0e7405e3-e9e6-4213-a73f-e0c01a7d6721",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Bone Devourer has +1/+1 counters put on it, and then enough -1/-1 counters are put on it to cause its toughness to be 0, X is equal to the number of +1/+1 counters it had at the time those -1/-1 counters were put on it.",
+      "oracle_id": "0ee41ef9-0b39-4d00-a68e-7914839a7175",
+      "published_at": "2025-04-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "Energy counters aren't permanents. Paying {E} won't satisfy a revolt ability.",
+      "oracle_id": "121a8717-4c5b-45a8-875a-2b802c1fe6f8",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "Revolt abilities check only whether a permanent you controlled left the battlefield this turn or not. They don't apply multiple times if more than one permanent you controlled left the battlefield. They don't check whether the permanent that left the battlefield is still in the zone it moved to.",
+      "oracle_id": "121a8717-4c5b-45a8-875a-2b802c1fe6f8",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "Revolt abilities don't care why the permanent left the battlefield, who caused it to move, or where it moved to. They're equally satisfied by an artifact you sacrificed to pay a cost, a creature you controlled that was destroyed by Murder, or an enchantment you returned to your hand with Leave in the Dust.",
+      "oracle_id": "121a8717-4c5b-45a8-875a-2b802c1fe6f8",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "Tokens that leave the battlefield will satisfy a revolt ability.",
+      "oracle_id": "121a8717-4c5b-45a8-875a-2b802c1fe6f8",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "Energy counters aren't permanents. Paying {E} won't satisfy a revolt ability.",
+      "oracle_id": "13db0230-b57e-47fd-9025-580d06cc88ee",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "Revolt abilities check only whether a permanent you controlled left the battlefield this turn or not. They don't apply multiple times if more than one permanent you controlled left the battlefield. They don't check whether the permanent that left the battlefield is still in the zone it moved to.",
+      "oracle_id": "13db0230-b57e-47fd-9025-580d06cc88ee",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "Revolt abilities don't care why the permanent left the battlefield, who caused it to move, or where it moved to. They're equally satisfied by an artifact you sacrificed to pay a cost, a creature you controlled that was destroyed by Murder, or an enchantment you returned to your hand with Leave in the Dust.",
+      "oracle_id": "13db0230-b57e-47fd-9025-580d06cc88ee",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "Tokens that leave the battlefield will satisfy a revolt ability.",
+      "oracle_id": "13db0230-b57e-47fd-9025-580d06cc88ee",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a creature you control would enter the battlefield with a number of +1/+1 counters on it, it enters with twice that many instead.",
+      "oracle_id": "28fe909b-06e0-424c-9f75-c824a25f5865",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "If two or more effects attempt to modify how many counters would be put onto a creature you control, you choose the order to apply those effects, no matter who controls the sources of those effects.",
+      "oracle_id": "28fe909b-06e0-424c-9f75-c824a25f5865",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control two Branching Evolutions, the number of +1/+1 counters put on a creature is four times the original number. Three Branching Evolutions multiplies the original number by eight, and so on.",
+      "oracle_id": "28fe909b-06e0-424c-9f75-c824a25f5865",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "In a Two-Headed Giant game, life gained by your teammate isn\u2019t considered, even though it causes your team\u2019s life total to increase.",
+      "oracle_id": "2a249c4b-beaa-4e7f-b4f7-496d282327bd",
+      "published_at": "2013-07-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Voracious Wurm\u2019s ability checks how much life you\u2019ve gained during the turn, not what your life total is compared to what it was when the turn began. For example, if you start the turn at 10 life, gain 6 life during the turn, then lose 6 life later that turn, Voracious Wurm will enter the battlefield with six +1/+1 counters.",
+      "oracle_id": "2a249c4b-beaa-4e7f-b4f7-496d282327bd",
+      "published_at": "2013-07-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some disappear abilities, such as those of the above cards, are triggered abilities with intervening if clauses. If a permanent hasn't left the battlefield under your control that turn by the time the disappear ability would trigger, it won't trigger at all.",
+      "oracle_id": "3aa3b908-e8d3-4944-8ced-5219d4129594",
+      "published_at": "2026-01-27",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each additional Hardened Scales you control will increase the number of +1/+1 counters placed on a creature you control by one.",
+      "oracle_id": "a1f3da21-af6d-450e-bf0b-985d158418e6",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a creature you control would enter the battlefield with a number of +1/+1 counters on it, it enters with that many plus one instead.",
+      "oracle_id": "a1f3da21-af6d-450e-bf0b-985d158418e6",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If two or more effects attempt to modify how many counters would be put on a creature you control, you choose the order to apply those effects, no matter who controls the sources of those effects.",
+      "oracle_id": "a1f3da21-af6d-450e-bf0b-985d158418e6",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost.",
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an attacking creature has multiple evasion abilities, such as shadow and flying, a creature can block it only if that creature satisfies all of the appropriate evasion abilities.",
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a card this way, you may not cast it for any other alternative costs it has, but you may pay for additional costs, such as kicker costs. If the spell requires an additional cost, you must pay that cost.",
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your opponent discards a card while you control Dauthi Voidwalker, abilities that function when that card is discarded still work, even though that card never reaches that player's graveyard. In addition, spells or abilities that check the characteristics of the discarded card can find that card in exile.",
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Playing a card with Dauthi Voidwalker's last ability is still subject to normal timing restrictions.",
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Tokens still die while Dauthi Voidwalker is on the battlefield.",
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "While Dauthi Voidwalker is on the battlefield, nontoken creatures your opponents control won't die. They'll be exiled instead. Abilities that would trigger when those creatures die won't trigger.",
+      "oracle_id": "f1c2dbe2-fbe0-4058-bdf1-91d1b1832786",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

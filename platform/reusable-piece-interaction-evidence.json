@@ -8024,6 +8024,36 @@
       ],
       "interaction_order": 2,
       "assertion": "Original Nightpack Ambusher retains an exact typed Wolf/Werewolf union anthem but its independently unrepresented no-spell end-step trigger keeps the whole CardProgram unresolved. Canonical runtime binding rejects complete gameplay admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_revolt_cast_uses_prior_departure_controller_and_replays",
+      "piece_ids": [
+        "capability.counter.producer.dynamic_self_entry",
+        "capability.trigger.event.normalized_zone_change"
+      ],
+      "capability_ids": [
+        "counter.producer.dynamic_self_entry",
+        "trigger.event.normalized_zone_change"
+      ],
+      "interaction_order": 2,
+      "assertion": "A real Unsummon commits departure history before Greenwheel Liberator is cast. The entry replacement distinguishes the prior departure controller from opponents, rejects wrong-principal casting atomically, and preserves exact pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_history_entry_competing_replacements_pending_save_load_preserves_frozen_amount",
+      "piece_ids": [
+        "capability.counter.placement.quantity_replacement",
+        "capability.counter.producer.dynamic_self_entry"
+      ],
+      "capability_ids": [
+        "counter.placement.quantity_replacement",
+        "counter.producer.dynamic_self_entry"
+      ],
+      "interaction_order": 2,
+      "assertion": "A real Revolt cast seals its two-counter amount before Hardened Scales/Branching Evolution ordering. Pending save/load retains the transaction, private choice rejects other principals atomically, and addition/doubling applies to the frozen amount with exact replay."
     }
   ]
 }
