@@ -20,7 +20,7 @@ _KEYWORD_WITH_VALUE = re.compile(
 _KNOWN_BARE_KEYWORDS = frozenset(
     "deathtouch|defender|double strike|first strike|flash|flying|haste|"
     "flanking|hexproof|indestructible|infect|lifelink|menace|reach|shadow|shroud|"
-    "trample|vigilance|wither".split("|")
+    "trample|vigilance|wither|umbra armor".split("|")
 )
 _TYPECYCLING = re.compile(
     r"^(?:basic land|plains|island|swamp|mountain|forest|artifact land|"

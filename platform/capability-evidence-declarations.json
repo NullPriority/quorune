@@ -2,6 +2,96 @@
   "schema_version": 1,
   "declarations": [
     {
+      "capability_id": "ability.umbra_armor.fragment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_umbra_armor.UmbraArmorRepresentationTests.test_current_aura_relationship_keeps_source_and_recipient_ability_loss_distinct",
+      "official_rule_ids": [
+        "702.89a",
+        "303.4b",
+        "303.4e",
+        "613.1f",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Read-only source-local representation preserves Aura and recipient identity, control and effective ability presence; does not certify destruction gameplay."
+    },
+    {
+      "capability_id": "ability.umbra_armor.fragment",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_umbra_armor.UmbraArmorRepresentationTests.test_current_source_fragment_projection_mutant_is_killed",
+      "official_rule_ids": [
+        "702.89a",
+        "303.4b",
+        "303.4e",
+        "613.1f",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Read-only source-local representation preserves Aura and recipient identity, control and effective ability presence; does not certify destruction gameplay."
+    },
+    {
+      "capability_id": "ability.umbra_armor.fragment",
+      "evidence_class": "negative",
+      "test_id": "tests.test_umbra_armor.UmbraArmorRepresentationTests.test_registered_fragment_handler_has_closed_descriptor_and_no_mutation",
+      "official_rule_ids": [
+        "702.89a",
+        "303.4b",
+        "303.4e",
+        "613.1f",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Read-only source-local representation preserves Aura and recipient identity, control and effective ability presence; does not certify destruction gameplay."
+    },
+    {
+      "capability_id": "ability.umbra_armor.fragment",
+      "evidence_class": "positive",
+      "test_id": "tests.test_umbra_armor.UmbraArmorRepresentationTests.test_source_rule_codec_preserves_multiplicity_and_rejects_unknown_fields",
+      "official_rule_ids": [
+        "702.89a",
+        "303.4b",
+        "303.4e",
+        "613.1f",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Read-only source-local representation preserves Aura and recipient identity, control and effective ability presence; does not certify destruction gameplay."
+    },
+    {
+      "capability_id": "ability.umbra_armor.fragment",
+      "evidence_class": "replay",
+      "test_id": "tests.test_umbra_armor.UmbraArmorRepresentationReplayTests.test_source_fragment_checkpoint_and_relationship_replay_are_exact",
+      "official_rule_ids": [
+        "702.89a",
+        "303.4b",
+        "303.4e",
+        "613.1f",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Read-only source-local representation preserves Aura and recipient identity, control and effective ability presence; does not certify destruction gameplay."
+    },
+    {
       "capability_id": "activation.condition.phase_window",
       "evidence_class": "interaction",
       "test_id": "tests.test_public_activation_conditions.PublicActivationConditionRuntimeTests.test_conditions_gate_existing_effect_and_replacement_owners",

@@ -4122,6 +4122,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/umbra_armor_nodes.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/unearth_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -4922,6 +4937,20 @@
         "semantics"
       ],
       "game_state_access": "mutable_owner",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/destruction_replacement_options.py",
+      "layer": "rules",
+      "owning_subsystem": "destruction",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
       "card_specificity_policy": "generic_no_growth",
       "visibility_sensitivity": "authoritative_internal",
       "replay_participation": "none"
@@ -11098,6 +11127,32 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/umbra_armor.py",
+      "layer": "rules",
+      "owning_subsystem": "destruction",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/umbra_armor_model.py",
+      "layer": "domain",
+      "owning_subsystem": "destruction",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/unearth.py",
       "layer": "rules",
       "owning_subsystem": "graveyard_actions",
@@ -11514,5 +11569,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "858aad5b4e48f7d3096ebba4846971b472c26b7f732e079393de9625aa53b55b"
+  "fingerprint": "8baaae488ff4f26fd4ebcc259dd26a1e7f3cf71a637996f08b3c24698899f887"
 }

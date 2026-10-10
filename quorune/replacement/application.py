@@ -45,6 +45,7 @@ _SET_FIELDS = {
     "token.create": {"quantity", "created_types", "created_subtypes"},
     "counter.place": {"amount"},
     "counter.add": {"amount", "quantity"},
+    "permanent.destroy": {"disposition", "clear_damage", "umbra_aura_object_id", "umbra_aura_logical_object_id"},
     "life.change": {"amount"},
     "draw.instruction": {"count"},
     "damage.results": {"life_loss_amount", "life_after_without_replacement"},

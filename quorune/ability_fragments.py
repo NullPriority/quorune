@@ -41,6 +41,7 @@ from .declaration_fragments import (
 from .defender_permission import DefenderAttackPermission
 from .as_unblocked import AsUnblockedAssignmentPermission
 from .toughness_assignment_model import ToughnessAssignmentSpec
+from .umbra_armor_model import UmbraArmorSpec
 from .creature_subtypes import canonical_creature_subtype
 from .replacement.immutable import FrozenMap, thaw_value
 from .trigger_participation import TriggerMultiplierSpec, WardSpec
@@ -989,6 +990,7 @@ StaticAbilityFragment: TypeAlias = (
     | DefenderAttackPermission
     | AsUnblockedAssignmentPermission
     | ToughnessAssignmentSpec
+    | UmbraArmorSpec
     | DeclarationCostTemplate
     | DeclarationRequirementTemplate
     | DeclarationRestrictionTemplate
@@ -1048,6 +1050,8 @@ def ability_fragment_to_dict(
     elif isinstance(fragment, AsUnblockedAssignmentPermission):
         kind = "as_unblocked_assignment"
     elif isinstance(fragment,ToughnessAssignmentSpec):kind='toughness_assignment_rule'
+    elif isinstance(fragment, UmbraArmorSpec):
+        kind = 'umbra_armor'
     elif isinstance(fragment, DeclarationCostTemplate):
         kind = "declaration_cost"
     elif isinstance(fragment, DeclarationRequirementTemplate):
@@ -1151,6 +1155,8 @@ def ability_fragment_from_dict(
     if value["kind"] == "as_unblocked_assignment":
         return AsUnblockedAssignmentPermission.from_dict(value["value"])
     if value['kind']=='toughness_assignment_rule':return ToughnessAssignmentSpec.from_dict(value['value'])
+    if value['kind'] == 'umbra_armor':
+        return UmbraArmorSpec.from_dict(value['value'])
     if value["kind"] == "declaration_cost":
         try:
             return DeclarationCostTemplate.from_dict(value["value"])
@@ -1206,6 +1212,7 @@ def canonical_ability_fragments(
                 DefenderAttackPermission,
                 AsUnblockedAssignmentPermission,
                 ToughnessAssignmentSpec,
+                UmbraArmorSpec,
                 DeclarationCostTemplate,
                 DeclarationRequirementTemplate,
                 DeclarationRestrictionTemplate,

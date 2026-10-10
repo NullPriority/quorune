@@ -220,6 +220,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "ability.static.query_characteristic_modifier",
                 "ability.static.query_power_toughness_definition",
                 "ability.static.toxic",
+                "ability.static.umbra_armor",
                 "ability.static.trigger_multiplier",
                 "ability.trigger.bushido",
                 "ability.trigger.battle_cry",

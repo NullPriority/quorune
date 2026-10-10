@@ -19,6 +19,7 @@ from ..death_return import (
 from ..evolve import EVOLVE_EVENT_CONDITION_FIELD
 from ..echo import ECHO_MECHANIC_ID
 from ..fixed_keyword_entry_counters import FIXED_KEYWORD_ENTRY_MECHANICS
+from .umbra_armor_nodes import umbra_armor_keyword_node
 from ..unleash import (
     UNLEASH_MECHANIC,
     unleash_block_handler_descriptor,
@@ -342,6 +343,9 @@ def closed_special_keyword_node(
         "capability_profile": capability_profile,
         "residuals": residuals,
     }
+    umbra = umbra_armor_keyword_node(**values)
+    if umbra is not None:
+        return umbra
     day_night = day_night_keyword_node(
         record=record, face_id=face_id, **values
     )

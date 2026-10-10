@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 191,
+  "registry_version": 192,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -238,6 +238,72 @@
     }
   ],
   "capabilities": [
+    {
+      "id": "ability.umbra_armor.fragment",
+      "version": 1,
+      "official_rules": [
+        "702.89a",
+        "303.4b",
+        "303.4e",
+        "613.1f",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Represent each source-local Umbra armor static ability and read immutable current Aura/recipient identity relationships through the existing layer-6 fragment owner.",
+        "inputs": [
+          "one closed source-local fragment",
+          "current effective Aura abilities",
+          "current attachment and incarnation",
+          "independent Aura and recipient controllers"
+        ],
+        "outputs": [
+          "immutable versioned codec",
+          "multiplicity preserved",
+          "current source/recipient relationship without state mutation"
+        ],
+        "exclusions": [
+          "destruction replacement and protection gameplay",
+          "coupled damage clear and Aura destruction",
+          "competing replacement choices"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.umbra_armor_model.UmbraArmorSpec",
+        "quorune.umbra_armor_model.UmbraArmorProtection",
+        "quorune.umbra_armor.current_umbra_armor_protections",
+        "quorune.semantic_runtime.ability_fragments.UmbraArmorFragmentHandler"
+      ],
+      "positive_tests": [
+        "test_source_rule_codec_preserves_multiplicity_and_rejects_unknown_fields"
+      ],
+      "negative_tests": [
+        "test_registered_fragment_handler_has_closed_descriptor_and_no_mutation"
+      ],
+      "interaction_tests": [
+        "test_current_aura_relationship_keeps_source_and_recipient_ability_loss_distinct"
+      ],
+      "multiplayer_tests": [],
+      "privacy_tests": [],
+      "replay_tests": ["test_source_fragment_checkpoint_and_relationship_replay_are_exact"],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "This representation has no external runtime dependency and does not grant destruction gameplay trust.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Dropping current source fragments from the read-only relationship query is killed by the independent source/recipient relationship witness; no gameplay mutation is claimed.",
+      "blockers": [],
+      "status": "trusted"
+    },
     {
       "id": "activation.crew.fixed_power",
       "version": 1,
@@ -1842,6 +1908,69 @@
       "implementation_mutation_rationale": "Compiler removal and altered shuffle/cardinality schema mutations withhold exact admission; actual printed search witnesses distinguish mandatory quantities, predicates and result order.",
       "blockers": [],
       "status": "trusted"
+    },
+    {
+      "id": "permanent.destroy.umbra_armor",
+      "version": 1,
+      "official_rules": [
+        "702.89a",
+        "701.8a",
+        "701.8b",
+        "616.1",
+        "616.1g",
+        "704.5g",
+        "704.5h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Coupled Umbra destruction replacement through canonical damage, replacement ordering and simultaneous zone owners.",
+        "inputs": [
+          "current Aura-owned protection",
+          "destruction snapshot",
+          "affected-controller choice"
+        ],
+        "outputs": [
+          "remove all damage from protected permanent",
+          "replace destruction with destruction of the chosen Aura"
+        ],
+        "exclusions": [
+          "non-destruction graveyard moves",
+          "unsupported siblings"
+        ]
+      },
+      "dependencies": [
+        "ability.umbra_armor.fragment",
+        "permanent.destroy.effect"
+      ],
+      "implementation_components": [
+        "quorune.compiler.umbra_armor_nodes.umbra_armor_keyword_node"
+      ],
+      "positive_tests": [],
+      "negative_tests": [],
+      "interaction_tests": [],
+      "multiplayer_tests": [],
+      "privacy_tests": [],
+      "replay_tests": [],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "not_run",
+      "dependency_fail_closed_rationale": "Coupled destruction, competing choice and recursive replacement owner remains unfinished.",
+      "implementation_mutation_status": "not_run",
+      "implementation_mutation_rationale": "Gameplay evidence is pending complete destruction ownership.",
+      "blockers": [
+        "coupled Umbra damage-clear/Aura-destruction and competing replacement choices incomplete"
+      ],
+      "status": "blocked"
     },
     {
       "id": "protection.typed.debt",

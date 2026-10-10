@@ -68,6 +68,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/as_unblocked.py",
         "quorune/as_unblocked_rule.py",
         "quorune/toughness_assignment_model.py",
+        "quorune/umbra_armor_model.py",
         "quorune/toughness_assignment_rule.py",
         "quorune/defender_permission.py",
         "quorune/declaration_rule_effects.py",
@@ -169,6 +170,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/public_quantity_mana_runtime.py",
         "quorune/power_up.py",
         "quorune/toughness_assignment.py",
+        "quorune/umbra_armor.py",
         "quorune/activation_usage.py",
         "quorune/activation_condition_model.py",
         "quorune/abilities.py",
@@ -237,6 +239,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/delayed_triggers.py",
         "quorune/destruction.py",
         "quorune/destruction_sets.py",
+        "quorune/destruction_replacement_options.py",
         "quorune/dynamic_characteristics.py",
         "quorune/engine.py",
         "quorune/entry_counter_coordination.py",
@@ -606,6 +609,9 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/destruction.py",
         "quorune/destruction_sets.py",
         "quorune/state_based_execution.py",
+        "quorune/destruction_replacement_options.py",
+        "quorune/umbra_armor.py",
+        "quorune/umbra_armor_model.py",
     }:
         return "destruction"
     if relative == "quorune/regeneration.py":

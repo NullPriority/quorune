@@ -37,6 +37,7 @@ from ..declaration_fragments import DECLARATION_COMPONENT_CAPABILITY_ID
 from ..defender_permission import DefenderAttackPermission, DEFENDER_PERMISSION_CAPABILITY, DEFENDER_PERMISSION_HANDLER
 from ..as_unblocked import AsUnblockedAssignmentPermission, AS_UNBLOCKED_CAPABILITY, AS_UNBLOCKED_HANDLER
 from ..toughness_assignment_model import ToughnessAssignmentSpec,TOUGHNESS_ASSIGNMENT_CAPABILITY,TOUGHNESS_ASSIGNMENT_HANDLER
+from ..umbra_armor_model import UmbraArmorSpec, UMBRA_ARMOR_FRAGMENT_CAPABILITY, UMBRA_ARMOR_HANDLER
 from ..rules.capabilities import load_default_capability_registry
 from ..trigger_participation import TriggerMultiplierSpec, WardSpec
 from .component_registry import RuntimeComponentRegistry, exact_fields
@@ -250,6 +251,23 @@ class ToughnessAssignmentFragmentHandler:
         return _fragment(descriptor,handler_id=self.handler_id,event=self.event,expected_type=ToughnessAssignmentSpec)
 
     def lower(self,descriptor,context):
+        del context
+        return (self.validate(descriptor),)
+
+
+@dataclass(frozen=True, slots=True)
+class UmbraArmorFragmentHandler:
+    handler_id: str = UMBRA_ARMOR_HANDLER
+    schema_version: int = 1
+    family: str = "ability.static.umbra_armor"
+    event: str = "characteristics.evaluate"
+    rule_references: tuple[str, ...] = ("702.89a", "613.1f")
+    capability_dependencies: tuple[str, ...] = (UMBRA_ARMOR_FRAGMENT_CAPABILITY,)
+
+    def validate(self, descriptor):
+        return _fragment(descriptor, handler_id=self.handler_id, event=self.event, expected_type=UmbraArmorSpec)
+
+    def lower(self, descriptor, context):
         del context
         return (self.validate(descriptor),)
 
@@ -1324,6 +1342,7 @@ def default_ability_fragment_registry() -> AbilityFragmentRegistry:
             DefenderPermissionAbilityFragmentHandler(),
             AsUnblockedAssignmentFragmentHandler(),
             ToughnessAssignmentFragmentHandler(),
+            UmbraArmorFragmentHandler(),
             DeclarationRequirementAbilityFragmentHandler(),
             DeclarationRestrictionAbilityFragmentHandler(),
             DeclarationRestrictionComponentHandler(),
