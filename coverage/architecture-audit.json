@@ -32171,7 +32171,7 @@
             "visibility": "private"
           }
         ],
-        "primary_test_count": 226,
+        "primary_test_count": 227,
         "primary_tests": [
           "test_ability_word_event_triggers",
           "test_activated_draw_abilities",
@@ -35828,7 +35828,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "15812d98b21a0452657687cb1c8313162dbaf71275e95dd40e4dbd9437a4c1bd",
+      "fingerprint": "53d3482d44975e1edbdaf4427197589ddfcd52c92c619507c6d528a447318847",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -36686,8 +36686,8 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 5221,
-      "discovered_total": 8557,
+      "conventional_ast_cases": 5222,
+      "discovered_total": 8558,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 263,
@@ -36697,7 +36697,7 @@
         "server_named": 38
       },
       "reconciles": false,
-      "test_files": 390
+      "test_files": 391
     }
   }
 }
