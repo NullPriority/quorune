@@ -8876,6 +8876,66 @@
       ],
       "interaction_order": 2,
       "assertion": "An actual Anointer Priest Embalm activation creates a token whose own entry trigger gains life through ordinary trigger placement and exact replay, while copiable color/type/no-mana-cost values remain intact."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_counter_replacement_pending_reload_retains_separate_following_grant",
+      "piece_ids": [
+        "capability.counter.placement.quantity_replacement",
+        "capability.trigger.keyword.backup"
+      ],
+      "capability_ids": [
+        "counter.placement.quantity_replacement",
+        "trigger.keyword.backup"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Hardened Scales and Doubling Season suspend Backup counter placement before its separate ability grant; explicit ordering produces four counters after pending reload and wrong-seat rollback, one grant and exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_copy_entry_preserves_printed_order_and_excludes_gained_keyword",
+      "piece_ids": [
+        "capability.token.creation.fixed_copy",
+        "capability.trigger.keyword.backup"
+      ],
+      "capability_ids": [
+        "token.creation.fixed_copy",
+        "trigger.keyword.backup"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Cackling Counterpart creates a copied Boon-Bringer Valkyrie whose Backup retains inherited printed order, grants its three printed keywords and excludes an original source gained Haste keyword, with exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_source_departure_preserves_locked_bundle_and_target_blink_invalidates",
+      "piece_ids": [
+        "capability.trigger.event.qualified_zone_change",
+        "capability.trigger.keyword.backup"
+      ],
+      "capability_ids": [
+        "trigger.event.qualified_zone_change",
+        "trigger.keyword.backup"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual source Unsummon preserves queued Backup donation, while actual recipient Ephemerate makes the original target incarnation illegal. Both paths use offered response spells and exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_static_donations_apply_recipient_block_and_damage_queries",
+      "piece_ids": [
+        "capability.combat.damage.assignment.toughness",
+        "capability.trigger.keyword.backup"
+      ],
+      "capability_ids": [
+        "combat.damage.assignment.toughness",
+        "trigger.keyword.backup"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Streetwise Negotiator Backup donates its independently represented toughness rule to its recipient; exact activation/target sequence replays before direct current-rule applicability checks."
     }
   ]
 }

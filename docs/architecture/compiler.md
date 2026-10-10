@@ -9,6 +9,14 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+`compiler/backup_nodes.py` binds each fixed Backup instance to the complete
+printed ability bundle below it after the face's ordinary nodes are compiled.
+Keywords and typed declaration fragments retain their owners; activated and
+triggered abilities use independent granted child programs. Unsupported
+downstream text keeps the complete Backup production residual. Copies entering
+with Backup retain that printed ordering; additional gained abilities do not
+change its compiled bundle. Separate instances retain separate trigger IDs.
+
 `compiler/player_target_protection_nodes.py` lowers only fixed "you have
 hexproof" and "you have shroud" lines to trusted source components. The
 existing ability-component registry validates the closed keyword descriptor;

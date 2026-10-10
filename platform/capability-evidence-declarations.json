@@ -42055,6 +42055,558 @@
     {"capability_id":"trigger.keyword.annihilator.fixed","evidence_class":"privacy","test_id":"tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectRuntimeTests.test_keyword_event_effect_multiplayer_projection_and_replay","official_rule_ids":["702.86","603"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Project only public annihilator choices without hidden library or implementation identity."},
     {"capability_id":"trigger.keyword.annihilator.fixed","evidence_class":"replay","test_id":"tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectRuntimeTests.test_keyword_event_effect_multiplayer_projection_and_replay","official_rule_ids":["702.86","603"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Replay annihilator triggers, choices, delayed work, and authoritative results exactly."},
     {
+      "capability_id": "trigger.keyword.backup",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_backup_rules.BackupRuntimeTests.test_actual_backup_cast_donates_printed_bundle_to_other_creature_and_replays",
+      "official_rule_ids": [
+        "702.165",
+        "702.165a",
+        "702.165b",
+        "702.165c",
+        "702.165d",
+        "603.3b",
+        "603.3d",
+        "608.2b",
+        "611.2a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed source order determines a complete Backup ability bundle. Actual registered source entry, shared target choice, canonical counters and a different-recipient grant retain principal-correct rollback and replay."
+    },
+    {
+      "capability_id": "trigger.keyword.backup",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_backup_rules.BackupRuntimeTests.test_actual_copy_entry_preserves_printed_order_and_excludes_gained_keyword",
+      "official_rule_ids": [
+        "702.165",
+        "702.165a",
+        "702.165b",
+        "702.165c",
+        "702.165d",
+        "603.3b",
+        "603.3d",
+        "608.2b",
+        "611.2a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual source-order Backup grants, copied entry, opponent-recipient activation/private draw, recipient attack triggers, source departure, target blink and replaced counter pending save/load retain shared typed owners and exact replay. Static and expiry checks are separately scoped diagnostics after the replayable action witness."
+    },
+    {
+      "capability_id": "trigger.keyword.backup",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_backup_rules.BackupRuntimeTests.test_actual_donated_attack_trigger_uses_recipient_target_and_replays",
+      "official_rule_ids": [
+        "702.165",
+        "702.165a",
+        "702.165b",
+        "702.165c",
+        "702.165d",
+        "603.3b",
+        "603.3d",
+        "608.2b",
+        "611.2a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual source-order Backup grants, copied entry, opponent-recipient activation/private draw, recipient attack triggers, source departure, target blink and replaced counter pending save/load retain shared typed owners and exact replay. Static and expiry checks are separately scoped diagnostics after the replayable action witness."
+    },
+    {
+      "capability_id": "trigger.keyword.backup",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_backup_rules.BackupRuntimeTests.test_actual_donated_sacrifice_activation_uses_recipient_and_private_draw_replay",
+      "official_rule_ids": [
+        "702.165",
+        "702.165a",
+        "702.165b",
+        "702.165c",
+        "702.165d",
+        "603.3b",
+        "603.3d",
+        "608.2b",
+        "611.2a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual source-order Backup grants, copied entry, opponent-recipient activation/private draw, recipient attack triggers, source departure, target blink and replaced counter pending save/load retain shared typed owners and exact replay. Static and expiry checks are separately scoped diagnostics after the replayable action witness."
+    },
+    {
+      "capability_id": "trigger.keyword.backup",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_backup_rules.BackupRuntimeTests.test_actual_source_departure_preserves_locked_bundle_and_target_blink_invalidates",
+      "official_rule_ids": [
+        "702.165",
+        "702.165a",
+        "702.165b",
+        "702.165c",
+        "702.165d",
+        "603.3b",
+        "603.3d",
+        "608.2b",
+        "611.2a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual source-order Backup grants, copied entry, opponent-recipient activation/private draw, recipient attack triggers, source departure, target blink and replaced counter pending save/load retain shared typed owners and exact replay. Static and expiry checks are separately scoped diagnostics after the replayable action witness."
+    },
+    {
+      "capability_id": "trigger.keyword.backup",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_backup_rules.BackupRuntimeTests.test_actual_static_donations_apply_recipient_block_and_damage_queries",
+      "official_rule_ids": [
+        "702.165",
+        "702.165a",
+        "702.165b",
+        "702.165c",
+        "702.165d",
+        "603.3b",
+        "603.3d",
+        "608.2b",
+        "611.2a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual source-order Backup grants, copied entry, opponent-recipient activation/private draw, recipient attack triggers, source departure, target blink and replaced counter pending save/load retain shared typed owners and exact replay. Static and expiry checks are separately scoped diagnostics after the replayable action witness."
+    },
+    {
+      "capability_id": "trigger.keyword.backup",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_backup_rules.BackupRuntimeTests.test_counter_replacement_pending_reload_retains_separate_following_grant",
+      "official_rule_ids": [
+        "702.165",
+        "702.165a",
+        "702.165b",
+        "702.165c",
+        "702.165d",
+        "603.3b",
+        "603.3d",
+        "608.2b",
+        "611.2a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual source-order Backup grants, copied entry, opponent-recipient activation/private draw, recipient attack triggers, source departure, target blink and replaced counter pending save/load retain shared typed owners and exact replay. Static and expiry checks are separately scoped diagnostics after the replayable action witness."
+    },
+    {
+      "capability_id": "trigger.keyword.backup",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_backup_rules.BackupRuntimeTests.test_self_target_only_gets_counters_and_donated_keywords_expire",
+      "official_rule_ids": [
+        "702.165",
+        "702.165a",
+        "702.165b",
+        "702.165c",
+        "702.165d",
+        "603.3b",
+        "603.3d",
+        "608.2b",
+        "611.2a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual source-order Backup grants, copied entry, opponent-recipient activation/private draw, recipient attack triggers, source departure, target blink and replaced counter pending save/load retain shared typed owners and exact replay. Static and expiry checks are separately scoped diagnostics after the replayable action witness."
+    },
+    {
+      "capability_id": "trigger.keyword.backup",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_backup_rules.BackupRuntimeTests.test_actual_backup_cast_donates_printed_bundle_to_other_creature_and_replays",
+      "official_rule_ids": [
+        "702.165",
+        "702.165a",
+        "702.165b",
+        "702.165c",
+        "702.165d",
+        "603.3b",
+        "603.3d",
+        "608.2b",
+        "611.2a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed source order determines a complete Backup ability bundle. Actual registered source entry, shared target choice, canonical counters and a different-recipient grant retain principal-correct rollback and replay."
+    },
+    {
+      "capability_id": "trigger.keyword.backup",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_backup_rules.BackupCompilerTests.test_omitting_source_order_mutant_is_killed",
+      "official_rule_ids": [
+        "702.165",
+        "702.165a",
+        "702.165b",
+        "702.165c",
+        "702.165d",
+        "603.3b",
+        "603.3d",
+        "608.2b",
+        "611.2a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed source order determines a complete Backup ability bundle. Actual registered source entry, shared target choice, canonical counters and a different-recipient grant retain principal-correct rollback and replay."
+    },
+    {
+      "capability_id": "trigger.keyword.backup",
+      "evidence_class": "negative",
+      "test_id": "tests.test_backup_rules.BackupCompilerTests.test_malformed_bundle_and_counter_dependency_fail_closed",
+      "official_rule_ids": [
+        "702.165",
+        "702.165a",
+        "702.165b",
+        "702.165c",
+        "702.165d",
+        "603.3b",
+        "603.3d",
+        "608.2b",
+        "611.2a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed source order determines a complete Backup ability bundle. Actual registered source entry, shared target choice, canonical counters and a different-recipient grant retain principal-correct rollback and replay."
+    },
+    {
+      "capability_id": "trigger.keyword.backup",
+      "evidence_class": "negative",
+      "test_id": "tests.test_backup_rules.BackupRuntimeTests.test_self_target_only_gets_counters_and_donated_keywords_expire",
+      "official_rule_ids": [
+        "702.165",
+        "702.165a",
+        "702.165b",
+        "702.165c",
+        "702.165d",
+        "603.3b",
+        "603.3d",
+        "608.2b",
+        "611.2a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A self-target Backup places counters without a resolution ability grant; donated abilities expire through the canonical end-of-turn journal owner."
+    },
+    {
+      "capability_id": "trigger.keyword.backup",
+      "evidence_class": "positive",
+      "test_id": "tests.test_backup_rules.BackupCompilerTests.test_source_order_keeps_only_complete_following_printed_keyword_bundle",
+      "official_rule_ids": [
+        "702.165",
+        "702.165a",
+        "702.165b",
+        "702.165c",
+        "702.165d",
+        "603.3b",
+        "603.3d",
+        "608.2b",
+        "611.2a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed source order determines a complete Backup ability bundle. Actual registered source entry, shared target choice, canonical counters and a different-recipient grant retain principal-correct rollback and replay."
+    },
+    {
+      "capability_id": "trigger.keyword.backup",
+      "evidence_class": "positive",
+      "test_id": "tests.test_backup_rules.BackupCompilerTests.test_triggered_and_activated_donations_use_independent_typed_children",
+      "official_rule_ids": [
+        "702.165",
+        "702.165a",
+        "702.165b",
+        "702.165c",
+        "702.165d",
+        "603.3b",
+        "603.3d",
+        "608.2b",
+        "611.2a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed source order determines a complete Backup ability bundle. Actual registered source entry, shared target choice, canonical counters and a different-recipient grant retain principal-correct rollback and replay."
+    },
+    {
+      "capability_id": "trigger.keyword.backup",
+      "evidence_class": "positive",
+      "test_id": "tests.test_backup_rules.BackupRuntimeTests.test_actual_backup_cast_donates_printed_bundle_to_other_creature_and_replays",
+      "official_rule_ids": [
+        "702.165",
+        "702.165a",
+        "702.165b",
+        "702.165c",
+        "702.165d",
+        "603.3b",
+        "603.3d",
+        "608.2b",
+        "611.2a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed source order determines a complete Backup ability bundle. Actual registered source entry, shared target choice, canonical counters and a different-recipient grant retain principal-correct rollback and replay."
+    },
+    {
+      "capability_id": "trigger.keyword.backup",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_backup_rules.BackupRuntimeTests.test_actual_backup_cast_donates_printed_bundle_to_other_creature_and_replays",
+      "official_rule_ids": [
+        "702.165",
+        "702.165a",
+        "702.165b",
+        "702.165c",
+        "702.165d",
+        "603.3b",
+        "603.3d",
+        "608.2b",
+        "611.2a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed source order determines a complete Backup ability bundle. Actual registered source entry, shared target choice, canonical counters and a different-recipient grant retain principal-correct rollback and replay."
+    },
+    {
+      "capability_id": "trigger.keyword.backup",
+      "evidence_class": "replay",
+      "test_id": "tests.test_backup_rules.BackupRuntimeTests.test_actual_backup_cast_donates_printed_bundle_to_other_creature_and_replays",
+      "official_rule_ids": [
+        "702.165",
+        "702.165a",
+        "702.165b",
+        "702.165c",
+        "702.165d",
+        "603.3b",
+        "603.3d",
+        "608.2b",
+        "611.2a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed source order determines a complete Backup ability bundle. Actual registered source entry, shared target choice, canonical counters and a different-recipient grant retain principal-correct rollback and replay."
+    },
+    {
+      "capability_id": "trigger.keyword.backup",
+      "evidence_class": "replay",
+      "test_id": "tests.test_backup_rules.BackupRuntimeTests.test_actual_copy_entry_preserves_printed_order_and_excludes_gained_keyword",
+      "official_rule_ids": [
+        "702.165",
+        "702.165a",
+        "702.165b",
+        "702.165c",
+        "702.165d",
+        "603.3b",
+        "603.3d",
+        "608.2b",
+        "611.2a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual source-order Backup grants, copied entry, opponent-recipient activation/private draw, recipient attack triggers, source departure, target blink and replaced counter pending save/load retain shared typed owners and exact replay. Static and expiry checks are separately scoped diagnostics after the replayable action witness."
+    },
+    {
+      "capability_id": "trigger.keyword.backup",
+      "evidence_class": "replay",
+      "test_id": "tests.test_backup_rules.BackupRuntimeTests.test_actual_donated_attack_trigger_uses_recipient_target_and_replays",
+      "official_rule_ids": [
+        "702.165",
+        "702.165a",
+        "702.165b",
+        "702.165c",
+        "702.165d",
+        "603.3b",
+        "603.3d",
+        "608.2b",
+        "611.2a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual source-order Backup grants, copied entry, opponent-recipient activation/private draw, recipient attack triggers, source departure, target blink and replaced counter pending save/load retain shared typed owners and exact replay. Static and expiry checks are separately scoped diagnostics after the replayable action witness."
+    },
+    {
+      "capability_id": "trigger.keyword.backup",
+      "evidence_class": "replay",
+      "test_id": "tests.test_backup_rules.BackupRuntimeTests.test_actual_donated_sacrifice_activation_uses_recipient_and_private_draw_replay",
+      "official_rule_ids": [
+        "702.165",
+        "702.165a",
+        "702.165b",
+        "702.165c",
+        "702.165d",
+        "603.3b",
+        "603.3d",
+        "608.2b",
+        "611.2a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual source-order Backup grants, copied entry, opponent-recipient activation/private draw, recipient attack triggers, source departure, target blink and replaced counter pending save/load retain shared typed owners and exact replay. Static and expiry checks are separately scoped diagnostics after the replayable action witness."
+    },
+    {
+      "capability_id": "trigger.keyword.backup",
+      "evidence_class": "replay",
+      "test_id": "tests.test_backup_rules.BackupRuntimeTests.test_actual_source_departure_preserves_locked_bundle_and_target_blink_invalidates",
+      "official_rule_ids": [
+        "702.165",
+        "702.165a",
+        "702.165b",
+        "702.165c",
+        "702.165d",
+        "603.3b",
+        "603.3d",
+        "608.2b",
+        "611.2a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual source-order Backup grants, copied entry, opponent-recipient activation/private draw, recipient attack triggers, source departure, target blink and replaced counter pending save/load retain shared typed owners and exact replay. Static and expiry checks are separately scoped diagnostics after the replayable action witness."
+    },
+    {
+      "capability_id": "trigger.keyword.backup",
+      "evidence_class": "replay",
+      "test_id": "tests.test_backup_rules.BackupRuntimeTests.test_actual_static_donations_apply_recipient_block_and_damage_queries",
+      "official_rule_ids": [
+        "702.165",
+        "702.165a",
+        "702.165b",
+        "702.165c",
+        "702.165d",
+        "603.3b",
+        "603.3d",
+        "608.2b",
+        "611.2a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual source-order Backup grants, copied entry, opponent-recipient activation/private draw, recipient attack triggers, source departure, target blink and replaced counter pending save/load retain shared typed owners and exact replay. Static and expiry checks are separately scoped diagnostics after the replayable action witness."
+    },
+    {
+      "capability_id": "trigger.keyword.backup",
+      "evidence_class": "replay",
+      "test_id": "tests.test_backup_rules.BackupRuntimeTests.test_counter_replacement_pending_reload_retains_separate_following_grant",
+      "official_rule_ids": [
+        "702.165",
+        "702.165a",
+        "702.165b",
+        "702.165c",
+        "702.165d",
+        "603.3b",
+        "603.3d",
+        "608.2b",
+        "611.2a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual source-order Backup grants, copied entry, opponent-recipient activation/private draw, recipient attack triggers, source departure, target blink and replaced counter pending save/load retain shared typed owners and exact replay. Static and expiry checks are separately scoped diagnostics after the replayable action witness."
+    },
+    {
+      "capability_id": "trigger.keyword.backup",
+      "evidence_class": "replay",
+      "test_id": "tests.test_backup_rules.BackupRuntimeTests.test_self_target_only_gets_counters_and_donated_keywords_expire",
+      "official_rule_ids": [
+        "702.165",
+        "702.165a",
+        "702.165b",
+        "702.165c",
+        "702.165d",
+        "603.3b",
+        "603.3d",
+        "608.2b",
+        "611.2a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual source-order Backup grants, copied entry, opponent-recipient activation/private draw, recipient attack triggers, source departure, target blink and replaced counter pending save/load retain shared typed owners and exact replay. Static and expiry checks are separately scoped diagnostics after the replayable action witness."
+    },
+    {
       "capability_id": "trigger.keyword.cascade",
       "evidence_class": "interaction",
       "test_id": "tests.test_cascade_rules.CascadeRuntimeTests.test_cascade_cast_revalidates_additional_cost_and_targets",

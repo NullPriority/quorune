@@ -61,6 +61,7 @@ def generated_ability_id(
                 _PROWESS_MECHANIC,
                 AFTERLIFE_MECHANIC_ID,
                 "chapter",
+                "backup",
                 PERSIST_KEYWORD,
                 RENOWN_MECHANIC_ID,
                 UNDYING_KEYWORD,

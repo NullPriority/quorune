@@ -1652,6 +1652,27 @@
       ]
     },
     {
+      "id": "printed-backup-ability-contract",
+      "patterns": [
+        "quorune/compiler/backup_nodes.py",
+        "quorune/compiler/card_face_finalization.py",
+        "quorune/effect_runtime/temporary_ability_bundle.py",
+        "quorune/effect_runtime/characteristic_version_dispatch.py",
+        "quorune/rules/temporary_ability_grant.py",
+        "mechanics/contracts/backup.json",
+        "tests/fixtures/backup-cards.json"
+      ],
+      "test_modules": [
+        "test_backup_rules",
+        "test_counter_placement_events",
+        "test_typed_grant_carriers",
+        "test_target_characteristic_sets",
+        "test_fixed_query_quoted_ability_grants",
+        "test_toughness_assignment",
+        "test_card_program_trust"
+      ]
+    },
+    {
       "id": "graveyard-copy-keyword-contract",
       "patterns": [
         "quorune/compiler/graveyard_copy_keyword_nodes.py",

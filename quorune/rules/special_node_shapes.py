@@ -3,6 +3,9 @@ from __future__ import annotations
 
 def special_node_capabilities(*,effects,target_schema,mechanics,cost_schema=None):
     """Route independently owned special shapes before ordinary leaf composition."""
+    if 'backup' in mechanics:
+        from .temporary_ability_grant import backup_node_capabilities
+        return backup_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanics,cost_schema=cost_schema)
     if 'extort' in mechanics:
         from .extort import extort_node_capabilities
         return extort_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanics,cost_schema=cost_schema)

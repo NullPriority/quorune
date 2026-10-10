@@ -31,6 +31,11 @@ maintenance: "hand-maintained"
 - Preserve explicit sacrifice provenance for Fading and Vanishing cleanup
   through zone replacements, normalized trigger occurrences, and turn history.
 
+- Resolve fixed Backup instances through complete printed ability bundles,
+  canonical counter placement and temporary recipient ability grants. Typed
+  donated activations and triggers use their recipient, including opponent
+  creatures, while source departure preserves the queued grant.
+
 - Activate fixed ordinary-mana Embalm and Eternalize through source exile and
   canonical token-copy recipes. Their color, Zombie type, no mana cost and
   Eternalize base stats remain copiable through token replacements and entry.

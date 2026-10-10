@@ -156,6 +156,15 @@ a closed life-intent identity and resumes only that uncommitted intent. The
 continuation decoder rejects unknown intent kinds and changed identity, and
 exact replay reissues the same semantic response and replacement selection.
 
+Backup commits canonical target counters before a version-seven temporary
+ability bundle. Its shared target decision permits any legal creature; a self
+target gets only the counters. A different target gains fixed keywords and
+typed ability fragments through the existing continuous-effect journal until
+end of turn. The compiled printed bundle is locked at trigger placement,
+survives source departure, and binds donated abilities to their recipient.
+Counter replacements may suspend before the following grant, preserving the
+cursor through save/load. Target incarnation revalidation remains shared.
+
 The existing counter-unless-payment choice additionally accepts a closed v2
 controller-payment descriptor. It locks the current target's controller for
 the private choice, validates the complete mana vector and current target at

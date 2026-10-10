@@ -9,7 +9,8 @@ from typing import Any, Iterable, Mapping, Sequence
 from .attachment_references import AttachmentReferenceKind
 from .aura import keyword_target_schema
 from .carddb import CardDatabase, CardRecord
-from .compiler.declared_effect_amounts import declared_spell_effect_compiler, scope_declared_card_faces
+from .compiler.declared_effect_amounts import declared_spell_effect_compiler
+from .compiler.card_face_finalization import finalize_card_faces
 from .cast_timing import (
     CAST_PERMISSION_ACTIVE_ZONE,
     CAST_PERMISSION_EVENT,
@@ -169,7 +170,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v320"
+ORACLE_COMPILER_VERSION = "oracle-ir-v321"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -1476,9 +1477,7 @@ def compile_oracle_card(
         )
         for face_id, face_name, type_line, oracle_text, keywords in face_values
     )
-    from .compiler.entry_designation_templates import scope_entry_designation_faces
-    faces = scope_entry_designation_faces(faces)
-    faces = scope_declared_card_faces(faces)
+    faces=finalize_card_faces(record,faces,material_line_for=_without_parenthetical_reminder,capability_registry=capability_registry,capability_profile=capability_profile)
     oracle_hash = hashlib.sha256(
         record.oracle_text.encode("utf-8")
     ).hexdigest()

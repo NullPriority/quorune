@@ -993,6 +993,8 @@ def _semantic_trigger_context(
             else {}
         ),
     }
+    from .effect_runtime.temporary_ability_bundle import printed_backup_source_context
+    stack_context.update(printed_backup_source_context(source,program))
     if "one_or_more_event_batch" in program.coverage:
         aggregation_scope = (
             {"damaged_player": context.get("player")}

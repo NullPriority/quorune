@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 212,
+  "registry_version": 213,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -12710,6 +12710,106 @@
       "dependency_fail_closed_rationale": "Omitting token-copy capability prevents exact keyword admission.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Omitting the no-mana-cost copy exception fails the exact applied copy-value witness while retaining other exceptions.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "trigger.keyword.backup",
+      "version": 1,
+      "official_rules": [
+        "702.165",
+        "702.165a",
+        "702.165b",
+        "702.165c",
+        "702.165d",
+        "603.3b",
+        "603.3d",
+        "608.2b",
+        "611.2a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Each printed Backup instance targets one creature on source entry, places fixed counters, then grants the complete independently closed printed downstream ability bundle to a different creature until end of turn.",
+        "inputs": [
+          "source-order pinned printed abilities",
+          "entry-trigger source and selected incarnation",
+          "typed fixed keyword and granted child-program bundle"
+        ],
+        "outputs": [
+          "canonical counter placement followed by a temporary layer-six ability grant",
+          "self target counter-only resolution"
+        ],
+        "exclusions": [
+          "unrepresented downstream printed abilities",
+          "additional abilities acquired by copy exceptions, token creation or other grants; a copied Backup retains its inherited printed bundle",
+          "runtime Oracle interpretation"
+        ]
+      },
+      "dependencies": [
+        "counter.producer.fixed_effect",
+        "target.revalidate_resolution",
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "trigger.event.qualified_zone_change"
+      ],
+      "implementation_components": [
+        "quorune.compiler.backup_nodes.compile_backup_faces",
+        "quorune.rules.temporary_ability_grant.decode_temporary_ability_grant",
+        "quorune.rules.temporary_ability_grant.backup_node_capabilities",
+        "quorune.effect_runtime.temporary_ability_bundle.apply_temporary_ability_bundle",
+        "quorune.effect_runtime.temporary_ability_bundle.printed_backup_source_context"
+      ],
+      "positive_tests": [
+        "test_source_order_keeps_only_complete_following_printed_keyword_bundle",
+        "test_triggered_and_activated_donations_use_independent_typed_children",
+        "test_actual_backup_cast_donates_printed_bundle_to_other_creature_and_replays"
+      ],
+      "negative_tests": [
+        "test_malformed_bundle_and_counter_dependency_fail_closed",
+        "test_self_target_only_gets_counters_and_donated_keywords_expire"
+      ],
+      "interaction_tests": [
+        "test_actual_backup_cast_donates_printed_bundle_to_other_creature_and_replays",
+        "test_actual_donated_sacrifice_activation_uses_recipient_and_private_draw_replay",
+        "test_self_target_only_gets_counters_and_donated_keywords_expire",
+        "test_actual_copy_entry_preserves_printed_order_and_excludes_gained_keyword",
+        "test_actual_source_departure_preserves_locked_bundle_and_target_blink_invalidates",
+        "test_actual_donated_attack_trigger_uses_recipient_target_and_replays",
+        "test_counter_replacement_pending_reload_retains_separate_following_grant",
+        "test_actual_static_donations_apply_recipient_block_and_damage_queries"
+      ],
+      "multiplayer_tests": [
+        "test_actual_backup_cast_donates_printed_bundle_to_other_creature_and_replays"
+      ],
+      "privacy_tests": [
+        "test_actual_backup_cast_donates_printed_bundle_to_other_creature_and_replays"
+      ],
+      "replay_tests": [
+        "test_actual_backup_cast_donates_printed_bundle_to_other_creature_and_replays",
+        "test_actual_donated_sacrifice_activation_uses_recipient_and_private_draw_replay",
+        "test_self_target_only_gets_counters_and_donated_keywords_expire",
+        "test_actual_copy_entry_preserves_printed_order_and_excludes_gained_keyword",
+        "test_actual_source_departure_preserves_locked_bundle_and_target_blink_invalidates",
+        "test_actual_donated_attack_trigger_uses_recipient_target_and_replays",
+        "test_counter_replacement_pending_reload_retains_separate_following_grant",
+        "test_actual_static_donations_apply_recipient_block_and_damage_queries"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Omitting fixed counter placement prevents exact Backup compilation.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Including an earlier printed Flash ability in the donated bundle fails the source-order witness.",
       "blockers": [],
       "status": "trusted"
     }
