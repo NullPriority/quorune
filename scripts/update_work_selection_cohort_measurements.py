@@ -320,6 +320,12 @@ def _prior_frontier_is_current_main(prior: dict) -> bool:
     for reference in references:
         completed = subprocess.run(["git", "rev-parse", f"{reference}:coverage/card-unlock-frontier.json.gz"],
                                    cwd=ROOT, check=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        if completed.returncode and re.fullmatch(r"[0-9a-f]{40}", reference):
+            fetched = subprocess.run(["git", "fetch", "--no-tags", "--depth=1", "origin", reference],
+                                     cwd=ROOT, check=False, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+            if fetched.returncode == 0:
+                completed = subprocess.run(["git", "rev-parse", f"{reference}:coverage/card-unlock-frontier.json.gz"],
+                                           cwd=ROOT, check=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         if completed.returncode == 0 and completed.stdout.decode("ascii").strip() == expected:
             return True
     return False

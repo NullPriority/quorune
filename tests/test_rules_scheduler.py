@@ -3930,6 +3930,18 @@ class RulesSchedulerTests(unittest.TestCase):
         with mock.patch.dict(owner.os.environ, {'GITHUB_EVENT_PATH': ''}), mock.patch.object(owner.subprocess, 'run', return_value=SimpleNamespace(returncode=0, stdout=('c' * 40 + '\n').encode())):
             self.assertFalse(owner._prior_frontier_is_current_main(prior))
 
+    def test_completed_batch_main_identity_is_recovered_in_shallow_pr_checkout(self):
+        import scripts.update_work_selection_cohort_measurements as owner
+        prior = {'head_receipt': {'blobs': {'coverage/card-unlock-frontier.json.gz': {'git_blob_oid': 'b' * 40}}}}
+        with tempfile.TemporaryDirectory() as directory:
+            event = Path(directory) / 'event.json'
+            event.write_text(json.dumps({'pull_request': {'base': {'sha': 'a' * 40}}}), encoding='utf-8')
+            results = [SimpleNamespace(returncode=1, stdout=b''), SimpleNamespace(returncode=0, stdout=b''),
+                       SimpleNamespace(returncode=0, stdout=('b' * 40 + '\n').encode())]
+            with mock.patch.dict(owner.os.environ, {'GITHUB_EVENT_PATH': str(event)}), mock.patch.object(owner.subprocess, 'run', side_effect=results) as git:
+                self.assertTrue(owner._prior_frontier_is_current_main(prior))
+            self.assertEqual(['git', 'fetch', '--no-tags', '--depth=1', 'origin', 'a' * 40], git.call_args_list[1].args[0])
+
     def test_transition_probe_recovers_receipt_blob_in_shallow_checkout(self):
         outcome = self.work_inputs["harvest_outcome_history"]["entries"][-1]
         transition_id = outcome["transition_id"]
