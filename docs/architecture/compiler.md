@@ -36,6 +36,14 @@ the existing program-generation lowering owner. Lowering still validates trust
 and constructs fresh semantic programs; it does not parse the same record a
 second time. The standalone generated-program API continues to compile its own
 IR. No IR result persists across calls or card records.
+
+Whole-hand discard has its own typed compiler and mutation owner. Ordered
+composition can lower a fixed draw followed by whole-hand discard even though
+the counted-discard and fixed controller-sequence leaf templates reject that
+instruction. Integration tests assert the promoted effect order and player
+selector; leaf tests retain their narrower grammar boundaries. The whole-hand
+impact rule includes those existing consumer expectations.
+
 The frontier owner passes the same original IR used for its node inventory to
 CardProgram lowering, retaining independent trust and construction-failure
 checks while avoiding a second parse of the same record.

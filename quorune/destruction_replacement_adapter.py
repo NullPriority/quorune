@@ -38,8 +38,10 @@ def prepare_destruction_replacement_if_needed(host, requests, **kwargs):
 
 def current_destruction_subject(host: Any, object_id: str) -> DestructionReplacementSubject:
     card = host.state.cards.get(object_id)
-    if card is None or card.zone != "battlefield" or card.phased_out:
-        raise ValueError("Destruction replacement subject is unavailable")
+    if card is None:
+        raise ValueError("Destruction permanent does not exist")
+    if card.zone != "battlefield" or card.phased_out:
+        raise ValueError("Only a phased-in battlefield permanent can be destroyed")
     return DestructionReplacementSubject(
         card.object_id, card.ref, card.logical_object_id, card.owner, card.controller,
         "indestructible" in normalized_effective_keywords(host, card),

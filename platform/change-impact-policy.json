@@ -1199,6 +1199,7 @@
       "test_modules": [
         "test_whole_hand_discard",
         "test_fixed_affected_player_discards",
+        "test_fixed_controller_effect_sequences",
         "test_scalar_effect_amounts",
         "test_card_program_trust",
         "test_closed_effect_programs",

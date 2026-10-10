@@ -111,7 +111,7 @@ class FixedCounterBatchCompilerTests(unittest.TestCase):
                 "When this creature enters, put a +1/+1 counter and a flying counter on this creature.",
                 "Creature — Human",
                 "triggered_ability",
-                "$source",
+                "$source.zone_object",
                 (("+1/+1", 1), ("flying", 1)),
             ),
             (

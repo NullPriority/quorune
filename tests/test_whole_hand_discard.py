@@ -68,7 +68,8 @@ class WholeHandDiscardRuntimeTests(unittest.TestCase):
     def setUpClass(cls):
         cls.temporary=tempfile.TemporaryDirectory();path=Path(cls.temporary.name)/'discard.sqlite3'
         build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',
-            ROOT/'tests/fixtures/whole-hand-discard-cards.json'],path)
+            ROOT/'tests/fixtures/whole-hand-discard-cards.json',
+            ROOT/'tests/fixtures/batched-support-assurance-cards.json'],path)
         cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
         cls.deck=DeckDefinition('Whole hand witness',[DeckEntry('Generic Bound Commander',1,'commander'),DeckEntry('Generic Bound Plains',30)],['Generic Bound Commander'])
     @classmethod
@@ -79,6 +80,76 @@ class WholeHandDiscardRuntimeTests(unittest.TestCase):
     checkpoint=witnesses.BoundEffectProgramRuntimeTests.checkpoint
     resolve=witnesses.BoundEffectProgramRuntimeTests.resolve
     replay=witnesses.BoundEffectProgramRuntimeTests.replay
+
+    def test_original_batch_carriers_with_residual_siblings_reject_runtime_admission(self):
+        from high_risk_interaction_support import _observed_piece_ids
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.compiler.unlock_frontier import analyze_card_unlocks
+        from quorune.semantics import SemanticRegistry
+
+        boundaries = (
+            ('Rasputin Dreamweaver', 'counter.placement.quantity_replacement',
+             ('residual.replacement.damage-prevention',)),
+            ('Rotating Fireplace', 'mana.production.public_quantity',
+             ('residual.replacement.replacement-applicability',
+              'residual.replacement.self-replacement-and-prevention-ordering')),
+            ('The Flame of Keld', 'zone.discard.whole_hand',
+             ('residual.card_form.ordinary-saga-chapter-event-binding',)),
+            ('Chandra Ablaze', 'zone.discard.whole_hand',
+             ('residual.target_or_choice.conditional-effect',
+              'residual.target_or_choice.target-predicate')),
+        )
+        for name, capability, residuals in boundaries:
+            with self.subTest(card=name):
+                record = self.db.lookup(name)
+                ir = compile_oracle_card(record, capability_registry=self.registry,
+                                         capability_profile='commander_review')
+                program = compile_best_available_card_program(self.db, record,
+                    semantic_registry=SemanticRegistry(), capability_registry=self.registry,
+                    capability_profile='commander_review')
+                row = analyze_card_unlocks(ir, program=program, program_error=None,
+                    capabilities=self.registry, profile='commander_review')
+                self.assertLessEqual({'capability.' + capability, *residuals}, _observed_piece_ids(row))
+                self.assertEqual('residual', row['card_program_status'])
+                self.assertIsNone(row['hard_construction_failure'])
+                self.assertEqual('unresolved', program.trust_closure['trust_basis'])
+                binding = bind_card_program_runtime(program, capability_registry=self.registry,
+                                                    profile='commander_review')
+                self.assertFalse(binding['strict_capability_ready'])
+                self.assertFalse(binding['compatible_ready'])
+                self.assertIn('trust_basis:unresolved', binding['blockers'])
+
+    def test_actual_wits_end_revalidates_departed_player_without_discarding_survivors(self):
+        session = self.session(285013)
+        engine = session.engine
+        spell = self.add(engine, "Wit's End", zone='hand')
+        private = self.add(engine, 'Generic Bound Growth', seat='C', zone='hand', ref='private-surviving-hand')
+        action = self.ready(session, spell, {'B':2, 'C':5})
+        self.assertIn('B', action['target_schema']['legal_refs'])
+        self.assertNotIn(private.ref, str(session.packet('pilot:B', full=True)))
+        self.checkpoint(session)
+        before = authoritative_state_hash(session.state)
+        rejected = session.act('pilot:C', {'action_id':action['id'], 'targets':['B'], 'pay':'auto'})
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act('pilot:A', {'action_id':action['id'], 'targets':['B'], 'pay':'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        for _ in range(8):
+            if engine.state.priority_player == 'B':
+                break
+            result = session.act(session.pending_principals()[0], {'action_id':'pass'})
+            self.assertTrue(result.ok, result.summary)
+        self.assertEqual('B', engine.state.priority_player)
+        departed = session.act('pilot:B', {'action_id':'concede', 'choices':{'confirm_concede':True}})
+        self.assertTrue(departed.ok, departed.summary)
+        self.assertFalse(engine.state.players['B'].in_game)
+        surviving_hands = {seat: tuple(engine.state.players[seat].zones['hand']) for seat in 'ACD'}
+        self.resolve(session)
+        self.assertEqual('graveyard', spell.zone)
+        self.assertEqual(surviving_hands, {seat:tuple(engine.state.players[seat].zones['hand']) for seat in 'ACD'})
+        self.assertEqual('hand', private.zone)
+        self.replay(session, load=True)
 
     def test_actual_wheel_discards_all_hands_before_drawing_and_replays(self):
         session=self.session(285001);engine=session.engine
