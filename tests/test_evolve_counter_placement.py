@@ -144,7 +144,7 @@ class EvolveCompilerTests(unittest.TestCase):
                 node.effects,
             )
             self.assertEqual(
-                ("counter.producer.evolve",),
+                ("counter.producer.evolve", "counter.producer.fixed_effect"),
                 node.capability_dependencies,
             )
             self.assertEqual(

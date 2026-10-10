@@ -242,6 +242,7 @@ _PROBE_NAMED_COUNTER_DOUBLING = "named-counter-doubling-existing-owner-v1"
 _PROBE_PUBLIC_QUANTITY_MANA = "public-quantity-mana-existing-owner-v1"
 _PROBE_STATIC_CHARACTERISTIC_SETTING = "static-characteristic-setting-existing-owner-v1"
 _PROBE_WHOLE_HAND_DISCARD = "whole-hand-discard-existing-owner-v1"
+_PROBE_COUNTER_PLACEMENT_EVENT = "counter-placement-event-existing-owner-v1"
 _PROBE_FIXED_CONTROLLED_CHARACTERISTIC = (
     "fixed-controlled-characteristic-effect-existing-owner-v1"
 )
@@ -627,6 +628,7 @@ _PROBE_IDS = {
     _PROBE_PUBLIC_QUANTITY_MANA,
     _PROBE_STATIC_CHARACTERISTIC_SETTING,
     _PROBE_WHOLE_HAND_DISCARD,
+    _PROBE_COUNTER_PLACEMENT_EVENT,
     _PROBE_OPTIONAL_EFFECT,
     _PROBE_OPTIONAL_MANA_PAYMENT,
     _PROBE_PUBLIC_STATIC_CAST_COST_MODIFIER,
@@ -1334,6 +1336,9 @@ def _matches_probe(
         return any(fixed_characteristic_setting_handler(line) is not None for line in source.splitlines())
     if probe_id == _PROBE_WHOLE_HAND_DISCARD:
         return bool(re.search(r'\bdiscard(?:s)? (?:your|their)(?: entire)? hand',source,re.I))
+    if probe_id == _PROBE_COUNTER_PLACEMENT_EVENT:
+        from quorune.compiler.counter_placement_event_bindings import counter_placement_event_binding_spec
+        return any(counter_placement_event_binding_spec(line,card_name=card_record.name if card_record else None) is not None for line in source.splitlines())
     if probe_id in {_PROBE_QUALIFIED_ZONE_EVENT, _PROBE_COUNTER_QUALIFIED_ZONE_EVENT}:
         if card_record is None:
             raise WorkSelectionCohortMeasurementError("Qualified zone query measurement requires card context")
@@ -5458,7 +5463,7 @@ def _measurement(
             cards_by_oracle_id=cards_by_oracle_id, coverage=coverage,
             cohort_fingerprint=cohort_fingerprint, database=database,
         )
-    if probe_id in {_PROBE_BOUND_EFFECT_PROGRAM, _PROBE_FIXED_CONTROL_UNTAP, _PROBE_ENTRY_DESIGNATIONS, _PROBE_ENTRY_DESIGNATIONS_V2, _PROBE_QUALIFIED_ZONE_EVENT, _PROBE_COUNTER_QUALIFIED_ZONE_EVENT, _PROBE_NAMED_COUNTER_DOUBLING, _PROBE_PUBLIC_QUANTITY_MANA, _PROBE_STATIC_CHARACTERISTIC_SETTING, _PROBE_WHOLE_HAND_DISCARD,
+    if probe_id in {_PROBE_BOUND_EFFECT_PROGRAM, _PROBE_FIXED_CONTROL_UNTAP, _PROBE_ENTRY_DESIGNATIONS, _PROBE_ENTRY_DESIGNATIONS_V2, _PROBE_QUALIFIED_ZONE_EVENT, _PROBE_COUNTER_QUALIFIED_ZONE_EVENT, _PROBE_NAMED_COUNTER_DOUBLING, _PROBE_PUBLIC_QUANTITY_MANA, _PROBE_STATIC_CHARACTERISTIC_SETTING, _PROBE_WHOLE_HAND_DISCARD, _PROBE_COUNTER_PLACEMENT_EVENT,
                     _PROBE_DECLARED_EFFECT_AMOUNT, _PROBE_FIXED_ANIMATION, _PROBE_FIXED_EFFECT_PAYMENT, _PROBE_STACK_CONTROLLER_PAYMENT, _PROBE_LINKED_EXILE_RETURN, _PROBE_SCALAR_EFFECT_AMOUNT, _PROBE_TOKEN_COPY_RECIPE, _PROBE_TAP_STATE_EVENT, _PROBE_PUBLIC_COLLECTION_QUANTITY, _PROBE_SOURCE_SELF_REFERENCES, _PROBE_SOURCE_MAINTENANCE, _PROBE_COUNTED_ACTIVATION_COST, _PROBE_KICKED_ENTRY, _PROBE_TARGET_ANNOUNCEMENT, _PROBE_KICKED_SPELL, _PROBE_EVENT_CARD_RETURN, _PROBE_BATCHED_SUPPORT, _PROBE_PERMANENT_PRICE, _PROBE_CAST_CREATURE_TARGET}:
         return _bound_effect_program_measurement(
             frontier=frontier, bundle_id=bundle_id, probe_id=probe_id,
@@ -8273,6 +8278,7 @@ def _bound_effect_program_measurement(
         _PROBE_PUBLIC_QUANTITY_MANA: "mana.production.public_quantity",
         _PROBE_STATIC_CHARACTERISTIC_SETTING: "continuous.characteristics.fixed_public_setting",
         _PROBE_WHOLE_HAND_DISCARD: "zone.discard.whole_hand",
+        _PROBE_COUNTER_PLACEMENT_EVENT: "trigger.event.normalized_counter_placement",
         _PROBE_BOUND_EFFECT_PROGRAM: BOUND_EFFECT_PROGRAM_CAPABILITY,
         _PROBE_FIXED_CONTROL_UNTAP: "continuous.control.fixed_resolution",
         _PROBE_ENTRY_DESIGNATIONS: "zone.entry.public_designation",

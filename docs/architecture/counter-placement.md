@@ -9,6 +9,32 @@ maintenance: "hand-maintained"
 
 # Counter placement and removal transactions
 
+Committed battlefield placements publish immutable `counter.put` occurrences
+after the complete instruction commits. Facts distinguish actual placed
+quantity, counter kind, placing player, recipient controller and owner, and
+the recipient's logical incarnation. One-or-more subscriptions consume one
+matching occurrence per subject and kind; singular subscriptions consume one
+`counter.single_put` occurrence per actual counter. Requested quantities,
+removed counters, zero results and state-based counter annihilation do not
+manufacture put events.
+An unqualified one-or-more-counters subscription consumes only the first kind
+in that subject's simultaneous placement, so a multi-kind instruction does not
+duplicate its trigger.
+
+Ordinary effects dispatch from the placement owner. Physical and copied-token
+entry coordinators dispatch resolved entry-counter trees after all members
+enter and entry history is established. Damage and prevention aftermath retain
+sealed occurrences in the canonical damage result and add them to its completed
+trigger batch. Trigger discovery, current source presence, APNAP ordering,
+targets, optional choices and replay retain their existing owners. The
+dispatcher uses that same printed-and-granted event-program lookup to skip
+per-counter iteration when there is no subscriber.
+
+The compiler admits source-self and closed public permanent predicates, with
+separate placing-player and recipient-controller relations. Threshold, first-
+per-turn, off-battlefield removal and one-or-more-on-one-or-more-objects
+aggregation remain residual, as do independently unsupported result bodies.
+
 `counter_placement.py` is the focused authoritative owner for represented
 effect-generated, cost-generated, and typed rule-result counters placed on
 players, battlefield permanents, and the already modeled card-zone counter

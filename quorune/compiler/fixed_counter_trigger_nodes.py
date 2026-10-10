@@ -39,6 +39,7 @@ from .spell_cast_predicates import (
 )
 from .public_state_queries import fixed_public_state_condition
 from .qualified_zone_event_bindings import QUALIFIED_ZONE_VARIANT, qualified_public_zone_event_binding_spec, public_binding_from_spec
+from .counter_placement_event_bindings import COUNTER_EVENT_VARIANTS
 from .tap_state_event_bindings import (
     TAP_STATE_EVENT_VARIANT, TAP_STATE_EVENT_VARIANTS,
     public_trigger_binding_spec, tap_state_bound_result,
@@ -94,6 +95,7 @@ FIXED_COUNTER_EVENT_TRIGGER_TEMPLATE_IDS = frozenset(
         "fixed-counter-battalion-attack-trigger-v1",
         "fixed-counter-public-state-source-zone-trigger-v1",
         "fixed-counter-tap-state-trigger-v1",
+        "fixed-counter-placement-occurrence-trigger-v1",
     }
 )
 FIXED_TYPED_EVENT_EFFECT_TRIGGER_TEMPLATE_IDS = frozenset(
@@ -223,11 +225,12 @@ PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
 _ALL_PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
     {
         *PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS,
+        *COUNTER_EVENT_VARIANTS,
         *PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS,
         *MULTI_EVENT_BINDING_CLOSURE_VARIANTS,
     }
 )
-_NONCOUNTER_PUBLIC_EVENT_VARIANTS = _ALL_PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS - TAP_STATE_EVENT_VARIANTS
+_NONCOUNTER_PUBLIC_EVENT_VARIANTS = _ALL_PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS - TAP_STATE_EVENT_VARIANTS - COUNTER_EVENT_VARIANTS
 _ONE_OR_MORE_PUBLIC_EVENT_VARIANTS = frozenset(
     {
         "controller_attack_batch",
@@ -351,6 +354,8 @@ class FixedCounterTriggerEvent(str, Enum):
     CLASS_LEVEL_CHANGED = "permanent.class_level_changed.self"
     PERMANENT_TAPPED = "permanent.tap"
     PERMANENT_UNTAPPED = "permanent.untap"
+    COUNTER_PLACED = 'counter.put'
+    SINGLE_COUNTER_PLACED = 'counter.single_put'
 
 
 class FixedCounterZoneController(str, Enum):

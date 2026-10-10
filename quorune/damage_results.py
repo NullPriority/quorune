@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Any, Literal, Mapping, Protocol, Sequence
+from .counter_placement_event_model import CounterPlacementOccurrence
 
 from . import deathtouch as deathtouch_rules
 from .counter_placement import (
@@ -124,6 +125,7 @@ class DamageResultCommit:
     records: tuple[DamageResultRecord, ...]
     changed_players: tuple[str, ...]
     changed_objects: tuple[str, ...]
+    counter_occurrences: tuple[CounterPlacementOccurrence, ...] = ()
 
 
 @dataclass(slots=True)
@@ -1379,6 +1381,7 @@ def commit_damage_result_plan(
         plan.counter_placements,
         reason="damage result",
         log=False,
+        dispatch_events=False,
     )
     commit_counter_removals(host, plan.counter_removals)
     apply_life_changes(host, plan.life)
@@ -1391,10 +1394,13 @@ def commit_damage_result_plan(
             defeated.append(card)
     for battle in defeated:
         host._queue_siege_defeated_trigger(battle)
+    from .counter_placement_events import capture_counter_placement_occurrences
+    counter_occurrences=capture_counter_placement_occurrences(host, plan.counter_placements.prepared.events, reason="damage result")
     return DamageResultCommit(
         records=plan.records,
         changed_players=plan.changed_players,
         changed_objects=plan.changed_objects,
+        counter_occurrences=counter_occurrences,
     )
 
 

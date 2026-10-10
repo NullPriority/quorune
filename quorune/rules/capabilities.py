@@ -398,6 +398,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
         "trigger.event.normalized_self_attack",
     ),
     "trigger-event-normalized-public-action": ("trigger.event.normalized_public_action",),
+    'trigger-event-normalized-counter-placement': ('trigger.event.normalized_counter_placement',),
     "tap-state-event-player-result": ("trigger.event.normalized_public_action",),
     "trigger-event-normalized-damage": (
         "trigger.event.normalized_damage",
@@ -1360,6 +1361,7 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
         "trigger.source.fixed_maintenance": "fixed-source-maintenance",
         "trigger.entry.fixed_kicked_result": "fixed-kicked-entry-trigger",
         'trigger.event.normalized_target_announcement': 'trigger-event-normalized-target-announcement',
+        'trigger.event.normalized_counter_placement': 'trigger-event-normalized-counter-placement',
         'resolution.effect.fixed_cast_fact': 'fixed-cast-fact-condition',
         'zone.return.fixed_event_card': 'fixed-event-card-return',
         "zone.mill.fixed": "mill",

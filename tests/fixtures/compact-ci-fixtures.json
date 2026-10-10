@@ -21,6 +21,7 @@
     "tests/fixtures/counted-activation-costs.json",
     "tests/fixtures/counted-library-search-cards.json",
     "tests/fixtures/counter-doubling-cards.json",
+    "tests/fixtures/counter-placement-event-cards.json",
     "tests/fixtures/counter-qualified-zone-cards.json",
     "tests/fixtures/counter-replacement-cards.json",
     "tests/fixtures/damage-result-cards.json",

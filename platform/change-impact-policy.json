@@ -1122,6 +1122,38 @@
       ]
     },
     {
+      "id": "counter-placement-event-contract",
+      "patterns": [
+        "quorune/counter_placement_event*.py",
+        "quorune/compiler/counter_placement_event_bindings.py",
+        "quorune/counter_placement.py",
+        "quorune/entry_results.py",
+        "quorune/damage.py",
+        "quorune/damage_results.py",
+        "quorune/damage_prevention_aftermath.py",
+        "quorune/compiler/dependency_gate.py",
+        "tests/test_counter_placement_events.py",
+        "tests/fixtures/counter-placement-event-cards.json"
+      ],
+      "test_modules": [
+        "test_counter_placement_events",
+        "test_evolve_counter_placement",
+        "test_counter_placement_replacements",
+        "test_copied_self_entry_counters",
+        "test_intrinsic_entry_counters",
+        "test_damage_result_events",
+        "test_fixed_counter_event_triggers",
+        "test_fixed_keyword_entry_counters",
+        "test_history_entry_characteristics",
+        "test_card_program_trust"
+      ],
+      "test_suites": [
+        "counter-continuous-effects",
+        "events-replacement-zone",
+        "compiler-cardprogram"
+      ]
+    },
+    {
       "id": "whole-hand-discard-contract",
       "patterns": [
         "quorune/whole_hand_discard*.py",

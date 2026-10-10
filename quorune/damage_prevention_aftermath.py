@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .counter_placement_event_model import CounterPlacementOccurrence
 
 from dataclasses import dataclass, replace
 from typing import Any, Mapping, Protocol, Sequence
@@ -127,6 +128,7 @@ class PreventionAftermathResult:
     changed_players: tuple[str, ...] = ()
     changed_objects: tuple[str, ...] = ()
     nested_damage_results: tuple[DamageTransactionResult, ...] = ()
+    counter_occurrences: tuple[CounterPlacementOccurrence, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -539,6 +541,7 @@ def commit_prevention_aftermath(
                 host,
                 prepared.counter_plan,
                 reason="damage prevention aftermath",
+                dispatch_events=False,
             )
         except CounterPlacementError as exc:
             raise PreventionAftermathError(str(exc)) from exc
@@ -593,6 +596,9 @@ def commit_prevention_aftermath(
                 damage_event_ids=instruction.damage_event_ids,
             )
         )
+    from .counter_placement_events import capture_counter_placement_occurrences
+    counter_occurrences=() if prepared.counter_plan is None else capture_counter_placement_occurrences(
+        host,prepared.counter_plan.prepared.events,reason="damage prevention aftermath")
     return PreventionAftermathResult(
         events=tuple(events),
         changed_players=tuple(
@@ -609,6 +615,7 @@ def commit_prevention_aftermath(
             )
         ),
         nested_damage_results=tuple(nested_damage_results),
+        counter_occurrences=counter_occurrences,
     )
 
 

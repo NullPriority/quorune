@@ -6680,6 +6680,93 @@
       "status": "trusted"
     },
     {
+      "id": "trigger.event.normalized_counter_placement",
+      "version": 1,
+      "official_rules": [
+        "122.6",
+        "122.6a",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.3b",
+        "603.6a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Discover counter-put triggers from actual positive battlefield placement leaves after the containing canonical instruction commits.",
+        "inputs": [
+          "resolved placement quantities",
+          "placing player",
+          "recipient logical identity and effective public characteristics",
+          "completed entry or damage transaction",
+          "current source ability"
+        ],
+        "outputs": [
+          "one per-object/kind occurrence or one per actual counter",
+          "APNAP ordinary trigger batch",
+          "sealed event facts and locked controller",
+          "replayable optional and target continuations"
+        ],
+        "exclusions": [
+          "Removal/cost-removal/SBA annihilation",
+          "Offbattlefield subjects",
+          "Threshold/first-per-turn/one-or-more-objects aggregation",
+          "Unrepresented result and sibling bodies"
+        ]
+      },
+      "dependencies": [
+        "trigger.placement.apnap",
+        "counter.placement.quantity_replacement"
+      ],
+      "implementation_components": [
+        "quorune.counter_placement_events.capture_counter_placement_occurrences",
+        "quorune.counter_placement_events.dispatch_counter_placement_occurrences",
+        "quorune.compiler.counter_placement_event_bindings.counter_placement_event_binding_spec",
+        "quorune.counter_placement.commit_counter_placement_plan",
+        "quorune.trigger_discovery.dispatch_semantic_event"
+      ],
+      "positive_tests": [
+        "test_counter_occurrence_compiler_preserves_multiplicity_actor_and_subject",
+        "test_actual_fathom_and_herd_distinguish_replaced_quantity_from_one_occurrence"
+      ],
+      "negative_tests": [
+        "test_counter_occurrence_unsupported_threshold_removal_and_aggregation_stay_residual"
+      ],
+      "interaction_tests": [
+        "test_counter_entry_occurrences_observe_complete_new_permanents_and_replay",
+        "test_counter_occurrences_pending_replacement_save_load_and_stale_subject"
+      ],
+      "multiplayer_tests": [
+        "test_actual_placing_player_and_recipient_controller_are_distinct"
+      ],
+      "privacy_tests": [
+        "test_actual_placing_player_and_recipient_controller_are_distinct"
+      ],
+      "replay_tests": [
+        "test_actual_fathom_and_herd_distinguish_replaced_quantity_from_one_occurrence",
+        "test_counter_entry_occurrences_observe_complete_new_permanents_and_replay"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Counter subscription and result owners independently require registered normalized event and body closure.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting dispatch violates actual trusted Fathom Mage multiplicity after replacement.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
       "id": "trigger.event.normalized_public_action",
       "version": 6,
       "official_rules": ["116.2b", "508.1", "508.1m", "508.3c", "508.3d", "509.1", "509.1h", "602.2", "603.2", "603.2e", "603.3", "701.8a", "701.26a", "701.26b", "701.34", "702.29", "702.37e", "702.168b"],

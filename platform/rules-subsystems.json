@@ -375,6 +375,42 @@
       },
       "candidate_bundles": [
         {
+          "bundle_id": "bundle:counter-placement-events",
+          "member_family_ids": [
+            "event_binding:normalized-event-binding",
+            "event_binding:intervening-if-and-reflexive-trigger-grammar"
+          ],
+          "canonical_owner_ids": [
+            "capability:trigger.event.normalized_counter_placement",
+            "component:quorune.counter_placement_events.capture_counter_placement_occurrences"
+          ],
+          "source_contexts": [
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "committed-counter-kind",
+            "per-object-or-per-counter",
+            "placing-player"
+          ],
+          "shared_dependencies": [
+            "trigger.placement.apnap",
+            "counter.placement.quantity_replacement"
+          ],
+          "shared_grammar": "Battlefield counter-put occurrences from canonical placement, entry and damage leaves with independent result closure.",
+          "estimated_implementation_hours": 3,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Retain measured whole-card gains in the combined delivery, excluding unsupported siblings.",
+          "explicit_exclusions": [
+            "Offbattlefield removal",
+            "Threshold and first-per-turn",
+            "One-or-more on one-or-more objects aggregate grammar",
+            "Unrepresented bodies"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "counter-placement-event-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:whole-hand-discard",
           "member_family_ids": [
             "effect_clause:ordered-effect-composition",

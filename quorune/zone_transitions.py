@@ -660,6 +660,7 @@ class ZoneTransitionOwner:
         if not defer_control_sync:
             from .control_effects import synchronize_control_effects
             synchronize_control_effects(self.host, reason="control duration source changed zones")
+        trigger_batch=[] if not defer_control_sync else None
         if semantic_events:
             sources = departure.trigger_sources
             self.host._dispatch_zone_change_events(
@@ -683,7 +684,12 @@ class ZoneTransitionOwner:
                     plan.prepared_replacement.read_ahead_chapter
                 ),
                 cast_option=departure.cast_option,
+                trigger_batch=trigger_batch,
             )
+        if not defer_control_sync:
+            from .counter_placement_events import dispatch_counter_event_trees
+            dispatch_counter_event_trees(self.host, (plan.prepared_replacement,), reason=reason,trigger_batch=trigger_batch)
+            enqueue_trigger_batch(self.host,trigger_batch)
 
     def _log_prevented_token(
         self,
@@ -962,6 +968,8 @@ class ZoneTransitionOwner:
         for occurrence in occurrences:
             record_zone_change_history(self.host, occurrence)
         trigger_batch: list[StackItem] = []
+        from .counter_placement_events import dispatch_counter_event_trees
+        dispatch_counter_event_trees(self.host, tuple(prepared.values()), reason=reason, trigger_batch=trigger_batch)
         for card, departure in snapshots:
             sources = departure.trigger_sources
             self.host._dispatch_zone_change_events(

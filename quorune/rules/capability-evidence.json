@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "f6e25433b096af73605986d8e216a445c0d4970f5d762d5e2889f963a4e21773",
-  "declaration_source_fingerprint": "5d7e81bfa61138fbc42487edf07f09962add40e5b693d44755e8a498e403e838",
+  "registry_fingerprint": "67b143d67d4a66bfdf3ac877139c4fce8ca365fffa62e64fc31e24312f34b83f",
+  "declaration_source_fingerprint": "22e94da0570bb462bf82d99db6d2b3c96dde5d7253b7a298fefc9016d3e6a26e",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -73092,6 +73092,489 @@
       "applicability_note": "Share the player-result trigger envelope and replay-stable counter continuation used by normalized draw consumers."
     },
     {
+      "capability_id": "trigger.event.normalized_counter_placement",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_counter_placement_events.CounterPlacementEventRuntimeTests.test_actual_any_kind_trigger_observes_one_multikind_instruction_once",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.3b",
+        "603.6a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Committed counter occurrence quantities, subject/placing-player distinction, current source and canonical trigger continuation."
+    },
+    {
+      "capability_id": "trigger.event.normalized_counter_placement",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_counter_placement_events.CounterPlacementEventRuntimeTests.test_actual_copied_entry_observers_get_own_counters_and_triggers",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.3b",
+        "603.6a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Committed counter occurrence quantities, subject/placing-player distinction, current source and canonical trigger continuation."
+    },
+    {
+      "capability_id": "trigger.event.normalized_counter_placement",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_counter_placement_events.CounterPlacementEventRuntimeTests.test_actual_infect_counter_damage_triggers_after_committed_result",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.3b",
+        "603.6a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Committed counter occurrence quantities, subject/placing-player distinction, current source and canonical trigger continuation."
+    },
+    {
+      "capability_id": "trigger.event.normalized_counter_placement",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_counter_placement_events.CounterPlacementEventRuntimeTests.test_actual_two_creature_batch_has_two_one_or_more_occurrences",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.3b",
+        "603.6a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Committed counter occurrence quantities, subject/placing-player distinction, current source and canonical trigger continuation."
+    },
+    {
+      "capability_id": "trigger.event.normalized_counter_placement",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_counter_placement_events.CounterPlacementEventRuntimeTests.test_counter_dispatch_without_subscribers_skips_per_counter_iteration",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.3b",
+        "603.6a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Committed counter occurrence quantities, subject/placing-player distinction, current source and canonical trigger continuation."
+    },
+    {
+      "capability_id": "trigger.event.normalized_counter_placement",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_counter_placement_events.CounterPlacementEventRuntimeTests.test_counter_entry_occurrences_observe_complete_new_permanents_and_replay",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.3b",
+        "603.6a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Committed counter occurrence quantities, subject/placing-player distinction, current source and canonical trigger continuation."
+    },
+    {
+      "capability_id": "trigger.event.normalized_counter_placement",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_counter_placement_events.CounterPlacementEventRuntimeTests.test_counter_occurrences_pending_replacement_save_load_and_stale_subject",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.3b",
+        "603.6a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Committed counter occurrence quantities, subject/placing-player distinction, current source and canonical trigger continuation."
+    },
+    {
+      "capability_id": "trigger.event.normalized_counter_placement",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_counter_placement_events.CounterPlacementEventRuntimeTests.test_simultaneous_entry_owner_seals_full_counter_set_before_discovery",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.3b",
+        "603.6a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Committed counter occurrence quantities, subject/placing-player distinction, current source and canonical trigger continuation."
+    },
+    {
+      "capability_id": "trigger.event.normalized_counter_placement",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_counter_placement_events.CounterPlacementEventRuntimeTests.test_actual_placing_player_and_recipient_controller_are_distinct",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.3b",
+        "603.6a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Committed counter occurrence quantities, subject/placing-player distinction, current source and canonical trigger continuation."
+    },
+    {
+      "capability_id": "trigger.event.normalized_counter_placement",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_counter_placement_events.CounterPlacementEventRuntimeTests.test_actual_queued_counter_trigger_keeps_controller_after_source_control_change",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.3b",
+        "603.6a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Committed counter occurrence quantities, subject/placing-player distinction, current source and canonical trigger continuation."
+    },
+    {
+      "capability_id": "trigger.event.normalized_counter_placement",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_counter_placement_events.CounterPlacementEventRuntimeTests.test_counter_occurrence_omitted_dispatch_mutant_is_killed",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.3b",
+        "603.6a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Committed counter occurrence quantities, subject/placing-player distinction, current source and canonical trigger continuation."
+    },
+    {
+      "capability_id": "trigger.event.normalized_counter_placement",
+      "evidence_class": "negative",
+      "test_id": "tests.test_counter_placement_events.CounterPlacementEventCompilerTests.test_counter_occurrence_producer_reads_actual_counts_and_rejects_stale_identity",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.3b",
+        "603.6a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Committed counter occurrence quantities, subject/placing-player distinction, current source and canonical trigger continuation."
+    },
+    {
+      "capability_id": "trigger.event.normalized_counter_placement",
+      "evidence_class": "negative",
+      "test_id": "tests.test_counter_placement_events.CounterPlacementEventCompilerTests.test_counter_occurrence_unsupported_threshold_removal_and_aggregation_stay_residual",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.3b",
+        "603.6a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Committed counter occurrence quantities, subject/placing-player distinction, current source and canonical trigger continuation."
+    },
+    {
+      "capability_id": "trigger.event.normalized_counter_placement",
+      "evidence_class": "negative",
+      "test_id": "tests.test_counter_placement_events.CounterPlacementEventRuntimeTests.test_counter_event_pending_source_new_incarnation_rejects_unchanged_hash",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.3b",
+        "603.6a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Committed counter occurrence quantities, subject/placing-player distinction, current source and canonical trigger continuation."
+    },
+    {
+      "capability_id": "trigger.event.normalized_counter_placement",
+      "evidence_class": "negative",
+      "test_id": "tests.test_counter_placement_events.CounterPlacementEventRuntimeTests.test_resolved_zero_counter_owner_creates_no_occurrence",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.3b",
+        "603.6a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Committed counter occurrence quantities, subject/placing-player distinction, current source and canonical trigger continuation."
+    },
+    {
+      "capability_id": "trigger.event.normalized_counter_placement",
+      "evidence_class": "positive",
+      "test_id": "tests.test_counter_placement_events.CounterPlacementEventCompilerTests.test_counter_occurrence_compiler_preserves_multiplicity_actor_and_subject",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.3b",
+        "603.6a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Committed counter occurrence quantities, subject/placing-player distinction, current source and canonical trigger continuation."
+    },
+    {
+      "capability_id": "trigger.event.normalized_counter_placement",
+      "evidence_class": "positive",
+      "test_id": "tests.test_counter_placement_events.CounterPlacementEventRuntimeTests.test_actual_fathom_and_herd_distinguish_replaced_quantity_from_one_occurrence",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.3b",
+        "603.6a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Committed counter occurrence quantities, subject/placing-player distinction, current source and canonical trigger continuation."
+    },
+    {
+      "capability_id": "trigger.event.normalized_counter_placement",
+      "evidence_class": "positive",
+      "test_id": "tests.test_counter_placement_events.CounterPlacementEventRuntimeTests.test_actual_hapatra_committed_negative_counters_create_one_snake",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.3b",
+        "603.6a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Committed counter occurrence quantities, subject/placing-player distinction, current source and canonical trigger continuation."
+    },
+    {
+      "capability_id": "trigger.event.normalized_counter_placement",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_counter_placement_events.CounterPlacementEventRuntimeTests.test_actual_placing_player_and_recipient_controller_are_distinct",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.3b",
+        "603.6a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Committed counter occurrence quantities, subject/placing-player distinction, current source and canonical trigger continuation."
+    },
+    {
+      "capability_id": "trigger.event.normalized_counter_placement",
+      "evidence_class": "replay",
+      "test_id": "tests.test_counter_placement_events.CounterPlacementEventRuntimeTests.test_actual_copied_entry_observers_get_own_counters_and_triggers",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.3b",
+        "603.6a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Committed counter occurrence quantities, subject/placing-player distinction, current source and canonical trigger continuation."
+    },
+    {
+      "capability_id": "trigger.event.normalized_counter_placement",
+      "evidence_class": "replay",
+      "test_id": "tests.test_counter_placement_events.CounterPlacementEventRuntimeTests.test_actual_fathom_and_herd_distinguish_replaced_quantity_from_one_occurrence",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.3b",
+        "603.6a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Committed counter occurrence quantities, subject/placing-player distinction, current source and canonical trigger continuation."
+    },
+    {
+      "capability_id": "trigger.event.normalized_counter_placement",
+      "evidence_class": "replay",
+      "test_id": "tests.test_counter_placement_events.CounterPlacementEventRuntimeTests.test_counter_entry_occurrences_observe_complete_new_permanents_and_replay",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.3b",
+        "603.6a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Committed counter occurrence quantities, subject/placing-player distinction, current source and canonical trigger continuation."
+    },
+    {
+      "capability_id": "trigger.event.normalized_counter_placement",
+      "evidence_class": "replay",
+      "test_id": "tests.test_counter_placement_events.CounterPlacementEventRuntimeTests.test_counter_occurrences_pending_replacement_save_load_and_stale_subject",
+      "official_rule_ids": [
+        "122.6",
+        "122.6a",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.3b",
+        "603.6a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Committed counter occurrence quantities, subject/placing-player distinction, current source and canonical trigger continuation."
+    },
+    {
       "capability_id": "trigger.event.normalized_damage",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_combat_damage_batch_scope_preserves_temporal_apnap_and_replay",
@@ -85679,5 +86162,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "6d89c723ecbdf1b3c0c471d2e4f4a60e243b0017cfd7346d0267c812107f6dc3"
+  "fingerprint": "fb59b63efa482320b271938392a3f285020559ea34575afc8df15f4044d7e7b0"
 }
