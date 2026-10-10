@@ -34,6 +34,45 @@ requesting principal's authorized projection.
 
 ## Descriptor and registry contract
 
+`continuous.characteristics.fixed-public-setting.v1` applies one constant
+setting to a reciprocal attached object or a closed public battlefield query.
+The compiler preserves type retention, source exclusion, controller scope,
+fixed colors, keyword additions, ability removal, base power/toughness and
+fixed modifiers. Creature subtype replacement removes only creature subtypes,
+preserving unrelated artifact or enchantment subtypes. Unknown subjects,
+chosen values, names, dynamic definitions and quoted grants remain residual.
+
+The setting handler and the existing attached-characteristic handler share
+one pure layer emission owner. It produces the represented layer 4, 5, 6, 7b
+and 7c operations for the existing evaluator. Ability removal precedes the
+same setting's keyword additions; base settings precede modifiers and counters.
+The ordinary timestamp and component-presence owners determine current source
+participation. Source departure or phasing ends a static effect, and reciprocal
+attachment identities prevent it from following a different incarnation.
+Printed and copied values remain separate from these live characteristics.
+
+`ability.activated.mana.public-quantity.v1` shares the existing activated mana
+registry and fixed-family cost boundary. Its versioned output reads a closed
+public zone quantity, source counter quantity, source power or toughness, or
+public turn history. The activation owner pays costs first, captures source
+information immediately before a source sacrifice, and resolves the output
+without the stack. Controller-relative quantities use the activating player;
+source characteristics use current information or the retained departing
+incarnation. Unknown information fails closed, while known zero and negative
+result amounts add no mana and still pay legal activation costs.
+
+Fixed-color, any-one-color, and allowed-color combination outputs validate the
+complete current amount. Combination choices carry allowed colors and a total
+instead of enumerating allocations. Source-sacrifice, counter-removal,
+mana-priced, and combination abilities remain explicit activations so automatic
+payment cannot skip their cost or choice authority. The same compiler amount
+producers lower fixed-color spell instructions through the existing `mana`
+effect owner; they read collections when the instruction resolves. Spending
+restrictions retain the canonical mana provenance. Targeted or loyalty mana
+abilities, linked sacrificed-object counts, unknown conditional tails, variable
+allocation spell continuations, and unsupported sibling abilities remain
+residual.
+
 `replacement.zone.entry-designation.v1` represents a mandatory intrinsic
 one-color or creature-type choice before battlefield entry. The existing
 replacement journal retains the destination controller's selection, and the
@@ -128,6 +167,15 @@ Discovery itself is read-only; ordinary timing, cost, control,
 zone-transition, cast, land-play, and commit rules remain authoritative in
 their existing owners. Unrepresented wording fails closed rather than falling
 back to current Oracle text.
+
+The pinned activation catalog carries optional strict `power_up` pricing data
+beside its distinct once-per-incarnation limit. Existing fixed cost options
+feed the source-aware price query, and the same payable alternatives drive
+offers, selected-cost proposals and commit revalidation. Pricing reads current
+mana cost and canonical battlefield entry history; it never reparses ability
+text. The ordinary payment and usage owners commit together after validation.
+Historical descriptors without this field retain their original shape;
+historical record execution still requires compatible runtime trust provenance.
 
 Typed continuous-characteristic descriptors own the represented live-state
 families. `continuous.ability.fixed-query-keyword-grant.v1` lowers closed

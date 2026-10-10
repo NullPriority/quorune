@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Sequence
+from .as_unblocked import can_assign_as_unblocked
+from .as_unblocked_rule import active_as_unblocked_rule
+from .toughness_assignment import current_toughness_assignment,current_toughness_rule_sources
 
 from .combat_damage_snapshot import (
     CombatDamageParticipant,
@@ -17,6 +20,7 @@ class EngineCombatDamageQuery:
 
     def __init__(self, engine: CommanderEngine) -> None:
         self._engine = engine
+        self._toughness_rule_sources=current_toughness_rule_sources(engine)
 
     def damage_step_identity(self) -> str:
         state = self._engine.state
@@ -69,16 +73,20 @@ class EngineCombatDamageQuery:
             raise CombatDamageSnapshotError(
                 f"Combat participant {card.ref} is not a creature"
             )
+        power=engine._numeric_stat(card.object_id,'power');toughness=engine._numeric_stat(card.object_id,'toughness')
         return CombatDamageParticipant(
             object_id=card.object_id,
             logical_object_id=card.logical_object_id,
             reference=card.ref,
             controller=card.controller,
-            power=engine._numeric_stat(card.object_id, "power"),
-            toughness=engine._numeric_stat(card.object_id, "toughness"),
+            power=power,
+            toughness=toughness,
             marked_damage=card.marked_damage,
             keywords=engine._combat_keywords(card),
             assigns_damage=engine._assigns_combat_damage_this_step(card),
+            assign_as_unblocked=can_assign_as_unblocked(engine._effective_ability_fragments(card,error_type=CombatDamageSnapshotError)),
+            must_assign_as_unblocked=active_as_unblocked_rule(engine.state,card),
+            assigns_using_toughness=current_toughness_assignment(engine,card,power=power,toughness=toughness,rule_sources=self._toughness_rule_sources),
         )
 
     def attacker_object_ids(self) -> Sequence[str]:

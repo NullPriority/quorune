@@ -8,6 +8,8 @@ import re
 from typing import Any, Mapping
 
 from ..object_predicate import ObjectQuerySpec
+from ..hand_entry_queries import decode_hand_entry_queries, historic_hand_entry_query_descriptor
+from ..replacement.immutable import FrozenMap, thaw_value
 from ..util import stable_json
 
 
@@ -43,6 +45,8 @@ def _hand_entry_query(subject: str) -> ObjectQuerySpec | None:
         )
     elif normalized == "creature":
         fields["types_all"] = ("creature",)
+    elif normalized == "artifact":
+        fields["types_all"] = ("artifact",)
     elif normalized == "equipment":
         fields.update(
             types_all=("artifact",),
@@ -85,21 +89,22 @@ def _hand_entry_query(subject: str) -> ObjectQuerySpec | None:
 
 @dataclass(frozen=True, slots=True)
 class FixedPrivateHandEntryTemplate:
-    query: ObjectQuerySpec
+    query: ObjectQuerySpec | Mapping[str, Any]
     tapped: bool = False
 
     def __post_init__(self) -> None:
-        if not isinstance(self.query, ObjectQuerySpec) or self.query.zones != (
-            "hand",
-        ):
+        value = self.query.canonical_dict() if isinstance(self.query, ObjectQuerySpec) else self.query
+        if not decode_hand_entry_queries(value):
             raise ValueError("Private hand entry requires a typed hand query")
         if type(self.tapped) is not bool:
             raise ValueError("Private hand entry tapped policy must be boolean")
+        if not isinstance(self.query, ObjectQuerySpec):
+            object.__setattr__(self, 'query', FrozenMap(value))
 
     @property
     def template_id(self) -> str:
         identity = {
-            "query": self.query.canonical_dict(),
+            "query": self.query.canonical_dict() if isinstance(self.query,ObjectQuerySpec) else thaw_value(self.query),
             "tapped": self.tapped,
         }
         digest = hashlib.sha256(stable_json(identity).encode("utf-8")).hexdigest()
@@ -111,7 +116,7 @@ class FixedPrivateHandEntryTemplate:
             {
                 "op": "put_card_from_hand",
                 "player": "$controller",
-                "query": self.query.canonical_dict(),
+                "query": self.query.canonical_dict() if isinstance(self.query,ObjectQuerySpec) else thaw_value(self.query),
                 "tapped": self.tapped,
             },
         )
@@ -147,7 +152,11 @@ def fixed_private_hand_entry_effect_template(
     )
     if match is None:
         return None
-    query = _hand_entry_query(match.group("subject"))
+    query = (
+        historic_hand_entry_query_descriptor()
+        if match.group('subject').casefold() == 'historic permanent'
+        else _hand_entry_query(match.group("subject"))
+    )
     return (
         FixedPrivateHandEntryTemplate(
             query=query,
@@ -155,6 +164,27 @@ def fixed_private_hand_entry_effect_template(
         )
         if query is not None
         else None
+    )
+
+
+def fixed_draw_then_hand_entry_template(text: str):
+    from .draw_templates import fixed_draw_effect_template
+    match = re.fullmatch(
+        r'(?P<draw>(?:You )?draw [^.]+?)(?:, then|\.)(?: then)? '
+        r'(?P<entry>you may put .+)\.', text.strip(), re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    draw = fixed_draw_effect_template(match['draw'] + '.')
+    entry = fixed_private_hand_entry_effect_template(match['entry'] + '.')
+    if (
+        draw is None or entry is None or draw[2] is not None
+        or len(draw[1]) != 1 or draw[1][0].get('op') != 'draw'
+    ):
+        return None
+    return (
+        'fixed-draw-then-private-hand-entry-v1', (*draw[1], *entry.effects), None,
+        tuple(dict.fromkeys(('closed-effect-program', *draw[3], *entry.mechanics))),
     )
 
 

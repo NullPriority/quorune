@@ -220,7 +220,7 @@ class FixedCounterPlacementTemplate:
     @property
     def _card_reference(self) -> str | Mapping[str, Any]:
         if self.subject is CounterPlacementSubject.SOURCE:
-            return "$source"
+            return "$source.zone_object"
         if self.subject is CounterPlacementSubject.TARGET:
             return "$target.0"
         assert self.attachment_relation is not None

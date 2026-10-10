@@ -96,7 +96,7 @@ from quorune.compiler.hand_inspection_templates import (
 )
 from quorune.rules.temporary_target_interactions import TEMPORARY_TARGET_INTERACTION_CAPABILITY
 from quorune.compiler.bound_effect_programs import BOUND_EFFECT_PROGRAM_CAPABILITY
-from quorune.compiler.qualified_zone_event_bindings import QUALIFIED_ZONE_CAPABILITY, qualified_public_zone_event_binding_spec
+from quorune.compiler.qualified_zone_event_bindings import COUNTER_QUALIFIED_ZONE_CAPABILITY, QUALIFIED_ZONE_CAPABILITY, qualified_public_zone_event_binding_spec
 from quorune.card_programs import bind_card_program_runtime
 from quorune.card_programs.adapters import compile_best_available_card_program
 from quorune.semantics import SemanticRegistry
@@ -225,6 +225,9 @@ _PROBE_TARGET_ANNOUNCEMENT = 'fixed-target-announcement-existing-owner-v1'
 _PROBE_KICKED_SPELL = 'fixed-kicked-spell-condition-existing-owner-v1'
 _PROBE_EVENT_CARD_RETURN = 'fixed-event-card-return-existing-owner-v1'
 _PROBE_BATCHED_SUPPORT = 'batched-card-support-existing-owner-v1'
+_PROBE_BATCHED_SUPPORT_V2 = 'batched-card-support-current-census-v2'
+_PROBE_PERMANENT_PRICE = 'permanent-spell-additional-price-existing-owner-v1'
+_PROBE_CAST_CREATURE_TARGET = 'cast-creature-target-existing-owner-v1'
 _PROBE_DECLARED_EFFECT_AMOUNT = "declared-effect-amount-existing-owner-v1"
 _PROBE_FIXED_ANIMATION = "fixed-resolution-animation-existing-owner-v1"
 _PROBE_FIXED_EFFECT_PAYMENT = "fixed-resolution-payment-existing-owner-v1"
@@ -235,6 +238,12 @@ _PROBE_TOKEN_COPY_RECIPE = "copiable-token-recipes-existing-owner-v1"
 _PROBE_TAP_STATE_EVENT = "normalized-tap-state-event-existing-owner-v1"
 _PROBE_PUBLIC_COLLECTION_QUANTITY = "public-collection-quantity-existing-owner-v1"
 _PROBE_QUALIFIED_ZONE_EVENT = "qualified-zone-event-query-existing-owner-v1"
+_PROBE_COUNTER_QUALIFIED_ZONE_EVENT = "counter-qualified-zone-event-existing-owner-v1"
+_PROBE_NAMED_COUNTER_DOUBLING = "named-counter-doubling-existing-owner-v1"
+_PROBE_PUBLIC_QUANTITY_MANA = "public-quantity-mana-existing-owner-v1"
+_PROBE_STATIC_CHARACTERISTIC_SETTING = "static-characteristic-setting-existing-owner-v1"
+_PROBE_WHOLE_HAND_DISCARD = "whole-hand-discard-existing-owner-v1"
+_PROBE_COUNTER_PLACEMENT_EVENT = "counter-placement-event-existing-owner-v1"
 _PROBE_FIXED_CONTROLLED_CHARACTERISTIC = (
     "fixed-controlled-characteristic-effect-existing-owner-v1"
 )
@@ -603,6 +612,9 @@ _PROBE_IDS = {
     _PROBE_KICKED_SPELL,
     _PROBE_EVENT_CARD_RETURN,
     _PROBE_BATCHED_SUPPORT,
+    _PROBE_BATCHED_SUPPORT_V2,
+    _PROBE_PERMANENT_PRICE,
+    _PROBE_CAST_CREATURE_TARGET,
     _PROBE_DECLARED_EFFECT_AMOUNT,
     _PROBE_FIXED_ANIMATION,
     _PROBE_FIXED_EFFECT_PAYMENT,
@@ -613,6 +625,12 @@ _PROBE_IDS = {
     _PROBE_TAP_STATE_EVENT,
     _PROBE_PUBLIC_COLLECTION_QUANTITY,
     _PROBE_QUALIFIED_ZONE_EVENT,
+    _PROBE_COUNTER_QUALIFIED_ZONE_EVENT,
+    _PROBE_NAMED_COUNTER_DOUBLING,
+    _PROBE_PUBLIC_QUANTITY_MANA,
+    _PROBE_STATIC_CHARACTERISTIC_SETTING,
+    _PROBE_WHOLE_HAND_DISCARD,
+    _PROBE_COUNTER_PLACEMENT_EVENT,
     _PROBE_OPTIONAL_EFFECT,
     _PROBE_OPTIONAL_MANA_PAYMENT,
     _PROBE_PUBLIC_STATIC_CAST_COST_MODIFIER,
@@ -1257,6 +1275,11 @@ def _matches_probe(
     card_record: Any | None = None,
     ability: Mapping[str, Any] | None = None,
 ) -> bool:
+    if probe_id == _PROBE_CAST_CREATURE_TARGET:
+        return bool(re.search(r"cast (?:a spell|an instant or sorcery spell) that targets a creature", source, re.I))
+    if probe_id == _PROBE_PERMANENT_PRICE:
+        return bool(card_record is not None and card_record.is_permanent_spell
+            and re.search(r"^As an additional cost to cast this spell,", source, re.I | re.M))
     if probe_id == _PROBE_BATCHED_SUPPORT:
         return any(_matches_probe(probe, source, card_record=card_record, ability=ability) for probe in (
             _PROBE_SOURCE_MAINTENANCE, _PROBE_COUNTED_ACTIVATION_COST, _PROBE_KICKED_ENTRY,
@@ -1306,13 +1329,31 @@ def _matches_probe(
         # binding below determine whether any card closes.
         return bool(card_record is not None and not card_record.faces
                     and re.search(r"\bX\b", source))
-    if probe_id == _PROBE_QUALIFIED_ZONE_EVENT:
+    if probe_id == _PROBE_NAMED_COUNTER_DOUBLING:
+        return bool(re.search(r"double the number of [^\n.]+ counters on ",source,re.I))
+    if probe_id == _PROBE_PUBLIC_QUANTITY_MANA:
+        return bool(re.search(r"Add (?:\{[WUBRGC]\} for each|an amount of \{[WUBRGC]\} equal to|X mana )", source, re.I))
+    if probe_id == _PROBE_STATIC_CHARACTERISTIC_SETTING:
+        from quorune.compiler.fixed_characteristic_settings import fixed_characteristic_setting_handler
+        return any(fixed_characteristic_setting_handler(line) is not None for line in source.splitlines())
+    if probe_id == _PROBE_WHOLE_HAND_DISCARD:
+        return bool(re.search(r'\bdiscard(?:s)? (?:your|their)(?: entire)? hand',source,re.I))
+    if probe_id == _PROBE_COUNTER_PLACEMENT_EVENT:
+        from quorune.compiler.counter_placement_event_bindings import counter_placement_event_binding_spec
+        return any(counter_placement_event_binding_spec(line,card_name=card_record.name if card_record else None) is not None for line in source.splitlines())
+    if probe_id in {_PROBE_QUALIFIED_ZONE_EVENT, _PROBE_COUNTER_QUALIFIED_ZONE_EVENT}:
         if card_record is None:
             raise WorkSelectionCohortMeasurementError("Qualified zone query measurement requires card context")
-        return any(qualified_public_zone_event_binding_spec(
-            trigger_ability_word_material_line(_without_parenthetical_reminder(line)),
-            card_name=str(card_record.name),
-        ) is not None for line in source.splitlines())
+        for line in source.splitlines():
+            binding = qualified_public_zone_event_binding_spec(
+                trigger_ability_word_material_line(_without_parenthetical_reminder(line)),
+                card_name=str(card_record.name),
+            )
+            if binding is not None and (
+                COUNTER_QUALIFIED_ZONE_CAPABILITY in binding.capabilities
+            ) == (probe_id == _PROBE_COUNTER_QUALIFIED_ZONE_EVENT):
+                return True
+        return False
     if probe_id == _PROBE_BOUND_EFFECT_PROGRAM:
         return (" and " in source.casefold() or ". " in source) and any(
             word in source.casefold() for word in ("target ", "each player", "each opponent", "you ")
@@ -5403,6 +5444,13 @@ def _measurement(
         raise WorkSelectionCohortMeasurementError(
             f"Unknown cohort measurement probe: {probe_id}"
         )
+    if probe_id == _PROBE_BATCHED_SUPPORT_V2:
+        from scripts.batched_support_measurement import current_census_delivery_measurement
+        return current_census_delivery_measurement(
+            frontier=frontier, bundle_id=bundle_id, probe_id=probe_id,
+            cards_by_oracle_id=cards_by_oracle_id, coverage=coverage,
+            cohort_fingerprint=cohort_fingerprint, database=database,
+        )
     if probe_id == _PROBE_TYPED_GRANT_CARRIERS:
         from scripts.typed_grant_carrier_measurement import typed_grant_carrier_measurement
         return typed_grant_carrier_measurement(
@@ -5424,8 +5472,8 @@ def _measurement(
             cards_by_oracle_id=cards_by_oracle_id, coverage=coverage,
             cohort_fingerprint=cohort_fingerprint, database=database,
         )
-    if probe_id in {_PROBE_BOUND_EFFECT_PROGRAM, _PROBE_FIXED_CONTROL_UNTAP, _PROBE_ENTRY_DESIGNATIONS, _PROBE_ENTRY_DESIGNATIONS_V2, _PROBE_QUALIFIED_ZONE_EVENT,
-                    _PROBE_DECLARED_EFFECT_AMOUNT, _PROBE_FIXED_ANIMATION, _PROBE_FIXED_EFFECT_PAYMENT, _PROBE_STACK_CONTROLLER_PAYMENT, _PROBE_LINKED_EXILE_RETURN, _PROBE_SCALAR_EFFECT_AMOUNT, _PROBE_TOKEN_COPY_RECIPE, _PROBE_TAP_STATE_EVENT, _PROBE_PUBLIC_COLLECTION_QUANTITY, _PROBE_SOURCE_SELF_REFERENCES, _PROBE_SOURCE_MAINTENANCE, _PROBE_COUNTED_ACTIVATION_COST, _PROBE_KICKED_ENTRY, _PROBE_TARGET_ANNOUNCEMENT, _PROBE_KICKED_SPELL, _PROBE_EVENT_CARD_RETURN, _PROBE_BATCHED_SUPPORT}:
+    if probe_id in {_PROBE_BOUND_EFFECT_PROGRAM, _PROBE_FIXED_CONTROL_UNTAP, _PROBE_ENTRY_DESIGNATIONS, _PROBE_ENTRY_DESIGNATIONS_V2, _PROBE_QUALIFIED_ZONE_EVENT, _PROBE_COUNTER_QUALIFIED_ZONE_EVENT, _PROBE_NAMED_COUNTER_DOUBLING, _PROBE_PUBLIC_QUANTITY_MANA, _PROBE_STATIC_CHARACTERISTIC_SETTING, _PROBE_WHOLE_HAND_DISCARD, _PROBE_COUNTER_PLACEMENT_EVENT,
+                    _PROBE_DECLARED_EFFECT_AMOUNT, _PROBE_FIXED_ANIMATION, _PROBE_FIXED_EFFECT_PAYMENT, _PROBE_STACK_CONTROLLER_PAYMENT, _PROBE_LINKED_EXILE_RETURN, _PROBE_SCALAR_EFFECT_AMOUNT, _PROBE_TOKEN_COPY_RECIPE, _PROBE_TAP_STATE_EVENT, _PROBE_PUBLIC_COLLECTION_QUANTITY, _PROBE_SOURCE_SELF_REFERENCES, _PROBE_SOURCE_MAINTENANCE, _PROBE_COUNTED_ACTIVATION_COST, _PROBE_KICKED_ENTRY, _PROBE_TARGET_ANNOUNCEMENT, _PROBE_KICKED_SPELL, _PROBE_EVENT_CARD_RETURN, _PROBE_BATCHED_SUPPORT, _PROBE_PERMANENT_PRICE, _PROBE_CAST_CREATURE_TARGET}:
         return _bound_effect_program_measurement(
             frontier=frontier, bundle_id=bundle_id, probe_id=probe_id,
             cards_by_oracle_id=cards_by_oracle_id, coverage=coverage,
@@ -8234,6 +8282,12 @@ def _bound_effect_program_measurement(
     registry = load_default_capability_registry()
     capability = {
         _PROBE_QUALIFIED_ZONE_EVENT: QUALIFIED_ZONE_CAPABILITY,
+        _PROBE_COUNTER_QUALIFIED_ZONE_EVENT: COUNTER_QUALIFIED_ZONE_CAPABILITY,
+        _PROBE_NAMED_COUNTER_DOUBLING: "counter.producer.named_doubling",
+        _PROBE_PUBLIC_QUANTITY_MANA: "mana.production.public_quantity",
+        _PROBE_STATIC_CHARACTERISTIC_SETTING: "continuous.characteristics.fixed_public_setting",
+        _PROBE_WHOLE_HAND_DISCARD: "zone.discard.whole_hand",
+        _PROBE_COUNTER_PLACEMENT_EVENT: "trigger.event.normalized_counter_placement",
         _PROBE_BOUND_EFFECT_PROGRAM: BOUND_EFFECT_PROGRAM_CAPABILITY,
         _PROBE_FIXED_CONTROL_UNTAP: "continuous.control.fixed_resolution",
         _PROBE_ENTRY_DESIGNATIONS: "zone.entry.public_designation",
@@ -8255,12 +8309,21 @@ def _bound_effect_program_measurement(
         _PROBE_KICKED_SPELL: 'resolution.effect.fixed_cast_fact',
         _PROBE_EVENT_CARD_RETURN: 'zone.return.fixed_event_card',
         _PROBE_BATCHED_SUPPORT: None,
+        _PROBE_PERMANENT_PRICE: None,
+        _PROBE_CAST_CREATURE_TARGET: "trigger.event.spell_cast_creature_target",
     }[probe_id]
     capabilities = {capability} if capability is not None else {
         "continuous.characteristics.query_count_modifier",
         "quantity_expression.public_query_effect_amount",
         "continuous.characteristics.query_power_toughness_definition",
     }
+    if probe_id == _PROBE_PERMANENT_PRICE:
+        capabilities = {
+            'casting.additional_cost.fixed_counter_placement', 'casting.additional_cost.fixed_sacrifice',
+            'casting.additional_cost.fixed_alternative', 'casting.additional_cost.fixed_life_payment',
+            'casting.additional_cost.zone_change.fixed_discard', 'casting.additional_cost.zone_change.fixed_exile',
+            'casting.additional_cost.zone_change.fixed_return_to_owner_hand',
+        }
     if probe_id == _PROBE_BATCHED_SUPPORT:
         capabilities = {
             'trigger.source.fixed_maintenance', 'activation.selected_zone_change.fixed',

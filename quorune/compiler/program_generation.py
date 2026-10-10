@@ -23,6 +23,7 @@ from .modal_program_closure import is_closed_fixed_modal_program
 from .fixed_effect_payment_templates import is_closed_fixed_effect_payment_program
 from ..rules.stack_controller_payment_shapes import is_closed_stack_controller_payment_program
 from .declared_effect_amounts import is_closed_declared_amount_program
+from .permanent_additional_cost_nodes import PERMANENT_ADDITIONAL_COST_COVERAGE, is_closed_permanent_additional_cost_program
 from .public_query_effect_amounts import (
     AMOUNT_MECHANIC_CAPABILITIES,
     public_query_amount_program_is_closed,
@@ -115,6 +116,9 @@ from ..rules.closed_effect_program_shapes import (
     closed_effect_program_node_capabilities,
 )
 from ..rules.echo_capability_shapes import fixed_mana_echo_node_capabilities
+from ..rules.public_quantity_mana_shapes import is_closed_public_quantity_mana_program
+from ..rules.whole_hand_discard_shapes import is_closed_whole_hand_discard_program
+from ..rules.as_unblocked_effect import is_closed_optional_as_unblocked_program
 from ..semantics import SemanticProgram, SemanticRegistry
 from ..util import stable_json
 from ..semantic_runtime.activated_abilities import (
@@ -353,7 +357,8 @@ def _generated_node_is_independently_exact(node: Any) -> bool:
 
 def _generated_static_declaration(node: Any) -> bool:
     return bool(
-        node.handlers
+        PERMANENT_ADDITIONAL_COST_COVERAGE in node.runtime_coverage
+        or node.handlers
         or (
             node.kind == "keyword_ability"
             and node.capability_dependencies
@@ -585,10 +590,8 @@ def _is_closed_composed_effect_program(
 ) -> bool:
     """Recognize a bounded program of independently closed components."""
 
-    if (
-        program.provenance.get("template_id") != "closed-effect-program-v1"
-        and "closed-effect-program" not in program.coverage
-    ):
+    if is_closed_optional_as_unblocked_program(program):return True
+    if program.provenance.get("template_id") != "closed-effect-program-v1" and "closed-effect-program" not in program.coverage:
         return False
     required = set(
         closed_effect_program_node_capabilities(
@@ -730,7 +733,7 @@ def _is_closed_fixed_counter_placement_program(
             mechanic_ids=(
                 value
                 for value in program.coverage
-                if value in {"cr-122-counters", "cr-115-targets"}
+                if value in {"cr-122-counters", "cr-115-targets", "named-counter-doubling"}
             ),
         )
     )
@@ -1059,7 +1062,7 @@ def _is_closed_fixed_counter_placement_set_program(
             mechanic_ids=(
                 value
                 for value in program.coverage
-                if value in {"cr-122-counters", "cr-115-targets"}
+                if value in {"cr-122-counters", "cr-115-targets", "named-counter-doubling"}
             ),
         )
     )
@@ -1248,7 +1251,7 @@ def _is_closed_fixed_public_zone_move_set_program(
                     "exile",
                     "return-to-owner-hand",
                     "fixed-public-zone-move",
-                    "fixed-public-zone-move-set",
+                    "fixed-public-zone-move-set", "fixed-private-hand-entry",
                     "cr-115-targets",
                 }
             ),
@@ -1263,17 +1266,21 @@ def _is_closed_fixed_control_program(program: SemanticProgram) -> bool:
     return _node_capabilities_close_program(program, fixed_control_node_capabilities)
 
 
+def _is_closed_public_characteristic_set_program(program: SemanticProgram) -> bool:
+    from ..rules.fixed_resolution_characteristic_shapes import fixed_resolution_characteristic_set_node_capabilities
+    return _node_capabilities_close_program(program, fixed_resolution_characteristic_set_node_capabilities)
+
+
 def _closed_effect_recognizers():
     return (
-        _is_closed_fixed_control_program,
+        is_closed_public_quantity_mana_program, is_closed_whole_hand_discard_program, _is_closed_fixed_control_program,
         is_closed_fixed_modal_program,
         is_closed_fixed_effect_payment_program,
         is_closed_stack_controller_payment_program,
         _is_closed_declared_amount_program,
         _is_closed_public_query_amount_program,
         _is_closed_fixed_creature_power_damage_program,
-        _is_closed_fixed_damage_program,
-        _is_closed_fixed_next_turn_draw_program,
+        _is_closed_fixed_damage_program, _is_closed_fixed_next_turn_draw_program,
         _is_closed_fixed_draw_program,
         _is_closed_fixed_mill_program,
         is_closed_fixed_impulse_access_program,
@@ -1301,6 +1308,7 @@ def _closed_effect_recognizers():
         _is_closed_fixed_bolster_program,
         _is_closed_fixed_amass_program,
         _is_closed_fixed_target_characteristics_program,
+        _is_closed_public_characteristic_set_program,
         _is_closed_temporary_target_interaction_program,
         _is_closed_fixed_source_characteristics_program,
         _is_closed_temporary_declaration_restriction_program,
@@ -1351,6 +1359,8 @@ def _is_closed_public_query_amount_program(program: SemanticProgram) -> bool:
 def _is_closed_effect_program(program: SemanticProgram) -> bool:
     """Return whether a reviewed capability-shaped effect owns execution."""
 
+    if is_closed_permanent_additional_cost_program(program):
+        return True
     if _node_capabilities_close_program(program, fixed_control_node_capabilities):
         return True
 

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from collections import Counter
 import os
 import tempfile
 import unittest
@@ -40,10 +41,15 @@ class LocalMergeGateTests(unittest.TestCase):
             json.loads(fixture.read_text(encoding="utf-8"))
             for fixture in fixtures
         ]
-        self.assertEqual(
-            sum(len(value.get("rulings", ())) for value in fixture_data),
-            result["rulings"],
-        )
+        # Overlap is one published snapshot, while repeated rows within any
+        # individual snapshot retain their original maximum multiplicity.
+        occurrences = [Counter(
+            (row['oracle_id'], row['published_at'], row['source'], row['comment'])
+            for row in value.get('rulings', ())
+        ) for value in fixture_data]
+        identities = set().union(*(set(counts) for counts in occurrences))
+        expected = sum(max(counts[identity] for counts in occurrences) for identity in identities)
+        self.assertEqual(expected, result["rulings"])
 
     def test_compact_ci_manifest_is_the_only_consumer_fixture_source(self):
         result = validate_compact_ci_consumers()

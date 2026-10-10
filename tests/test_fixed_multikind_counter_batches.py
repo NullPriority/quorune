@@ -111,7 +111,7 @@ class FixedCounterBatchCompilerTests(unittest.TestCase):
                 "When this creature enters, put a +1/+1 counter and a flying counter on this creature.",
                 "Creature — Human",
                 "triggered_ability",
-                "$source",
+                "$source.zone_object",
                 (("+1/+1", 1), ("flying", 1)),
             ),
             (
@@ -340,7 +340,7 @@ class FixedCounterBatchCompilerTests(unittest.TestCase):
 
         exact()
         with patch(
-            "quorune.compiler.resolution_effect_templates."
+            "quorune.compiler.counter_resolution_effect_templates."
             "fixed_counter_placement_batch_effect_template",
             return_value=None,
         ):

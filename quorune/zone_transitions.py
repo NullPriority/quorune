@@ -439,6 +439,7 @@ class ZoneTransitionOwner:
             controller=card.controller,
             logical_object_id=card.logical_object_id,
             characteristics=characteristics,
+            counters=dict(card.counters) if semantic_events else None,
             attachments=attachments,
             attached_to=attached_to,
             trigger_sources=capture_departure_trigger_sources(
@@ -659,6 +660,7 @@ class ZoneTransitionOwner:
         if not defer_control_sync:
             from .control_effects import synchronize_control_effects
             synchronize_control_effects(self.host, reason="control duration source changed zones")
+        trigger_batch=[] if not defer_control_sync else None
         if semantic_events:
             sources = departure.trigger_sources
             self.host._dispatch_zone_change_events(
@@ -668,6 +670,7 @@ class ZoneTransitionOwner:
                 origin_controller=departure.controller,
                 origin_logical_object_id=departure.logical_object_id,
                 origin_data=departure.characteristics,
+                origin_counters=departure.counters,
                 origin_attachments=departure.attachments,
                 origin_attached_to=departure.attached_to,
                 departure_sources=sources.sources,
@@ -681,7 +684,12 @@ class ZoneTransitionOwner:
                     plan.prepared_replacement.read_ahead_chapter
                 ),
                 cast_option=departure.cast_option,
+                trigger_batch=trigger_batch,
             )
+        if not defer_control_sync:
+            from .counter_placement_events import dispatch_counter_event_trees
+            dispatch_counter_event_trees(self.host, (plan.prepared_replacement,), reason=reason,trigger_batch=trigger_batch)
+            enqueue_trigger_batch(self.host,trigger_batch)
 
     def _log_prevented_token(
         self,
@@ -838,6 +846,9 @@ class ZoneTransitionOwner:
             card_object=card.is_card_object,
             previous_characteristics=departure.characteristics,
             current_characteristics=self.host._effective_card_data(card),
+            previous_counters=departure.counters,
+            current_counters=dict(card.counters) if departure.counters is not None else None,
+            schema_version=2 if departure.counters is not None else 1,
             previous_copy_snapshot=departure.copy_snapshot,
             current_copy_snapshot=(token_copy_snapshot(self.host, card)
                                    if card.zone == "battlefield" else None),
@@ -957,6 +968,8 @@ class ZoneTransitionOwner:
         for occurrence in occurrences:
             record_zone_change_history(self.host, occurrence)
         trigger_batch: list[StackItem] = []
+        from .counter_placement_events import dispatch_counter_event_trees
+        dispatch_counter_event_trees(self.host, tuple(prepared.values()), reason=reason, trigger_batch=trigger_batch)
         for card, departure in snapshots:
             sources = departure.trigger_sources
             self.host._dispatch_zone_change_events(
@@ -966,6 +979,7 @@ class ZoneTransitionOwner:
                 origin_controller=departure.controller,
                 origin_logical_object_id=departure.logical_object_id,
                 origin_data=departure.characteristics,
+                origin_counters=departure.counters,
                 origin_attachments=departure.attachments,
                 origin_attached_to=departure.attached_to,
                 cast_option=departure.cast_option,
@@ -1004,6 +1018,7 @@ class ZoneTransitionOwner:
                 controller=card.controller,
                 logical_object_id=card.logical_object_id,
                 characteristics=copy.deepcopy(self.host._effective_card_data(card)),
+                counters=dict(card.counters),
                 attachments=tuple(
                     self.state.cards[attachment_id].ref
                     for attachment_id in card.attachments

@@ -54,11 +54,11 @@ def _apply_bounce_or_destroy_or_discard_or_exile_or_move_or_sacrifice(
         "bounce": {"battlefield"},
         "discard": {"hand"},
     }
-    card = host._resolve_object(
-        actor,
-        str(effect["card"]),
-        zones=implicit_zones.get(op),
-    )
+    if 'hand_entry_query' in effect:
+        from ..hand_entry_move import resolve_selected_hand_entry_card
+        card=resolve_selected_hand_entry_card(host,effect,actor=actor)
+    else:
+        card = host._resolve_object(actor,str(effect["card"]),zones=implicit_zones.get(op))
     if op == "destroy":
         result = destroy_permanent_refs(
             host,

@@ -375,6 +375,306 @@
       },
       "candidate_bundles": [
         {
+          "bundle_id": "bundle:counter-placement-events",
+          "member_family_ids": [
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding"
+          ],
+          "canonical_owner_ids": [
+            "capability:trigger.event.normalized_counter_placement",
+            "component:quorune.counter_placement_events.capture_counter_placement_occurrences"
+          ],
+          "source_contexts": [
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "committed-counter-kind",
+            "per-object-or-per-counter",
+            "placing-player"
+          ],
+          "shared_dependencies": [
+            "counter.placement.quantity_replacement",
+            "trigger.placement.apnap"
+          ],
+          "shared_grammar": "Battlefield counter-put occurrences from canonical placement, entry and damage leaves with independent result closure.",
+          "estimated_implementation_hours": 3,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Retain measured whole-card gains in the combined delivery, excluding unsupported siblings.",
+          "explicit_exclusions": [
+            "Offbattlefield removal",
+            "One-or-more on one-or-more objects aggregate grammar",
+            "Threshold and first-per-turn",
+            "Unrepresented bodies"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "counter-placement-event-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:whole-hand-discard",
+          "member_family_ids": [
+            "effect_clause:ordered-effect-composition",
+            "event_binding:normalized-event-binding",
+            "quantity_expression:dynamic-quantity"
+          ],
+          "canonical_owner_ids": [
+            "capability:zone.discard.whole_hand",
+            "component:quorune.semantic_choices.intent_host.SemanticChoiceIntentHostMixin.move_objects_simultaneously_intent",
+            "component:quorune.whole_hand_discard.resolve_whole_hand_discard"
+          ],
+          "source_contexts": [
+            "activated",
+            "spell",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "independent-following-draw",
+            "simultaneous-discard",
+            "whole-hand"
+          ],
+          "shared_dependencies": [
+            "zone.change.destination_replacement",
+            "zone.discard.typed_cause",
+            "zone.draw.library_to_hand"
+          ],
+          "shared_grammar": "Discard entire represented hands simultaneously, then execute separately exact fixed or public-quantity draw instructions through their existing owners.",
+          "estimated_implementation_hours": 3,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Measured original whole-card closure accumulates in the combined delivery while unsupported siblings remain residual.",
+          "explicit_exclusions": [
+            "Linked greatest-discarded-this-way counts",
+            "Team and unknown hands",
+            "Unrepresented costs, events and siblings"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "whole-hand-discard-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:fixed-static-characteristic-setting",
+          "member_family_ids": [
+            "continuous_layer:continuous-effect-layers-and-dependencies"
+          ],
+          "canonical_owner_ids": [
+            "capability:continuous.characteristics.fixed_public_setting",
+            "component:quorune.semantic_runtime.fixed_characteristic_effects.fixed_characteristic_effects"
+          ],
+          "source_contexts": [
+            "static"
+          ],
+          "normalized_literal_parameters": [
+            "constant-characteristics",
+            "public-battlefield-subject",
+            "reciprocal-attachment"
+          ],
+          "shared_dependencies": [
+            "continuous.ability.fixed_query_keyword_grant",
+            "continuous.attached.fixed_characteristics"
+          ],
+          "shared_grammar": "One fully consumed constant characteristic setting through the canonical live layer evaluator and public query owner.",
+          "estimated_implementation_hours": 3,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Retain measured whole-card closure in the combined delivery while independent unsupported siblings remain blocked.",
+          "explicit_exclusions": [
+            "Basic land type replacement",
+            "General dependency rewrite",
+            "Names/chosen/dynamic values",
+            "Unrepresented conditions and quoted grants"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "static-characteristic-setting-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:public-quantity-mana",
+          "member_family_ids": [
+            "activated_effect:intrinsic-mana-ability",
+            "effect_clause:unparsed-add",
+            "quantity_expression:dynamic-quantity"
+          ],
+          "canonical_owner_ids": [
+            "capability:mana.production.public_quantity",
+            "component:quorune.dynamic_characteristics.query_characteristic_count",
+            "component:quorune.scalar_effect_amounts.resolve_scalar_effect_amount"
+          ],
+          "source_contexts": [
+            "activated",
+            "spell",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "closed-color-allocation",
+            "existing-public-quantity",
+            "postcost-source-information"
+          ],
+          "shared_dependencies": [
+            "activation.tap_untap_cost.haste",
+            "quantity_expression.public_query_effect_amount",
+            "quantity_expression.scalar_effect_amount"
+          ],
+          "shared_grammar": "Resolve one fixed or chosen-color mana output using existing public quantities, paid canonical costs and source information.",
+          "estimated_implementation_hours": 3,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Retain measured distinct whole-card closure in the combined delivery while preserving unsupported siblings.",
+          "explicit_exclusions": [
+            "Targeted or loyalty mana abilities",
+            "Unknown, linked and chosen quantities",
+            "Unrepresented costs and siblings",
+            "Variable allocation spell continuations"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "public-quantity-mana-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:named-counter-doubling",
+          "member_family_ids": [
+            "activated_effect:put-counter",
+            "activated_effect:unparsed-double-the-number",
+            "effect_clause:ordered-effect-composition",
+            "effect_clause:put-counter",
+            "quantity_expression:dynamic-quantity"
+          ],
+          "canonical_owner_ids": [
+            "capability:counter.producer.named_doubling",
+            "component:quorune.counter_doubling.snapshot_named_counter_doubling",
+            "component:quorune.counter_placement.place_counters"
+          ],
+          "source_contexts": [
+            "activated",
+            "spell",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "canonical-placement-batch",
+            "current-per-instruction-counts",
+            "one-named-counter-kind"
+          ],
+          "shared_dependencies": [
+            "counter.producer.fixed_effect",
+            "counter.producer.fixed_permanent_set_effect"
+          ],
+          "shared_grammar": "Double one named counter over existing public permanent source, target, attachment or affected-set references, preserving printed order and pending quantity provenance.",
+          "estimated_implementation_hours": 3,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Retain measured original whole-card closure within the combined net-200 delivery; independent unsupported siblings remain blocked.",
+          "explicit_exclusions": [
+            "All-kind, chosen and player counter quantities",
+            "Unknown counter facts",
+            "Unrepresented reference domains and unsupported siblings"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "named-counter-doubling-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:counter-qualified-zone-event",
+          "member_family_ids": [
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding"
+          ],
+          "canonical_owner_ids": [
+            "capability:trigger.event.counter_qualified_zone_change",
+            "component:quorune.compiler.qualified_zone_event_bindings.qualified_public_zone_event_binding_spec",
+            "component:quorune.zone_transitions.ZoneTransitionOwner"
+          ],
+          "source_contexts": [
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "departure-counter-lki",
+            "initialized-entry-counter-facts",
+            "one-named-counter-minimum-one"
+          ],
+          "shared_dependencies": [
+            "trigger.event.normalized_zone_change",
+            "trigger.event.qualified_zone_change",
+            "trigger.placement.apnap"
+          ],
+          "shared_grammar": "One closed counter-qualified entry, death, graveyard or leave subject with independently exact fixed results, preserving controller, token and event incarnation.",
+          "estimated_implementation_hours": 3,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Measure this reusable component against original pinned whole cards and retain it within a combined net-200 delivery; do not count leaf recognition or unsupported siblings as implemented cards.",
+          "explicit_exclusions": [
+            "Aggregation, combat and turn history",
+            "Counter quantities, no-counter and chosen-counter queries",
+            "Unrepresented producers and independently unsupported result siblings"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "counter-qualified-zone-event-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:cast-creature-target",
+          "member_family_ids": [
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding"
+          ],
+          "canonical_owner_ids": [
+            "capability:trigger.event.spell_cast_creature_target",
+            "component:quorune.rules.casting.commit._cast_creature_target_controllers"
+          ],
+          "source_contexts": [
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "current-creature-target-at-cast-completion",
+            "one-occurrence-per-cast",
+            "separate-source-caster-target-controller"
+          ],
+          "shared_dependencies": [
+            "target.revalidate_resolution",
+            "trigger.event.normalized_spell_cast"
+          ],
+          "shared_grammar": "Controller-bound completed spell casts with one or more current creature targets, optionally controlled by the source controller, and independently closed fixed trigger results.",
+          "estimated_implementation_hours": 3,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Retain distinct original whole-card closure as a component of a combined net-200 delivery; subtract independently confirmed lowering losses.",
+          "explicit_exclusions": [
+            "Copies, targets-only, counts and first-per-turn limits",
+            "Departed targets and last-known target information",
+            "Independent unrepresented whole-card siblings"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "cast-creature-target-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:permanent-spell-additional-price",
+          "member_family_ids": [
+            "effect_clause:typed-spell-additional-cost-clause"
+          ],
+          "canonical_owner_ids": [
+            "component:quorune.compiler.permanent_additional_cost_nodes.permanent_additional_cost_node",
+            "component:quorune.rules.casting.costs._cast_schema_and_mechanics"
+          ],
+          "source_contexts": [
+            "static"
+          ],
+          "normalized_literal_parameters": [
+            "one-fixed-price",
+            "primary-permanent-spell-schema"
+          ],
+          "shared_dependencies": [
+            "casting.additional_cost.fixed_alternative",
+            "casting.additional_cost.fixed_sacrifice",
+            "casting.additional_cost.zone_change.fixed_discard",
+            "casting.additional_cost.zone_change.fixed_exile",
+            "casting.additional_cost.zone_change.fixed_return_to_owner_hand"
+          ],
+          "shared_grammar": "One printed mandatory casting price on a permanent spell through the existing typed price parsers and authoritative casting transaction.",
+          "estimated_implementation_hours": 3,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Retain measured original whole-card closure as one component of a combined delivery meeting the 200 net distinct card floor.",
+          "explicit_exclusions": [
+            "Independently unsupported whole-card siblings",
+            "Repeated mandatory price declarations and open cost grammar"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "permanent-spell-additional-price-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:batched-card-support",
           "member_family_ids": [
             "activated_cost:complete-alternate-additional-cost-grammar",
@@ -437,6 +737,84 @@
           ],
           "measurement_status": "generated_probe",
           "measurement_probe_id": "batched-card-support-existing-owner-v1"
+        },
+        {
+          "bundle_id": "bundle:batched-card-support-v295",
+          "member_family_ids": [
+            "activated_cost:complete-alternate-additional-cost-grammar",
+            "activated_cost:restricted-payment-predicates",
+            "activation:fixed-source-prices",
+            "combat:assignment-rules",
+            "continuous:characteristics",
+            "counter:public-quantity",
+            "effect_clause:ordered-effect-composition",
+            "effect_clause:unrepresented-activation-cost-variant",
+            "event_binding:intervening-if-and-reflexive-trigger-grammar",
+            "event_binding:normalized-event-binding",
+            "keyword:fading",
+            "keyword:umbra-armor",
+            "keyword:vanishing",
+            "target_or_choice:conditional-effect"
+          ],
+          "canonical_owner_ids": [
+            "capability:ability.umbra_armor.fragment",
+            "capability:activation.power_up.entered_turn_cost",
+            "capability:combat.attack.defender_permission",
+            "capability:combat.attack.defender_permission.temporary",
+            "capability:combat.damage.assignment.as_unblocked",
+            "capability:combat.damage.assignment.toughness",
+            "capability:continuous.characteristics.fixed_public_setting",
+            "capability:counter.lifecycle.fading",
+            "capability:counter.lifecycle.vanishing",
+            "capability:counter.producer.fixed_effect",
+            "capability:counter.producer.fixed_event_trigger",
+            "capability:counter.producer.named_doubling",
+            "capability:mana.production.public_quantity",
+            "capability:permanent.destroy.umbra_armor",
+            "capability:quantity_expression.public_query_effect_amount",
+            "capability:quantity_expression.scalar_effect_amount",
+            "capability:trigger.event.counter_qualified_zone_change",
+            "capability:trigger.event.normalized_counter_placement",
+            "capability:trigger.event.normalized_counter_removal",
+            "capability:trigger.event.qualified_zone_change",
+            "capability:trigger.event.spell_cast_creature_target",
+            "capability:zone.discard.whole_hand",
+            "capability:zone.move.fixed_private_hand_choice"
+          ],
+          "source_contexts": [
+            "activated",
+            "spell",
+            "static",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "distinct-original-oracle-id",
+            "strict-whole-program-binding",
+            "union-of-reviewed-component-boundaries"
+          ],
+          "shared_dependencies": [
+            "activation.selected_zone_change.fixed",
+            "casting.kicker.fixed_mana",
+            "effect.choice.optional_fixed_mana_payment",
+            "resolution.effect.fixed_cast_fact",
+            "target.revalidate_resolution",
+            "trigger.event.normalized_zone_change",
+            "trigger.placement.apnap",
+            "zone.change.destination_replacement",
+            "zone.return.fixed_event_card"
+          ],
+          "shared_grammar": "Independently reviewed source activation prices, scoped effect composition, counter quantities and events, current characteristic rules, combat assignment exceptions, and complete Fading/Vanishing/Umbra lifecycles; whole-card union requires every sibling to close.",
+          "estimated_implementation_hours": 20,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "At least 200 net distinct capability-closed Commander cards through one delivery and immutable generated measurement.",
+          "explicit_exclusions": [
+            "Duplicate Oracle IDs do not increase gain",
+            "Independent unrepresented siblings remain residual",
+            "Lost support subtracts from final delivery"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "batched-card-support-current-census-v2"
         },
         {
           "bundle_id": "bundle:copiable-token-production-recipes",
@@ -4547,8 +4925,8 @@
           "estimated_generation_hours": 1,
           "expected_downstream_closure": "Promotes a normal-floor cross-era movement cohort across spells, triggers, activations, and modal programs while sharing current characteristic queries, APNAP public-set ordering, owner-relative destinations, prospective battlefield controller facts, private selection, stun-counter replacement, rollback, projection, and exact replay.",
           "explicit_exclusions": [
-            "attachment-dependent battlefield entry, including Auras, and additional entry-counter instructions",
             "continuous untap prohibitions, next-untap-step schedules, remove-from-combat riders, and optional aggregate tap-or-untap choices",
+            "direct generic Aura selection, unrepresented attachment domains, and additional entry-counter instructions",
             "independently unsupported sibling abilities, history-linked results, and unrepresented destination replacements",
             "library, opponent-hand, command, stack, attacking-entry, copied, granted, and text-changed private selections",
             "variable, optional public-set, random, chosen, linked, delayed-return, numeric-characteristic, dynamic-count, and open exception-list movement"
@@ -5326,9 +5704,9 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v277-batched-card-support",
-      "compiler_version": "oracle-ir-v277",
-      "bundle_id": "bundle:batched-card-support",
+      "transition_id": "oracle-ir-v295-batched-card-support",
+      "compiler_version": "oracle-ir-v295",
+      "bundle_id": "bundle:batched-card-support-v295",
       "candidate_ids": [
         "bundle:fixed-counted-activation-zone-cost",
         "bundle:fixed-event-card-return",
@@ -5340,21 +5718,45 @@
       "family_ids": [
         "activated_cost:complete-alternate-additional-cost-grammar",
         "activated_cost:restricted-payment-predicates",
+        "activation:fixed-source-prices",
+        "combat:assignment-rules",
+        "continuous:characteristics",
+        "counter:public-quantity",
         "effect_clause:ordered-effect-composition",
         "effect_clause:unrepresented-activation-cost-variant",
         "event_binding:intervening-if-and-reflexive-trigger-grammar",
         "event_binding:normalized-event-binding",
+        "keyword:fading",
+        "keyword:umbra-armor",
+        "keyword:vanishing",
         "target_or_choice:conditional-effect"
       ],
       "capability_ids": [
-        "activation.selected_zone_change.fixed",
-        "resolution.effect.fixed_cast_fact",
-        "trigger.entry.fixed_kicked_result",
-        "trigger.event.normalized_target_announcement",
-        "trigger.source.fixed_maintenance",
-        "zone.return.fixed_event_card"
+        "ability.umbra_armor.fragment",
+        "activation.power_up.entered_turn_cost",
+        "combat.attack.defender_permission",
+        "combat.attack.defender_permission.temporary",
+        "combat.damage.assignment.as_unblocked",
+        "combat.damage.assignment.toughness",
+        "continuous.characteristics.fixed_public_setting",
+        "counter.lifecycle.fading",
+        "counter.lifecycle.vanishing",
+        "counter.producer.fixed_effect",
+        "counter.producer.fixed_event_trigger",
+        "counter.producer.named_doubling",
+        "mana.production.public_quantity",
+        "permanent.destroy.umbra_armor",
+        "quantity_expression.public_query_effect_amount",
+        "quantity_expression.scalar_effect_amount",
+        "trigger.event.counter_qualified_zone_change",
+        "trigger.event.normalized_counter_placement",
+        "trigger.event.normalized_counter_removal",
+        "trigger.event.qualified_zone_change",
+        "trigger.event.spell_cast_creature_target",
+        "zone.discard.whole_hand",
+        "zone.move.fixed_private_hand_choice"
       ],
-      "measurement_id": "measurement:batched-card-support",
+      "measurement_id": "measurement:batched-card-support-v295",
       "non_harvest_reason": null
     },
 

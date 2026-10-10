@@ -61,6 +61,7 @@ def commit_prepared_entry_results(
         reason=reason,
         log=log,
         error_type=error_type,
+        dispatch_events=False,
     )
     try:
         commit_entry_keyword_grants(host, card, prepared.keyword_grants)

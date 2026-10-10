@@ -168,6 +168,11 @@ def _field(
         return field
     if value_type == "mana_bundle":
         options = _rows(value.get("options"))
+        if value.get("allowed_colors"):
+            field.update({"control": "mana_modes", "allowed_colors": list(value["allowed_colors"]),
+                "total": int(value["total"]), "single_color": bool(value.get("single_color")),
+                "default": {str(value["allowed_colors"][0]): int(value["total"])}})
+            return field
         field.update(
             {
                 "control": "mana_modes",

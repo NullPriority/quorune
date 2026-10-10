@@ -8,6 +8,7 @@ from typing import Any, Iterable, Mapping, Sequence
 from .affected_player_sacrifice_capability_shapes import (
     fixed_affected_player_sacrifice_node_capabilities,
 )
+from .whole_hand_discard_shapes import whole_hand_discard_node_capabilities
 from .affected_player_discard_capability_shapes import (
     fixed_affected_player_discard_node_capabilities,
 )
@@ -104,6 +105,7 @@ FIXED_EFFECT_CLAUSE_SEQUENCE_CAPABILITY = (
 )
 
 _COMPONENT_RESOLVERS = (
+    whole_hand_discard_node_capabilities,
     fixed_control_node_capabilities,
     fixed_attachment_action_node_capabilities,
     fixed_source_characteristics_node_capabilities,

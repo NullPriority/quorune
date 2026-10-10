@@ -66,3 +66,12 @@ ordering, Flying, Vigilance, Double strike, Lifelink, Deathtouch, Trample,
 Menace, Indestructible, and ordinary permanent Hexproof only through their
 named capability pairs. Other entries in the CR 122.1b vocabulary remain
 unknown until an exact consumer interaction is declared and certified.
+
+Fixed public characteristic settings have explicit composition witnesses with
+both Aura targeting and Equip recipient changes. Whole-hand discard has a
+player-target revalidation witness in which the target concedes before the
+spell resolves, preserving every surviving hand and exact replay. Original
+carriers combining quantity counters, public-quantity mana or whole-hand
+discard with unresolved prevention, replacement, Saga or choice siblings have
+separate whole-CardProgram admission witnesses. Those declarations establish
+fail-closed rejection; they do not claim the unresolved siblings are playable.

@@ -22,6 +22,7 @@ ACTIVATION_ONCE_PER_TURN_CAPABILITY = "activation.usage.once_per_turn"
 class ActivationLimit(str, Enum):
     ONCE_PER_TURN = "once_per_turn"
     EXHAUST_ONCE = "exhaust_once"
+    POWER_UP_ONCE = "power_up_once"
 
 
 _ONCE_PER_TURN_FIELD = "once_per_turn_activations"
@@ -80,7 +81,7 @@ def activation_usage_verdict(
             if raw.get(identity) == turn_sequence
             else ActivationUsageVerdict(True)
         )
-    if limit is ActivationLimit.EXHAUST_ONCE:
+    if limit in {ActivationLimit.EXHAUST_ONCE,ActivationLimit.POWER_UP_ONCE}:
         raw = annotations.get(_EXHAUST_FIELD, ())
         if not isinstance(raw, (list, tuple)) or any(
             type(value) is not str or not value for value in raw

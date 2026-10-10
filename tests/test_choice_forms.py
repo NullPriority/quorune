@@ -10,6 +10,18 @@ from quorune.choice_forms import (
 
 
 class ChoiceFormTests(unittest.TestCase):
+    def test_public_quantity_mana_form_preserves_allocation_constraints(self):
+        action={"id":"activate:source:ab1","action":"activate","choice_schema":{
+            "mana_output":{"type":"mana_bundle","label":"Mana to add",
+                "allowed_colors":["G","U"],"total":3,"single_color":False}}}
+        form=build_action_form(action,decision_kind="priority",context={})
+        field=form['fields'][0]
+        self.assertEqual('mana_modes',field['control'])
+        self.assertEqual(['G','U'],field['allowed_colors'])
+        self.assertEqual(3,field['total']);self.assertFalse(field['single_color'])
+        self.assertEqual({'G':3},field['default'])
+        self.assertEqual({'mana_output'},delegated_choice_fields(action,decision_kind='priority',context={}))
+
     def test_copy_retention_forms_expose_indices_not_internal_snapshots(self):
         schema = {"groups": [{"id": "target", "min": 2, "max": 2, "legal_refs": ["CURRENT"]}]}
         context = {"default_target_groups": {"target": ["OLD", "OTHER"]},

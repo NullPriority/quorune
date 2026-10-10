@@ -156,9 +156,6 @@ from .zone_trigger_events import (
     ZoneChangeOccurrence,
     ZoneTransitionKind,
 )
-from .zone_trigger_processing import (
-    DepartureTriggerSnapshot,
-)
 from .zone_transition_model import ZoneDepartureSnapshot
 from .zone_transitions import ZoneTransitionOwner
 from .turn_priority_owner import TurnPriorityDecisionOwner
@@ -1218,6 +1215,7 @@ class CommanderEngine(
         origin_controller: str,
         origin_logical_object_id: str,
         origin_data: Mapping[str, Any],
+        origin_counters: Mapping[str, int] | None = None,
         origin_attachments: Sequence[str],
         origin_attached_to: str | None = None,
         departure_sources: Sequence[CardInstance],
@@ -1235,20 +1233,17 @@ class CommanderEngine(
         occurrence, event_triggers, owns_trigger_batch = (
             ZoneTransitionOwner(self).dispatch_zone_change_events(
                 card,
-                departure=ZoneDepartureSnapshot(
+                departure=ZoneDepartureSnapshot.from_event_sources(
                     origin=origin,
                     controller=origin_controller,
                     logical_object_id=origin_logical_object_id,
                     characteristics=origin_data,
-                    attachments=tuple(origin_attachments),
+                    counters=origin_counters,
+                    attachments=origin_attachments,
                     attached_to=origin_attached_to, cast_option=cast_option,
-                    trigger_sources=DepartureTriggerSnapshot(
-                        sources=tuple(departure_sources),
-                        source_zones=dict(departure_source_zones),
-                        source_characteristics=dict(
-                            departure_source_characteristics
-                        ),
-                    ),
+                    sources=departure_sources,
+                    source_zones=departure_source_zones,
+                    source_characteristics=departure_source_characteristics,
                 ),
                 destination=destination,
                 reason=reason,
@@ -6871,7 +6866,10 @@ class CommanderEngine(
                 permanents=self._permanent_sba_snapshots(),
                 objects=self._object_sba_snapshots(),
             )
-            execution = prepare_state_based_execution(self, sba_batch)
+            from .state_based_replacement_coordination import prepare_state_based_execution_or_choice
+            execution = prepare_state_based_execution_or_choice(self, sba_batch)
+            if execution is None:
+                return True
             consume_deathtouch_damage_checks(
                 self, sba_batch.deathtouch_checks
             )
@@ -7028,24 +7026,8 @@ class CommanderEngine(
                         changed_objects=detached,
                     )
                 if counter_changes:
-                    self._log(
-                        None,
-                        "state.counters_annihilated",
-                        (
-                            "State-based actions removed opposing "
-                            "+1/+1 and -1/-1 counters."
-                        ),
-                        {"changes": counter_changes},
-                        importance=2,
-                        changed_objects=[
-                            object_id
-                            for object_id, _ in (
-                                sba_batch.counter_pairs_to_remove
-                            )
-                            if self.state.cards[object_id].zone
-                            == "battlefield"
-                        ],
-                    )
+                    from .state_based_replacement_coordination import log_state_based_counter_annihilation
+                    log_state_based_counter_annihilation(self, sba_batch, counter_changes)
                 if maximum_counter_changes:
                     self._log(
                         None,

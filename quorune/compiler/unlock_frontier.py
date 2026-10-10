@@ -650,6 +650,21 @@ def analyze_card_unlocks(
                 row = _orphan_ability_row(residual, index=index)
                 row["face_id"] = face.face_id
                 abilities.append(row)
+    if program is not None:
+        for index, residual in enumerate(program.residuals):
+            if residual.get('kind') != 'program_lowering' or not residual.get('material'):
+                continue
+            family = 'effect_clause:ordered-effect-composition'
+            span = residual.get('span', {})
+            abilities.append({
+                'ability_id': 'program-lowering:' + str(residual['residual_id']),
+                'face_id': str(residual.get('face_id') or 'front'),
+                'kind': 'program_lowering', 'source_line': int(span.get('line') or 1),
+                _STATUS_FIELD: 'unresolved',
+                'blockers': {'canonical_family_ids': [family], 'compiler_stage_ids': ['effect_clause'],
+                    'interaction_ids': ['complete physical spell program lowering']},
+                'residuals': [{'residual_id': residual['residual_id'], 'family_ids': [family]}],
+            })
     family_ids = sorted(
         {
             family_id

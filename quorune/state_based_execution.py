@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Protocol
+from typing import Any, Protocol, Sequence
 from .control_effects import ControlEffectHost, synchronize_control_effects
 
 from .counter_removal import (
@@ -219,6 +219,7 @@ def _prepare_counter_removals(
 def prepare_state_based_execution(
     host: DestructionHost,
     batch: StateBasedActionBatch,
+    *, replacement_selections: Sequence[Any] = (),
 ) -> StateBasedExecutionPlan:
     """Bind one pure SBA snapshot to typed destruction and zone owners."""
 
@@ -235,6 +236,7 @@ def prepare_state_based_execution(
         cause=DestructionCause.STATE_BASED_ACTION,
         actor=None,
         reason="state-based action",
+        replacement_selections=replacement_selections,
     )
     saga_ids = tuple(
         value.object_id for value in batch.saga_sacrifices

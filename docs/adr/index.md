@@ -121,3 +121,4 @@ deployment modes, or architecture review thresholds.
 - [ADR 0104 — typed linked exile and return](0104-typed-linked-exile-return.md)
 - [ADR 0105 — typed fixed resolution control and optional source untap](0105-typed-fixed-resolution-control.md)
 - [ADR 0106 — typed public entry designations](0106-typed-public-entry-designations.md)
+- [ADR 0107 — typed coupled Umbra destruction replacement](0107-typed-coupled-umbra-destruction.md)

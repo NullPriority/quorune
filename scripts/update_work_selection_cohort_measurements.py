@@ -231,7 +231,7 @@ def _source_checkpoint_frontier(transition_id: str) -> dict:
             prior = next((row for row in reversed(tuple(entries))
                           if isinstance(row, dict) and row.get("bundle_id") == declaration.get("bundle_id")
                           and row.get("receipt_identity_kind") == "semantic_content"), None)
-            if prior is not None:
+            if prior is not None and not _prior_frontier_is_current_main(prior):
                 head = prior.get("head_receipt", {}).get("blobs", {}).get("coverage/card-unlock-frontier.json.gz", {})
                 checkpoint = subprocess.run(["git", "rev-parse", "HEAD:coverage/card-unlock-frontier.json.gz"],
                     cwd=ROOT, check=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -299,6 +299,36 @@ def _source_checkpoint_frontier(transition_id: str) -> dict:
             "Cannot read the source-checkpoint card frontier for transition measurement"
         )
     return _decode_frontier(completed.stdout, label="Source-checkpoint")
+
+
+def _prior_frontier_is_current_main(prior: dict) -> bool:
+    """A landed batch head is the next batch's base, never its old base."""
+    expected = prior.get("head_receipt", {}).get("blobs", {}).get("coverage/card-unlock-frontier.json.gz", {}).get("git_blob_oid")
+    if not isinstance(expected, str):
+        return False
+    references = []
+    event_path = os.environ.get("GITHUB_EVENT_PATH")
+    if event_path:
+        try:
+            event = json.loads(Path(event_path).read_text(encoding="utf-8"))
+            base_sha = event.get("pull_request", {}).get("base", {}).get("sha")
+            if isinstance(base_sha, str) and re.fullmatch(r"[0-9a-f]{40}", base_sha):
+                references.append(base_sha)
+        except (OSError, UnicodeError, json.JSONDecodeError, AttributeError):
+            pass
+    references.extend(("origin/main", "main"))
+    for reference in references:
+        completed = subprocess.run(["git", "rev-parse", f"{reference}:coverage/card-unlock-frontier.json.gz"],
+                                   cwd=ROOT, check=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        if completed.returncode and re.fullmatch(r"[0-9a-f]{40}", reference):
+            fetched = subprocess.run(["git", "fetch", "--no-tags", "--depth=1", "origin", reference],
+                                     cwd=ROOT, check=False, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+            if fetched.returncode == 0:
+                completed = subprocess.run(["git", "rev-parse", f"{reference}:coverage/card-unlock-frontier.json.gz"],
+                                           cwd=ROOT, check=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        if completed.returncode == 0 and completed.stdout.decode("ascii").strip() == expected:
+            return True
+    return False
 
 
 def _preserved_transition_measurement(

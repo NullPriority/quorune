@@ -36,7 +36,7 @@
     "ordinary printed Exhaust now uses one typed per-ability, per-object once-only activation owner shared by advertised actions and accepted commands; control changes and phasing preserve the consumed use, while a zone change creates a new object and resets it. One closed source-threaded fixed counter-then-until-end-of-turn characteristic sequence is shared by activated and triggered contexts, preserves printed order, suspends for replacement choices, revalidates source identity, and commits atomically. Effects that grant another Exhaust use, copied, granted, removed, or face-down Exhaust abilities, reverse-order or broader source sequences, usage-limited mana auto-payment, and independently unsupported costs or results remain explicit blockers, so aggregate Exhaust is not trusted"
   ],
   "generated": {
-    "evaluated_input_fingerprint": "818aec177155de14cf7d98849ad20788ef58502ca2b4874cd07aa7d93d5e4540",
+    "evaluated_input_fingerprint": "e7450425e0f28e59bd6370f2ed7cef01d0b8eac2182f02ee5acbc26497651d84",
     "generator": "scripts/update_platform_status.py",
     "input_fingerprint_algorithm": "platform-readiness-derived-inputs-sha256-v1",
     "source": "platform/readiness-source.json",
@@ -687,11 +687,11 @@
   },
   "rules_coverage": {
     "commander_oracle": {
-      "material_residuals": 25720,
+      "material_residuals": 25398,
       "status_counts": {
-        "exact": 12698,
-        "partial": 10175,
-        "unresolved": 8750
+        "exact": 12913,
+        "partial": 10056,
+        "unresolved": 8654
       },
       "total": 31623
     },
@@ -709,11 +709,11 @@
       "trusted": 7
     },
     "oracle": {
-      "material_residuals": 32196,
+      "material_residuals": 31854,
       "status_counts": {
-        "exact": 16027,
-        "partial": 11437,
-        "unresolved": 11159
+        "exact": 16249,
+        "partial": 11324,
+        "unresolved": 11050
       },
       "total": 38623
     },
@@ -750,7 +750,7 @@
     "generated_validation_modules": 32,
     "migration_files": 1,
     "overlay_test_suites": 17,
-    "primary_test_modules": 372,
+    "primary_test_modules": 391,
     "primary_test_shards": 13,
     "schema_files": 18,
     "server_files": 5,
@@ -760,31 +760,31 @@
     "card_program_census": {
       "commander": {
         "cards_considered": 31623,
-        "material_residuals": 25723,
+        "material_residuals": 25828,
         "status_counts": {
-          "residual": 18925,
-          "trusted": 12698
+          "residual": 18710,
+          "trusted": 12913
         },
         "trust_basis_counts": {
-          "capability_closed": 12650,
-          "legacy_reviewed": 15,
-          "mixed": 33,
-          "unresolved": 18925
+          "capability_closed": 12863,
+          "legacy_reviewed": 16,
+          "mixed": 34,
+          "unresolved": 18710
         }
       },
       "full": {
         "cards_considered": 38623,
-        "material_residuals": 32199,
+        "material_residuals": 32335,
         "status_counts": {
           "failed": 2248,
-          "residual": 22594,
-          "trusted": 13781
+          "residual": 22373,
+          "trusted": 14002
         },
         "trust_basis_counts": {
-          "capability_closed": 13733,
-          "legacy_reviewed": 15,
-          "mixed": 33,
-          "unresolved": 22594
+          "capability_closed": 13952,
+          "legacy_reviewed": 16,
+          "mixed": 34,
+          "unresolved": 22373
         }
       }
     },

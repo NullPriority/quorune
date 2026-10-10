@@ -37,6 +37,7 @@ class DestructionDisposition(str, Enum):
     INDESTRUCTIBLE = "indestructible"
     REGENERATION = "regeneration"
     SHIELD_COUNTER = "shield_counter"
+    UMBRA_ARMOR = "umbra_armor"
 
 
 class DestructionHost(Protocol):
@@ -163,6 +164,11 @@ class DestructionPlan:
     regeneration_prohibited: bool = False
     destruction_event_order: tuple[str, ...] = ()
     replacement_selections: tuple[str | FrozenMap, ...] = ()
+    requested_object_ids: tuple[str, ...] = ()
+    replacement_subjects: tuple[object, ...] = ()
+    umbra_protections: tuple[object, ...] = ()
+    destruction_replacement_selections: tuple[str | FrozenMap, ...] = ()
+    damage_clear_object_ids: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         if not isinstance(self.cause, DestructionCause):
@@ -196,7 +202,7 @@ class DestructionPlan:
             raise DestructionError(
                 "A permanent may be destroyed only once per batch"
             )
-        if any(
+        if not self.replacement_subjects and any(
             entry.disposition
             is not _destruction_disposition(
                 cause=self.cause,
@@ -210,7 +216,7 @@ class DestructionPlan:
             raise DestructionError(
                 "Destruction entry disposition contradicts its snapshot"
             )
-        if self.cause is DestructionCause.EFFECT and not self.regeneration_prohibited and any(
+        if not self.replacement_subjects and self.cause is DestructionCause.EFFECT and not self.regeneration_prohibited and any(
             not entry.indestructible
             and entry.shield_counters
             and entry.regeneration_shields
@@ -224,6 +230,17 @@ class DestructionPlan:
             raise DestructionError(
                 "Destruction shield changes require a typed counter plan"
             )
+        if self.replacement_subjects:
+            from .destruction_replacement_options import DestructionReplacementSubject
+            from .umbra_armor_model import UmbraArmorProtection
+            if (not isinstance(self.replacement_subjects, tuple)
+                    or any(not isinstance(value, DestructionReplacementSubject) for value in self.replacement_subjects)
+                    or len({value.object_id for value in self.replacement_subjects}) != len(self.replacement_subjects)
+                    or not self.requested_object_ids
+                    or not set(self.requested_object_ids).issubset({value.object_id for value in self.replacement_subjects})
+                    or any(not isinstance(value, UmbraArmorProtection) for value in self.umbra_protections)
+                    or not set(self.damage_clear_object_ids).issubset({entry.object_id for entry in self.entries})):
+                raise DestructionError("Destruction replacement plan fields are malformed")
         expected_shields = {
             entry.object_id: entry
             for entry in self.entries
@@ -433,74 +450,24 @@ def prepare_destructions(
     if len(object_ids) != len(set(object_ids)):
         raise DestructionError("A permanent may be destroyed only once per batch")
 
+    from .destruction_replacement_adapter import prepare_destruction_replacement_if_needed
+    replaced = prepare_destruction_replacement_if_needed(
+        host, canonical_requests, cause=cause, actor=actor, reason=reason,
+        regeneration_prohibited=regeneration_prohibited, event_order=event_order,
+        replacement_selections=replacement_selections,
+    )
+    if replaced is not None:
+        return replaced
+
     entries: list[DestructionEntry] = []
     shield_changes: list[CounterChange] = []
+    from .destruction_replacement_adapter import legacy_destruction_entry
     for request in canonical_requests:
-        card = host.state.cards.get(request.object_id)
-        if card is None:
-            raise DestructionError("Destruction permanent does not exist")
-        if card.zone != "battlefield" or bool(card.phased_out):
-            raise DestructionError(
-                "Only a phased-in battlefield permanent can be destroyed"
-            )
-        if card.logical_object_id != request.logical_object_id:
-            raise DestructionError(
-                "Destruction permanent changed logical identity"
-            )
-        keywords = _effective_keywords(host, card)
-        raw_shield_count = card.counters.get("shield", 0)
-        if type(raw_shield_count) is not int or raw_shield_count < 0:
-            raise DestructionError(
-                "Shield counters must be nonnegative integers"
-            )
-        shield_count = raw_shield_count
-        regeneration_count = getattr(card, "regeneration_shields", None)
-        if type(regeneration_count) is not int or regeneration_count < 0:
-            raise DestructionError(
-                "Regeneration shields must be nonnegative integers"
-            )
-        indestructible = "indestructible" in keywords
-        if (
-            cause is DestructionCause.EFFECT
-            and not regeneration_prohibited
-            and not indestructible
-            and shield_count
-            and regeneration_count
-        ):
-            raise DestructionError(
-                "Competing shield-counter and regeneration replacements "
-                "require an unsupported affected-player choice"
-            )
-        disposition = _destruction_disposition(
-            cause=cause,
-            indestructible=indestructible,
-            shield_counters=shield_count,
-            regeneration_shields=regeneration_count,
-            regeneration_prohibited=regeneration_prohibited,
-        )
-        if disposition is DestructionDisposition.SHIELD_COUNTER:
-            shield_changes.append(
-                CounterChange(
-                    subject_kind="permanent",
-                    subject_id=card.object_id,
-                    counter_name="shield",
-                    amount=-1,
-                    expected_zone="battlefield",
-                    expected_logical_object_id=card.logical_object_id,
-                )
-            )
-        entries.append(
-            DestructionEntry(
-                object_id=card.object_id,
-                object_ref=card.ref,
-                logical_object_id=card.logical_object_id,
-                controller=card.controller,
-                disposition=disposition,
-                indestructible=indestructible,
-                shield_counters=shield_count,
-                regeneration_shields=regeneration_count,
-            )
-        )
+        entry = legacy_destruction_entry(host, request, cause=cause, regeneration_prohibited=regeneration_prohibited)
+        if entry.disposition is DestructionDisposition.SHIELD_COUNTER:
+            shield_changes.append(CounterChange("permanent", entry.object_id, "shield", -1,
+                                                "battlefield", entry.logical_object_id))
+        entries.append(entry)
 
     if not isinstance(replacement_selections, (list, tuple)):
         raise DestructionError(
@@ -549,6 +516,19 @@ def validate_destruction_plan(
 ) -> None:
     if not isinstance(plan, DestructionPlan):
         raise DestructionError("Destruction commits require a typed plan")
+    if plan.replacement_subjects:
+        current = prepare_destructions(
+            host, tuple(DestructionRequest(object_id, next(subject.logical_object_id
+                        for subject in plan.replacement_subjects if subject.object_id == object_id))
+                        for object_id in plan.requested_object_ids),
+            cause=plan.cause, actor=plan.actor, reason=plan.reason,
+            regeneration_prohibited=plan.regeneration_prohibited,
+            event_order=plan.requested_object_ids,
+            replacement_selections=plan.destruction_replacement_selections,
+        )
+        if current != plan:
+            raise DestructionError("Destruction replacement plan is stale")
+        return
     for entry in plan.entries:
         card = host.state.cards.get(entry.object_id)
         if (
@@ -659,6 +639,11 @@ def commit_destruction_plan(
         raise DestructionError(
             "Replacement selections do not support a compound move batch"
         )
+    if plan.damage_clear_object_ids:
+        from .damage_results import clear_permanent_damage
+        for object_id in plan.damage_clear_object_ids:
+            entry = next(value for value in plan.entries if value.object_id == object_id)
+            clear_permanent_damage(host, object_id, logical_object_id=entry.logical_object_id)
     if changes:
         host._move_cards_simultaneously(
             changes,
@@ -732,6 +717,10 @@ def commit_destruction_plan(
                 changed_objects=[entry.object_id],
                 changed_players=[entry.controller],
             )
+        elif entry.disposition is DestructionDisposition.UMBRA_ARMOR:
+            host._log(plan.actor, "permanent.destroy.umbra", f"Umbra armor protected {entry.object_ref}.",
+                      {"object": entry.object_ref, "reason": plan.reason}, importance=2,
+                      changed_objects=[entry.object_id], changed_players=[entry.controller])
         else:
             indestructible.append(entry.object_id)
             host._log(

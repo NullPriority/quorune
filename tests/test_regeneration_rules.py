@@ -1231,7 +1231,8 @@ class RegenerationRuntimeTests(unittest.TestCase):
         source.regeneration_shields = 1
         source.counters["shield"] = 1
         before_choice = authoritative_state_hash(engine.state)
-        with self.assertRaisesRegex(DestructionError, "affected-player choice"):
+        from quorune.replacement.ordering import ReplacementChoiceRequired
+        with self.assertRaises(ReplacementChoiceRequired) as required:
             prepare_destructions(
                 engine,
                 (request_for_card(source),),
@@ -1239,6 +1240,8 @@ class RegenerationRuntimeTests(unittest.TestCase):
                 actor="B",
                 reason="competing replacement witness",
             )
+        self.assertEqual(source.controller, required.exception.pending.choice.chooser)
+        self.assertEqual(2, len(required.exception.pending.choice.options))
         self.assertEqual(before_choice, authoritative_state_hash(engine.state))
 
         source.temporary_keywords.append("indestructible")

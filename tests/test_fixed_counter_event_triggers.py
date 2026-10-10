@@ -948,7 +948,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
     def test_dynamic_spell_cast_characteristic_variants_remain_material(self):
         variants = (
             "Whenever you cast a spell with mana value 3, draw a card.",
-            "Whenever you cast a spell that targets a creature, draw a card.",
+            "Whenever you cast a spell that targets only a creature, draw a card.",
             "Whenever you cast or copy a Spirit spell, draw a card.",
             "Whenever you cast a Spirit spell, if a chosen player controls "
             "an artifact, draw a card.",
@@ -3283,6 +3283,23 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                 self.assertEqual(event, node.event)
                 self.assertFalse(ir.material_residuals)
 
+    def test_counter_event_optional_token_body_is_precisely_promoted(self):
+        text = "Whenever one or more +1/+1 counters are put on this creature, you may create a 1/1 green Squirrel creature token."
+        ir = self.compile(text, type_line="Creature — Fixture")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node = ir.faces[0].nodes[0]
+        self.assertEqual("counter.put", node.event)
+        self.assertIn("trigger.event.normalized_counter_placement", node.capability_dependencies)
+        optional = node.effects[0]
+        self.assertEqual("offer_optional_effect", optional["op"])
+        self.assertEqual("$controller", optional["player"])
+        token = optional["effects"][0]
+        self.assertEqual("create_token", token["op"])
+        self.assertEqual("Squirrel", token["name"])
+        self.assertEqual(1, token["quantity"])
+        self.assertEqual("$controller", token["controller"])
+        self.assertEqual(["G"], token["characteristics"]["colors"])
+
     def test_public_event_near_misses_remain_material(self):
         self.assertEqual("exact", self.compile("Whenever a creature you control becomes tapped, you may gain 1 life.", type_line="Creature — Fixture").status)
         cases = (
@@ -3303,7 +3320,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             "Whenever a creature you control becomes the target of a spell for the first time each turn, you "
             "may draw a card.",
             "Whenever a creature you control becomes tapped, you may gain 1 life. This ability triggers only once each turn.",
-            "Whenever one or more +1/+1 counters are put on this creature, you "
+            "Whenever one or more +1/+1 counters are put on this creature for the first time each turn, you "
             "may create a 1/1 green Squirrel creature token.",
             "When you cycle this card and when this creature dies, you may draw "
             "a card.",

@@ -9,12 +9,12 @@ from ..counter_placement import (
     CounterPlacementError,
     CounterPlacementRequest,
     place_counters,
-    place_counters_on_refs,
 )
+from ..counter_doubling import resolve_effect_counters_on_refs as place_counters_on_refs
 from ..counter_placement_sets import (
     CounterPlacementSetError,
-    resolve_counter_placement_set,
 )
+from ..counter_doubling import resolve_effect_counter_set as resolve_counter_placement_set
 from ..counter_placement_targets import (
     CounterPlacementTargetSetError,
     resolve_counter_placement_targets,

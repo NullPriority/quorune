@@ -7746,6 +7746,135 @@
       ],
       "interaction_order": 2,
       "assertion": "Original pinned Spreading Algae retains its typed enchantment and exact event return beside an unsupported tap-destruction sibling; actual whole CardProgram runtime binding rejects the composition without granting gameplay trust."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_ensoul_offer_animation_counters_source_departure_and_replay",
+      "piece_ids": [
+        "capability.attachment.aura.simple_object",
+        "capability.continuous.characteristics.fixed_public_setting"
+      ],
+      "capability_ids": [
+        "attachment.aura.simple_object",
+        "continuous.characteristics.fixed_public_setting"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual trusted Ensoul Artifact offers only legal artifact targets, rejects a wrong principal and nonartifact target atomically, animates an opposing artifact with its existing counters, and loses its source-bound setting after the Aura leaves; pre-action replay preserves the result."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_equipment_setting_tracks_reciprocal_recipient_and_reequip",
+      "piece_ids": [
+        "capability.attachment.equip.fixed_mana",
+        "capability.continuous.characteristics.fixed_public_setting"
+      ],
+      "capability_ids": [
+        "attachment.equip.fixed_mana",
+        "continuous.characteristics.fixed_public_setting"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual trusted Angelic Armaments uses offered and accepted Equip actions to apply current type, color and characteristic changes to its reciprocal recipient, then removes them from the first recipient on re-equip; exact pre-action replay preserves both recipients."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_wits_end_revalidates_departed_player_without_discarding_survivors",
+      "piece_ids": [
+        "capability.target.revalidate_resolution",
+        "capability.zone.discard.whole_hand"
+      ],
+      "capability_ids": [
+        "target.revalidate_resolution",
+        "zone.discard.whole_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual trusted Wit's End rejects a wrong principal atomically and accepts a legal player target. That player concedes before resolution; target revalidation prevents whole-hand discard from affecting any surviving player's private hand, with exact pending-command replay and save/load."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_original_batch_carriers_with_residual_siblings_reject_runtime_admission",
+      "piece_ids": [
+        "capability.counter.placement.quantity_replacement",
+        "residual.replacement.damage-prevention"
+      ],
+      "capability_ids": [
+        "counter.placement.quantity_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original pinned Rasputin Dreamweaver retains recognized quantity-counter entry beside unsupported damage prevention. Canonical whole CardProgram construction and runtime binding reject its unresolved composition without granting gameplay trust."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_original_batch_carriers_with_residual_siblings_reject_runtime_admission",
+      "piece_ids": [
+        "capability.mana.production.public_quantity",
+        "residual.replacement.replacement-applicability"
+      ],
+      "capability_ids": [
+        "mana.production.public_quantity"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original pinned Rotating Fireplace retains public-quantity mana beside unsupported tapped entry replacement. Canonical whole CardProgram runtime binding rejects the unresolved composition, rather than admitting its supported mana prefix."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_original_batch_carriers_with_residual_siblings_reject_runtime_admission",
+      "piece_ids": [
+        "capability.mana.production.public_quantity",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ],
+      "capability_ids": [
+        "mana.production.public_quantity"
+      ],
+      "interaction_order": 2,
+      "assertion": "The same original Rotating Fireplace carrier retains an explicit replacement-ordering residual and fails canonical whole-card runtime admission. This witnesses rejection, not successful replacement execution."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_original_batch_carriers_with_residual_siblings_reject_runtime_admission",
+      "piece_ids": [
+        "capability.zone.discard.whole_hand",
+        "residual.card_form.ordinary-saga-chapter-event-binding"
+      ],
+      "capability_ids": [
+        "zone.discard.whole_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original pinned The Flame of Keld contains recognized whole-hand discard beside incomplete ordinary Saga chapter binding. Canonical runtime admission rejects the unresolved whole CardProgram, preserving the unsupported chapter boundary."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_original_batch_carriers_with_residual_siblings_reject_runtime_admission",
+      "piece_ids": [
+        "capability.zone.discard.whole_hand",
+        "residual.target_or_choice.conditional-effect"
+      ],
+      "capability_ids": [
+        "zone.discard.whole_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original pinned Chandra Ablaze contains recognized whole-hand discard beside unsupported conditional effects. Whole CardProgram runtime binding rejects the unresolved composition without executing a supported prefix."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_original_batch_carriers_with_residual_siblings_reject_runtime_admission",
+      "piece_ids": [
+        "capability.zone.discard.whole_hand",
+        "residual.target_or_choice.target-predicate"
+      ],
+      "capability_ids": [
+        "zone.discard.whole_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "The same original Chandra Ablaze carrier retains an unsupported target-predicate residual and fails canonical runtime admission; the declared pair proves fail-closed rejection rather than gameplay support."
     }
   ]
 }

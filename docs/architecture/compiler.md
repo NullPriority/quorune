@@ -36,6 +36,14 @@ the existing program-generation lowering owner. Lowering still validates trust
 and constructs fresh semantic programs; it does not parse the same record a
 second time. The standalone generated-program API continues to compile its own
 IR. No IR result persists across calls or card records.
+
+Whole-hand discard has its own typed compiler and mutation owner. Ordered
+composition can lower a fixed draw followed by whole-hand discard even though
+the counted-discard and fixed controller-sequence leaf templates reject that
+instruction. Integration tests assert the promoted effect order and player
+selector; leaf tests retain their narrower grammar boundaries. The whole-hand
+impact rule includes those existing consumer expectations.
+
 The frontier owner passes the same original IR used for its node inventory to
 CardProgram lowering, retaining independent trust and construction-failure
 checks while avoiding a second parse of the same record.
@@ -348,9 +356,49 @@ query. Source-controller recipient restrictions stay anchored to the
 originating source after the affected creature receives its characteristics.
 Offer and commit consume the same current fragment snapshot. Nonmana costs,
 chosen or named values, temporary mass effects, crew and transform riders,
-unsupported previous-turn facts, open dynamic counts, defender suppression,
+unsupported previous-turn facts, open dynamic counts,
 multiple-block capacity, and combat-damage assignment remain material
 residuals. See [ADR 0099](../adr/0099-typed-public-declaration-conditions.md).
+
+`compiler/defender_permission_templates.py` separately compiles the closed
+permission to attack as though a creature did not have Defender. It preserves
+Defender and grants one typed layer-6 fact to the current self, attachment or
+public-query recipient. Closed public-state conditions use the existing
+snapshot owner through a strict permission-only schema. Shared attacker
+legality disregards only Defender; tapped state, summoning sickness and other
+attack restrictions still apply. Fixed temporary self, target and public-query
+forms lock current logical incarnations through the ordinary end-of-turn
+continuous-effect journal, optionally sharing one timestamp with fixed stats
+or supported keywords. Later entrants and new incarnations receive no earlier
+temporary permission. Linked riders, defending-player history, and
+combat-damage assignment rules remain separate unsupported families.
+
+`compiler/as_unblocked_templates.py` owns the separate printed instruction
+to assign combat damage as though a creature were not blocked. Intrinsic,
+attached, public-query and closed source-conditioned forms grant one typed
+current layer-6 permission. The existing combat snapshot and assignment
+proposal own its ordinary versus all-recipient choice, including Trample,
+attacked planeswalkers and Battles, and independent first-strike damage steps.
+Quoted temporary ability grants lock current recipients to their incarnations.
+Unquoted optional assignment instructions instead use the existing resolution
+choice. Accepting the controller-set form creates a duration-bound rule that
+requires all current controlled attackers to assign as unblocked, including
+later entrants; it neither grants an ability nor freezes the creature set.
+Both forms use the existing duration journal. Variable target counts, unrepresented
+assignment controllers, Banding and independently unsupported siblings remain
+residual. This family does not remove blocked status or redirect damage to
+the attacked permanent's controller.
+
+`compiler/toughness_assignment_templates.py` lowers the closed rule that
+creatures assign combat damage using toughness. Its source-local fragment
+records intrinsic, attached, global or controller scope, current Defender or
+Vigilance qualifiers, fixed toughness-greater-than-power comparison and
+controller-turn applicability. Coupled attached stat bonuses and Defender
+permissions retain their existing characteristic owners. Temporary direct
+creature targets create duration-bound rule effects through the canonical
+journal; the represented Haste/Defender/toughness instruction composes three
+independently closed results over one shared target. Unsupported comparisons,
+result siblings and cost semantics remain residual.
 
 `activation_condition_model.py` owns complete trailing activation
 restrictions shared by the compiler-pinned catalog and activation lowering.
@@ -470,6 +518,19 @@ canonical mana-payment intent before resuming the typed body; decline commits
 nothing. Variable, hybrid, Phyrexian, snow, zero, restricted, and nonmana
 costs, reflexive `when you do` forms, nested or repeated choices, linked
 results, and multi-effect or independently inexact bodies remain residual.
+
+`compiler/power_up_templates.py` specializes the parser's explicit Power-up
+marker into a typed price descriptor and once-only activation limit. Both the
+Oracle node and runtime catalog use that same specialization. Entry-turn
+prices subtract the source's current mana cost through CR 118.7: matching
+colored or colorless mana is removed first and excess reduces generic mana.
+Hybrid symbols publish the legal reduction-half alternatives; Phyrexian
+symbols reduce their color. The ordinary activation proposal revalidates the
+chosen price before payment and usage mutation. The shared incarnation usage
+journal preserves the limit across turns, control changes and phasing, then
+resets it on zone change. Unsupported price symbols and material cost or
+result siblings remain residual. Earlier descriptors without the optional
+Power-up field keep their serialized meaning and pinned replay provenance.
 
 The selected-object activation cost compiler admits one homogeneous fixed
 count from two through ten for discard, owned-graveyard exile, controlled
@@ -799,13 +860,23 @@ otherwise universal Oracle instruction.
 `compiler/hand_entry_templates.py` and
 `compiler/public_tap_state_set_templates.py` reuse that public-object query
 boundary for two adjacent fixed families. The former offers one actor-private,
-owner-pinned hand choice and revalidates the same current object before the
-ordinary replacement-aware battlefield move. The latter locks one current
+owner-pinned hand choice over represented land, creature, Equipment, artifact,
+and historic-permanent predicates. Historic entry uses a closed union of the
+existing object queries: artifact, legendary permanent, or Saga. Legendary
+nonpermanents do not qualify. A fixed draw may precede the optional choice;
+the committed draw runs once before current hand candidates are discovered.
+Selection seals the card's logical incarnation and revalidates its ownership
+and predicate before the ordinary replacement-aware battlefield move and
+after any entry suspension. A qualifying Aura uses the existing nontargeted
+attachment choice; Shroud does not prohibit that choice, while Protection and
+Enchant legality still apply. With no legal recipient, the Aura stays in hand.
+The latter locks one current
 public permanent set and delegates each fixed tap or untap result to the
 canonical tap-state owner, including stun-counter replacement. Choice options
 are ordered by stable object reference so checkpoint replay cannot depend on
-in-memory card insertion order. Aura entry, additional entry counters,
-attacking entry, wider hidden selection, continuous untap prohibitions, and
+in-memory card insertion order. Direct generic Aura selection, unrepresented
+attachment domains, additional entry counters, attacking entry, linked later
+references, wider hidden selection, continuous untap prohibitions, and
 dynamic or chosen tap predicates remain residual.
 
 `compiler/fixed_owner_zone_move_templates.py` owns the complementary closed
@@ -984,7 +1055,17 @@ must remain residual. The generated assurance lives in the Oracle coverage
 reports and contains hashes and public identities rather than Oracle prose.
 
 `compiler/counter_placement_templates.py` separately owns the closed
-fixed counter-placement grammar. Direct targets lower once to
+fixed counter-placement grammar. Source-self recipients use the existing
+`$source.zone_object` resolver so a queued result cannot modify a returned new
+incarnation. The separate source provenance reference keeps its existing
+meaning, and unavailable source instructions leave independent results intact.
+`counter_doubling_templates.py` admits one fixed named-counter kind over those
+same source, attachment, direct-target and affected-set subjects. It emits a
+closed amount descriptor and the dedicated named-doubling capability. The
+runtime reads current counts at each instruction and uses the ordinary placement
+owner; no new operation or targeting grammar is introduced. Unknown, all-kind,
+chosen, player and independently unsupported sibling forms remain residual.
+Direct targets lower once to
 `DirectPermanentTargetSpec`, whose deterministic runtime schema supports the
 represented type conjunctions and canonical disjunctions of up to four
 permanent card types; pinned positive and negative creature subtypes; bounded
@@ -1170,6 +1251,18 @@ independently unsupported compound or conditional instructions remain
 source-spanned residuals or explicit unsupported-interaction boundaries.
 
 ## Invariants
+
+Fading and Vanishing lower their separate entry and lifecycle abilities to
+the current counter and trigger owners. Vanishing retains its intervening-if
+upkeep and separate last-counter sacrifice trigger; ordinary counter removals
+observe post-event characteristics before stabilization. Umbra armor lowers
+an Aura-owned current fragment and requires the complete coupled destruction
+capability. Current relationship tracking and compiler recognition alone do
+not make a card supported. See [ADR 0107](../adr/0107-typed-coupled-umbra-destruction.md)
+for replacement choice, recursive Aura destruction and replay ownership.
+The shared destruction snapshot preserves distinct errors for missing objects,
+phased-out or nonbattlefield subjects, and malformed effective keywords.
+Preparation rejects each case before committing a destruction transaction.
 
 - Every lowered node retains its exact source provenance.
 - Unknown or ambiguous grammar becomes a source-spanned residual, never
@@ -1451,7 +1544,43 @@ original fixed template identity is retained for runtime admission. Public
 declarations carry explicit Oracle-node-scoped identities and persist their
 first execution-time value across sibling results and replacement resumption.
 Independent quantity expressions retain their separate execution-time reads.
+One fixed counter placement may consume that existing public-query amount
+beside independently closed ordered components. The compiler preserves the
+original placement subject, counter kind and target schema; the canonical
+placement owner receives the concrete execution-time integer. Unrepresented
+activation costs still block an otherwise recognized result.
 The casting owner remains the sole authority for choosing and paying cost X.
+Target-qualified spell-cast predicates consume version-six public cast facts.
+The casting owner reads effective creature types and controllers only for
+selected targets still in their expected zone and incarnation at cast completion
+(CR 115.9b); phased-out or departed objects are ignored. One qualifying cast
+produces one occurrence, regardless of the number of creature targets. Aura
+spells may satisfy the any-spell form, while ordinary copies remain separate
+copy events. Targets-only, target counts and first-per-turn variants remain
+outside this boundary.
+
+The physical spell composer preserves independent public permanent, player and
+stack-spell target roles across up to four printed clauses. Bounded optional
+creature groups retain their own selected list through scoped group references,
+so an empty or partly invalid Support group does not shift a later scalar target. Each role can select the same object
+as a different instance of the word target, and partial target invalidation
+retains only the applicable instruction. Component validation verifies the
+exact target-role index and source span before admitting the combined program.
+An exact recognized clause whose group cannot produce a primary executable
+spell carrier adds a material lowering residual; an empty carrier cannot become
+capability-closed merely because its leaf recognition succeeded. Mixed-role programs reuse the existing target, hand-choice, counter, control and
+characteristic owners. Unsupported group domains remain blocked until their
+composition is owned; every emitted multi-target program must also pass the
+existing closed-effect composition validator.
+
+`compiler/permanent_additional_cost_nodes.py` lowers one mandatory printed
+casting-price clause on a permanent into its primary spell cost schema. The
+carrier has no resolution effects and uses the normal battlefield destination;
+the casting owner applies the existing exile, discard, sacrifice, owner-hand
+return, life, counter, or binary alternative price. Whole-card admission remains
+required. Repeated declarations and independently unrepresented siblings retain
+material residuals, so a supported price cannot make an unsupported card exact.
+
 Single-subject `place_counters` results also bind declared or current public
 characteristic amounts through their existing counter owner. A resolved zero
 amount is a paid no-op; malformed and negative amounts are rejected. Counter
@@ -1572,9 +1701,16 @@ generic production owns the same printed ability; current games never execute
 both, while saved historical registries retain their pinned compatibility data.
 Entry reads committed current characteristics and
 departure reads sealed battlefield LKI, including when the observer also leaves.
+The additional `trigger.event.counter_qualified_zone_change` capability admits
+one fixed named-counter minimum-one predicate. Version-two zone occurrences
+seal separate previous and current counter maps: departures retain counters
+before zone reset, while entries read the new incarnation after entry
+replacement and initialization. Version-one occurrences preserve their payload
+and omit these unknown facts; a counter-qualified subscription requires sealed
+facts rather than consulting the current object. Known-empty maps remain valid.
 The shared layer-6 ability query controls discovery and the existing APNAP,
 target, effect, replacement, and replay owners execute the resulting trigger.
-Aggregation, cross-zone card subjects, hidden or chosen information, counter,
+Aggregation, cross-zone card subjects, hidden or chosen information, other counter,
 combat-state, damage-history, relative and total-stat queries, and independently
 unsupported event or body forms remain residual. See
 [ADR 0090](../adr/0090-typed-public-event-effect-triggers.md).

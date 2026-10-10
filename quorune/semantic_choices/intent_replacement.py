@@ -37,6 +37,7 @@ from ..rules.library_selection import (
 )
 from ..zone_trigger_events import ZoneTransitionKind
 from .model import SemanticChoiceError
+from .destruction_intent_identity import DESTRUCTION_INTENT_TYPES, destruction_intent_identity, validate_destruction_intent_identity
 
 
 _REASON_FIELD = "reason"
@@ -341,6 +342,9 @@ def _create_token_intent_identity(
 
 def semantic_intent_identity(intent: Any) -> tuple[str, dict[str, Any]]:
     """Return the closed identity of a replacement-capable typed intent."""
+
+    if isinstance(intent, DESTRUCTION_INTENT_TYPES):
+        return destruction_intent_identity(intent)
 
     if isinstance(intent, LifeChangeIntent):
         return (
@@ -733,6 +737,8 @@ def validate_semantic_intent_identity(
     kind: str,
     value: Mapping[str, Any],
 ) -> dict[str, Any]:
+    if kind in {"destroy_permanent", "destroy_permanent_set", "destroy_permanent_targets"}:
+        return validate_destruction_intent_identity(kind, value)
     if kind == "life_change":
         return _validate_life_change_intent_identity(value)
     if kind == "place_counters":
@@ -1153,6 +1159,7 @@ def with_replacement_selections(
     if not isinstance(
         intent,
         (
+            *DESTRUCTION_INTENT_TYPES,
             PlaceCountersIntent,
             LifeChangeIntent,
             PlaceCounterBatchIntent,

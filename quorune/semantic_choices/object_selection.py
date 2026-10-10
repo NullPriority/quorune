@@ -6,6 +6,7 @@ from typing import Any, Mapping
 from ..replacement.immutable import FrozenMap
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..object_query import object_matches_query, query_objects
+from ..hand_entry_queries import decode_hand_entry_queries, hand_entry_matches
 from ..semantic_runtime.intents import (
     LifeChangeIntent,
     RecordZoneMoveIntent,
@@ -207,6 +208,7 @@ class PutTypedCardFromHandHandler:
         "_choice_actor",
         "_choice_query",
         "_legal_refs",
+        "_legal_logical_ids",
         "_stack_label",
     )
     private_data: tuple[str, ...] = ("actor hand", "eligible card identities")
@@ -216,12 +218,13 @@ class PutTypedCardFromHandHandler:
         "legal_actions.choice_schema.legal_refs",
     )
     mutation_path: tuple[str, ...] = (
-        "ZoneMoveIntent",
-        "CommanderEngine.move_object_intent",
+        "selected move effect",
+        "CommanderEngine.move_card",
     )
     replay_fixture: str = "fixed-private-hand-entry"
     test_modules: tuple[str, ...] = (
         "tests.test_fixed_public_zone_moves",
+        "tests.test_hand_entry_expansion",
     )
 
     @staticmethod
@@ -229,7 +232,7 @@ class PutTypedCardFromHandHandler:
         effect: Mapping[str, Any],
         *,
         actor: str | None = None,
-    ) -> ObjectQuerySpec:
+    ) -> tuple[ObjectQuerySpec, ...]:
         allowed = {"op", "player", "query", "tapped", "prompt"}
         if (
             set(effect) - allowed
@@ -244,40 +247,23 @@ class PutTypedCardFromHandHandler:
                 "Private hand-entry effect has an invalid shape"
             )
         try:
-            query = ObjectQuerySpec.from_dict(effect["query"])
-        except (KeyError, TypeError, ObjectQueryError) as exc:
+            queries = decode_hand_entry_queries(effect["query"])
+        except (KeyError, TypeError, ValueError) as exc:
             raise SemanticChoiceError(
                 "Private hand-entry query is malformed"
             ) from exc
-        if (
-            query.zones != ("hand",)
-            or query.owner is not None
-            or query.controller is not None
-            or query.include_phased_out
-            or query.known_to_actor is not None
-            or query.exclude_ref is not None
-            or query.state_predicate is not None
-        ):
-            raise SemanticChoiceError(
-                "Private hand-entry query is outside the closed family"
-            )
-        return query
+        return queries
 
     def prepare(
         self,
         effect: Mapping[str, Any],
         context: SemanticChoiceContext,
     ) -> SemanticChoicePreparation:
-        query = self._query(effect, actor=context.actor)
+        queries = self._query(effect, actor=context.actor)
         options = tuple(
             sorted(
-                query_objects(
-                    context.query.objects(
-                        zones=("hand",),
-                        owner=context.actor,
-                    ),
-                    query,
-                ),
+                (row for row in context.query.objects(zones=("hand",), owner=context.actor)
+                    if hand_entry_matches(row, queries)),
                 key=lambda row: row.ref,
             )
         )
@@ -292,7 +278,8 @@ class PutTypedCardFromHandHandler:
             {
                 **dict(effect),
                 "_choice_actor": context.actor,
-                "_choice_query": query.canonical_dict(),
+                "_choice_query": effect['query'],
+                "_legal_logical_ids": {row.ref:row.logical_object_id for row in options},
                 "_legal_refs": legal_refs,
                 "_stack_label": context.stack_label,
             }
@@ -312,7 +299,7 @@ class PutTypedCardFromHandHandler:
                     optional=True,
                     visibility="actor_private",
                     owner_relation="actor",
-                    predicates=FrozenMap(query.canonical_dict()),
+                    predicates=FrozenMap(effect['query']),
                 ),
                 public_context=FrozenMap(
                     {
@@ -346,63 +333,43 @@ class PutTypedCardFromHandHandler:
             return SemanticChoiceCompletion()
         actor = str(continuation.effect["_choice_actor"])
         try:
-            predicate = ObjectQuerySpec.from_dict(
+            predicates = decode_hand_entry_queries(
                 continuation.effect["_choice_query"]
             )
-        except (KeyError, TypeError, ObjectQueryError) as exc:
+        except (KeyError, TypeError, ValueError) as exc:
             raise SemanticChoiceError(
                 "Private hand-entry continuation query is malformed"
             ) from exc
+        identities = continuation.effect.get('_legal_logical_ids')
+        if identities is not None and (
+            not isinstance(identities, Mapping)
+            or set(identities) != legal
+            or any(not isinstance(value, str) or not value for value in identities.values())
+        ):
+            raise SemanticChoiceError('Private hand-entry continuation identities are malformed')
         row = query.object(selected, zones=("hand",))
         if (
             row is None
             or row.owner != actor
-            or not object_matches_query(row, predicate)
+            or not hand_entry_matches(row, predicates)
+            or (identities is not None and row.logical_object_id != identities.get(selected))
         ):
             raise SemanticChoiceError(
                 "Selected object no longer satisfies the private hand-entry query"
             )
-        label = str(continuation.effect["_stack_label"])
         tapped = continuation.effect.get("tapped")
         if type(tapped) is not bool:
             raise SemanticChoiceError(
                 "Private hand-entry tapped policy is malformed"
             )
-        land_only = predicate.types_all == ("land",)
-        move = ZoneMoveIntent(
-            actor=actor,
-            object_ref=selected,
-            expected_zones=("hand",),
-            destination="battlefield",
-            reason=label,
-            required_types=predicate.types_all,
-            owned_only=True,
-            new_controller=actor,
-            tapped_policy=(
-                "tapped" if tapped else "land_entry" if land_only else "untapped"
-            ),
-        )
-        return SemanticChoiceCompletion(
-            intents=(
-                move,
-                RecordZoneMoveIntent(
-                    actor=actor,
-                    object_ref=selected,
-                    event_code="card.put_from_hand",
-                    message=(
-                        f"{actor} put {selected} onto the battlefield from hand."
-                    ),
-                    details=FrozenMap(
-                        {
-                            "card": selected,
-                            "source": continuation.stack_ref,
-                            "include_tapped_state": True,
-                        }
-                    ),
-                    changed_player=actor,
-                ),
-            )
-        )
+        move = FrozenMap({
+            'op': 'move', 'card': selected, 'from': 'hand',
+            'destination': 'battlefield', 'controller': actor, 'tapped': tapped,
+            'expected_object_identity': row.logical_object_id,
+            'hand_entry_query': continuation.effect['_choice_query'],
+        })
+        return SemanticChoiceCompletion(prepend_effects=(move,))
+
 
 
 OBJECT_SELECTION_HANDLERS = (

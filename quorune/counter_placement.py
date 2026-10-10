@@ -653,6 +653,7 @@ def commit_counter_placement_plan(
     *,
     reason: str,
     log: bool = True,
+    dispatch_events: bool = True,
 ) -> tuple[CounterPlacementResult, ...]:
     """Apply a validated placement plan without rediscovering replacements."""
 
@@ -713,6 +714,9 @@ def commit_counter_placement_plan(
             )
     if log:
         log_counter_placement_replacements(host, plan.prepared)
+    if dispatch_events:
+        from .counter_placement_events import dispatch_prepared_counter_events
+        dispatch_prepared_counter_events(host, plan.prepared, reason=reason)
     return tuple(results)
 
 
@@ -722,6 +726,7 @@ def commit_prepared_counter_placements(
     *,
     reason: str,
     log: bool = True,
+    dispatch_events: bool = True,
 ) -> tuple[CounterPlacementResult, ...]:
     """Commit a choice-complete batch without rediscovering effects."""
 
@@ -730,6 +735,7 @@ def commit_prepared_counter_placements(
         plan_prepared_counter_placement_commit(host, prepared),
         reason=reason,
         log=log,
+        dispatch_events=dispatch_events,
     )
 
 
@@ -869,6 +875,7 @@ def commit_counter_events_from_resolution(
     reason: str,
     log: bool,
     error_type: type[Exception] = CounterPlacementError,
+    dispatch_events: bool = True,
 ) -> tuple[CounterPlacementResult, ...]:
     """Commit resolved nested counters without growing the zone-move owner."""
 
@@ -884,6 +891,7 @@ def commit_counter_events_from_resolution(
             ),
             reason=reason,
             log=log,
+            dispatch_events=dispatch_events,
         )
     except CounterPlacementError as exc:
         raise error_type(str(exc)) from exc

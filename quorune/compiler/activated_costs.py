@@ -4,6 +4,7 @@ from typing import Any
 
 from ..abilities import ActivatedAbility, ActivationLimit
 from ..activation_usage import ACTIVATION_ONCE_PER_TURN_CAPABILITY
+from ..power_up_model import POWER_UP_CAPABILITY
 from ..activation_condition_model import (
     ACTIVATION_PHASE_CONDITION_CAPABILITY,
     ACTIVATION_PUBLIC_QUERY_CAPABILITY,
@@ -18,6 +19,7 @@ def activated_ability_cost_capabilities(
     """Return the reviewed capability owners for one typed activation cost."""
 
     additional: list[str] = []
+    if ability.power_up is not None:additional.append(POWER_UP_CAPABILITY)
     if ability.source_counter_removal_cost is not None:
         additional.append("activation.source_counter_removal.fixed")
     if ability.loyalty_delta is not None and ability.loyalty_delta > 0:
@@ -89,6 +91,7 @@ def activated_ability_cost(ability: ActivatedAbility) -> dict[str, Any]:
         ]
     if ability.activation_limit is not None:
         result["activation_limit"] = ability.activation_limit.value
+    if ability.power_up is not None:result['power_up']=ability.power_up.to_dict()
     if ability.crew_threshold is not None:
         result["crew"] = ability.crew_threshold
     return result

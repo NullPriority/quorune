@@ -9,6 +9,42 @@ maintenance: "hand-maintained"
 
 # Counter placement and removal transactions
 
+Committed battlefield placements publish immutable `counter.put` occurrences
+after the complete instruction commits. Facts distinguish actual placed
+quantity, counter kind, placing player, recipient controller and owner, and
+the recipient's logical incarnation. One-or-more subscriptions consume one
+matching occurrence per subject and kind; singular subscriptions consume one
+`counter.single_put` occurrence per actual counter. Requested quantities,
+removed counters, zero results and state-based counter annihilation do not
+manufacture put events.
+An unqualified one-or-more-counters subscription consumes only the first kind
+in that subject's simultaneous placement, so a multi-kind instruction does not
+duplicate its trigger.
+
+Query-scaled ordinary placement lowers to the same `place_counters` instruction
+with a typed public amount. The amount is read at its printed instruction
+boundary, after preceding closed components such as milling finish. A card
+matching several branches of an artifact-or-creature query counts once. Zero
+requests produce no placement occurrence or quantity-replacement choice.
+Replacement suspension seals the concrete requested amount and recipient
+incarnation; resumption neither repeats the prefix nor recounts changed zones.
+Source-counter last-known quantities, distributed results and independently
+unsupported costs or linked riders remain outside this query family.
+
+Ordinary effects dispatch from the placement owner. Physical and copied-token
+entry coordinators dispatch resolved entry-counter trees after all members
+enter and entry history is established. Damage and prevention aftermath retain
+sealed occurrences in the canonical damage result and add them to its completed
+trigger batch. Trigger discovery, current source presence, APNAP ordering,
+targets, optional choices and replay retain their existing owners. The
+dispatcher uses that same printed-and-granted event-program lookup to skip
+per-counter iteration when there is no subscriber.
+
+The compiler admits source-self and closed public permanent predicates, with
+separate placing-player and recipient-controller relations. Threshold, first-
+per-turn, off-battlefield removal and one-or-more-on-one-or-more-objects
+aggregation remain residual, as do independently unsupported result bodies.
+
 `counter_placement.py` is the focused authoritative owner for represented
 effect-generated, cost-generated, and typed rule-result counters placed on
 players, battlefield permanents, and the already modeled card-zone counter
@@ -30,6 +66,23 @@ The choice projection contains labels and stable option IDs only; the event
 payload, object identifier, replacement batch, and prior journal remain in the
 authoritative continuation. Exact replay reconstructs and validates the path,
 chooser, and selected effect.
+
+Named-counter doubling uses one versioned `existing_named_counter_count`
+amount descriptor on the existing placement operations. The typed intent
+bridge reads each selected permanent's current public count at that printed
+instruction, then delegates one complete placement batch to the same owner.
+It places the existing number rather than multiplying the request in advance;
+quantity replacements modify that additional placement once. Zero counts
+produce no event. Sets capture all member counts before replacements, while
+earlier instructions may change the count used by a later doubling instruction.
+Unknown quantities reject before mutation.
+Pending replacement continuations seal the exact named-counter input counts
+and member incarnations, including zero-count members; quantity or membership
+changes behind a sealed choice reject before resume rather than resampling.
+Source incarnations, reciprocal
+attachments, target legality, pending choice projection and replay retain their
+existing authorities. All-kind, chosen and player counter doubling remains
+outside this named-permanent grammar.
 
 Token preparation uses that same nested zone-entry replacement tree for
 represented intrinsic and self-entry counter components. Prospective objects
@@ -212,8 +265,13 @@ controller-turn, sorcery-speed, once-per-turn, token-history, controlled-type,
 or graveyard-type tails after verifying the matching typed descriptor; upkeep,
 step, conditional-history, and mixed unrepresented tails remain material.
 Source-self Aura, Equipment, Saga, Spacecraft, and Vehicle wording lowers to the
-same physical `$source` identity as card-type or bounded name wording. These
-printed descriptors do not become runtime type predicates, so the counter
+same `$source.zone_object` recipient as card-type or bounded name wording. The
+existing resolver requires the activating or triggering battlefield incarnation;
+a source that leaves and returns cannot receive the old ability's counters.
+An unavailable source makes that instruction do nothing while independent
+instructions continue. The separate `$source` provenance field retains its
+existing meaning, and historical symbolic-source payloads retain their codec.
+These printed descriptors do not become runtime type predicates, so the counter
 transaction continues to validate object identity rather than reinterpreting
 current characteristics.
 

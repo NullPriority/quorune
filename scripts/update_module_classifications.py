@@ -59,10 +59,18 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/counter_maximums.py",
         "quorune/counter_names.py",
         "quorune/counter_snapshot.py",
+        "quorune/counter_placement_event_model.py",
         "quorune/damage_source.py",
         "quorune/damage_modifier_state.py",
         "quorune/death_return.py",
         "quorune/declaration_fragments.py",
+        "quorune/power_up_model.py",
+        "quorune/as_unblocked.py",
+        "quorune/as_unblocked_rule.py",
+        "quorune/toughness_assignment_model.py",
+        "quorune/umbra_armor_model.py",
+        "quorune/toughness_assignment_rule.py",
+        "quorune/defender_permission.py",
         "quorune/declaration_rule_effects.py",
         "quorune/continuous_conditions.py",
         "quorune/resolution_conditions.py",
@@ -90,6 +98,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/prevention_triggers.py",
         "quorune/query_effect_amount_model.py",
         "quorune/scalar_effect_amount_model.py",
+        "quorune/whole_hand_discard_model.py",
         "quorune/read_ahead.py",
         "quorune/replacement/immutable.py",
         "quorune/riot.py",
@@ -155,6 +164,13 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         )
     ) or relative in {
         "quorune/activation_mana_cost.py",
+        "quorune/whole_hand_discard.py",
+        "quorune/public_quantity_mana_model.py",
+        "quorune/public_quantity_mana_abilities.py",
+        "quorune/public_quantity_mana_runtime.py",
+        "quorune/power_up.py",
+        "quorune/toughness_assignment.py",
+        "quorune/umbra_armor.py",
         "quorune/activation_usage.py",
         "quorune/activation_condition_model.py",
         "quorune/abilities.py",
@@ -197,6 +213,9 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/zone_object_keyword_grants.py",
         "quorune/zone_object_subtype_grants.py",
         "quorune/counter_placement.py",
+        "quorune/counter_placement_events.py",
+        "quorune/counter_doubling.py",
+        "quorune/counter_removal_events.py",
         "quorune/counter_placement_sets.py",
         "quorune/counter_snapshot.py",
         "quorune/keyword_counters.py",
@@ -220,6 +239,10 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/delayed_triggers.py",
         "quorune/destruction.py",
         "quorune/destruction_sets.py",
+        "quorune/destruction_replacement_options.py",
+        "quorune/destruction_replacement_adapter.py",
+        "quorune/destruction_replacement_planning.py",
+        "quorune/state_based_replacement_coordination.py",
         "quorune/dynamic_characteristics.py",
         "quorune/engine.py",
         "quorune/entry_counter_coordination.py",
@@ -285,6 +308,8 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/saga_lifecycle.py",
         "quorune/saga_progression.py",
         "quorune/self_zone_move.py",
+        "quorune/hand_entry_queries.py",
+        "quorune/hand_entry_move.py",
         "quorune/turn_counter_coordination.py",
         "quorune/turn_priority_owner.py",
         "quorune/turn_step_owner.py",
@@ -383,6 +408,10 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/semantic_runtime/flashback.py",
     }:
         return "casting_flashback"
+    if relative in {"quorune/defender_permission.py", "quorune/rules/defender_permission_effect.py", "quorune/as_unblocked.py", "quorune/as_unblocked_rule.py", "quorune/rules/as_unblocked_effect.py", "quorune/toughness_assignment.py", "quorune/toughness_assignment_model.py", "quorune/toughness_assignment_rule.py", "quorune/rules/toughness_assignment_effect.py"}:
+        return "combat_declaration"
+    if relative in {"quorune/power_up.py", "quorune/power_up_model.py"}:
+        return "activated_abilities"
     if relative.startswith("quorune/rules/"):
         return "rules_capabilities"
     if relative.startswith("quorune/aura/"):
@@ -409,6 +438,10 @@ def _owner(relative: str, layer: str) -> str:
     if relative == "quorune/unearth.py":
         return "graveyard_actions"
     if relative == "quorune/self_zone_move.py":
+        return "zones_and_object_identity"
+    if relative in {"quorune/hand_entry_queries.py", "quorune/hand_entry_move.py"}:
+        return "zones_and_object_identity"
+    if relative in {"quorune/whole_hand_discard.py", "quorune/whole_hand_discard_model.py"}:
         return "zones_and_object_identity"
     if relative in {
         "quorune/impulse_access.py",
@@ -469,6 +502,7 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/counter_names.py",
         "quorune/counter_removal.py",
         "quorune/counter_state.py",
+        "quorune/counter_removal_events.py",
     }:
         return "counter_state"
     if relative == "quorune/counter_maximums.py":
@@ -521,6 +555,9 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/color_set_mana_abilities.py",
         "quorune/fixed_mana_abilities.py",
         "quorune/intrinsic_basic_land_mana.py",
+        "quorune/public_quantity_mana_abilities.py",
+        "quorune/public_quantity_mana_runtime.py",
+        "quorune/public_quantity_mana_model.py",
         "quorune/mana_ability_runtime.py",
         "quorune/mana_source_discovery.py",
         "quorune/mana_mode_effects.py",
@@ -545,6 +582,9 @@ def _owner(relative: str, layer: str) -> str:
     if relative in {
         "quorune/amass.py",
         "quorune/counter_placement.py",
+        "quorune/counter_placement_events.py",
+        "quorune/counter_placement_event_model.py",
+        "quorune/counter_doubling.py",
         "quorune/counter_placement_sets.py",
         "quorune/keyword_counters.py",
         "quorune/entry_counter_coordination.py",
@@ -572,6 +612,12 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/destruction.py",
         "quorune/destruction_sets.py",
         "quorune/state_based_execution.py",
+        "quorune/destruction_replacement_options.py",
+        "quorune/destruction_replacement_adapter.py",
+        "quorune/destruction_replacement_planning.py",
+        "quorune/state_based_replacement_coordination.py",
+        "quorune/umbra_armor.py",
+        "quorune/umbra_armor_model.py",
     }:
         return "destruction"
     if relative == "quorune/regeneration.py":
@@ -758,6 +804,9 @@ def build_classifications() -> dict[str, Any]:
                             "card_overrides/",
                             "effect_contracts.py",
                             "counter_placement.py",
+                            "counter_doubling.py",
+                            "counter_placement_events.py",
+                            "counter_removal_events.py",
                             "counter_placement_sets.py",
                             "counter_maximums.py",
                             "counter_names.py",
@@ -809,6 +858,8 @@ def build_classifications() -> dict[str, Any]:
                             "crew.py",
                             "cycling_abilities.py",
                             "fixed_mana_abilities.py",
+                            "public_quantity_mana",
+                            "whole_hand_discard",
                             "intrinsic_basic_land_mana.py",
                             "impulse_access_model.py",
                             "mana_ability_runtime.py",

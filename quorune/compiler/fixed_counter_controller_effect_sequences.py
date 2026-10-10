@@ -12,7 +12,6 @@ from .counter_placement_templates import (
 from .fixed_controller_effect_sequences import (
     fixed_controller_effect_clause,
 )
-from .fixed_source_effect_sequences import SOURCE_ZONE_OBJECT
 
 
 FIXED_COUNTER_CONTROLLER_SEQUENCE_MECHANIC = (
@@ -99,8 +98,6 @@ def fixed_counter_controller_effect_sequence_template(
     if len(counter_effects) != 1:
         return None
     counter_effect = counter_effects[0]
-    if counter_effect.get("card") == "$source":
-        counter_effect = {**counter_effect, "card": SOURCE_ZONE_OBJECT}
     effects = (
         (counter_effect, controller[0])
         if counter_index == 0

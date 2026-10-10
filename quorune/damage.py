@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 import hashlib
 from typing import Any, Mapping, Protocol, Sequence
+from .counter_placement_event_model import CounterPlacementOccurrence
 
 from .counter_state import (
     CounterChange,
@@ -364,6 +365,7 @@ class DamageBatchResult:
     prevention_events: tuple[PreventionAppliedEvent, ...] = ()
     aftermath_events: tuple[PreventionAftermathEvent, ...] = ()
     nested_damage_results: tuple["DamageBatchResult", ...] = ()
+    counter_occurrences: tuple[CounterPlacementOccurrence, ...] = ()
 
     @property
     def dealt_amount(self) -> int:
@@ -1436,6 +1438,7 @@ def commit_prepared_damage_batch(
         prevention_events=prevention_events,
         aftermath_events=aftermath.events,
         nested_damage_results=aftermath.nested_damage_results,
+        counter_occurrences=(*committed.counter_occurrences,*aftermath.counter_occurrences),
     )
 
 
@@ -1447,6 +1450,8 @@ def _collect_damage_result_triggers(
     trigger_source_zones: Mapping[str, str],
     trigger_batch: list[Any],
 ) -> None:
+    from .counter_placement_events import dispatch_counter_placement_occurrences
+    dispatch_counter_placement_occurrences(host,result.counter_occurrences,trigger_batch=trigger_batch)
     dispatch_lifelink_gain_events(
         host,
         result.lifelink_gains,

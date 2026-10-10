@@ -1,5 +1,7 @@
 from __future__ import annotations
 from .control_intents import GainControlIntent, GainControlSetIntent
+from ..whole_hand_discard_model import DiscardWholeHandsIntent
+from .whole_hand_discard import execute_whole_hand_discard
 
 from dataclasses import dataclass
 from typing import Any, Mapping, Protocol
@@ -567,8 +569,8 @@ def _execute_counter_placement_intent(
     return "player_counters", sink.place_player_counters_intent(intent)
 
 
-PlayerIntent = BecomeMonarchIntent | MillCardsIntent | ImpulseAccessIntent
-PLAYER_INTENT_TYPES = (BecomeMonarchIntent, MillCardsIntent, ImpulseAccessIntent)
+PlayerIntent = BecomeMonarchIntent | MillCardsIntent | ImpulseAccessIntent | DiscardWholeHandsIntent
+PLAYER_INTENT_TYPES = (BecomeMonarchIntent, MillCardsIntent, ImpulseAccessIntent, DiscardWholeHandsIntent)
 TapStateIntent = (
     SetPermanentTappedIntent
     | SetPermanentsTappedIntent
@@ -585,6 +587,8 @@ def _execute_player_intent(
     sink: SemanticIntentSink,
     intent: PlayerIntent,
 ) -> tuple[str, object]:
+    if isinstance(intent, DiscardWholeHandsIntent):
+        return intent.actor, execute_whole_hand_discard(sink, intent)
     if isinstance(intent, BecomeMonarchIntent):
         return intent.player, sink.become_monarch(
             intent.player,

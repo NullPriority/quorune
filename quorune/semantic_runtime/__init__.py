@@ -354,6 +354,7 @@ from .token_replacements import (
     resolve_token_creation_replacements,
 )
 from .tap_state_handlers import TAP_STATE_HANDLERS
+from .whole_hand_discard import WholeHandDiscardHandler
 from .station_handlers import STATION_HANDLERS, StationCounterPlacementHandler
 from .zone_object_keyword_handlers import (
     GrantZoneObjectKeywordHandler,
@@ -389,6 +390,7 @@ def default_semantic_handler_registry() -> SemanticHandlerRegistry:
     registry = SemanticHandlerRegistry(
         (
             *GENERIC_HANDLERS,
+            WholeHandDiscardHandler(),
             *TAP_STATE_HANDLERS,
             *DESTRUCTION_HANDLERS,
             *REGENERATION_HANDLERS,

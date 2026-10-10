@@ -99,6 +99,10 @@ _TURN_COUNTER_ACTION_FIELDS = {
     "replacement_batch",
     "replacement_effects",
 }
+_STATE_BASED_DESTRUCTION_FIELDS = {
+    "replacement_resume_kind", "state_based_frame", "replacement_selections",
+    "replacement_batch", "replacement_effects",
+}
 _MANA_FRAME_FIELDS = {
     "active_player",
     "phase",
@@ -143,6 +147,7 @@ class ReplacementContinuation:
     intent_index: int = 0
     counter_intent: FrozenMap | None = None
     semantic_intent_kind: str = ""
+    state_based_frame: FrozenMap | None = None
     semantic_intent: FrozenMap | None = None
     turn_action_kind: str = ""
     turn_action_actor: str = ""
@@ -192,6 +197,9 @@ class ReplacementContinuation:
             return _decode_turn_counter_action_continuation(
                 cls, value, batch, effects
             )
+        if resume_kind == "state_based_destruction":
+            from ..state_based_replacement_coordination import decode_state_based_replacement
+            return decode_state_based_replacement(cls, value, batch, effects)
         return _decode_semantic_continuation(cls, value, batch, effects)
 
     def thaw_combat_assignments(self) -> list[dict[str, Any]]:
@@ -295,6 +303,7 @@ def _validate_continuation_shape(value: Mapping[str, Any]) -> str:
             _TURN_COUNTER_ACTION_FIELDS,
             "turn-counter action continuation",
         ),
+        "state_based_destruction": (_STATE_BASED_DESTRUCTION_FIELDS, "state-based destruction continuation"),
     }
     shape = shapes.get(resume_kind)
     if shape is None:
@@ -1092,6 +1101,9 @@ def _decode_semantic_intent_continuation(
         or (resume_kind == "semantic_intent_completion" and not isinstance(response, Mapping))
         or not isinstance(semantic_intent, Mapping)
         or intent_kind not in {
+            "destroy_permanent",
+            "destroy_permanent_set",
+            "destroy_permanent_targets",
             "create_token",
             "life_change",
             "library_selection",

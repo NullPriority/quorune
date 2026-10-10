@@ -34,6 +34,10 @@ from ..ability_fragments import (
 from ..enchant_spec import SimpleEnchantSpec, TypedEnchantSpec
 from ..enchant_spec import LinkedGraveyardCreatureEnchantSpec
 from ..declaration_fragments import DECLARATION_COMPONENT_CAPABILITY_ID
+from ..defender_permission import DefenderAttackPermission, DEFENDER_PERMISSION_CAPABILITY, DEFENDER_PERMISSION_HANDLER
+from ..as_unblocked import AsUnblockedAssignmentPermission, AS_UNBLOCKED_CAPABILITY, AS_UNBLOCKED_HANDLER
+from ..toughness_assignment_model import ToughnessAssignmentSpec,TOUGHNESS_ASSIGNMENT_CAPABILITY,TOUGHNESS_ASSIGNMENT_HANDLER
+from ..umbra_armor_model import UmbraArmorSpec, UMBRA_ARMOR_FRAGMENT_CAPABILITY, UMBRA_ARMOR_HANDLER
 from ..rules.capabilities import load_default_capability_registry
 from ..trigger_participation import TriggerMultiplierSpec, WardSpec
 from .component_registry import RuntimeComponentRegistry, exact_fields
@@ -195,6 +199,75 @@ class TypedEnchantAbilityFragmentHandler:
         descriptor: Mapping[str, Any],
         context: object,
     ) -> tuple[StaticAbilityFragment, ...]:
+        del context
+        return (self.validate(descriptor),)
+
+
+@dataclass(frozen=True, slots=True)
+class DefenderPermissionAbilityFragmentHandler:
+    handler_id: str = DEFENDER_PERMISSION_HANDLER
+    schema_version: int = 1
+    family: str = 'ability.static.defender_permission'
+    event: str = 'continuous'
+    rule_references: tuple[str, ...] = ('609.4', '702.3b', '508.1c')
+    capability_dependencies: tuple[str, ...] = (DEFENDER_PERMISSION_CAPABILITY,)
+
+    def validate(self, descriptor: Mapping[str, Any]) -> DefenderAttackPermission:
+        return _fragment(descriptor, handler_id=self.handler_id, event=self.event,
+            expected_type=DefenderAttackPermission)
+
+    def lower(self, descriptor: Mapping[str, Any], context: object) -> tuple[StaticAbilityFragment, ...]:
+        del context
+        return (self.validate(descriptor),)
+
+
+@dataclass(frozen=True, slots=True)
+class AsUnblockedAssignmentFragmentHandler:
+    handler_id: str = AS_UNBLOCKED_HANDLER
+    schema_version: int = 1
+    family: str = 'ability.static.as_unblocked_assignment'
+    event: str = 'characteristics.evaluate'
+    rule_references: tuple[str,...] = ('609.4','510.1c')
+    capability_dependencies: tuple[str,...] = (AS_UNBLOCKED_CAPABILITY,)
+
+    def validate(self,descriptor):
+        return _fragment(descriptor,handler_id=self.handler_id,event=self.event,expected_type=AsUnblockedAssignmentPermission)
+
+    def lower(self,descriptor,context):
+        del context
+        return (self.validate(descriptor),)
+
+
+@dataclass(frozen=True,slots=True)
+class ToughnessAssignmentFragmentHandler:
+    handler_id: str = TOUGHNESS_ASSIGNMENT_HANDLER
+    schema_version: int = 1
+    family: str = 'ability.static.toughness_assignment'
+    event: str = 'characteristics.evaluate'
+    rule_references: tuple[str,...] = ('510.1a','510.1c','510.1d','613.1f')
+    capability_dependencies: tuple[str,...] = (TOUGHNESS_ASSIGNMENT_CAPABILITY,)
+
+    def validate(self,descriptor):
+        return _fragment(descriptor,handler_id=self.handler_id,event=self.event,expected_type=ToughnessAssignmentSpec)
+
+    def lower(self,descriptor,context):
+        del context
+        return (self.validate(descriptor),)
+
+
+@dataclass(frozen=True, slots=True)
+class UmbraArmorFragmentHandler:
+    handler_id: str = UMBRA_ARMOR_HANDLER
+    schema_version: int = 1
+    family: str = "ability.static.umbra_armor"
+    event: str = "characteristics.evaluate"
+    rule_references: tuple[str, ...] = ("702.89a", "613.1f")
+    capability_dependencies: tuple[str, ...] = (UMBRA_ARMOR_FRAGMENT_CAPABILITY,)
+
+    def validate(self, descriptor):
+        return _fragment(descriptor, handler_id=self.handler_id, event=self.event, expected_type=UmbraArmorSpec)
+
+    def lower(self, descriptor, context):
         del context
         return (self.validate(descriptor),)
 
@@ -1266,6 +1339,10 @@ def default_ability_fragment_registry() -> AbilityFragmentRegistry:
             CascadeAbilityFragmentHandler(),
             CounterMaximumAbilityFragmentHandler(),
             DeclarationCostAbilityFragmentHandler(),
+            DefenderPermissionAbilityFragmentHandler(),
+            AsUnblockedAssignmentFragmentHandler(),
+            ToughnessAssignmentFragmentHandler(),
+            UmbraArmorFragmentHandler(),
             DeclarationRequirementAbilityFragmentHandler(),
             DeclarationRestrictionAbilityFragmentHandler(),
             DeclarationRestrictionComponentHandler(),

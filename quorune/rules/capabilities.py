@@ -1,5 +1,7 @@
 from __future__ import annotations
+from .counter_placement_capability_shapes import counter_placement_covered_mechanics
 from .control_capability_shapes import fixed_control_node_capabilities
+from .whole_hand_discard_shapes import whole_hand_discard_node_capabilities
 
 from dataclasses import dataclass
 import hashlib
@@ -314,6 +316,8 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
         for mechanic in _FIXED_CAST_LIFECYCLE_MECHANICS
     },
     "self-zone-move": ("zone.self_move.activated",), "madness": ("casting.madness.fixed_mana",), "typed-discard-cause": ("zone.discard.typed_cause",),
+    'public-quantity-mana': ('mana.production.public_quantity',),
+    'whole-hand-discard': ('zone.discard.whole_hand',),
     **{
         mechanic: ("combat.block.landwalk.basic_type",)
         for mechanic in _BASIC_LANDWALK_MECHANICS
@@ -394,6 +398,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
         "trigger.event.normalized_self_attack",
     ),
     "trigger-event-normalized-public-action": ("trigger.event.normalized_public_action",),
+    'trigger-event-normalized-counter-placement': ('trigger.event.normalized_counter_placement',),
     "tap-state-event-player-result": ("trigger.event.normalized_public_action",),
     "trigger-event-normalized-damage": (
         "trigger.event.normalized_damage",
@@ -425,6 +430,9 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     FIXED_SOURCE_CHARACTERISTIC_MECHANIC: (
         FIXED_SOURCE_CHARACTERISTIC_CAPABILITY,
     ),
+    "fixed-temporary-defender-permission": ("combat.attack.defender_permission.temporary",),
+    "temporary-as-unblocked-assignment": ("combat.damage.assignment.as_unblocked",),
+    "temporary-toughness-assignment": ("combat.damage.assignment.toughness",),
     _FIXED_CONTROLLER_SEQUENCE_MECHANIC: (
         "resolution.effect_sequence.fixed_controller",
     ),
@@ -458,7 +466,7 @@ _SHAPE_GATED_MECHANICS = frozenset(
         "return-to-owner-hand",
         _FIXED_TARGET_SEQUENCE_MECHANIC,
         _FIXED_SOURCE_SEQUENCE_MECHANIC,
-        FIXED_SOURCE_CHARACTERISTIC_MECHANIC,
+        FIXED_SOURCE_CHARACTERISTIC_MECHANIC, "fixed-temporary-defender-permission", "temporary-as-unblocked-assignment", "temporary-toughness-assignment",
         _FIXED_CONTROLLER_SEQUENCE_MECHANIC,
         _FIXED_COUNTER_CONTROLLER_SEQUENCE_MECHANIC,
         FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC,
@@ -1044,6 +1052,7 @@ def _targeted_effect_capabilities(
 ) -> set[str]:
     dependencies: set[str] = set()
     for resolver in (
+        whole_hand_discard_node_capabilities,
         fixed_control_node_capabilities,
         fixed_attachment_action_node_capabilities,
         all_counter_removal_node_capabilities,
@@ -1192,6 +1201,9 @@ def capability_dependencies_for_node(
 
     mechanic_values = tuple(str(value).casefold() for value in mechanic_ids)
     mechanics = set(mechanic_values)
+    if 'public-quantity-mana' in mechanics:
+        from .public_quantity_mana_shapes import public_quantity_mana_node_capabilities
+        return public_quantity_mana_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
     from ..resolution_conditions import RESOLUTION_CONDITION_MECHANIC, RESOLUTION_CONDITION_OPERATION
     if RESOLUTION_CONDITION_MECHANIC in mechanics or RESOLUTION_CONDITION_OPERATION in _nested_effect_operations(effects):
         from .resolution_condition_shapes import resolution_condition_node_capabilities
@@ -1334,6 +1346,7 @@ def _affected_player_choice_covered_mechanics(
     covered: set[str] = set()
     for capability, mechanics in (
         (FIXED_AFFECTED_PLAYER_DISCARD_CAPABILITY, {FIXED_AFFECTED_PLAYER_DISCARD_MECHANIC, "cr-402-hand"}),
+        ('zone.discard.whole_hand', {'whole-hand-discard', 'cr-402-hand'}),
         (FIXED_HAND_INSPECTION_CAPABILITY, {FIXED_HAND_INSPECTION_MECHANIC, "cr-402-hand"}),
         (FIXED_AFFECTED_PLAYER_SACRIFICE_CAPABILITY, {FIXED_AFFECTED_PLAYER_SACRIFICE_MECHANIC, "sacrifice"}),
     ):
@@ -1351,6 +1364,7 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
         "trigger.source.fixed_maintenance": "fixed-source-maintenance",
         "trigger.entry.fixed_kicked_result": "fixed-kicked-entry-trigger",
         'trigger.event.normalized_target_announcement': 'trigger-event-normalized-target-announcement',
+        'trigger.event.normalized_counter_placement': 'trigger-event-normalized-counter-placement',
         'resolution.effect.fixed_cast_fact': 'fixed-cast-fact-condition',
         'zone.return.fixed_event_card': 'fixed-event-card-return',
         "zone.mill.fixed": "mill",
@@ -1514,18 +1528,7 @@ def capability_covered_mechanics(
         covered.add("cr-122-counters")
     if "counter.removal.all_effect" in supplied:
         covered.add("cr-122-counters")
-    if "counter.producer.fixed_effect" in supplied:
-        covered.add("cr-122-counters")
-    if "counter.producer.fixed_permanent_group_effect" in supplied:
-        covered.add("cr-122-counters")
-    if "counter.producer.fixed_multikind_effect" in supplied:
-        covered.add("cr-122-counters")
-    if "counter.producer.fixed_attached_effect" in supplied:
-        covered.add("cr-122-counters")
-    if "counter.producer.fixed_permanent_set_effect" in supplied:
-        covered.add("cr-122-counters")
-    if "counter.producer.fixed_permanent_target_set_effect" in supplied:
-        covered.add("cr-122-counters")
+    covered.update(counter_placement_covered_mechanics(supplied))
     if "counter.producer.support" in supplied:
         covered.update({"cr-115-targets", "cr-122-counters", "support"})
     if "counter.producer.bolster" in supplied:

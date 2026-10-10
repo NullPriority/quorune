@@ -401,6 +401,21 @@ class FixedControllerEffectSequenceCompilerTests(unittest.TestCase):
                     ),
                 )
 
+    def test_whole_hand_sequence_promotes_composition_but_keeps_leaf_boundary(self):
+        text = "Draw two cards, then discard your hand."
+        self.assertIsNone(fixed_controller_effect_sequence_template(text))
+        ir = compile_oracle_card(
+            self.fixture(text),
+            capability_registry=self.capabilities,
+            capability_profile="commander_review",
+        )
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        effects = ir.faces[0].nodes[0].effects
+        self.assertEqual(["draw", "discard_whole_hands"], [effect["op"] for effect in effects])
+        self.assertEqual(2, effects[0]["count"])
+        self.assertEqual("$controller", effects[0]["player"])
+        self.assertEqual(["$controller"], effects[1]["players"])
+
     def test_unsupported_sequence_wording_remains_a_precise_residual(self):
         composed = "Draw a card. Scry 1. You gain 1 life."
         self.assertIsNone(fixed_controller_effect_sequence_template(composed))
@@ -410,7 +425,7 @@ class FixedControllerEffectSequenceCompilerTests(unittest.TestCase):
             "Draw a card. Each player loses 1 life.",
             "Draw a card unless an opponent pays {1}.",
             "Draw two cards, then discard a card at random.",
-            "Draw two cards, then discard your hand.",
+            "Draw two cards, then discard each opponent's hand.",
             "Draw two cards, then discard two cards if you control a Wizard.",
             "Draw a card, then discard five cards.",
             "Discard a card, then draw a card, then lose 1 life.",

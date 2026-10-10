@@ -109,7 +109,7 @@ class FixedCounterPlacementCompilerTests(unittest.TestCase):
                 "When this creature enters, put a shield counter on this creature.",
                 "Creature — Human",
                 "triggered_ability",
-                "$source",
+                "$source.zone_object",
                 1,
                 "shield",
             ),
@@ -240,7 +240,7 @@ class FixedCounterPlacementCompilerTests(unittest.TestCase):
                 self.assertIs(CounterPlacementSubject.SOURCE, template.subject)
                 self.assertEqual(card_type, template.permanent_type)
                 self.assertIsNone(template.target_schema)
-                self.assertEqual("$source", template.effects[0]["card"])
+                self.assertEqual("$source.zone_object", template.effects[0]["card"])
 
     def test_pinned_source_descriptors_lower_across_trigger_and_activation_contexts(
         self,
@@ -281,7 +281,7 @@ class FixedCounterPlacementCompilerTests(unittest.TestCase):
                 node = nodes[0]
                 self.assertIs(exact, node.exact)
                 serialized_effects = json.dumps(node.effects, sort_keys=True)
-                self.assertIn('"card": "$source"', serialized_effects)
+                self.assertIn('"card": "$source.zone_object"', serialized_effects)
                 self.assertEqual(
                     node.text,
                     record.oracle_text[node.span.start : node.span.end],
@@ -524,7 +524,7 @@ class FixedCounterPlacementCompilerTests(unittest.TestCase):
 
         exact()
         with patch(
-            "quorune.compiler.resolution_effect_templates."
+            "quorune.compiler.counter_resolution_effect_templates."
             "fixed_counter_placement_effect_template",
             return_value=None,
         ):

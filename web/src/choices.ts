@@ -427,7 +427,8 @@ function fieldErrors(field: ChoiceField, values: ChoiceValues): string[] {
       const assigned = assignments
         .filter((row) => row.source === source)
         .reduce((total, row) => total + Number(row.amount ?? 0), 0);
-      if (assigned !== required) {
+      const allowedTotals = list(record(rawSource).allowed_totals).map(Number);
+      if (allowedTotals.length ? !allowedTotals.includes(assigned) : assigned !== required) {
         errors.push(`${source} must assign exactly ${required} damage.`);
       }
     }

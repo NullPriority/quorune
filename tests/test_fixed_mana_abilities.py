@@ -490,7 +490,7 @@ class FixedManaCompilerTests(unittest.TestCase):
                 self.assertTrue(ir.material_residuals)
     def test_fixed_output_compiler_leaves_dynamic_and_restricted_variants_residual(self):
         for text in (
-            "{T}: Add {G} for each creature you control.",
+            "{T}: Add {G} for each creature you control if you attacked this turn.",
             "{T}: Add {G}. Spend this mana only to cast spells from exile.",
             "+1: Add {G}.",
             "{T}: Target player adds {G}.",

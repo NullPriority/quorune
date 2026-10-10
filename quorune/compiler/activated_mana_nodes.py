@@ -42,6 +42,7 @@ from .activated_costs import (
 from .activated_zone_change_costs import fixed_activated_zone_change_cost
 from .activated_tap_costs import fixed_activated_tap_cost
 from .activation_mana_costs import fixed_complex_activation_mana_cost
+from .power_up_templates import fixed_power_up_ability
 from .dependency_gate import (
     DependencyGate,
     dependency_gate,
@@ -59,6 +60,7 @@ from .ir_model import (
 )
 from .modal_templates import FIXED_NONREPEATING_MODAL_MECHANIC
 from . import temporary_declaration_templates as declaration_templates
+from .public_quantity_mana_nodes import public_quantity_activated_mana_node
 
 
 def fixed_activated_mana_node(
@@ -69,6 +71,8 @@ def fixed_activated_mana_node(
     capability_registry: CapabilityRegistry | None,
     capability_profile: str,
     residuals: list[OracleResidual],
+    *,
+    source_name: str = "",
 ) -> tuple[Any, OracleNode | None]:
     ability = replace(
         ability,
@@ -85,7 +89,10 @@ def fixed_activated_mana_node(
         else compile_fixed_activated_mana_ability(ability)
     )
     if spec is None:
-        return ability, None
+        return public_quantity_activated_mana_node(
+            ability, node_id, line, span, capability_registry,
+            capability_profile, residuals, source_name=source_name,
+        )
     capabilities = list(FIXED_MANA_HANDLER_CAPABILITIES)
     if ability.activation_limit is ActivationLimit.EXHAUST_ONCE:
         capabilities.append("activation.exhaust.once_per_object")
@@ -593,7 +600,7 @@ def _intrinsic_basic_land_mana_reminder_node(
 
 
 def _fixed_activated_costs(ability: ActivatedAbility) -> ActivatedAbility:
-    ability = fixed_complex_activation_mana_cost(ability)
+    ability = fixed_complex_activation_mana_cost(fixed_power_up_ability(ability))
     return fixed_activated_tap_cost(
         fixed_activated_zone_change_cost(ability)
     )
@@ -676,6 +683,7 @@ def activated_oracle_node(
         capability_registry,
         capability_profile,
         residuals,
+        source_name=card_name,
     )
     if fixed_mana is not None:
         return fixed_mana

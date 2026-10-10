@@ -15,6 +15,21 @@ function form(fields: ChoiceForm["fields"]): ChoiceForm {
   return { v: 1, fields, submit_label: "Submit" };
 }
 
+test("combat assignment permits only the server's optional zero or full totals", () => {
+  const choicesForm = form([{
+    name: "assignments", label: "Combat damage", control: "damage_assignments",
+    combat: { damage_sources: { attacker: { power: 5, targets: ["B"], allowed_totals: [0, 5] } } },
+  }]);
+  assert.deepEqual(validateChoices(choicesForm, { assignments: [] }), []);
+  assert.deepEqual(validateChoices(choicesForm, { assignments: [{ source: "attacker", target: "B", amount: 5 }] }), []);
+  assert.equal(validateChoices(choicesForm, { assignments: [{ source: "attacker", target: "B", amount: 3 }] }).length, 1);
+  const mandatory = form([{
+    name: "assignments", label: "Combat damage", control: "damage_assignments",
+    combat: { damage_sources: { attacker: { power: 5, targets: ["B"] } } },
+  }]);
+  assert.equal(validateChoices(mandatory, { assignments: [] }).length, 1);
+});
+
 test("copied target slots distinguish retained identities and current objects", () => {
   const choicesForm = form([{
     name: "copy_targets", label: "Copy targets", control: "copy_targets",

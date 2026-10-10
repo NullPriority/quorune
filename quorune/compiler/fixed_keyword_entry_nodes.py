@@ -10,7 +10,9 @@ from ..fixed_keyword_entry_counters import (
     FixedKeywordEntryCounterSpec,
 )
 from ..rules.capabilities import CapabilityRegistry
-from .dependency_gate import explicit_capability_gate
+from .dependency_gate import explicit_capabilities_gate
+from .fading_nodes import fading_upkeep_node
+from .vanishing_nodes import vanishing_lifecycle_nodes
 from .ir_model import (
     OracleNode,
     OracleResidual,
@@ -35,6 +37,11 @@ def fixed_keyword_entry_nodes(
     if len(mechanics) != 1 or mechanics[0] not in FIXED_KEYWORD_ENTRY_MECHANICS:
         return ()
     mechanic = mechanics[0]
+    if mechanic == "vanishing" and re.fullmatch(r"vanishing(?:\s+0)?\.?", material_line.strip(), re.IGNORECASE):
+        return vanishing_lifecycle_nodes(
+            node_id=node_id, line=line, span=span, capability_registry=capability_registry,
+            capability_profile=capability_profile, residuals=residuals,
+        )
     match = re.fullmatch(
         rf"{re.escape(mechanic)}\s+(?P<amount>[1-9]\d*)\.?",
         material_line.strip(),
@@ -71,8 +78,8 @@ def fixed_keyword_entry_nodes(
         )
 
     spec = FixedKeywordEntryCounterSpec(mechanic, int(match.group("amount")))
-    gate = explicit_capability_gate(
-        FIXED_KEYWORD_ENTRY_CAPABILITY,
+    gate = explicit_capabilities_gate(
+        (FIXED_KEYWORD_ENTRY_CAPABILITY, "counter.placement.quantity_replacement"),
         capability_registry=capability_registry,
         capability_profile=capability_profile,
     )
@@ -93,6 +100,14 @@ def fixed_keyword_entry_nodes(
         if gate.blockers
         else ()
     )
+    lifecycle_nodes = (fading_upkeep_node(
+        node_id=node_id, line=line, span=span,
+        capability_registry=capability_registry,
+        capability_profile=capability_profile, residuals=residuals,
+    ),) if mechanic == "fading" else vanishing_lifecycle_nodes(
+        node_id=node_id, line=line, span=span, capability_registry=capability_registry,
+        capability_profile=capability_profile, residuals=residuals,
+    ) if mechanic == "vanishing" else ()
     lifecycle_residual_id = append_residual(
         residuals,
         kind="keyword_lifecycle",
@@ -103,7 +118,7 @@ def fixed_keyword_entry_nodes(
             "sacrifice behavior remains outside this entry-counter component"
         ),
         blockers=(f"mechanic:{mechanic}-remaining-lifecycle",),
-    )
+    ) if not lifecycle_nodes else None
     return (
         OracleNode(
             node_id=f"{node_id}:entry",
@@ -130,7 +145,7 @@ def fixed_keyword_entry_nodes(
                 gate.closure.fingerprint if gate.closure is not None else None
             ),
         ),
-        OracleNode(
+        *(lifecycle_nodes or (OracleNode(
             node_id=f"{node_id}:lifecycle",
             kind="keyword_ability",
             text=line,
@@ -140,8 +155,8 @@ def fixed_keyword_entry_nodes(
             lowerable=False,
             exact=False,
             mechanics=(mechanic,),
-            residual_ids=(lifecycle_residual_id,),
-        ),
+            residual_ids=(lifecycle_residual_id,) if lifecycle_residual_id is not None else (),
+        ),)),
     )
 
 

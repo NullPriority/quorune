@@ -1068,6 +1068,22 @@ def _prior_controller_spell_count(
     )
 
 
+def _cast_creature_target_controllers(host: Any, item: Any) -> tuple[str, ...]:
+    """CR 115.9b: read targets still in their expected zone at cast completion."""
+    controllers: set[str] = set()
+    for ref in dict.fromkeys(item.targets):
+        snapshot = item.context.get("target_snapshots", {}).get(ref)
+        if not isinstance(snapshot, Mapping) or not host._target_identity_matches_snapshot(ref, snapshot):
+            continue
+        card = next((card for card in host.state.cards.values() if card.ref == ref and card.zone == "battlefield" and not card.phased_out), None)
+        if card is None:
+            continue
+        types, _, _ = host._type_parts(str(host._effective_card_data(card).get("type_line") or ""))
+        if "creature" in types:
+            controllers.add(card.controller)
+    return tuple(sorted(controllers))
+
+
 def _dispatch_cast_events(
     host: CastCommitHost,
     proposal: CastProposal,
@@ -1131,7 +1147,7 @@ def _dispatch_cast_events(
         types=cast_types,
     )
     context = SpellCastEvent(
-        schema_version=5,
+        schema_version=6,
         card_ref=card.ref,
         object_id=card.object_id,
         logical_object_id=card.logical_object_id,
@@ -1156,6 +1172,7 @@ def _dispatch_cast_events(
         keywords=tuple(effective_spell.get("keywords") or ()),
         phase=host.state.phase,
         targets=proposal.targets,
+        creature_target_controllers=_cast_creature_target_controllers(host, item),
     ).to_context()
     event_sources = list(host._semantic_event_sources())
     if all(source.object_id != card.object_id for source in event_sources):

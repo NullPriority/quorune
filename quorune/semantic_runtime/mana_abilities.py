@@ -13,6 +13,7 @@ from ..fixed_mana_abilities import (
 from ..rules.capabilities import load_default_capability_registry
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
+from .public_quantity_mana import PublicQuantityActivatedManaHandler
 
 
 @dataclass(frozen=True, slots=True)
@@ -65,23 +66,26 @@ class FixedActivatedManaAbilityHandler:
 
 
 class FixedManaAbilityRegistry(
-    RuntimeComponentRegistry[object, FixedActivatedManaAbilitySpec]
+    RuntimeComponentRegistry[object, Any]
 ):
     pass
 
 
 @lru_cache(maxsize=1)
 def default_fixed_mana_ability_registry() -> FixedManaAbilityRegistry:
-    registry = FixedManaAbilityRegistry((FixedActivatedManaAbilityHandler(),))
+    registry = FixedManaAbilityRegistry((
+        FixedActivatedManaAbilityHandler(),
+        PublicQuantityActivatedManaHandler(),
+    ))
     registry.require_registered_capabilities(load_default_capability_registry())
     return registry.freeze()
 
 
 def fixed_mana_specs_from_descriptors(
     descriptors: tuple[Mapping[str, Any], ...] | list[Mapping[str, Any]],
-) -> tuple[FixedActivatedManaAbilitySpec, ...]:
+) -> tuple[Any, ...]:
     registry = default_fixed_mana_ability_registry()
-    result: list[FixedActivatedManaAbilitySpec] = []
+    result: list[Any] = []
     for descriptor in descriptors:
         if registry.describe(str(descriptor.get("handler_id") or "")) is None:
             continue

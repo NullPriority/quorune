@@ -1045,6 +1045,7 @@ def _commit_token_specs(
                 host,
                 prepared_counters,
                 reason="intrinsic token entry counters",
+                dispatch_events=False,
             )
         for object_id in created:
             token = host.state.cards[object_id]
@@ -1077,6 +1078,7 @@ def _record_and_dispatch_token_creation(
     replacement_components: Sequence[Mapping[str, Any]],
     replacement_journal: Sequence[Any],
     reason: str,
+    prepared_counters: PreparedCounterPlacements | None = None,
 ) -> None:
     tracker = host.state.players[controller].stats.setdefault(
         "tokens_created_by_turn", {}
@@ -1131,6 +1133,7 @@ def _record_and_dispatch_token_creation(
         context = {
             "card": card.ref,
             "card_object_identity": card.logical_object_id,
+            "card_zone_change_counter": card.zone_change_counter,
             "copiable_snapshot": token_copy_snapshot(host, card),
             "controller": controller,
             "owner": controller,
@@ -1147,6 +1150,9 @@ def _record_and_dispatch_token_creation(
     # observes complete history and its resulting entry characteristics,
     # before any separately instructed post-entry grant.
     trigger_batch: list[Any] = []
+    if prepared_counters is not None:
+        from .counter_placement_events import dispatch_prepared_counter_events
+        dispatch_prepared_counter_events(host, prepared_counters, reason=reason, trigger_batch=trigger_batch)
     for context in entry_contexts:
         host._dispatch_semantic_event(
             "token.created", context, trigger_batch=trigger_batch
@@ -1253,6 +1259,7 @@ def _commit_resolved_token_specs(
         replacement_components=applied_components,
         replacement_journal=resolved.journal,
         reason=reason,
+        prepared_counters=prepared_counters,
     )
     # A separate subsequent grant is not an entry modification. Discovery
     # remains deferred; this does not introduce priority or an SBA checkpoint.

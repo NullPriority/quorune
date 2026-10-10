@@ -369,8 +369,8 @@ def keyword_dependency_gate(
             if part.strip().casefold() == _EVOLVE_MECHANIC
         )
         if instances:
-            return explicit_capability_gate(
-                "counter.producer.evolve",
+            return explicit_capabilities_gate(
+                ("counter.producer.evolve", "counter.producer.fixed_effect"),
                 capability_registry=capability_registry,
                 capability_profile=capability_profile,
             )

@@ -1,4 +1,11 @@
 from __future__ import annotations
+from .counter_resolution_effect_templates import counter_resolution_effect_template
+from .public_quantity_mana_effects import public_quantity_mana_effect_template
+from .whole_hand_discard_templates import whole_hand_discard_effect_template, whole_hand_discard_draw_sequence_template, whole_hand_discard_public_draw_sequence
+from .hand_entry_templates import fixed_draw_then_hand_entry_template
+from .defender_permission_templates import temporary_defender_permission_template
+from .as_unblocked_templates import temporary_as_unblocked_template
+from .toughness_assignment_templates import temporary_toughness_assignment_template
 
 from typing import Any, Mapping, Sequence
 
@@ -14,14 +21,7 @@ from .fixed_control_templates import fixed_control_effect_template, fixed_contro
 from .linked_exile_return_templates import linked_exile_return_effect_template
 from .amass_templates import fixed_amass_effect_template
 from .bolster_templates import fixed_bolster_effect_template
-from .counter_placement_group_templates import (
-    fixed_counter_placement_group_effect_template,
-)
 from .counter_placement_templates import (
-    fixed_counter_placement_batch_effect_template,
-    fixed_counter_placement_effect_template,
-    fixed_counter_placement_set_effect_template,
-    fixed_counter_placement_target_set_effect_template,
     fixed_player_counter_placement_effect_template,
     support_counter_placement_effect_template,
 )
@@ -114,6 +114,20 @@ def _source_context_resolution_template(
     text: str, *, card_name: str, source_is_permanent: bool | None,
     source_card_types: Sequence[str],
 ) -> CompiledEffectTemplate | None:
+    toughness=temporary_toughness_assignment_template(text)
+    if toughness is not None:return toughness
+    as_unblocked=temporary_as_unblocked_template(text,source_name=card_name,source_is_permanent=source_is_permanent,source_card_types=source_card_types)
+    if as_unblocked is not None:return as_unblocked
+    permission=temporary_defender_permission_template(text,source_name=card_name,source_is_permanent=source_is_permanent,source_card_types=tuple(source_card_types))
+    if permission is not None:return permission
+    hand_entry=fixed_draw_then_hand_entry_template(text)
+    if hand_entry is not None:return hand_entry
+    discard = whole_hand_discard_effect_template(text) or whole_hand_discard_draw_sequence_template(text) or whole_hand_discard_public_draw_sequence(text,source_name=card_name)
+    if discard is not None:
+        return discard
+    mana = public_quantity_mana_effect_template(text, source_name=card_name)
+    if mana is not None:
+        return mana
     control = fixed_control_effect_template(
         text, card_name=card_name, source_is_permanent=source_is_permanent,
         source_card_types=tuple(source_card_types),
@@ -192,39 +206,10 @@ def typed_resolution_effect_template(
     )
     if fixed_homogeneous_target_set is not None:
         return fixed_homogeneous_target_set.compiled()
-    fixed_counter_placement_target_set = (
-        fixed_counter_placement_target_set_effect_template(text)
-    )
-    if fixed_counter_placement_target_set is not None:
-        return fixed_counter_placement_target_set.compiled()
-    fixed_counter_placement_set = fixed_counter_placement_set_effect_template(
-        text
-    )
-    if fixed_counter_placement_set is not None:
-        return fixed_counter_placement_set.compiled()
-    fixed_counter_placement_group = (
-        fixed_counter_placement_group_effect_template(
-            text,
-            card_name=card_name,
-            source_is_permanent=source_is_permanent,
-        )
-    )
-    if fixed_counter_placement_group is not None:
-        return fixed_counter_placement_group.compiled()
-    fixed_counter_placement_batch = fixed_counter_placement_batch_effect_template(
-        text,
-        card_name=card_name,
-        source_attachment_relation=source_attachment_relation,
-    )
-    if fixed_counter_placement_batch is not None:
-        return fixed_counter_placement_batch.compiled()
-    fixed_counter_placement = fixed_counter_placement_effect_template(
-        text,
-        card_name=card_name,
-        source_attachment_relation=source_attachment_relation,
-    )
-    if fixed_counter_placement is not None:
-        return fixed_counter_placement.compiled()
+    counter_placement = counter_resolution_effect_template(text, card_name=card_name,
+        source_is_permanent=source_is_permanent, source_attachment_relation=source_attachment_relation)
+    if counter_placement is not None:
+        return counter_placement
     all_counter_removal = all_counter_removal_effect_template(text)
     if all_counter_removal is not None:
         return all_counter_removal.compiled()

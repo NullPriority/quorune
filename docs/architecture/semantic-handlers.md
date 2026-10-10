@@ -145,6 +145,23 @@ Malformed continuations, unavailable characteristics, and unrepresented history
 fail closed. No new mutation owner, zone event, history registry, or runtime
 Oracle interpretation participates in this path.
 
+The typed `discard_whole_hands` instruction selects every current hand member
+for its represented affected players and delegates one simultaneous batch to
+the canonical zone owner. It preserves the discard transition cause and
+resolves all destination replacements before following draw instructions.
+Empty hands require no subset choice and do not skip an independent draw.
+Replacement continuations seal private membership, including logical object
+identity, and reject a changed hand before resuming. This snapshot is not
+published to another principal.
+
+Fixed controller and each-player draw tails reuse ordinary draw effects;
+independent controller quantities read the public collection or current-turn
+history after the discard. The scalar history vocabulary includes cards
+discarded this turn from the existing normalized journal, including redirected
+discards. Optional wrappers keep their existing controller choice. Team-wide
+choices, filtered entire hands, greatest-discarded-this-way counts, and
+unrepresented linked tails remain residual.
+
 Departure relevance is determined from object identity, expected incarnation,
 and public zone before a pending characteristic is evaluated. Empty departure
 groups and unrelated references neither read values nor initialize continuation

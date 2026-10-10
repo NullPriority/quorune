@@ -15,6 +15,9 @@ from .errors import GameRuleError
 from .mana import ManaMode
 from .object_query import object_query_result, query_objects
 from .util import normalize_mana_bundle
+from .public_quantity_mana_runtime import (
+    public_quantity_output, public_quantity_mana_modes, select_public_quantity_mana,
+)
 
 
 class ManaAbilityRuntimeHost(Protocol):
@@ -150,6 +153,8 @@ def mana_modes_for_ability(
 
     if ability.color_set_mana_output is not None:
         return decorated(_color_set_mana_modes(host, seat, ability))
+    if public_quantity_output(ability) is not None:
+        return decorated(public_quantity_mana_modes(host, seat, source, ability))
     if ability.fixed_mana_outputs:
         fixed_outputs = tuple(ability.fixed_mana_outputs)
         if all(
@@ -221,6 +226,8 @@ def _land_output_colors(
                         for color, amount in mode.bundle.items()
                         if color in "WUBRG" and amount
                     )
+                elif public_quantity_output(ability) is not None:
+                    colors.update(color for color in public_quantity_output(ability).colors if color in 'WUBRG')
                 elif ability.dynamic_mana_output is not None:
                     dynamic_by_object[object_id] = ability.dynamic_mana_output
     changed = True
@@ -301,9 +308,14 @@ def mana_output_for_ability(
     source: Any,
     ability: ActivatedAbility,
     response: Mapping[str, Any],
+    *,
+    source_information=None,
 ) -> dict[str, int]:
     """Validate the submitted output against the advertised mode set."""
 
+    if public_quantity_output(ability) is not None:
+        return select_public_quantity_mana(host, seat, source, ability, response,
+            source_information=source_information)
     legal_modes = mana_modes_for_ability(host, seat, source, ability)
     declared = normalize_mana_bundle(response.get("mana_output"))
     raw_choice = str(response.get("mana_choice") or "").upper()

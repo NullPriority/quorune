@@ -59,6 +59,7 @@ class FixedSelfEntryCounterTemplate:
     def capabilities(self) -> tuple[str, ...]:
         return (
             FIXED_SELF_ENTRY_COUNTER_CAPABILITY,
+            "counter.placement.quantity_replacement",
             *(
                 ("counter.characteristic.keyword",)
                 if keyword_counter_mechanic(self.counter_name) is not None

@@ -43,6 +43,7 @@ from .model import (
     SemanticChoiceContinuation,
     SemanticChoiceError,
 )
+from .destruction_intent_identity import DESTRUCTION_INTENT_TYPES
 
 
 _PILOT_ROLE = "pilot"
@@ -253,6 +254,7 @@ def continue_semantic_completion(
             elif isinstance(
                 intent,
                 (
+                    *DESTRUCTION_INTENT_TYPES,
                     PlaceCountersOnSetIntent,
                     LifeChangeIntent,
                     PlaceCounterBatchIntent,

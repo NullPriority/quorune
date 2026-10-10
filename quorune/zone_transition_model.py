@@ -3,7 +3,7 @@ from __future__ import annotations
 """Typed boundary values for authoritative zone transitions."""
 
 from dataclasses import dataclass
-from typing import Any, Mapping, Protocol
+from typing import Any, Mapping, Protocol, Sequence
 
 from .model import CardInstance, GameState
 from .life_state import PreparedLifePayment
@@ -103,6 +103,27 @@ class ZoneDepartureSnapshot:
     trigger_sources: DepartureTriggerSnapshot
     copy_snapshot: Mapping[str, Any] | None = None
     cast_option: str | None = None
+    counters: Mapping[str, int] | None = None
+
+    @classmethod
+    def from_event_sources(
+        cls, *, origin: str, controller: str, logical_object_id: str,
+        characteristics: Mapping[str, Any], counters: Mapping[str, int] | None,
+        attachments: Sequence[str], attached_to: str | None,
+        cast_option: str | None, sources: Sequence[CardInstance],
+        source_zones: Mapping[str, str],
+        source_characteristics: Mapping[str, Mapping[str, Any]],
+    ) -> ZoneDepartureSnapshot:
+        """Adapt the historical engine facade's event facts at their typed boundary."""
+        return cls(
+            origin=origin, controller=controller, logical_object_id=logical_object_id,
+            characteristics=characteristics, counters=counters,
+            attachments=tuple(attachments), attached_to=attached_to, cast_option=cast_option,
+            trigger_sources=DepartureTriggerSnapshot(
+                sources=tuple(sources), source_zones=dict(source_zones),
+                source_characteristics=dict(source_characteristics),
+            ),
+        )
 
 
 @dataclass(frozen=True, slots=True)

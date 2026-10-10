@@ -140,12 +140,25 @@ class FixedAffectedPlayerDiscardCompilerTests(unittest.TestCase):
         self.assertEqual("opponent", template.target_schema["player_relation"])
         self.assertTrue(template.effects[0]["hidden"])
 
+    def test_whole_hand_target_promotes_composition_but_keeps_counted_leaf_boundary(self):
+        text = "Target player discards their hand."
+        self.assertIsNone(fixed_affected_player_discard_effect_template(text))
+        ir = self.compile(text)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node = ir.faces[0].nodes[0]
+        self.assertEqual("discard_whole_hands", node.effects[0]["op"])
+        self.assertEqual(["$target.0"], node.effects[0]["players"])
+        self.assertEqual(["player"], node.target_schema["categories"])
+        self.assertEqual("any", node.target_schema["player_relation"])
+        self.assertEqual(1, node.target_schema["count"])
+        self.assertIn("zone.discard.whole_hand", node.capability_dependencies)
+
     def test_unsupported_discard_choices_and_shape_mutations_fail_closed(self):
         unsupported = (
             "Target player discards a card at random.",
             "Target player discards X cards.",
             "Target player discards four cards.",
-            "Target player discards their hand.",
+            "Target player discards all but one card from their hand.",
             "Target player reveals their hand and discards a card.",
             "You may have target player discard a card.",
             "Target player discards two cards at random, then draws two cards.",
