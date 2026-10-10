@@ -8519,6 +8519,93 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Viashino Firstblade cast queues its source modifier. A real Cloudshift response creates a new incarnation and new trigger; the returned object receives only its new +2/+2, with pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_aura_cast_controls_recipient_and_bounce_restores_initial_custody",
+      "piece_ids": [
+        "capability.attachment.aura.simple_object",
+        "capability.continuous.control.attached_source"
+      ],
+      "capability_ids": [
+        "attachment.aura.simple_object",
+        "continuous.control.attached_source"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Mind Control offered and accepted cast attaches to a foreign permanent, canonical layer-two control changes its custody, and actual Aura bounce restores initial control with pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_recipient_blink_returns_under_printed_controller_without_old_control",
+      "piece_ids": [
+        "capability.attachment.reference.current_or_lki",
+        "capability.continuous.control.attached_source"
+      ],
+      "capability_ids": [
+        "attachment.reference.current_or_lki",
+        "continuous.control.attached_source"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual controlled recipient Cloudshift breaks the old reciprocal attachment and static control, returns under the printed caster controller, and removes the Aura with new incarnation and pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_original_gift_aura_replacement_siblings_reject_whole_runtime_admission",
+      "piece_ids": [
+        "capability.continuous.control.attached_source",
+        "residual.replacement.replacement-applicability"
+      ],
+      "capability_ids": [
+        "continuous.control.attached_source"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Kitnap retains exact static Aura control and material Gift/replacement siblings; observed pieces are asserted and canonical whole CardProgram binding rejects both strict and compatible runtime admission without construction failure."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_original_gift_aura_replacement_siblings_reject_whole_runtime_admission",
+      "piece_ids": [
+        "capability.continuous.control.attached_source",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ],
+      "capability_ids": [
+        "continuous.control.attached_source"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Kitnap retains exact static Aura control and material Gift/replacement siblings; observed pieces are asserted and canonical whole CardProgram binding rejects both strict and compatible runtime admission without construction failure."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_original_saga_target_set_with_unrepresented_chapter_rejects_runtime_admission",
+      "piece_ids": [
+        "capability.continuous.resolution.fixed_target_characteristic_set",
+        "residual.card_form.ordinary-saga-chapter-event-binding"
+      ],
+      "capability_ids": [
+        "continuous.resolution.fixed_target_characteristic_set"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Tale of Tinuviel retains its exact bounded chapter-three target characteristic set and unrepresented chapter-one Saga body; observed pieces and unresolved whole-program trust reject strict and compatible runtime admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_doctors_companion_activated_draw_keeps_both_commander_designations_and_replays",
+      "piece_ids": [
+        "capability.format.commander.pairing.doctors_companion",
+        "capability.zone.draw.library_to_hand"
+      ],
+      "capability_ids": [
+        "format.commander.pairing.doctors_companion",
+        "zone.draw.library_to_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "An exactly registered generic Doctor companion with a fixed draw activation is paired with an actual Doctor during four-player setup. An offered and accepted activation draws privately without losing either commander designation, and pre-action replay reproduces the state."
     }
   ]
 }

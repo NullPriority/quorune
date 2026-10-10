@@ -20,10 +20,12 @@ class BatchedSupportMeasurementTests(unittest.TestCase):
     def test_current_delivery_identity_is_distinct_and_keeps_the_landed_policy(self):
         from scripts.harvest_outcome_history import validated_semantic_transition_declaration
         from quorune.work_selection_bundles import validate_bundle_policy
+        from quorune.oracle_ir import ORACLE_COMPILER_VERSION
         policy=json.loads((ROOT/'platform/rules-subsystems.json').read_text(encoding='utf-8'))['work_selection']
         declaration=validated_semantic_transition_declaration(policy['semantic_transition_declaration'])
-        self.assertEqual('bundle:batched-card-support-v295',declaration['bundle_id'])
-        self.assertEqual('measurement:batched-card-support-v295',declaration['measurement_id'])
+        self.assertEqual(ORACLE_COMPILER_VERSION,declaration['compiler_version'])
+        self.assertEqual('bundle:batched-card-support-'+ORACLE_COMPILER_VERSION.removeprefix('oracle-ir-'),declaration['bundle_id'])
+        self.assertEqual('measurement:'+declaration['bundle_id'].split(':',1)[1],declaration['measurement_id'])
         bundles,_weights=validate_bundle_policy(policy['coverage_family'])
         by_id={row['bundle_id']:row for row in bundles}
         self.assertIn('bundle:batched-card-support',by_id)

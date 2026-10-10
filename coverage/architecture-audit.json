@@ -13012,11 +13012,11 @@
       "applicable_high_risk_pairs": 376,
       "applicable_piece_pairs": 107650,
       "available": true,
-      "covered_high_risk_pairs": 370,
-      "covered_piece_pairs": 1112,
+      "covered_high_risk_pairs": 376,
+      "covered_piece_pairs": 1118,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "e67374a9d7da22944d3df7f2ff143906713dad6d2f5278896b6edfb51627cf7e",
-      "uncovered_high_risk_pairs": 6
+      "source_fingerprint": "b5cf1bfc43e9bdd50f67654f520eff5847cc6b822b9aa1752961250bfffc3f14",
+      "uncovered_high_risk_pairs": 0
     },
     "migration_queue": [],
     "missing_dedicated_owners": [],
@@ -32520,7 +32520,7 @@
             "visibility": "private"
           }
         ],
-        "primary_test_count": 243,
+        "primary_test_count": 244,
         "primary_tests": [
           "test_ability_word_event_triggers",
           "test_activated_draw_abilities",
@@ -32535,6 +32535,7 @@
           "test_attack_keyword_compiler",
           "test_aura_targeting_entry",
           "test_basic_land_type_mana",
+          "test_batched_support_measurement",
           "test_bestow_rules",
           "test_block_keyword_compiler",
           "test_bloodthirst_rules",
@@ -32620,8 +32621,7 @@
           "test_fixed_hand_inspection",
           "test_fixed_homogeneous_target_sets",
           "test_fixed_impulse_access",
-          "test_fixed_keyword_entry_counters",
-          "test_fixed_keyword_event_effects"
+          "test_fixed_keyword_entry_counters"
         ],
         "privacy_sensitivity": "not explicitly declared",
         "prohibited_runtime_oracle_text_accesses": 0,
@@ -36185,7 +36185,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "da4bc383a4df7b49dad6812acf6eaf6e25b7cc65029950eda00d33e5e1a88358",
+      "fingerprint": "06ac13f801f5ad8851ca6f4d97dae1cb17c328652f5dcdf0f93c4db6358c7a51",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -37043,14 +37043,14 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 5362,
-      "discovered_total": 8671,
+      "conventional_ast_cases": 5372,
+      "discovered_total": 8681,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 264,
         "fuzz_named": 1,
         "privacy_or_projection_named": 89,
-        "replay_named": 497,
+        "replay_named": 499,
         "server_named": 38
       },
       "reconciles": true,

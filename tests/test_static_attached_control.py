@@ -65,7 +65,7 @@ class StaticAttachedControlRuntimeTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.temporary=tempfile.TemporaryDirectory();path=Path(cls.temporary.name)/'aura-control.sqlite3'
-        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/static-attached-control.json'],path)
+        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/static-attached-control.json',ROOT/'tests/fixtures/batched-public-assurance-cards.json'],path)
         cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
         cls.deck=DeckDefinition('Static control',[DeckEntry('Generic Bound Commander',1,'commander'),DeckEntry('Generic Bound Plains',30)],['Generic Bound Commander'])
     @classmethod
@@ -221,6 +221,20 @@ class StaticAttachedControlRuntimeTests(unittest.TestCase):
         self.assertTrue(any(n.exact and n.handlers and n.handlers[0].get('handler_id')=='continuous.control.attached-source.v1' for f in ir.faces for n in f.nodes))
         program=compile_best_available_card_program(self.db,c,semantic_registry=SemanticRegistry(),capability_registry=self.registry,capability_profile='commander_review')
         self.assertFalse(bind_card_program_runtime(program,capability_registry=self.registry,profile='commander_review')['strict_capability_ready'])
+
+    def test_original_gift_aura_replacement_siblings_reject_whole_runtime_admission(self):
+        from high_risk_interaction_support import _observed_piece_ids
+        from quorune.compiler.unlock_frontier import analyze_card_unlocks
+        record=self.db.lookup('Kitnap')
+        ir=compile_oracle_card(record,capability_registry=self.registry,capability_profile='commander_review')
+        program=compile_best_available_card_program(self.db,record,semantic_registry=SemanticRegistry(),capability_registry=self.registry,capability_profile='commander_review')
+        row=analyze_card_unlocks(ir,program=program,program_error=None,capabilities=self.registry,profile='commander_review')
+        self.assertLessEqual({'capability.continuous.control.attached_source','residual.replacement.replacement-applicability',
+            'residual.replacement.self-replacement-and-prevention-ordering'},_observed_piece_ids(row))
+        self.assertEqual('residual',row['card_program_status']);self.assertIsNone(row['hard_construction_failure'])
+        binding=bind_card_program_runtime(program,capability_registry=self.registry,profile='commander_review')
+        self.assertFalse(binding['strict_capability_ready']);self.assertFalse(binding['compatible_ready'])
+        self.assertIn('trust_basis:unresolved',binding['blockers'])
 
     def test_departing_aura_owner_restores_recipient_in_surviving_game(self):
         session=self.session(303009);engine=session.engine

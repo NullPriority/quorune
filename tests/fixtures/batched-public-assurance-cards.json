@@ -1,0 +1,295 @@
+{
+  "cards": [
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Gift",
+        "Enchant"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{U}{U}",
+      "name": "Kitnap",
+      "oracle_id": "a1bd1e83-40ac-449f-838c-ef308f275a5d",
+      "oracle_text": "Gift a card (You may promise an opponent a gift as you cast this spell. If you do, when it enters, they draw a card.)\nEnchant creature\nWhen this Aura enters, tap enchanted creature. If the gift wasn't promised, put three stun counters on it.\nYou control enchanted creature.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-08-02",
+      "toughness": null,
+      "type_line": "Enchantment — Aura"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "saga",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{W}{W}",
+      "name": "Tale of Tinúviel",
+      "oracle_id": "bce30bc5-b059-42bb-a9a4-5886f5607160",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Target creature you control gains indestructible for as long as you control this Saga.\nII — Return target creature card from your graveyard to the battlefield.\nIII — Up to two target creatures you control each gain lifelink until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-06-23",
+      "toughness": null,
+      "type_line": "Enchantment — Saga"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Deal with the Black Guardian",
+        "Goad",
+        "Doctor's companion"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{B}",
+      "name": "Vislor Turlough",
+      "oracle_id": "cdf5c31c-c324-471f-b6d7-06a06e91daa3",
+      "oracle_text": "Deal with the Black Guardian — When Vislor Turlough enters, you may have an opponent gain control of it. If you do, it's goaded for as long as they control it.\nAt the beginning of your end step, draw a card, then you lose life equal to the number of cards in your hand.\nDoctor's companion (You can have two commanders if the other is the Doctor.)",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2023-10-13",
+      "toughness": "5",
+      "type_line": "Legendary Creature — Rogue"
+    },
+    {
+      "oracle_id": "fixture:doctor-companion-draw",
+      "name": "Generic Doctor Companion Draw",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Legendary Creature — Human",
+      "oracle_text": "{0}: Draw a card.\nDoctor's companion",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Bad Wolf",
+        "Doctor's companion"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-10-13",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "fixture:query-target-set",
+      "name": "Generic Query Target Set",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Instant",
+      "oracle_text": "Up to two target creatures each get +X/+X until end of turn, where X is the number of creatures you control.",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "As an additional cost to cast a spell with gift, you can promise the listed gift to an opponent. That opponent is chosen as part of that additional cost. The gift isn't given at this time; rather, it's given at a later time based on whether or not the spell is a permanent spell.",
+      "oracle_id": "a1bd1e83-40ac-449f-838c-ef308f275a5d",
+      "published_at": "2024-07-26",
+      "source": "wotc"
+    },
+    {
+      "comment": "For instants and sorceries with gift, the gift is given to the appropriate opponent as part of the resolution of the spell. This happens before any of the spell's other effects would take place.",
+      "oracle_id": "a1bd1e83-40ac-449f-838c-ef308f275a5d",
+      "published_at": "2024-07-26",
+      "source": "wotc"
+    },
+    {
+      "comment": "For permanent spells with gift, an ability triggers when that permanent enters if the gift was promised. When that ability resolves, the gift is given to the appropriate opponent.",
+      "oracle_id": "a1bd1e83-40ac-449f-838c-ef308f275a5d",
+      "published_at": "2024-07-26",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a spell for which the gift was promised is countered, doesn't resolve (perhaps because all of its targets are illegal), or is otherwise removed from the stack, the gift won't be given. None of its other effects will happen either.",
+      "oracle_id": "a1bd1e83-40ac-449f-838c-ef308f275a5d",
+      "published_at": "2024-07-26",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you copy a spell for which the gift was promised, the gift was also promised to the same opponent for the copy. If a card or token enters as a copy of a permanent that's already on the battlefield, the gift isn't promised for that new permanent, even if it was promised for the original.",
+      "oracle_id": "a1bd1e83-40ac-449f-838c-ef308f275a5d",
+      "published_at": "2024-07-26",
+      "source": "wotc"
+    },
+    {
+      "comment": "In the main set, there are four different kinds of gifts. \"Gift a Food\" causes the chosen opponent to create a Food token, while \"Gift a Treasure\" causes the chosen opponent to create a Treasure token. \"Gift a card\" causes them to draw a card, and \"Gift a tapped Fish\" causes them to create a tapped 1/1 blue Fish creature token. The Commander decks contain two more kinds of gifts: \"Gift an Octopus,\" which causes the chosen opponent to create an 8/8 blue Octopus creature token, and \"Gift an extra turn,\" which causes them to take an extra turn after the current turn ends.",
+      "oracle_id": "a1bd1e83-40ac-449f-838c-ef308f275a5d",
+      "published_at": "2024-07-26",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some instant or sorcery spells require alternative or additional targets if the gift was promised. You ignore these targeting requirements if the gifts aren't promised for those spells. On the other hand, you can promise a gift for a permanent spell even if you won't be able to choose targets for an enters ability of that permanent once the spell resolves.",
+      "oracle_id": "a1bd1e83-40ac-449f-838c-ef308f275a5d",
+      "published_at": "2024-07-26",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can't pay a gift cost more than once.",
+      "oracle_id": "a1bd1e83-40ac-449f-838c-ef308f275a5d",
+      "published_at": "2024-07-26",
+      "source": "wotc"
+    },
+    {
+      "comment": "Although Doctor's companion is a new variant of the partner ability, the rules for partner have not otherwise changed. Notably, Time Lord Doctors and cards with Doctor's companion do not interact with cards which have another partner ability.",
+      "oracle_id": "cdf5c31c-c324-471f-b6d7-06a06e91daa3",
+      "published_at": "2023-10-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "An effect that checks whether you control your commander is satisfied if you control one or both of your two commanders.",
+      "oracle_id": "cdf5c31c-c324-471f-b6d7-06a06e91daa3",
+      "published_at": "2023-10-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "Both commanders start in the command zone, and the remaining 98 cards (or 58 cards in a Commander Draft game) of your deck are shuffled to become your library.",
+      "oracle_id": "cdf5c31c-c324-471f-b6d7-06a06e91daa3",
+      "published_at": "2023-10-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "If something refers to your commander while you have two commanders, it refers to one of them of your choice. If you are instructed to perform an action on your commander (e.g. put it from the command zone into your hand due to Command Beacon), you choose one of your commanders at the time the effect happens.",
+      "oracle_id": "cdf5c31c-c324-471f-b6d7-06a06e91daa3",
+      "published_at": "2023-10-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your Commander deck has two commanders, you can include only cards whose own color identities are also found in your commanders' combined color identities.",
+      "oracle_id": "cdf5c31c-c324-471f-b6d7-06a06e91daa3",
+      "published_at": "2023-10-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once the game begins, your two commanders are tracked separately. If you cast one, you won't have to pay an additional {2} the first time you cast the other. A player loses the game after having been dealt 21 combat damage from any one of them, not from both of them combined.",
+      "oracle_id": "cdf5c31c-c324-471f-b6d7-06a06e91daa3",
+      "published_at": "2023-10-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "The Doctor's companion ability allows you to have two commanders if one has the ability and the other is a legendary creature that is a Time Lord Doctor and has no other creature types. Creatures with the changeling ability, for example, can't be a second commander this way.",
+      "oracle_id": "cdf5c31c-c324-471f-b6d7-06a06e91daa3",
+      "published_at": "2023-10-13",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

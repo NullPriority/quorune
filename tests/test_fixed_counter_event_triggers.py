@@ -2314,6 +2314,17 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
         )
         self.assertFalse(compiled.material_residuals)
 
+    def test_aggregate_zone_counter_and_limited_tap_compositions_are_exact(self):
+        aggregate=self.compile('Whenever one or more creatures die, put a +1/+1 counter on this creature.',type_line='Creature — Fixture')
+        self.assertEqual('exact',aggregate.status,aggregate.material_residuals)
+        node=next(n for f in aggregate.faces for n in f.nodes if n.exact)
+        self.assertIn('one_or_more_event_batch',node.runtime_coverage)
+        limited=self.compile('Whenever a creature you control becomes tapped, you may gain 1 life. This ability triggers only once each turn.',type_line='Creature — Fixture')
+        self.assertEqual('exact',limited.status,limited.material_residuals)
+        node=next(n for f in limited.faces for n in f.nodes if n.exact)
+        self.assertEqual({'schema_version':1,'kind':'once_per_turn'},dict(node.trigger_limit))
+        self.assertIn('trigger.usage.once_per_turn',node.capability_dependencies)
+
     def test_adjacent_event_and_effect_variants_remain_material(self):
         variants = (
             "Whenever you cast or copy a noncreature spell, put a +1/+1 counter on this creature.",
@@ -2330,7 +2341,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             "You may put a charge counter on this artifact.",
             "At the beginning of your upkeep, move a charge counter from this artifact onto target creature.",
             "At the beginning of your upkeep, remove a charge counter from this artifact.",
-            "Whenever one or more creatures die, put a +1/+1 counter on this creature.",
+            "Whenever one or more creatures die, put a +1/+1 counter on each of them.",
             "Whenever another creature you control enters or dies, put a +1/+1 counter on this creature.",
             "Whenever another creature you control leaves the battlefield, put a +1/+1 counter on this creature.",
             "Whenever another creature with a counter on it dies, put a +1/+1 counter on this creature.",
@@ -3319,7 +3330,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             "Whenever one or more creatures you control attack, you may draw a card.",
             "Whenever a creature you control becomes the target of a spell for the first time each turn, you "
             "may draw a card.",
-            "Whenever a creature you control becomes tapped, you may gain 1 life. This ability triggers only once each turn.",
+            "Whenever a creature you control becomes tapped, you may gain 1 life. This ability triggers only once during each opponent's turn.",
             "Whenever one or more +1/+1 counters are put on this creature for the first time each turn, you "
             "may create a 1/1 green Squirrel creature token.",
             "When you cycle this card and when this creature dies, you may draw "

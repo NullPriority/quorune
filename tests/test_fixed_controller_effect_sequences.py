@@ -416,11 +416,21 @@ class FixedControllerEffectSequenceCompilerTests(unittest.TestCase):
         self.assertEqual("$controller", effects[0]["player"])
         self.assertEqual(["$controller"], effects[1]["players"])
 
+    def test_public_quantity_sequence_promotes_composition_but_keeps_leaf_boundary(self):
+        text='Draw cards equal to the number of creatures you control. Scry 1.'
+        self.assertIsNone(fixed_controller_effect_sequence_template(text))
+        ir=compile_oracle_card(self.fixture(text),capability_registry=self.capabilities,capability_profile='commander_review')
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        effects=ir.faces[0].nodes[0].effects
+        self.assertEqual(['draw','scry'],[e['op'] for e in effects])
+        self.assertEqual('public_query_effect_amount',effects[0]['count']['kind'])
+        self.assertEqual(1,effects[1]['count'])
+
     def test_unsupported_sequence_wording_remains_a_precise_residual(self):
         composed = "Draw a card. Scry 1. You gain 1 life."
         self.assertIsNone(fixed_controller_effect_sequence_template(composed))
         for text in (
-            "Draw cards equal to the number of creatures you control. Scry 1.",
+            "Draw cards equal to the number of different powers among creatures you control. Scry 1.",
             "Scry 1, then you may draw a card.",
             "Draw a card. Each player loses 1 life.",
             "Draw a card unless an opponent pays {1}.",

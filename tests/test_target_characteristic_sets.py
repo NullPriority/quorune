@@ -49,7 +49,7 @@ class TargetCharacteristicSetRuntimeTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.temporary=tempfile.TemporaryDirectory();path=Path(cls.temporary.name)/'sets.sqlite3'
-        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/target-characteristic-sets.json'],path)
+        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/target-characteristic-sets.json',ROOT/'tests/fixtures/batched-public-assurance-cards.json'],path)
         cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
         cls.deck=DeckDefinition('Target sets',[DeckEntry('Generic Bound Commander',1,'commander'),DeckEntry('Generic Bound Plains',30)],['Generic Bound Commander'])
     @classmethod
@@ -152,6 +152,35 @@ class TargetCharacteristicSetRuntimeTests(unittest.TestCase):
         accepted=session.act('pilot:A',{'action_id':action['id'],'targets':[bodies[1].ref],'pay':'auto'});self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
         self.assertEqual(1,engine._numeric_stat(bodies[0].object_id,'power'))
         self.assertEqual(2,engine._numeric_stat(bodies[1].object_id,'power'));self.replay(session)
+
+
+    def test_public_quantity_target_set_resolves_current_count_for_original_targets_and_replays(self):
+        session=self.session(311102);engine=session.engine
+        bodies=[self.add(engine,'Generic Bound Body',ref='query-body-'+str(i)) for i in range(2)]
+        foreign=self.add(engine,'Generic Bound Body',seat='B')
+        spell=self.add(engine,'Generic Query Target Set',zone='hand')
+        action=self.ready(session,spell,{});self.checkpoint(session)
+        accepted=session.act('pilot:A',{'action_id':action['id'],'targets':[c.ref for c in bodies]});self.assertTrue(accepted.ok,accepted.summary)
+        self.resolve(session)
+        for body in bodies:self.assertEqual((4,8),(engine._numeric_stat(body.object_id,'power'),engine._numeric_stat(body.object_id,'toughness')))
+        self.assertEqual(2,engine._numeric_stat(foreign.object_id,'power'));self.replay(session,load=True)
+
+    def test_original_saga_target_set_with_unrepresented_chapter_rejects_runtime_admission(self):
+        from high_risk_interaction_support import _observed_piece_ids
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.compiler.unlock_frontier import analyze_card_unlocks
+        from quorune.semantics import SemanticRegistry
+        record=self.db.by_oracle_id('bce30bc5-b059-42bb-a9a4-5886f5607160')
+        ir=compile_oracle_card(record,capability_registry=self.registry,capability_profile='commander_review')
+        program=compile_best_available_card_program(self.db,record,semantic_registry=SemanticRegistry(),capability_registry=self.registry,capability_profile='commander_review')
+        row=analyze_card_unlocks(ir,program=program,program_error=None,capabilities=self.registry,profile='commander_review')
+        self.assertLessEqual({'capability.continuous.resolution.fixed_target_characteristic_set',
+            'residual.card_form.ordinary-saga-chapter-event-binding'},_observed_piece_ids(row))
+        self.assertEqual('residual',row['card_program_status']);self.assertIsNone(row['hard_construction_failure'])
+        binding=bind_card_program_runtime(program,capability_registry=self.registry,profile='commander_review')
+        self.assertFalse(binding['strict_capability_ready']);self.assertFalse(binding['compatible_ready'])
+        self.assertIn('trust_basis:unresolved',binding['blockers'])
 
 
 if __name__=='__main__':unittest.main()

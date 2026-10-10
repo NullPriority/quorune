@@ -1720,6 +1720,7 @@
       ],
       "test_modules": [
         "test_ordered_quantity_results",
+        "test_fixed_controller_effect_sequences",
         "test_public_query_effect_amounts",
         "test_source_counter_amounts",
         "test_scalar_effect_amounts",
@@ -1768,6 +1769,8 @@
       "test_modules": [
         "test_aggregated_zone_event_triggers",
         "test_qualified_zone_event_queries",
+        "test_fixed_counter_event_triggers",
+        "test_ability_word_event_triggers",
         "test_limited_event_triggers",
         "test_card_program_trust"
       ]
