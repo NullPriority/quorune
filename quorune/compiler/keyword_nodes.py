@@ -153,6 +153,7 @@ _PARAMETERIZED_SPLIT_MECHANICS = frozenset(
     }
 )
 _INSTANCE_PART_MECHANICS = (
+    'split second',
     _AFFINITY_MECHANIC,
     _DELVE_MECHANIC,
     _EVOKE_MECHANIC,
@@ -179,6 +180,7 @@ _INSTANCE_PART_MECHANICS = (
 )
 _SPLIT_MECHANICS = frozenset(
     {
+        'split second',
         PRINTED_FLASH_MECHANIC,
         _FABRICATE_MECHANIC,
         *_INSTANCE_PART_MECHANICS,
@@ -216,6 +218,7 @@ def keyword_node_plans(
             _DELVE_MECHANIC,
             _EVOKE_MECHANIC,
             _IMPROVISE_MECHANIC,
+            'split second',
         )
         if mechanic in mechanics
     ) + tuple(
@@ -343,6 +346,14 @@ def closed_special_keyword_node(
         "capability_profile": capability_profile,
         "residuals": residuals,
     }
+    if mechanics==('split second',):
+        from ..semantic_runtime.static_cast_rules import SPLIT_SECOND_HANDLER_ID,SPLIT_SECOND_CAPABILITY,STATIC_CAST_RULE_EVENT
+        from .static_runtime_nodes import runtime_handler_node
+        return runtime_handler_node(node_id=node_id,line=line,span=span,
+            compiled=('split-second-stack-static-v1',{'handler_id':SPLIT_SECOND_HANDLER_ID,'schema_version':1,'event':STATIC_CAST_RULE_EVENT},(SPLIT_SECOND_CAPABILITY,)),
+            kind='keyword_ability',event=STATIC_CAST_RULE_EVENT,active_zone='stack',
+            dependency_reason='Split second requires trusted stack priority restrictions',capability_registry=capability_registry,
+            capability_profile=capability_profile,residuals=residuals)
     umbra = umbra_armor_keyword_node(**values)
     if umbra is not None:
         return umbra

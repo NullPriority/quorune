@@ -66,6 +66,9 @@ def activation_availability(
         return "unavailable", "wrong_zone"
     if not ability.compiled_cost:
         return "unresolved", "unresolved_cost_semantics"
+    from ...semantic_runtime.static_cast_rules import split_second_is_active
+    if not ability.mana_ability and split_second_is_active(host):
+        return 'unavailable','split_second'
     activation_prohibitions = current_activation_prohibitions(
         host,
         card,

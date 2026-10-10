@@ -1652,6 +1652,23 @@
       ]
     },
     {
+      "id": "split-second-priority-contract",
+      "patterns": [
+        "quorune/semantic_runtime/static_cast_rules.py",
+        "quorune/rules/activation/availability.py",
+        "quorune/compiler/keyword_nodes.py",
+        "mechanics/contracts/split-second.json",
+        "tests/fixtures/split-second-cards.json"
+      ],
+      "test_modules": [
+        "test_split_second_rules",
+        "test_casting_spells_rules",
+        "test_mana_abilities",
+        "test_morph_rules",
+        "test_card_program_trust"
+      ]
+    },
+    {
       "id": "commander-characteristic-query-contract",
       "patterns": [
         "quorune/object_predicate.py",

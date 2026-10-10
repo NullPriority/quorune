@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 208,
+  "registry_version": 209,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -12350,6 +12350,86 @@
       "dependency_fail_closed_rationale": "This read-only designation query has no capability dependencies; the complete producer program independently requires its static grant, keyword, activation or result consumers.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "test_designation_query_omission_mutant_is_killed_by_actual_bastion removes the designation filter and wrongly grants an undesignated copy or the Bastion source.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "priority.stack.split_second",
+      "version": 1,
+      "official_rules": [
+        "702.61",
+        "702.61a",
+        "702.61b",
+        "702.61c",
+        "117.1a",
+        "117.1b",
+        "117.1c",
+        "605.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "While a trusted source-spanned Split second declaration is active on a current stack spell or copy, common casting and activation authority prohibits every spell cast and every nonmana activation. Mana abilities, special actions, triggers and ordinary passes retain their owners.",
+        "inputs": [
+          "current stack spell identity and selected face",
+          "trusted compiled stack static descriptor",
+          "typed mana-ability classification"
+        ],
+        "outputs": [
+          "shared prohibited cast/nonmana activation offers and commands",
+          "ordinary restriction disappearance when the last source leaves the stack"
+        ],
+        "exclusions": [
+          "unsupported whole-card siblings",
+          "raw Oracle or card-identity runtime dispatch",
+          "suppressing mana abilities, triggers, or special actions"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.semantic_runtime.static_cast_rules.SplitSecondHandler",
+        "quorune.semantic_runtime.static_cast_rules.split_second_is_active",
+        "quorune.rules.activation.availability.activation_availability",
+        "quorune.semantic_runtime.static_cast_rules.static_cast_prohibition_reason"
+      ],
+      "positive_tests": [
+        "test_keyword_is_a_stack_local_source_spanned_static_declaration"
+      ],
+      "negative_tests": [
+        "test_malformed_descriptors_and_dependency_omission_fail_closed"
+      ],
+      "interaction_tests": [
+        "test_actual_sudden_shock_blocks_casts_and_nonmana_abilities_but_allows_mana",
+        "test_cast_trigger_resolves_above_split_second_without_unlocking_priority",
+        "test_split_second_copy_restricts_until_last_spell_copy_leaves",
+        "test_actual_morph_face_up_special_action_remains_legal_during_split_second"
+      ],
+      "multiplayer_tests": [
+        "test_actual_sudden_shock_blocks_casts_and_nonmana_abilities_but_allows_mana"
+      ],
+      "privacy_tests": [
+        "test_actual_sudden_shock_blocks_casts_and_nonmana_abilities_but_allows_mana"
+      ],
+      "replay_tests": [
+        "test_actual_sudden_shock_blocks_casts_and_nonmana_abilities_but_allows_mana",
+        "test_cast_trigger_resolves_above_split_second_without_unlocking_priority",
+        "test_actual_morph_face_up_special_action_remains_legal_during_split_second"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "The stack-local rule has no capability dependencies; costs, results and mana-ability legality are independently closed by their existing owners.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the stack restriction republishes a response spell and nonmana activation during actual Sudden Shock priority and the offer witness rejects it.",
       "blockers": [],
       "status": "trusted"
     }

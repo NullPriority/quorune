@@ -90,6 +90,7 @@
     "tests/fixtures/source-pronoun-results.json",
     "tests/fixtures/source-reference-closure-cards.json",
     "tests/fixtures/spell-history-transformations-cards.json",
+    "tests/fixtures/split-second-cards.json",
     "tests/fixtures/static-action-permission-cards.json",
     "tests/fixtures/static-attached-control.json",
     "tests/fixtures/static-characteristic-labels.json",

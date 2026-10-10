@@ -298,6 +298,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "replacement.zone.self-entry-counter",
                 "replacement.zone.sunburst",
                 "rule.cast.static",
+                "rule.stack.split_second",
                 "rule.cleanup.no_maximum_hand_size",
                 "restriction.activation.chosen_name_nonmana",
                 "restriction.activation.fixed_public",

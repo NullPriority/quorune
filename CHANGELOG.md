@@ -31,6 +31,10 @@ maintenance: "hand-maintained"
 - Preserve explicit sacrifice provenance for Fading and Vanishing cleanup
   through zone replacements, normalized trigger occurrences, and turn history.
 
+- Enforce Split second through shared cast and activation availability while
+  preserving mana abilities, triggered abilities, face-up special actions and
+  stack copies. The restriction lasts only while its spell remains on the stack.
+
 - Apply fixed stats, keywords and closed quoted abilities to commander creatures
   through physical designation and distinct owner/control live queries. Partner
   commanders remain separate, copies do not inherit designation, and borrowed

@@ -1663,6 +1663,13 @@ query and require `state_query.commander.designation`. Prior query versions keep
 their exact serialized shapes; unrepresented quantity and cost grammars reject
 the new designation qualifier.
 
+Split second lowers to a trusted stack-local static descriptor in the existing
+cast-rule registry. The shared casting and activation availability owners read
+current spell declarations for every player; they block spells and nonmana
+activations while retaining mana abilities, triggers, special actions and
+priority passes. The restriction remains active beneath triggered abilities
+and on copied spells, and disappears when its last stack source leaves.
+
 Single-subject `place_counters` results also bind declared or current public
 characteristic amounts through their existing counter owner. A resolved zero
 amount is a paid no-op; malformed and negative amounts are rejected. Counter

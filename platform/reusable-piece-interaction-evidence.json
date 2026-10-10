@@ -8726,6 +8726,51 @@
       ],
       "interaction_order": 2,
       "assertion": "A real copy token of a designated commander remains undesignated. Actual commander bounce with declined command-zone replacement and Act of Treason bring the copy under the grant player without making it eligible for Bastion indestructible, with exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_sudden_shock_blocks_casts_and_nonmana_abilities_but_allows_mana",
+      "piece_ids": [
+        "capability.mana.activated.fixed_output",
+        "capability.priority.stack.split_second"
+      ],
+      "capability_ids": [
+        "mana.activated.fixed_output",
+        "priority.stack.split_second"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Sudden Shock restricts response casts and nonmana activations for its caster and opponents, while an offered Island mana ability remains accepted; denied commands roll back atomically and replay preserves the completed damage."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_morph_face_up_special_action_remains_legal_during_split_second",
+      "piece_ids": [
+        "capability.casting.morph.fixed_mana",
+        "capability.priority.stack.split_second"
+      ],
+      "capability_ids": [
+        "casting.morph.fixed_mana",
+        "priority.stack.split_second"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Battering Craghorn is cast face down, then turns face up through its offered and accepted special action while actual Sudden Shock remains on the stack. The restriction stays active and pre-action replay preserves the sequence."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_cast_trigger_resolves_above_split_second_without_unlocking_priority",
+      "piece_ids": [
+        "capability.priority.stack.split_second",
+        "capability.trigger.placement.apnap"
+      ],
+      "capability_ids": [
+        "priority.stack.split_second",
+        "trigger.placement.apnap"
+      ],
+      "interaction_order": 2,
+      "assertion": "An exactly registered cast observer triggers above actual Sudden Shock and draws through ordinary APNAP placement and resolution; Split second remains active beneath it and exact pre-action replay reproduces the stack and hand."
     }
   ]
 }
