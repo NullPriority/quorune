@@ -1647,6 +1647,12 @@ across transactional replay. The continuation decoder admits only distinct
 selected refs with prior canonical event identities; the casting owner still
 revalidates every payer, zone, predicate and selected replacement at commitment.
 
+Global fixed characteristic sets accept canonical creature-subtype plurals with
+optional `All` and `Other`. The shared battlefield query carries no controller
+restriction and excludes only the source when `Other` is printed. Both fixed
+stats and keyword grants consume that same predicate. Unknown nouns, open union
+clauses and Class level context retain their existing fail-closed boundaries.
+
 Single-subject `place_counters` results also bind declared or current public
 characteristic amounts through their existing counter owner. A resolved zero
 amount is a paid no-op; malformed and negative amounts are rejected. Counter

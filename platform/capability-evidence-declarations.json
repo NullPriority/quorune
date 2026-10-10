@@ -11655,272 +11655,760 @@
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "interaction",
       "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_static_query_declaration_grant_uses_offer_commit_authority",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Grant a fixed keyword and typed declaration fragment over one live public query, then enforce the fragment at offer and commit."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_live_public_object_state_and_layer_five_queries_recompute",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Recompute layer-6 grants from shared combat, controller-relative modified, equipment, attachment, and cycle-safe layer-5 query facts, then replay the normalized descriptors exactly."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_multicolor_query_observes_the_cycle_safe_layer_five_boundary",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Evaluate multicolor cardinality after a represented layer-5 color addition and before the layer-6 keyword grant without consulting later characteristics."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_ability_presence_query_uses_shared_layer_six_dependency_order",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Order positive ability-presence applicability after relevant layer-6 additions and removals while preserving deterministic cycle fallback."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_aura_attachment_and_query_grant_execute_from_one_exact_card",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Attach Emblem of the Warmind through the ordinary Aura owner, consume its independently compiled Haste grant, and remove the grant when the attached source leaves."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_compiled_grants_feed_haste_vigilance_flying_strike_and_trample_owners",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Feed effective keywords from seven actual compiled CardPrograms into Haste attack and activation, Vigilance tapping, Flying blocking, both strike steps, and Trample assignment."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_counter_multicolor_and_token_queries_use_live_public_state_and_replay",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Recompute controller-scoped named-counter, multicolor, and subtype-token sets from current public state while preserving token qualification and source phasing."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_exact_grant_executes_while_replacement_siblings_fail_closed",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Execute Pulmonic Sliver's exact global Flying grant while its independent replacement applicability and self-replacement ordering spans remain residual and strict runtime admission stays closed."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_subtype_union_recomputes_after_layer_four_and_excludes_source",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Apply the identical subtype-union query to both layer-6 and layer-7c operations after current type changes."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "interaction",
+      "test_id": "tests.test_global_plural_characteristic_sets.GlobalPluralCharacteristicRuntimeTests.test_actual_atlantis_layer_grant_changes_block_offers_and_acceptance",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original global canonical subtype plural grants use one current set across layer-six keywords and fixed stats, all controllers and source exclusion; actual block legality, private commands and replay preserve authority."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "interaction",
       "test_id": "tests.test_typed_dynamic_characteristics.TypedDynamicCharacteristicRuntimeTests.test_four_player_keyword_grants_are_controller_scoped_and_phase_with_source",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Grant Hexproof only to controlled artifacts and Haste only to controlled creature tokens, then remove both when their independent sources phase out."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_counter_multicolor_and_token_queries_use_live_public_state_and_replay",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Keep named-counter grants scoped to the source controller in a four-player game even when an opponent controls an otherwise matching permanent."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_live_queries_track_global_control_subtype_phase_and_zone_changes",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Distinguish global and source-controller live sets across four players while control, subtype, phasing, and source-zone membership change."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_global_plural_characteristic_sets.GlobalPluralCharacteristicRuntimeTests.test_actual_atlantis_cast_grants_foreign_merfolk_and_source_exclusion_with_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original global canonical subtype plural grants use one current set across layer-six keywords and fixed stats, all controllers and source exclusion; actual block legality, private commands and replay preserve authority."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_typed_dynamic_characteristics.TypedDynamicCharacteristicRuntimeTests.test_four_player_keyword_grants_are_controller_scoped_and_phase_with_source",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Keep both live sets scoped to the source controller in a four-player battlefield."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_descriptor_semantics_change_card_program_fingerprint",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Kill a global-to-controller query-scope mutant by requiring the changed runtime descriptor to change the enclosing CardProgram fingerprint."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "mutation",
+      "test_id": "tests.test_global_plural_characteristic_sets.GlobalPluralCharacteristicRuntimeTests.test_global_plural_selector_omission_mutant_is_killed_by_original_atlantis",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original global canonical subtype plural grants use one current set across layer-six keywords and fixed stats, all controllers and source exclusion; actual block legality, private commands and replay preserve authority."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "mutation",
       "test_id": "tests.test_typed_dynamic_characteristics.TypedDynamicCharacteristicCompilerTests.test_characteristic_lowering_mutants_are_killed",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Kill removal of the exact compiler-to-component lowering before keyword behavior can retain trust."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "negative",
       "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_static_declaration_grant_dependencies_fail_closed",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Block the keyword, declaration, or shared public-query capability beneath a combined descriptor and keep exact admission closed."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_descriptors_fail_closed_and_rejection_has_no_state_effect",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Reject malformed fields, controller overrides, duplicates, unsupported keywords, and fabricated global Hexproof before any authoritative state can change."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_level_gated_class_keyword_grant_remains_residual",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Keep a Class level's otherwise matching keyword sentence residual until Class-level applicability has a typed runtime owner."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_open_or_unsupported_queries_remain_material_residuals",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Keep compound combat-state-and-counter, temporary, unsupported-keyword, and widened-Hexproof sentences material and residual."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_shared_public_query_dependency_fails_closed_across_consumers",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Block the shared query dependency and retain the affected static keyword ability as a material residual."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "negative",
+      "test_id": "tests.test_global_plural_characteristic_sets.GlobalPluralCharacteristicCompilerTests.test_unknown_nouns_and_class_level_context_remain_residual",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original global canonical subtype plural grants use one current set across layer-six keywords and fixed stats, all controllers and source exclusion; actual block legality, private commands and replay preserve authority."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "negative",
       "test_id": "tests.test_typed_dynamic_characteristics.TypedDynamicCharacteristicCompilerTests.test_characteristic_descriptors_reject_malformed_values",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Reject unknown fields, noninteger schema versions, unsupported keywords, and controller relations outside the closed source-controller, source-opponent, or global vocabulary."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "negative",
       "test_id": "tests.test_typed_dynamic_characteristics.TypedDynamicCharacteristicRuntimeTests.test_raw_oracle_text_without_fragment_does_not_select_behavior",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Leave identical visible rules prose inert when its trusted typed component is absent."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "positive",
       "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_static_query_and_attachment_declaration_grants_compile_closed",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Compile a fixed query keyword grant beside exact declaration fragments without duplicating the query owner."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_public_object_state_and_query_conditions_compile_closed",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Compile closed combat, tap, attachment, and modified affected sets into the existing fixed-query keyword owner without admitting dynamic or ability-qualified predicates."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_closed_query_grammar_compiles_exact_with_consumer_capabilities",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Compile every bounded controller, global, type, subtype, color, token, multi-keyword, and preserved artifact-Hexproof query shape with exact per-keyword consumer capabilities."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_fixed_battlefield_query_extensions_share_one_canonical_condition",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Compile source-controller, source-opponent, and global fixed battlefield sets into one canonical ObjectQuerySpec shared by layer-6 and layer-7c components."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_shared_public_set_query_fans_into_layers_and_resolution",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Compile fixed type, subtype, Outlaw, token, state, and positive ability predicates through one layer-6 query owner."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_measured_50_card_lower_bound_is_capability_closed",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Compile every card in the conservative pinned 50-card lower bound without material residuals and require a fixed-query characteristic handler on each card."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "positive",
+      "test_id": "tests.test_global_plural_characteristic_sets.GlobalPluralCharacteristicCompilerTests.test_global_other_plural_uses_canonical_subtype_without_controller_filter",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original global canonical subtype plural grants use one current set across layer-six keywords and fixed stats, all controllers and source exclusion; actual block legality, private commands and replay preserve authority."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "positive",
       "test_id": "tests.test_typed_dynamic_characteristics.TypedDynamicCharacteristicCompilerTests.test_closed_characteristic_families_compile_exact_and_near_misses_remain_residual",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Compile exact controller-wide Artifact Hexproof and creature-token Haste sentences into source-spanned query descriptors while adjacent keyword and predicate forms remain residual."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_projection_and_replay_preserve_grants_without_private_identities",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Project public effective keywords to an opponent without exposing physical object identities or internal continuous-effect state."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_live_public_object_state_and_layer_five_queries_recompute",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Round-trip the extended permanent-state predicate and schema-v2 condition descriptors, then replay the resulting layer-6 grants exactly."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_counter_multicolor_and_token_queries_use_live_public_state_and_replay",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Replay exactly from a checkpoint containing live named-counter, multicolor, subtype-token, and phased-source query state."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_projection_and_replay_preserve_grants_without_private_identities",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Replay a command exactly from a checkpoint containing the actual compiled fixed-query sources and their live effective grants."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "replay",
+      "test_id": "tests.test_global_plural_characteristic_sets.GlobalPluralCharacteristicRuntimeTests.test_actual_atlantis_cast_grants_foreign_merfolk_and_source_exclusion_with_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original global canonical subtype plural grants use one current set across layer-six keywords and fixed stats, all controllers and source exclusion; actual block legality, private commands and replay preserve authority."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "replay",
       "test_id": "tests.test_typed_dynamic_characteristics.TypedDynamicCharacteristicRuntimeTests.test_dynamic_characteristics_replay_exactly",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Pin the widened continuous-component registry with a typed characteristic checkpoint and replay the following command exactly."
     },
     {
@@ -15460,8 +15948,19 @@
       "capability_id": "continuous.power_toughness.fixed_anthem",
       "evidence_class": "interaction",
       "test_id": "tests.test_attached_static_characteristics.AttachedStaticEngineTests.test_aura_equipment_anthem_temporary_effect_and_draw_compose",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1g", "613.4c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Apply a live fixed anthem beside Aura and Equipment modifiers, a locked temporary modifier, and a canonical draw on the same authoritative battlefield."
     },
     {
@@ -15506,41 +16005,115 @@
       "capability_id": "continuous.power_toughness.fixed_anthem",
       "evidence_class": "interaction",
       "test_id": "tests.test_continuous_effect_duration.ContinuousEffectEngineTests.test_exact_continuous_effects_compose_while_replacements_stay_residual",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1g", "613.4c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Compose a fixed anthem with exact attached and until-end-of-turn modifiers while keeping unsupported replacement prose explicitly residual."
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_live_public_object_state_and_layer_five_queries_recompute",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1g", "613.4c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Recompute fixed layer-7c modifiers from shared combat, controller-relative modified, equipment, attachment, and cycle-safe layer-5 query facts, then replay the normalized descriptors exactly."
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_ability_presence_query_uses_shared_layer_six_dependency_order",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1g", "613.4c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Evaluate an ability-qualified layer-7c anthem only after relevant layer-6 additions and removals."
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_live_fixed_queries_track_relations_source_identity_and_phasing",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1g", "613.4c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Apply source-controller and source-opponent modifiers to distinct live sets, exclude the source from its own Other set, and expire both when it phases or leaves."
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_subtype_union_recomputes_after_layer_four_and_excludes_source",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1g", "613.4c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Recompute subtype-union membership after layer 4 before applying the fixed layer-7c modifier."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_global_plural_characteristic_sets.GlobalPluralCharacteristicRuntimeTests.test_actual_atlantis_layer_grant_changes_block_offers_and_acceptance",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original global canonical subtype plural grants use one current set across layer-six keywords and fixed stats, all controllers and source exclusion; actual block legality, private commands and replay preserve authority."
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
@@ -15565,9 +16138,39 @@
       "capability_id": "continuous.power_toughness.fixed_anthem",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_live_fixed_queries_track_relations_source_identity_and_phasing",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1g", "613.4c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Apply the opponent-relative modifier to creatures controlled by each of two distinct opponents while preserving the source controller's separate Other-creature modifier."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_global_plural_characteristic_sets.GlobalPluralCharacteristicRuntimeTests.test_actual_atlantis_cast_grants_foreign_merfolk_and_source_exclusion_with_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original global canonical subtype plural grants use one current set across layer-six keywords and fixed stats, all controllers and source exclusion; actual block legality, private commands and replay preserve authority."
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
@@ -15587,6 +16190,25 @@
         "commander_review"
       ],
       "applicability_note": "Reject removal of the generic typed static-anthem lowering."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_global_plural_characteristic_sets.GlobalPluralCharacteristicRuntimeTests.test_global_plural_selector_omission_mutant_is_killed_by_original_atlantis",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original global canonical subtype plural grants use one current set across layer-six keywords and fixed stats, all controllers and source exclusion; actual block legality, private commands and replay preserve authority."
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
@@ -15611,9 +16233,39 @@
       "capability_id": "continuous.power_toughness.fixed_anthem",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_shared_public_query_dependency_fails_closed_across_consumers",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1g", "613.4c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Block the shared public query and retain the affected anthem as a source-spanned material residual."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "negative",
+      "test_id": "tests.test_global_plural_characteristic_sets.GlobalPluralCharacteristicCompilerTests.test_unknown_nouns_and_class_level_context_remain_residual",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original global canonical subtype plural grants use one current set across layer-six keywords and fixed stats, all controllers and source exclusion; actual block legality, private commands and replay preserve authority."
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
@@ -15638,33 +16290,96 @@
       "capability_id": "continuous.power_toughness.fixed_anthem",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_public_object_state_and_query_conditions_compile_closed",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1g", "613.4c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Compile fixed power and toughness modifiers over closed combat, tap, attachment, and modified affected sets into the existing anthem owner."
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_fixed_battlefield_query_extensions_share_one_canonical_condition",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1g", "613.4c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Compile global subtype, source-opponent, multicolor, and shared combined layer-6/layer-7c fixed queries into the existing anthem owner."
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_shared_public_set_query_fans_into_layers_and_resolution",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1g", "613.4c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Compile fixed public type, subtype, token, state, and positive ability sets into the existing layer-7c owner."
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_measured_50_card_lower_bound_is_capability_closed",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1g", "613.4c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Require every card in the conservative pinned 50-card lower bound to close exactly through a fixed-query characteristic component."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "positive",
+      "test_id": "tests.test_global_plural_characteristic_sets.GlobalPluralCharacteristicCompilerTests.test_global_other_plural_uses_canonical_subtype_without_controller_filter",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original global canonical subtype plural grants use one current set across layer-six keywords and fixed stats, all controllers and source exclusion; actual block legality, private commands and replay preserve authority."
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
@@ -15689,9 +16404,39 @@
       "capability_id": "continuous.power_toughness.fixed_anthem",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_live_public_object_state_and_layer_five_queries_recompute",
-      "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1g", "613.4c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Round-trip extended affected-set and schema-v2 conditional descriptors, then replay their resulting layer-7c modifiers exactly."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "replay",
+      "test_id": "tests.test_global_plural_characteristic_sets.GlobalPluralCharacteristicRuntimeTests.test_actual_atlantis_cast_grants_foreign_merfolk_and_source_exclusion_with_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original global canonical subtype plural grants use one current set across layer-six keywords and fixed stats, all controllers and source exclusion; actual block legality, private commands and replay preserve authority."
     },
     {
       "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",

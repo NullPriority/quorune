@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 206,
+  "registry_version": 207,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -4496,24 +4496,138 @@
     },
     {
       "id": "continuous.ability.fixed_query_keyword_grant",
-      "version": 9,
-      "official_rules": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 10,
+      "official_rules": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
-        "summary": "Grant one or more selected ordinary keywords, including five fixed basic landwalk variants and Horsemanship, in layer 6 to a live source-controller, source-opponent, or global battlefield set selected by the shared closed public ObjectQuerySpec, optionally coupled to fixed layer-7c power/toughness or exact declaration fragments over that identical query.",
-        "inputs": ["active phased-in battlefield source", "source-controller, source-opponent, or global target relation", "closed battlefield type, subtype conjunction or union, defined Outlaw, token, public-state, or positive ability-presence query", "represented attack, block, damage, destruction, targeting, ordinary combat keyword, or fixed-generic Ward fragment", "optional fixed power/toughness modifier or exact declaration fragments over the identical creature query"],
-        "outputs": ["source-bound layer-6 keyword grant", "optional source-bound layer-6 declaration-fragment or layer-7c power/toughness grant", "live type, subtype, color-cardinality, supertype, token, named-counter, combat, tap, attachment, modified, positive ability, control, entry, and phasing applicability", "generic layer-6 dependency ordering against additions and removals of the required ability", "immediate source-departure and phasing expiration", "per-keyword capability closure through the existing combat, damage, destruction, or targeting owner"],
-        "exclusions": ["arbitrary rules text", "keywords without trusted consumers", "hidden-zone predicates", "negative or absent ability predicates, compound state-and-counter predicates, or dynamically counted predicates", "open conditional, temporary, chosen, or variable abilities", "untyped keyword data"]
+        "summary": "Grant one or more selected ordinary keywords, including five fixed basic landwalk variants and Horsemanship, in layer 6 to a live source-controller, source-opponent, or global battlefield set selected by the shared closed public ObjectQuerySpec, optionally coupled to fixed layer-7c power/toughness or exact declaration fragments over that identical query. Global canonical creature-subtype plurals accept optional All and Other; one shared query preserves every controller and source exclusion.",
+        "inputs": [
+          "active phased-in battlefield source",
+          "source-controller, source-opponent, or global target relation",
+          "closed battlefield type, subtype conjunction or union, defined Outlaw, token, public-state, or positive ability-presence query",
+          "represented attack, block, damage, destruction, targeting, ordinary combat keyword, or fixed-generic Ward fragment",
+          "optional fixed power/toughness modifier or exact declaration fragments over the identical creature query"
+        ],
+        "outputs": [
+          "source-bound layer-6 keyword grant",
+          "optional source-bound layer-6 declaration-fragment or layer-7c power/toughness grant",
+          "live type, subtype, color-cardinality, supertype, token, named-counter, combat, tap, attachment, modified, positive ability, control, entry, and phasing applicability",
+          "generic layer-6 dependency ordering against additions and removals of the required ability",
+          "immediate source-departure and phasing expiration",
+          "per-keyword capability closure through the existing combat, damage, destruction, or targeting owner"
+        ],
+        "exclusions": [
+          "arbitrary rules text",
+          "keywords without trusted consumers",
+          "hidden-zone predicates",
+          "negative or absent ability predicates, compound state-and-counter predicates, or dynamically counted predicates",
+          "open conditional, temporary, chosen, or variable abilities",
+          "untyped keyword data"
+        ]
       },
-      "dependencies": ["state_query.permanent.public_state_predicate"],
-      "implementation_components": ["quorune.compiler.continuous_templates.fixed_query_keyword_grant_handler", "quorune.compiler.continuous_templates.fixed_query_characteristic_grant_handler", "quorune.compiler.declaration_nodes.fixed_static_declaration_grant_handler", "quorune.compiler.public_state_queries.fixed_characteristic_battlefield_query_subject", "quorune.continuous_effects._ability_presence_dependency_ids", "quorune.semantic_runtime.continuous_components.FixedQueryKeywordGrantHandler", "quorune.semantic_runtime.continuous_components.FixedQueryCharacteristicGrantHandler", "quorune.semantic_runtime.continuous_components.FixedQueryAbilityGrantHandler", "quorune.card_programs.runtime.collect_card_program_continuous_effects", "quorune.continuous_effects.evaluate_continuous_effects"],
-      "positive_tests": ["test_closed_query_grammar_compiles_exact_with_consumer_capabilities", "test_expanded_query_grammar_and_combined_characteristics_compile_exact", "test_fixed_battlefield_query_extensions_share_one_canonical_condition", "test_measured_50_card_lower_bound_is_capability_closed", "test_public_object_state_and_query_conditions_compile_closed", "test_compiled_grants_feed_haste_vigilance_flying_strike_and_trample_owners", "test_shared_public_set_query_fans_into_layers_and_resolution", "test_static_query_and_attachment_declaration_grants_compile_closed", "test_fixed_public_ward_costs_and_keyword_composition_compile", "test_fixed_query_ward_grant_uses_typed_layer_six_fragment", "test_fixed_basic_landwalk_and_horsemanship_grants_declare_exact_consumers", "test_decorative_static_labels_preserve_descriptor_and_original_source_span", "test_werewolf_plural_union_is_typed_and_deduplicates_recipient_query"],
-      "negative_tests": ["test_open_or_unsupported_queries_remain_material_residuals", "test_level_gated_class_keyword_grant_remains_residual", "test_descriptors_fail_closed_and_rejection_has_no_state_effect", "test_raw_oracle_text_without_fragment_does_not_select_behavior", "test_shared_public_query_dependency_fails_closed_across_consumers", "test_static_declaration_grant_dependencies_fail_closed", "test_grant_boundaries_and_missing_evasion_consumer_fail_closed", "test_missing_granted_landwalk_consumer_mapping_mutant_is_killed", "test_semantic_markers_and_unrepresented_labeled_body_stay_residual", "test_static_label_dispatch_omission_mutant_is_killed"],
-      "interaction_tests": ["test_aura_attachment_and_query_grant_execute_from_one_exact_card", "test_compiled_grants_feed_haste_vigilance_flying_strike_and_trample_owners", "test_expanded_query_grants_feed_current_keyword_consumers", "test_exact_grant_executes_while_replacement_siblings_fail_closed", "test_live_queries_track_global_control_subtype_phase_and_zone_changes", "test_multicolor_query_observes_the_cycle_safe_layer_five_boundary", "test_counter_multicolor_and_token_queries_use_live_public_state_and_replay", "test_live_public_object_state_and_layer_five_queries_recompute", "test_subtype_union_recomputes_after_layer_four_and_excludes_source", "test_ability_presence_query_uses_shared_layer_six_dependency_order", "test_static_query_declaration_grant_uses_offer_commit_authority", "test_actual_elvish_champion_cast_affects_other_controllers_and_current_landwalk_blocks", "test_actual_sun_quan_cast_grants_self_and_rejects_flying_reach_as_horsemanship", "test_actual_turn_to_frog_removes_source_grant_until_expiration_and_replays", "test_actual_cryptothrall_cast_grants_current_other_artifacts_and_replays"],
-      "multiplayer_tests": ["test_live_queries_track_global_control_subtype_phase_and_zone_changes", "test_counter_multicolor_and_token_queries_use_live_public_state_and_replay", "test_projection_and_replay_preserve_grants_without_private_identities", "test_actual_elvish_champion_cast_affects_other_controllers_and_current_landwalk_blocks", "test_actual_cryptothrall_cast_grants_current_other_artifacts_and_replays"],
-      "privacy_tests": ["test_projection_and_replay_preserve_grants_without_private_identities", "test_actual_elvish_champion_cast_affects_other_controllers_and_current_landwalk_blocks"],
-      "replay_tests": ["test_counter_multicolor_and_token_queries_use_live_public_state_and_replay", "test_live_public_object_state_and_layer_five_queries_recompute", "test_projection_and_replay_preserve_grants_without_private_identities", "test_actual_elvish_champion_cast_affects_other_controllers_and_current_landwalk_blocks", "test_actual_sun_quan_cast_grants_self_and_rejects_flying_reach_as_horsemanship", "test_actual_turn_to_frog_removes_source_grant_until_expiration_and_replays", "test_actual_cryptothrall_cast_grants_current_other_artifacts_and_replays"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "state_query.permanent.public_state_predicate"
+      ],
+      "implementation_components": [
+        "quorune.compiler.continuous_templates.fixed_query_keyword_grant_handler",
+        "quorune.compiler.continuous_templates.fixed_query_characteristic_grant_handler",
+        "quorune.compiler.declaration_nodes.fixed_static_declaration_grant_handler",
+        "quorune.compiler.public_state_queries.fixed_characteristic_battlefield_query_subject",
+        "quorune.continuous_effects._ability_presence_dependency_ids",
+        "quorune.semantic_runtime.continuous_components.FixedQueryKeywordGrantHandler",
+        "quorune.semantic_runtime.continuous_components.FixedQueryCharacteristicGrantHandler",
+        "quorune.semantic_runtime.continuous_components.FixedQueryAbilityGrantHandler",
+        "quorune.card_programs.runtime.collect_card_program_continuous_effects",
+        "quorune.continuous_effects.evaluate_continuous_effects"
+      ],
+      "positive_tests": [
+        "test_closed_query_grammar_compiles_exact_with_consumer_capabilities",
+        "test_expanded_query_grammar_and_combined_characteristics_compile_exact",
+        "test_fixed_battlefield_query_extensions_share_one_canonical_condition",
+        "test_measured_50_card_lower_bound_is_capability_closed",
+        "test_public_object_state_and_query_conditions_compile_closed",
+        "test_compiled_grants_feed_haste_vigilance_flying_strike_and_trample_owners",
+        "test_shared_public_set_query_fans_into_layers_and_resolution",
+        "test_static_query_and_attachment_declaration_grants_compile_closed",
+        "test_fixed_public_ward_costs_and_keyword_composition_compile",
+        "test_fixed_query_ward_grant_uses_typed_layer_six_fragment",
+        "test_fixed_basic_landwalk_and_horsemanship_grants_declare_exact_consumers",
+        "test_decorative_static_labels_preserve_descriptor_and_original_source_span",
+        "test_werewolf_plural_union_is_typed_and_deduplicates_recipient_query",
+        "test_global_other_plural_uses_canonical_subtype_without_controller_filter"
+      ],
+      "negative_tests": [
+        "test_open_or_unsupported_queries_remain_material_residuals",
+        "test_level_gated_class_keyword_grant_remains_residual",
+        "test_descriptors_fail_closed_and_rejection_has_no_state_effect",
+        "test_raw_oracle_text_without_fragment_does_not_select_behavior",
+        "test_shared_public_query_dependency_fails_closed_across_consumers",
+        "test_static_declaration_grant_dependencies_fail_closed",
+        "test_grant_boundaries_and_missing_evasion_consumer_fail_closed",
+        "test_missing_granted_landwalk_consumer_mapping_mutant_is_killed",
+        "test_semantic_markers_and_unrepresented_labeled_body_stay_residual",
+        "test_static_label_dispatch_omission_mutant_is_killed",
+        "test_unknown_nouns_and_class_level_context_remain_residual"
+      ],
+      "interaction_tests": [
+        "test_aura_attachment_and_query_grant_execute_from_one_exact_card",
+        "test_compiled_grants_feed_haste_vigilance_flying_strike_and_trample_owners",
+        "test_expanded_query_grants_feed_current_keyword_consumers",
+        "test_exact_grant_executes_while_replacement_siblings_fail_closed",
+        "test_live_queries_track_global_control_subtype_phase_and_zone_changes",
+        "test_multicolor_query_observes_the_cycle_safe_layer_five_boundary",
+        "test_counter_multicolor_and_token_queries_use_live_public_state_and_replay",
+        "test_live_public_object_state_and_layer_five_queries_recompute",
+        "test_subtype_union_recomputes_after_layer_four_and_excludes_source",
+        "test_ability_presence_query_uses_shared_layer_six_dependency_order",
+        "test_static_query_declaration_grant_uses_offer_commit_authority",
+        "test_actual_elvish_champion_cast_affects_other_controllers_and_current_landwalk_blocks",
+        "test_actual_sun_quan_cast_grants_self_and_rejects_flying_reach_as_horsemanship",
+        "test_actual_turn_to_frog_removes_source_grant_until_expiration_and_replays",
+        "test_actual_cryptothrall_cast_grants_current_other_artifacts_and_replays",
+        "test_actual_atlantis_cast_grants_foreign_merfolk_and_source_exclusion_with_replay"
+      ],
+      "multiplayer_tests": [
+        "test_live_queries_track_global_control_subtype_phase_and_zone_changes",
+        "test_counter_multicolor_and_token_queries_use_live_public_state_and_replay",
+        "test_projection_and_replay_preserve_grants_without_private_identities",
+        "test_actual_elvish_champion_cast_affects_other_controllers_and_current_landwalk_blocks",
+        "test_actual_cryptothrall_cast_grants_current_other_artifacts_and_replays",
+        "test_actual_atlantis_cast_grants_foreign_merfolk_and_source_exclusion_with_replay"
+      ],
+      "privacy_tests": [
+        "test_projection_and_replay_preserve_grants_without_private_identities",
+        "test_actual_elvish_champion_cast_affects_other_controllers_and_current_landwalk_blocks"
+      ],
+      "replay_tests": [
+        "test_counter_multicolor_and_token_queries_use_live_public_state_and_replay",
+        "test_live_public_object_state_and_layer_five_queries_recompute",
+        "test_projection_and_replay_preserve_grants_without_private_identities",
+        "test_actual_elvish_champion_cast_affects_other_controllers_and_current_landwalk_blocks",
+        "test_actual_sun_quan_cast_grants_self_and_rejects_flying_reach_as_horsemanship",
+        "test_actual_turn_to_frog_removes_source_grant_until_expiration_and_replays",
+        "test_actual_cryptothrall_cast_grants_current_other_artifacts_and_replays",
+        "test_actual_atlantis_cast_grants_foreign_merfolk_and_source_exclusion_with_replay"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Blocking the shared public-query capability prevents exact admission, while each compiled node also declares and gates every exact combat, damage, destruction, or targeting consumer capability it emits.",
       "implementation_mutation_status": "killed",
@@ -5192,24 +5306,101 @@
     },
     {
       "id": "continuous.power_toughness.fixed_anthem",
-      "version": 6,
-      "official_rules": ["604.1", "611.3a", "611.3b", "611.3c", "613.1g", "613.4c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 7,
+      "official_rules": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
-        "summary": "Apply a reviewed battlefield static ability that gives a live source-controller, source-opponent, or global typed creature set a fixed power/toughness modifier in layer 7c while the source remains applicable.",
-        "inputs": ["active phased-in source object", "source-controller, source-opponent, or global relation", "source timestamp", "shared typed creature predicate after earlier layers and, when required, layer-6 ability changes", "optional source exclusion", "fixed power/toughness modifier"],
-        "outputs": ["typed layer-7c continuous effect", "live new-entry, type, color, subtype conjunction or union, supertype, token, named-counter, combat, tap, attachment, modified, positive ability, and control applicability", "source-departure and phasing expiration", "stacking modifiers from multiple sources"],
-        "exclusions": ["power/toughness setting effects", "characteristic-defining abilities", "unrepresented layer dependencies within 7c", "conditional and dynamically counted modifiers", "negative or absent ability, compound state-and-counter, hidden, and color-exclusion predicates"]
+        "summary": "Apply a reviewed battlefield static ability that gives a live source-controller, source-opponent, or global typed creature set a fixed power/toughness modifier in layer 7c while the source remains applicable. Global canonical creature-subtype plurals accept optional All and Other; one shared query preserves every controller and source exclusion.",
+        "inputs": [
+          "active phased-in source object",
+          "source-controller, source-opponent, or global relation",
+          "source timestamp",
+          "shared typed creature predicate after earlier layers and, when required, layer-6 ability changes",
+          "optional source exclusion",
+          "fixed power/toughness modifier"
+        ],
+        "outputs": [
+          "typed layer-7c continuous effect",
+          "live new-entry, type, color, subtype conjunction or union, supertype, token, named-counter, combat, tap, attachment, modified, positive ability, and control applicability",
+          "source-departure and phasing expiration",
+          "stacking modifiers from multiple sources"
+        ],
+        "exclusions": [
+          "power/toughness setting effects",
+          "characteristic-defining abilities",
+          "unrepresented layer dependencies within 7c",
+          "conditional and dynamically counted modifiers",
+          "negative or absent ability, compound state-and-counter, hidden, and color-exclusion predicates"
+        ]
       },
-      "dependencies": ["state_query.permanent.public_state_predicate"],
-      "implementation_components": ["quorune.compiler.public_state_queries.fixed_characteristic_battlefield_query_subject", "quorune.compiler.public_state_queries.fixed_power_toughness_battlefield_query", "quorune.semantic_runtime.continuous_components.FixedPowerToughnessAnthemHandler", "quorune.semantic_runtime.continuous_components.FixedQueryPowerToughnessAnthemHandler", "quorune.card_programs.runtime.collect_card_program_continuous_effects", "quorune.continuous_effects.evaluate_continuous_effects"],
-      "positive_tests": ["test_registered_anthem_component_replaces_name_dispatch", "test_fixed_battlefield_query_extensions_share_one_canonical_condition", "test_measured_50_card_lower_bound_is_capability_closed", "test_public_object_state_and_query_conditions_compile_closed", "test_shared_public_set_query_fans_into_layers_and_resolution", "test_decorative_static_labels_preserve_descriptor_and_original_source_span", "test_werewolf_plural_union_is_typed_and_deduplicates_recipient_query"],
-      "negative_tests": ["test_anthem_component_rejects_malformed_descriptors", "test_shared_public_query_dependency_fails_closed_across_consumers", "test_semantic_markers_and_unrepresented_labeled_body_stay_residual", "test_static_label_dispatch_omission_mutant_is_killed"],
-      "interaction_tests": ["test_multiple_anthem_components_stack_and_respect_control", "test_layer_four_subtype_change_enables_layer_seven_anthem", "test_aura_equipment_anthem_temporary_effect_and_draw_compose", "test_exact_continuous_effects_compose_while_replacements_stay_residual", "test_live_fixed_queries_track_relations_source_identity_and_phasing", "test_live_public_object_state_and_layer_five_queries_recompute", "test_subtype_union_recomputes_after_layer_four_and_excludes_source", "test_ability_presence_query_uses_shared_layer_six_dependency_order"],
-      "multiplayer_tests": ["test_static_anthem_is_controller_scoped_in_four_player_evaluation", "test_live_fixed_queries_track_relations_source_identity_and_phasing"],
+      "dependencies": [
+        "state_query.permanent.public_state_predicate"
+      ],
+      "implementation_components": [
+        "quorune.compiler.public_state_queries.fixed_characteristic_battlefield_query_subject",
+        "quorune.compiler.public_state_queries.fixed_power_toughness_battlefield_query",
+        "quorune.semantic_runtime.continuous_components.FixedPowerToughnessAnthemHandler",
+        "quorune.semantic_runtime.continuous_components.FixedQueryPowerToughnessAnthemHandler",
+        "quorune.card_programs.runtime.collect_card_program_continuous_effects",
+        "quorune.continuous_effects.evaluate_continuous_effects"
+      ],
+      "positive_tests": [
+        "test_registered_anthem_component_replaces_name_dispatch",
+        "test_fixed_battlefield_query_extensions_share_one_canonical_condition",
+        "test_measured_50_card_lower_bound_is_capability_closed",
+        "test_public_object_state_and_query_conditions_compile_closed",
+        "test_shared_public_set_query_fans_into_layers_and_resolution",
+        "test_decorative_static_labels_preserve_descriptor_and_original_source_span",
+        "test_werewolf_plural_union_is_typed_and_deduplicates_recipient_query",
+        "test_global_other_plural_uses_canonical_subtype_without_controller_filter"
+      ],
+      "negative_tests": [
+        "test_anthem_component_rejects_malformed_descriptors",
+        "test_shared_public_query_dependency_fails_closed_across_consumers",
+        "test_semantic_markers_and_unrepresented_labeled_body_stay_residual",
+        "test_static_label_dispatch_omission_mutant_is_killed",
+        "test_unknown_nouns_and_class_level_context_remain_residual"
+      ],
+      "interaction_tests": [
+        "test_multiple_anthem_components_stack_and_respect_control",
+        "test_layer_four_subtype_change_enables_layer_seven_anthem",
+        "test_aura_equipment_anthem_temporary_effect_and_draw_compose",
+        "test_exact_continuous_effects_compose_while_replacements_stay_residual",
+        "test_live_fixed_queries_track_relations_source_identity_and_phasing",
+        "test_live_public_object_state_and_layer_five_queries_recompute",
+        "test_subtype_union_recomputes_after_layer_four_and_excludes_source",
+        "test_ability_presence_query_uses_shared_layer_six_dependency_order",
+        "test_actual_atlantis_cast_grants_foreign_merfolk_and_source_exclusion_with_replay"
+      ],
+      "multiplayer_tests": [
+        "test_static_anthem_is_controller_scoped_in_four_player_evaluation",
+        "test_live_fixed_queries_track_relations_source_identity_and_phasing",
+        "test_actual_atlantis_cast_grants_foreign_merfolk_and_source_exclusion_with_replay"
+      ],
       "privacy_tests": [],
-      "replay_tests": ["test_anthem_component_replays_exactly", "test_live_public_object_state_and_layer_five_queries_recompute"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "replay"],
+      "replay_tests": [
+        "test_anthem_component_replays_exactly",
+        "test_live_public_object_state_and_layer_five_queries_recompute",
+        "test_actual_atlantis_cast_grants_foreign_merfolk_and_source_exclusion_with_replay"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Blocking the shared public-query capability prevents fixed-query anthem nodes from becoming exact.",
       "implementation_mutation_status": "killed",

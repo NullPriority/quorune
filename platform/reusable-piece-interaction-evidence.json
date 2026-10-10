@@ -8651,6 +8651,21 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual two-card discard cost suspends for competing Dauthi replacements on each object, rejects another principal atomically, survives pending save/load, and carries only prior selected-object journal identities into the second choice; both costs pay and replay exactly."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_atlantis_layer_grant_changes_block_offers_and_acceptance",
+      "piece_ids": [
+        "capability.combat.block.landwalk.basic_type",
+        "capability.continuous.ability.fixed_query_keyword_grant"
+      ],
+      "capability_ids": [
+        "combat.block.landwalk.basic_type",
+        "continuous.ability.fixed_query_keyword_grant"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Lord of Atlantis cast grants islandwalk to an opponent Merfolk. A defending Island removes its block offers and rejects submitted blocks atomically; after that Island leaves, offered and accepted blocks agree, with exact replay."
     }
   ]
 }

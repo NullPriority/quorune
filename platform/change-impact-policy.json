@@ -1652,6 +1652,20 @@
       ]
     },
     {
+      "id": "global-plural-characteristic-contract",
+      "patterns": [
+        "quorune/compiler/public_state_queries.py",
+        "tests/fixtures/global-plural-characteristic-sets.json"
+      ],
+      "test_modules": [
+        "test_global_plural_characteristic_sets",
+        "test_fixed_query_keyword_grants",
+        "test_fixed_evasion_grants",
+        "test_static_characteristic_labels",
+        "test_card_program_trust"
+      ]
+    },
+    {
       "id": "counted-spell-price-contract",
       "patterns": [
         "quorune/compiler/spell_additional_cost_nodes.py",

@@ -51,6 +51,7 @@
     "tests/fixtures/fixed-token-creation-cards.json",
     "tests/fixtures/fixed-token-production-cards.json",
     "tests/fixtures/flashback-cards.json",
+    "tests/fixtures/global-plural-characteristic-sets.json",
     "tests/fixtures/hand-entry-expansion-cards.json",
     "tests/fixtures/history-entry-characteristic-cards.json",
     "tests/fixtures/history-entry-counters.json",

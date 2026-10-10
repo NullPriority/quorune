@@ -97,7 +97,7 @@ _GLOBAL_SUBTYPE_CREATURES = re.compile(
     r"(?P<subtype>[A-Z][A-Za-z'-]*(?: [A-Z][A-Za-z'-]*)?) creatures$"
 )
 _GLOBAL_PLURAL_SUBJECT = re.compile(
-    r"^(?P<other>Other )?All (?P<plural>[A-Z][A-Za-z'-]*)$"
+    r"^(?P<other>Other )?(?:All )?(?P<plural>[A-Z][A-Za-z'-]*)$"
 )
 _TRAILING_REMINDER = re.compile(r"\s+\([^()]*\)\.?$")
 _COLOR_SYMBOLS = {
