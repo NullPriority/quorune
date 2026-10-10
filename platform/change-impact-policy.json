@@ -1651,6 +1651,21 @@
       ]
     },
     {
+      "id": "combined-source-selected-tap-contract",
+      "patterns": [
+        "quorune/compiler/activated_tap_costs.py",
+        "quorune/rules/activation_costs.py",
+        "quorune/rules/activation/commit.py",
+        "tests/fixtures/combined-tap-activation-costs.json"
+      ],
+      "test_modules": [
+        "test_combined_tap_activation_costs",
+        "test_fixed_activation_tap_costs",
+        "test_card_program_trust",
+        "test_activating_abilities_rules"
+      ]
+    },
+    {
       "id": "ordered-result-quantity-contract",
       "patterns": [
         "quorune/compiler/query_counter_sequences.py",

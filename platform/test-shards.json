@@ -161,6 +161,7 @@
     "functional-05": [
       "test_attack_counter_triggers",
       "test_combat_declaration_restrictions",
+      "test_combined_tap_activation_costs",
       "test_commander_damage_identity",
       "test_damage_prevention_aftermath",
       "test_damage_prevention_creation",

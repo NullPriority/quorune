@@ -8399,6 +8399,21 @@
       ],
       "interaction_order": 2,
       "assertion": "A represented generic counter-then-draw activation suspends for competing Hardened Scales and Branching Evolution replacements. Pending save/load and private chooser validation preserve one placement, then draw exactly the final source counter count."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_cost_tap_events_observe_complete_source_and_selected_group",
+      "piece_ids": [
+        "capability.activation.selected_tap.fixed",
+        "capability.trigger.event.normalized_public_action"
+      ],
+      "capability_ids": [
+        "activation.selected_tap.fixed",
+        "trigger.event.normalized_public_action"
+      ],
+      "interaction_order": 2,
+      "assertion": "An actual Selesnya Evangel activation taps its source and a distinct selected creature through the canonical cost owner before either normalized tap event is discovered; both observed events see the full paid group and pre-action replay agrees."
     }
   ]
 }

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 199,
+  "registry_version": 200,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -762,24 +762,86 @@
     },
     {
       "id": "activation.selected_tap.fixed",
-      "version": 1,
-      "official_rules": ["205.1a", "205.1b", "602.2", "602.2b", "701.21a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 2,
+      "official_rules": [
+        "205.1a",
+        "205.1b",
+        "602.2",
+        "602.2b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
-        "summary": "Choose and tap a fixed positive number of distinct untapped permanents the activator controls that share one current effective card type or pinned subtype, using one typed query for both the offer and committed activation cost.",
-        "inputs": ["one source-spanned fixed selected-permanent tap cost", "one actor-bound battlefield ObjectQuerySpec", "current effective card types and subtypes", "distinct current untapped controlled permanents", "activation source physical and logical identity"],
-        "outputs": ["one offer and command sharing the same legal object set", "complete preflight before mutation", "canonical tap-state commitment before stack placement", "transactional rollback", "exact replay"],
-        "exclusions": ["source tap or untap symbols", "Crew, Station, Convoke, or Improvise payment semantics", "zero, variable, any-number, optional, random, repeated, or target-based tap costs", "type or subtype unions", "color, supertype, token, keyword, power, attachment, combat, or history predicates", "mana abilities", "copied, granted, removed, or text-changing activation costs"]
+        "summary": "Choose and tap a fixed positive number of distinct untapped permanents the activator controls that share one current effective card type or pinned subtype, using one typed query for both the offer and committed activation cost. A source tap symbol may accompany the selection, excludes the source from selected payment, and commits the full tap group before event discovery.",
+        "inputs": [
+          "one source-spanned fixed selected-permanent tap cost",
+          "one actor-bound battlefield ObjectQuerySpec",
+          "current effective card types and subtypes",
+          "distinct current untapped controlled permanents",
+          "activation source physical and logical identity"
+        ],
+        "outputs": [
+          "one offer and command sharing the same legal object set",
+          "complete preflight before mutation",
+          "canonical tap-state commitment before stack placement",
+          "transactional rollback",
+          "exact replay"
+        ],
+        "exclusions": [
+          "source untap symbols and mixed selected zone-change costs",
+          "Crew, Station, Convoke, or Improvise payment semantics",
+          "zero, variable, any-number, optional, random, repeated, or target-based tap costs",
+          "type or subtype unions",
+          "color, supertype, token, keyword, power, attachment, combat, or history predicates",
+          "mana abilities",
+          "copied, granted, removed, or text-changing activation costs"
+        ]
       },
       "dependencies": [],
-      "implementation_components": ["quorune.compiler.activated_tap_costs.fixed_activated_tap_cost", "quorune.rules.activation_costs.FixedTapActivationCost", "quorune.rules.activation_costs.activation_choice_candidates", "quorune.rules.activation_costs.pay_fixed_tap_cost", "quorune.rules.activation.commit._pay_object_and_mana_costs", "quorune.tap_state.set_permanent_tapped"],
-      "positive_tests": ["test_fixed_type_and_subtype_tap_costs_compile_source_spanned", "test_offer_commit_and_replay_share_current_untapped_wizard_query"],
-      "negative_tests": ["test_tap_cost_grammar_rejects_qualified_and_open_variants", "test_multiple_tap_cost_rejects_duplicate_and_stale_selection_atomically"],
-      "interaction_tests": ["test_offer_commit_and_replay_share_current_untapped_wizard_query", "test_multiple_tap_cost_rejects_duplicate_and_stale_selection_atomically"],
-      "multiplayer_tests": ["test_offer_commit_and_replay_share_current_untapped_wizard_query"],
+      "implementation_components": [
+        "quorune.compiler.activated_tap_costs.fixed_activated_tap_cost",
+        "quorune.rules.activation_costs.FixedTapActivationCost",
+        "quorune.rules.activation_costs.activation_choice_candidates",
+        "quorune.rules.activation_costs.pay_fixed_tap_cost",
+        "quorune.rules.activation.commit._pay_object_and_mana_costs",
+        "quorune.tap_state.set_permanent_tapped"
+      ],
+      "positive_tests": [
+        "test_fixed_type_and_subtype_tap_costs_compile_source_spanned",
+        "test_offer_commit_and_replay_share_current_untapped_wizard_query",
+        "test_source_and_selected_tap_cost_excludes_same_source"
+      ],
+      "negative_tests": [
+        "test_tap_cost_grammar_rejects_qualified_and_open_variants",
+        "test_multiple_tap_cost_rejects_duplicate_and_stale_selection_atomically",
+        "test_new_source_is_unavailable_even_with_new_eligible_selected_creature"
+      ],
+      "interaction_tests": [
+        "test_offer_commit_and_replay_share_current_untapped_wizard_query",
+        "test_multiple_tap_cost_rejects_duplicate_and_stale_selection_atomically",
+        "test_actual_evangel_requires_distinct_taps_and_allows_new_selected_creature",
+        "test_cost_tap_events_observe_complete_source_and_selected_group"
+      ],
+      "multiplayer_tests": [
+        "test_offer_commit_and_replay_share_current_untapped_wizard_query",
+        "test_actual_evangel_requires_distinct_taps_and_allows_new_selected_creature"
+      ],
       "privacy_tests": [],
-      "replay_tests": ["test_offer_commit_and_replay_share_current_untapped_wizard_query"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "replay"],
+      "replay_tests": [
+        "test_offer_commit_and_replay_share_current_untapped_wizard_query",
+        "test_actual_evangel_requires_distinct_taps_and_allows_new_selected_creature"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "test_selected_tap_cost_dependencies_fail_closed blocks the fine-grained cost capability and proves the exact source-spanned activation remains material rather than falling back to legacy choice payment.",
       "implementation_mutation_status": "killed",

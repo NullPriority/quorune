@@ -143,7 +143,6 @@ def fixed_activated_tap_cost(ability: ActivatedAbility) -> ActivatedAbility:
         ability.mana_ability
         or ability.zones != ("battlefield",)
         or ability.complex_symbols
-        or ability.tap_source
         or ability.untap_source
         or ability.discard_source
         or ability.sacrifice_source
@@ -158,6 +157,8 @@ def fixed_activated_tap_cost(ability: ActivatedAbility) -> ActivatedAbility:
     choice = fixed_tap_activation_cost_choice(ability.uncompiled_costs[0])
     if choice is None:
         return ability
+    if ability.tap_source:
+        choice = replace(choice,another=True,predicate=FrozenMap({**dict(choice.predicate),'exclude_ref':'$source'}))
     return replace(ability, choices=(choice,), uncompiled_costs=())
 
 

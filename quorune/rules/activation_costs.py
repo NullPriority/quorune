@@ -360,10 +360,12 @@ def prepare_fixed_tap_cost(
 
 
 def commit_fixed_tap_cost(
-    host: ActivationCostHost, plan: FixedTapCostPlan
+    host: ActivationCostHost, plan: FixedTapCostPlan, *, tap_source: bool = False
 ) -> list[str]:
     """Revalidate and atomically commit one prepared fixed tap selection."""
 
+    if type(tap_source) is not bool:
+        raise FixedTapActivationCostError("Source tap flag must be boolean")
     source = host.state.cards.get(plan.source_object_id)
     if (
         source is None
@@ -385,6 +387,10 @@ def commit_fixed_tap_cost(
         raise FixedTapActivationCostError(
             "A selected tap-cost object changed before commitment"
         )
+    if tap_source and (source.tapped or any(candidate.object_id==source.object_id for candidate in plan.selected)):
+        raise FixedTapActivationCostError("Source tap and selected tap costs require distinct untapped objects")
+    if tap_source:
+        set_permanent_tapped(host,source.ref,actor=plan.seat,tapped=True,reason="activated ability cost",log=False,semantic_events=False)
     for candidate in plan.selected:
         set_permanent_tapped(
             host,
@@ -397,19 +403,19 @@ def commit_fixed_tap_cost(
             semantic_events=False,
         )
     dispatch_tapped_cost_group(
-        host, (host.state.cards[candidate.object_id] for candidate in plan.selected),
+        host, (*((source,) if tap_source else ()), *(host.state.cards[candidate.object_id] for candidate in plan.selected)),
         reason="activated ability cost",
     )
     host._log(
         plan.seat,
         "cost.tap_selected",
-        f"{plan.seat} tapped {len(plan.selected)} object(s) to activate {source.ref}.",
+        f"{plan.seat} tapped {len(plan.selected)+int(tap_source)} object(s) to activate {source.ref}.",
         {
             "source": source.ref,
-            "objects": [candidate.object_ref for candidate in plan.selected],
+            "objects": [*((source.ref,) if tap_source else ()), *(candidate.object_ref for candidate in plan.selected)],
         },
         importance=1,
-        changed_objects=[candidate.object_id for candidate in plan.selected],
+        changed_objects=[*((source.object_id,) if tap_source else ()), *(candidate.object_id for candidate in plan.selected)],
         changed_players=[plan.seat],
     )
     return [candidate.object_id for candidate in plan.selected]
@@ -422,6 +428,7 @@ def pay_fixed_tap_cost(
     source: Any,
     choice: Any,
     response: Mapping[str, Any],
+    tap_source: bool = False,
 ) -> list[str]:
     return commit_fixed_tap_cost(
         host,
@@ -432,6 +439,7 @@ def pay_fixed_tap_cost(
             choice=choice,
             response=response,
         ),
+        tap_source=tap_source,
     )
 
 

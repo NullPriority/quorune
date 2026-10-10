@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "6cf99e5ae93e278bdc1d70ebdf00dc9b4e544d930e0255078f2a386a8faf18de",
-  "declaration_source_fingerprint": "b1b64f3c9b9f2a334b7d99a9917ca8ec010139a4f206bf5956b6d554db1c8913",
+  "registry_fingerprint": "b87a5b07979bd64d28be22cd36cda57e49a5122213bbc713ded76a6cc1faef37",
+  "declaration_source_fingerprint": "98ee567b81ba3e29e528f05d2fefd83ead623fedc8f63064c4361a3463ec0b37",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -3356,6 +3356,24 @@
     {
       "capability_id": "activation.selected_tap.fixed",
       "evidence_class": "interaction",
+      "test_id": "tests.test_combined_tap_activation_costs.CombinedTapCostRuntimeTests.test_actual_evangel_requires_distinct_taps_and_allows_new_selected_creature",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "602.2",
+        "602.2b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Selesnya Evangel consumes distinct source and selected tap costs, preserves tap-symbol acquisition timing, and observes the complete cost group with atomic rejection and exact replay."
+    },
+    {
+      "capability_id": "activation.selected_tap.fixed",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_activation_tap_costs.FixedActivationTapCostRuntimeTests.test_offer_commit_and_replay_share_current_untapped_wizard_query",
       "official_rule_ids": [
         "205.1a",
@@ -3370,6 +3388,24 @@
         "commander_review"
       ],
       "applicability_note": "Compose current effective subtype, control, phasing, tapped state, ordinary activation, draw resolution, and exact replay without a family-specific characteristic path."
+    },
+    {
+      "capability_id": "activation.selected_tap.fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_combined_tap_activation_costs.CombinedTapCostRuntimeTests.test_actual_evangel_requires_distinct_taps_and_allows_new_selected_creature",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "602.2",
+        "602.2b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Selesnya Evangel consumes distinct source and selected tap costs, preserves tap-symbol acquisition timing, and observes the complete cost group with atomic rejection and exact replay."
     },
     {
       "capability_id": "activation.selected_tap.fixed",
@@ -3392,6 +3428,24 @@
     {
       "capability_id": "activation.selected_tap.fixed",
       "evidence_class": "mutation",
+      "test_id": "tests.test_combined_tap_activation_costs.CombinedTapCostRuntimeTests.test_omitted_source_tap_mutant_is_killed_by_actual_evangel_activation",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "602.2",
+        "602.2b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Selesnya Evangel consumes distinct source and selected tap costs, preserves tap-symbol acquisition timing, and observes the complete cost group with atomic rejection and exact replay."
+    },
+    {
+      "capability_id": "activation.selected_tap.fixed",
+      "evidence_class": "mutation",
       "test_id": "tests.test_fixed_activation_tap_costs.FixedActivationTapCostCompilerTests.test_selected_tap_cost_compiler_mutant_is_killed",
       "official_rule_ids": [
         "205.1a",
@@ -3406,6 +3460,24 @@
         "commander_review"
       ],
       "applicability_note": "Remove the shared fixed tap-cost compiler production and require the exact source-spanned witness to kill the survivor."
+    },
+    {
+      "capability_id": "activation.selected_tap.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_combined_tap_activation_costs.CombinedTapCostRuntimeTests.test_new_source_is_unavailable_even_with_new_eligible_selected_creature",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "602.2",
+        "602.2b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Selesnya Evangel consumes distinct source and selected tap costs, preserves tap-symbol acquisition timing, and observes the complete cost group with atomic rejection and exact replay."
     },
     {
       "capability_id": "activation.selected_tap.fixed",
@@ -3446,6 +3518,24 @@
     {
       "capability_id": "activation.selected_tap.fixed",
       "evidence_class": "positive",
+      "test_id": "tests.test_combined_tap_activation_costs.CombinedTapCostCompilerTests.test_source_and_selected_tap_cost_excludes_same_source",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "602.2",
+        "602.2b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Selesnya Evangel consumes distinct source and selected tap costs, preserves tap-symbol acquisition timing, and observes the complete cost group with atomic rejection and exact replay."
+    },
+    {
+      "capability_id": "activation.selected_tap.fixed",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_activation_tap_costs.FixedActivationTapCostCompilerTests.test_fixed_type_and_subtype_tap_costs_compile_source_spanned",
       "official_rule_ids": [
         "205.1a",
@@ -3478,6 +3568,24 @@
         "commander_review"
       ],
       "applicability_note": "Advertise and tap one current untapped controlled Wizard, including the summoning-sick source for an ordinary-word tap cost, before stack placement."
+    },
+    {
+      "capability_id": "activation.selected_tap.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_combined_tap_activation_costs.CombinedTapCostRuntimeTests.test_actual_evangel_requires_distinct_taps_and_allows_new_selected_creature",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "602.2",
+        "602.2b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Selesnya Evangel consumes distinct source and selected tap costs, preserves tap-symbol acquisition timing, and observes the complete cost group with atomic rejection and exact replay."
     },
     {
       "capability_id": "activation.selected_tap.fixed",
@@ -91404,5 +91512,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "e2543ac0d2ebb9b059e8af60504c7e1232bd31a863a71269acf820698385e227"
+  "fingerprint": "ddf28a465f4b0ced7d1c9e0f5c301244dec7f500690ea182820bbd0a40add3a3"
 }
