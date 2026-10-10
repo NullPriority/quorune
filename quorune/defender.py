@@ -4,6 +4,8 @@ from collections.abc import Mapping
 from typing import Any
 
 from .characteristic_evaluation import type_parts
+from .defender_permission import DefenderAttackPermission
+from .ability_fragments import canonical_ability_fragments
 from .keyword_abilities import (
     EffectiveKeywordError,
     normalized_characteristic_keywords,
@@ -36,7 +38,9 @@ def defender_prohibits_attack(data: Mapping[str, Any]) -> bool:
         keywords = normalized_characteristic_keywords(data)
     except EffectiveKeywordError as exc:
         raise DefenderRuleError(str(exc)) from exc
-    return DEFENDER_KEYWORD in keywords
+    fragments = canonical_ability_fragments(data.get('ability_fragments', ()))
+    permitted = any(isinstance(fragment, DefenderAttackPermission) for fragment in fragments)
+    return DEFENDER_KEYWORD in keywords and not permitted
 
 
 __all__ = [

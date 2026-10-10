@@ -64,6 +64,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/damage_modifier_state.py",
         "quorune/death_return.py",
         "quorune/declaration_fragments.py",
+        "quorune/defender_permission.py",
         "quorune/declaration_rule_effects.py",
         "quorune/continuous_conditions.py",
         "quorune/resolution_conditions.py",
@@ -393,6 +394,8 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/semantic_runtime/flashback.py",
     }:
         return "casting_flashback"
+    if relative in {"quorune/defender_permission.py", "quorune/rules/defender_permission_effect.py"}:
+        return "combat_declaration"
     if relative.startswith("quorune/rules/"):
         return "rules_capabilities"
     if relative.startswith("quorune/aura/"):

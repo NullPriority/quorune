@@ -5983,6 +5983,592 @@
       "applicability_note": "Reject an injected Defender attacker without changing the authoritative state hash."
     },
     {
+      "capability_id": "combat.attack.defender_permission",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_defender_permission.DefenderPermissionCompilerTests.test_permission_keeps_keyword_and_shared_verdict_mutant_is_killed",
+      "official_rule_ids": [
+        "101.2",
+        "508.1a",
+        "508.1c",
+        "609.4",
+        "613.1f",
+        "702.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed Defender exception preserves other restrictions, current layer-six presence, multiplayer authority and exact replay."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_defender_permission.DefenderPermissionRuntimeTests.test_actual_aura_ability_removal_disables_static_permission_source",
+      "official_rule_ids": [
+        "101.2",
+        "508.1a",
+        "508.1c",
+        "609.4",
+        "613.1f",
+        "702.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed Defender exception preserves other restrictions, current layer-six presence, multiplayer authority and exact replay."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_defender_permission.DefenderPermissionRuntimeTests.test_actual_cast_and_artifact_entry_facts_change_static_permission",
+      "official_rule_ids": [
+        "101.2",
+        "508.1a",
+        "508.1c",
+        "609.4",
+        "613.1f",
+        "702.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed Defender exception preserves other restrictions, current layer-six presence, multiplayer authority and exact replay."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_defender_permission.DefenderPermissionRuntimeTests.test_actual_static_source_and_artifact_condition_loss_remove_only_permission",
+      "official_rule_ids": [
+        "101.2",
+        "508.1a",
+        "508.1c",
+        "609.4",
+        "613.1f",
+        "702.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed Defender exception preserves other restrictions, current layer-six presence, multiplayer authority and exact replay."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_defender_permission.DefenderPermissionRuntimeTests.test_attached_permission_follows_current_attachment_and_disappears_with_aura",
+      "official_rule_ids": [
+        "101.2",
+        "508.1a",
+        "508.1c",
+        "609.4",
+        "613.1f",
+        "702.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed Defender exception preserves other restrictions, current layer-six presence, multiplayer authority and exact replay."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_defender_permission.DefenderPermissionRuntimeTests.test_permission_does_not_override_tap_sickness_or_other_attack_restrictions",
+      "official_rule_ids": [
+        "101.2",
+        "508.1a",
+        "508.1c",
+        "609.4",
+        "613.1f",
+        "702.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed Defender exception preserves other restrictions, current layer-six presence, multiplayer authority and exact replay."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_defender_permission.DefenderPermissionRuntimeTests.test_actual_rolling_stones_uses_shared_offer_and_accepted_declaration",
+      "official_rule_ids": [
+        "101.2",
+        "508.1a",
+        "508.1c",
+        "609.4",
+        "613.1f",
+        "702.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed Defender exception preserves other restrictions, current layer-six presence, multiplayer authority and exact replay."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_defender_permission.DefenderPermissionCompilerTests.test_permission_keeps_keyword_and_shared_verdict_mutant_is_killed",
+      "official_rule_ids": [
+        "101.2",
+        "508.1a",
+        "508.1c",
+        "609.4",
+        "613.1f",
+        "702.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed Defender exception preserves other restrictions, current layer-six presence, multiplayer authority and exact replay."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission",
+      "evidence_class": "negative",
+      "test_id": "tests.test_defender_permission.DefenderPermissionCompilerTests.test_permission_dependencies_and_forged_effect_shape_fail_closed",
+      "official_rule_ids": [
+        "101.2",
+        "508.1a",
+        "508.1c",
+        "609.4",
+        "613.1f",
+        "702.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed Defender exception preserves other restrictions, current layer-six presence, multiplayer authority and exact replay."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission",
+      "evidence_class": "negative",
+      "test_id": "tests.test_defender_permission.DefenderPermissionCompilerTests.test_permission_model_schema_and_unknown_grammar_fail_closed",
+      "official_rule_ids": [
+        "101.2",
+        "508.1a",
+        "508.1c",
+        "609.4",
+        "613.1f",
+        "702.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed Defender exception preserves other restrictions, current layer-six presence, multiplayer authority and exact replay."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission",
+      "evidence_class": "negative",
+      "test_id": "tests.test_defender_permission.DefenderPermissionRuntimeTests.test_actual_counter_condition_loss_removes_permission_and_rejects_attack",
+      "official_rule_ids": [
+        "101.2",
+        "508.1a",
+        "508.1c",
+        "609.4",
+        "613.1f",
+        "702.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed Defender exception preserves other restrictions, current layer-six presence, multiplayer authority and exact replay."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission",
+      "evidence_class": "positive",
+      "test_id": "tests.test_defender_permission.DefenderPermissionCompilerTests.test_static_permission_queries_and_public_conditions_preserve_only_defender_exception",
+      "official_rule_ids": [
+        "101.2",
+        "508.1a",
+        "508.1c",
+        "609.4",
+        "613.1f",
+        "702.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed Defender exception preserves other restrictions, current layer-six presence, multiplayer authority and exact replay."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_defender_permission.DefenderPermissionRuntimeTests.test_actual_rolling_stones_uses_shared_offer_and_accepted_declaration",
+      "official_rule_ids": [
+        "101.2",
+        "508.1a",
+        "508.1c",
+        "609.4",
+        "613.1f",
+        "702.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed Defender exception preserves other restrictions, current layer-six presence, multiplayer authority and exact replay."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission",
+      "evidence_class": "replay",
+      "test_id": "tests.test_defender_permission.DefenderPermissionRuntimeTests.test_actual_rolling_stones_uses_shared_offer_and_accepted_declaration",
+      "official_rule_ids": [
+        "101.2",
+        "508.1a",
+        "508.1c",
+        "609.4",
+        "613.1f",
+        "702.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed Defender exception preserves other restrictions, current layer-six presence, multiplayer authority and exact replay."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.temporary",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_defender_permission.DefenderPermissionRuntimeTests.test_actual_coupled_power_toughness_and_permission_share_timestamp_and_expiry",
+      "official_rule_ids": [
+        "400.7",
+        "508.1c",
+        "609.4",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "702.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual registered temporary permission preserves selected-set duration, shared modifier timestamp, event composition and activation usage."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.temporary",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_defender_permission.DefenderPermissionRuntimeTests.test_actual_instant_cast_trigger_grants_fixed_stats_and_defender_permission",
+      "official_rule_ids": [
+        "400.7",
+        "508.1c",
+        "609.4",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "702.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual registered temporary permission preserves selected-set duration, shared modifier timestamp, event composition and activation usage."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.temporary",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_defender_permission.DefenderPermissionRuntimeTests.test_actual_temporary_activation_expires_and_does_not_follow_new_incarnation",
+      "official_rule_ids": [
+        "400.7",
+        "508.1c",
+        "609.4",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "702.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical temporary permission, current incarnation and end-of-turn expiry through actual registered activation."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.temporary",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_defender_permission.DefenderPermissionRuntimeTests.test_targeted_temporary_permission_offers_legal_creatures_and_replays",
+      "official_rule_ids": [
+        "400.7",
+        "508.1c",
+        "609.4",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "702.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual registered temporary permission preserves selected-set duration, shared modifier timestamp, event composition and activation usage."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.temporary",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_defender_permission.DefenderPermissionRuntimeTests.test_temporary_set_locks_current_objects_and_survives_source_departure",
+      "official_rule_ids": [
+        "400.7",
+        "508.1c",
+        "609.4",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "702.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual registered temporary permission preserves selected-set duration, shared modifier timestamp, event composition and activation usage."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.temporary",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_defender_permission.DefenderPermissionRuntimeTests.test_actual_temporary_activation_expires_and_does_not_follow_new_incarnation",
+      "official_rule_ids": [
+        "400.7",
+        "508.1c",
+        "609.4",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "702.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical temporary permission, current incarnation and end-of-turn expiry through actual registered activation."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.temporary",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_defender_permission.DefenderPermissionRuntimeTests.test_temporary_permission_journal_mutant_is_killed",
+      "official_rule_ids": [
+        "400.7",
+        "508.1c",
+        "609.4",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "702.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical temporary permission, current incarnation and end-of-turn expiry through actual registered activation."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.temporary",
+      "evidence_class": "negative",
+      "test_id": "tests.test_defender_permission.DefenderPermissionCompilerTests.test_permission_dependencies_and_forged_effect_shape_fail_closed",
+      "official_rule_ids": [
+        "400.7",
+        "508.1c",
+        "609.4",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "702.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Blocked canonical owner and forged temporary shapes cannot gain trust or mutate the duration journal."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.temporary",
+      "evidence_class": "negative",
+      "test_id": "tests.test_defender_permission.DefenderPermissionCompilerTests.test_temporary_permission_locks_selection_and_rejects_linked_riders",
+      "official_rule_ids": [
+        "400.7",
+        "508.1c",
+        "609.4",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "702.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical temporary permission, current incarnation and end-of-turn expiry through actual registered activation."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.temporary",
+      "evidence_class": "negative",
+      "test_id": "tests.test_defender_permission.DefenderPermissionRuntimeTests.test_actual_once_per_turn_activation_does_not_erase_usage_limit",
+      "official_rule_ids": [
+        "400.7",
+        "508.1c",
+        "609.4",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "702.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual registered temporary permission preserves selected-set duration, shared modifier timestamp, event composition and activation usage."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.temporary",
+      "evidence_class": "negative",
+      "test_id": "tests.test_defender_permission.DefenderPermissionRuntimeTests.test_malformed_temporary_permission_rolls_back_before_journal_mutation",
+      "official_rule_ids": [
+        "400.7",
+        "508.1c",
+        "609.4",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "702.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Blocked canonical owner and forged temporary shapes cannot gain trust or mutate the duration journal."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.temporary",
+      "evidence_class": "negative",
+      "test_id": "tests.test_defender_permission.DefenderPermissionRuntimeTests.test_pending_temporary_activation_does_not_grant_returned_source",
+      "official_rule_ids": [
+        "400.7",
+        "508.1c",
+        "609.4",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "702.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual registered temporary permission preserves selected-set duration, shared modifier timestamp, event composition and activation usage."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.temporary",
+      "evidence_class": "positive",
+      "test_id": "tests.test_defender_permission.DefenderPermissionCompilerTests.test_temporary_permission_locks_selection_and_rejects_linked_riders",
+      "official_rule_ids": [
+        "400.7",
+        "508.1c",
+        "609.4",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "702.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical temporary permission, current incarnation and end-of-turn expiry through actual registered activation."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.temporary",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_defender_permission.DefenderPermissionRuntimeTests.test_actual_temporary_activation_expires_and_does_not_follow_new_incarnation",
+      "official_rule_ids": [
+        "400.7",
+        "508.1c",
+        "609.4",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "702.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical temporary permission, current incarnation and end-of-turn expiry through actual registered activation."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.temporary",
+      "evidence_class": "replay",
+      "test_id": "tests.test_defender_permission.DefenderPermissionRuntimeTests.test_actual_temporary_activation_expires_and_does_not_follow_new_incarnation",
+      "official_rule_ids": [
+        "400.7",
+        "508.1c",
+        "609.4",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "702.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical temporary permission, current incarnation and end-of-turn expiry through actual registered activation."
+    },
+    {
+      "capability_id": "combat.attack.defender_permission.temporary",
+      "evidence_class": "replay",
+      "test_id": "tests.test_defender_permission.DefenderPermissionRuntimeTests.test_pending_temporary_activation_save_load_resolves_same_source_once",
+      "official_rule_ids": [
+        "400.7",
+        "508.1c",
+        "609.4",
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "702.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual registered temporary permission preserves selected-set duration, shared modifier timestamp, event composition and activation usage."
+    },
+    {
       "capability_id": "combat.attack.haste",
       "evidence_class": "interaction",
       "test_id": "tests.test_declare_attackers_rules.DeclareAttackersRuleTests.test_haste_attack_permission_uses_current_effective_keywords",

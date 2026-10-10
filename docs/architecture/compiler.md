@@ -348,9 +348,22 @@ query. Source-controller recipient restrictions stay anchored to the
 originating source after the affected creature receives its characteristics.
 Offer and commit consume the same current fragment snapshot. Nonmana costs,
 chosen or named values, temporary mass effects, crew and transform riders,
-unsupported previous-turn facts, open dynamic counts, defender suppression,
+unsupported previous-turn facts, open dynamic counts,
 multiple-block capacity, and combat-damage assignment remain material
 residuals. See [ADR 0099](../adr/0099-typed-public-declaration-conditions.md).
+
+`compiler/defender_permission_templates.py` separately compiles the closed
+permission to attack as though a creature did not have Defender. It preserves
+Defender and grants one typed layer-6 fact to the current self, attachment or
+public-query recipient. Closed public-state conditions use the existing
+snapshot owner through a strict permission-only schema. Shared attacker
+legality disregards only Defender; tapped state, summoning sickness and other
+attack restrictions still apply. Fixed temporary self, target and public-query
+forms lock current logical incarnations through the ordinary end-of-turn
+continuous-effect journal, optionally sharing one timestamp with fixed stats
+or supported keywords. Later entrants and new incarnations receive no earlier
+temporary permission. Linked riders, defending-player history, and
+combat-damage assignment rules remain separate unsupported families.
 
 `activation_condition_model.py` owns complete trailing activation
 restrictions shared by the compiler-pinned catalog and activation lowering.

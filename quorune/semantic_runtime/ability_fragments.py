@@ -34,6 +34,7 @@ from ..ability_fragments import (
 from ..enchant_spec import SimpleEnchantSpec, TypedEnchantSpec
 from ..enchant_spec import LinkedGraveyardCreatureEnchantSpec
 from ..declaration_fragments import DECLARATION_COMPONENT_CAPABILITY_ID
+from ..defender_permission import DefenderAttackPermission, DEFENDER_PERMISSION_CAPABILITY, DEFENDER_PERMISSION_HANDLER
 from ..rules.capabilities import load_default_capability_registry
 from ..trigger_participation import TriggerMultiplierSpec, WardSpec
 from .component_registry import RuntimeComponentRegistry, exact_fields
@@ -195,6 +196,24 @@ class TypedEnchantAbilityFragmentHandler:
         descriptor: Mapping[str, Any],
         context: object,
     ) -> tuple[StaticAbilityFragment, ...]:
+        del context
+        return (self.validate(descriptor),)
+
+
+@dataclass(frozen=True, slots=True)
+class DefenderPermissionAbilityFragmentHandler:
+    handler_id: str = DEFENDER_PERMISSION_HANDLER
+    schema_version: int = 1
+    family: str = 'ability.static.defender_permission'
+    event: str = 'continuous'
+    rule_references: tuple[str, ...] = ('609.4', '702.3b', '508.1c')
+    capability_dependencies: tuple[str, ...] = (DEFENDER_PERMISSION_CAPABILITY,)
+
+    def validate(self, descriptor: Mapping[str, Any]) -> DefenderAttackPermission:
+        return _fragment(descriptor, handler_id=self.handler_id, event=self.event,
+            expected_type=DefenderAttackPermission)
+
+    def lower(self, descriptor: Mapping[str, Any], context: object) -> tuple[StaticAbilityFragment, ...]:
         del context
         return (self.validate(descriptor),)
 
@@ -1266,6 +1285,7 @@ def default_ability_fragment_registry() -> AbilityFragmentRegistry:
             CascadeAbilityFragmentHandler(),
             CounterMaximumAbilityFragmentHandler(),
             DeclarationCostAbilityFragmentHandler(),
+            DefenderPermissionAbilityFragmentHandler(),
             DeclarationRequirementAbilityFragmentHandler(),
             DeclarationRestrictionAbilityFragmentHandler(),
             DeclarationRestrictionComponentHandler(),

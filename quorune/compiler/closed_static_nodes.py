@@ -9,6 +9,7 @@ from .declaration_nodes import (
 )
 from .intrinsic_counter_nodes import intrinsic_counter_prohibition_node
 from .maximum_hand_size_nodes import no_maximum_hand_size_node
+from .defender_permission_templates import static_defender_permission_handler
 from .ir_model import OracleNode, OracleResidual, SourceSpan
 from .kicker_nodes import fixed_kicked_entry_node
 from .permanent_additional_cost_nodes import permanent_additional_cost_node
@@ -85,7 +86,7 @@ def closed_static_or_replacement_node(
     )
     if no_maximum is not None:
         return no_maximum
-    declaration_grant = fixed_static_declaration_grant_handler(
+    declaration_grant = static_defender_permission_handler(material_line, source_name=source_name) or fixed_static_declaration_grant_handler(
         material_line,
         source_name=source_name,
     )

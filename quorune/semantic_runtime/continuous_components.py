@@ -31,6 +31,7 @@ from ..leveler_bands import (
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..replacement.immutable import FrozenMap
 from ..continuous_conditions import FixedPublicStateConditionSnapshot
+from ..defender_permission import DefenderAttackPermission
 from ..declaration_fragments import (
     DeclarationRequirementTemplate,
     DeclarationRestrictionTemplate,
@@ -742,6 +743,7 @@ class FixedQueryAbilityGrantHandler:
                 (
                     DeclarationRequirementTemplate,
                     DeclarationRestrictionTemplate,
+                    DefenderAttackPermission,
                     GrantedActivatedAbilitySpec,
                     GrantedTriggeredAbilitySpec,
                 ),
@@ -1294,6 +1296,7 @@ def default_continuous_effect_component_registry(
     from .conditional_continuous import (
         FixedPublicStateCharacteristicsHandler,
         FixedPublicStateGrantedAbilityHandler,
+        ConditionalDefenderPermissionHandler,
     )
 
     registry = ContinuousEffectComponentRegistry(
@@ -1308,6 +1311,7 @@ def default_continuous_effect_component_registry(
             LevelerBandsHandler(),
             FixedPublicStateCharacteristicsHandler(),
             FixedPublicStateGrantedAbilityHandler(),
+            ConditionalDefenderPermissionHandler(),
             AttachedFixedCharacteristicsHandler(),
             FixedCharacteristicSettingsHandler(),
         )

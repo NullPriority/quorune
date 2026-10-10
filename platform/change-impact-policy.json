@@ -391,6 +391,11 @@
       ]
     },
     {
+      "id": "defender-permission-contract",
+      "patterns": ["quorune/defender.py", "quorune/defender_permission.py", "quorune/compiler/defender_permission_templates.py", "quorune/compiler/closed_static_nodes.py", "quorune/rules/defender_permission_effect.py", "tests/fixtures/defender-permission-cards.json"],
+      "test_modules": ["test_defender_permission", "test_defender_rules", "test_combat_keyword_rules", "test_fixed_public_state_characteristics", "test_combat_declaration_restrictions", "test_card_program_trust", "test_rules_scheduler"]
+    },
+    {
       "id": "private-hand-entry-contract",
       "patterns": ["quorune/compiler/hand_entry_templates.py", "quorune/hand_entry_queries.py", "quorune/hand_entry_move.py", "quorune/semantic_choices/object_selection.py", "quorune/rules/public_zone_move_capability_shapes.py", "tests/fixtures/hand-entry-expansion-cards.json"],
       "test_modules": ["test_hand_entry_expansion", "test_fixed_public_zone_moves", "test_aura_targeting_entry", "test_riot_rules", "test_card_program_trust", "test_rules_scheduler"]

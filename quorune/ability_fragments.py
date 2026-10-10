@@ -38,6 +38,7 @@ from .declaration_fragments import (
     DeclarationRequirementTemplate,
     DeclarationRestrictionTemplate,
 )
+from .defender_permission import DefenderAttackPermission
 from .creature_subtypes import canonical_creature_subtype
 from .replacement.immutable import FrozenMap, thaw_value
 from .trigger_participation import TriggerMultiplierSpec, WardSpec
@@ -983,6 +984,7 @@ StaticAbilityFragment: TypeAlias = (
     | DynamicPowerToughnessSpec
     | QueryCharacteristicModifierSpec
     | QueryPowerToughnessDefinitionSpec
+    | DefenderAttackPermission
     | DeclarationCostTemplate
     | DeclarationRequirementTemplate
     | DeclarationRestrictionTemplate
@@ -1037,6 +1039,8 @@ def ability_fragment_to_dict(
         kind = "query_characteristic_modifier"
     elif isinstance(fragment, QueryPowerToughnessDefinitionSpec):
         kind = "query_power_toughness_definition"
+    elif isinstance(fragment, DefenderAttackPermission):
+        kind = "defender_attack_permission"
     elif isinstance(fragment, DeclarationCostTemplate):
         kind = "declaration_cost"
     elif isinstance(fragment, DeclarationRequirementTemplate):
@@ -1135,6 +1139,8 @@ def ability_fragment_from_dict(
             return QueryPowerToughnessDefinitionSpec.from_dict(value["value"])
         except CharacteristicFragmentError as exc:
             raise AbilityFragmentError(str(exc)) from exc
+    if value["kind"] == "defender_attack_permission":
+        return DefenderAttackPermission.from_dict(value["value"])
     if value["kind"] == "declaration_cost":
         try:
             return DeclarationCostTemplate.from_dict(value["value"])
@@ -1187,6 +1193,7 @@ def canonical_ability_fragments(
                 DynamicPowerToughnessSpec,
                 QueryCharacteristicModifierSpec,
                 QueryPowerToughnessDefinitionSpec,
+                DefenderAttackPermission,
                 DeclarationCostTemplate,
                 DeclarationRequirementTemplate,
                 DeclarationRestrictionTemplate,

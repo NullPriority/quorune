@@ -15,6 +15,7 @@ from ..continuous_conditions import (
     FixedPublicStateConditionSnapshot,
     FixedPublicStateConditionError,
 )
+from ..defender_permission import CONDITIONAL_DEFENDER_PERMISSION_HANDLER
 from ..continuous_effects import Layer
 from ..characteristic_fragments import CharacteristicQuantitySpec
 from ..drawing.restrictions import drawn_this_turn
@@ -619,6 +620,7 @@ def collect_card_program_continuous_effects(
                     is_fixed_public_state = descriptor.get("handler_id") in (
                         FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID,
                         FIXED_PUBLIC_STATE_GRANTED_ABILITY_HANDLER_ID,
+                        CONDITIONAL_DEFENDER_PERMISSION_HANDLER,
                     )
                     if (
                         is_fixed_public_state

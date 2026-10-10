@@ -54,6 +54,7 @@
       "test_counter_state",
       "test_counter_target_predicates",
       "test_deck_loader",
+      "test_defender_permission",
       "test_defender_rules",
       "test_delayed_triggers",
       "test_draw_continuation",
