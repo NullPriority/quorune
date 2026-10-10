@@ -12935,11 +12935,11 @@
       "applicable_high_risk_pairs": 369,
       "applicable_piece_pairs": 106080,
       "available": true,
-      "covered_high_risk_pairs": 360,
-      "covered_piece_pairs": 1066,
+      "covered_high_risk_pairs": 369,
+      "covered_piece_pairs": 1075,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "3c69fde0737d77523a225bbd6537d05276170df1b29f8beff40285f5f893ca1d",
-      "uncovered_high_risk_pairs": 9
+      "source_fingerprint": "5870e0929ce2421ff7a29781196e60856114e1bd2cc07490353cede33b50c8f1",
+      "uncovered_high_risk_pairs": 0
     },
     "migration_queue": [],
     "missing_dedicated_owners": [],
@@ -13327,7 +13327,7 @@
           "visibility": "public"
         }
       ],
-      "logical_lines": 246401,
+      "logical_lines": 246403,
       "methods": {
         "dunder": 624,
         "private": 975,
@@ -16962,6 +16962,13 @@
           "physical_lines": 117
         },
         {
+          "file": "quorune/destruction_replacement_adapter.py",
+          "functions_and_methods": 4,
+          "language": "python",
+          "logical_lines": 106,
+          "physical_lines": 118
+        },
+        {
           "file": "quorune/compiler/keyword_templates.py",
           "functions_and_methods": 1,
           "language": "python",
@@ -17002,13 +17009,6 @@
           "language": "python",
           "logical_lines": 104,
           "physical_lines": 120
-        },
-        {
-          "file": "quorune/destruction_replacement_adapter.py",
-          "functions_and_methods": 4,
-          "language": "python",
-          "logical_lines": 104,
-          "physical_lines": 116
         },
         {
           "file": "quorune/ability_fragment_host.py",
@@ -19435,7 +19435,7 @@
           "physical_lines": 1697
         }
       ],
-      "physical_lines": 269607,
+      "physical_lines": 269609,
       "python_file_count": 807,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -35828,7 +35828,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "53d3482d44975e1edbdaf4427197589ddfcd52c92c619507c6d528a447318847",
+      "fingerprint": "c09c7b29ebf3b96963192a00b11353c129aaab4a00e1bdbbd92d939a4fc34799",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -36686,8 +36686,8 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 5222,
-      "discovered_total": 8558,
+      "conventional_ast_cases": 5227,
+      "discovered_total": 8536,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 263,
@@ -36696,7 +36696,7 @@
         "replay_named": 482,
         "server_named": 38
       },
-      "reconciles": false,
+      "reconciles": true,
       "test_files": 391
     }
   }
