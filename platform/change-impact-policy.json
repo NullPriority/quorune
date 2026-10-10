@@ -1651,6 +1651,22 @@
       ]
     },
     {
+      "id": "source-counter-scalar-contract",
+      "patterns": [
+        "quorune/scalar_effect_amount_model.py",
+        "quorune/scalar_effect_amounts.py",
+        "quorune/compiler/scalar_effect_amounts.py",
+        "tests/fixtures/source-counter-amounts.json"
+      ],
+      "test_modules": [
+        "test_source_counter_amounts",
+        "test_scalar_effect_amounts",
+        "test_declared_effect_amounts",
+        "test_card_program_trust",
+        "test_counter_qualified_zone_events"
+      ]
+    },
+    {
       "id": "aggregate-zone-event-query-contract",
       "patterns": [
         "quorune/compiler/aggregated_zone_event_bindings.py",

@@ -286,6 +286,7 @@
       "test_regeneration_rules",
       "test_repeatable_object_action_triggers",
       "test_scalar_effect_amounts",
+      "test_source_counter_amounts",
       "test_static_characteristic_labels",
       "test_static_characteristic_settings",
       "test_targeted_tap_state_effect_clauses",

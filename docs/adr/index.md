@@ -125,3 +125,4 @@ deployment modes, or architecture review thresholds.
 - [ADR 0108 — typed current-turn Mayhem](0108-typed-current-turn-mayhem.md)
 - [ADR 0109 — typed trigger usage limits](0109-typed-trigger-usage-limits.md)
 - [ADR 0110 — static attached control](0110-static-attached-control.md)
+- [ADR 0111 — source counter scalar amounts](0111-source-counter-scalar-amounts.md)

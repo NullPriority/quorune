@@ -20,7 +20,7 @@ class ScalarAmountHost(Protocol):
     def _type_parts(self, text: str) -> tuple[set[str], set[str], set[str]]: ...
 
 
-def _snapshot(host, card, *, characteristics=None):
+def _snapshot(host, card, *, characteristics=None, include_counters=False):
     data = dict(characteristics) if characteristics is not None else host._effective_card_data(card)
     types = host._type_parts(str(data.get("type_line") or ""))[0]
     has_stats = "creature" in types or card.zone != "battlefield"
@@ -28,7 +28,7 @@ def _snapshot(host, card, *, characteristics=None):
               for field in ("power", "toughness")}
     values["mana_value"] = data.get("mana_value", data.get("cmc"))
     return {"object_id": card.object_id, "logical_object_id": card.logical_object_id,
-            "ref": card.ref, "zone": card.zone, **values}
+            "ref": card.ref, "zone": card.zone, **values, **({"counters":dict(card.counters)} if include_counters else {})}
 
 
 def _current_card(host, ref):
@@ -39,7 +39,8 @@ def scalar_source_context(host, source, effects, *, characteristics=None):
     """Seed source identity/LKI before activation costs or departure discovery."""
     if not any(spec.origin is ScalarAmountOrigin.SOURCE for spec in scalar_amount_specs(effects)):
         return {}
-    return {SCALAR_REFERENCE_CONTEXT: {"source": _snapshot(host, source, characteristics=characteristics)}}
+    counters=any(spec.counter_name is not None for spec in scalar_amount_specs(effects))
+    return {SCALAR_REFERENCE_CONTEXT: {"source": _snapshot(host, source, characteristics=characteristics,include_counters=counters)}}
 
 
 def _reference(host, item, spec):
@@ -54,7 +55,7 @@ def _reference(host, item, spec):
             card = host.state.cards.get(item.source_object_id or item.card_object_id or "")
             if card is None or card.logical_object_id != item.context.get("source_logical_object_id"):
                 raise PublicQueryAmountError("Scalar source identity is unavailable")
-            initial = _snapshot(host, card)
+            initial = _snapshot(host, card,include_counters=spec.counter_name is not None)
     elif spec.origin is ScalarAmountOrigin.TARGET:
         if len(item.targets) != 1 or item.targets[0] is None:
             raise PublicQueryAmountError("Scalar characteristic requires its single target")
@@ -81,14 +82,15 @@ def _reference(host, item, spec):
                 "logical_object_id": identity, "zone": "battlefield",
                 "power": context.get("power"), "toughness": context.get("toughness"),
                 "mana_value": context.get("mana_value")}
-    if not isinstance(initial, Mapping) or set(initial) != {"ref", "object_id", "logical_object_id", "zone", "power", "toughness", "mana_value"}:
+    fields={"ref", "object_id", "logical_object_id", "zone", "power", "toughness", "mana_value"}
+    if not isinstance(initial, Mapping) or set(initial) not in (fields,fields|{'counters'}):
         raise PublicQueryAmountError("Scalar characteristic snapshot is malformed")
     snapshots[key] = dict(initial)
     card = host.state.cards.get(initial["object_id"])
     if card is not None and card.logical_object_id == initial["logical_object_id"] and card.zone == initial["zone"]:
         if card.phased_out:
             raise PublicQueryAmountError("Scalar characteristic object is phased out")
-        return _snapshot(host, card)
+        return _snapshot(host, card,include_counters='counters' in initial or spec.counter_name is not None)
     return initial
 
 
@@ -199,7 +201,14 @@ def resolve_scalar_effect_amount(host: ScalarAmountHost, value: Mapping[str, Any
     elif spec.origin is ScalarAmountOrigin.HISTORY:
         amount = _history_amount(host, item, spec.history_fact)
     else:
-        amount = _reference(host, item, spec).get(spec.characteristic)
+        reference=_reference(host,item,spec)
+        if spec.counter_name is not None:
+            counters=reference.get('counters')
+            if not isinstance(counters,Mapping) or any(type(v) is not int or v<0 for v in counters.values()):
+                raise PublicQueryAmountError("Scalar source counter snapshot is unavailable or malformed")
+            amount=counters.get(spec.counter_name,0)
+        else:
+            amount = reference.get(spec.characteristic)
         if spec.characteristic == "mana_value" and type(amount) is float and amount.is_integer():
             amount = int(amount)
     if type(amount) is not int:

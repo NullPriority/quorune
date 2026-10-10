@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "afdbcb1be159af4baba731c76858a3bf4880d90b625aac972981eef158f52423",
-  "declaration_source_fingerprint": "d2f4f90fffa4f05cbdd3114c9b163e570327c0efae363af32aebcba085507ebb",
+  "registry_fingerprint": "f3f8a5933f005859c5a61c4bbd431bb45b61c8849399fbbca888302d5c407b7e",
+  "declaration_source_fingerprint": "f1387ed01084492d12153165ceccf56d15c79ae82d3d6b0a67b53a91bcd217dc",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -63629,6 +63629,26 @@
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
       "evidence_class": "interaction",
+      "test_id": "tests.test_source_counter_amounts.SourceCounterAmountRuntimeTests.test_actual_death_draw_uses_predeparture_counters_and_replays",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Marketback Walker sacrifice and Culling Dais activation preserve original source counter look-back after canonical reset, with authenticated rejection, current response changes, blink, and exact save/load replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "interaction",
       "test_id": "tests.test_whole_hand_discard.WholeHandDiscardRuntimeTests.test_actual_discard_history_counts_redirection_from_opponent_controller",
       "official_rule_ids": [
         "107.1b",
@@ -63665,6 +63685,26 @@
         "commander_review"
       ],
       "applicability_note": "Actual trusted actions use the normal four-seat offered-action and committed-result paths."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_source_counter_amounts.SourceCounterAmountRuntimeTests.test_actual_death_draw_uses_predeparture_counters_and_replays",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Marketback Walker sacrifice and Culling Dais activation preserve original source counter look-back after canonical reset, with authenticated rejection, current response changes, blink, and exact save/load replay."
     },
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
@@ -63705,6 +63745,26 @@
         "commander_review"
       ],
       "applicability_note": "A mutant that falsely binds an unrelated departure to the future scalar exposes the prohibited phased-reference evaluation."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_source_counter_amounts.SourceCounterAmountRuntimeTests.test_missing_counter_lki_mutant_is_killed_by_actual_source_sacrifice",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Marketback Walker sacrifice and Culling Dais activation preserve original source counter look-back after canonical reset, with authenticated rejection, current response changes, blink, and exact save/load replay."
     },
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
@@ -63765,6 +63825,26 @@
         "commander_review"
       ],
       "applicability_note": "The scalar's own source, target or event-object read still rejects unavailable phased information; relevance filtering does not invent phasing support or substitute zero."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_source_counter_amounts.SourceCounterAmountCompilerTests.test_v2_counter_codec_keeps_v1_shape_and_rejects_ambiguous_origins",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Marketback Walker sacrifice and Culling Dais activation preserve original source counter look-back after canonical reset, with authenticated rejection, current response changes, blink, and exact save/load replay."
     },
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
@@ -63829,6 +63909,26 @@
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
       "evidence_class": "positive",
+      "test_id": "tests.test_source_counter_amounts.SourceCounterAmountCompilerTests.test_source_counter_amounts_preserve_typed_identity_and_span",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Marketback Walker sacrifice and Culling Dais activation preserve original source counter look-back after canonical reset, with authenticated rejection, current response changes, blink, and exact save/load replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "positive",
       "test_id": "tests.test_whole_hand_discard.WholeHandDiscardRuntimeTests.test_actual_discard_history_counts_redirection_from_opponent_controller",
       "official_rule_ids": [
         "107.1b",
@@ -63865,6 +63965,26 @@
         "commander_review"
       ],
       "applicability_note": "Each principal receives the ordinary projection, never an authoritative checkpoint."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_source_counter_amounts.SourceCounterAmountRuntimeTests.test_actual_death_draw_uses_predeparture_counters_and_replays",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Marketback Walker sacrifice and Culling Dais activation preserve original source counter look-back after canonical reset, with authenticated rejection, current response changes, blink, and exact save/load replay."
     },
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
@@ -63965,6 +64085,26 @@
         "commander_review"
       ],
       "applicability_note": "An actual return-to-owner-hand command uses the single-object zone owner successfully from a constructed pre-action checkpoint and reproduces the exact resulting state on load and replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_source_counter_amounts.SourceCounterAmountRuntimeTests.test_actual_death_draw_uses_predeparture_counters_and_replays",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual Marketback Walker sacrifice and Culling Dais activation preserve original source counter look-back after canonical reset, with authenticated rejection, current response changes, blink, and exact save/load replay."
     },
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
@@ -90965,5 +91105,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "8eca17739e20198c1c64bb958e00b5c960f28e0b3776cac1f9614c7ab980857f"
+  "fingerprint": "dc0f1614bc9680544c73a96013788fe1aae772b05a81d09749a8ad0fc70adb49"
 }
