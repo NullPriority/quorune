@@ -1290,6 +1290,7 @@ def default_continuous_effect_component_registry(
 ) -> ContinuousEffectComponentRegistry:
     from .chosen_characteristics import ChosenCharacteristicsHandler
     from .attached_continuous import AttachedFixedCharacteristicsHandler
+    from .fixed_characteristic_settings import FixedCharacteristicSettingsHandler
     from .conditional_continuous import (
         FixedPublicStateCharacteristicsHandler,
         FixedPublicStateGrantedAbilityHandler,
@@ -1308,6 +1309,7 @@ def default_continuous_effect_component_registry(
             FixedPublicStateCharacteristicsHandler(),
             FixedPublicStateGrantedAbilityHandler(),
             AttachedFixedCharacteristicsHandler(),
+            FixedCharacteristicSettingsHandler(),
         )
     )
     registry.require_registered_capabilities(

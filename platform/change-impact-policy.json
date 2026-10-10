@@ -1122,6 +1122,31 @@
       ]
     },
     {
+      "id": "static-characteristic-setting-contract",
+      "patterns": [
+        "quorune/compiler/fixed_characteristic_settings.py",
+        "quorune/compiler/public_state_queries.py",
+        "quorune/semantic_runtime/fixed_characteristic_effects.py",
+        "quorune/semantic_runtime/fixed_characteristic_settings.py",
+        "quorune/semantic_runtime/attached_continuous.py",
+        "tests/test_static_characteristic_settings.py",
+        "tests/fixtures/static-characteristic-setting-cards.json"
+      ],
+      "test_modules": [
+        "test_static_characteristic_settings",
+        "test_attached_static_characteristics",
+        "test_continuous_effect_components",
+        "test_fixed_public_state_characteristics",
+        "test_fixed_query_keyword_grants",
+        "test_fixed_source_characteristic_effects",
+        "test_card_program_trust"
+      ],
+      "test_suites": [
+        "counter-continuous-effects",
+        "compiler-cardprogram"
+      ]
+    },
+    {
       "id": "public-quantity-mana-contract",
       "patterns": [
         "quorune/public_quantity_mana*.py",

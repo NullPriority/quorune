@@ -19,6 +19,7 @@ from .cast_cost_modifier_templates import (
 )
 from .static_cast_rule_templates import static_cast_rule_handler
 from .combat_metadata_templates import static_goad_prohibition_handler
+from .fixed_characteristic_settings import fixed_characteristic_setting_handler
 from .continuous_templates import (
     attached_fixed_characteristics_handler,
     basic_land_type_addition_handler,
@@ -347,20 +348,9 @@ def _continuous_static_runtime_template(
     if declaration_grant is not None:
         return declaration_grant
 
-    attached_characteristics = attached_fixed_characteristics_handler(
-        text,
-        source_name=source_name or "source",
-    )
-    if attached_characteristics is not None:
-        return StaticRuntimeTemplate(
-            compiled=attached_characteristics,
-            kind="static_ability",
-            event="characteristics.evaluate",
-            dependency_reason=(
-                "generic attached characteristics depend on an untrusted "
-                "continuous-effect capability"
-            ),
-        )
+    setting = _constant_static_characteristic_template(text, source_name=source_name, source_is_class=source_is_class)
+    if setting is not None:
+        return setting
     basic_land_type = basic_land_type_addition_handler(text)
     if basic_land_type is not None:
         return StaticRuntimeTemplate(
@@ -484,6 +474,18 @@ def _continuous_static_runtime_template(
             "capability"
         ),
     )
+
+
+def _constant_static_characteristic_template(text, *, source_name, source_is_class):
+    attached = attached_fixed_characteristics_handler(text, source_name=source_name or "source")
+    if attached is not None:
+        return StaticRuntimeTemplate(compiled=attached, kind="static_ability", event="characteristics.evaluate",
+            dependency_reason="Generic attached characteristics require a trusted continuous-effect capability")
+    setting = None if source_is_class else fixed_characteristic_setting_handler(text)
+    if setting is not None:
+        return StaticRuntimeTemplate(compiled=setting, kind="static_ability", event="characteristics.evaluate",
+            dependency_reason="Fixed public characteristic settings require closed layer and subject capabilities")
+    return None
 
 
 def _self_entry_counter_runtime_template(

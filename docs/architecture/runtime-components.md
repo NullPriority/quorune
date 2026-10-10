@@ -34,6 +34,23 @@ requesting principal's authorized projection.
 
 ## Descriptor and registry contract
 
+`continuous.characteristics.fixed-public-setting.v1` applies one constant
+setting to a reciprocal attached object or a closed public battlefield query.
+The compiler preserves type retention, source exclusion, controller scope,
+fixed colors, keyword additions, ability removal, base power/toughness and
+fixed modifiers. Creature subtype replacement removes only creature subtypes,
+preserving unrelated artifact or enchantment subtypes. Unknown subjects,
+chosen values, names, dynamic definitions and quoted grants remain residual.
+
+The setting handler and the existing attached-characteristic handler share
+one pure layer emission owner. It produces the represented layer 4, 5, 6, 7b
+and 7c operations for the existing evaluator. Ability removal precedes the
+same setting's keyword additions; base settings precede modifiers and counters.
+The ordinary timestamp and component-presence owners determine current source
+participation. Source departure or phasing ends a static effect, and reciprocal
+attachment identities prevent it from following a different incarnation.
+Printed and copied values remain separate from these live characteristics.
+
 `ability.activated.mana.public-quantity.v1` shares the existing activated mana
 registry and fixed-family cost boundary. Its versioned output reads a closed
 public zone quantity, source counter quantity, source power or toughness, or

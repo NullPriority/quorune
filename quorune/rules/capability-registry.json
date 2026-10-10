@@ -4015,6 +4015,97 @@
       "status": "trusted"
     },
     {
+      "id": "continuous.characteristics.fixed_public_setting",
+      "version": 1,
+      "official_rules": [
+        "205.1a",
+        "205.1b",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Apply source-bound constant type, color, keyword and base-stat settings to current public battlefield subjects through the existing layer owner.",
+        "inputs": [
+          "source-spanned closed setting",
+          "current public predicate or reciprocal attachment",
+          "constant modifier",
+          "current source component",
+          "timestamp and logical incarnation"
+        ],
+        "outputs": [
+          "layer4/5/6/7b/7c continuous effects",
+          "current queried characteristics",
+          "shared offered and accepted actions",
+          "deterministic replay"
+        ],
+        "exclusions": [
+          "Chosen/name/dynamic settings",
+          "Basic land type replacement",
+          "Quoted grants",
+          "Unrepresented condition and sibling bodies",
+          "General dependency discovery"
+        ]
+      },
+      "dependencies": [
+        "continuous.attached.fixed_characteristics",
+        "continuous.ability.fixed_query_keyword_grant"
+      ],
+      "implementation_components": [
+        "quorune.compiler.fixed_characteristic_settings.fixed_characteristic_setting_handler",
+        "quorune.semantic_runtime.fixed_characteristic_settings.FixedCharacteristicSettingsHandler",
+        "quorune.semantic_runtime.fixed_characteristic_effects.fixed_characteristic_effects",
+        "quorune.continuous_effects.evaluate_continuous_effects"
+      ],
+      "positive_tests": [
+        "test_static_settings_preserve_exact_types_colors_and_source_spans",
+        "test_actual_ensoul_offer_animation_counters_source_departure_and_replay"
+      ],
+      "negative_tests": [
+        "test_static_setting_unsupported_grammar_and_malformed_descriptors_fail_closed"
+      ],
+      "interaction_tests": [
+        "test_static_setting_source_removal_and_ability_order_use_current_layers"
+      ],
+      "multiplayer_tests": [
+        "test_actual_kudo_changes_other_creatures_across_controllers_with_replay"
+      ],
+      "privacy_tests": [
+        "test_actual_ensoul_offer_animation_counters_source_departure_and_replay"
+      ],
+      "replay_tests": [
+        "test_actual_ensoul_offer_animation_counters_source_departure_and_replay",
+        "test_actual_kudo_changes_other_creatures_across_controllers_with_replay"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Removing the setting capability rejects the source-spanned node before runtime admission.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the layer7b plan violates the actual Kudo action witness.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
       "id": "continuous.attached.fixed_characteristics",
       "version": 7,
       "official_rules": ["301.5", "303.4", "604.1", "611.3a", "611.3b", "613.1d", "613.1f", "613.1g", "613.6", "701.3c"],

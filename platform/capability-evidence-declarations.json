@@ -9395,6 +9395,448 @@
       "applicability_note": "Round-trip a token carrying the typed count fragment in a checkpoint and verify the following concession command exactly."
     },
     {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_deep_freeze_keeps_original_types_and_own_defender",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Constant live public characteristic settings through shared layer and action owners."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_equipment_setting_tracks_reciprocal_recipient_and_reequip",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Constant live public characteristic settings through shared layer and action owners."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_static_setting_older_removal_and_newer_grant_follow_timestamp_order",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Constant live public characteristic settings through shared layer and action owners."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_static_setting_source_removal_and_ability_order_use_current_layers",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Constant live public characteristic settings through shared layer and action owners."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_static_setting_started_effect_continues_when_source_loses_ability",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Constant live public characteristic settings through shared layer and action owners."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_counter_qualified_static_set_distinguishes_controller_and_enemy",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Constant live public characteristic settings through shared layer and action owners."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_kudo_changes_other_creatures_across_controllers_with_replay",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Constant live public characteristic settings through shared layer and action owners."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_static_setting_mutant_is_killed",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Constant live public characteristic settings through shared layer and action owners."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "negative",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingCompilerTests.test_global_permanent_subject_has_no_fictitious_card_type",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Constant live public characteristic settings through shared layer and action owners."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "negative",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingCompilerTests.test_static_setting_attachment_incarnation_and_query_codec_remain_closed",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Constant live public characteristic settings through shared layer and action owners."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "negative",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingCompilerTests.test_static_setting_unsupported_grammar_and_malformed_descriptors_fail_closed",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Constant live public characteristic settings through shared layer and action owners."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingCompilerTests.test_static_settings_preserve_exact_types_colors_and_source_spans",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Constant live public characteristic settings through shared layer and action owners."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_ensoul_offer_animation_counters_source_departure_and_replay",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Constant live public characteristic settings through shared layer and action owners."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_ensoul_offer_animation_counters_source_departure_and_replay",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Constant live public characteristic settings through shared layer and action owners."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "replay",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_ensoul_offer_animation_counters_source_departure_and_replay",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Constant live public characteristic settings through shared layer and action owners."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "replay",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_kudo_changes_other_creatures_across_controllers_with_replay",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Constant live public characteristic settings through shared layer and action owners."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "replay",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_static_setting_color_timestamps_and_source_departure_replay",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Constant live public characteristic settings through shared layer and action owners."
+    },
+    {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_live_public_object_state_and_layer_five_queries_recompute",

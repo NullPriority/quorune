@@ -2418,6 +2418,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/compiler/fixed_characteristic_settings.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/fixed_control_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -9516,6 +9531,36 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_runtime/fixed_characteristic_effects.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
+      "file": "quorune/semantic_runtime/fixed_characteristic_settings.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_runtime/fixed_damage_set_handlers.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
@@ -11069,5 +11114,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "1be745d172f5869e04d2f6c3e84753c4c7bbe2454c26d145d43b6c7d801fcdf3"
+  "fingerprint": "8e8577083c89c3320d92e7fff186172854453193618820c6dd90ca192cc32260"
 }

@@ -668,8 +668,8 @@ def _global_battlefield_query(
         if quality and subject_kind != "creatures":
             return None
         fields["types_all"] = (
-            ("creature",)
-            if subject_kind == "creatures"
+            ()
+            if subject_kind == "permanents"
             else (subject_kind.removesuffix("s"),)
         )
         if quality:

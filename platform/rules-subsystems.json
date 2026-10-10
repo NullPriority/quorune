@@ -375,6 +375,41 @@
       },
       "candidate_bundles": [
         {
+          "bundle_id": "bundle:fixed-static-characteristic-setting",
+          "member_family_ids": [
+            "continuous_layer:continuous-effect-layers-and-dependencies"
+          ],
+          "canonical_owner_ids": [
+            "capability:continuous.characteristics.fixed_public_setting",
+            "component:quorune.semantic_runtime.fixed_characteristic_effects.fixed_characteristic_effects"
+          ],
+          "source_contexts": [
+            "static"
+          ],
+          "normalized_literal_parameters": [
+            "constant-characteristics",
+            "public-battlefield-subject",
+            "reciprocal-attachment"
+          ],
+          "shared_dependencies": [
+            "continuous.attached.fixed_characteristics",
+            "continuous.ability.fixed_query_keyword_grant"
+          ],
+          "shared_grammar": "One fully consumed constant characteristic setting through the canonical live layer evaluator and public query owner.",
+          "estimated_implementation_hours": 3,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Retain measured whole-card closure in the combined delivery while independent unsupported siblings remain blocked.",
+          "explicit_exclusions": [
+            "Names/chosen/dynamic values",
+            "Basic land type replacement",
+            "Unrepresented conditions and quoted grants",
+            "General dependency rewrite"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "static-characteristic-setting-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:public-quantity-mana",
           "member_family_ids": ["quantity_expression:dynamic-quantity", "activated_effect:intrinsic-mana-ability", "effect_clause:unparsed-add"],
           "canonical_owner_ids": ["capability:mana.production.public_quantity", "component:quorune.dynamic_characteristics.query_characteristic_count", "component:quorune.scalar_effect_amounts.resolve_scalar_effect_amount"],
