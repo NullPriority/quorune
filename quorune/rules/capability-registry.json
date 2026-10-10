@@ -480,6 +480,92 @@
       "status": "trusted"
     },
     {
+      "id": "activation.power_up.entered_turn_cost",
+      "version": 1,
+      "official_rules": [
+        "702.193a",
+        "702.193b",
+        "118.7",
+        "118.7a",
+        "118.7b",
+        "118.7c",
+        "118.7d",
+        "118.7e",
+        "118.7f",
+        "400.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Price a compiler-pinned Power-up activation from the permanent current mana cost when it entered this turn and enforce once-only usage on that incarnation.",
+        "inputs": [
+          "typed Power-up descriptor and fixed activation-cost options",
+          "canonical current-turn battlefield entry fact",
+          "current effective permanent mana cost",
+          "existing activation principal, resource and target authority"
+        ],
+        "outputs": [
+          "all closed matching-colored and generic-excess reduction options",
+          "hybrid reduction half choices and Phyrexian-color reductions",
+          "same offered and accepted payable prices",
+          "once-only incarnation usage",
+          "atomic rollback and exact replay"
+        ],
+        "exclusions": [
+          "unsupported source mana-cost symbols",
+          "independently unsupported cost or result siblings",
+          "unrepresented granted Power-up modifiers"
+        ]
+      },
+      "dependencies": [
+        "activation.mana_cost.fixed_complex"
+      ],
+      "implementation_components": [
+        "quorune.power_up_model.PowerUpSpec",
+        "quorune.compiler.power_up_templates.fixed_power_up_ability",
+        "quorune.power_up.current_power_up_mana_options",
+        "quorune.activation_usage.activation_usage_verdict",
+        "quorune.rules.activation.proposal.build_activation_proposal",
+        "quorune.rules.activation.commit.commit_activation"
+      ],
+      "positive_tests": [
+        "test_reductions_follow_colorless_excess_hybrid_and_phyrexian_rules"
+      ],
+      "negative_tests": [
+        "test_power_up_codec_pins_pricing_and_usage_without_reinterpreting_old_descriptors"
+      ],
+      "interaction_tests": [
+        "test_once_per_incarnation_usage_does_not_reset_on_another_turn"
+      ],
+      "multiplayer_tests": [
+        "test_actual_brawn_hybrid_entry_discount_once_and_replay"
+      ],
+      "privacy_tests": [
+        "test_actual_brawn_hybrid_entry_discount_once_and_replay"
+      ],
+      "replay_tests": [
+        "test_actual_brawn_hybrid_entry_discount_once_and_replay"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Blocking Power-up pricing or the fixed activation cost owner keeps the whole program untrusted.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Removing typed source reduction or usage commitment fails the real discounted activation and repeated-activation witnesses.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
       "id": "activation.selected_zone_change.fixed",
       "version": 3,
       "official_rules": [

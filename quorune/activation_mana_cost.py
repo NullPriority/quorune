@@ -215,14 +215,19 @@ def current_activation_mana_options(
     host: ActivationManaCostHost,
     seat: str,
     ability: Any,
+    source: Any | None = None,
 ) -> tuple[ActivationManaCostOption, ...]:
     reduction = int(
         getattr(ability, "generic_reduction_per_legendary_creature", 0)
     ) * max(0, host._legendary_creatures_controlled(seat))
-    return reduced_activation_mana_options(
+    options = reduced_activation_mana_options(
         tuple(getattr(ability, "mana_cost_options", ())),
         generic_reduction=reduction,
     )
+    if getattr(ability,'power_up',None) is not None:
+        from .power_up import current_power_up_mana_options
+        return current_power_up_mana_options(host,source,ability,options)
+    return options
 
 
 def payable_activation_mana_options(
@@ -246,6 +251,7 @@ def payable_activation_mana_options(
             host,
             seat,
             ability,
+            source,
         )
         if host.state.players[seat].life
         >= base_life + option.life_payment

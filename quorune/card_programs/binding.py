@@ -54,6 +54,9 @@ def bind_semantic_program_runtime(
             continue
         component_identities.append(registered)
         required.update(registered["capability_dependencies"])
+        if handler_id == 'activation.catalog.pinned.v1' and not is_structural_activated_ability_catalog_program(program) and descriptor.get('ability',{}).get('power_up') is not None:
+            from ..power_up_model import POWER_UP_CAPABILITY
+            required.add(POWER_UP_CAPABILITY)
         if descriptor.get("schema_version") != registered["schema_version"]:
             blockers.add(f"runtime_handler:schema_mismatch:{handler_id}")
         if descriptor.get("event") != registered["event"]:

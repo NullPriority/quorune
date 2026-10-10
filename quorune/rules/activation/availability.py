@@ -115,7 +115,9 @@ def activation_availability(
     ) < crew_threshold:
         return "unpayable", "insufficient_crew_power"
     if ability.mana_cost_options:
-        if not payable_activation_mana_options(host, seat, card, ability):
+        try:payable=payable_activation_mana_options(host, seat, card, ability)
+        except ValueError:return 'unresolved','unresolved_activation_price'
+        if not payable:
             return "unpayable", "complex_mana_cost_unpayable"
     else:
         requirements = reduced_requirements(

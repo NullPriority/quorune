@@ -50,6 +50,7 @@ from ..semantics import SemanticProgram
 from .activated_zone_change_costs import fixed_activated_zone_change_cost
 from .activated_tap_costs import fixed_activated_tap_cost
 from .activation_mana_costs import fixed_complex_activation_mana_cost
+from .power_up_templates import fixed_power_up_ability
 
 
 def _face_material(
@@ -94,6 +95,7 @@ def _specialize_compiled_ability(
     *,
     source_name: str,
 ) -> ActivatedAbility:
+    ability = fixed_power_up_ability(ability)
     ability = fixed_complex_activation_mana_cost(ability)
     ability = fixed_activated_tap_cost(fixed_activated_zone_change_cost(ability))
     candidates = tuple(

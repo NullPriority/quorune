@@ -19,8 +19,8 @@ import test_bound_effect_programs as witnesses
 
 
 class QueryScaledCounterCompilerTests(unittest.TestCase):
-    def test_power_up_price_and_usage_cannot_be_stripped_into_unlimited_activation(self):
-        text='Power-up — {4}{G/U}: Put a +1/+1 counter on this creature for each card in your hand. (Activate each power-up ability only once. Reduce the cost by its mana cost if it entered this turn.)'
+    def test_unsupported_power_up_cost_cannot_be_stripped_into_unlimited_activation(self):
+        text='Power-up — {4}{X}: Put a +1/+1 counter on this creature for each card in your hand. (Activate each power-up ability only once. Reduce the cost by its mana cost if it entered this turn.)'
         from quorune.abilities import parse_activated_abilities
         abilities=parse_activated_abilities(card_name='Generic Quantity Source',oracle_text=text,keywords=())
         self.assertTrue(abilities[0].uncompiled_costs)
@@ -162,9 +162,9 @@ class QueryScaledCounterRuntimeTests(unittest.TestCase):
         self.assertEqual(before-3,len(resumed.state.players['A'].zones['library']))
         self.replay(resumed,load=True)
 
-    def test_actual_power_up_carrier_is_untrusted_and_never_offers_unlimited_activation(self):
+    def test_unsupported_power_up_carrier_is_untrusted_and_never_offers_unlimited_activation(self):
         session=self.session(289006);engine=session.engine
-        source=self.add(engine,'Brawn, Amadeus Cho')
+        source=self.add(engine,'Generic Unsupported Power Up')
         engine.state.players['A'].mana_pool.update({'C':8,'G':2,'U':2})
         engine.permissions.invalidate_current();engine.state.pending_decision=None
         engine.state.started=True;engine.state.active_player='A';engine.state.phase='precombat_main';engine.state.step='main'

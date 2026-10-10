@@ -3273,6 +3273,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/power_up_templates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/prevention_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -6037,6 +6052,32 @@
         "domain",
         "rules",
         "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/power_up.py",
+      "layer": "rules",
+      "owning_subsystem": "activated_abilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "read_only",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/power_up_model.py",
+      "layer": "domain",
+      "owning_subsystem": "activated_abilities",
+      "allowed_dependency_layers": [
+        "domain"
       ],
       "game_state_access": "none",
       "card_specificity_policy": "generic_no_growth",
@@ -11309,5 +11350,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "fa62816bb5f5fffcba7adcf139293cd390989d22dcd4a52152b01112e807d630"
+  "fingerprint": "7592f82eec3bd37a334a12464e7bf744cc5f0a081714f33c30f76fbe3ce3ec65"
 }

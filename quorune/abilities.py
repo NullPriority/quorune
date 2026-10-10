@@ -10,6 +10,7 @@ letting a pilot invent a cheaper cost or mutate state directly.
 """
 
 from dataclasses import dataclass, field
+from .power_up_model import PowerUpSpec, POWER_UP_UNCOMPILED
 from enum import Enum
 import re
 from typing import Any, Iterable, Mapping, Sequence
@@ -301,6 +302,7 @@ class ActivatedAbility:
     activation_conditions: tuple[ActivationCondition, ...] = ()
     dynamic_mana_output: str | FrozenMap | None = None
     mana_spend_restriction: str | None = None
+    power_up: PowerUpSpec | None = None
 
     def __post_init__(self) -> None:
         _validate_ability_identity_and_cost(self)
@@ -369,6 +371,7 @@ class ActivatedAbility:
             result["source_counter_removal_cost"] = (
                 self.source_counter_removal_cost.to_dict()
             )
+        if self.power_up is not None:result['power_up']=self.power_up.to_dict()
         return result
 
     @classmethod
@@ -376,6 +379,7 @@ class ActivatedAbility:
         value = validate_activated_ability_descriptor(value)
         return cls(
             ability_id=value["ability_id"],
+            power_up=PowerUpSpec.from_dict(value['power_up']) if 'power_up' in value else None,
             line_index=value["line_index"],
             oracle_line=value["oracle_line"],
             cost_text=value["cost_text"],
@@ -638,6 +642,9 @@ def _normalize_and_validate_ability_descriptors(
             )
         except (TypeError, ValueError) as exc:
             raise ValueError("activation_limit is unsupported") from exc
+    if ability.power_up is not None and (not isinstance(ability.power_up,PowerUpSpec) or ability.activation_limit!=ActivationLimit.POWER_UP_ONCE or ability.zones!=('battlefield',) or not ability.mana_cost_options or ability.mana_ability):
+        raise ValueError('Power-up requires typed battlefield pricing and once-only usage')
+    if ability.activation_limit is ActivationLimit.POWER_UP_ONCE and ability.power_up is None:raise ValueError('Power-up usage requires its typed price descriptor')
     if ability.source_counter_removal_cost is not None and not isinstance(
         ability.source_counter_removal_cost, SourceCounterRemovalCost
     ):
@@ -1497,7 +1504,7 @@ def _parse_activated_line(
             loyalty_delta=cost.loyalty_delta,
             source_counter_removal_cost=cost.source_counter_removal_cost,
             choices=cost.choices,
-            uncompiled_costs=(*cost.uncompiled, *(("power-up activation price and usage are unrepresented",) if prefix == "power-up" else ())),
+            uncompiled_costs=(*cost.uncompiled, *((POWER_UP_UNCOMPILED,) if prefix == "power-up" else ())),
             mana_ability=mana_ability,
             sorcery_speed=bool(_ACTIVATE_ONLY_SORCERY.search(effect_text)),
             generic_reduction_per_legendary_creature=int(

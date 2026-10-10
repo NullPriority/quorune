@@ -484,6 +484,19 @@ nothing. Variable, hybrid, Phyrexian, snow, zero, restricted, and nonmana
 costs, reflexive `when you do` forms, nested or repeated choices, linked
 results, and multi-effect or independently inexact bodies remain residual.
 
+`compiler/power_up_templates.py` specializes the parser's explicit Power-up
+marker into a typed price descriptor and once-only activation limit. Both the
+Oracle node and runtime catalog use that same specialization. Entry-turn
+prices subtract the source's current mana cost through CR 118.7: matching
+colored or colorless mana is removed first and excess reduces generic mana.
+Hybrid symbols publish the legal reduction-half alternatives; Phyrexian
+symbols reduce their color. The ordinary activation proposal revalidates the
+chosen price before payment and usage mutation. The shared incarnation usage
+journal preserves the limit across turns, control changes and phasing, then
+resets it on zone change. Unsupported price symbols and material cost or
+result siblings remain residual. Earlier descriptors without the optional
+Power-up field keep their serialized meaning and pinned replay provenance.
+
 The selected-object activation cost compiler admits one homogeneous fixed
 count from two through ten for discard, owned-graveyard exile, controlled
 sacrifice or return. Count and the canonical singular predicate travel together;
@@ -1488,8 +1501,7 @@ One fixed counter placement may consume that existing public-query amount
 beside independently closed ordered components. The compiler preserves the
 original placement subject, counter kind and target schema; the canonical
 placement owner receives the concrete execution-time integer. Unrepresented
-Power-up activation pricing and usage remain explicit uncompiled costs, so a
-recognized result does not expose a cheaper or unlimited activation.
+activation costs still block an otherwise recognized result.
 The casting owner remains the sole authority for choosing and paying cost X.
 Target-qualified spell-cast predicates consume version-six public cast facts.
 The casting owner reads effective creature types and controllers only for

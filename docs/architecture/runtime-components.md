@@ -168,6 +168,15 @@ zone-transition, cast, land-play, and commit rules remain authoritative in
 their existing owners. Unrepresented wording fails closed rather than falling
 back to current Oracle text.
 
+The pinned activation catalog carries optional strict `power_up` pricing data
+beside its distinct once-per-incarnation limit. Existing fixed cost options
+feed the source-aware price query, and the same payable alternatives drive
+offers, selected-cost proposals and commit revalidation. Pricing reads current
+mana cost and canonical battlefield entry history; it never reparses ability
+text. The ordinary payment and usage owners commit together after validation.
+Historical descriptors without this field retain their original shape;
+historical record execution still requires compatible runtime trust provenance.
+
 Typed continuous-characteristic descriptors own the represented live-state
 families. `continuous.ability.fixed-query-keyword-grant.v1` lowers closed
 source-controller, source-opponent, or global battlefield queries into

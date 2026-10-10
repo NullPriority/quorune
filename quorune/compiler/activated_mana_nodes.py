@@ -42,6 +42,7 @@ from .activated_costs import (
 from .activated_zone_change_costs import fixed_activated_zone_change_cost
 from .activated_tap_costs import fixed_activated_tap_cost
 from .activation_mana_costs import fixed_complex_activation_mana_cost
+from .power_up_templates import fixed_power_up_ability
 from .dependency_gate import (
     DependencyGate,
     dependency_gate,
@@ -599,7 +600,7 @@ def _intrinsic_basic_land_mana_reminder_node(
 
 
 def _fixed_activated_costs(ability: ActivatedAbility) -> ActivatedAbility:
-    ability = fixed_complex_activation_mana_cost(ability)
+    ability = fixed_complex_activation_mana_cost(fixed_power_up_ability(ability))
     return fixed_activated_tap_cost(
         fixed_activated_zone_change_cost(ability)
     )

@@ -946,6 +946,582 @@
       "applicability_note": "Replay a mana activation authorized by the controller-wide as-though-haste permission to the exact state hash."
     },
     {
+      "capability_id": "activation.power_up.entered_turn_cost",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_power_up.PowerUpCompilerTests.test_current_entry_turn_prices_ignore_mana_value_and_reject_unknown_symbols",
+      "official_rule_ids": [
+        "702.193a",
+        "702.193b",
+        "118.7",
+        "118.7a",
+        "118.7b",
+        "118.7c",
+        "118.7d",
+        "118.7e",
+        "118.7f",
+        "400.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed source-aware Power-up cost alternatives, once-per-incarnation usage and actual authenticated discounted actions with exact replay."
+    },
+    {
+      "capability_id": "activation.power_up.entered_turn_cost",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_power_up.PowerUpCompilerTests.test_once_per_incarnation_usage_does_not_reset_on_another_turn",
+      "official_rule_ids": [
+        "702.193a",
+        "702.193b",
+        "118.7",
+        "118.7a",
+        "118.7b",
+        "118.7c",
+        "118.7d",
+        "118.7e",
+        "118.7f",
+        "400.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed source-aware Power-up cost alternatives, once-per-incarnation usage and actual authenticated discounted actions with exact replay."
+    },
+    {
+      "capability_id": "activation.power_up.entered_turn_cost",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_power_up.PowerUpRuntimeTests.test_actual_captain_marvel_entry_discount_commits_both_counter_kinds",
+      "official_rule_ids": [
+        "702.193a",
+        "702.193b",
+        "118.7",
+        "118.7a",
+        "118.7b",
+        "118.7c",
+        "118.7d",
+        "118.7e",
+        "118.7f",
+        "400.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed source-aware Power-up cost alternatives, once-per-incarnation usage and actual authenticated discounted actions with exact replay."
+    },
+    {
+      "capability_id": "activation.power_up.entered_turn_cost",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_power_up.PowerUpRuntimeTests.test_actual_copied_power_up_has_copied_mana_cost_and_independent_usage",
+      "official_rule_ids": [
+        "702.193a",
+        "702.193b",
+        "118.7",
+        "118.7a",
+        "118.7b",
+        "118.7c",
+        "118.7d",
+        "118.7e",
+        "118.7f",
+        "400.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed source-aware Power-up cost alternatives, once-per-incarnation usage and actual authenticated discounted actions with exact replay."
+    },
+    {
+      "capability_id": "activation.power_up.entered_turn_cost",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_power_up.PowerUpRuntimeTests.test_actual_old_source_pays_full_price_and_pending_activation_replays",
+      "official_rule_ids": [
+        "702.193a",
+        "702.193b",
+        "118.7",
+        "118.7a",
+        "118.7b",
+        "118.7c",
+        "118.7d",
+        "118.7e",
+        "118.7f",
+        "400.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed source-aware Power-up cost alternatives, once-per-incarnation usage and actual authenticated discounted actions with exact replay."
+    },
+    {
+      "capability_id": "activation.power_up.entered_turn_cost",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_power_up.PowerUpRuntimeTests.test_actual_targeted_power_up_restores_card_and_replays",
+      "official_rule_ids": [
+        "702.193a",
+        "702.193b",
+        "118.7",
+        "118.7a",
+        "118.7b",
+        "118.7c",
+        "118.7d",
+        "118.7e",
+        "118.7f",
+        "400.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed source-aware Power-up cost alternatives, once-per-incarnation usage and actual authenticated discounted actions with exact replay."
+    },
+    {
+      "capability_id": "activation.power_up.entered_turn_cost",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_power_up.PowerUpRuntimeTests.test_actual_ultron_entry_discount_creates_one_token_and_replays",
+      "official_rule_ids": [
+        "702.193a",
+        "702.193b",
+        "118.7",
+        "118.7a",
+        "118.7b",
+        "118.7c",
+        "118.7d",
+        "118.7e",
+        "118.7f",
+        "400.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed source-aware Power-up cost alternatives, once-per-incarnation usage and actual authenticated discounted actions with exact replay."
+    },
+    {
+      "capability_id": "activation.power_up.entered_turn_cost",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_power_up.PowerUpRuntimeTests.test_power_up_usage_survives_control_change_and_resets_on_reentry",
+      "official_rule_ids": [
+        "702.193a",
+        "702.193b",
+        "118.7",
+        "118.7a",
+        "118.7b",
+        "118.7c",
+        "118.7d",
+        "118.7e",
+        "118.7f",
+        "400.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed source-aware Power-up cost alternatives, once-per-incarnation usage and actual authenticated discounted actions with exact replay."
+    },
+    {
+      "capability_id": "activation.power_up.entered_turn_cost",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_power_up.PowerUpRuntimeTests.test_zero_clamped_entry_price_is_offered_and_accepted_once",
+      "official_rule_ids": [
+        "702.193a",
+        "702.193b",
+        "118.7",
+        "118.7a",
+        "118.7b",
+        "118.7c",
+        "118.7d",
+        "118.7e",
+        "118.7f",
+        "400.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed source-aware Power-up cost alternatives, once-per-incarnation usage and actual authenticated discounted actions with exact replay."
+    },
+    {
+      "capability_id": "activation.power_up.entered_turn_cost",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_power_up.PowerUpRuntimeTests.test_actual_brawn_hybrid_entry_discount_once_and_replay",
+      "official_rule_ids": [
+        "702.193a",
+        "702.193b",
+        "118.7",
+        "118.7a",
+        "118.7b",
+        "118.7c",
+        "118.7d",
+        "118.7e",
+        "118.7f",
+        "400.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed source-aware Power-up cost alternatives, once-per-incarnation usage and actual authenticated discounted actions with exact replay."
+    },
+    {
+      "capability_id": "activation.power_up.entered_turn_cost",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_power_up.PowerUpCompilerTests.test_power_up_cost_and_usage_mutants_are_killed",
+      "official_rule_ids": [
+        "702.193a",
+        "702.193b",
+        "118.7",
+        "118.7a",
+        "118.7b",
+        "118.7c",
+        "118.7d",
+        "118.7e",
+        "118.7f",
+        "400.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed source-aware Power-up cost alternatives, once-per-incarnation usage and actual authenticated discounted actions with exact replay."
+    },
+    {
+      "capability_id": "activation.power_up.entered_turn_cost",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_power_up.PowerUpRuntimeTests.test_actual_usage_mutant_is_killed_before_repeated_activation",
+      "official_rule_ids": [
+        "702.193a",
+        "702.193b",
+        "118.7",
+        "118.7a",
+        "118.7b",
+        "118.7c",
+        "118.7d",
+        "118.7e",
+        "118.7f",
+        "400.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed source-aware Power-up cost alternatives, once-per-incarnation usage and actual authenticated discounted actions with exact replay."
+    },
+    {
+      "capability_id": "activation.power_up.entered_turn_cost",
+      "evidence_class": "negative",
+      "test_id": "tests.test_power_up.PowerUpCompilerTests.test_power_up_codec_pins_pricing_and_usage_without_reinterpreting_old_descriptors",
+      "official_rule_ids": [
+        "702.193a",
+        "702.193b",
+        "118.7",
+        "118.7a",
+        "118.7b",
+        "118.7c",
+        "118.7d",
+        "118.7e",
+        "118.7f",
+        "400.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed source-aware Power-up cost alternatives, once-per-incarnation usage and actual authenticated discounted actions with exact replay."
+    },
+    {
+      "capability_id": "activation.power_up.entered_turn_cost",
+      "evidence_class": "negative",
+      "test_id": "tests.test_power_up.PowerUpCompilerTests.test_power_up_requires_its_pricing_capability_before_runtime_trust",
+      "official_rule_ids": [
+        "702.193a",
+        "702.193b",
+        "118.7",
+        "118.7a",
+        "118.7b",
+        "118.7c",
+        "118.7d",
+        "118.7e",
+        "118.7f",
+        "400.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed source-aware Power-up cost alternatives, once-per-incarnation usage and actual authenticated discounted actions with exact replay."
+    },
+    {
+      "capability_id": "activation.power_up.entered_turn_cost",
+      "evidence_class": "negative",
+      "test_id": "tests.test_power_up.PowerUpRuntimeTests.test_actual_targeted_power_up_rejects_departed_target_before_usage",
+      "official_rule_ids": [
+        "702.193a",
+        "702.193b",
+        "118.7",
+        "118.7a",
+        "118.7b",
+        "118.7c",
+        "118.7d",
+        "118.7e",
+        "118.7f",
+        "400.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed source-aware Power-up cost alternatives, once-per-incarnation usage and actual authenticated discounted actions with exact replay."
+    },
+    {
+      "capability_id": "activation.power_up.entered_turn_cost",
+      "evidence_class": "negative",
+      "test_id": "tests.test_power_up.PowerUpRuntimeTests.test_entry_price_changes_after_new_incarnation_and_stale_source_is_rejected",
+      "official_rule_ids": [
+        "702.193a",
+        "702.193b",
+        "118.7",
+        "118.7a",
+        "118.7b",
+        "118.7c",
+        "118.7d",
+        "118.7e",
+        "118.7f",
+        "400.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed source-aware Power-up cost alternatives, once-per-incarnation usage and actual authenticated discounted actions with exact replay."
+    },
+    {
+      "capability_id": "activation.power_up.entered_turn_cost",
+      "evidence_class": "negative",
+      "test_id": "tests.test_power_up.PowerUpRuntimeTests.test_proposal_revalidates_entry_price_before_payment_and_usage",
+      "official_rule_ids": [
+        "702.193a",
+        "702.193b",
+        "118.7",
+        "118.7a",
+        "118.7b",
+        "118.7c",
+        "118.7d",
+        "118.7e",
+        "118.7f",
+        "400.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed source-aware Power-up cost alternatives, once-per-incarnation usage and actual authenticated discounted actions with exact replay."
+    },
+    {
+      "capability_id": "activation.power_up.entered_turn_cost",
+      "evidence_class": "negative",
+      "test_id": "tests.test_power_up.PowerUpRuntimeTests.test_stale_entry_discount_rejects_without_spending_usage",
+      "official_rule_ids": [
+        "702.193a",
+        "702.193b",
+        "118.7",
+        "118.7a",
+        "118.7b",
+        "118.7c",
+        "118.7d",
+        "118.7e",
+        "118.7f",
+        "400.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed source-aware Power-up cost alternatives, once-per-incarnation usage and actual authenticated discounted actions with exact replay."
+    },
+    {
+      "capability_id": "activation.power_up.entered_turn_cost",
+      "evidence_class": "negative",
+      "test_id": "tests.test_power_up.PowerUpRuntimeTests.test_underpayment_rolls_back_mana_usage_and_stack",
+      "official_rule_ids": [
+        "702.193a",
+        "702.193b",
+        "118.7",
+        "118.7a",
+        "118.7b",
+        "118.7c",
+        "118.7d",
+        "118.7e",
+        "118.7f",
+        "400.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed source-aware Power-up cost alternatives, once-per-incarnation usage and actual authenticated discounted actions with exact replay."
+    },
+    {
+      "capability_id": "activation.power_up.entered_turn_cost",
+      "evidence_class": "negative",
+      "test_id": "tests.test_power_up.PowerUpRuntimeTests.test_unrepresented_current_mana_cost_is_unavailable_before_payment",
+      "official_rule_ids": [
+        "702.193a",
+        "702.193b",
+        "118.7",
+        "118.7a",
+        "118.7b",
+        "118.7c",
+        "118.7d",
+        "118.7e",
+        "118.7f",
+        "400.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed source-aware Power-up cost alternatives, once-per-incarnation usage and actual authenticated discounted actions with exact replay."
+    },
+    {
+      "capability_id": "activation.power_up.entered_turn_cost",
+      "evidence_class": "positive",
+      "test_id": "tests.test_power_up.PowerUpCompilerTests.test_reductions_follow_colorless_excess_hybrid_and_phyrexian_rules",
+      "official_rule_ids": [
+        "702.193a",
+        "702.193b",
+        "118.7",
+        "118.7a",
+        "118.7b",
+        "118.7c",
+        "118.7d",
+        "118.7e",
+        "118.7f",
+        "400.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed source-aware Power-up cost alternatives, once-per-incarnation usage and actual authenticated discounted actions with exact replay."
+    },
+    {
+      "capability_id": "activation.power_up.entered_turn_cost",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_power_up.PowerUpRuntimeTests.test_actual_brawn_hybrid_entry_discount_once_and_replay",
+      "official_rule_ids": [
+        "702.193a",
+        "702.193b",
+        "118.7",
+        "118.7a",
+        "118.7b",
+        "118.7c",
+        "118.7d",
+        "118.7e",
+        "118.7f",
+        "400.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed source-aware Power-up cost alternatives, once-per-incarnation usage and actual authenticated discounted actions with exact replay."
+    },
+    {
+      "capability_id": "activation.power_up.entered_turn_cost",
+      "evidence_class": "replay",
+      "test_id": "tests.test_power_up.PowerUpRuntimeTests.test_actual_brawn_hybrid_entry_discount_once_and_replay",
+      "official_rule_ids": [
+        "702.193a",
+        "702.193b",
+        "118.7",
+        "118.7a",
+        "118.7b",
+        "118.7c",
+        "118.7d",
+        "118.7e",
+        "118.7f",
+        "400.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed source-aware Power-up cost alternatives, once-per-incarnation usage and actual authenticated discounted actions with exact replay."
+    },
+    {
+      "capability_id": "activation.power_up.entered_turn_cost",
+      "evidence_class": "replay",
+      "test_id": "tests.test_power_up.PowerUpRuntimeTests.test_actual_copied_power_up_has_copied_mana_cost_and_independent_usage",
+      "official_rule_ids": [
+        "702.193a",
+        "702.193b",
+        "118.7",
+        "118.7a",
+        "118.7b",
+        "118.7c",
+        "118.7d",
+        "118.7e",
+        "118.7f",
+        "400.7",
+        "602.2b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed source-aware Power-up cost alternatives, once-per-incarnation usage and actual authenticated discounted actions with exact replay."
+    },
+    {
       "capability_id": "activation.restriction.attached",
       "evidence_class": "interaction",
       "test_id": "tests.test_combat_declaration_restrictions.CombatDeclarationRestrictionTests.test_attached_restraint_shares_layer_six_declaration_and_activation_queries",
@@ -26069,24 +26645,6 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "negative",
-      "test_id": "tests.test_query_scaled_counters.QueryScaledCounterCompilerTests.test_power_up_price_and_usage_cannot_be_stripped_into_unlimited_activation",
-      "official_rule_ids": [
-        "608.2h",
-        "611.2c",
-        "613.1d",
-        "613.1e",
-        "613.4c"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability_note": "Canonical query-scaled placement, printed instruction order, sealed replacement request, current target authority and private identity-free quantities."
-    },
-    {
-      "capability_id": "quantity_expression.public_query_effect_amount",
-      "evidence_class": "negative",
       "test_id": "tests.test_query_scaled_counters.QueryScaledCounterCompilerTests.test_query_counter_unknown_quantities_and_blocked_owner_fail_closed",
       "official_rule_ids": [
         "608.2h",
@@ -26105,7 +26663,25 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "negative",
-      "test_id": "tests.test_query_scaled_counters.QueryScaledCounterRuntimeTests.test_actual_power_up_carrier_is_untrusted_and_never_offers_unlimited_activation",
+      "test_id": "tests.test_query_scaled_counters.QueryScaledCounterCompilerTests.test_unsupported_power_up_cost_cannot_be_stripped_into_unlimited_activation",
+      "official_rule_ids": [
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical query-scaled placement, printed instruction order, sealed replacement request, current target authority and private identity-free quantities."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_query_scaled_counters.QueryScaledCounterRuntimeTests.test_unsupported_power_up_carrier_is_untrusted_and_never_offers_unlimited_activation",
       "official_rule_ids": [
         "608.2h",
         "611.2c",

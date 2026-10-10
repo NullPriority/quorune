@@ -656,7 +656,7 @@ def fixed_counter_placement_batch_node_capabilities(
         "counter.producer.fixed_multikind_effect",
         *(("counter.characteristic.keyword",) if keyword_counter else ()),
     )
-    if target_schema is None and effect.get("card") == "$source":
+    if target_schema is None and effect.get("card") in {"$source", "$source.zone_object"}:
         return result
     if (
         "cr-115-targets" in mechanics
