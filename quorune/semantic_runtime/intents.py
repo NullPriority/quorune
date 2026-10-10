@@ -1,4 +1,5 @@
 from __future__ import annotations
+from ..whole_hand_discard_model import DiscardWholeHandsIntent
 from .control_intents import ControlIntent
 from .domain_intent import DomainEffectIntent
 
@@ -1645,6 +1646,7 @@ SemanticIntent: TypeAlias = (
     | GrantZoneObjectKeywordIntent
     | ProliferateIntent
     | DomainEffectIntent
+    | DiscardWholeHandsIntent
 )
 ResultShape: TypeAlias = Literal["single", "by_player"]
 

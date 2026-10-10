@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "a5eb4f54b781f74c5638fd69d7731d227019b879491d930a04fd4c117a2369dd",
-  "declaration_source_fingerprint": "8b9f2677c5ee9e45144ed9d4239f0c8589fbae42ae979c942f119a24120869fc",
+  "registry_fingerprint": "f6e25433b096af73605986d8e216a445c0d4970f5d762d5e2889f963a4e21773",
+  "declaration_source_fingerprint": "5d7e81bfa61138fbc42487edf07f09962add40e5b693d44755e8a498e403e838",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -59810,6 +59810,26 @@
     },
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_whole_hand_discard.WholeHandDiscardRuntimeTests.test_actual_discard_history_counts_redirection_from_opponent_controller",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Count committed current-turn card_discarded facts for the locked controller, including redirected hand discards."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountActionTests.test_trusted_scalar_actions_controller_privacy_and_replay",
       "official_rule_ids": [
@@ -59990,6 +60010,26 @@
     },
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_whole_hand_discard.WholeHandDiscardRuntimeTests.test_actual_discard_history_counts_redirection_from_opponent_controller",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Count committed current-turn card_discarded facts for the locked controller, including redirected hand discards."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
       "evidence_class": "privacy",
       "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountActionTests.test_trusted_scalar_actions_controller_privacy_and_replay",
       "official_rule_ids": [
@@ -60107,6 +60147,26 @@
         "commander_review"
       ],
       "applicability_note": "An actual return-to-owner-hand command uses the single-object zone owner successfully from a constructed pre-action checkpoint and reproduces the exact resulting state on load and replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_whole_hand_discard.WholeHandDiscardRuntimeTests.test_actual_discard_history_counts_redirection_from_opponent_controller",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Count committed current-turn card_discarded facts for the locked controller, including redirected hand discards."
     },
     {
       "capability_id": "replacement.kicker.fixed_entry",
@@ -81185,6 +81245,342 @@
       "applicability_note": "Replay the typed discard cause, replaced destination, normalized trigger, and subsequent cast or decline deterministically."
     },
     {
+      "capability_id": "zone.discard.whole_hand",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_whole_hand_discard.WholeHandDiscardRuntimeTests.test_actual_change_of_fortune_counts_current_turn_discards",
+      "official_rule_ids": [
+        "101.4",
+        "402.1",
+        "608.2c",
+        "608.2f",
+        "608.2h",
+        "701.9a",
+        "701.9c",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole-hand membership, simultaneous typed discard, canonical replacements and later draw sequencing."
+    },
+    {
+      "capability_id": "zone.discard.whole_hand",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_whole_hand_discard.WholeHandDiscardRuntimeTests.test_actual_peer_counts_graveyard_types_after_hand_discard",
+      "official_rule_ids": [
+        "101.4",
+        "402.1",
+        "608.2c",
+        "608.2f",
+        "608.2h",
+        "701.9a",
+        "701.9c",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole-hand membership, simultaneous typed discard, canonical replacements and later draw sequencing."
+    },
+    {
+      "capability_id": "zone.discard.whole_hand",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_whole_hand_discard.WholeHandDiscardRuntimeTests.test_actual_wager_known_empty_hand_still_draws_after_discard",
+      "official_rule_ids": [
+        "101.4",
+        "402.1",
+        "608.2c",
+        "608.2f",
+        "608.2h",
+        "701.9a",
+        "701.9c",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole-hand membership, simultaneous typed discard, canonical replacements and later draw sequencing."
+    },
+    {
+      "capability_id": "zone.discard.whole_hand",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_whole_hand_discard.WholeHandDiscardRuntimeTests.test_whole_hand_discard_pending_replacement_save_load_and_replay",
+      "official_rule_ids": [
+        "101.4",
+        "402.1",
+        "608.2c",
+        "608.2f",
+        "608.2h",
+        "701.9a",
+        "701.9c",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole-hand membership, simultaneous typed discard, canonical replacements and later draw sequencing."
+    },
+    {
+      "capability_id": "zone.discard.whole_hand",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_whole_hand_discard.WholeHandDiscardRuntimeTests.test_actual_wheel_discards_all_hands_before_drawing_and_replays",
+      "official_rule_ids": [
+        "101.4",
+        "402.1",
+        "608.2c",
+        "608.2f",
+        "608.2h",
+        "701.9a",
+        "701.9c",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole-hand membership, simultaneous typed discard, canonical replacements and later draw sequencing."
+    },
+    {
+      "capability_id": "zone.discard.whole_hand",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_whole_hand_discard.WholeHandDiscardRuntimeTests.test_whole_hand_discard_omitted_batch_mutant_is_killed",
+      "official_rule_ids": [
+        "101.4",
+        "402.1",
+        "608.2c",
+        "608.2f",
+        "608.2h",
+        "701.9a",
+        "701.9c",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole-hand membership, simultaneous typed discard, canonical replacements and later draw sequencing."
+    },
+    {
+      "capability_id": "zone.discard.whole_hand",
+      "evidence_class": "negative",
+      "test_id": "tests.test_whole_hand_discard.WholeHandDiscardCompilerTests.test_whole_hand_discard_grammar_and_player_codec_fail_closed",
+      "official_rule_ids": [
+        "101.4",
+        "402.1",
+        "608.2c",
+        "608.2f",
+        "608.2h",
+        "701.9a",
+        "701.9c",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole-hand membership, simultaneous typed discard, canonical replacements and later draw sequencing."
+    },
+    {
+      "capability_id": "zone.discard.whole_hand",
+      "evidence_class": "negative",
+      "test_id": "tests.test_whole_hand_discard.WholeHandDiscardRuntimeTests.test_whole_hand_pending_membership_change_rejects_before_draw",
+      "official_rule_ids": [
+        "101.4",
+        "402.1",
+        "608.2c",
+        "608.2f",
+        "608.2h",
+        "701.9a",
+        "701.9c",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole-hand membership, simultaneous typed discard, canonical replacements and later draw sequencing."
+    },
+    {
+      "capability_id": "zone.discard.whole_hand",
+      "evidence_class": "positive",
+      "test_id": "tests.test_whole_hand_discard.WholeHandDiscardCompilerTests.test_whole_hand_discard_compiler_closes_complete_instructions_and_order",
+      "official_rule_ids": [
+        "101.4",
+        "402.1",
+        "608.2c",
+        "608.2f",
+        "608.2h",
+        "701.9a",
+        "701.9c",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole-hand membership, simultaneous typed discard, canonical replacements and later draw sequencing."
+    },
+    {
+      "capability_id": "zone.discard.whole_hand",
+      "evidence_class": "positive",
+      "test_id": "tests.test_whole_hand_discard.WholeHandDiscardRuntimeTests.test_actual_reveler_entry_discard_draw_is_trusted_and_replayed",
+      "official_rule_ids": [
+        "101.4",
+        "402.1",
+        "608.2c",
+        "608.2f",
+        "608.2h",
+        "701.9a",
+        "701.9c",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole-hand membership, simultaneous typed discard, canonical replacements and later draw sequencing."
+    },
+    {
+      "capability_id": "zone.discard.whole_hand",
+      "evidence_class": "positive",
+      "test_id": "tests.test_whole_hand_discard.WholeHandDiscardRuntimeTests.test_actual_wheel_discards_all_hands_before_drawing_and_replays",
+      "official_rule_ids": [
+        "101.4",
+        "402.1",
+        "608.2c",
+        "608.2f",
+        "608.2h",
+        "701.9a",
+        "701.9c",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole-hand membership, simultaneous typed discard, canonical replacements and later draw sequencing."
+    },
+    {
+      "capability_id": "zone.discard.whole_hand",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_whole_hand_discard.WholeHandDiscardRuntimeTests.test_actual_wheel_discards_all_hands_before_drawing_and_replays",
+      "official_rule_ids": [
+        "101.4",
+        "402.1",
+        "608.2c",
+        "608.2f",
+        "608.2h",
+        "701.9a",
+        "701.9c",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole-hand membership, simultaneous typed discard, canonical replacements and later draw sequencing."
+    },
+    {
+      "capability_id": "zone.discard.whole_hand",
+      "evidence_class": "replay",
+      "test_id": "tests.test_whole_hand_discard.WholeHandDiscardRuntimeTests.test_actual_wheel_discards_all_hands_before_drawing_and_replays",
+      "official_rule_ids": [
+        "101.4",
+        "402.1",
+        "608.2c",
+        "608.2f",
+        "608.2h",
+        "701.9a",
+        "701.9c",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole-hand membership, simultaneous typed discard, canonical replacements and later draw sequencing."
+    },
+    {
+      "capability_id": "zone.discard.whole_hand",
+      "evidence_class": "replay",
+      "test_id": "tests.test_whole_hand_discard.WholeHandDiscardRuntimeTests.test_whole_hand_discard_pending_replacement_save_load_and_replay",
+      "official_rule_ids": [
+        "101.4",
+        "402.1",
+        "608.2c",
+        "608.2f",
+        "608.2h",
+        "701.9a",
+        "701.9c",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Whole-hand membership, simultaneous typed discard, canonical replacements and later draw sequencing."
+    },
+    {
       "capability_id": "zone.draw.library_to_hand",
       "evidence_class": "interaction",
       "test_id": "tests.test_activated_draw_abilities.ActivatedDrawRuntimeTests.test_draw_replacement_completes_after_cost_and_before_resolution",
@@ -85283,5 +85679,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "bb2b0a20e6fc4521a56c315f979d75ffa24f5e4a6305a9a22d19637cb1a02d89"
+  "fingerprint": "6d89c723ecbdf1b3c0c471d2e4f4a60e243b0017cfd7346d0267c812107f6dc3"
 }

@@ -27,6 +27,8 @@ _HISTORY = {
     "the number of spells you cast this turn": "spells_cast",
     "the number of cards you've drawn this turn": "cards_drawn",
     "the number of cards you drew this turn": "cards_drawn",
+    "the number of cards you've discarded this turn": "cards_discarded",
+    "the number of cards you discarded this turn": "cards_discarded",
     "the number of permanents you've sacrificed this turn": "permanents_sacrificed",
     "the number of creatures that died this turn": "creatures_died",
     "the number of creatures that entered under your control this turn": "creatures_entered",

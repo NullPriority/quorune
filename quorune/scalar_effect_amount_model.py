@@ -26,6 +26,7 @@ CHARACTERISTICS = frozenset({"power", "toughness", "mana_value"})
 HISTORY_FACTS = frozenset({
     "life_gained", "life_lost", "spells_cast", "cards_drawn",
     "permanents_sacrificed", "creatures_died", "creatures_entered",
+    "cards_discarded",
 })
 
 

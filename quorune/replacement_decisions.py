@@ -104,6 +104,10 @@ def issue_replacement_order_choice(
     seat = pending.choice.chooser
     context = replacement_choice_payload(pending, required.effects)
     sealed_effect = copy.deepcopy(dict(effect))
+    from .whole_hand_discard import whole_hand_input_snapshot
+    hand_inputs=whole_hand_input_snapshot(host,effect,actor=item.controller)
+    if hand_inputs is not None:
+        sealed_effect['_whole_hand_input_snapshot']=hand_inputs
     named_inputs = named_counter_input_snapshot(host, effect, actor=item.controller)
     if named_inputs is not None:
         sealed_effect["_named_counter_input_snapshot"] = named_inputs
@@ -474,6 +478,11 @@ def _resume_semantic_replacement(
     except CounterPlacementError as exc:
         raise error_type(str(exc)) from exc
     current_effect = restored.thaw_effect()
+    from .whole_hand_discard import whole_hand_input_snapshot
+    hand_snapshot=current_effect.pop('_whole_hand_input_snapshot',None)
+    hand_current=whole_hand_input_snapshot(host,current_effect,actor=item.controller)
+    if hand_current is not None and hand_current!=hand_snapshot:
+        raise error_type('Whole-hand membership changed before replacement resume')
     snapshot=current_effect.pop('_named_counter_input_snapshot',None)
     current=named_counter_input_snapshot(host,current_effect,actor=item.controller)
     if current is not None and current!=snapshot:

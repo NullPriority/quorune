@@ -375,6 +375,46 @@
       },
       "candidate_bundles": [
         {
+          "bundle_id": "bundle:whole-hand-discard",
+          "member_family_ids": [
+            "effect_clause:ordered-effect-composition",
+            "quantity_expression:dynamic-quantity",
+            "event_binding:normalized-event-binding"
+          ],
+          "canonical_owner_ids": [
+            "capability:zone.discard.whole_hand",
+            "component:quorune.whole_hand_discard.resolve_whole_hand_discard",
+            "component:quorune.semantic_choices.intent_host.SemanticChoiceIntentHostMixin.move_objects_simultaneously_intent"
+          ],
+          "source_contexts": [
+            "spell",
+            "activated",
+            "triggered"
+          ],
+          "normalized_literal_parameters": [
+            "whole-hand",
+            "simultaneous-discard",
+            "independent-following-draw"
+          ],
+          "shared_dependencies": [
+            "zone.change.destination_replacement",
+            "zone.discard.typed_cause",
+            "zone.draw.library_to_hand"
+          ],
+          "shared_grammar": "Discard entire represented hands simultaneously, then execute separately exact fixed or public-quantity draw instructions through their existing owners.",
+          "estimated_implementation_hours": 3,
+          "estimated_probe_hours": 1,
+          "estimated_generation_hours": 1,
+          "expected_downstream_closure": "Measured original whole-card closure accumulates in the combined delivery while unsupported siblings remain residual.",
+          "explicit_exclusions": [
+            "Team and unknown hands",
+            "Linked greatest-discarded-this-way counts",
+            "Unrepresented costs, events and siblings"
+          ],
+          "measurement_status": "generated_probe",
+          "measurement_probe_id": "whole-hand-discard-existing-owner-v1"
+        },
+        {
           "bundle_id": "bundle:fixed-static-characteristic-setting",
           "member_family_ids": [
             "continuous_layer:continuous-effect-layers-and-dependencies"

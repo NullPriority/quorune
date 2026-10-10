@@ -90,6 +90,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/prevention_triggers.py",
         "quorune/query_effect_amount_model.py",
         "quorune/scalar_effect_amount_model.py",
+        "quorune/whole_hand_discard_model.py",
         "quorune/read_ahead.py",
         "quorune/replacement/immutable.py",
         "quorune/riot.py",
@@ -155,6 +156,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         )
     ) or relative in {
         "quorune/activation_mana_cost.py",
+        "quorune/whole_hand_discard.py",
         "quorune/public_quantity_mana_model.py",
         "quorune/public_quantity_mana_abilities.py",
         "quorune/public_quantity_mana_runtime.py",
@@ -413,6 +415,8 @@ def _owner(relative: str, layer: str) -> str:
     if relative == "quorune/unearth.py":
         return "graveyard_actions"
     if relative == "quorune/self_zone_move.py":
+        return "zones_and_object_identity"
+    if relative in {"quorune/whole_hand_discard.py", "quorune/whole_hand_discard_model.py"}:
         return "zones_and_object_identity"
     if relative in {
         "quorune/impulse_access.py",
@@ -819,6 +823,7 @@ def build_classifications() -> dict[str, Any]:
                             "cycling_abilities.py",
                             "fixed_mana_abilities.py",
                             "public_quantity_mana",
+                            "whole_hand_discard",
                             "intrinsic_basic_land_mana.py",
                             "impulse_access_model.py",
                             "mana_ability_runtime.py",

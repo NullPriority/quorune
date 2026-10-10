@@ -4053,6 +4053,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/whole_hand_discard_templates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/compiler/zone_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -7961,6 +7976,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/whole_hand_discard_shapes.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/rules/zone_action_permissions.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -10101,6 +10130,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_runtime/whole_hand_discard.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_runtime/zone_object_keyword_handlers.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
@@ -10802,6 +10846,32 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/whole_hand_discard.py",
+      "layer": "rules",
+      "owning_subsystem": "zones_and_object_identity",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
+      "file": "quorune/whole_hand_discard_model.py",
+      "layer": "domain",
+      "owning_subsystem": "zones_and_object_identity",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/work_selection.py",
       "layer": "rules",
       "owning_subsystem": "rules_governance",
@@ -11114,5 +11184,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "8e8577083c89c3320d92e7fff186172854453193618820c6dd90ca192cc32260"
+  "fingerprint": "c3a100855e0f1271caae3ef5f1ee0767e29d6a357e0d3d14c11459fd34fef439"
 }

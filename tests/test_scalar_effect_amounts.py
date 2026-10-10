@@ -104,6 +104,18 @@ class ScalarEffectAmountCompilerTests(unittest.TestCase):
 
 
 class ScalarEffectAmountValueTests(unittest.TestCase):
+    def test_discard_history_quantity_filters_locked_controller_and_rejects_unknown(self):
+        from quorune.model import TurnHistory,TurnHistoryEvent
+        history=TurnHistory(turn_sequence=1,events=[TurnHistoryEvent(kind='card_discarded',actor='A'),
+            TurnHistoryEvent(kind='card_discarded',actor='B'),TurnHistoryEvent(kind='card_discarded',actor='A')])
+        host=SimpleNamespace(state=SimpleNamespace(turn_history=history,turn_sequence=1))
+        item=SimpleNamespace(controller='A',context={})
+        spec=ScalarEffectAmountSpec(ScalarAmountOrigin.HISTORY,history_fact='cards_discarded')
+        self.assertEqual(2,resolve_scalar_effect_amount(host,spec.to_dict(),item))
+        item.controller='B';self.assertEqual(1,resolve_scalar_effect_amount(host,spec.to_dict(),item))
+        host.state.turn_history=None
+        with self.assertRaises(PublicQueryAmountError):resolve_scalar_effect_amount(host,spec.to_dict(),item)
+
     def host_and_item(self, power=2):
         card = SimpleNamespace(object_id="source-id", logical_object_id="source:1", ref="SOURCE",
             zone="battlefield", controller="A", owner="A", phased_out=False, annotations={}, counters={})

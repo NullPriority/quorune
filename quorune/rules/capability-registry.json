@@ -3854,12 +3854,12 @@
     },
     {
       "id": "quantity_expression.scalar_effect_amount",
-      "version": 1,
+      "version": 2,
       "official_rules": ["107.1b", "107.2", "107.3c", "113.7a", "400.7", "608.2h", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
         "summary": "Resolve a typed referenced characteristic, committed trigger amount, or represented current-turn quantity through the existing numeric result boundary.",
-        "inputs": ["complete source-spanned result instruction", "explicit source, singleton direct target, normalized zone-event object, committed event amount, or public-history origin", "same logical incarnation and expected public zone", "existing fixed result and target shapes"],
+        "inputs": ["current-turn cards-discarded history including redirected discards", "complete source-spanned result instruction", "explicit source, singleton direct target, normalized zone-event object, committed event amount, or public-history origin", "same logical incarnation and expected public zone", "existing fixed result and target shapes"],
         "outputs": ["resolution-time current information or immediate departure LKI", "sealed actual event amounts", "known zero distinct from unavailable information", "instruction-scoped declaration persistence", "ordinary negative amounts normalized to zero before signed result coefficients"],
         "exclusions": ["ambiguous references, chosen facts, open arithmetic, aggregate extrema and unsupported characteristic evaluations", "dynamic target domains or cardinalities, variable costs and nested declaration scopes", "unrepresented event/history origins and independently unsupported effects or siblings"]
       },
@@ -8208,6 +8208,93 @@
       "dependency_fail_closed_rationale": "Blocking target revalidation or destination replacement removes exact capability closure; malformed predicates, hidden-owner access, stale options, and changed hands reject before movement.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "The focused compiler and shape mutation test removes the shared production and mutates its visibility, action, predicate, or target schema; exact-node and trusted-program assertions reject every survivor.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "zone.discard.whole_hand",
+      "version": 1,
+      "official_rules": [
+        "101.4",
+        "402.1",
+        "608.2c",
+        "608.2f",
+        "608.2h",
+        "701.9a",
+        "701.9c",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Discard every card in one represented affected-player hand set before independent later instructions, using the existing simultaneous zone transition.",
+        "inputs": [
+          "source-spanned whole-hand instruction",
+          "resolving controller and represented affected players",
+          "complete current authoritative hand membership",
+          "replacement journal"
+        ],
+        "outputs": [
+          "one simultaneous typed discard batch",
+          "correct normalized discard cause",
+          "following draw after discard destinations complete",
+          "rollback and exact replay"
+        ],
+        "exclusions": [
+          "Optional/team/filtered hands",
+          "Linked hand-size counts until separately represented",
+          "Unrepresented cost/event/sibling clauses"
+        ]
+      },
+      "dependencies": [
+        "zone.change.destination_replacement",
+        "zone.discard.typed_cause"
+      ],
+      "implementation_components": [
+        "quorune.compiler.whole_hand_discard_templates.whole_hand_discard_effect_template",
+        "quorune.semantic_runtime.whole_hand_discard.WholeHandDiscardHandler",
+        "quorune.whole_hand_discard.resolve_whole_hand_discard",
+        "quorune.semantic_choices.intent_host.SemanticChoiceIntentHostMixin.move_objects_simultaneously_intent"
+      ],
+      "positive_tests": [
+        "test_whole_hand_discard_compiler_closes_complete_instructions_and_order",
+        "test_actual_wheel_discards_all_hands_before_drawing_and_replays"
+      ],
+      "negative_tests": [
+        "test_whole_hand_discard_grammar_and_player_codec_fail_closed"
+      ],
+      "interaction_tests": [
+        "test_actual_wager_known_empty_hand_still_draws_after_discard",
+        "test_whole_hand_discard_pending_replacement_save_load_and_replay"
+      ],
+      "multiplayer_tests": [
+        "test_actual_wheel_discards_all_hands_before_drawing_and_replays"
+      ],
+      "privacy_tests": [
+        "test_actual_wheel_discards_all_hands_before_drawing_and_replays"
+      ],
+      "replay_tests": [
+        "test_actual_wheel_discards_all_hands_before_drawing_and_replays",
+        "test_whole_hand_discard_pending_replacement_save_load_and_replay"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The instruction is rejected without the whole-hand and canonical zone/typed discard capabilities.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the batch violates actual Wheel of Fortune original-hand movement assertions.",
       "blockers": [],
       "status": "trusted"
     },

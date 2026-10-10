@@ -1122,6 +1122,34 @@
       ]
     },
     {
+      "id": "whole-hand-discard-contract",
+      "patterns": [
+        "quorune/whole_hand_discard*.py",
+        "quorune/compiler/whole_hand_discard_templates.py",
+        "quorune/semantic_runtime/whole_hand_discard.py",
+        "quorune/rules/whole_hand_discard_shapes.py",
+        "quorune/scalar_effect_amount_model.py",
+        "quorune/scalar_effect_amounts.py",
+        "quorune/compiler/scalar_effect_amounts.py",
+        "tests/test_whole_hand_discard.py",
+        "tests/fixtures/whole-hand-discard-cards.json"
+      ],
+      "test_modules": [
+        "test_whole_hand_discard",
+        "test_fixed_affected_player_discards",
+        "test_scalar_effect_amounts",
+        "test_card_program_trust",
+        "test_closed_effect_programs",
+        "test_bound_effect_programs",
+        "test_zone_trigger_events"
+      ],
+      "test_suites": [
+        "targets-choices-continuations",
+        "events-replacement-zone",
+        "compiler-cardprogram"
+      ]
+    },
+    {
       "id": "static-characteristic-setting-contract",
       "patterns": [
         "quorune/compiler/fixed_characteristic_settings.py",

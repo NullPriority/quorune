@@ -169,6 +169,7 @@ def _history_amount(host, item, fact):
     kind = {"life_gained":"player_gained_life", "life_lost":"player_lost_life",
         "spells_cast":"spell_cast",
         "permanents_sacrificed":"permanent_sacrificed", "creatures_died":"creature_died",
+        "cards_discarded":"card_discarded",
         "creatures_entered":"permanent_entered"}[fact]
     events = current_turn_history_events(history, turn_sequence=host.state.turn_sequence, kind=kind)
     if fact in {"life_gained", "life_lost"}:
