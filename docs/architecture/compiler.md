@@ -365,6 +365,22 @@ or supported keywords. Later entrants and new incarnations receive no earlier
 temporary permission. Linked riders, defending-player history, and
 combat-damage assignment rules remain separate unsupported families.
 
+`compiler/as_unblocked_templates.py` owns the separate printed instruction
+to assign combat damage as though a creature were not blocked. Intrinsic,
+attached, public-query and closed source-conditioned forms grant one typed
+current layer-6 permission. The existing combat snapshot and assignment
+proposal own its ordinary versus all-recipient choice, including Trample,
+attacked planeswalkers and Battles, and independent first-strike damage steps.
+Quoted temporary ability grants lock current recipients to their incarnations.
+Unquoted optional assignment instructions instead use the existing resolution
+choice. Accepting the controller-set form creates a duration-bound rule that
+requires all current controlled attackers to assign as unblocked, including
+later entrants; it neither grants an ability nor freezes the creature set.
+Both forms use the existing duration journal. Variable target counts, unrepresented
+assignment controllers, Banding and independently unsupported siblings remain
+residual. This family does not remove blocked status or redirect damage to
+the attacked permanent's controller.
+
 `activation_condition_model.py` owns complete trailing activation
 restrictions shared by the compiler-pinned catalog and activation lowering.
 It represents controller upkeep and pre-attack turn windows plus fixed-range

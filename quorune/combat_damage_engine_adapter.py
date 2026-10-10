@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Sequence
+from .as_unblocked import can_assign_as_unblocked
+from .as_unblocked_rule import active_as_unblocked_rule
 
 from .combat_damage_snapshot import (
     CombatDamageParticipant,
@@ -79,6 +81,8 @@ class EngineCombatDamageQuery:
             marked_damage=card.marked_damage,
             keywords=engine._combat_keywords(card),
             assigns_damage=engine._assigns_combat_damage_this_step(card),
+            assign_as_unblocked=can_assign_as_unblocked(engine._effective_ability_fragments(card,error_type=CombatDamageSnapshotError)),
+            must_assign_as_unblocked=active_as_unblocked_rule(engine.state,card),
         )
 
     def attacker_object_ids(self) -> Sequence[str]:

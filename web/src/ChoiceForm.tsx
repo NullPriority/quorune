@@ -466,6 +466,9 @@ function DamageAssignments({
         return (
           <div key={source} className="damage-source">
             <strong>{labelFor(source)} assigns {text(sourceData.power)} damage</strong>
+            {sourceData.as_unblocked_recipient && (
+              <p>Assign all damage to {labelFor(text(sourceData.as_unblocked_recipient))}, or use the ordinary assignment to blockers.</p>
+            )}
             {list(sourceData.targets).map((rawTarget) => {
               const target = text(rawTarget);
               return (

@@ -103,6 +103,17 @@ class TrampleDamageSpec:
             )
 
 
+@dataclass(frozen=True, slots=True)
+class AsUnblockedDamageSpec:
+    attacker: str
+    recipient: str
+
+    def __post_init__(self):
+        assignment_identity(self.attacker,label='As-unblocked attacker')
+        assignment_identity(self.recipient,label='As-unblocked recipient')
+        if self.attacker==self.recipient:raise CombatDamageAssignmentError('An attacker cannot assign damage to itself as unblocked')
+
+
 __all__ = [
     "assignment_identity",
     "CombatDamageAssignmentError",

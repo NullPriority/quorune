@@ -228,6 +228,30 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/as_unblocked.py",
+      "layer": "domain",
+      "owning_subsystem": "combat_declaration",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/as_unblocked_rule.py",
+      "layer": "domain",
+      "owning_subsystem": "combat_declaration",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/attachment_references.py",
       "layer": "rules",
       "owning_subsystem": "attachments",
@@ -1534,6 +1558,21 @@
     },
     {
       "file": "quorune/compiler/amass_templates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/compiler/as_unblocked_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
       "allowed_dependency_layers": [
@@ -7022,6 +7061,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/as_unblocked_effect.py",
+      "layer": "rules",
+      "owning_subsystem": "combat_declaration",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "read_only",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/attachment_action_capability_shapes.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -11350,5 +11403,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "7592f82eec3bd37a334a12464e7bf744cc5f0a081714f33c30f76fbe3ce3ec65"
+  "fingerprint": "d3daac9315a0c1a252a4ae77f14a644b3a45e98854076049003b8326caf3e0f7"
 }

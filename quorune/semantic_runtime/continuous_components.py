@@ -32,6 +32,7 @@ from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..replacement.immutable import FrozenMap
 from ..continuous_conditions import FixedPublicStateConditionSnapshot
 from ..defender_permission import DefenderAttackPermission
+from ..as_unblocked import AsUnblockedAssignmentPermission
 from ..declaration_fragments import (
     DeclarationRequirementTemplate,
     DeclarationRestrictionTemplate,
@@ -744,6 +745,7 @@ class FixedQueryAbilityGrantHandler:
                     DeclarationRequirementTemplate,
                     DeclarationRestrictionTemplate,
                     DefenderAttackPermission,
+                    AsUnblockedAssignmentPermission,
                     GrantedActivatedAbilitySpec,
                     GrantedTriggeredAbilitySpec,
                 ),
@@ -1297,6 +1299,7 @@ def default_continuous_effect_component_registry(
         FixedPublicStateCharacteristicsHandler,
         FixedPublicStateGrantedAbilityHandler,
         ConditionalDefenderPermissionHandler,
+        ConditionalAsUnblockedAssignmentHandler,
     )
 
     registry = ContinuousEffectComponentRegistry(
@@ -1312,6 +1315,7 @@ def default_continuous_effect_component_registry(
             FixedPublicStateCharacteristicsHandler(),
             FixedPublicStateGrantedAbilityHandler(),
             ConditionalDefenderPermissionHandler(),
+            ConditionalAsUnblockedAssignmentHandler(),
             AttachedFixedCharacteristicsHandler(),
             FixedCharacteristicSettingsHandler(),
         )

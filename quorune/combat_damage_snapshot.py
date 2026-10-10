@@ -35,8 +35,12 @@ class CombatDamageParticipant:
     keywords: frozenset[str]
     assigns_damage: bool
     logical_object_id: str = ""
+    assign_as_unblocked: bool = False
+    must_assign_as_unblocked: bool = False
 
     def __post_init__(self) -> None:
+        if type(self.assign_as_unblocked) is not bool:raise CombatDamageSnapshotError('As-unblocked assignment permission must be boolean')
+        if type(self.must_assign_as_unblocked) is not bool:raise CombatDamageSnapshotError('As-unblocked assignment rule must be boolean')
         _identity(self.object_id, label="Participant object identity")
         _identity(self.reference, label="Participant reference")
         _identity(self.controller, label="Participant controller")

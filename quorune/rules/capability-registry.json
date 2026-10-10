@@ -1395,6 +1395,93 @@
       "status": "trusted"
     },
     {
+      "id": "combat.damage.assignment.as_unblocked",
+      "version": 1,
+      "official_rules": [
+        "609.4",
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "510.2",
+        "509.1h",
+        "702.19b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Offer ordinary or all-recipient combat assignment through one current typed as-unblocked permission without changing blocked status.",
+        "inputs": [
+          "current source ability-fragment snapshot",
+          "optional resolution choice and accepted dynamic assignment rule",
+          "canonical combat participant and attacked-recipient identities",
+          "current blocked status and blockers",
+          "one authenticated assignment proposal"
+        ],
+        "outputs": [
+          "ordinary assignment remains legal",
+          "all damage may go to the attacked legal recipient",
+          "normal Trample lethal-before-spill route remains legal",
+          "blockers still assign combat damage",
+          "accepted controller-set rule applies to later entrants until end of turn",
+          "atomic rollback, private pending projection and exact replay"
+        ],
+        "exclusions": [
+          "unsupported variable target cardinalities",
+          "independently unsupported body or source conditions",
+          "toughness or other damage-quantity assignment modifications",
+          "Banding and another player controlling assignment"
+        ]
+      },
+      "dependencies": [
+        "combat.damage.assignment.canonical",
+        "combat.damage.assignment.trample"
+      ],
+      "implementation_components": [
+        "quorune.as_unblocked.AsUnblockedAssignmentPermission",
+        "quorune.as_unblocked_rule.AsUnblockedAssignmentRule",
+        "quorune.compiler.as_unblocked_templates.static_as_unblocked_handler",
+        "quorune.combat_damage_assignment.CombatDamageAssignmentProposal",
+        "quorune.combat_damage_engine_adapter.EngineCombatDamageQuery",
+        "quorune.semantic_runtime.ability_fragments.AsUnblockedAssignmentFragmentHandler"
+      ],
+      "positive_tests": [
+        "test_all_or_nothing_choice_preserves_ordinary_and_trample_routes"
+      ],
+      "negative_tests": [
+        "test_permission_is_typed_and_proposal_identity_binds_legal_branch"
+      ],
+      "interaction_tests": [
+        "test_departed_blockers_leave_optional_zero_or_all_recipient_assignment"
+      ],
+      "multiplayer_tests": [
+        "test_actual_thorn_optional_assignment_is_principal_scoped_and_replays"
+      ],
+      "privacy_tests": [
+        "test_actual_thorn_optional_assignment_is_principal_scoped_and_replays"
+      ],
+      "replay_tests": [
+        "test_actual_thorn_optional_assignment_is_principal_scoped_and_replays"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Blocking the canonical assignment snapshot or permission owner prevents current trusted closure.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Dropping the current permission removes the advertised recipient and kills the legal all-recipient witness.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
       "id": "library.search.fixed_counted",
       "version": 1,
       "official_rules": [

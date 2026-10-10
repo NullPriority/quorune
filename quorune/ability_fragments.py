@@ -39,6 +39,7 @@ from .declaration_fragments import (
     DeclarationRestrictionTemplate,
 )
 from .defender_permission import DefenderAttackPermission
+from .as_unblocked import AsUnblockedAssignmentPermission
 from .creature_subtypes import canonical_creature_subtype
 from .replacement.immutable import FrozenMap, thaw_value
 from .trigger_participation import TriggerMultiplierSpec, WardSpec
@@ -985,6 +986,7 @@ StaticAbilityFragment: TypeAlias = (
     | QueryCharacteristicModifierSpec
     | QueryPowerToughnessDefinitionSpec
     | DefenderAttackPermission
+    | AsUnblockedAssignmentPermission
     | DeclarationCostTemplate
     | DeclarationRequirementTemplate
     | DeclarationRestrictionTemplate
@@ -1041,6 +1043,8 @@ def ability_fragment_to_dict(
         kind = "query_power_toughness_definition"
     elif isinstance(fragment, DefenderAttackPermission):
         kind = "defender_attack_permission"
+    elif isinstance(fragment, AsUnblockedAssignmentPermission):
+        kind = "as_unblocked_assignment"
     elif isinstance(fragment, DeclarationCostTemplate):
         kind = "declaration_cost"
     elif isinstance(fragment, DeclarationRequirementTemplate):
@@ -1141,6 +1145,8 @@ def ability_fragment_from_dict(
             raise AbilityFragmentError(str(exc)) from exc
     if value["kind"] == "defender_attack_permission":
         return DefenderAttackPermission.from_dict(value["value"])
+    if value["kind"] == "as_unblocked_assignment":
+        return AsUnblockedAssignmentPermission.from_dict(value["value"])
     if value["kind"] == "declaration_cost":
         try:
             return DeclarationCostTemplate.from_dict(value["value"])
@@ -1194,6 +1200,7 @@ def canonical_ability_fragments(
                 QueryCharacteristicModifierSpec,
                 QueryPowerToughnessDefinitionSpec,
                 DefenderAttackPermission,
+                AsUnblockedAssignmentPermission,
                 DeclarationCostTemplate,
                 DeclarationRequirementTemplate,
                 DeclarationRestrictionTemplate,

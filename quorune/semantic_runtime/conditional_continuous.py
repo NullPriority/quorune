@@ -23,6 +23,7 @@ from ..ability_fragments import (
     GrantedActivatedAbilitySpec, GrantedTriggeredAbilitySpec, ability_fragment_from_dict,
 )
 from ..defender_permission import DefenderAttackPermission, DEFENDER_PERMISSION_CAPABILITY, CONDITIONAL_DEFENDER_PERMISSION_HANDLER
+from ..as_unblocked import AsUnblockedAssignmentPermission, AS_UNBLOCKED_CAPABILITY, CONDITIONAL_AS_UNBLOCKED_HANDLER
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from .component_registry import exact_fields, nonempty_strings
 from .context import SemanticNodeError
@@ -154,12 +155,12 @@ def _validate_target(
 
 
 def _validate_modifier(
-    value: Any, *, allow_granted_ability: bool = False, allow_defender_permission: bool = False,
+    value: Any, *, allow_granted_ability: bool = False, allow_defender_permission: bool = False, allow_as_unblocked: bool = False,
 ) -> tuple[tuple[str, ...], int, int, tuple[Mapping[str, Any], ...]]:
     if not isinstance(value, Mapping):
         raise SemanticNodeError("runtime handler modifier must be an object")
     fields = {"add_abilities", "power", "toughness"}
-    if allow_granted_ability or allow_defender_permission:
+    if allow_granted_ability or allow_defender_permission or allow_as_unblocked:
         fields.add("add_ability_fragments")
     exact_fields(
         value,
@@ -185,7 +186,7 @@ def _validate_modifier(
         )
     raw_fragments = value.get("add_ability_fragments", [])
     if not isinstance(raw_fragments, list) or (
-        (allow_granted_ability or allow_defender_permission) and len(raw_fragments) != 1
+        (allow_granted_ability or allow_defender_permission or allow_as_unblocked) and len(raw_fragments) != 1
     ):
         raise SemanticNodeError("Conditional grants require exactly one fragment")
     fragments = []
@@ -194,7 +195,7 @@ def _validate_modifier(
             parsed = ability_fragment_from_dict(raw) if isinstance(raw, Mapping) else None
         except (TypeError, ValueError) as exc:
             raise SemanticNodeError(str(exc)) from exc
-        expected = (DefenderAttackPermission,) if allow_defender_permission else (GrantedActivatedAbilitySpec, GrantedTriggeredAbilitySpec)
+        expected = (AsUnblockedAssignmentPermission,) if allow_as_unblocked else (DefenderAttackPermission,) if allow_defender_permission else (GrantedActivatedAbilitySpec, GrantedTriggeredAbilitySpec)
         if not isinstance(parsed, expected):
             raise SemanticNodeError("Conditional grants require independently compiled typed abilities")
         fragments.append(dict(raw))
@@ -270,6 +271,7 @@ class FixedPublicStateCharacteristicsHandler:
         abilities, power, toughness, fragments = _validate_modifier(
             descriptor["modifier"], allow_granted_ability=self.schema_version == 2,
             allow_defender_permission=self.schema_version == 3,
+            allow_as_unblocked=self.schema_version == 4,
         )
         return FixedPublicStateCharacteristicsNode(
             source_condition=source_condition,
@@ -393,6 +395,15 @@ class ConditionalDefenderPermissionHandler(FixedPublicStateCharacteristicsHandle
     family: str = 'continuous.defender_permission.public_state'
     rule_references: tuple[str, ...] = ('609.4', '702.3b', '613.1f', '508.1c')
     capability_dependencies: tuple[str, ...] = (DEFENDER_PERMISSION_CAPABILITY, 'continuous.characteristics.fixed_public_state')
+
+
+@dataclass(frozen=True, slots=True)
+class ConditionalAsUnblockedAssignmentHandler(FixedPublicStateCharacteristicsHandler):
+    handler_id: str = CONDITIONAL_AS_UNBLOCKED_HANDLER
+    schema_version: int = 4
+    family: str = 'continuous.as_unblocked_assignment.public_state'
+    rule_references: tuple[str,...] = ('609.4','510.1c','613.1f')
+    capability_dependencies: tuple[str,...] = (AS_UNBLOCKED_CAPABILITY,'continuous.characteristics.fixed_public_state')
 
 
 __all__ = [

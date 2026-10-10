@@ -31,6 +31,14 @@ Combat snapshots freeze the relevant public relationships and effective
 characteristics before a pilot decision is issued. Assignment validation owns
 legal recipients, totals, canonical source and recipient order, lethal
 thresholds, and trample spill. Client JSON order is never authoritative.
+Typed as-unblocked permission adds one optional all-recipient assignment to
+that same proposal. Ordinary assignment remains legal, and Trample retains
+its lethal-before-spill route. Choosing the permission changes assignment
+only: the attacker remains blocked and blockers still assign damage. Current
+permission and attacked-recipient identity are recomputed for each damage
+step. When every blocker has left, a non-Trample creature may assign either
+zero normally or all damage to its attacked legal recipient. The projected
+allowed totals keep the client choice form aligned with this server verdict.
 Noncombat producers use the same immutable damage values and stable physical
 or logical source identities.
 

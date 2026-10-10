@@ -431,6 +431,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
         FIXED_SOURCE_CHARACTERISTIC_CAPABILITY,
     ),
     "fixed-temporary-defender-permission": ("combat.attack.defender_permission.temporary",),
+    "temporary-as-unblocked-assignment": ("combat.damage.assignment.as_unblocked",),
     _FIXED_CONTROLLER_SEQUENCE_MECHANIC: (
         "resolution.effect_sequence.fixed_controller",
     ),
@@ -464,7 +465,7 @@ _SHAPE_GATED_MECHANICS = frozenset(
         "return-to-owner-hand",
         _FIXED_TARGET_SEQUENCE_MECHANIC,
         _FIXED_SOURCE_SEQUENCE_MECHANIC,
-        FIXED_SOURCE_CHARACTERISTIC_MECHANIC, "fixed-temporary-defender-permission",
+        FIXED_SOURCE_CHARACTERISTIC_MECHANIC, "fixed-temporary-defender-permission", "temporary-as-unblocked-assignment",
         _FIXED_CONTROLLER_SEQUENCE_MECHANIC,
         _FIXED_COUNTER_CONTROLLER_SEQUENCE_MECHANIC,
         FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC,

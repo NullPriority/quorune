@@ -1324,6 +1324,9 @@ def apply_effect(
     operation: str,
     reason: str,
 ) -> Any:
+    if operation == 'apply_source_characteristics_until_end_of_turn' and effect.get('schema_version') == 4:
+        from ..rules.as_unblocked_effect import apply_temporary_as_unblocked
+        return apply_temporary_as_unblocked(host,effect,actor=actor,reason=reason)
     if operation == 'apply_source_characteristics_until_end_of_turn' and effect.get('schema_version') == 3:
         from ..rules.defender_permission_effect import apply_temporary_defender_permission
         return apply_temporary_defender_permission(host,effect,actor=actor,reason=reason)

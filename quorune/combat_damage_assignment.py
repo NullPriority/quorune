@@ -18,6 +18,7 @@ from .combat_damage_values import (
     DamageAssignment,
     exact_assignment_integer as _exact_integer,
     TrampleDamageSpec,
+    AsUnblockedDamageSpec,
 )
 
 
@@ -61,6 +62,8 @@ class CombatDamageAssignmentProposal:
     attacking_sources: frozenset[str]
     deathtouch_sources: frozenset[str]
     trample_sources: tuple[TrampleDamageSpec, ...]
+    as_unblocked_sources: tuple[AsUnblockedDamageSpec, ...] = ()
+    mandatory_as_unblocked_sources: frozenset[str] = frozenset()
 
     def __post_init__(self) -> None:
         _identity(self.damage_step_id, label="Damage-step identity")
@@ -71,6 +74,10 @@ class CombatDamageAssignmentProposal:
         deathtouch_sources = frozenset(self.deathtouch_sources)
         object.__setattr__(self, "sources", sources)
         object.__setattr__(self, "trample_sources", trample_sources)
+        choices=tuple(self.as_unblocked_sources)
+        object.__setattr__(self,'as_unblocked_sources',choices)
+        if any(not isinstance(value,AsUnblockedDamageSpec) for value in choices):raise CombatDamageAssignmentError('As-unblocked choices must be typed')
+        mandatory=frozenset(self.mandatory_as_unblocked_sources);object.__setattr__(self,'mandatory_as_unblocked_sources',mandatory)
         object.__setattr__(self, "attacking_sources", attacking_sources)
         object.__setattr__(self, "deathtouch_sources", deathtouch_sources)
         if not all(isinstance(value, CombatDamageSourceSpec) for value in sources):
@@ -96,6 +103,7 @@ class CombatDamageAssignmentProposal:
             raise CombatDamageAssignmentError(
                 "Attacking damage sources must be proposal sources"
             )
+        if not mandatory<=attacking_sources:raise CombatDamageAssignmentError('Mandatory as-unblocked rules require current attacking sources')
         if not deathtouch_sources <= attacking_sources:
             raise CombatDamageAssignmentError(
                 "Deathtouch damage sources must be attacking sources"
@@ -109,6 +117,7 @@ class CombatDamageAssignmentProposal:
                 "Trample sources must be unique current attacking sources"
             )
         by_source = {source.source: source for source in sources}
+        if len({value.attacker for value in choices})!=len(choices) or any(value.attacker not in attacking_sources or value.recipient not in by_source[value.attacker].targets for value in choices):raise CombatDamageAssignmentError('As-unblocked choices require unique current attackers and legal recipients')
         for trample in trample_sources:
             source_targets = by_source[trample.attacker].targets
             legal_targets = set(source_targets)
@@ -144,6 +153,8 @@ class CombatDamageAssignmentProposal:
                 for source in self.sources
             ],
         }
+        if self.as_unblocked_sources:payload['as_unblocked']=[{'source':value.attacker,'recipient':value.recipient} for value in self.as_unblocked_sources]
+        if self.mandatory_as_unblocked_sources:payload['mandatory_as_unblocked']=sorted(self.mandatory_as_unblocked_sources)
         digest = hashlib.sha256(
             json.dumps(
                 payload,
@@ -154,18 +165,23 @@ class CombatDamageAssignmentProposal:
         return f"combat-assignment:{digest}"
 
     def projected_options(self) -> dict[str, dict[str, Any]]:
-        return {
+        options = {
             source.source: {
                 "power": source.power,
                 "targets": list(source.targets),
             }
             for source in self.sources
         }
+        for permission in self.as_unblocked_sources:
+            option=options[permission.attacker];option['as_unblocked_recipient']=permission.recipient
+            if option['targets']==[permission.recipient] and permission.attacker not in {value.attacker for value in self.trample_sources}:
+                option['allowed_totals']=[0,option['power']]
+        return options
 
     def automatic_assignments(self) -> tuple[DamageAssignment, ...] | None:
         """Return forced assignments, or None when a source must divide."""
 
-        if any(len(source.targets) > 1 for source in self.sources):
+        if any(len(source.targets) > 1 for source in self.sources) or any(source.power>0 and any(permission.attacker==source.source for permission in self.as_unblocked_sources) and source.source not in {value.attacker for value in self.trample_sources} for source in self.sources):
             return None
         return tuple(
             DamageAssignment(source.source, source.targets[0], source.power)
@@ -199,9 +215,10 @@ class CombatDamageAssignmentProposal:
             )
 
         for source in self.sources:
+            no_blockers_choice=any(permission.attacker==source.source and source.targets==(permission.recipient,) for permission in self.as_unblocked_sources) and source.source not in {value.attacker for value in self.trample_sources}
             required = source.power if source.targets else 0
             assigned = totals.get(source.source, 0)
-            if assigned != required:
+            if assigned != required and not (no_blockers_choice and assigned==0):
                 raise CombatDamageAssignmentError(
                     f"{source.source} must assign exactly {required} combat "
                     f"damage, not {assigned}"
@@ -214,7 +231,17 @@ class CombatDamageAssignmentProposal:
             if (assignment := parsed.get((source.source, target))) is not None
             and assignment.amount > 0
         )
+        bypassed=set()
+        tramplers={value.attacker for value in self.trample_sources}
+        for permission in self.as_unblocked_sources:
+            source=source_map[permission.attacker]
+            recipient_amount=next((row.amount for row in assignments if row.source==permission.attacker and row.target==permission.recipient),0)
+            if recipient_amount==0:continue
+            all_to_recipient=recipient_amount==source.power and not any(row.source==permission.attacker and row.target!=permission.recipient and row.amount>0 for row in assignments)
+            if all_to_recipient:bypassed.add(permission.attacker)
+            elif permission.attacker not in tramplers:raise CombatDamageAssignmentError('As-unblocked assignment must send all damage to the attacked recipient')
         for trample in self.trample_sources:
+            if trample.attacker in bypassed:continue
             error = trample_assignment_error(
                 attacker_ref=trample.attacker,
                 spill_target=trample.spill_target,
@@ -263,6 +290,8 @@ def build_combat_damage_assignment_proposal(
     attacking_sources: set[str] = set()
     deathtouch_sources: set[str] = set()
     trample_sources: list[TrampleDamageSpec] = []
+    as_unblocked_sources: list[AsUnblockedDamageSpec] = []
+    mandatory_as_unblocked_sources: set[str] = set()
     for participant in snapshot.participants:
         if participant.controller != seat or not participant.assigns_damage:
             continue
@@ -275,10 +304,16 @@ def build_combat_damage_assignment_proposal(
             blocker_ids = blocks_by_attacker[participant.object_id]
             blocker_refs = tuple(participants[value].reference for value in blocker_ids)
             recipient = attack.recipient
-            if participant.object_id in snapshot.was_blocked:
+            if participant.must_assign_as_unblocked:
+                targets=(recipient.reference,) if recipient.legal else ()
+                mandatory_as_unblocked_sources.add(participant.reference)
+            elif participant.object_id in snapshot.was_blocked:
                 targets = blocker_refs
+                if participant.assign_as_unblocked and recipient.legal:
+                    targets=(*targets,recipient.reference)
+                    as_unblocked_sources.append(AsUnblockedDamageSpec(participant.reference,recipient.reference))
                 if "trample" in participant.keywords and recipient.legal:
-                    targets = (*targets, recipient.reference)
+                    if recipient.reference not in targets:targets = (*targets, recipient.reference)
                     trample_sources.append(
                         TrampleDamageSpec(
                             attacker=participant.reference,
@@ -326,6 +361,8 @@ def build_combat_damage_assignment_proposal(
         attacking_sources=frozenset(attacking_sources),
         deathtouch_sources=frozenset(deathtouch_sources),
         trample_sources=tuple(trample_sources),
+        as_unblocked_sources=tuple(as_unblocked_sources),
+        mandatory_as_unblocked_sources=frozenset(mandatory_as_unblocked_sources),
     )
 
 

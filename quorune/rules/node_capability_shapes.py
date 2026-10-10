@@ -928,6 +928,9 @@ def fixed_source_characteristics_node_capabilities(
 ) -> tuple[str, ...]:
     """Return ownership for one closed source characteristic effect."""
 
+    if any(effect.get('schema_version') == 4 and effect.get('op') == 'apply_source_characteristics_until_end_of_turn' for effect in effects):
+        from .as_unblocked_effect import temporary_as_unblocked_capabilities
+        return temporary_as_unblocked_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
     if any(effect.get('schema_version') == 3 and effect.get('op') == 'apply_source_characteristics_until_end_of_turn' for effect in effects):
         from .defender_permission_effect import temporary_defender_permission_capabilities
         return temporary_defender_permission_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)

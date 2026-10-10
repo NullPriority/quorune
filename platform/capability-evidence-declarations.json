@@ -8009,6 +8009,636 @@
       "applicability_note": "Reject an injected block prohibited by the cumulative Skulk boundary without changing state."
     },
     {
+      "capability_id": "combat.damage.assignment.as_unblocked",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_as_unblocked_assignment.AsUnblockedAssignmentModelTests.test_compiler_static_attached_query_and_conditional_grants_are_closed",
+      "official_rule_ids": [
+        "609.4",
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "510.2",
+        "509.1h",
+        "702.19b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Same immutable assignment proposal owns ordinary/all-recipient choice, unchanged blocked status and multiplayer authority with exact replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.as_unblocked",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_as_unblocked_assignment.AsUnblockedAssignmentModelTests.test_departed_blockers_leave_optional_zero_or_all_recipient_assignment",
+      "official_rule_ids": [
+        "609.4",
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "510.2",
+        "509.1h",
+        "702.19b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Same immutable assignment proposal owns ordinary/all-recipient choice, unchanged blocked status and multiplayer authority with exact replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.as_unblocked",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_as_unblocked_assignment.AsUnblockedAssignmentRuntimeTests.test_accepted_predatory_focus_rule_applies_to_real_later_cast_and_forces_recipient",
+      "official_rule_ids": [
+        "609.4",
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "510.2",
+        "509.1h",
+        "702.19b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Same immutable assignment proposal owns ordinary/all-recipient choice, unchanged blocked status and multiplayer authority with exact replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.as_unblocked",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_as_unblocked_assignment.AsUnblockedAssignmentRuntimeTests.test_actual_indomitable_might_attachment_grants_current_recipient_and_replays",
+      "official_rule_ids": [
+        "609.4",
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "510.2",
+        "509.1h",
+        "702.19b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Same immutable assignment proposal owns ordinary/all-recipient choice, unchanged blocked status and multiplayer authority with exact replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.as_unblocked",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_as_unblocked_assignment.AsUnblockedAssignmentRuntimeTests.test_actual_predatory_focus_chooses_at_resolution_and_applies_to_later_creatures",
+      "official_rule_ids": [
+        "609.4",
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "510.2",
+        "509.1h",
+        "702.19b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Same immutable assignment proposal owns ordinary/all-recipient choice, unchanged blocked status and multiplayer authority with exact replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.as_unblocked",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_as_unblocked_assignment.AsUnblockedAssignmentRuntimeTests.test_actual_proud_wildbonder_preserves_trample_split_and_all_recipient_choice",
+      "official_rule_ids": [
+        "609.4",
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "510.2",
+        "509.1h",
+        "702.19b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Same immutable assignment proposal owns ordinary/all-recipient choice, unchanged blocked status and multiplayer authority with exact replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.as_unblocked",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_as_unblocked_assignment.AsUnblockedAssignmentRuntimeTests.test_actual_siege_condition_grants_only_while_source_is_attacking",
+      "official_rule_ids": [
+        "609.4",
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "510.2",
+        "509.1h",
+        "702.19b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Same immutable assignment proposal owns ordinary/all-recipient choice, unchanged blocked status and multiplayer authority with exact replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.as_unblocked",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_as_unblocked_assignment.AsUnblockedAssignmentRuntimeTests.test_actual_spinebiter_as_unblocked_uses_infect_and_blocker_still_deals_damage",
+      "official_rule_ids": [
+        "609.4",
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "510.2",
+        "509.1h",
+        "702.19b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Same immutable assignment proposal owns ordinary/all-recipient choice, unchanged blocked status and multiplayer authority with exact replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.as_unblocked",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_as_unblocked_assignment.AsUnblockedAssignmentRuntimeTests.test_actual_thorn_can_assign_ordinary_damage_to_blocker",
+      "official_rule_ids": [
+        "609.4",
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "510.2",
+        "509.1h",
+        "702.19b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Same immutable assignment proposal owns ordinary/all-recipient choice, unchanged blocked status and multiplayer authority with exact replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.as_unblocked",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_as_unblocked_assignment.AsUnblockedAssignmentRuntimeTests.test_actual_trample_permission_accepts_lethal_then_spill_split",
+      "official_rule_ids": [
+        "609.4",
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "510.2",
+        "509.1h",
+        "702.19b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Same immutable assignment proposal owns ordinary/all-recipient choice, unchanged blocked status and multiplayer authority with exact replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.as_unblocked",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_as_unblocked_assignment.AsUnblockedAssignmentRuntimeTests.test_as_unblocked_damage_uses_attacked_planeswalker_or_battle_not_its_controller",
+      "official_rule_ids": [
+        "609.4",
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "510.2",
+        "509.1h",
+        "702.19b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Same immutable assignment proposal owns ordinary/all-recipient choice, unchanged blocked status and multiplayer authority with exact replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.as_unblocked",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_as_unblocked_assignment.AsUnblockedAssignmentRuntimeTests.test_double_strike_makes_independent_assignment_choices_in_both_damage_steps",
+      "official_rule_ids": [
+        "609.4",
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "510.2",
+        "509.1h",
+        "702.19b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Same immutable assignment proposal owns ordinary/all-recipient choice, unchanged blocked status and multiplayer authority with exact replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.as_unblocked",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_as_unblocked_assignment.AsUnblockedAssignmentRuntimeTests.test_quoted_temporary_ability_grant_locks_recipients_and_leaves_assignment_optional",
+      "official_rule_ids": [
+        "609.4",
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "510.2",
+        "509.1h",
+        "702.19b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Same immutable assignment proposal owns ordinary/all-recipient choice, unchanged blocked status and multiplayer authority with exact replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.as_unblocked",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_as_unblocked_assignment.AsUnblockedAssignmentRuntimeTests.test_resolved_assignment_rule_survives_creature_ability_removal",
+      "official_rule_ids": [
+        "609.4",
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "510.2",
+        "509.1h",
+        "702.19b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Same immutable assignment proposal owns ordinary/all-recipient choice, unchanged blocked status and multiplayer authority with exact replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.as_unblocked",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_as_unblocked_assignment.AsUnblockedAssignmentRuntimeTests.test_source_ability_removal_changes_permission_before_second_damage_step",
+      "official_rule_ids": [
+        "609.4",
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "510.2",
+        "509.1h",
+        "702.19b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Same immutable assignment proposal owns ordinary/all-recipient choice, unchanged blocked status and multiplayer authority with exact replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.as_unblocked",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_as_unblocked_assignment.AsUnblockedAssignmentRuntimeTests.test_actual_thorn_optional_assignment_is_principal_scoped_and_replays",
+      "official_rule_ids": [
+        "609.4",
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "510.2",
+        "509.1h",
+        "702.19b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Same immutable assignment proposal owns ordinary/all-recipient choice, unchanged blocked status and multiplayer authority with exact replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.as_unblocked",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_as_unblocked_assignment.AsUnblockedAssignmentRuntimeTests.test_assignment_permission_mutant_is_killed",
+      "official_rule_ids": [
+        "609.4",
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "510.2",
+        "509.1h",
+        "702.19b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Same immutable assignment proposal owns ordinary/all-recipient choice, unchanged blocked status and multiplayer authority with exact replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.as_unblocked",
+      "evidence_class": "negative",
+      "test_id": "tests.test_as_unblocked_assignment.AsUnblockedAssignmentModelTests.test_blocked_assignment_owner_prevents_exact_printed_and_temporary_closure",
+      "official_rule_ids": [
+        "609.4",
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "510.2",
+        "509.1h",
+        "702.19b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Same immutable assignment proposal owns ordinary/all-recipient choice, unchanged blocked status and multiplayer authority with exact replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.as_unblocked",
+      "evidence_class": "negative",
+      "test_id": "tests.test_as_unblocked_assignment.AsUnblockedAssignmentModelTests.test_dynamic_assignment_rule_round_trip_is_distinct_from_ability_fragments",
+      "official_rule_ids": [
+        "609.4",
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "510.2",
+        "509.1h",
+        "702.19b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Same immutable assignment proposal owns ordinary/all-recipient choice, unchanged blocked status and multiplayer authority with exact replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.as_unblocked",
+      "evidence_class": "negative",
+      "test_id": "tests.test_as_unblocked_assignment.AsUnblockedAssignmentModelTests.test_mandatory_rule_keeps_only_attacked_recipient_and_never_adds_optional_split",
+      "official_rule_ids": [
+        "609.4",
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "510.2",
+        "509.1h",
+        "702.19b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Same immutable assignment proposal owns ordinary/all-recipient choice, unchanged blocked status and multiplayer authority with exact replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.as_unblocked",
+      "evidence_class": "negative",
+      "test_id": "tests.test_as_unblocked_assignment.AsUnblockedAssignmentModelTests.test_permission_is_typed_and_proposal_identity_binds_legal_branch",
+      "official_rule_ids": [
+        "609.4",
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "510.2",
+        "509.1h",
+        "702.19b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Same immutable assignment proposal owns ordinary/all-recipient choice, unchanged blocked status and multiplayer authority with exact replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.as_unblocked",
+      "evidence_class": "negative",
+      "test_id": "tests.test_as_unblocked_assignment.AsUnblockedAssignmentModelTests.test_temporary_permission_schema_rejects_unknown_subjects_and_extra_fields",
+      "official_rule_ids": [
+        "609.4",
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "510.2",
+        "509.1h",
+        "702.19b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Same immutable assignment proposal owns ordinary/all-recipient choice, unchanged blocked status and multiplayer authority with exact replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.as_unblocked",
+      "evidence_class": "negative",
+      "test_id": "tests.test_as_unblocked_assignment.AsUnblockedAssignmentRuntimeTests.test_actual_predatory_focus_decline_creates_no_assignment_rule",
+      "official_rule_ids": [
+        "609.4",
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "510.2",
+        "509.1h",
+        "702.19b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Same immutable assignment proposal owns ordinary/all-recipient choice, unchanged blocked status and multiplayer authority with exact replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.as_unblocked",
+      "evidence_class": "negative",
+      "test_id": "tests.test_as_unblocked_assignment.AsUnblockedAssignmentRuntimeTests.test_current_permission_loss_invalidates_pending_assignment_before_mutation",
+      "official_rule_ids": [
+        "609.4",
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "510.2",
+        "509.1h",
+        "702.19b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Same immutable assignment proposal owns ordinary/all-recipient choice, unchanged blocked status and multiplayer authority with exact replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.as_unblocked",
+      "evidence_class": "negative",
+      "test_id": "tests.test_as_unblocked_assignment.AsUnblockedAssignmentRuntimeTests.test_departed_attacked_permanent_is_not_replaced_with_its_controller",
+      "official_rule_ids": [
+        "609.4",
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "510.2",
+        "509.1h",
+        "702.19b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Same immutable assignment proposal owns ordinary/all-recipient choice, unchanged blocked status and multiplayer authority with exact replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.as_unblocked",
+      "evidence_class": "negative",
+      "test_id": "tests.test_as_unblocked_assignment.AsUnblockedAssignmentRuntimeTests.test_malformed_temporary_permission_rejects_before_journal_mutation",
+      "official_rule_ids": [
+        "609.4",
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "510.2",
+        "509.1h",
+        "702.19b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Same immutable assignment proposal owns ordinary/all-recipient choice, unchanged blocked status and multiplayer authority with exact replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.as_unblocked",
+      "evidence_class": "positive",
+      "test_id": "tests.test_as_unblocked_assignment.AsUnblockedAssignmentModelTests.test_all_or_nothing_choice_preserves_ordinary_and_trample_routes",
+      "official_rule_ids": [
+        "609.4",
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "510.2",
+        "509.1h",
+        "702.19b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Same immutable assignment proposal owns ordinary/all-recipient choice, unchanged blocked status and multiplayer authority with exact replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.as_unblocked",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_as_unblocked_assignment.AsUnblockedAssignmentRuntimeTests.test_actual_thorn_optional_assignment_is_principal_scoped_and_replays",
+      "official_rule_ids": [
+        "609.4",
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "510.2",
+        "509.1h",
+        "702.19b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Same immutable assignment proposal owns ordinary/all-recipient choice, unchanged blocked status and multiplayer authority with exact replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.as_unblocked",
+      "evidence_class": "replay",
+      "test_id": "tests.test_as_unblocked_assignment.AsUnblockedAssignmentRuntimeTests.test_actual_thorn_optional_assignment_is_principal_scoped_and_replays",
+      "official_rule_ids": [
+        "609.4",
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "510.2",
+        "509.1h",
+        "702.19b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Same immutable assignment proposal owns ordinary/all-recipient choice, unchanged blocked status and multiplayer authority with exact replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.as_unblocked",
+      "evidence_class": "replay",
+      "test_id": "tests.test_as_unblocked_assignment.AsUnblockedAssignmentRuntimeTests.test_departed_blockers_offer_zero_or_all_damage_to_attacked_seat",
+      "official_rule_ids": [
+        "609.4",
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "510.2",
+        "509.1h",
+        "702.19b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Same immutable assignment proposal owns ordinary/all-recipient choice, unchanged blocked status and multiplayer authority with exact replay."
+    },
+    {
       "capability_id": "combat.damage.assignment.canonical",
       "evidence_class": "interaction",
       "test_id": "tests.test_damage_replacement_integration.DamageReplacementIntegrationTests.test_permuted_combat_assignment_has_identical_replacement_replay",

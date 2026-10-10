@@ -4,6 +4,7 @@ from .public_quantity_mana_effects import public_quantity_mana_effect_template
 from .whole_hand_discard_templates import whole_hand_discard_effect_template, whole_hand_discard_draw_sequence_template, whole_hand_discard_public_draw_sequence
 from .hand_entry_templates import fixed_draw_then_hand_entry_template
 from .defender_permission_templates import temporary_defender_permission_template
+from .as_unblocked_templates import temporary_as_unblocked_template
 
 from typing import Any, Mapping, Sequence
 
@@ -112,6 +113,8 @@ def _source_context_resolution_template(
     text: str, *, card_name: str, source_is_permanent: bool | None,
     source_card_types: Sequence[str],
 ) -> CompiledEffectTemplate | None:
+    as_unblocked=temporary_as_unblocked_template(text,source_name=card_name,source_is_permanent=source_is_permanent,source_card_types=source_card_types)
+    if as_unblocked is not None:return as_unblocked
     permission=temporary_defender_permission_template(text,source_name=card_name,source_is_permanent=source_is_permanent,source_card_types=tuple(source_card_types))
     if permission is not None:return permission
     hand_entry=fixed_draw_then_hand_entry_template(text)

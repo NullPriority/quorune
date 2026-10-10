@@ -309,6 +309,7 @@
     ],
     "functional-11": [
       "test_activation_conditions",
+      "test_as_unblocked_assignment",
       "test_attack_transitions",
       "test_battlefield_rules",
       "test_beginning_phase_rules",

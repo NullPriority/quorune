@@ -118,6 +118,7 @@ from ..rules.closed_effect_program_shapes import (
 from ..rules.echo_capability_shapes import fixed_mana_echo_node_capabilities
 from ..rules.public_quantity_mana_shapes import is_closed_public_quantity_mana_program
 from ..rules.whole_hand_discard_shapes import is_closed_whole_hand_discard_program
+from ..rules.as_unblocked_effect import is_closed_optional_as_unblocked_program
 from ..semantics import SemanticProgram, SemanticRegistry
 from ..util import stable_json
 from ..semantic_runtime.activated_abilities import (
@@ -589,10 +590,8 @@ def _is_closed_composed_effect_program(
 ) -> bool:
     """Recognize a bounded program of independently closed components."""
 
-    if (
-        program.provenance.get("template_id") != "closed-effect-program-v1"
-        and "closed-effect-program" not in program.coverage
-    ):
+    if is_closed_optional_as_unblocked_program(program):return True
+    if program.provenance.get("template_id") != "closed-effect-program-v1" and "closed-effect-program" not in program.coverage:
         return False
     required = set(
         closed_effect_program_node_capabilities(

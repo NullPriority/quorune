@@ -391,6 +391,11 @@
       ]
     },
     {
+      "id": "as-unblocked-assignment-contract",
+      "patterns": ["quorune/as_unblocked.py", "quorune/as_unblocked_rule.py", "quorune/compiler/as_unblocked_templates.py", "quorune/rules/as_unblocked_effect.py", "quorune/combat_damage_assignment.py", "quorune/combat_damage_values.py", "quorune/combat_damage_snapshot.py", "quorune/combat_damage_engine_adapter.py", "tests/fixtures/as-unblocked-assignment-cards.json"],
+      "test_modules": ["test_as_unblocked_assignment", "test_combat_damage_assignment", "test_combat_damage_snapshot", "test_combat_damage_sequence", "test_combat_damage_rules", "test_combat_keyword_rules", "test_card_program_trust", "test_choice_forms"]
+    },
+    {
       "id": "power-up-activation-contract",
       "patterns": ["quorune/power_up.py", "quorune/power_up_model.py", "quorune/compiler/power_up_templates.py", "quorune/activated_ability_descriptor.py", "quorune/activation_usage.py", "quorune/activation_mana_cost.py", "tests/fixtures/power-up-cards.json"],
       "test_modules": ["test_power_up", "test_query_scaled_counters", "test_complex_activation_mana_costs", "test_fixed_source_effect_sequences", "test_activated_abilities", "test_card_program_trust", "test_casting_activation_proposal_equivalence"]

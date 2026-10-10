@@ -4,6 +4,7 @@
   "fixtures": [
     "tests/fixtures/affinity-rules-cards.json",
     "tests/fixtures/amass-rules-cards.json",
+    "tests/fixtures/as-unblocked-assignment-cards.json",
     "tests/fixtures/attached-characteristic-closure-cards.json",
     "tests/fixtures/bestow-cards.json",
     "tests/fixtures/browser-lifecycle-cards.json",
