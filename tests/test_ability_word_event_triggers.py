@@ -152,10 +152,27 @@ class AbilityWordEventTriggerCompilerTests(unittest.TestCase):
                 )
                 self.assertEqual(fields, self.condition_fields(node.event_condition))
 
+    def test_heroic_label_does_not_override_promoted_creature_target_event(self):
+        text = "Heroic — Whenever you cast a spell that targets a creature, draw a card."
+        record = replace(self.db.lookup("Heroic Counter Fixture"),
+                         oracle_text=text, keywords=())
+        ir = compile_oracle_card(record, capability_registry=self.capabilities,
+                                 capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node = ir.faces[0].nodes[0]
+        self.assertEqual("spell.cast", node.event)
+        self.assertEqual({"all": [
+            {"field":"controller", "op":"eq", "value":"$source.controller"},
+            {"field":"creature_target_controllers", "op":"count_gte", "value":1},
+        ]}, node.event_condition)
+        self.assertEqual({"op":"draw", "player":"$controller", "count":1, "private":True},
+                         node.effects[0])
+        self.assertIn("trigger.event.spell_cast_creature_target", node.capability_dependencies)
+
     def test_adjacent_event_and_body_grammar_remain_material(self):
         base = self.db.lookup("Heroic Counter Fixture")
         cases = (
-            "Heroic — Whenever you cast a spell that targets a creature, draw a card.",
+            "Heroic — Whenever you cast a spell that targets two or more creatures, draw a card.",
             "Heroic — Whenever an opponent casts a spell that targets this creature, draw a card.",
             "Magecraft — Whenever you cast or copy a permanent spell, draw a card.",
             "Constellation — Whenever one or more enchantments you control enter, draw a card.",

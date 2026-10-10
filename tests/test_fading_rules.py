@@ -84,7 +84,7 @@ class FadingCompilerTests(unittest.TestCase):
                     row.update(status="blocked", blockers=["independent owner unavailable"])
             ir = compile_oracle_card(self.db.lookup("Skyshroud Ridgeback"), capability_registry=CapabilityRegistry(value))
             self.assertNotEqual("exact", ir.status)
-        for text in ("Fading X", "Fading 0", "Fading 2 with haste", "Vanishing 2", "Graft 2"):
+        for text in ("Fading X", "Fading 0", "Fading 2 with haste", "Vanishing X", "Graft 2"):
             record = replace(self.db.lookup("Skyshroud Ridgeback"), oracle_text=text, keywords=(text.split()[0],))
             self.assertNotEqual("exact", compile_oracle_card(record, capability_registry=self.registry).status)
 

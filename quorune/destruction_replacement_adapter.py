@@ -42,9 +42,13 @@ def current_destruction_subject(host: Any, object_id: str) -> DestructionReplace
         raise ValueError("Destruction permanent does not exist")
     if card.zone != "battlefield" or card.phased_out:
         raise ValueError("Only a phased-in battlefield permanent can be destroyed")
+    try:
+        keywords = normalized_effective_keywords(host, card)
+    except ValueError as exc:
+        raise ValueError(f"Unable to compute effective destruction keywords: {exc}") from exc
     return DestructionReplacementSubject(
         card.object_id, card.ref, card.logical_object_id, card.owner, card.controller,
-        "indestructible" in normalized_effective_keywords(host, card),
+        "indestructible" in keywords,
         card.counters.get("shield", 0), card.regeneration_shields,
     )
 

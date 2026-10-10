@@ -1854,6 +1854,7 @@
       "test_modules": [
         "test_fixed_counter_event_triggers",
         "test_fixed_counter_player_cast_triggers",
+        "test_ability_word_event_triggers",
         "test_prowess_rules"
       ]
     },

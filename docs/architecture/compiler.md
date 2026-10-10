@@ -1260,6 +1260,9 @@ an Aura-owned current fragment and requires the complete coupled destruction
 capability. Current relationship tracking and compiler recognition alone do
 not make a card supported. See [ADR 0107](../adr/0107-typed-coupled-umbra-destruction.md)
 for replacement choice, recursive Aura destruction and replay ownership.
+The shared destruction snapshot preserves distinct errors for missing objects,
+phased-out or nonbattlefield subjects, and malformed effective keywords.
+Preparation rejects each case before committing a destruction transaction.
 
 - Every lowered node retains its exact source provenance.
 - Unknown or ambiguous grammar becomes a source-spanned residual, never
