@@ -350,7 +350,7 @@ def build_combat_damage_assignment_proposal(
                 source=participant.reference,
                 controller=participant.controller,
                 logical_object_id=participant.logical_object_id,
-                power=max(0, participant.power),
+                power=max(0, participant.toughness if participant.assigns_using_toughness else participant.power),
                 targets=targets,
             )
         )

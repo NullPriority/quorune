@@ -42,6 +42,18 @@ allowed totals keep the client choice form aligned with this server verdict.
 Noncombat producers use the same immutable damage values and stable physical
 or logical source identities.
 
+Toughness-based combat assignment is a separate source-local rule. The combat
+snapshot retains the creature's real power and toughness and selects current
+toughness only for its assignment quantity, for attackers and blockers alike.
+External rules use current controller, attachment, keyword and fixed
+stat-comparison predicates; removing the source ability ends its rule, while
+removing a recipient's abilities does not erase a rule supplied by another
+source. Printed stat bonuses remain ordinary characteristic components.
+Temporary targeted instructions create incarnation-locked rules in the same
+duration journal, survive ability removal and expire at end of turn. Trample
+still uses ordinary blocker toughness and marked damage for lethal thresholds.
+Noncombat damage and other power-based effects continue to read actual power.
+
 Fixed simultaneous affected-set instructions compile to an immutable ordered
 group descriptor. `fixed_damage_set_model.py` owns its closed player and
 permanent vocabulary; `fixed_damage_set.py` materializes current public

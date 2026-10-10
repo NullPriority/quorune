@@ -40,6 +40,7 @@ from .declaration_fragments import (
 )
 from .defender_permission import DefenderAttackPermission
 from .as_unblocked import AsUnblockedAssignmentPermission
+from .toughness_assignment_model import ToughnessAssignmentSpec
 from .creature_subtypes import canonical_creature_subtype
 from .replacement.immutable import FrozenMap, thaw_value
 from .trigger_participation import TriggerMultiplierSpec, WardSpec
@@ -987,6 +988,7 @@ StaticAbilityFragment: TypeAlias = (
     | QueryPowerToughnessDefinitionSpec
     | DefenderAttackPermission
     | AsUnblockedAssignmentPermission
+    | ToughnessAssignmentSpec
     | DeclarationCostTemplate
     | DeclarationRequirementTemplate
     | DeclarationRestrictionTemplate
@@ -1045,6 +1047,7 @@ def ability_fragment_to_dict(
         kind = "defender_attack_permission"
     elif isinstance(fragment, AsUnblockedAssignmentPermission):
         kind = "as_unblocked_assignment"
+    elif isinstance(fragment,ToughnessAssignmentSpec):kind='toughness_assignment_rule'
     elif isinstance(fragment, DeclarationCostTemplate):
         kind = "declaration_cost"
     elif isinstance(fragment, DeclarationRequirementTemplate):
@@ -1147,6 +1150,7 @@ def ability_fragment_from_dict(
         return DefenderAttackPermission.from_dict(value["value"])
     if value["kind"] == "as_unblocked_assignment":
         return AsUnblockedAssignmentPermission.from_dict(value["value"])
+    if value['kind']=='toughness_assignment_rule':return ToughnessAssignmentSpec.from_dict(value['value'])
     if value["kind"] == "declaration_cost":
         try:
             return DeclarationCostTemplate.from_dict(value["value"])
@@ -1201,6 +1205,7 @@ def canonical_ability_fragments(
                 QueryPowerToughnessDefinitionSpec,
                 DefenderAttackPermission,
                 AsUnblockedAssignmentPermission,
+                ToughnessAssignmentSpec,
                 DeclarationCostTemplate,
                 DeclarationRequirementTemplate,
                 DeclarationRestrictionTemplate,

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "b48235a4818a24ebaeeda16895d00180619c74c9d9cadcf9349b1e3eb0059814",
-  "declaration_source_fingerprint": "822e81481550b41dd7db1e748c52eff74de77a2b2336c025d515be10297baa80",
+  "registry_fingerprint": "3f380614ba24048eb800b71acbf7be48b487bb3d01fb15c4bfeb3653975f353f",
+  "declaration_source_fingerprint": "519cc48c4d5b03c57815450b434c67a6d6c493081f84ced7bc6b6e75ed4c448e",
   "declarations": [
     {
       "capability_id": "activation.condition.phase_window",
@@ -20694,6 +20694,468 @@
         "commander_review"
       ],
       "applicability_note": "Replay the APNAP assignments and resulting deathtouch destruction exactly."
+    },
+    {
+      "capability_id": "combat.damage.assignment.toughness",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_toughness_assignment.ToughnessAssignmentCompilerTests.test_snapshot_assignment_uses_current_toughness_for_attacker_and_blocker",
+      "official_rule_ids": [
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "608.2h",
+        "613.1f",
+        "613.1g",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-local rule changes only combat assignment quantity, preserving current characteristics, multiplayer scope and canonical replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.toughness",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_toughness_assignment.ToughnessAssignmentRuntimeTests.test_actual_bulwark_couples_haste_defender_permission_and_toughness_rule",
+      "official_rule_ids": [
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "608.2h",
+        "613.1f",
+        "613.1g",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-local rule changes only combat assignment quantity, preserving current characteristics, multiplayer scope and canonical replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.toughness",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_toughness_assignment.ToughnessAssignmentRuntimeTests.test_actual_doran_does_not_change_noncombat_power_damage",
+      "official_rule_ids": [
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "608.2h",
+        "613.1f",
+        "613.1g",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-local rule changes only combat assignment quantity, preserving current characteristics, multiplayer scope and canonical replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.toughness",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_toughness_assignment.ToughnessAssignmentRuntimeTests.test_actual_gauntlets_add_toughness_before_assignment_and_replay",
+      "official_rule_ids": [
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "608.2h",
+        "613.1f",
+        "613.1g",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-local rule changes only combat assignment quantity, preserving current characteristics, multiplayer scope and canonical replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.toughness",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_toughness_assignment.ToughnessAssignmentRuntimeTests.test_actual_high_alert_scope_does_not_change_enemy_assignment_or_power",
+      "official_rule_ids": [
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "608.2h",
+        "613.1f",
+        "613.1g",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-local rule changes only combat assignment quantity, preserving current characteristics, multiplayer scope and canonical replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.toughness",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_toughness_assignment.ToughnessAssignmentRuntimeTests.test_actual_lumberknot_comparison_reads_full_current_stats",
+      "official_rule_ids": [
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "608.2h",
+        "613.1f",
+        "613.1g",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-local rule changes only combat assignment quantity, preserving current characteristics, multiplayer scope and canonical replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.toughness",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_toughness_assignment.ToughnessAssignmentRuntimeTests.test_attached_rule_survives_recipient_ability_removal_and_current_comparison_changes",
+      "official_rule_ids": [
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "608.2h",
+        "613.1f",
+        "613.1g",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-local rule changes only combat assignment quantity, preserving current characteristics, multiplayer scope and canonical replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.toughness",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_toughness_assignment.ToughnessAssignmentRuntimeTests.test_combat_query_collects_current_source_rules_once_for_all_participants",
+      "official_rule_ids": [
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "608.2h",
+        "613.1f",
+        "613.1g",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-local rule changes only combat assignment quantity, preserving current characteristics, multiplayer scope and canonical replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.toughness",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_toughness_assignment.ToughnessAssignmentRuntimeTests.test_external_rule_survives_recipient_ability_removal_but_source_rule_does_not",
+      "official_rule_ids": [
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "608.2h",
+        "613.1f",
+        "613.1g",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-local rule changes only combat assignment quantity, preserving current characteristics, multiplayer scope and canonical replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.toughness",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_toughness_assignment.ToughnessAssignmentRuntimeTests.test_intrinsic_and_source_controller_turn_rules_use_current_applicability",
+      "official_rule_ids": [
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "608.2h",
+        "613.1f",
+        "613.1g",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-local rule changes only combat assignment quantity, preserving current characteristics, multiplayer scope and canonical replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.toughness",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_toughness_assignment.ToughnessAssignmentRuntimeTests.test_later_damage_step_recomputes_toughness_after_current_modifier",
+      "official_rule_ids": [
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "608.2h",
+        "613.1f",
+        "613.1g",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-local rule changes only combat assignment quantity, preserving current characteristics, multiplayer scope and canonical replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.toughness",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_toughness_assignment.ToughnessAssignmentRuntimeTests.test_toughness_trample_uses_current_lethal_threshold_and_spill",
+      "official_rule_ids": [
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "608.2h",
+        "613.1f",
+        "613.1g",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-local rule changes only combat assignment quantity, preserving current characteristics, multiplayer scope and canonical replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.toughness",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_toughness_assignment.ToughnessAssignmentRuntimeTests.test_actual_doran_changes_both_sides_combat_assignment_and_replays",
+      "official_rule_ids": [
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "608.2h",
+        "613.1f",
+        "613.1g",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-local rule changes only combat assignment quantity, preserving current characteristics, multiplayer scope and canonical replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.toughness",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_toughness_assignment.ToughnessAssignmentRuntimeTests.test_toughness_assignment_mutant_is_killed",
+      "official_rule_ids": [
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "608.2h",
+        "613.1f",
+        "613.1g",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-local rule changes only combat assignment quantity, preserving current characteristics, multiplayer scope and canonical replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.toughness",
+      "evidence_class": "negative",
+      "test_id": "tests.test_toughness_assignment.ToughnessAssignmentCompilerTests.test_temporary_rule_schema_and_blocked_assignment_owner_fail_closed",
+      "official_rule_ids": [
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "608.2h",
+        "613.1f",
+        "613.1g",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-local rule changes only combat assignment quantity, preserving current characteristics, multiplayer scope and canonical replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.toughness",
+      "evidence_class": "negative",
+      "test_id": "tests.test_toughness_assignment.ToughnessAssignmentCompilerTests.test_toughness_rule_codec_and_unknown_subjects_fail_closed",
+      "official_rule_ids": [
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "608.2h",
+        "613.1f",
+        "613.1g",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-local rule changes only combat assignment quantity, preserving current characteristics, multiplayer scope and canonical replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.toughness",
+      "evidence_class": "negative",
+      "test_id": "tests.test_toughness_assignment.ToughnessAssignmentRuntimeTests.test_actual_solid_footing_reads_current_vigilance_and_stale_assignment_rolls_back",
+      "official_rule_ids": [
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "608.2h",
+        "613.1f",
+        "613.1g",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-local rule changes only combat assignment quantity, preserving current characteristics, multiplayer scope and canonical replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.toughness",
+      "evidence_class": "negative",
+      "test_id": "tests.test_toughness_assignment.ToughnessAssignmentRuntimeTests.test_malformed_temporary_rule_rejects_before_journal_mutation",
+      "official_rule_ids": [
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "608.2h",
+        "613.1f",
+        "613.1g",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-local rule changes only combat assignment quantity, preserving current characteristics, multiplayer scope and canonical replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.toughness",
+      "evidence_class": "positive",
+      "test_id": "tests.test_toughness_assignment.ToughnessAssignmentCompilerTests.test_static_rule_shapes_preserve_scope_and_separate_characteristic_prefix",
+      "official_rule_ids": [
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "608.2h",
+        "613.1f",
+        "613.1g",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-local rule changes only combat assignment quantity, preserving current characteristics, multiplayer scope and canonical replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.toughness",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_toughness_assignment.ToughnessAssignmentRuntimeTests.test_actual_doran_changes_both_sides_combat_assignment_and_replays",
+      "official_rule_ids": [
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "608.2h",
+        "613.1f",
+        "613.1g",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-local rule changes only combat assignment quantity, preserving current characteristics, multiplayer scope and canonical replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.toughness",
+      "evidence_class": "replay",
+      "test_id": "tests.test_toughness_assignment.ToughnessAssignmentRuntimeTests.test_actual_bill_food_cost_and_pending_target_rule_replay",
+      "official_rule_ids": [
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "608.2h",
+        "613.1f",
+        "613.1g",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-local rule changes only combat assignment quantity, preserving current characteristics, multiplayer scope and canonical replay."
+    },
+    {
+      "capability_id": "combat.damage.assignment.toughness",
+      "evidence_class": "replay",
+      "test_id": "tests.test_toughness_assignment.ToughnessAssignmentRuntimeTests.test_actual_doran_changes_both_sides_combat_assignment_and_replays",
+      "official_rule_ids": [
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "608.2h",
+        "613.1f",
+        "613.1g",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-local rule changes only combat assignment quantity, preserving current characteristics, multiplayer scope and canonical replay."
     },
     {
       "capability_id": "combat.damage.assignment.trample",
@@ -88700,5 +89162,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "e81a1b332acf57b6dbc8760523998a8af5ff05f80dfd1a856ca723764715cbdb"
+  "fingerprint": "c440742a9f973f5f4f3488b4350fad3e8a44d62dddcc0e700401f343cff8997d"
 }

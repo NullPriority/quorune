@@ -14,6 +14,7 @@ from .continuous_effect_model import (
 from .declaration_fragments import DeclarationRestrictionTemplate
 from .replacement.immutable import immutable_fingerprint
 from .as_unblocked_rule import AS_UNBLOCKED_RULE_KIND,AsUnblockedAssignmentRule
+from .toughness_assignment_rule import TOUGHNESS_RULE_KIND,ResolvedToughnessAssignmentRule
 
 
 RESOLUTION_DECLARATION_RULE_EFFECT_KIND = "resolution_declaration_rule"
@@ -160,7 +161,7 @@ class ResolutionDeclarationRuleEffect:
 
 
 ContinuousJournalEffect: TypeAlias = (
-    ContinuousEffect | ResolutionDeclarationRuleEffect | AsUnblockedAssignmentRule
+    ContinuousEffect | ResolutionDeclarationRuleEffect | AsUnblockedAssignmentRule | ResolvedToughnessAssignmentRule
 )
 
 
@@ -171,6 +172,7 @@ def continuous_journal_effect_from_dict(
 
     if isinstance(value, Mapping) and "effect_kind" in value:
         if value['effect_kind']==AS_UNBLOCKED_RULE_KIND:return AsUnblockedAssignmentRule.from_dict(value)
+        if value['effect_kind']==TOUGHNESS_RULE_KIND:return ResolvedToughnessAssignmentRule.from_dict(value)
         return ResolutionDeclarationRuleEffect.from_dict(value)
     return ContinuousEffect.from_dict(value)
 

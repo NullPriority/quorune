@@ -394,6 +394,8 @@
       ,"quorune/rules/action_catalog.py": "read-only executable action-offer catalog"
       ,"quorune/rules/defender_permission_effect.py": "typed read-only selected creature and incarnation snapshot delegating temporary layer-six permission commitment to the canonical continuous-effect journal"
       ,"quorune/rules/as_unblocked_effect.py": "typed read-only current creature set selection delegating incarnation-locked as-unblocked permission commitment to the canonical continuous-effect journal"
+      ,"quorune/toughness_assignment.py": "read-only combat assignment rule applicability from current source fragments and full recipient characteristics"
+      ,"quorune/rules/toughness_assignment_effect.py": "typed read-only selected incarnation query delegating resolved assignment-rule commitment to the canonical continuous-effect journal"
       ,"quorune/rules/action_explanations.py": "principal-scoped read-only unavailable-action explanations"
       ,"quorune/rules/casting/costs.py": "read-only casting-cost proposal query"
       ,"quorune/cast_lifecycles.py": "typed casting-lifecycle coordinator delegating state changes to canonical cost, zone, keyword, trigger, and permission owners"

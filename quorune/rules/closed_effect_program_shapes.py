@@ -56,14 +56,10 @@ def closed_effect_program_node_capabilities(
     component_mechanics = mechanics - {CLOSED_EFFECT_PROGRAM_MECHANIC}
     dependencies = {CLOSED_EFFECT_PROGRAM_CAPABILITY}
     if target_effects:
-        target_dependencies = closed_effect_component_capabilities(
-            target_effects,
-            target_schema=target_schema,
-            mechanics=component_mechanics,
-        )
-        if not target_dependencies:
-            return ()
-        dependencies.update(target_dependencies)
+        for target_effect in target_effects:
+            target_dependencies = closed_effect_component_capabilities((target_effect,),target_schema=target_schema,mechanics=component_mechanics)
+            if not target_dependencies:return ()
+            dependencies.update(target_dependencies)
     for effect in effects:
         if _contains_target_reference(effect):
             continue

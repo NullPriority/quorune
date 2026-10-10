@@ -36,6 +36,7 @@ from ..enchant_spec import LinkedGraveyardCreatureEnchantSpec
 from ..declaration_fragments import DECLARATION_COMPONENT_CAPABILITY_ID
 from ..defender_permission import DefenderAttackPermission, DEFENDER_PERMISSION_CAPABILITY, DEFENDER_PERMISSION_HANDLER
 from ..as_unblocked import AsUnblockedAssignmentPermission, AS_UNBLOCKED_CAPABILITY, AS_UNBLOCKED_HANDLER
+from ..toughness_assignment_model import ToughnessAssignmentSpec,TOUGHNESS_ASSIGNMENT_CAPABILITY,TOUGHNESS_ASSIGNMENT_HANDLER
 from ..rules.capabilities import load_default_capability_registry
 from ..trigger_participation import TriggerMultiplierSpec, WardSpec
 from .component_registry import RuntimeComponentRegistry, exact_fields
@@ -230,6 +231,23 @@ class AsUnblockedAssignmentFragmentHandler:
 
     def validate(self,descriptor):
         return _fragment(descriptor,handler_id=self.handler_id,event=self.event,expected_type=AsUnblockedAssignmentPermission)
+
+    def lower(self,descriptor,context):
+        del context
+        return (self.validate(descriptor),)
+
+
+@dataclass(frozen=True,slots=True)
+class ToughnessAssignmentFragmentHandler:
+    handler_id: str = TOUGHNESS_ASSIGNMENT_HANDLER
+    schema_version: int = 1
+    family: str = 'ability.static.toughness_assignment'
+    event: str = 'characteristics.evaluate'
+    rule_references: tuple[str,...] = ('510.1a','510.1c','510.1d','613.1f')
+    capability_dependencies: tuple[str,...] = (TOUGHNESS_ASSIGNMENT_CAPABILITY,)
+
+    def validate(self,descriptor):
+        return _fragment(descriptor,handler_id=self.handler_id,event=self.event,expected_type=ToughnessAssignmentSpec)
 
     def lower(self,descriptor,context):
         del context
@@ -1305,6 +1323,7 @@ def default_ability_fragment_registry() -> AbilityFragmentRegistry:
             DeclarationCostAbilityFragmentHandler(),
             DefenderPermissionAbilityFragmentHandler(),
             AsUnblockedAssignmentFragmentHandler(),
+            ToughnessAssignmentFragmentHandler(),
             DeclarationRequirementAbilityFragmentHandler(),
             DeclarationRestrictionAbilityFragmentHandler(),
             DeclarationRestrictionComponentHandler(),

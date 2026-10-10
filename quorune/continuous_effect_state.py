@@ -16,6 +16,7 @@ from .declaration_rule_effects import (
     ResolutionDeclarationRuleEffect,
 )
 from .as_unblocked_rule import AsUnblockedAssignmentRule
+from .toughness_assignment_rule import ResolvedToughnessAssignmentRule
 from .declaration_fragments import DeclarationRestrictionTemplate
 from .object_predicate import ObjectQuerySpec
 from .object_query import object_matches_query, object_query_result
@@ -168,7 +169,7 @@ def commit_continuous_effect(
 
     if not isinstance(
         effect,
-        (ContinuousEffect, ResolutionDeclarationRuleEffect, AsUnblockedAssignmentRule),
+        (ContinuousEffect, ResolutionDeclarationRuleEffect, AsUnblockedAssignmentRule, ResolvedToughnessAssignmentRule),
     ):
         raise ContinuousEffectStateError(
             "Continuous-effect commits require a typed effect"

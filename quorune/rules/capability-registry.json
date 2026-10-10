@@ -1482,6 +1482,92 @@
       "status": "trusted"
     },
     {
+      "id": "combat.damage.assignment.toughness",
+      "version": 1,
+      "official_rules": [
+        "510.1a",
+        "510.1c",
+        "510.1d",
+        "608.2h",
+        "613.1f",
+        "613.1g",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Read the current toughness instead of power only for combat assignment through one source-local typed rule and the canonical combat snapshot.",
+        "inputs": [
+          "current external or intrinsic source rule",
+          "temporary incarnation-locked target assignment rule",
+          "closed current controller/global/attachment recipient predicate",
+          "full effective power and toughness",
+          "current assignment-step eligibility and recipient identities"
+        ],
+        "outputs": [
+          "attackers and blockers assign current nonnegative toughness",
+          "ordinary power and toughness characteristics remain unchanged",
+          "source/recipient ability removal are distinct",
+          "same advertised and accepted assignment quantity",
+          "temporary rule survives recipient ability removal and expires at end of turn",
+          "exact replay"
+        ],
+        "exclusions": [
+          "independently unsupported body or cost siblings",
+          "unknown comparisons or recipient predicates",
+          "unrepresented rule-stat choices"
+        ]
+      },
+      "dependencies": [
+        "combat.damage.assignment.canonical"
+      ],
+      "implementation_components": [
+        "quorune.toughness_assignment_model.ToughnessAssignmentSpec",
+        "quorune.toughness_assignment_rule.ResolvedToughnessAssignmentRule",
+        "quorune.rules.toughness_assignment_effect.apply_temporary_toughness_assignment",
+        "quorune.toughness_assignment.current_toughness_assignment",
+        "quorune.compiler.toughness_assignment_templates.static_toughness_assignment_handler",
+        "quorune.semantic_runtime.ability_fragments.ToughnessAssignmentFragmentHandler",
+        "quorune.combat_damage_assignment.build_combat_damage_assignment_proposal"
+      ],
+      "positive_tests": [
+        "test_static_rule_shapes_preserve_scope_and_separate_characteristic_prefix"
+      ],
+      "negative_tests": [
+        "test_toughness_rule_codec_and_unknown_subjects_fail_closed"
+      ],
+      "interaction_tests": [
+        "test_snapshot_assignment_uses_current_toughness_for_attacker_and_blocker"
+      ],
+      "multiplayer_tests": [
+        "test_actual_doran_changes_both_sides_combat_assignment_and_replays"
+      ],
+      "privacy_tests": [
+        "test_actual_doran_changes_both_sides_combat_assignment_and_replays"
+      ],
+      "replay_tests": [
+        "test_actual_doran_changes_both_sides_combat_assignment_and_replays"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Blocking toughness assignment or canonical combat assignment prevents current trusted closure.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Dropping the current rule restores power-based damage and fails the actual unequal-stat witness.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
       "id": "library.search.fixed_counted",
       "version": 1,
       "official_rules": [

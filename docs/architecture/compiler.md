@@ -381,6 +381,17 @@ assignment controllers, Banding and independently unsupported siblings remain
 residual. This family does not remove blocked status or redirect damage to
 the attacked permanent's controller.
 
+`compiler/toughness_assignment_templates.py` lowers the closed rule that
+creatures assign combat damage using toughness. Its source-local fragment
+records intrinsic, attached, global or controller scope, current Defender or
+Vigilance qualifiers, fixed toughness-greater-than-power comparison and
+controller-turn applicability. Coupled attached stat bonuses and Defender
+permissions retain their existing characteristic owners. Temporary direct
+creature targets create duration-bound rule effects through the canonical
+journal; the represented Haste/Defender/toughness instruction composes three
+independently closed results over one shared target. Unsupported comparisons,
+result siblings and cost semantics remain residual.
+
 `activation_condition_model.py` owns complete trailing activation
 restrictions shared by the compiler-pinned catalog and activation lowering.
 It represents controller upkeep and pre-attack turn windows plus fixed-range

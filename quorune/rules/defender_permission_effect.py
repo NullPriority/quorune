@@ -45,7 +45,8 @@ def temporary_defender_permission_capabilities(*,effects,target_schema,mechanic_
         if target_schema is not None:return ()
     elif selection=='$target.0':
         from .node_capability_shapes import direct_target_predicate_capabilities
-        if dict(target_schema or {})!={'zones':['battlefield'],'categories':['permanent'],'count':1,'types_any':['creature']}:return ()
+        from .permanent_predicate_capability_shapes import direct_permanent_target_schema_is_closed
+        if not direct_permanent_target_schema_is_closed(target_schema) or target_schema.get('types_any',target_schema.get('types_all'))!=['creature']:return ()
         dependencies.update(direct_target_predicate_capabilities(target_schema));dependencies.add('target.revalidate_resolution')
     else:return ()
     dependencies.update(cap for keyword in keywords for cap in FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES[keyword])

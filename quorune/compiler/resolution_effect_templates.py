@@ -5,6 +5,7 @@ from .whole_hand_discard_templates import whole_hand_discard_effect_template, wh
 from .hand_entry_templates import fixed_draw_then_hand_entry_template
 from .defender_permission_templates import temporary_defender_permission_template
 from .as_unblocked_templates import temporary_as_unblocked_template
+from .toughness_assignment_templates import temporary_toughness_assignment_template
 
 from typing import Any, Mapping, Sequence
 
@@ -113,6 +114,8 @@ def _source_context_resolution_template(
     text: str, *, card_name: str, source_is_permanent: bool | None,
     source_card_types: Sequence[str],
 ) -> CompiledEffectTemplate | None:
+    toughness=temporary_toughness_assignment_template(text)
+    if toughness is not None:return toughness
     as_unblocked=temporary_as_unblocked_template(text,source_name=card_name,source_is_permanent=source_is_permanent,source_card_types=source_card_types)
     if as_unblocked is not None:return as_unblocked
     permission=temporary_defender_permission_template(text,source_name=card_name,source_is_permanent=source_is_permanent,source_card_types=tuple(source_card_types))

@@ -344,6 +344,7 @@
       "test_spells_abilities_effects_general",
       "test_stack_counter_rules",
       "test_storm_rules",
+      "test_toughness_assignment",
       "test_typed_activated_ability_catalog",
       "test_typed_dynamic_characteristics",
       "test_typed_query_self_characteristics",

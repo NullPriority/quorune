@@ -391,6 +391,11 @@
       ]
     },
     {
+      "id": "toughness-combat-assignment-contract",
+      "patterns": ["quorune/toughness_assignment.py", "quorune/toughness_assignment_model.py", "quorune/toughness_assignment_rule.py", "quorune/compiler/toughness_assignment_templates.py", "quorune/rules/toughness_assignment_effect.py", "quorune/rules/closed_effect_program_shapes.py", "tests/fixtures/toughness-assignment-cards.json"],
+      "test_modules": ["test_toughness_assignment", "test_combat_damage_assignment", "test_combat_damage_snapshot", "test_combat_damage_rules", "test_closed_effect_programs", "test_defender_permission", "test_card_program_trust"]
+    },
+    {
       "id": "as-unblocked-assignment-contract",
       "patterns": ["quorune/as_unblocked.py", "quorune/as_unblocked_rule.py", "quorune/compiler/as_unblocked_templates.py", "quorune/rules/as_unblocked_effect.py", "quorune/combat_damage_assignment.py", "quorune/combat_damage_values.py", "quorune/combat_damage_snapshot.py", "quorune/combat_damage_engine_adapter.py", "tests/fixtures/as-unblocked-assignment-cards.json"],
       "test_modules": ["test_as_unblocked_assignment", "test_combat_damage_assignment", "test_combat_damage_snapshot", "test_combat_damage_sequence", "test_combat_damage_rules", "test_combat_keyword_rules", "test_card_program_trust", "test_choice_forms"]

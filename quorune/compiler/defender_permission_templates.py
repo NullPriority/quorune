@@ -80,8 +80,7 @@ def temporary_defender_permission_template(text: str, *, source_name: str,
     if selected is None:
         return None
     selection, schema = selected
-    if schema is not None and dict(schema)!={'zones':['battlefield'],'categories':['permanent'],'count':1,'types_any':['creature']}:
-        return None
+    if schema is not None and schema.get('types_any',schema.get('types_all'))!=['creature']:return None
     keywords = _keyword_list(match['keywords'] or match['pt_keywords']) if (match['keywords'] or match['pt_keywords']) else ()
     if keywords is None:
         return None
