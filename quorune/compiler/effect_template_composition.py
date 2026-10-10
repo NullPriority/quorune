@@ -17,7 +17,7 @@ from .optional_payment_templates import fixed_optional_mana_payment_template
 from .counter_templates import targeted_controller_payment_template
 from .token_copy_templates import token_copy_recipe_template
 from .resolution_condition_templates import resolution_condition_template
-from .query_counter_sequences import query_counter_sequence_template
+from .query_counter_sequences import ordered_quantity_sequence_template
 
 
 CompiledEffectTemplate = tuple[
@@ -133,7 +133,7 @@ def reviewed_effect_template_composition(
         )
         if declared is not None:
             return declared
-    query_counters = query_counter_sequence_template(text, source_name=source_name, compile_atomic=compile_atomic, compile_fixed=compile_fixed)
+    query_counters = ordered_quantity_sequence_template(text, source_name=source_name, compile_atomic=compile_atomic, compile_fixed=compile_fixed)
     if query_counters is not None:return query_counters
     sequence = fixed_effect_clause_sequence_template(
         text,

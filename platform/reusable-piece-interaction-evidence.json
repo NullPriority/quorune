@@ -8354,6 +8354,51 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Copper Tablet triggers at D upkeep and its fixed nontargeted result deals one damage to D through the canonical damage owner, recording the exact public turn-history fact and replaying from before step advancement."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_union_counts_hand_after_its_draw_and_replays",
+      "piece_ids": [
+        "capability.quantity_expression.public_query_effect_amount",
+        "capability.resolution.effect_program.closed_components"
+      ],
+      "capability_ids": [
+        "quantity_expression.public_query_effect_amount",
+        "resolution.effect_program.closed_components"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Union of the Third Path first draws, then gains life equal to the caster current hand count after that draw, with authenticated rejection, hidden projection, save/load and pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_mind_unbound_counter_is_counted_by_later_draw",
+      "piece_ids": [
+        "capability.quantity_expression.scalar_effect_amount",
+        "capability.resolution.effect_program.closed_components"
+      ],
+      "capability_ids": [
+        "quantity_expression.scalar_effect_amount",
+        "resolution.effect_program.closed_components"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Mind Unbound upkeep places a lore counter before its source-scalar quantity reads the resulting count and draws exactly that many cards, with action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_pending_counter_replacement_resumes_once_before_later_quantity",
+      "piece_ids": [
+        "capability.counter.placement.quantity_replacement",
+        "capability.resolution.effect_program.closed_components"
+      ],
+      "capability_ids": [
+        "counter.placement.quantity_replacement",
+        "resolution.effect_program.closed_components"
+      ],
+      "interaction_order": 2,
+      "assertion": "A represented generic counter-then-draw activation suspends for competing Hardened Scales and Branching Evolution replacements. Pending save/load and private chooser validation preserve one placement, then draw exactly the final source counter count."
     }
   ]
 }

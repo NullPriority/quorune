@@ -9,6 +9,15 @@ maintenance: "hand-maintained"
 
 # Typed semantic handlers
 
+Bounded ordered effect programs can compose independently closed public-query
+and source-scalar result amounts. Each instruction reads its quantity at its
+printed resolution position: an earlier draw, counter placement, or token
+creation affects a later count. A declaration retains its own binding and
+continuation cache; the program never evaluates all quantities in advance.
+Pending replacement choices resume at the same cursor without repeating prior
+mutations. Linked-result, conditional, ambiguous shared subjects, and multiple
+independent target groups retain their unsupported boundaries.
+
 Typed semantic handlers execute one immediate CardProgram instruction. They
 translate a validated typed node and bounded immutable rules query into typed
 intents. Canonical engine or focused mutation owners commit those intents.

@@ -561,6 +561,7 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
     from ..rules.fixed_controller_effect_shapes import fixed_life_node_capabilities
     from ..rules.token_creation_capability_shapes import fixed_token_creation_node_capabilities
     from ..rules.counter_placement_capability_shapes import fixed_counter_placement_node_capabilities
+    from ..rules.closed_effect_program_shapes import closed_effect_program_node_capabilities
 
     if not {PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC, SCALAR_AMOUNT_MECHANIC}.intersection(program.coverage):
         return False
@@ -569,13 +570,22 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
         return False
     effects, mechanics = context
     required = set(required_dependencies)
+    amount_owners = {
+        capability
+        for mechanic, capability in (
+            (SCALAR_AMOUNT_MECHANIC, SCALAR_AMOUNT_CAPABILITY),
+            (PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC, PUBLIC_QUERY_AMOUNT_CAPABILITY),
+        )
+        if mechanic in program.coverage
+    }
     if (
-        (SCALAR_AMOUNT_CAPABILITY if SCALAR_AMOUNT_MECHANIC in program.coverage else PUBLIC_QUERY_AMOUNT_CAPABILITY) not in required
+        not amount_owners.issubset(required)
         or not required.issubset(program.capability_dependencies)
     ):
         return False
     return any(
-        resolver(effects=effects, target_schema=program.target_schema, mechanic_ids=mechanics)
+        bool(dependencies:=resolver(effects=effects, target_schema=program.target_schema, mechanic_ids=mechanics))
+        and set(dependencies).issubset(program.capability_dependencies)
         for resolver in (
             fixed_damage_node_capabilities,
             fixed_draw_node_capabilities,
@@ -584,6 +594,7 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
             fixed_target_characteristics_node_capabilities,
             fixed_source_characteristics_node_capabilities,
             fixed_counter_placement_node_capabilities,
+            closed_effect_program_node_capabilities,
         )
     )
 
@@ -594,7 +605,11 @@ def public_query_amount_shape_context(
     """Return fixed-value inputs for existing capability shape owners."""
 
     if SCALAR_AMOUNT_MECHANIC in mechanics:
-        return scalar_amount_shape_context(effects, mechanics)
+        scalar=scalar_amount_shape_context(effects, mechanics)
+        if scalar is None:return None
+        if PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC in scalar[1]:
+            return public_query_amount_shape_context(*scalar)
+        return scalar
     if DECLARED_EFFECT_AMOUNT_MECHANIC in mechanics:
         return declared_amount_shape_context(effects, mechanics)
     if PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC not in mechanics:

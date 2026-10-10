@@ -1651,6 +1651,23 @@
       ]
     },
     {
+      "id": "ordered-result-quantity-contract",
+      "patterns": [
+        "quorune/compiler/query_counter_sequences.py",
+        "quorune/compiler/public_query_effect_amounts.py",
+        "quorune/compiler/effect_template_composition.py",
+        "tests/fixtures/ordered-quantity-results.json"
+      ],
+      "test_modules": [
+        "test_ordered_quantity_results",
+        "test_public_query_effect_amounts",
+        "test_source_counter_amounts",
+        "test_scalar_effect_amounts",
+        "test_card_program_trust",
+        "test_closed_effect_programs"
+      ]
+    },
+    {
       "id": "scheduled-player-result-contract",
       "patterns": [
         "quorune/compiler/scheduled_player_triggers.py",
