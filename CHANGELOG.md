@@ -31,6 +31,10 @@ maintenance: "hand-maintained"
 - Preserve explicit sacrifice provenance for Fading and Vanishing cleanup
   through zone replacements, normalized trigger occurrences, and turn history.
 
+- Activate fixed ordinary-mana Embalm and Eternalize through source exile and
+  canonical token-copy recipes. Their color, Zombie type, no mana cost and
+  Eternalize base stats remain copiable through token replacements and entry.
+
 - Apply fixed player hexproof and shroud through shared target legality,
   following current trusted source abilities and control without persisting
   player keyword state. Source departure and entry update target revalidation.

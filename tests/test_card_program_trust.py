@@ -217,6 +217,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "ability.static.component_scope",
                 "ability.static.protection",
                 "ability.static.player_target_protection",
+                "ability.activated.graveyard_copy_keyword",
                 "ability.static.partner_with",
                 "ability.static.query_characteristic_modifier",
                 "ability.static.query_power_toughness_definition",

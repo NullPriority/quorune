@@ -8846,6 +8846,36 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual trusted Vedalken Orrery permits Aegis of the Gods in response to Shock; new current player hexproof invalidates the selected player at resolution, preserving life and exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_canonical_token_replacement_pending_reload_retains_paid_source_snapshot",
+      "piece_ids": [
+        "capability.activation.graveyard_copy_keyword.fixed_mana",
+        "capability.token.creation.quantity_replacement"
+      ],
+      "capability_ids": [
+        "activation.graveyard_copy_keyword.fixed_mana",
+        "token.creation.quantity_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "An actual Sacred Cat Embalm activation pays and exiles once before generic trusted multiplier fixtures suspend token creation. Pending reload and wrong-principal rollback retain the original no-mana-cost white Zombie copy snapshot; four final tokens and exact replay prove the canonical interaction without asserting real multiplier producer admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_embalm_token_keeps_entry_trigger_and_copyable_exceptions",
+      "piece_ids": [
+        "capability.activation.graveyard_copy_keyword.fixed_mana",
+        "capability.trigger.event.qualified_zone_change"
+      ],
+      "capability_ids": [
+        "activation.graveyard_copy_keyword.fixed_mana",
+        "trigger.event.qualified_zone_change"
+      ],
+      "interaction_order": 2,
+      "assertion": "An actual Anointer Priest Embalm activation creates a token whose own entry trigger gains life through ordinary trigger placement and exact replay, while copiable color/type/no-mana-cost values remain intact."
     }
   ]
 }

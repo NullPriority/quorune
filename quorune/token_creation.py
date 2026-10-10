@@ -1291,8 +1291,10 @@ def create_tokens(
     """Resolve creation replacements, commit tokens, and emit enter events."""
 
     host._require_seat(controller, in_game=True)
-    if copy_source_zone not in {"battlefield", "exile"}:
+    if copy_source_zone not in {"battlefield", "exile", "graveyard"}:
         raise TokenCreationError("Token-copy source zone is unsupported")
+    if copy_source_zone == "graveyard" and copy_snapshot is None:
+        raise TokenCreationError("Graveyard token-copy source requires a pinned snapshot")
     if copy_source_zone != "battlefield" and not copy_of:
         raise TokenCreationError(
             "A nonbattlefield token-copy zone requires a copy source"

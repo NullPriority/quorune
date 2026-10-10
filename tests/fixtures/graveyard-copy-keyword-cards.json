@@ -1,0 +1,657 @@
+{
+  "cards": [
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Double strike",
+        "Eternalize"
+      ],
+      "layout": "token",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "not_legal",
+        "competitivebrawl": "not_legal",
+        "duel": "not_legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "not_legal",
+        "modern": "not_legal",
+        "oathbreaker": "not_legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "not_legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Adorned Pouncer",
+      "oracle_id": "80b8ee3d-4174-4f47-a533-a3db1e703382",
+      "oracle_text": "Double strike\nEternalize {3}{W}{W} ({3}{W}{W}, Exile this card from your graveyard: Create a token that's a copy of it, except it's a 4/4 black Zombie Cat with no mana cost. Eternalize only as a sorcery.)",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2017-07-14",
+      "toughness": "4",
+      "type_line": "Token Creature — Zombie Cat"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{W}",
+      "name": "Anointed Procession",
+      "oracle_id": "7246d45b-2185-4cdd-981b-5419b7d52bce",
+      "oracle_text": "If an effect would create one or more tokens under your control, it creates twice that many of those tokens instead.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2017-04-28",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Embalm"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Anointer Priest",
+      "oracle_id": "4e0b9273-6614-41a8-9738-959349c0717b",
+      "oracle_text": "Whenever a creature token you control enters, you gain 1 life.\nEmbalm {3}{W} ({3}{W}, Exile this card from your graveyard: Create a token that's a copy of it, except it's a white Zombie Human Cleric with no mana cost. Embalm only as a sorcery.)",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2017-04-28",
+      "toughness": "3",
+      "type_line": "Creature — Human Cleric"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Embalm"
+      ],
+      "layout": "token",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "not_legal",
+        "competitivebrawl": "not_legal",
+        "duel": "not_legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "not_legal",
+        "modern": "not_legal",
+        "oathbreaker": "not_legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "not_legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Aven Initiate",
+      "oracle_id": "c872012d-b598-4076-8385-2e3771c0306f",
+      "oracle_text": "Flying\nEmbalm {6}{U} ({6}{U}, Exile this card from your graveyard: Create a token that's a copy of it, except it's a white Zombie Bird Warrior with no mana cost. Embalm only as a sorcery.)",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2022-07-08",
+      "toughness": "2",
+      "type_line": "Token Creature — Zombie Bird Warrior"
+    },
+    {
+      "oracle_id": "01546b7d-a233-4176-8843-d732074dc5b6",
+      "name": "Doubling Season",
+      "mana_cost": "{4}{G}",
+      "cmc": 5.0,
+      "type_line": "Enchantment",
+      "oracle_text": "If an effect would create one or more tokens under your control, it creates twice that many of those tokens instead.\nIf an effect would put one or more counters on a permanent you control, it puts twice that many of those counters on that permanent instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Trample",
+        "Embalm"
+      ],
+      "layout": "token",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "not_legal",
+        "competitivebrawl": "not_legal",
+        "duel": "not_legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "not_legal",
+        "modern": "not_legal",
+        "oathbreaker": "not_legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "not_legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Honored Hydra",
+      "oracle_id": "db63d999-97a6-4a62-83bd-e0677e6f8956",
+      "oracle_text": "Trample\nEmbalm {3}{G} ({3}{G}, Exile this card from your graveyard: Create a token that's a copy of it, except it's a white Zombie Snake Hydra with no mana cost. Embalm only as a sorcery.)",
+      "power": "6",
+      "produced_mana": [],
+      "released_at": "2017-04-28",
+      "toughness": "6",
+      "type_line": "Token Creature — Zombie Snake Hydra"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Pull from Eternity",
+      "oracle_id": "2903bd66-6948-445b-a18a-12e2ce1a86c3",
+      "oracle_text": "Put target face-up exiled card into its owner's graveyard.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2006-10-06",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Lifelink",
+        "Embalm"
+      ],
+      "layout": "token",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "not_legal",
+        "competitivebrawl": "not_legal",
+        "duel": "not_legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "not_legal",
+        "modern": "not_legal",
+        "oathbreaker": "not_legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "not_legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Sacred Cat",
+      "oracle_id": "d85ea576-a794-44bf-b405-1f1c49477409",
+      "oracle_text": "Lifelink\nEmbalm {W} ({W}, Exile this card from your graveyard: Create a token that's a copy of it, except it's a white Zombie Cat with no mana cost. Embalm only as a sorcery.)",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2017-04-28",
+      "toughness": "1",
+      "type_line": "Token Creature — Zombie Cat"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Embalm"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}",
+      "name": "Tah-Crop Skirmisher",
+      "oracle_id": "6fab0fa0-d082-414e-9bcf-edc0fc1f6211",
+      "oracle_text": "Embalm {3}{U} ({3}{U}, Exile this card from your graveyard: Create a token that's a copy of it, except it's a white Zombie Snake Warrior with no mana cost. Embalm only as a sorcery.)",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2017-04-28",
+      "toughness": "1",
+      "type_line": "Creature — Snake Warrior"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "Battles will enter with double the normal number of defense counters.",
+      "oracle_id": "01546b7d-a233-4176-8843-d732074dc5b6",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Doubling Season affects permanents that enter with counters.",
+      "oracle_id": "01546b7d-a233-4176-8843-d732074dc5b6",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Everything that is specified by the effect creating the original token or tokens will also be true about the additional token or tokens created by Doubling Season's replacement effect. For example, if an effect tells you to create a token \"tapped and attacking,\" the additional tokens will also be tapped and attacking.",
+      "oracle_id": "01546b7d-a233-4176-8843-d732074dc5b6",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If there are two Doubling Seasons on the battlefield, then the number of tokens or counters is four times the original number. If there are three on the battlefield, then the number of tokens or counters is eight times the original number, and so on.",
+      "oracle_id": "01546b7d-a233-4176-8843-d732074dc5b6",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Planeswalkers will enter with double the normal number of loyalty counters. However, if you activate an ability whose cost has you put loyalty counters on a planeswalker, the number you put on isn't doubled. This is because those counters are put on as a cost, not as an effect.",
+      "oracle_id": "01546b7d-a233-4176-8843-d732074dc5b6",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Pull from Eternity affects a card that’s haunting a creature, the haunt effect ends.",
+      "oracle_id": "2903bd66-6948-445b-a18a-12e2ce1a86c3",
+      "published_at": "2006-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Pull from Eternity affects a suspended card, the card loses its time counters and is no longer suspended. (This doesn’t trigger the last ability of suspend.)",
+      "oracle_id": "2903bd66-6948-445b-a18a-12e2ce1a86c3",
+      "published_at": "2006-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "Pull from Eternity targets a card in the exile zone. A card is only face down in the exile zone if the effect that put it there specifically says so.",
+      "oracle_id": "2903bd66-6948-445b-a18a-12e2ce1a86c3",
+      "published_at": "2006-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "For each card with embalm, a corresponding game play supplement token can be found in some Amonkhet booster packs. These supplements are not required to play with cards with embalm; you can use the same items to represent an embalmed token as you would any other token.",
+      "oracle_id": "4e0b9273-6614-41a8-9738-959349c0717b",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Anointer Priest enters the battlefield at the same time as a creature token, its ability triggers for that other creature. For example, if you control Anointed Procession and embalm Anointer Priest, the triggered ability of each one triggers twice and you gain a total of 4 life.",
+      "oracle_id": "4e0b9273-6614-41a8-9738-959349c0717b",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Anointer Priest is a token, most likely because it's embalmed, it will cause its own ability to trigger when it enters the battlefield.",
+      "oracle_id": "4e0b9273-6614-41a8-9738-959349c0717b",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the card copied by the token had any \"when [this permanent] enters the battlefield\" abilities, then the token also has those abilities and will trigger them when it's created. Similarly, any \"as [this permanent] enters the battlefield\" or \"[this permanent] enters the battlefield with\" abilities that the token has copied will also work.",
+      "oracle_id": "4e0b9273-6614-41a8-9738-959349c0717b",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "The token copies exactly what was printed on the original card and nothing else. It doesn't copy any information about the object the card was before it was put into your graveyard.",
+      "oracle_id": "4e0b9273-6614-41a8-9738-959349c0717b",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "The token is a Zombie in addition to its other types and is white instead of its other colors. It has no mana cost, and thus its mana value is 0. These are copiable values of the token that other effects may copy.",
+      "oracle_id": "4e0b9273-6614-41a8-9738-959349c0717b",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a spell or ability puts a creature card with embalm into your graveyard during your main phase, you'll have priority immediately after that spell or ability resolves. You can activate the creature card's embalm ability before any player can exile it with an effect, such as that of Crook of Condemnation, if it's legal for you to do so.",
+      "oracle_id": "4e0b9273-6614-41a8-9738-959349c0717b",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once you've activated an embalm ability, the card is immediately exiled. Opponents can't try to stop the ability by exiling the card with an effect such as that of Crook of Condemnation.",
+      "oracle_id": "4e0b9273-6614-41a8-9738-959349c0717b",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "For each card with embalm, a corresponding game play supplement token can be found in some Amonkhet booster packs. These supplements are not required to play with cards with embalm; you can use the same items to represent an embalmed token as you would any other token.",
+      "oracle_id": "6fab0fa0-d082-414e-9bcf-edc0fc1f6211",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "The token copies exactly what was printed on the original card and nothing else. It doesn't copy any information about the object the card was before it was put into your graveyard.",
+      "oracle_id": "6fab0fa0-d082-414e-9bcf-edc0fc1f6211",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "The token is a Zombie in addition to its other types and is white instead of its other colors. It has no mana cost, and thus its mana value is 0. These are copiable values of the token that other effects may copy.",
+      "oracle_id": "6fab0fa0-d082-414e-9bcf-edc0fc1f6211",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a spell or ability puts a creature card with embalm into your graveyard during your main phase, you'll have priority immediately after that spell or ability resolves. You can activate the creature card's embalm ability before any player can exile it with an effect, such as that of Crook of Condemnation, if it's legal for you to do so.",
+      "oracle_id": "6fab0fa0-d082-414e-9bcf-edc0fc1f6211",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once you've activated an embalm ability, the card is immediately exiled. Opponents can't try to stop the ability by exiling the card with an effect such as that of Crook of Condemnation.",
+      "oracle_id": "6fab0fa0-d082-414e-9bcf-edc0fc1f6211",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "All of the tokens enter the battlefield simultaneously. They’ll be created with the same name, color, type and subtype, abilities, power, toughness, and so on.",
+      "oracle_id": "7246d45b-2185-4cdd-981b-5419b7d52bce",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect creates more than one kind of token, it’ll create twice as many of each kind. For example, if you cast Bestial Menace while controlling Anointed Procession, you’ll create two Snake tokens, two Wolf tokens, and two Elephant tokens.",
+      "oracle_id": "7246d45b-2185-4cdd-981b-5419b7d52bce",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the effect creating the tokens instructs you to do something with those tokens at a later time, like exiling them at the end of combat, you’ll do that for all the tokens.",
+      "oracle_id": "7246d45b-2185-4cdd-981b-5419b7d52bce",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the token you create has any “as [this permanent] enters the battlefield” or “[this permanent] enters the battlefield with” abilities, first determine how many tokens are being created, then apply those abilities individually for each one. For example, if a token with “You may have [this permanent] enter the battlefield as a copy of any creature on the battlefield” would be created (such as an embalmed Vizier of Many Faces), the resulting two tokens can each copy a different creature.",
+      "oracle_id": "7246d45b-2185-4cdd-981b-5419b7d52bce",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control two Anointed Processions, then the number of tokens created is four times the original number. If you control three, then the number of tokens created is eight times the original number, and so on.",
+      "oracle_id": "7246d45b-2185-4cdd-981b-5419b7d52bce",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "There are many important moments in the story, but the most crucial—called “story spotlights”—are shown on cards. These cards have the Planeswalker symbol in their text box; this symbol has no effect on gameplay. You can read more about these events in the official Magic fiction at http://www.mtgstory.com.",
+      "oracle_id": "7246d45b-2185-4cdd-981b-5419b7d52bce",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

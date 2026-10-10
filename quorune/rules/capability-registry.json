@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 211,
+  "registry_version": 212,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -12618,6 +12618,98 @@
       "dependency_fail_closed_rationale": "Omitting target revalidation blocks exact player protection compilation.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Omitting player protection fails the controller-grid keyword verdict witness.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "activation.graveyard_copy_keyword.fixed_mana",
+      "version": 1,
+      "official_rules": [
+        "702.128",
+        "702.128a",
+        "702.129",
+        "702.129a",
+        "602.2a",
+        "602.2b",
+        "601.2h",
+        "707.2",
+        "707.9",
+        "111.3",
+        "202.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Fixed ordinary mana Embalm and Eternalize activate from the owner graveyard at sorcery speed, exile their source as cost and create a token through canonical copy exceptions.",
+        "inputs": [
+          "source-spanned keyword mana cost",
+          "owner graveyard source identity",
+          "pre-cost copiable source snapshot"
+        ],
+        "outputs": [
+          "atomic paid source exile",
+          "white Embalm or black 4/4 Eternalize Zombie token with no mana cost"
+        ],
+        "exclusions": [
+          "nonmana, hybrid, variable and snow keyword costs",
+          "unsupported whole-card siblings",
+          "runtime Oracle interpretation"
+        ]
+      },
+      "dependencies": [
+        "activation.source_zone_change.fixed",
+        "token.creation.fixed_copy"
+      ],
+      "implementation_components": [
+        "quorune.compiler.graveyard_copy_keyword_nodes.graveyard_copy_keyword_node",
+        "quorune.token_copy_recipes.TokenCopyExceptionSpec",
+        "quorune.token_copy_recipes.apply_copy_exception",
+        "quorune.token_copy_references.copy_source_context",
+        "quorune.token_copy_runtime.apply_copy_recipe",
+        "quorune.semantic_runtime.graveyard_copy_keyword.GraveyardCopyKeywordHandler"
+      ],
+      "positive_tests": [
+        "test_fixed_cost_keywords_lower_to_one_owner_exile_and_versioned_copy_exception",
+        "test_actual_fixed_embalm_and_eternalize_pay_exile_create_correct_tokens_and_replay"
+      ],
+      "negative_tests": [
+        "test_copy_exception_preserves_v1_bytes_and_rejects_forged_versions",
+        "test_copy_dependency_omission_and_unsupported_sibling_fail_closed",
+        "test_keyword_marker_and_graveyard_snapshot_guard_reject_forged_input",
+        "test_sorcery_timing_insufficient_payment_and_reused_source_reject_atomically"
+      ],
+      "interaction_tests": [
+        "test_actual_fixed_embalm_and_eternalize_pay_exile_create_correct_tokens_and_replay",
+        "test_actual_embalm_token_keeps_entry_trigger_and_copyable_exceptions",
+        "test_canonical_source_move_after_exile_cost_preserves_original_copy_snapshot",
+        "test_canonical_token_replacement_pending_reload_retains_paid_source_snapshot"
+      ],
+      "multiplayer_tests": [
+        "test_actual_fixed_embalm_and_eternalize_pay_exile_create_correct_tokens_and_replay"
+      ],
+      "privacy_tests": [
+        "test_actual_fixed_embalm_and_eternalize_pay_exile_create_correct_tokens_and_replay"
+      ],
+      "replay_tests": [
+        "test_actual_fixed_embalm_and_eternalize_pay_exile_create_correct_tokens_and_replay",
+        "test_actual_embalm_token_keeps_entry_trigger_and_copyable_exceptions",
+        "test_canonical_token_replacement_pending_reload_retains_paid_source_snapshot"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Omitting token-copy capability prevents exact keyword admission.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the no-mana-cost copy exception fails the exact applied copy-value witness while retaining other exceptions.",
       "blockers": [],
       "status": "trusted"
     }

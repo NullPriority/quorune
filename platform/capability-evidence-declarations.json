@@ -692,6 +692,390 @@
       "applicability_note": "Replay an explicit nonreversible Exhaust mana activation with the same selected output, usage journal, and final authoritative hash."
     },
     {
+      "capability_id": "activation.graveyard_copy_keyword.fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_graveyard_copy_keywords.GraveyardCopyRuntimeTests.test_actual_embalm_token_keeps_entry_trigger_and_copyable_exceptions",
+      "official_rule_ids": [
+        "702.128",
+        "702.128a",
+        "702.129",
+        "702.129a",
+        "602.2a",
+        "602.2b",
+        "601.2h",
+        "707.2",
+        "707.9",
+        "111.3",
+        "202.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed graveyard activation retains canonical cost and copy values, entry triggers and replay. Generic trusted token-multiplier fixture boundaries verify pending replacement save/load and paid-source snapshots without claiming their real Oracle producers supported."
+    },
+    {
+      "capability_id": "activation.graveyard_copy_keyword.fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_graveyard_copy_keywords.GraveyardCopyRuntimeTests.test_actual_fixed_embalm_and_eternalize_pay_exile_create_correct_tokens_and_replay",
+      "official_rule_ids": [
+        "702.128",
+        "702.128a",
+        "702.129",
+        "702.129a",
+        "602.2a",
+        "602.2b",
+        "601.2h",
+        "707.2",
+        "707.9",
+        "111.3",
+        "202.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Embalm and Eternalize use canonical source exile, original copiable values and versioned no-mana-cost/color/type/stats exceptions. Actual principal-bound graveyard activations retain rollback, token values and replay."
+    },
+    {
+      "capability_id": "activation.graveyard_copy_keyword.fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_graveyard_copy_keywords.GraveyardCopyRuntimeTests.test_canonical_source_move_after_exile_cost_preserves_original_copy_snapshot",
+      "official_rule_ids": [
+        "702.128",
+        "702.128a",
+        "702.129",
+        "702.129a",
+        "602.2a",
+        "602.2b",
+        "601.2h",
+        "707.2",
+        "707.9",
+        "111.3",
+        "202.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed graveyard activation retains canonical cost and copy values, entry triggers and replay. Generic trusted token-multiplier fixture boundaries verify pending replacement save/load and paid-source snapshots without claiming their real Oracle producers supported."
+    },
+    {
+      "capability_id": "activation.graveyard_copy_keyword.fixed_mana",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_graveyard_copy_keywords.GraveyardCopyRuntimeTests.test_canonical_token_replacement_pending_reload_retains_paid_source_snapshot",
+      "official_rule_ids": [
+        "702.128",
+        "702.128a",
+        "702.129",
+        "702.129a",
+        "602.2a",
+        "602.2b",
+        "601.2h",
+        "707.2",
+        "707.9",
+        "111.3",
+        "202.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed graveyard activation retains canonical cost and copy values, entry triggers and replay. Generic trusted token-multiplier fixture boundaries verify pending replacement save/load and paid-source snapshots without claiming their real Oracle producers supported."
+    },
+    {
+      "capability_id": "activation.graveyard_copy_keyword.fixed_mana",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_graveyard_copy_keywords.GraveyardCopyRuntimeTests.test_actual_fixed_embalm_and_eternalize_pay_exile_create_correct_tokens_and_replay",
+      "official_rule_ids": [
+        "702.128",
+        "702.128a",
+        "702.129",
+        "702.129a",
+        "602.2a",
+        "602.2b",
+        "601.2h",
+        "707.2",
+        "707.9",
+        "111.3",
+        "202.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Embalm and Eternalize use canonical source exile, original copiable values and versioned no-mana-cost/color/type/stats exceptions. Actual principal-bound graveyard activations retain rollback, token values and replay."
+    },
+    {
+      "capability_id": "activation.graveyard_copy_keyword.fixed_mana",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_graveyard_copy_keywords.GraveyardCopyCompilerTests.test_omitting_no_mana_cost_exception_mutant_is_killed",
+      "official_rule_ids": [
+        "702.128",
+        "702.128a",
+        "702.129",
+        "702.129a",
+        "602.2a",
+        "602.2b",
+        "601.2h",
+        "707.2",
+        "707.9",
+        "111.3",
+        "202.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Omitting the new no-mana-cost copy exception preserves printed mana cost and is rejected by the exact copy-value witness."
+    },
+    {
+      "capability_id": "activation.graveyard_copy_keyword.fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_graveyard_copy_keywords.GraveyardCopyCompilerTests.test_copy_dependency_omission_and_unsupported_sibling_fail_closed",
+      "official_rule_ids": [
+        "702.128",
+        "702.128a",
+        "702.129",
+        "702.129a",
+        "602.2a",
+        "602.2b",
+        "601.2h",
+        "707.2",
+        "707.9",
+        "111.3",
+        "202.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Embalm and Eternalize use canonical source exile, original copiable values and versioned no-mana-cost/color/type/stats exceptions. Actual principal-bound graveyard activations retain rollback, token values and replay."
+    },
+    {
+      "capability_id": "activation.graveyard_copy_keyword.fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_graveyard_copy_keywords.GraveyardCopyCompilerTests.test_copy_exception_preserves_v1_bytes_and_rejects_forged_versions",
+      "official_rule_ids": [
+        "702.128",
+        "702.128a",
+        "702.129",
+        "702.129a",
+        "602.2a",
+        "602.2b",
+        "601.2h",
+        "707.2",
+        "707.9",
+        "111.3",
+        "202.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Embalm and Eternalize use canonical source exile, original copiable values and versioned no-mana-cost/color/type/stats exceptions. Actual principal-bound graveyard activations retain rollback, token values and replay."
+    },
+    {
+      "capability_id": "activation.graveyard_copy_keyword.fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_graveyard_copy_keywords.GraveyardCopyCompilerTests.test_keyword_marker_and_graveyard_snapshot_guard_reject_forged_input",
+      "official_rule_ids": [
+        "702.128",
+        "702.128a",
+        "702.129",
+        "702.129a",
+        "602.2a",
+        "602.2b",
+        "601.2h",
+        "707.2",
+        "707.9",
+        "111.3",
+        "202.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed graveyard activation retains canonical cost and copy values, entry triggers and replay. Generic trusted token-multiplier fixture boundaries verify pending replacement save/load and paid-source snapshots without claiming their real Oracle producers supported."
+    },
+    {
+      "capability_id": "activation.graveyard_copy_keyword.fixed_mana",
+      "evidence_class": "negative",
+      "test_id": "tests.test_graveyard_copy_keywords.GraveyardCopyRuntimeTests.test_sorcery_timing_insufficient_payment_and_reused_source_reject_atomically",
+      "official_rule_ids": [
+        "702.128",
+        "702.128a",
+        "702.129",
+        "702.129a",
+        "602.2a",
+        "602.2b",
+        "601.2h",
+        "707.2",
+        "707.9",
+        "111.3",
+        "202.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed graveyard activation retains canonical cost and copy values, entry triggers and replay. Generic trusted token-multiplier fixture boundaries verify pending replacement save/load and paid-source snapshots without claiming their real Oracle producers supported."
+    },
+    {
+      "capability_id": "activation.graveyard_copy_keyword.fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_graveyard_copy_keywords.GraveyardCopyCompilerTests.test_fixed_cost_keywords_lower_to_one_owner_exile_and_versioned_copy_exception",
+      "official_rule_ids": [
+        "702.128",
+        "702.128a",
+        "702.129",
+        "702.129a",
+        "602.2a",
+        "602.2b",
+        "601.2h",
+        "707.2",
+        "707.9",
+        "111.3",
+        "202.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Embalm and Eternalize use canonical source exile, original copiable values and versioned no-mana-cost/color/type/stats exceptions. Actual principal-bound graveyard activations retain rollback, token values and replay."
+    },
+    {
+      "capability_id": "activation.graveyard_copy_keyword.fixed_mana",
+      "evidence_class": "positive",
+      "test_id": "tests.test_graveyard_copy_keywords.GraveyardCopyRuntimeTests.test_actual_fixed_embalm_and_eternalize_pay_exile_create_correct_tokens_and_replay",
+      "official_rule_ids": [
+        "702.128",
+        "702.128a",
+        "702.129",
+        "702.129a",
+        "602.2a",
+        "602.2b",
+        "601.2h",
+        "707.2",
+        "707.9",
+        "111.3",
+        "202.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Embalm and Eternalize use canonical source exile, original copiable values and versioned no-mana-cost/color/type/stats exceptions. Actual principal-bound graveyard activations retain rollback, token values and replay."
+    },
+    {
+      "capability_id": "activation.graveyard_copy_keyword.fixed_mana",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_graveyard_copy_keywords.GraveyardCopyRuntimeTests.test_actual_fixed_embalm_and_eternalize_pay_exile_create_correct_tokens_and_replay",
+      "official_rule_ids": [
+        "702.128",
+        "702.128a",
+        "702.129",
+        "702.129a",
+        "602.2a",
+        "602.2b",
+        "601.2h",
+        "707.2",
+        "707.9",
+        "111.3",
+        "202.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Embalm and Eternalize use canonical source exile, original copiable values and versioned no-mana-cost/color/type/stats exceptions. Actual principal-bound graveyard activations retain rollback, token values and replay."
+    },
+    {
+      "capability_id": "activation.graveyard_copy_keyword.fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_graveyard_copy_keywords.GraveyardCopyRuntimeTests.test_actual_embalm_token_keeps_entry_trigger_and_copyable_exceptions",
+      "official_rule_ids": [
+        "702.128",
+        "702.128a",
+        "702.129",
+        "702.129a",
+        "602.2a",
+        "602.2b",
+        "601.2h",
+        "707.2",
+        "707.9",
+        "111.3",
+        "202.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed graveyard activation retains canonical cost and copy values, entry triggers and replay. Generic trusted token-multiplier fixture boundaries verify pending replacement save/load and paid-source snapshots without claiming their real Oracle producers supported."
+    },
+    {
+      "capability_id": "activation.graveyard_copy_keyword.fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_graveyard_copy_keywords.GraveyardCopyRuntimeTests.test_actual_fixed_embalm_and_eternalize_pay_exile_create_correct_tokens_and_replay",
+      "official_rule_ids": [
+        "702.128",
+        "702.128a",
+        "702.129",
+        "702.129a",
+        "602.2a",
+        "602.2b",
+        "601.2h",
+        "707.2",
+        "707.9",
+        "111.3",
+        "202.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Embalm and Eternalize use canonical source exile, original copiable values and versioned no-mana-cost/color/type/stats exceptions. Actual principal-bound graveyard activations retain rollback, token values and replay."
+    },
+    {
+      "capability_id": "activation.graveyard_copy_keyword.fixed_mana",
+      "evidence_class": "replay",
+      "test_id": "tests.test_graveyard_copy_keywords.GraveyardCopyRuntimeTests.test_canonical_token_replacement_pending_reload_retains_paid_source_snapshot",
+      "official_rule_ids": [
+        "702.128",
+        "702.128a",
+        "702.129",
+        "702.129a",
+        "602.2a",
+        "602.2b",
+        "601.2h",
+        "707.2",
+        "707.9",
+        "111.3",
+        "202.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual fixed graveyard activation retains canonical cost and copy values, entry triggers and replay. Generic trusted token-multiplier fixture boundaries verify pending replacement save/load and paid-source snapshots without claiming their real Oracle producers supported."
+    },
+    {
       "capability_id": "activation.loyalty.positive_counter_cost",
       "evidence_class": "interaction",
       "test_id": "tests.test_loyalty_counter_cost_replacements.LoyaltyCounterCostReplacementTests.test_competing_cost_replacements_suspend_before_mutation_and_replay",

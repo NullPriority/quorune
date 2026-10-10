@@ -1281,12 +1281,20 @@ one source-independent next-end-step creation. `compiler/token_copy_templates.py
 adds fixed copy recipes referencing the source, one qualified public permanent
 target, or a represented zone-event object. Copiable fixed exceptions retain
 nonlegendary, base-stat, color, subtype, card-type and keyword distinctions.
+Version-two exceptions additionally remove the mana cost and set mana value
+to zero while preserving version-one serialized forms. Fixed ordinary-mana
+Embalm and Eternalize use canonical graveyard self-exile costs and these copy
+recipes, with an independent complete-card admission marker. The original
+pre-cost source snapshot supplies the token after source exile. Embalm creates
+a white Zombie copy; Eternalize creates a black 4/4 Zombie copy. Other printed
+characteristics and supported abilities are retained. Nonmana keyword costs
+and unsupported siblings remain residual.
 Quoted granted abilities use the existing typed-token child programs; recurring
 copied cleanup is not converted to an independent delayed trigger. Normal
 Populate uses the existing token-copy choice owner without the historical
 Haste-and-sacrifice rider. Every form reaches the existing replacement-aware
 `token_creation.py` transaction. Incubate, Roles, attached or attacking tokens,
-linked, chosen, hidden, graveyard or spell copy origins, face-down copy values,
+linked, chosen, hidden, arbitrary graveyard or spell copy origins, face-down copy values,
 arbitrary quoted abilities, unsupported keywords, other delayed times, and
 independently unsupported compound or conditional instructions remain
 source-spanned residuals or explicit unsupported-interaction boundaries.

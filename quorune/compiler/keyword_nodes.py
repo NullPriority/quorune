@@ -20,6 +20,7 @@ from ..evolve import EVOLVE_EVENT_CONDITION_FIELD
 from ..echo import ECHO_MECHANIC_ID
 from ..fixed_keyword_entry_counters import FIXED_KEYWORD_ENTRY_MECHANICS
 from .umbra_armor_nodes import umbra_armor_keyword_node
+from .graveyard_copy_keyword_nodes import graveyard_copy_keyword_node
 from ..unleash import (
     UNLEASH_MECHANIC,
     unleash_block_handler_descriptor,
@@ -414,12 +415,9 @@ def closed_special_keyword_node(
     morph = fixed_mana_morph_keyword_node(**values)
     if morph is not None:
         return morph
-    unearth = ordinary_unearth_keyword_node(**values)
-    if unearth is not None:
-        return unearth
-    kicker = fixed_mana_kicker_keyword_node(**values)
-    if kicker is not None:
-        return kicker
+    for lower in (graveyard_copy_keyword_node,ordinary_unearth_keyword_node,fixed_mana_kicker_keyword_node):
+        node=lower(**values)
+        if node is not None:return node
     renown = renown_keyword_node(
         **values,
         trusted_mechanics=trusted_mechanics,

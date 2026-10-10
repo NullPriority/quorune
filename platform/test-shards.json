@@ -175,6 +175,7 @@
       "test_fixed_counter_placement_target_sets",
       "test_fixed_public_state_characteristics",
       "test_fixed_query_keyword_grants",
+      "test_graveyard_copy_keywords",
       "test_hand_rules",
       "test_life_change",
       "test_mentor_rules",

@@ -225,6 +225,10 @@ target or normalized event-object identity before current-or-immediate-LKI
 reads; unrelated departures never inspect pending copy instructions. Fixed
 exceptions become copiable values, while separately granted Haste uses the
 existing incarnation-pinned continuous-effect owner with its stated duration.
+Embalm and Eternalize reuse a source snapshot captured before the activation's
+self-exile cost. Their fixed color, Zombie subtype, no-mana-cost and Eternalize
+base-stat exceptions become copiable token values through that same owner.
+Their keyword marker requires complete-card admission before activation.
 Independent next-end-step cleanup records actual created incarnations and uses
 one filtered simultaneous sacrifice or exile through the zone transaction.
 The token owner seals entry facts for the actual replacement-adjusted group,
