@@ -340,7 +340,7 @@ class FixedCounterBatchCompilerTests(unittest.TestCase):
 
         exact()
         with patch(
-            "quorune.compiler.resolution_effect_templates."
+            "quorune.compiler.counter_resolution_effect_templates."
             "fixed_counter_placement_batch_effect_template",
             return_value=None,
         ):
