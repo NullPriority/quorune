@@ -13327,7 +13327,7 @@
           "visibility": "public"
         }
       ],
-      "logical_lines": 246403,
+      "logical_lines": 246407,
       "methods": {
         "dunder": 624,
         "private": 975,
@@ -16885,6 +16885,13 @@
           "physical_lines": 117
         },
         {
+          "file": "quorune/destruction_replacement_adapter.py",
+          "functions_and_methods": 4,
+          "language": "python",
+          "logical_lines": 110,
+          "physical_lines": 122
+        },
+        {
           "file": "quorune/entry_state_conditions.py",
           "functions_and_methods": 4,
           "language": "python",
@@ -16960,13 +16967,6 @@
           "language": "python",
           "logical_lines": 106,
           "physical_lines": 117
-        },
-        {
-          "file": "quorune/destruction_replacement_adapter.py",
-          "functions_and_methods": 4,
-          "language": "python",
-          "logical_lines": 106,
-          "physical_lines": 118
         },
         {
           "file": "quorune/compiler/keyword_templates.py",
@@ -19435,7 +19435,7 @@
           "physical_lines": 1697
         }
       ],
-      "physical_lines": 269609,
+      "physical_lines": 269613,
       "python_file_count": 807,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -35828,7 +35828,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "c09c7b29ebf3b96963192a00b11353c129aaab4a00e1bdbbd92d939a4fc34799",
+      "fingerprint": "615b2744eb26088c829f22812338fc670de58720d3785a095f4feb86a1b8b1d8",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -36686,8 +36686,8 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 5227,
-      "discovered_total": 8536,
+      "conventional_ast_cases": 5228,
+      "discovered_total": 8537,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 263,
