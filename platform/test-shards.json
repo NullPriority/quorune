@@ -191,6 +191,7 @@
       "test_explore_compiler",
       "test_fixed_affected_player_discards",
       "test_fixed_hand_inspection",
+      "test_fixture_ruling_merge",
       "test_graveyard_rules",
       "test_keyword_counter_composition",
       "test_kicker_rules",

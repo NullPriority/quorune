@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 import json
 from pathlib import Path
 import tempfile
@@ -177,7 +178,8 @@ def build_fixture_database(
     fixture_paths = [fixtures] if isinstance(fixtures, Path) else fixtures
     cards_by_oracle: dict[str, dict] = {}
     oracle_by_name: dict[str, str] = {}
-    ruling_rows: list[dict] = []
+    ruling_counts: Counter[str] = Counter()
+    ruling_values: dict[str, dict] = {}
     for fixture in fixture_paths:
         payload = json.loads(fixture.read_text(encoding="utf-8"))
         if int(payload.get("schema_version", 0)) != 1:
@@ -199,9 +201,15 @@ def build_fixture_database(
                 raise ValueError(f"Conflicting card fixture name: {name}")
             cards_by_oracle[oracle_id] = card
             oracle_by_name[name.casefold()] = oracle_id
-        # Preserve multiplicity. Scryfall can publish text-identical ruling
-        # rows, and reviewed semantic provenance hashes that exact multiset.
-        ruling_rows.extend(payload.get("rulings", []))
+        # Preserve a snapshot's genuine multiplicity without multiplying the
+        # same publication when several overlapping fixtures contain it.
+        snapshot_counts = Counter()
+        for ruling in payload.get("rulings", []):
+            identity = stable_json(ruling)
+            ruling_values[identity] = ruling
+            snapshot_counts[identity] += 1
+        ruling_counts |= snapshot_counts
+    ruling_rows = [ruling_values[identity] for identity, count in ruling_counts.items() for _ in range(count)]
     with tempfile.TemporaryDirectory() as temporary:
         work = Path(temporary)
         oracle_path = work / "oracle-cards.jsonl"
