@@ -44,4 +44,5 @@ def validate_block_assignments(host, defender, raw):
             if not legal:raise GameRuleError(f'{blocker.ref} cannot block {attacker.ref}: {reason}')
             chosen.append((blocker,attacker));references.append(attacker.ref)
         canonical[blocker.ref]=references[0] if len(references)==1 else tuple(sorted(references))
+    chosen.sort(key=lambda pair:(pair[1].ref,pair[0].ref,pair[1].object_id,pair[0].object_id))
     return chosen,canonical

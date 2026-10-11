@@ -420,6 +420,14 @@ The shared declaration solver selects distinct attacker sets up to current
 capacity while retaining costs and maximum requirement satisfaction. Open
 quantities and independently unsupported siblings remain residual.
 
+Fixed all-damage prevention shares the existing scope codec for static and
+turn-bound forms. Closed source and recipient predicates include attacking
+creatures, own creature tokens, enchanted creature sources, accepted combat
+pairings, red or snow recipients, fixed absence of +1/+1 counters and matching
+colors on distinct creatures. Sealed damage facts and ordinary redirection
+keep these predicates exact across replacement choices. Unknown quantities,
+chosen-color links and independently unsupported siblings remain residual.
+
 `compiler/defender_permission_templates.py` separately compiles the closed
 permission to attack as though a creature did not have Defender. It preserves
 Defender and grants one typed layer-6 fact to the current self, attachment or

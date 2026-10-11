@@ -31,6 +31,10 @@ maintenance: "hand-maintained"
 - Preserve explicit sacrifice provenance for Fading and Vanishing cleanup
   through zone replacements, normalized trigger occurrences, and turn history.
 
+- Extend scoped prevention with sealed token, combat, attachment, counter and
+  color facts, including recipient changes during redirection. Canonicalize
+  accepted block pair order so saved command mappings replay deterministically.
+
 - Support fixed Prototype casting with shared cost and legality queries,
   persistent stack and battlefield characteristics, copiable selected values,
   and ordinary characteristic restoration on other zone transitions.

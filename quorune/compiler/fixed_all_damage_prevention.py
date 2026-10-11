@@ -32,8 +32,10 @@ class FixedDamageObjectScope:
     attached_identity: bool = False
     selected_target: DirectPermanentTargetSpec | None = None
     exclude_source_identity: bool = False
+    combat_pair: bool = False
 
     def __post_init__(self) -> None:
+        if type(self.combat_pair) is not bool:raise ValueError('Damage scope combat pair must be Boolean')
         if self.controller_relation not in _CONTROLLER_RELATIONS:
             raise ValueError("Damage scope controller relation is unsupported")
         for field in (
@@ -77,8 +79,10 @@ class FixedAllDamagePreventionSpec:
     recipient: FixedDamageObjectScope
     source_controller_turn_only: bool = False
     application_group: str | None = None
+    shared_color: bool = False
 
     def __post_init__(self) -> None:
+        if type(self.shared_color) is not bool:raise ValueError('Damage scope shared color must be Boolean')
         if self.damage_kind not in _DAMAGE_KINDS:
             raise ValueError("All-damage prevention kind is unsupported")
         if self.duration not in _DURATIONS:
@@ -154,6 +158,20 @@ def _recipient_scopes(
                 characteristics_all=("creature",),
             ),
         ),
+        "attacking creatures you control": (_canonical_scope(
+            controller_relation='source_controller',kinds=('permanent',),
+            characteristics_all=('attacking','creature')),),
+        "snow creatures":(_canonical_scope(kinds=('permanent',),characteristics_all=('creature','snow')),),
+        "red creatures":(_canonical_scope(kinds=('permanent',),characteristics_all=('creature',),colors_any=('R',)),),
+        "attacking artifact creatures you control": (_canonical_scope(
+            controller_relation='source_controller',kinds=('permanent',),
+            characteristics_all=('artifact','attacking','creature')),),
+        "other attacking soldiers you control": (_canonical_scope(
+            controller_relation='source_controller',kinds=('permanent',),
+            characteristics_all=('attacking','creature','soldier'),exclude_source_identity=True),),
+        "creature tokens you control": (_canonical_scope(
+            controller_relation='source_controller',kinds=('permanent',),
+            characteristics_all=('creature','token')),),
         "other creatures you control": (
             _canonical_scope(
                 controller_relation="source_controller",
@@ -243,6 +261,8 @@ def _source_scope(
     card_name: str,
 ) -> FixedDamageObjectScope | None:
     normalized = " ".join(phrase.casefold().split())
+    if normalized in {"creatures blocking it","creatures it's blocking"}:
+        return _canonical_scope(characteristics_all=('creature',),combat_pair=True)
     if normalized in {"this artifact", "this creature", "this permanent"}:
         return _SELF_SCOPE
     if normalized in {"enchanted creature", "equipped creature"}:
@@ -295,6 +315,17 @@ def _source_scope(
             controller_relation=relation,
             colors_any=("B", "R"),
         ),
+        "black sources and red sources": _canonical_scope(
+            controller_relation=relation,colors_any=('B','R')),
+        "creatures with flying": _canonical_scope(
+            controller_relation=relation,characteristics_all=('creature','flying')),
+        "enchanted creatures": _canonical_scope(
+            controller_relation=relation,characteristics_all=('creature','enchanted')),
+        "unblocked creatures": _canonical_scope(
+            controller_relation=relation,characteristics_all=('creature','unblocked')),
+        "creatures with no +1/+1 counters on them": _canonical_scope(
+            controller_relation=relation,characteristics_all=('creature','no-plus-one-counter')),
+        "walls": _canonical_scope(controller_relation=relation,characteristics_all=('wall',)),
         "blue creatures and black creatures": _canonical_scope(
             controller_relation=relation,
             characteristics_all=("creature",),
@@ -408,6 +439,10 @@ def fixed_all_damage_prevention_specs(
     if match is None:
         return None
     body = match.group("body")
+    if body.casefold()=='that would be dealt to a creature by another creature if they share a color':
+        return (FixedAllDamagePreventionSpec(damage_kind=str(match.group('kind') or 'any').casefold(),
+            duration=duration,source=_canonical_scope(characteristics_all=('creature',)),
+            recipient=_canonical_scope(kinds=('permanent',),characteristics_all=('creature',)),shared_color=True),)
     if re.fullmatch(
         r"that would be dealt to and dealt by (?P<source>.+)",
         body,
@@ -492,6 +527,9 @@ def fixed_all_damage_prevention_scope_descriptor(
     source_ref, excluded_source_ref = _scope_ref(spec.source)
     target_ref, excluded_target_ref = _scope_ref(spec.recipient)
     return {
+        **({'combat_pair':True} if spec.source.combat_pair else {}),
+        **({'shared_color':True} if spec.shared_color else {}),
+        **({'target_colors_any':list(spec.recipient.colors_any)} if spec.recipient.colors_any else {}),
         "source_controller_relation": spec.source.controller_relation,
         "target_controller_relation": spec.recipient.controller_relation,
         "target_kinds": list(spec.recipient.kinds),

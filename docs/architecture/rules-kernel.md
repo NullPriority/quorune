@@ -26,6 +26,9 @@ loss of the permission does not undo those blocks. The graph owns all pairs;
 the legacy `blocking` field remains one representative blocking identity.
 Trigger occurrences, relative combat targets and damage snapshots consume the
 complete graph, and a blocker assigns its power once across its recipients.
+Validated pairs sort by attacker and blocker identity before commit. Client
+mapping order therefore cannot change the authoritative blocker list or saved
+command replay.
 
 Fixed selected-object tap costs may accompany a source tap symbol. The source
 and selected objects are distinct: the source cannot pay both costs. The source

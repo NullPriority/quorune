@@ -977,8 +977,17 @@ class DamagePreventionScope:
     target_ref: str | None = None
     excluded_source_ref: str | None = None
     excluded_target_ref: str | None = None
+    combat_pair: bool = False
+    target_colors_any: tuple[str,...] = ()
+    shared_color: bool = False
 
     def __post_init__(self) -> None:
+        if type(self.shared_color) is not bool:raise DamageModifierError('Prevention shared color must be a boolean')
+        if (not isinstance(self.target_colors_any,(list,tuple)) or any(type(c) is not str or c not in 'WUBRG' for c in self.target_colors_any)):
+            raise DamageModifierError('Prevention target colors must be represented colors')
+        object.__setattr__(self,'target_colors_any',tuple(sorted(set(self.target_colors_any))))
+        if type(self.combat_pair) is not bool:
+            raise DamageModifierError('Prevention combat pair must be a boolean')
         relations = {"any", "source_controller", "opponent"}
         if (
             self.source_controller_relation not in relations
@@ -1071,6 +1080,11 @@ class DamagePreventionScope:
                 "Prevention scope requires an active controller"
             )
         result: dict[str, Any] = {}
+        if self.combat_pair:result['source_and_target_block_pair']={'eq':True}
+        if self.target_colors_any:result['target_colors']={'contains_any':list(self.target_colors_any)}
+        if self.shared_color:
+            result['source_and_target_share_color']={'eq':True}
+            result['source_and_target_distinct']={'eq':True}
         source_controller = self._relation(
             self.source_controller_relation, controller
         )
@@ -1116,6 +1130,9 @@ class DamagePreventionScope:
 
     def to_dict(self) -> dict[str, Any]:
         return {
+            **({'combat_pair':True} if self.combat_pair else {}),
+            **({'target_colors_any':list(self.target_colors_any)} if self.target_colors_any else {}),
+            **({'shared_color':True} if self.shared_color else {}),
             "source_controller_relation": self.source_controller_relation,
             "target_controller_relation": self.target_controller_relation,
             "target_kinds": list(self.target_kinds),
@@ -1135,9 +1152,16 @@ class DamagePreventionScope:
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> "DamagePreventionScope":
+        combat_pair=value.get('combat_pair',False)
+        target_colors=value.get('target_colors_any',())
+        shared_color=value.get('shared_color',False)
+        value={key:val for key,val in value.items() if key not in {'combat_pair','target_colors_any','shared_color'}}
         expected = set(cls().to_dict())
         _exact_fields(value, expected, label="Damage prevention scope")
         return cls(
+            combat_pair=combat_pair,
+            target_colors_any=target_colors,
+            shared_color=shared_color,
             source_controller_relation=str(value["source_controller_relation"]),
             target_controller_relation=str(value["target_controller_relation"]),
             target_kinds=_strings(value["target_kinds"], label="scope target kinds"),

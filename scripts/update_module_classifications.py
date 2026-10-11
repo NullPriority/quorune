@@ -61,6 +61,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/counter_snapshot.py",
         "quorune/counter_placement_event_model.py",
         "quorune/damage_source.py",
+        "quorune/damage_scope_facts.py",
         "quorune/damage_modifier_state.py",
         "quorune/death_return.py",
         "quorune/declaration_fragments.py",

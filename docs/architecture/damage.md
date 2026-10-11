@@ -15,6 +15,14 @@ identity values. `damage.py` coordinates preparation; `damage_results.py` owns
 normalized CR 120.3 result materialization, commit planning, and authoritative
 result mutation.
 
+`rules/damage_snapshots.py` seals public source and recipient facts before
+replacement. Closed prevention facts include creature token status, attacking
+and unblocked roles, enchantment, absence of +1/+1 counters and logical combat
+partners. Recipient color and supertype facts accompany them. Redirection
+replaces these facts with the destination snapshot; it recomputes block-pair
+and shared-color relations instead of inheriting the former recipient's scope.
+Empty source and redirection extensions preserve their legacy serialized form.
+
 ```mermaid
 flowchart LR
     Producer["Combat or typed effect"] --> Proposal["Immutable proposal batch"]

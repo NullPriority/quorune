@@ -41,8 +41,14 @@ scope and one closed public recipient scope. The same immutable scope value is
 used by until-end-of-turn shields and battlefield-static components. It covers
 current controller or opponent relations, source or attached-object identity,
 one already selected direct target, fixed type, subtype, color, and keyword
-predicates, and any, combat, or noncombat damage. Static discovery requires the
-current layer-6 ability component, recomputes controller and attachment facts,
+predicates, and any, combat, or noncombat damage. Sealed snapshots supply
+attacking, unblocked, token, enchanted and
+no-plus-one-counter facts where the printed grammar calls for them. Complete
+current block-pair identities support prevention between opposing combatants;
+recipient color and shared source-recipient color remain explicit predicates.
+Redirection replaces recipient colors, supertypes, combat partners and scope
+facts together, so prevention follows the new recipient. Static discovery requires
+the current layer-6 ability component, recomputes controller and attachment facts,
 and stops when the source leaves the battlefield. Turn-bound shields freeze
 their resolved public identities and expire through the ordinary cleanup
 owner. Both forms still enter the same affected-player replacement ordering.
@@ -81,7 +87,7 @@ Runtime components and handlers never mutate shield state directly. Generic
 code does not recognize card names or Oracle IDs. New prevention grammar must
 compile to typed descriptors with exact predicates, provenance, duration, and
 capability dependencies; unsupported predicates and aftermath forms stay
-material residuals. Token, counter, open combat-role, dynamic power or
+material residuals. Unrepresented counter and combat-role predicates, dynamic power or
 toughness, mana-value, secret, chosen, history-relative, linked-result, modal,
 optional-prevention, repeated-decision, and unsupported multiple-target
 predicates remain outside the represented fixed all-damage boundary. So do

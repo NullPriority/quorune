@@ -22,8 +22,15 @@ class DamageRecipientSnapshot:
     owner: str | None = None
     types: tuple[str, ...] = ()
     subtypes: tuple[str, ...] = ()
+    scope_facts: tuple[str,...] = ()
+    combat_partners: tuple[str,...] = ()
+    colors: tuple[str,...] = ()
+    supertypes: tuple[str,...] = ()
 
     def __post_init__(self) -> None:
+        from .damage_scope_facts import canonical_damage_scope_facts,canonical_damage_partner_identities
+        object.__setattr__(self,'scope_facts',canonical_damage_scope_facts(self.scope_facts))
+        object.__setattr__(self,'combat_partners',canonical_damage_partner_identities(self.combat_partners))
         if self.kind not in {"player", "permanent"}:
             raise DamageError(
                 "Damage recipient kinds must be player or permanent"
@@ -33,6 +40,8 @@ class DamageRecipientSnapshot:
                 "Damage recipients require stable identity and controller facts"
             )
         if self.kind == "player":
+            if self.scope_facts or self.combat_partners or self.colors or self.supertypes:
+                raise DamageError('Player damage recipients cannot carry permanent scope facts')
             if any(
                 value is not None
                 for value in (
@@ -48,7 +57,7 @@ class DamageRecipientSnapshot:
             raise DamageError(
                 "Permanent damage recipients require complete object identity"
             )
-        for field in ("types", "subtypes"):
+        for field in ("types", "subtypes","colors","supertypes"):
             raw = getattr(self, field)
             if not isinstance(raw, (list, tuple)) or any(
                 type(value) is not str or not value for value in raw
@@ -118,10 +127,12 @@ class DamageProposal:
                     *self.source.subtypes,
                     *self.source.supertypes,
                     *self.source.keywords,
+                    *self.source.scope_facts,
                 }
             ),
             "source_colors": list(self.source.colors),
             "source_keywords": list(self.source.keywords),
+            "source_combat_partners":list(self.source.combat_partners),
             "source_mana_value": self.source.mana_value,
             "source_is_commander": self.source.is_commander,
             "source_toxic_value": self.source.toxic_value,
@@ -133,9 +144,14 @@ class DamageProposal:
             "target_owner": self.recipient.owner,
             "target_types": list(self.recipient.types),
             "target_subtypes": list(self.recipient.subtypes),
+            "target_combat_partners":list(self.recipient.combat_partners),
+            "source_and_target_block_pair":self.recipient.logical_object_id in self.source.combat_partners,
+            "source_and_target_share_color":bool(set(self.source.colors)&set(self.recipient.colors)),
+            "source_and_target_distinct":self.source.logical_object_id!=self.recipient.logical_object_id,
             "target_characteristics": sorted(
-                {*self.recipient.types, *self.recipient.subtypes}
+                {*self.recipient.types, *self.recipient.subtypes,*self.recipient.supertypes,*self.recipient.scope_facts}
             ),
+            "target_colors":list(self.recipient.colors),
             "proposed_amount": self.amount,
             "amount": self.amount,
             "prevented": 0,

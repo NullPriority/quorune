@@ -94,8 +94,13 @@ class DamageSourceSnapshot:
     mana_value: float | None = None
     is_commander: bool = False
     toxic_value: int | None = 0
+    scope_facts: tuple[str,...] = ()
+    combat_partners: tuple[str,...] = ()
 
     def __post_init__(self) -> None:
+        from .damage_scope_facts import canonical_damage_scope_facts,canonical_damage_partner_identities
+        object.__setattr__(self,'scope_facts',canonical_damage_scope_facts(self.scope_facts))
+        object.__setattr__(self,'combat_partners',canonical_damage_partner_identities(self.combat_partners))
         if not all(
             (
                 self.ref,
@@ -148,6 +153,8 @@ class DamageSourceSnapshot:
 
     def to_dict(self) -> dict[str, object]:
         return {
+            **({'scope_facts':list(self.scope_facts)} if self.scope_facts else {}),
+            **({'combat_partners':list(self.combat_partners)} if self.combat_partners else {}),
             "ref": self.ref,
             "object_id": self.object_id,
             "logical_object_id": self.logical_object_id,
@@ -189,7 +196,7 @@ class DamageSourceSnapshot:
             "toxic_value",
         }
         legacy_expected = expected - {"mana_value"}
-        if frozenset(value) not in {
+        if frozenset(set(value)-{'scope_facts','combat_partners'}) not in {
             frozenset(expected),
             frozenset(legacy_expected),
         }:
@@ -221,6 +228,8 @@ class DamageSourceSnapshot:
         if type(value["is_commander"]) is not bool:
             raise DamageError("Damage source commander flag is malformed")
         return cls(
+            scope_facts=value.get('scope_facts',()),
+            combat_partners=value.get('combat_partners',()),
             ref=value["ref"],
             object_id=value["object_id"],
             logical_object_id=value["logical_object_id"],

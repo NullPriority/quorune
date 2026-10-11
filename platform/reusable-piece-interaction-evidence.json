@@ -9161,6 +9161,51 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Counterspell counters a prototyped spell; the canonical graveyard transition resets selected characteristics, with exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_scoped_damage_prevention.ScopedPreventionRuntimeTests.test_actual_emmara_prevents_only_own_creature_token_shock_and_replays",
+      "piece_ids": [
+        "capability.damage.prevention.persistent_amount",
+        "capability.token.creation.fixed_copy"
+      ],
+      "capability_ids": [
+        "damage.prevention.persistent_amount",
+        "token.creation.fixed_copy"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Cackling token copy receives Emmara prevention while the original nontoken takes Shock damage, with exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_scoped_damage_prevention.ScopedPreventionRuntimeTests.test_actual_prevention_quantity_replacement_pending_reload_preserves_same_damage",
+      "piece_ids": [
+        "capability.damage.prevention.persistent_amount",
+        "capability.damage.replacement.static_quantity"
+      ],
+      "capability_ids": [
+        "damage.prevention.persistent_amount",
+        "damage.replacement.static_quantity"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Furnace and Emmara ordering suspends damage, reloads, preserves recipient scope and prevention, rejects the wrong principal and replays."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_scoped_damage_prevention.ScopedPreventionRuntimeTests.test_actual_wall_prevents_only_blocked_creature_damage_across_multiple_pairings",
+      "piece_ids": [
+        "capability.combat.damage.assignment.canonical",
+        "capability.damage.prevention.persistent_amount"
+      ],
+      "capability_ids": [
+        "combat.damage.assignment.canonical",
+        "damage.prevention.persistent_amount"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual graph records two defending pairings; Wall of Vapor prevents its own assigned damage while the second blocker takes damage, including replay of noncanonical block input order."
     }
   ]
 }

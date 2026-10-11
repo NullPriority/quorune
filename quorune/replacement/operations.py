@@ -168,8 +168,21 @@ class RedirectDamage:
     target_types: tuple[str, ...] = ()
     target_subtypes: tuple[str, ...] = ()
     schema_version: int = OPERATION_SCHEMA_VERSION
+    target_scope_facts: tuple[str,...] = ()
+    target_combat_partners: tuple[str,...] = ()
+    target_colors: tuple[str,...] = ()
+    target_supertypes: tuple[str,...] = ()
 
     def __post_init__(self) -> None:
+        from ..damage_scope_facts import canonical_damage_scope_facts,canonical_damage_partner_identities
+        object.__setattr__(self,'target_scope_facts',canonical_damage_scope_facts(self.target_scope_facts))
+        object.__setattr__(self,'target_combat_partners',canonical_damage_partner_identities(self.target_combat_partners))
+        if not isinstance(self.target_colors,(list,tuple)) or any(type(c) is not str or c not in 'WUBRG' for c in self.target_colors):
+            raise ReplacementOperationError('Damage redirection target colors are malformed')
+        if not isinstance(self.target_supertypes,(list,tuple)) or any(type(s) is not str or not s for s in self.target_supertypes):
+            raise ReplacementOperationError('Damage redirection target supertypes are malformed')
+        object.__setattr__(self,'target_colors',tuple(sorted(set(self.target_colors))))
+        object.__setattr__(self,'target_supertypes',tuple(sorted(set(self.target_supertypes))))
         target = str(self.target or "")
         target_kind = str(self.target_kind or "")
         controller = str(self.target_controller or "")
@@ -207,6 +220,10 @@ class RedirectDamage:
 
     def to_dict(self) -> dict[str, Any]:
         return {
+            **({'target_scope_facts':list(self.target_scope_facts)} if self.target_scope_facts else {}),
+            **({'target_combat_partners':list(self.target_combat_partners)} if self.target_combat_partners else {}),
+            **({'target_colors':list(self.target_colors)} if self.target_colors else {}),
+            **({'target_supertypes':list(self.target_supertypes)} if self.target_supertypes else {}),
             "op": "redirect_damage",
             "target": self.target,
             "target_kind": self.target_kind,
@@ -799,6 +816,8 @@ def _redirect_damage_from_dict(
     *,
     operation: str,
 ) -> RedirectDamage:
+    optional={key:value[key] for key in ('target_scope_facts','target_combat_partners','target_colors','target_supertypes') if key in value}
+    value={key:val for key,val in value.items() if key not in optional}
     _exact_fields(
         value,
         {
@@ -823,6 +842,10 @@ def _redirect_damage_from_dict(
             "Damage redirection type fields must be arrays"
         )
     return RedirectDamage(
+        target_scope_facts=optional.get('target_scope_facts',()),
+        target_combat_partners=optional.get('target_combat_partners',()),
+        target_colors=optional.get('target_colors',()),
+        target_supertypes=optional.get('target_supertypes',()),
         target=str(value["target"] or ""),
         target_kind=str(value["target_kind"] or ""),
         target_controller=str(value["target_controller"] or ""),
