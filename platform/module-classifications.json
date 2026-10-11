@@ -2558,6 +2558,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/extra_turn_templates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/fading_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -8286,6 +8301,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/extra_turn_shapes.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/face_characteristic_values.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -12664,5 +12693,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "2a972810e987108c48c921d03ac914860b6433a1eb6141821bab886004c93a03"
+  "fingerprint": "f6d7c0590b72acbaa84a85fcc6be30e874da076bc72ac403813261f221baf579"
 }

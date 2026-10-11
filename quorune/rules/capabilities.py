@@ -1,6 +1,7 @@
 from __future__ import annotations
 from .counter_placement_capability_shapes import counter_placement_covered_mechanics
 from .control_capability_shapes import fixed_control_node_capabilities
+from .extra_turn_shapes import fixed_extra_turn_node_capabilities
 from .whole_hand_discard_shapes import whole_hand_discard_node_capabilities
 from .affected_player_choice_coverage import (
     affected_player_choice_covered_mechanics as _affected_player_choice_covered_mechanics,
@@ -319,6 +320,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     "self-zone-move": ("zone.self_move.activated",), "madness": ("casting.madness.fixed_mana",), "typed-discard-cause": ("zone.discard.typed_cause",),
     'public-quantity-mana': ('mana.production.public_quantity',),
     'fixed-resolution-mana':('mana.production.fixed_resolution',),
+    'fixed-extra-turn-after-current': ('turn.extra.fixed_after_current',),
     'whole-hand-discard': ('zone.discard.whole_hand',),
     **{
         mechanic: ("combat.block.landwalk.basic_type",)
@@ -454,6 +456,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
 }
 _SHAPE_GATED_MECHANICS = frozenset(
     {
+        "fixed-extra-turn-after-current",
         "declared-effect-amount",
         "cr-121-drawing-a-card",
         "cr-119-life",
@@ -1055,6 +1058,7 @@ def _targeted_effect_capabilities(
 ) -> set[str]:
     dependencies: set[str] = set()
     for resolver in (
+        fixed_extra_turn_node_capabilities,
         whole_hand_discard_node_capabilities,
         fixed_control_node_capabilities,
         fixed_attachment_action_node_capabilities,

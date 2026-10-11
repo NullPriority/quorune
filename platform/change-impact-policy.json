@@ -3212,6 +3212,22 @@
         "test_landwalk",
         "test_oracle_corpus_examples"
       ]
+    },
+    {
+      "id": "fixed-extra-turn-contract",
+      "patterns": [
+        "quorune/compiler/extra_turn_templates.py",
+        "quorune/rules/extra_turn_shapes.py",
+        "tests/fixtures/fixed-extra-turn-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_extra_turns",
+        "test_turn_priority_owner",
+        "test_turn_structure_rules",
+        "test_card_program_trust",
+        "test_oracle_corpus_examples",
+        "test_bound_effect_programs"
+      ]
     }
   ],
   "symbol_rules": [

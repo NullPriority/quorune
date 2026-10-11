@@ -14174,6 +14174,88 @@
       "implementation_mutation_rationale": "The exact compiler/shape boundary witness removes each producer and rejects malformed actor, context player, count and private-selection shapes; the original action witnesses establish execution and replay separately.",
       "blockers": [],
       "status": "trusted"
+    },
+    {
+      "id": "turn.extra.fixed_after_current",
+      "version": 1,
+      "official_rules": [
+        "500.7",
+        "608.2c",
+        "608.2b",
+        "800.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Schedule one through ten fixed extra turns after the current turn for the locked controller or one revalidated target player through the existing turn-step owner.",
+        "inputs": [
+          "complete source-spanned fixed extra-turn instruction",
+          "one resolving controller or ordinary player/opponent target",
+          "one through ten independently represented scheduling effects",
+          "existing authenticated cast, activation or trigger carrier"
+        ],
+        "outputs": [
+          "canonical unique extra-turn queue entries created at resolution",
+          "most recently created turn taken first",
+          "ordinary normal-turn ordering resumes after the extra-turn queue",
+          "exact queue and source replay"
+        ],
+        "exclusions": [
+          "variable, optional, conditional or unknown turn quantities",
+          "different turn insertion points",
+          "each-player or simultaneous-player extra-turn groups",
+          "turn-specific loss, prevention, untap or other linked riders",
+          "unrepresented whole-card siblings"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.compiler.extra_turn_templates.fixed_extra_turn_effect_template",
+        "quorune.rules.extra_turn_shapes.fixed_extra_turn_node_capabilities",
+        "quorune.rules.extra_turn_shapes.is_closed_fixed_extra_turn_program",
+        "quorune.effect_runtime.damage_life_and_turns._apply_extra_turn",
+        "quorune.turn_step_owner.TurnStepOwner.schedule_extra_turn",
+        "quorune.turn_step_owner.TurnStepOwner.select_next_turn"
+      ],
+      "positive_tests": [
+        "test_fixed_extra_turn_controller_and_target_grammar_preserves_recipients",
+        "test_fixed_extra_turn_reuses_activation_and_trigger_carriers"
+      ],
+      "negative_tests": [
+        "test_unrepresented_extra_turn_qualifiers_and_riders_remain_material",
+        "test_extra_turn_shape_dependency_and_compiler_mutants_fail_closed"
+      ],
+      "interaction_tests": [
+        "test_original_turn_spells_lock_recipients_schedule_lifo_and_replay",
+        "test_original_scepter_pays_source_counter_price_before_scheduling_and_replays"
+      ],
+      "multiplayer_tests": [
+        "test_original_turn_spells_lock_recipients_schedule_lifo_and_replay"
+      ],
+      "privacy_tests": [
+        "test_original_turn_spells_lock_recipients_schedule_lifo_and_replay"
+      ],
+      "replay_tests": [
+        "test_original_turn_spells_lock_recipients_schedule_lifo_and_replay",
+        "test_original_scepter_pays_source_counter_price_before_scheduling_and_replays"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Only a complete ordinary controller or player-target shape receives extra-turn authority; blocking its scheduler capability or removing the exact target schema leaves a material residual.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the compiler producer and corrupting the recipient, source, target count or instruction fields are rejected by the distinguishing compiler and shape regressions.",
+      "blockers": [],
+      "status": "trusted"
     }
   ]
 }

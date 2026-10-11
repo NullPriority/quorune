@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "5da151c1b351c1a88bbc207da23dd0107fb349b16991a65cf328853bae88b162",
-  "declaration_source_fingerprint": "c0583fa6b616ce791c11a96c6e2ace4fc7840017e142c06301377f8402e13f9e",
+  "registry_fingerprint": "8d932ae6414cbaf6e5f7a47c5cf7bccda0734d3451e9608e5ffd7b8628b19b82",
+  "declaration_source_fingerprint": "eb8e0aea457c868d73aed0ec57cf5ef8e531d8a06e0b5dd2459da47b76ba28db",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -95639,6 +95639,244 @@
       "applicability_note": "One closed intrinsic trigger consumes its current-turn allowance at event discovery, with exact replay and authenticated command rejection."
     },
     {
+      "capability_id": "turn.extra.fixed_after_current",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_extra_turns.FixedExtraTurnRuntimeTests.test_original_scepter_pays_source_counter_price_before_scheduling_and_replays",
+      "official_rule_ids": [
+        "500.7",
+        "608.2c",
+        "608.2b",
+        "800.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Scepter activation pays the tap and three-counter price before its ordinary stack result schedules one turn; unauthorized input rolls back and pending/final replay preserves the paid price and queue."
+    },
+    {
+      "capability_id": "turn.extra.fixed_after_current",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_extra_turns.FixedExtraTurnRuntimeTests.test_original_turn_spells_lock_recipients_schedule_lifo_and_replay",
+      "official_rule_ids": [
+        "500.7",
+        "608.2c",
+        "608.2b",
+        "800.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Time Warp and Time Stretch casts pay their complete prices, lock distinct controller/target recipients, schedule only on resolution, reject unauthorized or malformed targeting without mutation, project decisions by principal and save/load/replay the resulting LIFO queue from before cast."
+    },
+    {
+      "capability_id": "turn.extra.fixed_after_current",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_extra_turns.FixedExtraTurnRuntimeTests.test_original_turn_spells_lock_recipients_schedule_lifo_and_replay",
+      "official_rule_ids": [
+        "500.7",
+        "608.2c",
+        "608.2b",
+        "800.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Time Warp and Time Stretch casts pay their complete prices, lock distinct controller/target recipients, schedule only on resolution, reject unauthorized or malformed targeting without mutation, project decisions by principal and save/load/replay the resulting LIFO queue from before cast."
+    },
+    {
+      "capability_id": "turn.extra.fixed_after_current",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_extra_turns.FixedExtraTurnCompilerTests.test_extra_turn_shape_dependency_and_compiler_mutants_fail_closed",
+      "official_rule_ids": [
+        "500.7",
+        "608.2c",
+        "608.2b",
+        "800.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The executable compiler-omission mutant fails exact admission; malformed producer payloads fail the closed shape independently."
+    },
+    {
+      "capability_id": "turn.extra.fixed_after_current",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_extra_turns.FixedExtraTurnCompilerTests.test_extra_turn_shape_dependency_and_compiler_mutants_fail_closed",
+      "official_rule_ids": [
+        "500.7",
+        "608.2c",
+        "608.2b",
+        "800.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Unknown fields, unbound recipients, malformed Boolean target counts and blocked scheduler authority cannot acquire turn closure."
+    },
+    {
+      "capability_id": "turn.extra.fixed_after_current",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_extra_turns.FixedExtraTurnCompilerTests.test_unrepresented_extra_turn_qualifiers_and_riders_remain_material",
+      "official_rule_ids": [
+        "500.7",
+        "608.2c",
+        "608.2b",
+        "800.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Variable counts, different insertion points, all-player results, linked turn-loss riders and malformed count grammar remain material."
+    },
+    {
+      "capability_id": "turn.extra.fixed_after_current",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_extra_turns.FixedExtraTurnRuntimeTests.test_original_target_turn_spell_fizzles_after_accepted_target_concession",
+      "official_rule_ids": [
+        "500.7",
+        "608.2c",
+        "608.2b",
+        "800.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Time Warp pays its full casting price and locks B as its target. An actual accepted B concession before resolution invalidates the sole target, moves the spell to its ordinary graveyard without scheduling any turn and replays from before cast."
+    },
+    {
+      "capability_id": "turn.extra.fixed_after_current",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_extra_turns.FixedExtraTurnCompilerTests.test_fixed_extra_turn_controller_and_target_grammar_preserves_recipients",
+      "official_rule_ids": [
+        "500.7",
+        "608.2c",
+        "608.2b",
+        "800.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Controller and player/opponent target forms preserve one through ten fixed independently scheduled turns and the canonical target schema."
+    },
+    {
+      "capability_id": "turn.extra.fixed_after_current",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_extra_turns.FixedExtraTurnCompilerTests.test_fixed_extra_turn_reuses_activation_and_trigger_carriers",
+      "official_rule_ids": [
+        "500.7",
+        "608.2c",
+        "608.2b",
+        "800.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The same closed turn result reuses existing activated and normalized-trigger carriers without a parallel rules or scheduler owner."
+    },
+    {
+      "capability_id": "turn.extra.fixed_after_current",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_extra_turns.FixedExtraTurnRuntimeTests.test_original_turn_spells_lock_recipients_schedule_lifo_and_replay",
+      "official_rule_ids": [
+        "500.7",
+        "608.2c",
+        "608.2b",
+        "800.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Time Warp and Time Stretch casts pay their complete prices, lock distinct controller/target recipients, schedule only on resolution, reject unauthorized or malformed targeting without mutation, project decisions by principal and save/load/replay the resulting LIFO queue from before cast."
+    },
+    {
+      "capability_id": "turn.extra.fixed_after_current",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_extra_turns.FixedExtraTurnRuntimeTests.test_original_scepter_pays_source_counter_price_before_scheduling_and_replays",
+      "official_rule_ids": [
+        "500.7",
+        "608.2c",
+        "608.2b",
+        "800.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Scepter activation pays the tap and three-counter price before its ordinary stack result schedules one turn; unauthorized input rolls back and pending/final replay preserves the paid price and queue."
+    },
+    {
+      "capability_id": "turn.extra.fixed_after_current",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_extra_turns.FixedExtraTurnRuntimeTests.test_original_target_turn_spell_fizzles_after_accepted_target_concession",
+      "official_rule_ids": [
+        "500.7",
+        "608.2c",
+        "608.2b",
+        "800.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Time Warp pays its full casting price and locks B as its target. An actual accepted B concession before resolution invalidates the sole target, moves the spell to its ordinary graveyard without scheduling any turn and replays from before cast."
+    },
+    {
+      "capability_id": "turn.extra.fixed_after_current",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_extra_turns.FixedExtraTurnRuntimeTests.test_original_turn_spells_lock_recipients_schedule_lifo_and_replay",
+      "official_rule_ids": [
+        "500.7",
+        "608.2c",
+        "608.2b",
+        "800.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Time Warp and Time Stretch casts pay their complete prices, lock distinct controller/target recipients, schedule only on resolution, reject unauthorized or malformed targeting without mutation, project decisions by principal and save/load/replay the resulting LIFO queue from before cast."
+    },
+    {
+      "capability_id": "turn.extra.fixed_after_current",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_extra_turns.FixedExtraTurnRuntimeTests.test_original_turn_spells_lock_recipients_schedule_lifo_and_replay",
+      "official_rule_ids": [
+        "500.7",
+        "608.2c",
+        "608.2b",
+        "800.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Time Warp and Time Stretch casts pay their complete prices, lock distinct controller/target recipients, schedule only on resolution, reject unauthorized or malformed targeting without mutation, project decisions by principal and save/load/replay the resulting LIFO queue from before cast."
+    },
+    {
       "capability_id": "untap.step.optional_source",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_control_effects.FixedControlGameplayTests.test_manual_untap_mode_preserves_tapped_sources_without_optional_choice",
@@ -102582,5 +102820,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "de03624046f862a99f86d3f777856d11ff1cb4b1d32848a5c5dcb88a271e77af"
+  "fingerprint": "70219347cd8f3ef3ee053b6f5fe9dcb871f997fb2f4f86c6d1c82ee4a1c935e2"
 }

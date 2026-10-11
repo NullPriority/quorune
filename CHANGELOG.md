@@ -11,6 +11,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Compile fixed controller and player-target extra turns through the canonical
+  scheduler, retaining ordinary prices, target revalidation, turn order and
+  replay without a second turn journal.
+
 - Align temporary source-keyword scope with the shared basic-landwalk owner
   and add original-card offer, command, rollback, and replay evidence.
 

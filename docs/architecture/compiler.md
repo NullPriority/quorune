@@ -55,6 +55,18 @@ Oracle IR, recognized semantic nodes, dependency declarations, material
 residuals, and a canonical `CardProgram`. For the same inputs and compiler
 version, the result must be deterministic.
 
+`compiler/extra_turn_templates.py` lowers one through ten fixed extra turns
+after the current turn for the resolving controller or one ordinary player or
+opponent target. Each turn is a separate existing `extra_turn` instruction;
+`rules/extra_turn_shapes.py` requires its exact recipient, source, and target
+schema before trust admission. Spell, activated, and normalized-trigger
+carriers share the result. The canonical turn-step owner creates queue entries
+at resolution, takes the most recently created entry first, and then resumes
+normal order. Target departure follows ordinary resolution revalidation;
+activation prices remain separate from scheduling. Variable counts, different
+insertion points, each-player results, turn-specific riders, and unrepresented
+sibling abilities remain residual.
+
 The shared trigger-label normalizer accepts leading ability and flavor names
 with numeric words, hyphens, apostrophes, and question or exclamation marks.
 Under CR 207.2c-d these names add no rules meaning. The original text and span
