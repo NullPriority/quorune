@@ -7,6 +7,8 @@ from pathlib import Path
 import tempfile
 import unittest
 import json
+import shutil
+import subprocess
 from unittest.mock import patch
 
 from common import ROOT
@@ -111,6 +113,126 @@ class PublicQuantityManaRuntimeTests(unittest.TestCase):
     checkpoint=witnesses.BoundEffectProgramRuntimeTests.checkpoint
     replay=witnesses.BoundEffectProgramRuntimeTests.replay
     resolve=witnesses.BoundEffectProgramRuntimeTests.resolve
+
+    def browser_errors(self, action, allocation):
+        node = shutil.which('node')
+        self.assertIsNotNone(node, 'The real TypeScript validator requires Node.js')
+        script = """
+            import {validateChoices} from './web/src/choices.ts';
+            let input = '';
+            for await (const chunk of process.stdin) input += chunk;
+            const {form, allocation} = JSON.parse(input);
+            process.stdout.write(JSON.stringify(validateChoices(form, {mana_output: allocation})));
+        """
+        result = subprocess.run([node, '--experimental-strip-types', '--input-type=module', '-e', script],
+            input=json.dumps({'form': action['form'], 'allocation': allocation}),
+            text=True, capture_output=True, cwd=ROOT, check=True)
+        return json.loads(result.stdout)
+
+    def test_projected_lotus_form_accepts_legal_dynamic_allocation_in_real_browser_validator(self):
+        session = self.session(283020)
+        source = self.add(session.engine, 'Lotus Blossom')
+        source.counters['petal'] = 3
+        action = self.ready(session, source, {})
+        action = next(row for row in session.packet('pilot:A', full=True)['decision']['legal_actions']
+            if row['id'] == action['id'])
+        field = next(row for row in action['form']['fields'] if row['name'] == 'mana_output')
+        self.assertTrue(field['required'])
+        self.assertEqual(('mana_modes', 3, True), (field['control'], field['total'], field['single_color']))
+        self.assertNotIn('options', field)
+        allocation = {'U': 3}
+        self.assertEqual([], self.browser_errors(action, allocation))
+        self.checkpoint(session)
+        accepted = session.act('pilot:A', {'action_id': action['id'], 'mana_output': allocation})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual('graveyard', session.state.cards[source.object_id].zone)
+        self.assertEqual(3, session.state.players['A'].mana_pool['U'])
+        self.replay(session, load=True)
+
+    def test_projected_dynamic_allocation_rejects_same_malformed_browser_and_server_values(self):
+        session = self.session(283023)
+        source = self.add(session.engine, 'Generic Public Mixed Mana')
+        for index in range(3):
+            self.add(session.engine, 'Generic Bound Body', ref=f'quantity-{index}')
+        action = self.ready(session, source, {})
+        action = next(row for row in session.packet('pilot:A', full=True)['decision']['legal_actions']
+            if row['id'] == action['id'])
+        self.checkpoint(session)
+        for allocation in (None, 3, '3', [], {}, {'G': '3'}, {'G': True}, {'G': 1.5, 'U': 1.5},
+                {'G': -1, 'U': 4}, {'G': 4}, {'G': 2}, {'R': 3}, {'G': 3, 'R': 0}):
+            with self.subTest(allocation=allocation):
+                self.assertTrue(self.browser_errors(action, allocation))
+                before = authoritative_state_hash(session.state)
+                denied = session.act('pilot:A', {'action_id': action['id'], 'mana_output': allocation})
+                self.assertFalse(denied.ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+        allocation = {'G': 1, 'U': 2}
+        self.assertEqual([], self.browser_errors(action, allocation))
+        accepted = session.act('pilot:A', {'action_id': action['id'], 'mana_output': allocation})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual((1, 2), (session.state.players['A'].mana_pool['G'], session.state.players['A'].mana_pool['U']))
+        self.assertTrue(session.state.cards[source.object_id].tapped)
+        self.replay(session, load=True)
+
+    def test_combined_counter_price_and_choice_grammar_advertises_postcost_total(self):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+        session = self.session(283021)
+        source = self.add(session.engine, 'Generic Public Mixed Counter Mana')
+        record = self.db.lookup(source.printed_name)
+        ir = compile_oracle_card(record, capability_registry=self.registry, capability_profile='commander_review')
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        program = compile_best_available_card_program(self.db, record, semantic_registry=session.engine.semantics,
+            capability_registry=self.registry, capability_profile='commander_review')
+        self.assertTrue(bind_card_program_runtime(program, capability_registry=self.registry,
+            profile='commander_review')['strict_capability_ready'])
+        source.counters['charge'] = 3
+        action = self.ready(session, source, {})
+        self.assertEqual(2, action['choice_schema']['mana_output']['total'])
+
+    def test_projected_postcost_allocation_agrees_with_browser_and_command(self):
+        session = self.session(283022)
+        source = self.add(session.engine, 'Generic Public Mixed Counter Mana')
+        source.counters['charge'] = 3
+        action = self.ready(session, source, {})
+        action = next(row for row in session.packet('pilot:A', full=True)['decision']['legal_actions']
+            if row['id'] == action['id'])
+        self.checkpoint(session)
+        allocation = {'G': 1, 'U': 1}
+        self.assertEqual([], self.browser_errors(action, allocation))
+        self.assertTrue(self.browser_errors(action, {'G': 3}))
+        before = authoritative_state_hash(session.state)
+        denied = session.act('pilot:A', {'action_id': action['id'], 'mana_output': {'G': 3}})
+        self.assertFalse(denied.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act('pilot:A', {'action_id': action['id'], 'mana_output': allocation})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(2, session.state.cards[source.object_id].counters['charge'])
+        self.assertEqual((1, 1), (session.state.players['A'].mana_pool['G'], session.state.players['A'].mana_pool['U']))
+        self.replay(session, load=True)
+
+    def test_counter_price_zero_output_is_read_only_offered_and_paid_once(self):
+        session = self.session(283024)
+        source = self.add(session.engine, 'Generic Public Mixed Counter Mana')
+        source.counters['charge'] = 1
+        action = self.ready(session, source, {})
+        from quorune.public_quantity_mana_runtime import public_quantity_mana_choice_schema
+        ability = next(ability for ability in session.engine._activated_abilities(source)
+            if ability.dynamic_mana_output is not None)
+        before = authoritative_state_hash(session.state)
+        self.assertEqual(action['choice_schema'], public_quantity_mana_choice_schema(session.engine, 'A', source, ability))
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self.assertEqual(1, source.counters['charge'])
+        self.assertEqual(0, action['choice_schema']['mana_output']['total'])
+        action = next(row for row in session.packet('pilot:A', full=True)['decision']['legal_actions']
+            if row['id'] == action['id'])
+        self.assertEqual([], self.browser_errors(action, {}))
+        self.checkpoint(session)
+        accepted = session.act('pilot:A', {'action_id': action['id'], 'mana_output': {}})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(0, session.state.cards[source.object_id].counters.get('charge', 0))
+        self.assertEqual(0, sum(session.state.players['A'].mana_pool.values()))
+        self.replay(session, load=True)
 
     def test_quantity_mana_spell_counts_at_resolution_and_replays(self):
         session=self.session(283004);engine=session.engine

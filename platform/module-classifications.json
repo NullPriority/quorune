@@ -10697,6 +10697,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_runtime/zone_move_intent.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_runtime/zone_object_keyword_handlers.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
@@ -11814,5 +11829,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "ee54234a01a26d5fb6adba211e6be81a4c432ba4b2046477a5d5150c39d8ce3d"
+  "fingerprint": "89ce3031a59f4f55aa3d9d22a5801a738361db58d4da4e420143ef3d6eca6ea1"
 }

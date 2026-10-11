@@ -15,6 +15,31 @@ function form(fields: ChoiceForm["fields"]): ChoiceForm {
   return { v: 1, fields, submit_label: "Submit" };
 }
 
+test("dynamic mana allocations enforce colors, integers, total and color multiplicity", () => {
+  const field = {name: "mana_output", label: "Mana", control: "mana_modes", required: true,
+    allowed_colors: ["G", "U"], total: 3, single_color: false, default: {G: 3}};
+  const choicesForm = form([field]);
+  for (const mana_output of [{G: 3}, {G: 1, U: 2}, {G: 0, U: 3}]) {
+    assert.deepEqual(validateChoices(choicesForm, {mana_output}), []);
+  }
+  for (const mana_output of [undefined, null, 3, "3", [], {}, {G: "3"}, {G: true},
+    {G: 1.5, U: 1.5}, {G: -1, U: 4}, {G: 4}, {G: 2}, {R: 3}, {G: 3, R: 0}]) {
+    assert.equal(validateChoices(choicesForm, {mana_output}).length, 1);
+  }
+  const single = form([{...field, single_color: true}]);
+  assert.deepEqual(validateChoices(single, {mana_output: {U: 3}}), []);
+  assert.equal(validateChoices(single, {mana_output: {G: 1, U: 2}}).length, 1);
+  const zero = form([{...field, total: 0}]);
+  for (const mana_output of [{}, {G: 0}, {G: 0, U: 0}]) {
+    assert.deepEqual(validateChoices(zero, {mana_output}), []);
+  }
+  assert.equal(validateChoices(zero, {mana_output: {R: 0}}).length, 1);
+  const enumerated = form([{name: "mana_output", control: "mana_modes", required: true,
+    options: [{value: {G: 1}}, {value: {U: 1}}]}]);
+  assert.deepEqual(validateChoices(enumerated, {mana_output: {U: 1}}), []);
+  assert.equal(validateChoices(enumerated, {mana_output: {G: 1, U: 0}}).length, 1);
+});
+
 test("combat assignment permits only the server's optional zero or full totals", () => {
   const choicesForm = form([{
     name: "assignments", label: "Combat damage", control: "damage_assignments",

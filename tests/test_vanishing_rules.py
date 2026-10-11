@@ -113,6 +113,12 @@ class VanishingRuntimeTests(unittest.TestCase):
     checkpoint = fading_witnesses.FadingRuntimeTests.checkpoint
     replay = fading_witnesses.FadingRuntimeTests.replay
     upkeep = fading_witnesses.FadingRuntimeTests.upkeep
+    cleanup_source = "Calciderm"
+    cleanup_counter = "time"
+    cleanup_count = 1
+
+    def test_vanishing_cleanup_replacement_resumes_atomically_without_death(self):
+        fading_witnesses.FadingRuntimeTests.test_cleanup_sacrifice_replacement_resumes_atomically_without_death(self)
 
     def resolve_top(self, session):
         top = session.state.stack[-1].stack_id
@@ -152,6 +158,37 @@ class VanishingRuntimeTests(unittest.TestCase):
         resumed = self.replay(session, load=True)
         self.resolve(resumed)
         self.assertEqual("graveyard", resumed.state.cards[source.object_id].zone)
+        self.replay(resumed)
+
+    def test_separate_last_time_counter_trigger_publishes_sacrifice_and_observer_draw(self):
+        session = self.session(294010)
+        engine = session.engine
+        source = self.add(engine, "Calciderm")
+        observer = self.add(engine, "Generic Player Sacrifice Draw Trigger Fixture")
+        for card in (source, observer):
+            program = compile_best_available_card_program(self.db, self.db.lookup(card.printed_name),
+                semantic_registry=engine.semantics, capability_registry=self.registry,
+                capability_profile="commander_review")
+            self.assertTrue(bind_card_program_runtime(program, capability_registry=self.registry,
+                profile="commander_review")["strict_capability_ready"])
+        source.counters["time"] = 1
+        identity = source.logical_object_id
+        hand = len(session.state.players["A"].zones["hand"])
+        self.upkeep(session)
+        self.checkpoint(session)
+        self.resolve_top(session)
+        self.assertEqual("battlefield", source.zone)
+        self.assertEqual(0, source.counters.get("time", 0))
+        self.assertTrue(self.is_sacrifice(engine, engine.state.stack[-1]))
+        resumed = self.replay(session, load=True)
+        self.resolve(resumed)
+        self.assertEqual("graveyard", resumed.state.cards[source.object_id].zone)
+        self.assertEqual(hand + 1, len(resumed.state.players["A"].zones["hand"]),
+            "Vanishing's separate cleanup must trigger the unrestricted sacrifice observer")
+        sacrifices = [row for row in resumed.state.turn_history.events if row.kind == "permanent_sacrificed"]
+        self.assertEqual(1, len(sacrifices))
+        self.assertEqual(identity, sacrifices[0].object_incarnation)
+        self.assertEqual("A", sacrifices[0].actor)
         self.replay(resumed)
 
     def test_removal_batch_seals_actual_transitions_and_discovers_after_commit(self):

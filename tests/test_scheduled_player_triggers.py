@@ -18,6 +18,13 @@ import test_counter_placement_events as counter_witnesses
 
 
 class ScheduledPlayerTriggerCompilerTests(unittest.TestCase):
+    def test_mixed_scheduled_result_preserves_each_original_recipient(self):
+        text = "At the beginning of each opponent's upkeep, that player draws a card and you gain 1 life."
+        ir = compile_oracle_card(query_record(text), capability_registry=load_default_capability_registry())
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        self.assertEqual(({'op': 'draw', 'player': '$context.player', 'count': 1, 'private': True},
+            {'op': 'life', 'player': '$controller', 'delta': 1}), ir.faces[0].nodes[0].effects)
+
     def test_each_player_and_opponent_results_are_nontargeted_context_bound(self):
         for text in ("At the beginning of each player's upkeep, that player loses 2 life and draws two cards.",
                      "At the beginning of each opponent's upkeep, that player loses 1 life."):
@@ -42,6 +49,15 @@ class ScheduledPlayerTriggerCompilerTests(unittest.TestCase):
         self.assertIn('damage.result.player_life',scheduled_player_node_capabilities(**args))
         for changes in ({'target':'$controller'},{'amount':True},{'source':'$target.0'},{'extra':1}):
             self.assertEqual((),scheduled_player_node_capabilities(**{**args,'effects':({**effect,**changes},)}))
+
+    def test_mixed_scheduled_shape_rejects_malformed_second_player(self):
+        from quorune.rules.scheduled_player_shapes import scheduled_player_node_capabilities
+        draw = {'op': 'draw', 'player': '$context.player', 'count': 1, 'private': True}
+        for player in ([], {}, None, True, '$target.0'):
+            with self.subTest(player=player):
+                self.assertEqual((), scheduled_player_node_capabilities(effects=(draw,
+                    {'op': 'life', 'player': player, 'delta': 1}), target_schema=None,
+                    mechanic_ids=('scheduled-player-event-result',)))
 
 
 class ScheduledPlayerTriggerRuntimeTests(unittest.TestCase):
@@ -70,6 +86,43 @@ class ScheduledPlayerTriggerRuntimeTests(unittest.TestCase):
             if session.state.step=='upkeep':break
             result=session.act(session.pending_principals()[0],{'action_id':'pass'});self.assertTrue(result.ok,result.summary)
         self.assertEqual('upkeep',session.state.step)
+
+    def test_mixed_upkeep_resolves_draw_and_locked_controller_life_privately(self):
+        self.mixed_upkeep(change_controller=True)
+
+    def test_mixed_upkeep_replays_from_before_triggering_step(self):
+        self.mixed_upkeep(change_controller=False)
+
+    def mixed_upkeep(self, *, change_controller):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+        session = self.session(306020)
+        engine = session.engine
+        source = self.add(engine, 'Generic Mixed Opponent Upkeep Result')
+        program = compile_best_available_card_program(self.db, self.db.lookup(source.printed_name),
+            semantic_registry=engine.semantics, capability_registry=self.registry,
+            capability_profile='commander_review')
+        self.assertTrue(bind_card_program_runtime(program, capability_registry=self.registry,
+            profile='commander_review')['strict_capability_ready'])
+        hands = {seat: len(session.state.players[seat].zones['hand']) for seat in 'ABCD'}
+        self.enter_upkeep_from_untap(session, 'B')
+        trigger = next(item for item in session.state.stack if item.source_object_id == source.object_id)
+        self.assertEqual(('A', 'B'), (trigger.controller, trigger.context['player']))
+        if change_controller:
+            engine.change_control(source.object_id, 'C', reason='Response changes source controller')
+            self.checkpoint(session)
+        self.resolve(session)
+        self.assertEqual({'A': 41, 'B': 40, 'C': 40, 'D': 40},
+            {seat: session.state.players[seat].life for seat in 'ABCD'})
+        self.assertEqual({**hands, 'B': hands['B'] + 1},
+            {seat: len(session.state.players[seat].zones['hand']) for seat in 'ABCD'})
+        private = session.state.cards[session.state.players['B'].zones['hand'][-1]].ref
+        for seat in 'ACD':
+            packet = session.packet('pilot:' + seat, full=True)
+            self.assertNotIn(private, str(packet))
+            self.assertEqual({'A': 41, 'B': 40, 'C': 40, 'D': 40},
+                {seat: row['life'] for seat, row in packet['state']['players'].items()})
+        self.replay(session, load=True)
 
     def test_actual_seizan_upkeep_affects_active_player_not_source_controller(self):
         session=self.session(306001);engine=session.engine

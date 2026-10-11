@@ -59,6 +59,15 @@ jobs:
         run: |
           python scripts/build_test_database.py validate-ci-dependencies
           python scripts/build_test_database.py build-ci --output "data/test-ci-${{ matrix.platform }}-${{ matrix.shard }}.sqlite3"
+      - id: validator_runtime
+        name: Detect TypeScript validator integration
+        run: >-
+          python -c "import json, os, sys; from pathlib import Path; modules = json.loads(Path('platform/test-shards.json').read_text(encoding='utf-8'))['primary_shards'][sys.argv[1]]; Path(os.environ['GITHUB_OUTPUT']).write_text('node_required=' + str('test_public_quantity_mana' in modules).lower() + chr(10), encoding='utf-8')"
+          "${{ matrix.shard }}"
+      - uses: actions/setup-node@v4
+        if: steps.validator_runtime.outputs.node_required == 'true'
+        with:
+          node-version: "24"
       - name: Run functional shard with fixed collection-preserving workers
         if: matrix.shard != 'generated-validation'
         run: >-

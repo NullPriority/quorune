@@ -36,6 +36,13 @@ def bind_semantic_program_runtime(
     required: set[str] = set()
     blockers: set[str] = set()
     unregistered_operations: set[str] = set()
+    if getattr(program, "trigger_limit", None) is not None:
+        from ..rules.trigger_limits import validate_program_trigger_limit, TRIGGER_ONCE_PER_TURN_CAPABILITY
+        required.add(TRIGGER_ONCE_PER_TURN_CAPABILITY)
+        try:
+            validate_program_trigger_limit(program)
+        except (TypeError, ValueError) as exc:
+            blockers.add(f"runtime_trigger_limit:invalid:{exc}")
     for effect in program.effects:
         operation = str(effect.get("op") or "")
         descriptor = semantic_handlers.describe(operation)

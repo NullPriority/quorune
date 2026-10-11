@@ -14,6 +14,10 @@ typed characteristic query grammar. The compiler marks their generated
 trigger for one occurrence per committed simultaneous batch, scoped to source
 incarnation and ability identity. Separate batches remain separate events.
 The once-each-turn descriptor independently limits qualifying entry triggers.
+Departure subscriptions, including source and external sacrifice events, remain
+outside that descriptor's admitted scope. The compiler, semantic shape validator
+and runtime trust binder share the same exclusion; an independently supported
+unrestricted sacrifice observer is unaffected.
 Result references that require the entire matching object set remain
 residuals, as do unsupported sibling abilities.
 
@@ -33,7 +37,9 @@ damage source references retain their ordinary last known source information.
 
 Scheduled each-player and each-opponent upkeep triggers preserve the trigger
 source's controller separately from the active player. Fixed nontargeted
-draw, life, mill, and damage results bind to the recorded step player. A
+draw, life, mill, and damage results preserve each clause's original subject.
+“That player” and inherited subjects bind to the recorded step player; an
+explicit “you” remains bound to the resolving trigger controller. A
 current enchanted-object controller schedule uses the reciprocal attachment
 and the recipient's controller at discovery. Changing custody later does not
 change the queued result's affected player. Unsupported player roles,
@@ -1290,7 +1296,10 @@ Chosen or qualified landwalk and as-though evasion overrides remain residual.
 Fading and Vanishing lower their separate entry and lifecycle abilities to
 the current counter and trigger owners. Vanishing retains its intervening-if
 upkeep and separate last-counter sacrifice trigger; ordinary counter removals
-observe post-event characteristics before stabilization. Umbra armor lowers
+observe post-event characteristics before stabilization. Both cleanup actions
+carry an explicit sacrifice transition through the ordinary zone-move intent
+and canonical replacement transaction, preserving sacrifice occurrences and
+history even when a destination replacement prevents death. Umbra armor lowers
 an Aura-owned current fragment and requires the complete coupled destruction
 capability. Current relationship tracking and compiler recognition alone do
 not make a card supported. See [ADR 0107](../adr/0107-typed-coupled-umbra-destruction.md)

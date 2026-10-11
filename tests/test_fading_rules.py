@@ -207,6 +207,77 @@ class FadingRuntimeTests(unittest.TestCase):
         self.assertEqual("graveyard", current.zone)
         self.replay(resumed)
 
+    def test_failed_fade_removal_publishes_sacrifice_and_observer_draw(self):
+        session = self.session(293010)
+        engine = session.engine
+        source = self.add(engine, "Skyshroud Ridgeback")
+        observer = self.add(engine, "Generic Player Sacrifice Draw Trigger Fixture")
+        for card in (source, observer):
+            program = compile_best_available_card_program(self.db, self.db.lookup(card.printed_name),
+                semantic_registry=engine.semantics, capability_registry=self.registry,
+                capability_profile="commander_review")
+            self.assertTrue(bind_card_program_runtime(program, capability_registry=self.registry,
+                profile="commander_review")["strict_capability_ready"])
+        source.counters["fade"] = 0
+        identity = source.logical_object_id
+        hand = len(session.state.players["A"].zones["hand"])
+        self.upkeep(session)
+        self.checkpoint(session)
+        self.resolve(session)
+        self.assertEqual("graveyard", source.zone)
+        self.assertEqual(hand + 1, len(session.state.players["A"].zones["hand"]),
+            "Fading cleanup must trigger the unrestricted sacrifice observer")
+        sacrifices = [row for row in session.state.turn_history.events if row.kind == "permanent_sacrificed"]
+        self.assertEqual(1, len(sacrifices))
+        self.assertEqual(identity, sacrifices[0].object_incarnation)
+        self.assertEqual("A", sacrifices[0].actor)
+        self.replay(session)
+
+    def test_cleanup_sacrifice_replacement_resumes_atomically_without_death(self):
+        session = self.session(293011)
+        engine = session.engine
+        source = self.add(engine, self.cleanup_source)
+        observer = self.add(engine, "Generic Player Sacrifice Draw Trigger Fixture")
+        source.counters[self.cleanup_counter] = self.cleanup_count
+        for index in range(2):
+            replacement = self.add(engine, "Generic Cleanup Destination Replacement", seat="B", ref=f"replacement-{index}")
+            program = compile_best_available_card_program(self.db, self.db.lookup(replacement.printed_name),
+                semantic_registry=engine.semantics, capability_registry=self.registry,
+                capability_profile="commander_review")
+            self.assertTrue(bind_card_program_runtime(program, capability_registry=self.registry,
+                profile="commander_review")["strict_capability_ready"])
+        hand = len(session.state.players["A"].zones["hand"])
+        identity = source.logical_object_id
+        self.upkeep(session)
+        self.checkpoint(session)
+        self.resolve(session)
+        self.assertEqual("replacement.order", session.state.pending_decision.kind)
+        self.assertEqual("battlefield", source.zone)
+        self.assertFalse(any(row.kind == "permanent_sacrificed" for row in session.state.turn_history.events))
+        for seat in "BCD":
+            self.assertIsNone(session.packet("pilot:" + seat, full=True)["decision"])
+        resumed = self.replay(session, load=True)
+        for _ in range(4):
+            if resumed.state.pending_decision.kind != "replacement.order":
+                break
+            option = resumed.packet("pilot:A", full=True)["decision"]["ctx"]["options"][0]["id"]
+            before = authoritative_state_hash(resumed.state)
+            denied = resumed.act("pilot:B", {"action_id": "choose", "replacement": option})
+            self.assertFalse(denied.ok)
+            self.assertEqual(before, authoritative_state_hash(resumed.state))
+            accepted = resumed.act("pilot:A", {"action_id": "choose", "replacement": option})
+            self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(resumed)
+        self.assertEqual("exile", resumed.state.cards[source.object_id].zone)
+        self.assertEqual(hand + 1, len(resumed.state.players["A"].zones["hand"]))
+        rows = [row for row in resumed.state.turn_history.events if row.object_incarnation == identity]
+        self.assertEqual(["permanent_left", "permanent_sacrificed"], [row.kind for row in rows])
+        self.replay(resumed)
+
+    cleanup_source = "Skyshroud Ridgeback"
+    cleanup_counter = "fade"
+    cleanup_count = 0
+
     def test_other_seat_upkeep_does_not_trigger_and_pending_source_does_not_follow_blink(self):
         session = self.session(293002)
         engine = session.engine

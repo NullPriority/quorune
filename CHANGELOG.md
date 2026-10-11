@@ -11,6 +11,26 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Reject limited sacrifice-departure subscriptions consistently in compilation,
+  semantic shape validation, and trust admission instead of silently dropping
+  an admitted departing observer's trigger.
+
+- Advertise source-counter mana quantities after their exact counter-removal
+  price, using a detached preview of the canonical payment plan.
+
+- Validate dynamic public-quantity mana allocations in the browser and reject
+  disallowed color keys consistently at the authoritative command boundary.
+
+- Preserve distinct step-player and trigger-controller recipients in mixed
+  scheduled draw and life results.
+
+- Bind copied and retargeted becomes-target announcements to the selected
+  incarnation, preserving stale-target retention without triggering a returned
+  permanent.
+
+- Preserve explicit sacrifice provenance for Fading and Vanishing cleanup
+  through zone replacements, normalized trigger occurrences, and turn history.
+
 - Cast ordinary fixed-cost and bare Mayhem cards from their owner’s graveyard
   using current-turn discarded-card identity, existing timing, additional-cost
   and land-play owners. Prior lifecycle descriptor versions remain readable.

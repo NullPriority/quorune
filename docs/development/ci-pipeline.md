@@ -76,6 +76,11 @@ changes so its payoff and regressions remain attributable.
 
 ## Two development slots
 
+The public-quantity mana integration tests run projected forms through the real
+TypeScript choice validator. Their existing Python owner shards install Node 24;
+cross-platform and nightly workflows derive that requirement from the canonical
+shard manifest. Browser jobs continue to use the same pinned Node major version.
+
 Keep at most two substantive branches active:
 
 - Slot A is pushed and undergoing pull-request certification.

@@ -48,7 +48,7 @@
       "produced_mana": [],
       "released_at": "2021-03-19",
       "toughness": "3",
-      "type_line": "Creature \u2014 Bird Rebel Soldier"
+      "type_line": "Creature — Bird Rebel Soldier"
     },
     {
       "cmc": 4.0,
@@ -98,7 +98,7 @@
       "produced_mana": [],
       "released_at": "2021-03-19",
       "toughness": "5",
-      "type_line": "Creature \u2014 Beast"
+      "type_line": "Creature — Beast"
     },
     {
       "cmc": 4.0,
@@ -148,7 +148,7 @@
       "produced_mana": [],
       "released_at": "2007-02-02",
       "toughness": "3",
-      "type_line": "Creature \u2014 Illusion"
+      "type_line": "Creature — Illusion"
     },
     {
       "cmc": 4.0,
@@ -245,7 +245,7 @@
       "produced_mana": [],
       "released_at": "2007-05-04",
       "toughness": "6",
-      "type_line": "Creature \u2014 Wurm"
+      "type_line": "Creature — Wurm"
     },
     {
       "cmc": 3.0,
@@ -295,7 +295,7 @@
       "produced_mana": [],
       "released_at": "2021-03-19",
       "toughness": null,
-      "type_line": "Enchantment \u2014 Aura"
+      "type_line": "Enchantment — Aura"
     },
     {
       "cmc": 1.0,
@@ -391,7 +391,7 @@
       "produced_mana": [],
       "released_at": "2007-02-02",
       "toughness": "*",
-      "type_line": "Creature \u2014 Elemental"
+      "type_line": "Creature — Elemental"
     },
     {
       "cmc": 0,
@@ -656,6 +656,78 @@
       "released_at": "2021-03-19",
       "toughness": null,
       "type_line": "Instant"
+    },
+    {
+      "oracle_id": "12100000-0000-4000-8000-000000000087",
+      "name": "Generic Player Sacrifice Draw Trigger Fixture",
+      "mana_cost": "{2}{U}",
+      "cmc": 3.0,
+      "type_line": "Creature â€” Advisor",
+      "oracle_text": "Whenever a player sacrifices a permanent, draw a card.",
+      "power": "2",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-09-20",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000001986",
+      "name": "Generic Cleanup Destination Replacement",
+      "mana_cost": "{B}{B}",
+      "cmc": 2.0,
+      "type_line": "Creature — Dauthi Rogue",
+      "oracle_text": "If a card would be put into an opponent's graveyard from anywhere, instead exile it with a void counter on it.",
+      "power": "3",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-04-11",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
     }
   ],
   "fixture_kind": "public_exact-list_card_data",
@@ -757,7 +829,7 @@
       "source": "wotc"
     },
     {
-      "comment": "This is the current interaction between Humility and Opalescence:\u00a0The type-changing effect applies at layer 4, but the rest happens in the applicable layers. The rest of it will apply even if the permanent loses its ability before it's finished applying. So if Opalescence, Humility, and Worship are on the battlefield and Opalescence entered before Humility, the following is true: Layer 4: Humility and Worship each become creatures that are still enchantments. (Opalescence). Layer 6: Humility and Worship each lose their abilities. (Humility) Layer 7b: Humility becomes 4/4 and Worship becomes 4/4. (Opalescence). Humility becomes 1/1 and Worship becomes 1/1 (Humility). But if Humility entered before Opalescence, the following is true: Layer 4: Humility and Worship each become creatures that are still enchantments (Opalescence). Layer 6: Humility and Worship each lose their abilities (Humility). Layer 7b: Humility becomes 1/1 and Worship becomes 1/1 (Humility). Humility becomes 4/4 and Worship becomes 4/4 (Opalescence).",
+      "comment": "This is the current interaction between Humility and Opalescence: The type-changing effect applies at layer 4, but the rest happens in the applicable layers. The rest of it will apply even if the permanent loses its ability before it's finished applying. So if Opalescence, Humility, and Worship are on the battlefield and Opalescence entered before Humility, the following is true: Layer 4: Humility and Worship each become creatures that are still enchantments. (Opalescence). Layer 6: Humility and Worship each lose their abilities. (Humility) Layer 7b: Humility becomes 4/4 and Worship becomes 4/4. (Opalescence). Humility becomes 1/1 and Worship becomes 1/1 (Humility). But if Humility entered before Opalescence, the following is true: Layer 4: Humility and Worship each become creatures that are still enchantments (Opalescence). Layer 6: Humility and Worship each lose their abilities (Humility). Layer 7b: Humility becomes 1/1 and Worship becomes 1/1 (Humility). Humility becomes 4/4 and Worship becomes 4/4 (Opalescence).",
       "oracle_id": "ed7bdb3e-5c51-4547-9266-76a791e0b2b0",
       "published_at": "2009-10-01",
       "source": "wotc"

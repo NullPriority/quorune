@@ -295,14 +295,30 @@ function fieldErrors(field: ChoiceField, values: ChoiceValues): string[] {
       errors.push(`${label} requires explicit confirmation.`);
     }
   } else if (control === "mana_modes") {
-    const serialized = JSON.stringify(value ?? {});
-    const legal = new Set(
-      list(field.options).map((option) =>
-        JSON.stringify(record(option).value ?? {}),
-      ),
-    );
-    if (required && !legal.has(serialized)) {
-      errors.push(`${label} requires a legal mana choice.`);
+    if (field.allowed_colors !== undefined) {
+      const colors = list(field.allowed_colors);
+      const total = field.total;
+      const allocation = record(value);
+      const amounts = Object.values(allocation);
+      const valid = Array.isArray(field.allowed_colors) && colors.length > 0
+        && colors.every((color) => typeof color === "string" && /^[WUBRGC]$/.test(color))
+        && typeof total === "number" && Number.isInteger(total) && total >= 0
+        && value !== null && typeof value === "object" && !Array.isArray(value)
+        && Object.keys(allocation).every((color) => colors.includes(color))
+        && amounts.every((amount) => typeof amount === "number" && Number.isInteger(amount) && amount >= 0)
+        && amounts.reduce<number>((sum, amount) => sum + Number(amount), 0) === total
+        && (!field.single_color || amounts.filter((amount) => Number(amount) > 0).length <= 1);
+      if (!valid) errors.push(`${label} requires a legal mana allocation.`);
+    } else {
+      const serialized = JSON.stringify(value ?? {});
+      const legal = new Set(
+        list(field.options).map((option) =>
+          JSON.stringify(record(option).value ?? {}),
+        ),
+      );
+      if (required && !legal.has(serialized)) {
+        errors.push(`${label} requires a legal mana choice.`);
+      }
     }
   } else if (control === "integer") {
     const number = Number(value);

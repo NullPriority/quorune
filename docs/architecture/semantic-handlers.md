@@ -39,6 +39,10 @@ independent target groups retain their unsupported boundaries.
 Typed semantic handlers execute one immediate CardProgram instruction. They
 translate a validated typed node and bounded immutable rules query into typed
 intents. Canonical engine or focused mutation owners commit those intents.
+The single-object `ZoneMoveIntent` and its frozen replacement selections live
+in `semantic_runtime/zone_move_intent.py`; the public intent catalog reexports
+the same type. Its explicit transition kind is data for the canonical zone
+transaction, including sacrifice provenance and ordinary default movement.
 Handlers never receive mutable `GameState`, private projections, persistence
 objects, or unrestricted engine access.
 

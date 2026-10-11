@@ -7,6 +7,7 @@ from typing import Mapping
 
 from ..object_query import ObjectQueryResult
 from ..replacement.immutable import FrozenMap
+from ..zone_trigger_events import ZoneTransitionKind
 from ..semantic_runtime import (
     BecomeMonstrousIntent,
     BecomeRenownedIntent,
@@ -83,6 +84,7 @@ def _fading_intents(
             actor=context.actor, object_ref=source.ref,
             expected_zones=("battlefield",), destination="graveyard",
             reason="Fading could not remove a fade counter", controlled_only=True,
+            transition_kind=ZoneTransitionKind.SACRIFICE,
         ),)
     return ()
 
@@ -96,6 +98,7 @@ def _vanishing_intents(
         return (ZoneMoveIntent(
             actor=context.actor, object_ref=source.ref, expected_zones=("battlefield",),
             destination="graveyard", reason="Vanishing last time counter removed", controlled_only=True,
+            transition_kind=ZoneTransitionKind.SACRIFICE,
         ),)
     counters = source.counters.get("time", 0)
     if type(counters) is not int or counters < 0:

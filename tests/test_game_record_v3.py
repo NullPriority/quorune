@@ -73,6 +73,31 @@ class GameRecordV3Tests(unittest.TestCase):
                     replay_record(record_dir, self.db, verify=True)
                 checkpoint.assert_not_called()
 
+    def test_archived_cleanup_descriptor_is_readable_but_execution_provenance_is_rejected(self):
+        from quorune.record import ENGINE_VERSION, semantics_fingerprint
+        from quorune.record_trust import runtime_trust_provenance
+        from quorune.semantics import SemanticRegistry, SemanticProgram
+        from quorune.util import stable_json
+        import hashlib
+        recipe = json.loads((Path(__file__).parent / 'fixtures/historical-cleanup-provenance-recipe.json').read_text(encoding='utf-8'))
+        self.assertTrue(recipe['base_execution_verified'])
+        old = recipe['historical_descriptor']
+        self.assertEqual(old, SemanticProgram.from_dict(old).to_dict())
+        self.assertEqual(recipe['historical_descriptor_sha256'], hashlib.sha256(stable_json(old).encode()).hexdigest())
+        semantics = SemanticRegistry()
+        historical = runtime_trust_provenance()
+        historical.update(recipe['runtime_trust_fingerprints'])
+        with tempfile.TemporaryDirectory() as directory:
+            record_dir = Path(directory)
+            manifest = {'schema_version': 3, 'engine_version': ENGINE_VERSION,
+                'semantics_fingerprint': semantics_fingerprint(semantics), 'runtime_trust': historical}
+            (record_dir / 'manifest.json').write_text(json.dumps(manifest), encoding='utf-8')
+            with patch('quorune.record.SemanticRegistry', return_value=semantics), \
+                    patch('quorune.record.read_initial_checkpoint') as checkpoint:
+                with self.assertRaisesRegex(ValueError, recipe['current_replay_disposition']):
+                    replay_record(record_dir, self.db, verify=True)
+                checkpoint.assert_not_called()
+
     def test_pre_rebrand_runtime_identity_namespace_remains_stable(self):
         session = make_session(
             self.db,

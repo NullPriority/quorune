@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "sanitized_historical_cleanup_provenance_recipe",
+  "source_commit": "0bb137fc2b8d10c1e92f3d33cf5b23d0fa028686",
+  "compiler_version": "oracle-ir-v311",
+  "engine_version": "0.9.0",
+  "runtime_trust_fingerprints": {
+    "capability_evidence_fingerprint": "dcd662963b769942d59911c9678f40b701a77b9b107c897f415d7412088fc40f",
+    "capability_registry_fingerprint": "ec164342e7970f0ceea07dc66eb1002d75d339bb29e843db3e85203305679c1f",
+    "runtime_component_registry_fingerprint": "071a99fe26e0cda2f939c0e8867bd280c0633c115252f336755b6cc2a95e3a48",
+    "schema_version": 1,
+    "semantic_handler_registry_fingerprint": "2b9c803f4e32f3f2e20f31dafda853e96474bb21f6f390a33cbacfddd2fb5e6e"
+  },
+  "archive_file_sha256": {
+    "manifest.json": "bd711f3b5bd448efeed356da0eb624019f69c4e63971b18c910472cec25ab9dd",
+    "initial-checkpoint.json.gz": "44cb5d9a31c47f6ce99d71444ee40318b0f4d8b2f47219c9238eb3f84987e877",
+    "commands.jsonl": "2edf248dbd749c890501134fd616c85f5986f98ea4b9e2b459c96dfd770e54f2",
+    "semantics.json": "6fb8dc8cef549aff3fb423e4a3d9b4c2a9e5741332e6a14b52671b25ef61d68c"
+  },
+  "accepted_commands": 4,
+  "base_execution_verified": true,
+  "readable_checkpoint_state_hash": "3948eba9dfd795e3af7e0b9102d3cbb94924062aa8304345dc4b8a7bd9bc0193",
+  "historical_descriptor": {
+    "ability_id": "trigger:front:n1",
+    "active_zone": "battlefield",
+    "capability_closure": {
+      "blockers": [],
+      "evidence_fingerprint": "dcd662963b769942d59911c9678f40b701a77b9b107c897f415d7412088fc40f",
+      "fingerprint": "9f2f1995fd00d31faade7df5df69dde682c5588b7cad1a508f9952e8201bb1b8",
+      "profile": "commander_review",
+      "reachable": [
+        "counter.lifecycle.fading",
+        "counter.placement.quantity_replacement",
+        "counter.removal.fixed_effect",
+        "trigger.placement.apnap",
+        "zone.change.destination_replacement"
+      ],
+      "registry_fingerprint": "ec164342e7970f0ceea07dc66eb1002d75d339bb29e843db3e85203305679c1f",
+      "requested": [
+        "counter.lifecycle.fading",
+        "counter.placement.quantity_replacement"
+      ],
+      "trusted": true
+    },
+    "capability_dependencies": [
+      "counter.lifecycle.fading",
+      "counter.placement.quantity_replacement"
+    ],
+    "cost_schema": null,
+    "coverage": [
+      "generated_oracle_ir",
+      "triggered_ability",
+      "current_ability_fragment_required",
+      "fading",
+      "cr-122-counters"
+    ],
+    "destination": null,
+    "effects": [
+      {
+        "action": "fading",
+        "amount": 1,
+        "op": "fixed_self_counter_keyword_action",
+        "source": "$source"
+      }
+    ],
+    "event": "step.begin",
+    "event_condition": {
+      "all": [
+        {
+          "field": "player",
+          "op": "eq",
+          "value": "$source.controller"
+        },
+        {
+          "field": "step",
+          "op": "eq",
+          "value": "upkeep"
+        }
+      ]
+    },
+    "handlers": [],
+    "key": "34a160bc-5d7e-483c-b24c-ab30b7d313b0:trigger:front:n1",
+    "label": "Skyshroud Ridgeback — Fading 2",
+    "notes": "",
+    "oracle_id": "34a160bc-5d7e-483c-b24c-ab30b7d313b0",
+    "provenance": {
+      "authored_by": "oracle-ir-v311",
+      "capability_closure_fingerprint": "9f2f1995fd00d31faade7df5df69dde682c5588b7cad1a508f9952e8201bb1b8",
+      "capability_profile": "commander_review",
+      "capability_registry_fingerprint": "ec164342e7970f0ceea07dc66eb1002d75d339bb29e843db3e85203305679c1f",
+      "dependency_trust": "capability_closure_verified",
+      "face_id": "front",
+      "review_status": "capability_closure_verified",
+      "semantic_hash": "c80842204fc61f1cd7b4b8a7b1d512823505799b3ae76642128e4308555872db",
+      "source_oracle_hash": "aae78af399ef77f93178668035c73b2f751eafb73d60f345424b6ca8531818b6",
+      "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "source_span": {
+        "end": 8,
+        "line": 1,
+        "start": 0
+      },
+      "template_id": "fading-fixed-upkeep-v1"
+    },
+    "requires_arbiter": false,
+    "semantic_schema_version": 3,
+    "target_schema": null,
+    "tests": [
+      "oracle_template:fading-fixed-upkeep-v1"
+    ],
+    "trust_level": "trusted",
+    "version": 1
+  },
+  "historical_descriptor_sha256": "d0dec95ff410fc884b05ceab096d8117f47cc55f8681cfae9453913c1e768343",
+  "current_replay_disposition": "Runtime trust provenance mismatch in record manifest",
+  "historical_execution_claim": "explicitly incompatible after correction; no preserved historical execution claim"
+}

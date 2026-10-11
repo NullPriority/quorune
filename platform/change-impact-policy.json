@@ -226,6 +226,7 @@
         "scripts/validate_pr_body.py"
       ],
       "test_modules": [
+        "test_batched_support_measurement",
         "test_pr_body_policy"
       ]
     },

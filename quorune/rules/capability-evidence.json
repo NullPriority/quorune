@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "ec164342e7970f0ceea07dc66eb1002d75d339bb29e843db3e85203305679c1f",
-  "declaration_source_fingerprint": "7cd96428baa786849e9f5db1ca022970db4afdbe02720f17fed518a8f579a783",
+  "registry_fingerprint": "3fa0afa753f8c05bf63e71083c79bf8227df68f3bfa5abdfc44647ae2a735242",
+  "declaration_source_fingerprint": "60ca382e77263bb4f0d9b655c5d79c89a0cdb3134aad358603756c29ce442c0f",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -34494,6 +34494,29 @@
     {
       "capability_id": "counter.lifecycle.fading",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fading_rules.FadingRuntimeTests.test_cleanup_sacrifice_replacement_resumes_atomically_without_death",
+      "official_rule_ids": [
+        "702.32a",
+        "603.1",
+        "603.2",
+        "603.3",
+        "113.7a",
+        "400.7",
+        "608.2c",
+        "608.2h",
+        "122.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pending destination replacements are atomic and private; resumed exile retains sacrifice without death."
+    },
+    {
+      "capability_id": "counter.lifecycle.fading",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fading_rules.FadingRuntimeTests.test_current_ability_loss_stops_future_upkeep_but_not_a_pending_trigger",
       "official_rule_ids": [
         "702.32a",
@@ -34517,6 +34540,29 @@
     {
       "capability_id": "counter.lifecycle.fading",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fading_rules.FadingRuntimeTests.test_failed_fade_removal_publishes_sacrifice_and_observer_draw",
+      "official_rule_ids": [
+        "702.32a",
+        "603.1",
+        "603.2",
+        "603.3",
+        "113.7a",
+        "400.7",
+        "608.2c",
+        "608.2h",
+        "122.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Failed fade removal commits sacrifice history and resolves an unrestricted observer draw."
+    },
+    {
+      "capability_id": "counter.lifecycle.fading",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fading_rules.FadingRuntimeTests.test_other_seat_upkeep_does_not_trigger_and_pending_source_does_not_follow_blink",
       "official_rule_ids": [
         "702.32a",
@@ -34536,6 +34582,29 @@
         "commander_review"
       ],
       "applicability_note": "Fixed Fading uses current fade counters and trigger-controller sacrifice permission, preserving old source identity and canonical replay."
+    },
+    {
+      "capability_id": "counter.lifecycle.fading",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fading_rules.FadingRuntimeTests.test_cleanup_sacrifice_replacement_resumes_atomically_without_death",
+      "official_rule_ids": [
+        "702.32a",
+        "603.1",
+        "603.2",
+        "603.3",
+        "113.7a",
+        "400.7",
+        "608.2c",
+        "608.2h",
+        "122.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pending destination replacements are atomic and private; resumed exile retains sacrifice without death."
     },
     {
       "capability_id": "counter.lifecycle.fading",
@@ -34677,6 +34746,29 @@
     },
     {
       "capability_id": "counter.lifecycle.fading",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fading_rules.FadingRuntimeTests.test_failed_fade_removal_publishes_sacrifice_and_observer_draw",
+      "official_rule_ids": [
+        "702.32a",
+        "603.1",
+        "603.2",
+        "603.3",
+        "113.7a",
+        "400.7",
+        "608.2c",
+        "608.2h",
+        "122.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Failed fade removal commits sacrifice history and resolves an unrestricted observer draw."
+    },
+    {
+      "capability_id": "counter.lifecycle.fading",
       "evidence_class": "privacy",
       "test_id": "tests.test_fading_rules.FadingRuntimeTests.test_actual_cast_entry_last_counter_and_next_upkeep_sacrifice",
       "official_rule_ids": [
@@ -34700,6 +34792,29 @@
     },
     {
       "capability_id": "counter.lifecycle.fading",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fading_rules.FadingRuntimeTests.test_cleanup_sacrifice_replacement_resumes_atomically_without_death",
+      "official_rule_ids": [
+        "702.32a",
+        "603.1",
+        "603.2",
+        "603.3",
+        "113.7a",
+        "400.7",
+        "608.2c",
+        "608.2h",
+        "122.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pending destination replacements are atomic and private; resumed exile retains sacrifice without death."
+    },
+    {
+      "capability_id": "counter.lifecycle.fading",
       "evidence_class": "replay",
       "test_id": "tests.test_fading_rules.FadingRuntimeTests.test_actual_cast_entry_last_counter_and_next_upkeep_sacrifice",
       "official_rule_ids": [
@@ -34720,6 +34835,52 @@
         "commander_review"
       ],
       "applicability_note": "Fixed Fading uses current fade counters and trigger-controller sacrifice permission, preserving old source identity and canonical replay."
+    },
+    {
+      "capability_id": "counter.lifecycle.fading",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fading_rules.FadingRuntimeTests.test_cleanup_sacrifice_replacement_resumes_atomically_without_death",
+      "official_rule_ids": [
+        "702.32a",
+        "603.1",
+        "603.2",
+        "603.3",
+        "113.7a",
+        "400.7",
+        "608.2c",
+        "608.2h",
+        "122.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Pending destination replacements are atomic and private; resumed exile retains sacrifice without death."
+    },
+    {
+      "capability_id": "counter.lifecycle.fading",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fading_rules.FadingRuntimeTests.test_failed_fade_removal_publishes_sacrifice_and_observer_draw",
+      "official_rule_ids": [
+        "702.32a",
+        "603.1",
+        "603.2",
+        "603.3",
+        "113.7a",
+        "400.7",
+        "608.2c",
+        "608.2h",
+        "122.1",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Failed fade removal commits sacrifice history and resolves an unrestricted observer draw."
     },
     {
       "capability_id": "counter.lifecycle.vanishing",
@@ -34787,6 +34948,27 @@
     {
       "capability_id": "counter.lifecycle.vanishing",
       "evidence_class": "interaction",
+      "test_id": "tests.test_vanishing_rules.VanishingRuntimeTests.test_separate_last_time_counter_trigger_publishes_sacrifice_and_observer_draw",
+      "official_rule_ids": [
+        "702.63a",
+        "702.63b",
+        "702.63c",
+        "603.4",
+        "113.7a",
+        "400.7",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The last removal and sacrifice resolve in distinct windows and retain original incarnation history and observer draw."
+    },
+    {
+      "capability_id": "counter.lifecycle.vanishing",
+      "evidence_class": "interaction",
       "test_id": "tests.test_vanishing_rules.VanishingRuntimeTests.test_upkeep_intervening_condition_and_current_ability_loss",
       "official_rule_ids": [
         "702.63a",
@@ -34828,6 +35010,27 @@
     },
     {
       "capability_id": "counter.lifecycle.vanishing",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_vanishing_rules.VanishingRuntimeTests.test_vanishing_cleanup_replacement_resumes_atomically_without_death",
+      "official_rule_ids": [
+        "702.63a",
+        "702.63b",
+        "702.63c",
+        "603.4",
+        "113.7a",
+        "400.7",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reload the separate cleanup replacement; redirected departure retains sacrifice history without a death."
+    },
+    {
+      "capability_id": "counter.lifecycle.vanishing",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_vanishing_rules.VanishingRuntimeTests.test_pending_sacrifice_control_change_blink_and_new_counters",
       "official_rule_ids": [
@@ -34846,6 +35049,27 @@
         "commander_review"
       ],
       "applicability_note": "Distinct Vanishing upkeep and sacrifice triggers consume sealed actual removals and preserve current ability, incarnation, controller and ordinary stack timing."
+    },
+    {
+      "capability_id": "counter.lifecycle.vanishing",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_vanishing_rules.VanishingRuntimeTests.test_vanishing_cleanup_replacement_resumes_atomically_without_death",
+      "official_rule_ids": [
+        "702.63a",
+        "702.63b",
+        "702.63c",
+        "603.4",
+        "113.7a",
+        "400.7",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reload the separate cleanup replacement; redirected departure retains sacrifice history without a death."
     },
     {
       "capability_id": "counter.lifecycle.vanishing",
@@ -34912,6 +35136,27 @@
     },
     {
       "capability_id": "counter.lifecycle.vanishing",
+      "evidence_class": "positive",
+      "test_id": "tests.test_vanishing_rules.VanishingRuntimeTests.test_separate_last_time_counter_trigger_publishes_sacrifice_and_observer_draw",
+      "official_rule_ids": [
+        "702.63a",
+        "702.63b",
+        "702.63c",
+        "603.4",
+        "113.7a",
+        "400.7",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The last removal and sacrifice resolve in distinct windows and retain original incarnation history and observer draw."
+    },
+    {
+      "capability_id": "counter.lifecycle.vanishing",
       "evidence_class": "privacy",
       "test_id": "tests.test_vanishing_rules.VanishingRuntimeTests.test_upkeep_last_counter_and_separate_sacrifice_replay",
       "official_rule_ids": [
@@ -34933,6 +35178,48 @@
     },
     {
       "capability_id": "counter.lifecycle.vanishing",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_vanishing_rules.VanishingRuntimeTests.test_vanishing_cleanup_replacement_resumes_atomically_without_death",
+      "official_rule_ids": [
+        "702.63a",
+        "702.63b",
+        "702.63c",
+        "603.4",
+        "113.7a",
+        "400.7",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reload the separate cleanup replacement; redirected departure retains sacrifice history without a death."
+    },
+    {
+      "capability_id": "counter.lifecycle.vanishing",
+      "evidence_class": "replay",
+      "test_id": "tests.test_vanishing_rules.VanishingRuntimeTests.test_separate_last_time_counter_trigger_publishes_sacrifice_and_observer_draw",
+      "official_rule_ids": [
+        "702.63a",
+        "702.63b",
+        "702.63c",
+        "603.4",
+        "113.7a",
+        "400.7",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The last removal and sacrifice resolve in distinct windows and retain original incarnation history and observer draw."
+    },
+    {
+      "capability_id": "counter.lifecycle.vanishing",
       "evidence_class": "replay",
       "test_id": "tests.test_vanishing_rules.VanishingRuntimeTests.test_upkeep_last_counter_and_separate_sacrifice_replay",
       "official_rule_ids": [
@@ -34951,6 +35238,27 @@
         "commander_review"
       ],
       "applicability_note": "Distinct Vanishing upkeep and sacrifice triggers consume sealed actual removals and preserve current ability, incarnation, controller and ordinary stack timing."
+    },
+    {
+      "capability_id": "counter.lifecycle.vanishing",
+      "evidence_class": "replay",
+      "test_id": "tests.test_vanishing_rules.VanishingRuntimeTests.test_vanishing_cleanup_replacement_resumes_atomically_without_death",
+      "official_rule_ids": [
+        "702.63a",
+        "702.63b",
+        "702.63c",
+        "603.4",
+        "113.7a",
+        "400.7",
+        "608.2c",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reload the separate cleanup replacement; redirected departure retains sacrifice history without a death."
     },
     {
       "capability_id": "counter.placement.quantity_replacement",
@@ -58388,6 +58696,86 @@
     {
       "capability_id": "mana.production.public_quantity",
       "evidence_class": "interaction",
+      "test_id": "tests.test_public_quantity_mana.PublicQuantityManaRuntimeTests.test_counter_price_zero_output_is_read_only_offered_and_paid_once",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "107.1b",
+        "601.2g",
+        "605.1a",
+        "605.3b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The exact cost plan previews zero without committing, then the activation pays once and produces zero."
+    },
+    {
+      "capability_id": "mana.production.public_quantity",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_quantity_mana.PublicQuantityManaRuntimeTests.test_projected_dynamic_allocation_rejects_same_malformed_browser_and_server_values",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "107.1b",
+        "601.2g",
+        "605.1a",
+        "605.3b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Real browser and server reject malformed allocations without mutation, then accept a permitted mixture and replay."
+    },
+    {
+      "capability_id": "mana.production.public_quantity",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_quantity_mana.PublicQuantityManaRuntimeTests.test_projected_lotus_form_accepts_legal_dynamic_allocation_in_real_browser_validator",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "107.1b",
+        "601.2g",
+        "605.1a",
+        "605.3b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Feed the original projected required form into the real TypeScript validator and accept the same source-sacrifice activation."
+    },
+    {
+      "capability_id": "mana.production.public_quantity",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_quantity_mana.PublicQuantityManaRuntimeTests.test_projected_postcost_allocation_agrees_with_browser_and_command",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "107.1b",
+        "601.2g",
+        "605.1a",
+        "605.3b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The client accepts the post-price total and the server pays once; the obsolete pre-price total rolls back."
+    },
+    {
+      "capability_id": "mana.production.public_quantity",
+      "evidence_class": "interaction",
       "test_id": "tests.test_public_quantity_mana.PublicQuantityManaRuntimeTests.test_quantity_mana_counter_cost_is_removed_before_counting",
       "official_rule_ids": [
         "106.1",
@@ -58508,6 +58896,46 @@
     {
       "capability_id": "mana.production.public_quantity",
       "evidence_class": "negative",
+      "test_id": "tests.test_public_quantity_mana.PublicQuantityManaRuntimeTests.test_projected_dynamic_allocation_rejects_same_malformed_browser_and_server_values",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "107.1b",
+        "601.2g",
+        "605.1a",
+        "605.3b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Real browser and server reject malformed allocations without mutation, then accept a permitted mixture and replay."
+    },
+    {
+      "capability_id": "mana.production.public_quantity",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_quantity_mana.PublicQuantityManaRuntimeTests.test_projected_postcost_allocation_agrees_with_browser_and_command",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "107.1b",
+        "601.2g",
+        "605.1a",
+        "605.3b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The client accepts the post-price total and the server pays once; the obsolete pre-price total rolls back."
+    },
+    {
+      "capability_id": "mana.production.public_quantity",
+      "evidence_class": "negative",
       "test_id": "tests.test_public_quantity_mana.PublicQuantityManaRuntimeTests.test_quantity_mana_invalid_allocation_rolls_back",
       "official_rule_ids": [
         "106.1",
@@ -58548,6 +58976,66 @@
     {
       "capability_id": "mana.production.public_quantity",
       "evidence_class": "positive",
+      "test_id": "tests.test_public_quantity_mana.PublicQuantityManaRuntimeTests.test_counter_price_zero_output_is_read_only_offered_and_paid_once",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "107.1b",
+        "601.2g",
+        "605.1a",
+        "605.3b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The exact cost plan previews zero without committing, then the activation pays once and produces zero."
+    },
+    {
+      "capability_id": "mana.production.public_quantity",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_quantity_mana.PublicQuantityManaRuntimeTests.test_projected_lotus_form_accepts_legal_dynamic_allocation_in_real_browser_validator",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "107.1b",
+        "601.2g",
+        "605.1a",
+        "605.3b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Feed the original projected required form into the real TypeScript validator and accept the same source-sacrifice activation."
+    },
+    {
+      "capability_id": "mana.production.public_quantity",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_quantity_mana.PublicQuantityManaRuntimeTests.test_projected_postcost_allocation_agrees_with_browser_and_command",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "107.1b",
+        "601.2g",
+        "605.1a",
+        "605.3b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The client accepts the post-price total and the server pays once; the obsolete pre-price total rolls back."
+    },
+    {
+      "capability_id": "mana.production.public_quantity",
+      "evidence_class": "positive",
       "test_id": "tests.test_public_quantity_mana.PublicQuantityManaRuntimeTests.test_quantity_mana_spell_counts_at_resolution_and_replays",
       "official_rule_ids": [
         "106.1",
@@ -58584,6 +59072,86 @@
         "commander_review"
       ],
       "applicability_note": "Closed public quantities, postcost source information, allowed allocations and transactional trusted actions."
+    },
+    {
+      "capability_id": "mana.production.public_quantity",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_quantity_mana.PublicQuantityManaRuntimeTests.test_counter_price_zero_output_is_read_only_offered_and_paid_once",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "107.1b",
+        "601.2g",
+        "605.1a",
+        "605.3b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The exact cost plan previews zero without committing, then the activation pays once and produces zero."
+    },
+    {
+      "capability_id": "mana.production.public_quantity",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_quantity_mana.PublicQuantityManaRuntimeTests.test_projected_dynamic_allocation_rejects_same_malformed_browser_and_server_values",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "107.1b",
+        "601.2g",
+        "605.1a",
+        "605.3b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Real browser and server reject malformed allocations without mutation, then accept a permitted mixture and replay."
+    },
+    {
+      "capability_id": "mana.production.public_quantity",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_quantity_mana.PublicQuantityManaRuntimeTests.test_projected_lotus_form_accepts_legal_dynamic_allocation_in_real_browser_validator",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "107.1b",
+        "601.2g",
+        "605.1a",
+        "605.3b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Feed the original projected required form into the real TypeScript validator and accept the same source-sacrifice activation."
+    },
+    {
+      "capability_id": "mana.production.public_quantity",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_quantity_mana.PublicQuantityManaRuntimeTests.test_projected_postcost_allocation_agrees_with_browser_and_command",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "107.1b",
+        "601.2g",
+        "605.1a",
+        "605.3b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The client accepts the post-price total and the server pays once; the obsolete pre-price total rolls back."
     },
     {
       "capability_id": "mana.production.public_quantity",
@@ -80085,6 +80653,29 @@
     {
       "capability_id": "trigger.event.normalized_target_announcement",
       "evidence_class": "interaction",
+      "test_id": "tests.test_target_announcements.TargetAnnouncementActionTests.test_actual_storm_copy_retained_stale_target_never_targets_returned_incarnation",
+      "official_rule_ids": [
+        "115.1",
+        "115.2",
+        "115.7",
+        "400.7",
+        "601.2c",
+        "601.2i",
+        "602.2b",
+        "603.2",
+        "603.3",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Real cast, blink and Storm commands distinguish stale retention from explicit current-incarnation targeting and resolve observer consequences."
+    },
+    {
+      "capability_id": "trigger.event.normalized_target_announcement",
+      "evidence_class": "interaction",
       "test_id": "tests.test_target_announcements.TargetAnnouncementActionTests.test_actual_targeted_cast_and_ability_each_trigger_once_and_replay",
       "official_rule_ids": [
         "115.1",
@@ -80177,6 +80768,29 @@
     {
       "capability_id": "trigger.event.normalized_target_announcement",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_target_announcements.TargetAnnouncementActionTests.test_actual_storm_copy_retained_stale_target_never_targets_returned_incarnation",
+      "official_rule_ids": [
+        "115.1",
+        "115.2",
+        "115.7",
+        "400.7",
+        "601.2c",
+        "601.2i",
+        "602.2b",
+        "603.2",
+        "603.3",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Real cast, blink and Storm commands distinguish stale retention from explicit current-incarnation targeting and resolve observer consequences."
+    },
+    {
+      "capability_id": "trigger.event.normalized_target_announcement",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_target_announcements.TargetAnnouncementActionTests.test_opposing_stack_controller_and_target_controller_publish_private_optional_draw",
       "official_rule_ids": [
         "115.1",
@@ -80242,6 +80856,29 @@
         "commander_review"
       ],
       "applicability_note": "Authoritative targeting commits distinguish caster/ability controller from targeted-object controller, preserve one occurrence, share accepted legality and retain private choices, rollback and exact replay."
+    },
+    {
+      "capability_id": "trigger.event.normalized_target_announcement",
+      "evidence_class": "negative",
+      "test_id": "tests.test_target_announcements.TargetAnnouncementActionTests.test_actual_storm_copy_retained_stale_target_never_targets_returned_incarnation",
+      "official_rule_ids": [
+        "115.1",
+        "115.2",
+        "115.7",
+        "400.7",
+        "601.2c",
+        "601.2i",
+        "602.2b",
+        "603.2",
+        "603.3",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Real cast, blink and Storm commands distinguish stale retention from explicit current-incarnation targeting and resolve observer consequences."
     },
     {
       "capability_id": "trigger.event.normalized_target_announcement",
@@ -80315,6 +80952,29 @@
     {
       "capability_id": "trigger.event.normalized_target_announcement",
       "evidence_class": "positive",
+      "test_id": "tests.test_target_announcements.TargetAnnouncementActionTests.test_actual_storm_copy_retained_stale_target_never_targets_returned_incarnation",
+      "official_rule_ids": [
+        "115.1",
+        "115.2",
+        "115.7",
+        "400.7",
+        "601.2c",
+        "601.2i",
+        "602.2b",
+        "603.2",
+        "603.3",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Real cast, blink and Storm commands distinguish stale retention from explicit current-incarnation targeting and resolve observer consequences."
+    },
+    {
+      "capability_id": "trigger.event.normalized_target_announcement",
+      "evidence_class": "positive",
       "test_id": "tests.test_target_announcements.TargetAnnouncementActionTests.test_actual_targeted_cast_and_ability_each_trigger_once_and_replay",
       "official_rule_ids": [
         "115.1",
@@ -80384,6 +81044,29 @@
     {
       "capability_id": "trigger.event.normalized_target_announcement",
       "evidence_class": "privacy",
+      "test_id": "tests.test_target_announcements.TargetAnnouncementActionTests.test_actual_storm_copy_retained_stale_target_never_targets_returned_incarnation",
+      "official_rule_ids": [
+        "115.1",
+        "115.2",
+        "115.7",
+        "400.7",
+        "601.2c",
+        "601.2i",
+        "602.2b",
+        "603.2",
+        "603.3",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Real cast, blink and Storm commands distinguish stale retention from explicit current-incarnation targeting and resolve observer consequences."
+    },
+    {
+      "capability_id": "trigger.event.normalized_target_announcement",
+      "evidence_class": "privacy",
       "test_id": "tests.test_target_announcements.TargetAnnouncementActionTests.test_opposing_stack_controller_and_target_controller_publish_private_optional_draw",
       "official_rule_ids": [
         "115.1",
@@ -80426,6 +81109,29 @@
         "commander_review"
       ],
       "applicability_note": "Targeting occurrences remain distinct from casting, bind the committed new target set once, preserve private pending choices, and route controlled source sacrifice through the canonical owner with exact replay."
+    },
+    {
+      "capability_id": "trigger.event.normalized_target_announcement",
+      "evidence_class": "replay",
+      "test_id": "tests.test_target_announcements.TargetAnnouncementActionTests.test_actual_storm_copy_retained_stale_target_never_targets_returned_incarnation",
+      "official_rule_ids": [
+        "115.1",
+        "115.2",
+        "115.7",
+        "400.7",
+        "601.2c",
+        "601.2i",
+        "602.2b",
+        "603.2",
+        "603.3",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Real cast, blink and Storm commands distinguish stale retention from explicit current-incarnation targeting and resolve observer consequences."
     },
     {
       "capability_id": "trigger.event.normalized_target_announcement",
@@ -81643,6 +82349,24 @@
     },
     {
       "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerRuntimeTests.test_mixed_upkeep_resolves_draw_and_locked_controller_life_privately",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The recorded step player draws privately and the locked trigger controller gains public life after source control changes."
+    },
+    {
+      "capability_id": "trigger.event.scheduled_player_result",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerRuntimeTests.test_each_opponent_upkeep_filter_excludes_source_controller",
       "official_rule_ids": [
@@ -81658,6 +82382,24 @@
         "commander_review"
       ],
       "applicability_note": "Actual source-controlled Seizan triggers on a different active player upkeep and applies life/draw to that recorded player with private projection and exact replay."
+    },
+    {
+      "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerRuntimeTests.test_mixed_upkeep_resolves_draw_and_locked_controller_life_privately",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The recorded step player draws privately and the locked trigger controller gains public life after source control changes."
     },
     {
       "capability_id": "trigger.event.scheduled_player_result",
@@ -81733,6 +82475,42 @@
     },
     {
       "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerCompilerTests.test_mixed_scheduled_result_preserves_each_original_recipient",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compare every emitted recipient in an already-admitted mixed scheduled result."
+    },
+    {
+      "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerRuntimeTests.test_mixed_upkeep_replays_from_before_triggering_step",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay the complete recipient-distinguishing result from before the opponent upkeep begins."
+    },
+    {
+      "capability_id": "trigger.event.scheduled_player_result",
       "evidence_class": "privacy",
       "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerRuntimeTests.test_actual_seizan_upkeep_affects_active_player_not_source_controller",
       "official_rule_ids": [
@@ -81751,6 +82529,24 @@
     },
     {
       "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerRuntimeTests.test_mixed_upkeep_resolves_draw_and_locked_controller_life_privately",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The recorded step player draws privately and the locked trigger controller gains public life after source control changes."
+    },
+    {
+      "capability_id": "trigger.event.scheduled_player_result",
       "evidence_class": "replay",
       "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerRuntimeTests.test_actual_seizan_upkeep_affects_active_player_not_source_controller",
       "official_rule_ids": [
@@ -81766,6 +82562,42 @@
         "commander_review"
       ],
       "applicability_note": "Actual source-controlled Seizan triggers on a different active player upkeep and applies life/draw to that recorded player with private projection and exact replay."
+    },
+    {
+      "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "replay",
+      "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerRuntimeTests.test_mixed_upkeep_replays_from_before_triggering_step",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replay the complete recipient-distinguishing result from before the opponent upkeep begins."
+    },
+    {
+      "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "replay",
+      "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerRuntimeTests.test_mixed_upkeep_resolves_draw_and_locked_controller_life_privately",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The recorded step player draws privately and the locked trigger controller gains public life after source control changes."
     },
     {
       "capability_id": "trigger.event.spell_cast_creature_target",
@@ -85629,6 +86461,24 @@
     {
       "capability_id": "trigger.usage.once_per_turn",
       "evidence_class": "negative",
+      "test_id": "tests.test_limited_event_triggers.LimitedEventTriggerCompilerTests.test_departure_shape_and_forged_trust_binding_fail_closed",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reject limited departing event shapes and forged runtime bindings while keeping supported v1 descriptors readable."
+    },
+    {
+      "capability_id": "trigger.usage.once_per_turn",
+      "evidence_class": "negative",
       "test_id": "tests.test_limited_event_triggers.LimitedEventTriggerCompilerTests.test_unsupported_action_limits_and_departures_remain_residual",
       "official_rule_ids": [
         "400.7",
@@ -85643,6 +86493,24 @@
         "commander_review"
       ],
       "applicability_note": "One closed intrinsic trigger consumes its current-turn allowance at event discovery, with exact replay and authenticated command rejection."
+    },
+    {
+      "capability_id": "trigger.usage.once_per_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_limited_event_triggers.LimitedEventTriggerRuntimeTests.test_limited_sacrifice_departure_cards_fail_whole_program_admission",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Both source-self and external sacrifice-departure combinations remain residual at whole-card admission."
     },
     {
       "capability_id": "trigger.usage.once_per_turn",
@@ -91970,5 +92838,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "dcd662963b769942d59911c9678f40b701a77b9b107c897f415d7412088fc40f"
+  "fingerprint": "fefb992c33faeee028741e2fc6c508dd2ed90ded1ec0c82f7b8a9d14cd9320d4"
 }

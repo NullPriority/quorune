@@ -6,6 +6,7 @@ from copy import deepcopy
 import re
 
 from .fixed_public_event_trigger_bindings import FixedPublicEventBindingSpec
+from .fixed_controller_effect_sequences import _clauses
 
 SCHEDULED_PLAYER_CAPABILITY = 'trigger.event.scheduled_player_result'
 SCHEDULED_PLAYER_MECHANIC = 'scheduled-player-event-result'
@@ -44,9 +45,17 @@ def scheduled_player_result(binding, body, *, effect_template, card_name):
     normalized=re.sub(r'\b(loses|gains|draws|mills)\b',lambda m:m[0][:-1],normalized,flags=re.I)
     template,effects,schema,mechanics=effect_template(normalized,card_name=card_name)
     if template is None or schema is not None or not 1<=len(effects)<=2:return None
+    clauses = _clauses(body) if len(effects) == 2 else (body,)
+    if clauses is None or len(clauses) != len(effects):return None
     results=[]
-    for effect in effects:
+    player = '$context.player'
+    for clause, effect in zip(clauses, effects):
         if effect.get('op') not in {'life','lose_life','draw','mill'} or effect.get('player')!='$controller':return None
-        result=deepcopy(dict(effect));result['player']='$context.player';results.append(result)
+        subject = re.match(r'(that player|they|you)\b', clause, re.I)
+        if subject is not None:
+            player = '$controller' if subject[1].casefold() == 'you' else '$context.player'
+        elif not re.match(r'(?:loses?|gains?|draws?|mills?)\b', clause, re.I):
+            return None
+        result=deepcopy(dict(effect));result['player']=player;results.append(result)
     return ('scheduled-player-fixed-result-v1',tuple(results),None,tuple(dict.fromkeys((
         *(m for m in mechanics if m!='fixed-controller-effect-sequence'),SCHEDULED_PLAYER_MECHANIC)))),True

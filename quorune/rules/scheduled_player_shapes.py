@@ -7,6 +7,7 @@ from typing import Any,Iterable,Mapping,Sequence
 
 def scheduled_player_node_capabilities(*,effects:Sequence[Mapping[str,Any]],target_schema:Mapping[str,Any]|None,mechanic_ids:Iterable[str]):
     if 'scheduled-player-event-result' not in set(mechanic_ids) or target_schema is not None or not 1<=len(effects)<=2:return ()
+    if not any(effect.get('player', effect.get('target')) == '$context.player' for effect in effects):return ()
     capabilities={'trigger.event.scheduled_player_result'}
     for effect in effects:
         op=effect.get('op')
@@ -18,7 +19,8 @@ def scheduled_player_node_capabilities(*,effects:Sequence[Mapping[str,Any]],targ
         if op not in layouts:return ()
         field,fields,capability=layouts[op]
         reference='target' if op=='damage' else 'player'
-        if set(effect)!=fields or effect.get(reference)!='$context.player' or type(effect.get(field)) is not int:
+        players = {'$context.player'} if op == 'damage' else {'$context.player', '$controller'}
+        if set(effect)!=fields or type(effect.get(reference)) is not str or effect.get(reference) not in players or type(effect.get(field)) is not int:
             return ()
         if (effect[field]==0 if op=='life' else effect[field]<=0):return ()
         if op=='draw' and effect['private'] is not True:return ()

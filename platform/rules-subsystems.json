@@ -5778,54 +5778,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v311-batched-card-support",
-      "compiler_version": "oracle-ir-v311",
-      "bundle_id": "bundle:batched-card-support-v311",
-      "candidate_ids": [
-        "bundle:batched-card-support-v311"
-      ],
-      "family_ids": [
-        "activated_cost:complete-alternate-additional-cost-grammar",
-        "activated_cost:restricted-payment-predicates",
-        "continuous_layer:continuous-effect-layers-and-dependencies",
-        "continuous_layer:granted-ability",
-        "counter:public-quantity",
-        "duration:until-end-of-turn",
-        "effect_clause:ordered-effect-composition",
-        "event_binding:intervening-if-and-reflexive-trigger-grammar",
-        "event_binding:normalized-event-binding",
-        "event_binding:normalized-source-zone-lifecycle",
-        "quantity_expression:dynamic-quantity",
-        "target_or_choice:multiple-targets",
-        "target_or_choice:target-predicate"
-      ],
-      "capability_ids": [
-        "activation.selected_tap.fixed",
-        "casting.lifecycle.fixed_public",
-        "casting.lifecycle.fixed_zone_cast",
-        "combat.block.horsemanship",
-        "combat.block.landwalk.basic_type",
-        "continuous.ability.fixed_query_keyword_grant",
-        "continuous.attached.fixed_characteristics",
-        "continuous.control.attached_source",
-        "continuous.power_toughness.fixed_anthem",
-        "continuous.resolution.fixed_target_characteristic_set",
-        "counter.producer.dynamic_self_entry",
-        "counter.producer.fixed_event_trigger",
-        "counter.producer.modular",
-        "counter.producer.optional_fixed_event_trigger",
-        "counter.producer.sunburst",
-        "effect.choice.optional_fixed",
-        "quantity_expression.scalar_effect_amount",
-        "resolution.effect_program.closed_components",
-        "trigger.effect.fixed_event",
-        "trigger.event.normalized_zone_change",
-        "trigger.event.qualified_zone_change",
-        "trigger.event.scheduled_player_result",
-        "trigger.usage.once_per_turn"
-      ],
-      "measurement_id": "measurement:batched-card-support-v311",
-      "non_harvest_reason": null
+      "transition_id": "oracle-ir-v313-consolidated-correctness",
+      "compiler_version": "oracle-ir-v313",
+      "bundle_id": null,
+      "candidate_ids": [],
+      "family_ids": [],
+      "capability_ids": [],
+      "expected_complete_card_gain": null,
+      "non_harvest_reason": "Correct confirmed sacrifice provenance, copied target incarnation, scheduled recipient and public mana-choice defects; remove unsound limited-departure admission. No card-support harvest."
     },
 
     "forecast_corrections": [
