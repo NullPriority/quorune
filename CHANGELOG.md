@@ -11,6 +11,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Admit fixed stack mana-value counter predicates and align the shared target
+  projection with announced X, preserving the existing counter and payment
+  owners and ordinary replay.
+
 - Admit qualified temporary combat restrictions through shared target queries,
   revalidating before creation and retaining the resolved incarnation-bound
   rule after later characteristic changes.

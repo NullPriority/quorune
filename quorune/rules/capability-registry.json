@@ -7967,12 +7967,12 @@
     },
     {
       "id": "stack.counter.effect",
-      "version": 2,
+      "version": 3,
       "official_rules": ["115.1", "115.5", "603.10e", "608.2b", "701.6", "701.6a", "701.6b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
         "summary": "Compile and execute one mandatory direct-target instruction that counters a currently legal spell, activated ability, or triggered ability through a typed stack-counter owner after exact target revalidation.",
-        "inputs": ["closed typed direct-target counter clause", "current public stack object", "canonical spell or ability characteristics", "source-exclusion identity", "trusted counter-prohibition declaration"],
+        "inputs": ["closed typed direct-target counter clause", "current public stack object", "canonical spell or ability characteristics, with one optional fixed spell mana-value bound", "source-exclusion identity", "trusted counter-prohibition declaration"],
         "outputs": ["removed stack object", "replacement-aware countered spell movement toward its owner's graveyard", "normalized pre-counter spell event", "conditional post-move card-graveyard event", "counter failure journal for represented prohibitions", "public deterministic event"],
         "exclusions": ["counter unless a player pays or performs another action", "conditional, optional, modal, mass, multi-target, or linked-result counter clauses", "intrinsic alternate countered-spell destinations other than a represented zone replacement", "countering by a game rule as compiler grammar", "countered ability or spell-copy look-back trigger grammar", "conditional, source-qualified, name-qualified, target-qualified, or variable-mana-value stack predicates"]
       },

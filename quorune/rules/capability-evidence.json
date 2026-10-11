@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "e229a856eaa9d601e0f72c58dcc8ebcda7ec1b60cb16f863bb9925434626171f",
-  "declaration_source_fingerprint": "75ccb01f5274a9a28de4f41598875d21fc3ace7d5bc644c5805fe40e69744579",
+  "registry_fingerprint": "196f64a873216e667761758900d3fbbfda8b8d7778539c6ab83e43699f98fabb",
+  "declaration_source_fingerprint": "c1cb2b9792fff114ee3f928b935653d31766f5f96fc9c909a44cf2f5c711b315",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -76532,6 +76532,26 @@
     },
     {
       "capability_id": "stack.counter.effect",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_targeted_counter_effect_clauses.FixedManaValueCounterRuntimeTests.test_original_stroke_uses_announced_x_in_real_response_offers_and_replays",
+      "official_rule_ids": [
+        "115.1",
+        "115.5",
+        "603.10e",
+        "608.2b",
+        "701.6",
+        "701.6a",
+        "701.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An actual generic X+G spell cast records and pays announced X. Original Disdainful Stroke is offered and accepted for X=3/mana value four, but excluded and atomically rejected for X=0/mana value one. Unauthorized responses roll back; valid countering moves both spells without drawing, while the low-value spell resolves its private draw. Pending save/load and complete pre-cast replay agree."
+    },
+    {
+      "capability_id": "stack.counter.effect",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_stack_counter_rules.StackCounterRuleTests.test_compiled_counter_targets_exact_stack_domains_and_replays",
       "official_rule_ids": [
@@ -76549,6 +76569,26 @@
         "commander_review"
       ],
       "applicability_note": "Advertise, submit, resolve, and publicly project one generated direct counter instruction in a four-seat game."
+    },
+    {
+      "capability_id": "stack.counter.effect",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_targeted_counter_effect_clauses.FixedManaValueCounterRuntimeTests.test_original_stroke_uses_announced_x_in_real_response_offers_and_replays",
+      "official_rule_ids": [
+        "115.1",
+        "115.5",
+        "603.10e",
+        "608.2b",
+        "701.6",
+        "701.6a",
+        "701.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An actual generic X+G spell cast records and pays announced X. Original Disdainful Stroke is offered and accepted for X=3/mana value four, but excluded and atomically rejected for X=0/mana value one. Unauthorized responses roll back; valid countering moves both spells without drawing, while the low-value spell resolves its private draw. Pending save/load and complete pre-cast replay agree."
     },
     {
       "capability_id": "stack.counter.effect",
@@ -76592,6 +76632,26 @@
     },
     {
       "capability_id": "stack.counter.effect",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_targeted_counter_effect_clauses.FixedManaValueCounterCompilerTests.test_fixed_stack_mana_value_shapes_costs_and_mutants_fail_closed",
+      "official_rule_ids": [
+        "115.1",
+        "115.5",
+        "603.10e",
+        "608.2b",
+        "701.6",
+        "701.6a",
+        "701.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Removing the actual producer from the direct-resolution compiler tuple kills fixed-value counter admission; missing counter authority and malformed schemas are independently rejected."
+    },
+    {
+      "capability_id": "stack.counter.effect",
       "evidence_class": "negative",
       "test_id": "tests.test_stack_counter_rules.StackCounterRuleTests.test_counter_source_cannot_target_its_own_stack_object",
       "official_rule_ids": [
@@ -76609,6 +76669,26 @@
         "commander_review"
       ],
       "applicability_note": "Exclude the counter spell or ability's own stack object from the legal target set."
+    },
+    {
+      "capability_id": "stack.counter.effect",
+      "evidence_class": "negative",
+      "test_id": "tests.test_targeted_counter_effect_clauses.FixedManaValueCounterCompilerTests.test_fixed_stack_mana_value_shapes_costs_and_mutants_fail_closed",
+      "official_rule_ids": [
+        "115.1",
+        "115.5",
+        "603.10e",
+        "608.2b",
+        "701.6",
+        "701.6a",
+        "701.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Boolean, fractional, negative or multiple numeric fields, ability mana values, variable bounds and unrepresented linked results fail closed."
     },
     {
       "capability_id": "stack.counter.effect",
@@ -76713,6 +76793,26 @@
     {
       "capability_id": "stack.counter.effect",
       "evidence_class": "positive",
+      "test_id": "tests.test_targeted_counter_effect_clauses.FixedManaValueCounterCompilerTests.test_fixed_mana_value_counter_targets_keep_equal_lower_and_upper_bounds",
+      "official_rule_ids": [
+        "115.1",
+        "115.5",
+        "603.10e",
+        "608.2b",
+        "701.6",
+        "701.6a",
+        "701.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exact, lower and upper nonnegative fixed mana-value bounds remain conjoined with the closed spell category and other represented target filters."
+    },
+    {
+      "capability_id": "stack.counter.effect",
+      "evidence_class": "positive",
       "test_id": "tests.test_targeted_counter_effect_clauses.TargetedCounterCompilerTests.test_spell_trigger_and_activated_contexts_share_targeted_counter_lowering",
       "official_rule_ids": [
         "115.1",
@@ -76749,6 +76849,26 @@
         "commander_review"
       ],
       "applicability_note": "Project only public stack and graveyard results while withholding unrelated opposing hand identities."
+    },
+    {
+      "capability_id": "stack.counter.effect",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_targeted_counter_effect_clauses.FixedManaValueCounterRuntimeTests.test_original_stroke_uses_announced_x_in_real_response_offers_and_replays",
+      "official_rule_ids": [
+        "115.1",
+        "115.5",
+        "603.10e",
+        "608.2b",
+        "701.6",
+        "701.6a",
+        "701.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An actual generic X+G spell cast records and pays announced X. Original Disdainful Stroke is offered and accepted for X=3/mana value four, but excluded and atomically rejected for X=0/mana value one. Unauthorized responses roll back; valid countering moves both spells without drawing, while the low-value spell resolves its private draw. Pending save/load and complete pre-cast replay agree."
     },
     {
       "capability_id": "stack.counter.effect",
@@ -76792,6 +76912,26 @@
     },
     {
       "capability_id": "stack.counter.effect",
+      "evidence_class": "replay",
+      "test_id": "tests.test_targeted_counter_effect_clauses.FixedManaValueCounterRuntimeTests.test_original_stroke_uses_announced_x_in_real_response_offers_and_replays",
+      "official_rule_ids": [
+        "115.1",
+        "115.5",
+        "603.10e",
+        "608.2b",
+        "701.6",
+        "701.6a",
+        "701.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An actual generic X+G spell cast records and pays announced X. Original Disdainful Stroke is offered and accepted for X=3/mana value four, but excluded and atomically rejected for X=0/mana value one. Unauthorized responses roll back; valid countering moves both spells without drawing, while the low-value spell resolves its private draw. Pending save/load and complete pre-cast replay agree."
+    },
+    {
+      "capability_id": "stack.counter.effect",
       "evidence_class": "rollback",
       "test_id": "tests.test_stack_counter_rules.StackCounterRuleTests.test_missing_stack_target_rolls_back_without_mutation",
       "official_rule_ids": [
@@ -76809,6 +76949,26 @@
         "commander_review"
       ],
       "applicability_note": "Reject a missing stack identity before any stack, zone, telemetry, or event mutation."
+    },
+    {
+      "capability_id": "stack.counter.effect",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_targeted_counter_effect_clauses.FixedManaValueCounterRuntimeTests.test_original_stroke_uses_announced_x_in_real_response_offers_and_replays",
+      "official_rule_ids": [
+        "115.1",
+        "115.5",
+        "603.10e",
+        "608.2b",
+        "701.6",
+        "701.6a",
+        "701.6b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An actual generic X+G spell cast records and pays announced X. Original Disdainful Stroke is offered and accepted for X=3/mana value four, but excluded and atomically rejected for X=0/mana value one. Unauthorized responses roll back; valid countering moves both spells without drawing, while the low-value spell resolves its private draw. Pending save/load and complete pre-cast replay agree."
     },
     {
       "capability_id": "stack.counter.prohibition.fixed_query_static",
@@ -103482,5 +103642,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "c7d325e62b4ba73117be260556cf52b365229877c0143db7e58a424661b5db05"
+  "fingerprint": "2e738b1192f8e3c14d62c9062d6e3fe9b45cf78c9a748d6780e3209df1770a3b"
 }

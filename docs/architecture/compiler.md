@@ -55,6 +55,16 @@ Oracle IR, recognized semantic nodes, dependency declarations, material
 residuals, and a canonical `CardProgram`. For the same inputs and compiler
 version, the result must be deterministic.
 
+Fixed stack-counter clauses admit one nonnegative exact, upper, or lower
+mana-value bound over an otherwise closed spell target. The source exclusion
+and any represented type or color filter remain conjoined with that bound.
+The same shape feeds mandatory countering and the existing controller-payment
+wrapper. Stack targeting evaluates the effective selected face's mana cost
+with announced X through the same mana-value owner used by cast events, rather
+than printed mana value or mana actually paid. The full predicate remains a
+resolution-time target check. Variable bounds, ability mana-value predicates,
+multiple numeric fields, and unrepresented result linkage remain residual.
+
 `compiler/temporary_declaration_templates.py` lowers one fixed attack, block,
 attack-and-block, or unblockable instruction over the source or one shared
 direct permanent target. Qualified targets preserve fixed current power,

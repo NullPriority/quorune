@@ -566,6 +566,22 @@ def targeted_exile_node_capabilities(
     )
 
 
+def fixed_stack_counter_target_schema_is_closed(target_schema: Mapping[str, Any] | None) -> bool:
+    if not isinstance(target_schema, Mapping):
+        return False
+    schema = dict(target_schema)
+    if type(schema.get("count")) is not int or schema["count"] != 1 or schema.get("source_exclusion") is not True:
+        return False
+    numeric = set(schema).intersection({"mana_value", "mana_value_min", "mana_value_max"})
+    if numeric:
+        if len(numeric) != 1 or schema.get("categories") != ["spell"]:
+            return False
+        value = schema.pop(next(iter(numeric)))
+        if type(value) is not int or value < 0:
+            return False
+    return schema in _TARGETED_COUNTER_SCHEMAS
+
+
 def targeted_counter_node_capabilities(
     *,
     effects: Sequence[Mapping[str, Any]],
@@ -582,7 +598,7 @@ def targeted_counter_node_capabilities(
     if (
         not {"counter", "cr-115-targets"}.issubset(mechanics)
         or len(effects) != 1
-        or dict(target_schema or {}) not in _TARGETED_COUNTER_SCHEMAS
+        or not fixed_stack_counter_target_schema_is_closed(target_schema)
     ):
         return ()
     effect = effects[0]

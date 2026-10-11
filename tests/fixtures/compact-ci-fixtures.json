@@ -59,6 +59,7 @@
     "tests/fixtures/fixed-query-keyword-grant-cards.json",
     "tests/fixtures/fixed-resolution-mana-cards.json",
     "tests/fixtures/fixed-spell-cost-reduction-cards.json",
+    "tests/fixtures/fixed-stack-mana-value-cards.json",
     "tests/fixtures/fixed-token-creation-cards.json",
     "tests/fixtures/fixed-token-production-cards.json",
     "tests/fixtures/flashback-cards.json",

@@ -41172,6 +41172,7 @@
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Resolve a generated typed counter against an intrinsically uncounterable spell and retain the target on the stack until its ordinary resolution."
     },
+    {"capability_id":"stack.counter.effect","evidence_class":"interaction","test_id":"tests.test_targeted_counter_effect_clauses.FixedManaValueCounterRuntimeTests.test_original_stroke_uses_announced_x_in_real_response_offers_and_replays","official_rule_ids":["115.1","115.5","603.10e","608.2b","701.6","701.6a","701.6b"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"An actual generic X+G spell cast records and pays announced X. Original Disdainful Stroke is offered and accepted for X=3/mana value four, but excluded and atomically rejected for X=0/mana value one. Unauthorized responses roll back; valid countering moves both spells without drawing, while the low-value spell resolves its private draw. Pending save/load and complete pre-cast replay agree."},
     {
       "capability_id": "stack.counter.effect",
       "evidence_class": "multiplayer",
@@ -41180,6 +41181,7 @@
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Advertise, submit, resolve, and publicly project one generated direct counter instruction in a four-seat game."
     },
+    {"capability_id":"stack.counter.effect","evidence_class":"multiplayer","test_id":"tests.test_targeted_counter_effect_clauses.FixedManaValueCounterRuntimeTests.test_original_stroke_uses_announced_x_in_real_response_offers_and_replays","official_rule_ids":["115.1","115.5","603.10e","608.2b","701.6","701.6a","701.6b"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"An actual generic X+G spell cast records and pays announced X. Original Disdainful Stroke is offered and accepted for X=3/mana value four, but excluded and atomically rejected for X=0/mana value one. Unauthorized responses roll back; valid countering moves both spells without drawing, while the low-value spell resolves its private draw. Pending save/load and complete pre-cast replay agree."},
     {
       "capability_id": "stack.counter.effect",
       "evidence_class": "mutation",
@@ -41196,6 +41198,7 @@
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Kill suppression of the counterability guard and omission of the canonical stack-removal and countered-spell zone movement owner."
     },
+    {"capability_id":"stack.counter.effect","evidence_class":"mutation","test_id":"tests.test_targeted_counter_effect_clauses.FixedManaValueCounterCompilerTests.test_fixed_stack_mana_value_shapes_costs_and_mutants_fail_closed","official_rule_ids":["115.1","115.5","603.10e","608.2b","701.6","701.6a","701.6b"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Removing the actual producer from the direct-resolution compiler tuple kills fixed-value counter admission; missing counter authority and malformed schemas are independently rejected."},
     {
       "capability_id": "stack.counter.effect",
       "evidence_class": "negative",
@@ -41204,6 +41207,7 @@
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Exclude the counter spell or ability's own stack object from the legal target set."
     },
+    {"capability_id":"stack.counter.effect","evidence_class":"negative","test_id":"tests.test_targeted_counter_effect_clauses.FixedManaValueCounterCompilerTests.test_fixed_stack_mana_value_shapes_costs_and_mutants_fail_closed","official_rule_ids":["115.1","115.5","603.10e","608.2b","701.6","701.6a","701.6b"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Boolean, fractional, negative or multiple numeric fields, ability mana values, variable bounds and unrepresented linked results fail closed."},
     {
       "capability_id": "stack.counter.effect",
       "evidence_class": "negative",
@@ -41244,6 +41248,7 @@
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Validate one strict JSON-compatible counter operation and lower it through a read-only handler context to one typed stack-counter intent."
     },
+    {"capability_id":"stack.counter.effect","evidence_class":"positive","test_id":"tests.test_targeted_counter_effect_clauses.FixedManaValueCounterCompilerTests.test_fixed_mana_value_counter_targets_keep_equal_lower_and_upper_bounds","official_rule_ids":["115.1","115.5","603.10e","608.2b","701.6","701.6a","701.6b"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Exact, lower and upper nonnegative fixed mana-value bounds remain conjoined with the closed spell category and other represented target filters."},
     {
       "capability_id": "stack.counter.effect",
       "evidence_class": "positive",
@@ -41260,6 +41265,7 @@
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Project only public stack and graveyard results while withholding unrelated opposing hand identities."
     },
+    {"capability_id":"stack.counter.effect","evidence_class":"privacy","test_id":"tests.test_targeted_counter_effect_clauses.FixedManaValueCounterRuntimeTests.test_original_stroke_uses_announced_x_in_real_response_offers_and_replays","official_rule_ids":["115.1","115.5","603.10e","608.2b","701.6","701.6a","701.6b"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"An actual generic X+G spell cast records and pays announced X. Original Disdainful Stroke is offered and accepted for X=3/mana value four, but excluded and atomically rejected for X=0/mana value one. Unauthorized responses roll back; valid countering moves both spells without drawing, while the low-value spell resolves its private draw. Pending save/load and complete pre-cast replay agree."},
     {"capability_id": "stack.counter.effect", "evidence_class": "replay", "test_id": "tests.test_cast_creature_targets.CastCreatureTargetActionTests.test_mixed_stack_and_land_roles_counter_draw_mill_and_untap_in_printed_order", "official_rule_ids": ["115.1", "115.5", "603.10e", "608.2b", "701.6", "701.6a", "701.6b"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Actual Sokka's Haiku counters the independently targeted stack spell, performs its printed draw and mill, then untaps the separate land target with pre-action replay."},
     {
       "capability_id": "stack.counter.effect",
@@ -41269,6 +41275,7 @@
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the advertised target, paid counter spell, canonical stack removal, public zone result, event journal, and final state hash exactly."
     },
+    {"capability_id":"stack.counter.effect","evidence_class":"replay","test_id":"tests.test_targeted_counter_effect_clauses.FixedManaValueCounterRuntimeTests.test_original_stroke_uses_announced_x_in_real_response_offers_and_replays","official_rule_ids":["115.1","115.5","603.10e","608.2b","701.6","701.6a","701.6b"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"An actual generic X+G spell cast records and pays announced X. Original Disdainful Stroke is offered and accepted for X=3/mana value four, but excluded and atomically rejected for X=0/mana value one. Unauthorized responses roll back; valid countering moves both spells without drawing, while the low-value spell resolves its private draw. Pending save/load and complete pre-cast replay agree."},
     {
       "capability_id": "stack.counter.effect",
       "evidence_class": "rollback",
@@ -41277,6 +41284,7 @@
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Reject a missing stack identity before any stack, zone, telemetry, or event mutation."
     },
+    {"capability_id":"stack.counter.effect","evidence_class":"rollback","test_id":"tests.test_targeted_counter_effect_clauses.FixedManaValueCounterRuntimeTests.test_original_stroke_uses_announced_x_in_real_response_offers_and_replays","official_rule_ids":["115.1","115.5","603.10e","608.2b","701.6","701.6a","701.6b"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"An actual generic X+G spell cast records and pays announced X. Original Disdainful Stroke is offered and accepted for X=3/mana value four, but excluded and atomically rejected for X=0/mana value one. Unauthorized responses roll back; valid countering moves both spells without drawing, while the low-value spell resolves its private draw. Pending save/load and complete pre-cast replay agree."},
     {"capability_id":"stack.counter.prohibition.fixed_query_static","evidence_class":"interaction","test_id":"tests.test_static_action_rules.StaticActionRuleRuntimeTests.test_static_uncounterable_tracks_current_source_and_spell_copies","official_rule_ids":["101.2","601.2","701.5"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Recompute current static sources when a spell or represented ability is countered."},
     {"capability_id":"stack.counter.prohibition.fixed_query_static","evidence_class":"multiplayer","test_id":"tests.test_static_action_rules.StaticActionRuleRuntimeTests.test_static_action_rules_replay_and_four_player_projection","official_rule_ids":["101.2","601.2","701.5"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Apply controller and table-wide counter prohibitions seat-correctly."},
     {"capability_id":"stack.counter.prohibition.fixed_query_static","evidence_class":"mutation","test_id":"tests.test_static_action_rules.StaticActionRuleCompilerTests.test_static_action_rule_compiler_mutant_is_killed","official_rule_ids":["101.2","601.2","701.5"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Kill removal of the shared static action-rule compiler production."},

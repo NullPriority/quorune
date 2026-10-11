@@ -3270,6 +3270,21 @@
         "test_temporary_target_interactions",
         "test_oracle_corpus_examples"
       ]
+    },
+    {
+      "id": "fixed-stack-mana-value-contract",
+      "patterns": [
+        "quorune/compiler/counter_templates.py",
+        "quorune/selection/targeting.py",
+        "tests/fixtures/fixed-stack-mana-value-cards.json"
+      ],
+      "test_modules": [
+        "test_targeted_counter_effect_clauses",
+        "test_casting_activation_metadata",
+        "test_copy_objects",
+        "test_target_announcements",
+        "test_oracle_corpus_examples"
+      ]
     }
   ],
   "symbol_rules": [
