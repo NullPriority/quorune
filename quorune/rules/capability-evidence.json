@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "0ed1d73f099ffa091aceafa9c32132f0ad058a2398585477308f1272f3251fb6",
-  "declaration_source_fingerprint": "fdee05323b1ef92b3da11658dfdedf19e97870ee57f0ffd1282a4f33b253d058",
+  "registry_fingerprint": "345aff6c86c2c3d6e159bd57e310f68a0096e916f40982c017ce452e5bc5661b",
+  "declaration_source_fingerprint": "cfc0c3aa3861befef40b976abd7235a5593726bf02a75e87b4feee20f32b4458",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -31829,6 +31829,9 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_public_query_effect_amounts.PublicCollectionQuantityActionTests.test_trusted_domain_resolution_reads_current_membership_and_rolls_back_bad_target",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "604.1",
         "611.3a",
         "613.1d",
@@ -31847,8 +31850,34 @@
     {
       "capability_id": "continuous.characteristics.query_count_modifier",
       "evidence_class": "interaction",
+      "test_id": "tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityRuntimeTests.test_original_soulless_one_counts_noncreature_kindreds_across_public_zones",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Soulless One is fully admitted and cast through an accepted principal action. Its public battlefield and graveyard quantities include foreign noncreature Zombie Kindreds, producing 2 power on the stack and 3/3 after entry. A non-Zombie creature is excluded. Unauthorized casting rolls back; foreign principals see only hand counts. Pending and final save/load and full pre-cast replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "interaction",
       "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicCompilerTests.test_query_ability_removal_sibling_withholds_runtime_admission",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "604.1",
         "611.3a",
         "613.1d",
@@ -31869,6 +31898,9 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicRuntimeTests.test_query_counts_use_layer_five_types_and_compose_in_layer_seven_c",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "604.1",
         "611.3a",
         "613.1d",
@@ -31889,6 +31921,9 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicRuntimeTests.test_query_fragment_copy_uses_current_source_and_controller",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "604.1",
         "611.3a",
         "613.1d",
@@ -31909,6 +31944,9 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicRuntimeTests.test_query_gate_recomputes_layer_six_and_seven_characteristics",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "604.1",
         "611.3a",
         "613.1d",
@@ -31929,6 +31967,9 @@
       "evidence_class": "multiplayer",
       "test_id": "tests.test_public_query_effect_amounts.PublicCollectionQuantityActionTests.test_trusted_collection_draw_activation_characteristics_privacy_and_replay",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "604.1",
         "611.3a",
         "613.1d",
@@ -31947,8 +31988,34 @@
     {
       "capability_id": "continuous.characteristics.query_count_modifier",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityRuntimeTests.test_original_soulless_one_counts_noncreature_kindreds_across_public_zones",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Soulless One is fully admitted and cast through an accepted principal action. Its public battlefield and graveyard quantities include foreign noncreature Zombie Kindreds, producing 2 power on the stack and 3/3 after entry. A non-Zombie creature is excluded. Unauthorized casting rolls back; foreign principals see only hand counts. Pending and final save/load and full pre-cast replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicRuntimeTests.test_query_quantities_recompute_controller_correct_characteristics",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "604.1",
         "611.3a",
         "613.1d",
@@ -31967,8 +32034,34 @@
     {
       "capability_id": "continuous.characteristics.query_count_modifier",
       "evidence_class": "mutation",
+      "test_id": "tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityRuntimeTests.test_implied_creature_type_omission_mutant_is_killed_by_original_soulless_one",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reintroducing the implied Creature card-type restriction breaks the independently expected original Soulless One quantities."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "mutation",
       "test_id": "tests.test_typed_dynamic_characteristics.PublicCollectionReductionTests.test_collection_object_count_mutant_is_killed",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "604.1",
         "611.3a",
         "613.1d",
@@ -31989,6 +32082,9 @@
       "evidence_class": "mutation",
       "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicCompilerTests.test_query_characteristic_compiler_mutant_is_killed",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "604.1",
         "611.3a",
         "613.1d",
@@ -32007,8 +32103,34 @@
     {
       "capability_id": "continuous.characteristics.query_count_modifier",
       "evidence_class": "negative",
+      "test_id": "tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityCompilerTests.test_bare_subtype_quantities_do_not_add_a_creature_card_type",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit Creature card-type predicates remain separate from creature subtypes, and unrecognized subtype vocabulary fails closed."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "negative",
       "test_id": "tests.test_typed_dynamic_characteristics.PublicCollectionReductionTests.test_extended_quantity_codecs_reject_forged_parameters_and_nested_sums",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "604.1",
         "611.3a",
         "613.1d",
@@ -32029,6 +32151,9 @@
       "evidence_class": "negative",
       "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicCompilerTests.test_query_characteristic_descriptors_fail_closed_without_behavior",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "604.1",
         "611.3a",
         "613.1d",
@@ -32049,6 +32174,9 @@
       "evidence_class": "negative",
       "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicCompilerTests.test_query_characteristic_grammar_keeps_ambiguous_families_residual",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "604.1",
         "611.3a",
         "613.1d",
@@ -32069,6 +32197,9 @@
       "evidence_class": "negative",
       "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicCompilerTests.test_query_gated_grammar_rejects_nonquery_and_open_modifiers",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "604.1",
         "611.3a",
         "613.1d",
@@ -32089,6 +32220,9 @@
       "evidence_class": "positive",
       "test_id": "tests.test_public_query_effect_amounts.PublicCollectionQuantityActionTests.test_trusted_collection_draw_activation_characteristics_privacy_and_replay",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "604.1",
         "611.3a",
         "613.1d",
@@ -32107,8 +32241,34 @@
     {
       "capability_id": "continuous.characteristics.query_count_modifier",
       "evidence_class": "positive",
+      "test_id": "tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityCompilerTests.test_bare_subtype_quantities_do_not_add_a_creature_card_type",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Bare subtype and represented subtype-union quantities retain only subtype predicates; explicit Creature card-type wording stays constrained and unknown subtypes stay residual."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "positive",
       "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicCompilerTests.test_query_characteristic_grammar_compiles_closed_fragments",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "604.1",
         "611.3a",
         "613.1d",
@@ -32129,6 +32289,9 @@
       "evidence_class": "positive",
       "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicCompilerTests.test_query_gated_prefix_and_keyword_only_grammar_is_closed",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "604.1",
         "611.3a",
         "613.1d",
@@ -32149,6 +32312,9 @@
       "evidence_class": "positive",
       "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicRuntimeTests.test_query_quantities_recompute_controller_correct_characteristics",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "604.1",
         "611.3a",
         "613.1d",
@@ -32169,6 +32335,9 @@
       "evidence_class": "privacy",
       "test_id": "tests.test_public_query_effect_amounts.PublicCollectionQuantityActionTests.test_trusted_collection_draw_activation_characteristics_privacy_and_replay",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "604.1",
         "611.3a",
         "613.1d",
@@ -32187,8 +32356,34 @@
     {
       "capability_id": "continuous.characteristics.query_count_modifier",
       "evidence_class": "privacy",
+      "test_id": "tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityRuntimeTests.test_original_soulless_one_counts_noncreature_kindreds_across_public_zones",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Soulless One is fully admitted and cast through an accepted principal action. Its public battlefield and graveyard quantities include foreign noncreature Zombie Kindreds, producing 2 power on the stack and 3/3 after entry. A non-Zombie creature is excluded. Unauthorized casting rolls back; foreign principals see only hand counts. Pending and final save/load and full pre-cast replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "privacy",
       "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicRuntimeTests.test_query_hand_count_projects_and_replays_without_hidden_identity",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "604.1",
         "611.3a",
         "613.1d",
@@ -32209,6 +32404,9 @@
       "evidence_class": "replay",
       "test_id": "tests.test_public_query_effect_amounts.PublicCollectionQuantityActionTests.test_trusted_collection_draw_activation_characteristics_privacy_and_replay",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "604.1",
         "611.3a",
         "613.1d",
@@ -32227,8 +32425,34 @@
     {
       "capability_id": "continuous.characteristics.query_count_modifier",
       "evidence_class": "replay",
+      "test_id": "tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityRuntimeTests.test_original_soulless_one_counts_noncreature_kindreds_across_public_zones",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Soulless One is fully admitted and cast through an accepted principal action. Its public battlefield and graveyard quantities include foreign noncreature Zombie Kindreds, producing 2 power on the stack and 3/3 after entry. A non-Zombie creature is excluded. Unauthorized casting rolls back; foreign principals see only hand counts. Pending and final save/load and full pre-cast replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "replay",
       "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicRuntimeTests.test_query_hand_count_projects_and_replays_without_hidden_identity",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "604.1",
         "611.3a",
         "613.1d",
@@ -32245,10 +32469,36 @@
       "applicability_note": "Pin the typed hand-size fragment and hidden zone membership into a checkpoint, then replay the following multiplayer priority commands exactly."
     },
     {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityRuntimeTests.test_original_soulless_one_counts_noncreature_kindreds_across_public_zones",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Soulless One is fully admitted and cast through an accepted principal action. Its public battlefield and graveyard quantities include foreign noncreature Zombie Kindreds, producing 2 power on the stack and 3/3 after entry. A non-Zombie creature is excluded. Unauthorized casting rolls back; foreign principals see only hand counts. Pending and final save/load and full pre-cast replay agree."
+    },
+    {
       "capability_id": "continuous.characteristics.query_power_toughness_definition",
       "evidence_class": "interaction",
       "test_id": "tests.test_public_query_effect_amounts.PublicCollectionQuantityActionTests.test_trusted_domain_resolution_reads_current_membership_and_rolls_back_bad_target",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "604.3",
         "611.3a",
         "613.1g",
@@ -32266,6 +32516,9 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_query_power_toughness_definitions.QueryPowerToughnessDefinitionCompilerTests.test_query_definition_ability_removal_sibling_withholds_runtime_admission",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "604.3",
         "611.3a",
         "613.1g",
@@ -32283,6 +32536,9 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_query_power_toughness_definitions.QueryPowerToughnessDefinitionRuntimeTests.test_query_definition_copy_and_control_change_use_current_source",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "604.3",
         "611.3a",
         "613.1g",
@@ -32300,6 +32556,9 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_query_power_toughness_definitions.QueryPowerToughnessDefinitionRuntimeTests.test_query_definition_counts_layer_five_types_and_orders_in_layer_seven_a",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "604.3",
         "611.3a",
         "613.1g",
@@ -32314,9 +32573,32 @@
     },
     {
       "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityRuntimeTests.test_original_soulless_one_counts_noncreature_kindreds_across_public_zones",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Soulless One is fully admitted and cast through an accepted principal action. Its public battlefield and graveyard quantities include foreign noncreature Zombie Kindreds, producing 2 power on the stack and 3/3 after entry. A non-Zombie creature is excluded. Unauthorized casting rolls back; foreign principals see only hand counts. Pending and final save/load and full pre-cast replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_public_query_effect_amounts.PublicCollectionQuantityActionTests.test_trusted_collection_draw_activation_characteristics_privacy_and_replay",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "604.3",
         "611.3a",
         "613.1g",
@@ -32334,6 +32616,9 @@
       "evidence_class": "multiplayer",
       "test_id": "tests.test_query_power_toughness_definitions.QueryPowerToughnessDefinitionRuntimeTests.test_query_definition_copy_and_control_change_use_current_source",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "604.3",
         "611.3a",
         "613.1g",
@@ -32348,9 +32633,32 @@
     },
     {
       "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityRuntimeTests.test_original_soulless_one_counts_noncreature_kindreds_across_public_zones",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Soulless One is fully admitted and cast through an accepted principal action. Its public battlefield and graveyard quantities include foreign noncreature Zombie Kindreds, producing 2 power on the stack and 3/3 after entry. A non-Zombie creature is excluded. Unauthorized casting rolls back; foreign principals see only hand counts. Pending and final save/load and full pre-cast replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
       "evidence_class": "mutation",
       "test_id": "tests.test_query_power_toughness_definitions.QueryPowerToughnessDefinitionCompilerTests.test_query_power_toughness_definition_compiler_mutant_is_killed",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "604.3",
         "611.3a",
         "613.1g",
@@ -32366,8 +32674,31 @@
     {
       "capability_id": "continuous.characteristics.query_power_toughness_definition",
       "evidence_class": "mutation",
+      "test_id": "tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityRuntimeTests.test_implied_creature_type_omission_mutant_is_killed_by_original_soulless_one",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reintroducing the implied Creature card-type restriction breaks the independently expected original Soulless One quantities."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "mutation",
       "test_id": "tests.test_typed_dynamic_characteristics.PublicCollectionReductionTests.test_collection_object_count_mutant_is_killed",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "604.3",
         "611.3a",
         "613.1g",
@@ -32385,6 +32716,9 @@
       "evidence_class": "negative",
       "test_id": "tests.test_query_power_toughness_definitions.QueryPowerToughnessDefinitionCompilerTests.test_query_power_toughness_definition_descriptors_fail_closed",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "604.3",
         "611.3a",
         "613.1g",
@@ -32402,6 +32736,9 @@
       "evidence_class": "negative",
       "test_id": "tests.test_query_power_toughness_definitions.QueryPowerToughnessDefinitionCompilerTests.test_query_power_toughness_definition_grammar_keeps_open_families_residual",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "604.3",
         "611.3a",
         "613.1g",
@@ -32417,8 +32754,31 @@
     {
       "capability_id": "continuous.characteristics.query_power_toughness_definition",
       "evidence_class": "negative",
+      "test_id": "tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityCompilerTests.test_bare_subtype_quantities_do_not_add_a_creature_card_type",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit Creature card-type predicates remain separate from creature subtypes, and unrecognized subtype vocabulary fails closed."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "negative",
       "test_id": "tests.test_typed_dynamic_characteristics.PublicCollectionReductionTests.test_extended_quantity_codecs_reject_forged_parameters_and_nested_sums",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "604.3",
         "611.3a",
         "613.1g",
@@ -32436,6 +32796,9 @@
       "evidence_class": "positive",
       "test_id": "tests.test_public_query_effect_amounts.PublicCollectionQuantityActionTests.test_trusted_collection_draw_activation_characteristics_privacy_and_replay",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "604.3",
         "611.3a",
         "613.1g",
@@ -32453,6 +32816,9 @@
       "evidence_class": "positive",
       "test_id": "tests.test_query_power_toughness_definitions.QueryPowerToughnessDefinitionCompilerTests.test_query_power_toughness_definition_grammar_compiles_closed_fragments",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "604.3",
         "611.3a",
         "613.1g",
@@ -32470,6 +32836,9 @@
       "evidence_class": "positive",
       "test_id": "tests.test_query_power_toughness_definitions.QueryPowerToughnessDefinitionRuntimeTests.test_query_definitions_apply_in_every_zone_and_preserve_undefined_field",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "604.3",
         "611.3a",
         "613.1g",
@@ -32484,9 +32853,32 @@
     },
     {
       "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "positive",
+      "test_id": "tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityCompilerTests.test_bare_subtype_quantities_do_not_add_a_creature_card_type",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Bare subtype and represented subtype-union quantities retain only subtype predicates; explicit Creature card-type wording stays constrained and unknown subtypes stay residual."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
       "evidence_class": "privacy",
       "test_id": "tests.test_public_query_effect_amounts.PublicCollectionQuantityActionTests.test_trusted_collection_draw_activation_characteristics_privacy_and_replay",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "604.3",
         "611.3a",
         "613.1g",
@@ -32504,6 +32896,9 @@
       "evidence_class": "privacy",
       "test_id": "tests.test_query_power_toughness_definitions.QueryPowerToughnessDefinitionRuntimeTests.test_query_definition_hand_count_projects_without_hidden_identity",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "604.3",
         "611.3a",
         "613.1g",
@@ -32518,9 +32913,32 @@
     },
     {
       "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityRuntimeTests.test_original_soulless_one_counts_noncreature_kindreds_across_public_zones",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Soulless One is fully admitted and cast through an accepted principal action. Its public battlefield and graveyard quantities include foreign noncreature Zombie Kindreds, producing 2 power on the stack and 3/3 after entry. A non-Zombie creature is excluded. Unauthorized casting rolls back; foreign principals see only hand counts. Pending and final save/load and full pre-cast replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
       "evidence_class": "replay",
       "test_id": "tests.test_public_query_effect_amounts.PublicCollectionQuantityActionTests.test_trusted_collection_draw_activation_characteristics_privacy_and_replay",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "604.3",
         "611.3a",
         "613.1g",
@@ -32538,6 +32956,9 @@
       "evidence_class": "replay",
       "test_id": "tests.test_query_power_toughness_definitions.QueryPowerToughnessDefinitionRuntimeTests.test_query_definition_save_load_and_replay_exactly",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "604.3",
         "611.3a",
         "613.1g",
@@ -32549,6 +32970,46 @@
         "commander_review"
       ],
       "applicability_note": "Reload the typed all-zone definition and replay subsequent priority commands to the exact authoritative hash."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "replay",
+      "test_id": "tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityRuntimeTests.test_original_soulless_one_counts_noncreature_kindreds_across_public_zones",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Soulless One is fully admitted and cast through an accepted principal action. Its public battlefield and graveyard quantities include foreign noncreature Zombie Kindreds, producing 2 power on the stack and 3/3 after entry. A non-Zombie creature is excluded. Unauthorized casting rolls back; foreign principals see only hand counts. Pending and final save/load and full pre-cast replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_power_toughness_definition",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityRuntimeTests.test_original_soulless_one_counts_noncreature_kindreds_across_public_zones",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Soulless One is fully admitted and cast through an accepted principal action. Its public battlefield and graveyard quantities include foreign noncreature Zombie Kindreds, producing 2 power on the stack and 3/3 after entry. A non-Zombie creature is excluded. Unauthorized casting rolls back; foreign principals see only hand counts. Pending and final save/load and full pre-cast replay agree."
     },
     {
       "capability_id": "continuous.control.attached_source",
@@ -69678,6 +70139,9 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_query_quoted_ability_grants.FixedQueryQuotedAbilityGrantRuntimeTests.test_query_scaled_grant_revalidates_current_ability_and_replays",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -69696,6 +70160,9 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_public_query_action_registration.PublicQueryActionRegistrationTests.test_existing_query_draw_is_current_trusted_and_casts_with_exact_replay",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -69714,6 +70181,9 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_public_query_action_registration.PublicQueryActionRegistrationTests.test_source_self_runtime_reference_distinguishes_incarnations",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -69732,6 +70202,9 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_public_query_effect_amounts.PublicCollectionQuantityActionTests.test_trusted_domain_resolution_reads_current_membership_and_rolls_back_bad_target",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -69750,6 +70223,9 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountRuntimeTests.test_query_amounts_delegate_to_draw_and_token_owners",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -69768,6 +70244,9 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountRuntimeTests.test_query_amounts_life_use_existing_replacement_owner",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -69786,6 +70265,9 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountRuntimeTests.test_query_amounts_trigger_uses_normalized_event_and_apnap_owner",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -69804,6 +70286,9 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountRuntimeTests.test_query_amounts_use_current_layer_five_state_and_locked_controller",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -69822,6 +70307,9 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountRuntimeTests.test_query_scaled_characteristics_use_resolution_state_and_cleanup",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -69840,6 +70328,9 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountRuntimeTests.test_zero_query_amount_and_stale_target_use_existing_target_owner",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -69858,6 +70349,9 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_query_scaled_counters.QueryScaledCounterCompilerTests.test_query_counter_sequence_preserves_instruction_order_and_rejects_open_tail",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -69876,6 +70370,9 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_query_scaled_counters.QueryScaledCounterRuntimeTests.test_actual_millipede_counts_after_milling_and_replays",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -69894,6 +70391,9 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_query_scaled_counters.QueryScaledCounterRuntimeTests.test_actual_ooze_patrol_counts_overlapping_artifact_creature_once",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -69912,6 +70412,9 @@
       "evidence_class": "interaction",
       "test_id": "tests.test_query_scaled_counters.QueryScaledCounterRuntimeTests.test_query_amount_is_sealed_after_instruction_before_replacement_resumption",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -69927,9 +70430,33 @@
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityRuntimeTests.test_original_pride_and_priest_count_foreign_noncreature_elves",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Accepted original Priest of Titania and Wirewood Pride actions count the same foreign noncreature Elf Kindred plus the Priest. Mana production pays its tap price and adds two green mana; the paid targeted spell gives a B-controlled Human +2/+2, preserving costs, public membership and complete pre-activation replay."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_public_query_action_registration.PublicQueryActionRegistrationTests.test_existing_query_draw_is_current_trusted_and_casts_with_exact_replay",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -69948,6 +70475,9 @@
       "evidence_class": "multiplayer",
       "test_id": "tests.test_public_query_effect_amounts.PublicCollectionQuantityActionTests.test_trusted_collection_draw_activation_characteristics_privacy_and_replay",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -69966,6 +70496,9 @@
       "evidence_class": "multiplayer",
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryCharacteristicActionTests.test_trusted_query_scaled_activation_uses_real_action_path_and_replays",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -69984,6 +70517,9 @@
       "evidence_class": "multiplayer",
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountRuntimeTests.test_query_amount_four_player_projection_save_load_and_replay",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -70002,6 +70538,9 @@
       "evidence_class": "multiplayer",
       "test_id": "tests.test_query_scaled_counters.QueryScaledCounterRuntimeTests.test_actual_magistrate_counts_only_controlled_elves_and_uses_real_targets",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -70017,9 +70556,33 @@
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityRuntimeTests.test_original_pride_and_priest_count_foreign_noncreature_elves",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Accepted original Priest of Titania and Wirewood Pride actions count the same foreign noncreature Elf Kindred plus the Priest. Mana production pays its tap price and adds two green mana; the paid targeted spell gives a B-controlled Human +2/+2, preserving costs, public membership and complete pre-activation replay."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "mutation",
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountCompilerTests.test_public_query_amount_compiler_and_resolver_mutants_are_killed",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -70038,6 +70601,9 @@
       "evidence_class": "mutation",
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountRuntimeTests.test_public_query_amount_resolver_mutant_is_killed",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -70056,6 +70622,9 @@
       "evidence_class": "mutation",
       "test_id": "tests.test_query_scaled_counters.QueryScaledCounterRuntimeTests.test_query_counter_coefficient_mutant_is_killed",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -70072,8 +70641,32 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "mutation",
+      "test_id": "tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityRuntimeTests.test_implied_creature_type_omission_mutant_is_killed_by_original_soulless_one",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Reintroducing the implied Creature card-type restriction breaks the independently expected original Soulless One quantities."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "mutation",
       "test_id": "tests.test_typed_dynamic_characteristics.PublicCollectionReductionTests.test_collection_object_count_mutant_is_killed",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -70092,6 +70685,9 @@
       "evidence_class": "negative",
       "test_id": "tests.test_public_query_action_registration.PublicQueryRegistrationShapeTests.test_public_quantity_registration_rejects_malformed_and_missing_dependencies",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -70110,6 +70706,9 @@
       "evidence_class": "negative",
       "test_id": "tests.test_public_query_action_registration.PublicQueryRegistrationShapeTests.test_source_scalar_adaptation_consumes_all_fixed_components",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -70128,6 +70727,9 @@
       "evidence_class": "negative",
       "test_id": "tests.test_public_query_effect_amounts.PublicQuantityBoundaryTests.test_public_amount_decoder_rejects_negative_keyword_queries",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -70146,6 +70748,9 @@
       "evidence_class": "negative",
       "test_id": "tests.test_public_query_effect_amounts.PublicQuantityBoundaryTests.test_quantity_constructor_rejects_all_late_keyword_polarities",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -70164,6 +70769,9 @@
       "evidence_class": "negative",
       "test_id": "tests.test_public_query_effect_amounts.PublicQuantityBoundaryTests.test_resolver_rejects_negative_keyword_even_for_known_empty_zone",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -70182,6 +70790,9 @@
       "evidence_class": "negative",
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountCompilerTests.test_public_query_amount_grammar_and_schema_fail_closed",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -70200,6 +70811,9 @@
       "evidence_class": "negative",
       "test_id": "tests.test_query_scaled_counters.QueryScaledCounterCompilerTests.test_query_counter_unknown_quantities_and_blocked_owner_fail_closed",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -70218,6 +70832,9 @@
       "evidence_class": "negative",
       "test_id": "tests.test_query_scaled_counters.QueryScaledCounterCompilerTests.test_unsupported_power_up_cost_cannot_be_stripped_into_unlimited_activation",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -70236,6 +70853,9 @@
       "evidence_class": "negative",
       "test_id": "tests.test_query_scaled_counters.QueryScaledCounterRuntimeTests.test_unsupported_power_up_carrier_is_untrusted_and_never_offers_unlimited_activation",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -70254,6 +70874,9 @@
       "evidence_class": "negative",
       "test_id": "tests.test_query_scaled_counters.QueryScaledCounterRuntimeTests.test_zero_query_placement_creates_no_counter_event_or_replacement_choice",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -70270,8 +70893,32 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "negative",
+      "test_id": "tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityCompilerTests.test_bare_subtype_quantities_do_not_add_a_creature_card_type",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit Creature card-type predicates remain separate from creature subtypes, and unrecognized subtype vocabulary fails closed."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "negative",
       "test_id": "tests.test_typed_dynamic_characteristics.PublicCollectionReductionTests.test_extended_quantity_codecs_reject_forged_parameters_and_nested_sums",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -70290,6 +70937,9 @@
       "evidence_class": "positive",
       "test_id": "tests.test_public_query_action_registration.PublicQueryActionRegistrationTests.test_existing_query_source_self_activation_is_trusted_and_replays",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -70308,6 +70958,9 @@
       "evidence_class": "positive",
       "test_id": "tests.test_public_query_action_registration.PublicQueryRegistrationShapeTests.test_existing_public_quantity_spell_shapes_are_promotable",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -70326,6 +70979,9 @@
       "evidence_class": "positive",
       "test_id": "tests.test_public_query_effect_amounts.PublicCollectionQuantityActionTests.test_trusted_collection_draw_activation_characteristics_privacy_and_replay",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -70344,6 +71000,9 @@
       "evidence_class": "positive",
       "test_id": "tests.test_public_query_effect_amounts.PublicCollectionQuantityActionTests.test_trusted_domain_tokens_and_chroma_cost_symbols_resolve_and_replay",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -70362,6 +71021,9 @@
       "evidence_class": "positive",
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountCompilerTests.test_compiler_lowers_public_query_amounts_across_contexts",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -70380,6 +71042,9 @@
       "evidence_class": "positive",
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountCompilerTests.test_compiler_lowers_query_scaled_characteristics_across_contexts",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -70398,6 +71063,9 @@
       "evidence_class": "positive",
       "test_id": "tests.test_query_scaled_counters.QueryScaledCounterCompilerTests.test_public_query_counter_amounts_preserve_subject_counter_kind_and_query",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -70413,9 +71081,33 @@
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityCompilerTests.test_bare_subtype_quantities_do_not_add_a_creature_card_type",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Bare subtype and represented subtype-union quantities retain only subtype predicates; explicit Creature card-type wording stays constrained and unknown subtypes stay residual."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "privacy",
       "test_id": "tests.test_public_query_action_registration.PublicQueryActionRegistrationTests.test_existing_query_draw_is_current_trusted_and_casts_with_exact_replay",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -70434,6 +71126,9 @@
       "evidence_class": "privacy",
       "test_id": "tests.test_public_query_effect_amounts.PublicCollectionQuantityActionTests.test_trusted_collection_draw_activation_characteristics_privacy_and_replay",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -70452,6 +71147,9 @@
       "evidence_class": "privacy",
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryCharacteristicActionTests.test_trusted_query_scaled_activation_uses_real_action_path_and_replays",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -70470,6 +71168,9 @@
       "evidence_class": "privacy",
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountRuntimeTests.test_query_amount_four_player_projection_save_load_and_replay",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -70488,6 +71189,9 @@
       "evidence_class": "privacy",
       "test_id": "tests.test_query_scaled_counters.QueryScaledCounterRuntimeTests.test_actual_magistrate_counts_only_controlled_elves_and_uses_real_targets",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -70506,6 +71210,9 @@
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_query_quoted_ability_grants.FixedQueryQuotedAbilityGrantRuntimeTests.test_query_scaled_grant_revalidates_current_ability_and_replays",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -70524,6 +71231,9 @@
       "evidence_class": "replay",
       "test_id": "tests.test_public_query_action_registration.PublicQueryActionRegistrationTests.test_actual_v232_source_quantity_record_fails_closed_without_reinterpretation",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -70542,6 +71252,9 @@
       "evidence_class": "replay",
       "test_id": "tests.test_public_query_action_registration.PublicQueryActionRegistrationTests.test_existing_query_draw_is_current_trusted_and_casts_with_exact_replay",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -70560,6 +71273,9 @@
       "evidence_class": "replay",
       "test_id": "tests.test_public_query_effect_amounts.PublicCollectionQuantityActionTests.test_trusted_collection_draw_activation_characteristics_privacy_and_replay",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -70578,6 +71294,9 @@
       "evidence_class": "replay",
       "test_id": "tests.test_public_query_effect_amounts.PublicCollectionQuantityActionTests.test_trusted_domain_tokens_and_chroma_cost_symbols_resolve_and_replay",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -70596,6 +71315,9 @@
       "evidence_class": "replay",
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryCharacteristicActionTests.test_trusted_query_scaled_activation_uses_real_action_path_and_replays",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -70614,6 +71336,9 @@
       "evidence_class": "replay",
       "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountRuntimeTests.test_query_amount_four_player_projection_save_load_and_replay",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -70632,6 +71357,9 @@
       "evidence_class": "replay",
       "test_id": "tests.test_query_scaled_counters.QueryScaledCounterRuntimeTests.test_post_mill_query_pending_replacements_save_original_amount_and_replay",
       "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
         "608.2h",
         "611.2c",
         "613.1d",
@@ -70644,6 +71372,27 @@
         "commander_review"
       ],
       "applicability_note": "Canonical query-scaled placement, printed instruction order, sealed replacement request, current target authority and private identity-free quantities."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityRuntimeTests.test_original_pride_and_priest_count_foreign_noncreature_elves",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Accepted original Priest of Titania and Wirewood Pride actions count the same foreign noncreature Elf Kindred plus the Priest. Mana production pays its tap price and adds two green mana; the paid targeted spell gives a B-controlled Human +2/+2, preserving costs, public membership and complete pre-activation replay."
     },
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
@@ -101014,5 +101763,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "fa8de222ebe2cf82dc7aafcb43bc59f238ade4b53f781e33b466575eff19f8d0"
+  "fingerprint": "7aaf5578641f7075ebed9219eec870dbf1e9626e5c4d6dc90e074986f8452ef7"
 }

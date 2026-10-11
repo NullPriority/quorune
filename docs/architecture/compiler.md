@@ -1665,7 +1665,10 @@ dedicated `query_characteristic_templates` owner and lower to
 opponent, and global object sets use `ObjectQuerySpec`; attachments, source
 counters, and raw controller hand size use closed quantity scopes. Counted
 objects are evaluated only through layer 5 before concrete layer-6 and layer-7c
-effects are added, so represented type and color changes feed the count without
+effects are added. Bare creature subtypes constrain the subtype independently
+of card type, so matching Kindred permanents and cards participate in their
+represented public-zone counts. Explicit Creature card-type predicates retain
+their separate type constraint. Represented type and color changes feed the count without
 later-layer recursion. Current compilation uses the source's current controller
 for “your” zones. Fixed public battlefield and graveyard thresholds accept
 prefix or suffix self wording and may add only power/toughness, only supported

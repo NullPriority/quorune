@@ -68,6 +68,7 @@
     "tests/fixtures/intrinsic-basic-land-mana-cards.json",
     "tests/fixtures/kicked-entry-triggers.json",
     "tests/fixtures/kicked-spell-conditions.json",
+    "tests/fixtures/kindred-subtype-quantities.json",
     "tests/fixtures/leveler-bands-cards.json",
     "tests/fixtures/library-search-qualifier-cards.json",
     "tests/fixtures/limited-event-triggers.json",

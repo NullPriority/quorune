@@ -164,7 +164,6 @@ def _query_quantity_descriptor(
             )
         )
         if len(subtypes) == len(union_parts):
-            fields["types_all"] = ("creature",)
             fields["subtypes_any"] = subtypes
             return (ObjectQuerySpec(**fields), exclude_source)
 
@@ -239,7 +238,6 @@ def _query_quantity_descriptor(
             subtype = _singular_creature_subtype(descriptor)
         if subtype is None:
             return None
-        fields["types_all"] = ("creature",)
         fields["subtypes_all"] = (subtype,)
     return (ObjectQuerySpec(**fields), exclude_source)
 
