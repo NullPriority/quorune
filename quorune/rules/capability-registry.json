@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 203,
+  "registry_version": 204,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -1699,7 +1699,7 @@
     },
     {
       "id": "counter.lifecycle.fading",
-      "version": 1,
+      "version": 2,
       "official_rules": [
         "702.32a",
         "603.1",
@@ -1740,7 +1740,8 @@
         "counter.placement.quantity_replacement",
         "counter.removal.fixed_effect",
         "zone.change.destination_replacement",
-        "trigger.placement.apnap"
+        "trigger.placement.apnap",
+        "trigger.event.normalized_zone_change"
       ],
       "implementation_components": [
         "quorune.compiler.fading_nodes.fading_upkeep_node",
@@ -1749,13 +1750,17 @@
         "quorune.semantic_choices.intent_host.SemanticChoiceIntentHostMixin.move_object_intent"
       ],
       "positive_tests": [
-        "test_fading_compiles_entry_and_upkeep_as_separate_closed_nodes"
+        "test_fading_compiles_entry_and_upkeep_as_separate_closed_nodes",
+        "test_failed_fade_removal_publishes_sacrifice_and_observer_draw",
+        "test_cleanup_sacrifice_replacement_resumes_atomically_without_death"
       ],
       "negative_tests": [
         "test_fading_shape_and_blocked_dependencies_fail_closed"
       ],
       "interaction_tests": [
-        "test_actual_cast_entry_last_counter_and_next_upkeep_sacrifice"
+        "test_actual_cast_entry_last_counter_and_next_upkeep_sacrifice",
+        "test_failed_fade_removal_publishes_sacrifice_and_observer_draw",
+        "test_cleanup_sacrifice_replacement_resumes_atomically_without_death"
       ],
       "multiplayer_tests": [
         "test_trigger_control_change_removes_counter_but_cannot_sacrifice_new_controller_permanent"
@@ -1764,7 +1769,9 @@
         "test_actual_cast_entry_last_counter_and_next_upkeep_sacrifice"
       ],
       "replay_tests": [
-        "test_actual_cast_entry_last_counter_and_next_upkeep_sacrifice"
+        "test_actual_cast_entry_last_counter_and_next_upkeep_sacrifice",
+        "test_failed_fade_removal_publishes_sacrifice_and_observer_draw",
+        "test_cleanup_sacrifice_replacement_resumes_atomically_without_death"
       ],
       "required_evidence": [
         "positive",
@@ -1783,7 +1790,7 @@
     },
     {
       "id": "counter.lifecycle.vanishing",
-      "version": 1,
+      "version": 2,
       "official_rules": [
         "702.63a",
         "702.63b",
@@ -1825,7 +1832,8 @@
         "trigger.condition.fixed_public_state",
         "trigger.event.normalized_counter_removal",
         "trigger.placement.apnap",
-        "zone.change.destination_replacement"
+        "zone.change.destination_replacement",
+        "trigger.event.normalized_zone_change"
       ],
       "implementation_components": [
         "quorune.compiler.vanishing_nodes.vanishing_lifecycle_nodes",
@@ -1833,13 +1841,17 @@
         "quorune.card_programs.binding.bind_semantic_program_runtime"
       ],
       "positive_tests": [
-        "test_fixed_bare_zero_and_repeated_vanishing_programs_are_closed"
+        "test_fixed_bare_zero_and_repeated_vanishing_programs_are_closed",
+        "test_separate_last_time_counter_trigger_publishes_sacrifice_and_observer_draw",
+        "test_vanishing_cleanup_replacement_resumes_atomically_without_death"
       ],
       "negative_tests": [
         "test_lifecycle_dependencies_and_variant_certificates_fail_closed"
       ],
       "interaction_tests": [
-        "test_upkeep_last_counter_and_separate_sacrifice_replay"
+        "test_upkeep_last_counter_and_separate_sacrifice_replay",
+        "test_separate_last_time_counter_trigger_publishes_sacrifice_and_observer_draw",
+        "test_vanishing_cleanup_replacement_resumes_atomically_without_death"
       ],
       "multiplayer_tests": [
         "test_pending_sacrifice_control_change_blink_and_new_counters"
@@ -1848,7 +1860,9 @@
         "test_upkeep_last_counter_and_separate_sacrifice_replay"
       ],
       "replay_tests": [
-        "test_upkeep_last_counter_and_separate_sacrifice_replay"
+        "test_upkeep_last_counter_and_separate_sacrifice_replay",
+        "test_separate_last_time_counter_trigger_publishes_sacrifice_and_observer_draw",
+        "test_vanishing_cleanup_replacement_resumes_atomically_without_death"
       ],
       "required_evidence": [
         "positive",
@@ -6318,7 +6332,7 @@
     },
     {
       "id": "mana.production.public_quantity",
-      "version": 1,
+      "version": 2,
       "official_rules": [
         "106.1",
         "106.4",
@@ -6368,18 +6382,28 @@
         "quorune.semantic_runtime.public_quantity_mana.PublicQuantityActivatedManaHandler",
         "quorune.public_quantity_mana_runtime.public_quantity_mana_amount",
         "quorune.public_quantity_mana_runtime.select_public_quantity_mana",
-        "quorune.mana_activation.complete_mana_activation"
+        "quorune.mana_activation.complete_mana_activation",
+        "quorune.public_quantity_mana_runtime.public_quantity_mana_choice_schema",
+        "quorune.rules.activation.counter_costs.plan_source_counter_removal_cost",
+        "quorune.rules.activation.counter_costs.preview_source_counter_removal_cost"
       ],
       "positive_tests": [
         "test_quantity_mana_compiler_and_codec_close_existing_producers",
-        "test_quantity_mana_controller_query_is_offered_accepted_and_replayed"
+        "test_quantity_mana_controller_query_is_offered_accepted_and_replayed",
+        "test_projected_lotus_form_accepts_legal_dynamic_allocation_in_real_browser_validator",
+        "test_projected_postcost_allocation_agrees_with_browser_and_command",
+        "test_counter_price_zero_output_is_read_only_offered_and_paid_once"
       ],
       "negative_tests": [
         "test_quantity_mana_grammar_cost_and_codec_boundaries",
-        "test_quantity_mana_invalid_allocation_rolls_back"
+        "test_quantity_mana_invalid_allocation_rolls_back",
+        "test_projected_dynamic_allocation_rejects_same_malformed_browser_and_server_values"
       ],
       "interaction_tests": [
-        "test_quantity_mana_source_cost_uses_postcost_and_predeparture_values"
+        "test_quantity_mana_source_cost_uses_postcost_and_predeparture_values",
+        "test_projected_lotus_form_accepts_legal_dynamic_allocation_in_real_browser_validator",
+        "test_projected_postcost_allocation_agrees_with_browser_and_command",
+        "test_counter_price_zero_output_is_read_only_offered_and_paid_once"
       ],
       "multiplayer_tests": [
         "test_quantity_mana_controller_query_is_offered_accepted_and_replayed"
@@ -6389,7 +6413,10 @@
       ],
       "replay_tests": [
         "test_quantity_mana_controller_query_is_offered_accepted_and_replayed",
-        "test_quantity_mana_source_cost_uses_postcost_and_predeparture_values"
+        "test_quantity_mana_source_cost_uses_postcost_and_predeparture_values",
+        "test_projected_lotus_form_accepts_legal_dynamic_allocation_in_real_browser_validator",
+        "test_projected_postcost_allocation_agrees_with_browser_and_command",
+        "test_counter_price_zero_output_is_read_only_offered_and_paid_once"
       ],
       "required_evidence": [
         "positive",
@@ -10458,7 +10485,7 @@
     },
     {
       "id": "trigger.event.normalized_target_announcement",
-      "version": 1,
+      "version": 2,
       "official_rules": [
         "115.1",
         "115.2",
@@ -10507,7 +10534,8 @@
       "positive_tests": [
         "test_target_occurrence_pins_stack_controller_and_each_current_object_once",
         "test_actual_targeted_cast_and_ability_each_trigger_once_and_replay",
-        "test_actual_triggered_target_choice_announces_only_committed_target"
+        "test_actual_triggered_target_choice_announces_only_committed_target",
+        "test_actual_storm_copy_retained_stale_target_never_targets_returned_incarnation"
       ],
       "negative_tests": [
         "test_current_phased_or_departed_target_creates_no_occurrence",
@@ -10517,7 +10545,8 @@
       "interaction_tests": [
         "test_actual_targeted_cast_and_ability_each_trigger_once_and_replay",
         "test_copy_and_retarget_owner_publish_new_targets_without_creating_casts",
-        "test_actual_targeted_illusion_sacrifices_before_spell_and_replays"
+        "test_actual_targeted_illusion_sacrifices_before_spell_and_replays",
+        "test_actual_storm_copy_retained_stale_target_never_targets_returned_incarnation"
       ],
       "multiplayer_tests": [
         "test_opposing_stack_controller_and_target_controller_publish_private_optional_draw"
@@ -10528,7 +10557,8 @@
       ],
       "replay_tests": [
         "test_actual_targeted_cast_and_ability_each_trigger_once_and_replay",
-        "test_opposing_stack_controller_and_target_controller_publish_private_optional_draw"
+        "test_opposing_stack_controller_and_target_controller_publish_private_optional_draw",
+        "test_actual_storm_copy_retained_stale_target_never_targets_returned_incarnation"
       ],
       "required_evidence": [
         "positive",
@@ -11558,7 +11588,7 @@
     },
     {
       "id": "trigger.usage.once_per_turn",
-      "version": 1,
+      "version": 2,
       "official_rules": [
         "400.7",
         "603.2",
@@ -11589,7 +11619,7 @@
         "exclusions": [
           "action-dependent Do this only once each turn",
           "first-time history conditions",
-          "departure and nonbattlefield subscriptions",
+          "departure subscriptions including permanent.sacrificed and permanent.sacrificed.self, and nonbattlefield subscriptions",
           "granted or copied printed abilities outside represented discovery"
         ]
       },
@@ -11599,7 +11629,10 @@
         "quorune.compiler.trigger_limit_nodes.limited_trigger_node",
         "quorune.activation_usage.trigger_usage_available",
         "quorune.activation_usage.commit_trigger_usage",
-        "quorune.trigger_discovery.dispatch_semantic_event"
+        "quorune.trigger_discovery.dispatch_semantic_event",
+        "quorune.rules.trigger_limits.supported_trigger_limit_event",
+        "quorune.rules.trigger_limits.validate_program_trigger_limit",
+        "quorune.card_programs.binding.bind_semantic_program_runtime"
       ],
       "positive_tests": [
         "test_closed_limit_preserves_span_and_dependency",
@@ -11607,7 +11640,9 @@
       ],
       "negative_tests": [
         "test_unsupported_action_limits_and_departures_remain_residual",
-        "test_codec_rejects_malformed_limit_and_preserves_old_shape"
+        "test_codec_rejects_malformed_limit_and_preserves_old_shape",
+        "test_departure_shape_and_forged_trust_binding_fail_closed",
+        "test_limited_sacrifice_departure_cards_fail_whole_program_admission"
       ],
       "interaction_tests": [
         "test_actual_counter_events_draw_once_and_replay"
@@ -11722,7 +11757,7 @@
     },
     {
       "id": "trigger.event.scheduled_player_result",
-      "version": 1,
+      "version": 2,
       "official_rules": [
         "109.5",
         "503.1",
@@ -11765,7 +11800,10 @@
         "quorune.scheduled_player.current_attachment_controller"
       ],
       "positive_tests": [
-        "test_each_player_and_opponent_results_are_nontargeted_context_bound"
+        "test_each_player_and_opponent_results_are_nontargeted_context_bound",
+        "test_mixed_scheduled_result_preserves_each_original_recipient",
+        "test_mixed_upkeep_resolves_draw_and_locked_controller_life_privately",
+        "test_mixed_upkeep_replays_from_before_triggering_step"
       ],
       "negative_tests": [
         "test_unknown_bound_results_and_monarch_schedules_remain_residual",
@@ -11774,7 +11812,9 @@
       "interaction_tests": [
         "test_actual_seizan_upkeep_affects_active_player_not_source_controller",
         "test_actual_aura_upkeep_uses_recipient_controller_and_keeps_queued_player",
-        "test_actual_copper_tablet_deals_damage_to_each_active_upkeep_player"
+        "test_actual_copper_tablet_deals_damage_to_each_active_upkeep_player",
+        "test_mixed_upkeep_resolves_draw_and_locked_controller_life_privately",
+        "test_mixed_upkeep_replays_from_before_triggering_step"
       ],
       "multiplayer_tests": [
         "test_each_opponent_upkeep_filter_excludes_source_controller"
@@ -11784,7 +11824,9 @@
       ],
       "replay_tests": [
         "test_actual_seizan_upkeep_affects_active_player_not_source_controller",
-        "test_actual_aura_upkeep_uses_recipient_controller_and_keeps_queued_player"
+        "test_actual_aura_upkeep_uses_recipient_controller_and_keeps_queued_player",
+        "test_mixed_upkeep_resolves_draw_and_locked_controller_life_privately",
+        "test_mixed_upkeep_replays_from_before_triggering_step"
       ],
       "required_evidence": [
         "positive",

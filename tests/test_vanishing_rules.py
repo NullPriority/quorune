@@ -113,10 +113,12 @@ class VanishingRuntimeTests(unittest.TestCase):
     checkpoint = fading_witnesses.FadingRuntimeTests.checkpoint
     replay = fading_witnesses.FadingRuntimeTests.replay
     upkeep = fading_witnesses.FadingRuntimeTests.upkeep
-    test_cleanup_sacrifice_replacement_resumes_atomically_without_death = fading_witnesses.FadingRuntimeTests.test_cleanup_sacrifice_replacement_resumes_atomically_without_death
     cleanup_source = "Calciderm"
     cleanup_counter = "time"
     cleanup_count = 1
+
+    def test_vanishing_cleanup_replacement_resumes_atomically_without_death(self):
+        fading_witnesses.FadingRuntimeTests.test_cleanup_sacrifice_replacement_resumes_atomically_without_death(self)
 
     def resolve_top(self, session):
         top = session.state.stack[-1].stack_id
