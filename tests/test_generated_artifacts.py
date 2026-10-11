@@ -138,6 +138,38 @@ class SharedCompilerCensusTests(unittest.TestCase):
 
 
 class GeneratedArtifactFinalizationTests(unittest.TestCase):
+    def test_rules_derived_rebuilds_stale_cached_index_metadata(self):
+        from scripts import update_rules_derived as writer
+        from quorune.rules_corpus import _json_hash
+        original_load = writer._load
+        pinned = original_load('rules/manifest.json')
+        stale = copy.deepcopy(pinned)
+        stale['mechanic_count'] = 0
+        stale['derived_hashes']['rule-index.json'] = '0' * 64
+        stale['derived_hashes']['mechanic-index.json'] = '0' * 64
+        def load(relative):
+            return copy.deepcopy(stale) if relative == 'rules/manifest.json' else original_load(relative)
+        with mock.patch.object(writer, '_load', side_effect=load):
+            outputs = writer.expected_outputs()
+        result = json.loads(outputs['rules/manifest.json'])
+        for name in ('rule-index.json', 'mechanic-index.json', 'glossary-index.json', 'dependency-graph.json'):
+            self.assertEqual(_json_hash(original_load('rules/' + name)), result['derived_hashes'][name])
+        self.assertEqual(len(original_load('rules/mechanic-index.json')['mechanics']), result['mechanic_count'])
+        for key in ('source_sha256', 'source_url', 'effective_date', 'generated_at', 'card_data_snapshot'):
+            self.assertEqual(pinned[key], result[key])
+
+    def test_rules_derived_rejects_cross_snapshot_index_metadata(self):
+        from scripts import update_rules_derived as writer
+        manifest = writer._load('rules/manifest.json')
+        documents = {name: writer._load('rules/' + name) for name in (
+            'rule-index.json', 'mechanic-index.json', 'glossary-index.json', 'dependency-graph.json',
+        )}
+        for key, value in (('source_sha256', '0' * 64), ('effective_date', '2000-01-01')):
+            invalid = copy.deepcopy(documents)
+            invalid['mechanic-index.json'][key] = value
+            with self.subTest(key=key), self.assertRaisesRegex(writer.RulesDerivedError, 'different pinned rules snapshot'):
+                writer._pinned_manifest_metadata(manifest, invalid)
+
     def test_rules_derived_normalizes_platform_line_endings(self):
         with TemporaryDirectory() as raw:
             output = Path(raw) / "generated.json"

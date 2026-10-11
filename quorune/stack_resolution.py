@@ -12,6 +12,7 @@ from .cast_lifecycles import (
 from .errors import StateInvariantError
 from .evoke import EVOKE_PAYMENT_FIELD, validate_evoke_payment_marker
 from .model import CardInstance, StackItem
+from .rules.casting.face_queries import prospective_cast_record
 from .semantic_runtime.zone_replacements import PreparedZoneChange
 from .stack_counter import oracle_has_intrinsic_counter_prohibition
 from .combat_entry_activations import cleanup_ninjutsu_reveal
@@ -60,6 +61,8 @@ def trusted_generic_empty_resolution(
     provenance: str | None = None
     if item.kind == "spell" and item.card_object_id:
         record = host.card_record(item.card_object_id)
+        face=next((f for f in record.faces if f.get('name')==item.chosen_face),None) if record is not None and record.faces else None
+        if record is not None:record=prospective_cast_record(record,face)
         if record and host._trusted_generic_spell(record):
             provenance = "trusted_generic_permanent_spell"
         elif record and oracle_has_intrinsic_counter_prohibition(

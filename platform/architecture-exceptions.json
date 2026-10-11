@@ -1338,6 +1338,52 @@
         "tests.test_fixed_control_effects.FixedControlGameplayTests.test_printed_control_of_face_down_creature_preserves_principal_private_projection_and_replays",
         "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
       ]
+    },
+    {
+      "exception_id": "ARCH-EXC-0057",
+      "adr": "docs/adr/0113-typed-extort-and-life-loss-batches.md",
+      "artifact": "platform/architecture-guard-baseline.json",
+      "allowance_fingerprint": "86e87ce16254335aae11c5bc868d9b59843ccd21a730531fd71fd0a94e079e85",
+      "exact_allowance": "The exact structural baseline with only the reviewed extort operation; existing engine, mutation, identity and oversized-symbol allowances cannot grow.",
+      "rationale": "The ordered Extort operation delegates hybrid payment and simultaneous actual life loss to canonical intents and retains separate replacement-aware gain. Cohesive life commitment and dispatch extractions reduce oversized hosts and preserve existing paths.",
+      "owner": "rules/compiler/replay maintainers through protected PR certification",
+      "maximum_scope": "One closed Extort stage grammar and its generic simultaneous loss intent. No added direct or unowned state writes, engine methods, runtime Oracle parsing, fixed-card dispatch, callbacks, transport authority or size-growth allowance.",
+      "removal_condition": "Remove this binding when the operation is retired or a later exact reviewed baseline supersedes it; retain strict payment, life-batch, continuation, privacy and replay validation.",
+      "target_milestone": "typed optional hybrid payment and ordered actual-life transfer",
+      "replay_implications": "Prior descriptor and single-life intent shapes retain their exact behavior. New staged choices and canonical cast-source enumeration preserve pending persistence and command hashes for independently triggered sources.",
+      "privacy_implications": "Extort exposes only the active controller payment choices and public life totals. No private cards, library ordering or capability values enter the operation.",
+      "security_implications": "Clients submit only published scalar payment choices. Unknown stages, malformed batches or result bindings, duplicated players, unsupported dependencies, wrong principals and forged result fields fail closed before mutation.",
+      "tests": [
+        "tests.test_extort_rules.ExtortRuntimeTests.test_actual_extort_white_and_black_payments_transfer_total_opponent_loss_and_replay",
+        "tests.test_extort_rules.ExtortRuntimeTests.test_pending_payment_and_gain_replacement_preserve_committed_loss_after_reload",
+        "tests.test_extort_rules.ExtortRuntimeTests.test_two_actual_sources_choose_independent_payments_for_one_cast",
+        "tests.test_extort_rules.ExtortCompilerTests.test_extort_stage_shape_and_dependency_omissions_fail_closed",
+        "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound",
+        "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
+      ]
+    },
+    {
+      "exception_id": "ARCH-EXC-0058",
+      "adr": "docs/adr/0114-player-speed-and-max-speed-applicability.md",
+      "artifact": "platform/architecture-guard-baseline.json",
+      "allowance_fingerprint": "6600203bb39b80b67b47533c5222bb11e3dbb6748815b62f733aa7a765b660fe",
+      "exact_allowance": "The exact structural baseline admitting only increase_speed; engine, unowned write, runtime Oracle access, identity dispatch and oversized ceilings retain their ratchets.",
+      "rationale": "Admit one reviewed closed increase_speed operation and one canonical typed player speed mutation owner. Source-free inherent triggers and live Max Speed scopes reuse existing APNAP, life, component and continuous owners. Cohesive extraction preserves oversized ceilings.",
+      "owner": "rules/compiler/replay maintainers through protected certification",
+      "maximum_scope": "One generic positive speed increase, state-based speed start and once-own-turn inherent trigger usage, with canonical speed stats mutation. No engine method, identity dispatch, runtime Oracle access, unowned write, registry duplication or size-growth allowance.",
+      "removal_condition": "Remove the binding when this operation is retired or a later exact reviewed baseline supersedes it; preserve persistent speed, trigger usage, current controller gating and exact replay.",
+      "target_milestone": "typed player speed and zone-correct Max Speed ability availability",
+      "replay_implications": "Current records persist ordinary player stats and pending source-free trigger state. Older payloads without speed remain unchanged and require matching execution provenance.",
+      "privacy_implications": "Only public player speed and public stack occurrences are added; no hidden card identity or capability enters the speed owner.",
+      "security_implications": "Clients retain ordinary principal-bound actions. Speed changes arise only through canonical state-based or trusted effect ownership; malformed amounts, Boolean values and unsupported child programs fail closed.",
+      "tests": [
+        "tests.test_player_speed.PlayerSpeedRuntimeTests.test_actual_start_and_damage_trigger_increment_only_once_own_turn_and_replay",
+        "tests.test_player_speed.PlayerSpeedRuntimeTests.test_actual_max_speed_graveyard_ability_is_offered_only_at_four_and_replays",
+        "tests.test_player_speed.PlayerSpeedRuntimeTests.test_countered_inherent_trigger_consumes_turn_usage_and_pending_reload_replays",
+        "tests.test_player_speed.PlayerSpeedCompilerTests.test_speed_shapes_and_dependency_omission_reject_boolean_negative_or_open_values",
+        "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound",
+        "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
+      ]
     }
   ]
 }

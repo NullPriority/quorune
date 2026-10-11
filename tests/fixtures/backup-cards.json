@@ -1,0 +1,1017 @@
+{
+  "cards": [
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}",
+      "name": "Act of Treason",
+      "oracle_id": "9d08af23-9f4a-4097-9abc-3b17475ab744",
+      "oracle_text": "Gain control of target creature until end of turn. Untap that creature. It gains haste until end of turn. (It can attack and {T} this turn.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-01-12",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Backup"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{W}",
+      "name": "Bola Slinger",
+      "oracle_id": "6ff995f9-080d-4316-8fbe-39bf195db91b",
+      "oracle_text": "Backup 1 (When this creature enters, put a +1/+1 counter on target creature. If that's another creature, it gains the following ability until end of turn.)\nWhenever this creature attacks, tap target artifact or creature an opponent controls.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2023-04-21",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Cat Soldier"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Lifelink",
+        "Backup",
+        "First strike"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{W}{W}",
+      "name": "Boon-Bringer Valkyrie",
+      "oracle_id": "8652d88f-edca-4235-b942-6e7467608de8",
+      "oracle_text": "Backup 1 (When this creature enters, put a +1/+1 counter on target creature. If that's another creature, it gains the following abilities until end of turn.)\nFlying, first strike, lifelink",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2023-04-21",
+      "toughness": "4",
+      "type_line": "Creature \u2014 Angel Warrior"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Backup"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{G}",
+      "name": "Chomping Kavu",
+      "oracle_id": "20a362c3-d278-437f-881c-e7d9fe78fc2d",
+      "oracle_text": "Backup 1 (When this creature enters, put a +1/+1 counter on target creature. If that's another creature, it gains the following ability until end of turn.)\nThis creature can't be blocked by creatures with power 2 or less.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2023-04-21",
+      "toughness": "3",
+      "type_line": "Creature \u2014 Kavu"
+    },
+    {
+      "oracle_id": "01546b7d-a233-4176-8843-d732074dc5b6",
+      "name": "Doubling Season",
+      "mana_cost": "{4}{G}",
+      "cmc": 5.0,
+      "type_line": "Enchantment",
+      "oracle_text": "If an effect would create one or more tokens under your control, it creates twice that many of those tokens instead.\nIf an effect would put one or more counters on a permanent you control, it puts twice that many of those counters on that permanent instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Rebound"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Ephemerate",
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "oracle_text": "Exile target creature you control, then return it to the battlefield under its owner's control.\nRebound (If you cast this spell from your hand, exile it as it resolves. At the beginning of your next upkeep, you may cast this card from exile without paying its mana cost.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2019-06-14",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "a1f3da21-af6d-450e-bf0b-985d158418e6",
+      "name": "Hardened Scales",
+      "mana_cost": "{G}",
+      "type_line": "Enchantment",
+      "oracle_text": "If one or more +1/+1 counters would be put on a creature you control, that many plus one +1/+1 counters are put on it instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2026-04-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "card_faces": []
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Backup",
+        "Hexproof",
+        "Flash"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}",
+      "name": "Saiba Cryptomancer",
+      "oracle_id": "15f89b06-5025-4c9f-bf51-e25bc5c2dd6b",
+      "oracle_text": "Flash\nBackup 1 (When this creature enters, put a +1/+1 counter on target creature. If that's another creature, it gains the following ability until end of turn.)\nHexproof",
+      "power": "0",
+      "produced_mana": [],
+      "released_at": "2023-04-21",
+      "toughness": "1",
+      "type_line": "Creature \u2014 Moonfolk Ninja"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Backup"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{B}",
+      "name": "Scorn-Blade Berserker",
+      "oracle_id": "93107139-b743-4d62-b0ac-9997202e0562",
+      "oracle_text": "Backup 1 (When this creature enters, put a +1/+1 counter on target creature. If that's another creature, it gains the following ability until end of turn.)\n{1}, Sacrifice this creature: Draw a card.",
+      "power": "0",
+      "produced_mana": [],
+      "released_at": "2023-04-21",
+      "toughness": "1",
+      "type_line": "Creature \u2014 Human Berserker"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Vigilance",
+        "Backup"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}",
+      "name": "Sigiled Sentinel",
+      "oracle_id": "79c90a68-1c31-4e16-be53-1304132da80f",
+      "oracle_text": "Backup 1 (When this creature enters, put a +1/+1 counter on target creature. If that's another creature, it gains the following ability until end of turn.)\nVigilance",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2023-04-21",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Human Knight"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Backup"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Streetwise Negotiator",
+      "oracle_id": "74b631c5-9420-496e-8845-3b050d3d5340",
+      "oracle_text": "Backup 1 (When this creature enters, put a +1/+1 counter on target creature. If that's another creature, it gains the following ability until end of turn.)\nThis creature assigns combat damage equal to its toughness rather than its power.",
+      "power": "0",
+      "produced_mana": [],
+      "released_at": "2023-04-21",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Cat Citizen"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flashback"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}{U}",
+      "name": "Cackling Counterpart",
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "oracle_text": "Create a token that's a copy of target creature you control.\nFlashback {5}{U}{U} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-01-24",
+      "toughness": null,
+      "type_line": "Instant"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "Battles will enter with double the normal number of defense counters.",
+      "oracle_id": "01546b7d-a233-4176-8843-d732074dc5b6",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Doubling Season affects permanents that enter with counters.",
+      "oracle_id": "01546b7d-a233-4176-8843-d732074dc5b6",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Everything that is specified by the effect creating the original token or tokens will also be true about the additional token or tokens created by Doubling Season's replacement effect. For example, if an effect tells you to create a token \"tapped and attacking,\" the additional tokens will also be tapped and attacking.",
+      "oracle_id": "01546b7d-a233-4176-8843-d732074dc5b6",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If there are two Doubling Seasons on the battlefield, then the number of tokens or counters is four times the original number. If there are three on the battlefield, then the number of tokens or counters is eight times the original number, and so on.",
+      "oracle_id": "01546b7d-a233-4176-8843-d732074dc5b6",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Planeswalkers will enter with double the normal number of loyalty counters. However, if you activate an ability whose cost has you put loyalty counters on a planeswalker, the number you put on isn't doubled. This is because those counters are put on as a cost, not as an effect.",
+      "oracle_id": "01546b7d-a233-4176-8843-d732074dc5b6",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Casting the card again due to rebound's delayed triggered ability is optional. If you choose not to cast the card, or if you can't (perhaps because there are no legal targets available), the card will stay exiled. You won't get another chance to cast it on a future turn. If you do cast the card, it's put into its owner's graveyard as normal once it resolves.",
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "published_at": "2019-06-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a spell with rebound that you cast from your hand is countered or doesn't resolve (most likely because its targets have become illegal), none of its effects will happen, including rebound. The spell will be put into its owner's graveyard and you won't get to cast it again on your next turn.",
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "published_at": "2019-06-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a token is exiled this way, it will cease to exist and won't return to the battlefield.",
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "published_at": "2019-06-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once the exiled creature returns, it's considered a new object with no relation to the object that it was. Auras attached to the exiled creature will be put into their owners' graveyards. Equipment attached to the exiled creature will become unattached and remain on the battlefield. Any counters on the exiled creature will cease to exist.",
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "published_at": "2019-06-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Backup confers only abilities that are actually printed below it. Any abilities that are gained by the permanent are ignored, including abilities gained due to a resolving spell or ability or copy effects.",
+      "oracle_id": "15f89b06-5025-4c9f-bf51-e25bc5c2dd6b",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a backup ability causes another creature to gain abilities, the creature with backup will still have those abilities.",
+      "oracle_id": "15f89b06-5025-4c9f-bf51-e25bc5c2dd6b",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a backup ability targets the creature with backup, that creature will get +1/+1 counters, but it won\u2019t gain additional abilities.",
+      "oracle_id": "15f89b06-5025-4c9f-bf51-e25bc5c2dd6b",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a permanent enters the battlefield as a copy of a card with a backup ability or a token is created that is a copy of that card, the order of the printed abilities is maintained.",
+      "oracle_id": "15f89b06-5025-4c9f-bf51-e25bc5c2dd6b",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "The abilities that backup grants to the target creature are determined only once, at the time the ability triggers. They won\u2019t change if the permanent with backup loses any abilities before the backup ability resolves.",
+      "oracle_id": "15f89b06-5025-4c9f-bf51-e25bc5c2dd6b",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Backup confers only abilities that are actually printed below it. Any abilities that are gained by the permanent are ignored, including abilities gained due to a resolving spell or ability or copy effects.",
+      "oracle_id": "20a362c3-d278-437f-881c-e7d9fe78fc2d",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a backup ability causes another creature to gain abilities, the creature with backup will still have those abilities.",
+      "oracle_id": "20a362c3-d278-437f-881c-e7d9fe78fc2d",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a backup ability targets the creature with backup, that creature will get +1/+1 counters, but it won\u2019t gain additional abilities.",
+      "oracle_id": "20a362c3-d278-437f-881c-e7d9fe78fc2d",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a permanent enters the battlefield as a copy of a card with a backup ability or a token is created that is a copy of that card, the order of the printed abilities is maintained.",
+      "oracle_id": "20a362c3-d278-437f-881c-e7d9fe78fc2d",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once Chomping Kavu has been legally blocked by a creature, changing that creature\u2019s power to 2 or less won\u2019t undo that block.",
+      "oracle_id": "20a362c3-d278-437f-881c-e7d9fe78fc2d",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "The abilities that backup grants to the target creature are determined only once, at the time the ability triggers. They won\u2019t change if the permanent with backup loses any abilities before the backup ability resolves.",
+      "oracle_id": "20a362c3-d278-437f-881c-e7d9fe78fc2d",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Backup confers only abilities that are actually printed below it. Any abilities that are gained by the permanent are ignored, including abilities gained due to a resolving spell or ability or copy effects.",
+      "oracle_id": "6ff995f9-080d-4316-8fbe-39bf195db91b",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a backup ability causes another creature to gain abilities, the creature with backup will still have those abilities.",
+      "oracle_id": "6ff995f9-080d-4316-8fbe-39bf195db91b",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a backup ability targets the creature with backup, that creature will get +1/+1 counters, but it won\u2019t gain additional abilities.",
+      "oracle_id": "6ff995f9-080d-4316-8fbe-39bf195db91b",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a permanent enters the battlefield as a copy of a card with a backup ability or a token is created that is a copy of that card, the order of the printed abilities is maintained.",
+      "oracle_id": "6ff995f9-080d-4316-8fbe-39bf195db91b",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "The abilities that backup grants to the target creature are determined only once, at the time the ability triggers. They won\u2019t change if the permanent with backup loses any abilities before the backup ability resolves.",
+      "oracle_id": "6ff995f9-080d-4316-8fbe-39bf195db91b",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Backup confers only abilities that are actually printed below it. Any abilities that are gained by the permanent are ignored, including abilities gained due to a resolving spell or ability or copy effects.",
+      "oracle_id": "74b631c5-9420-496e-8845-3b050d3d5340",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a backup ability causes another creature to gain abilities, the creature with backup will still have those abilities.",
+      "oracle_id": "74b631c5-9420-496e-8845-3b050d3d5340",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a backup ability targets the creature with backup, that creature will get +1/+1 counters, but it won\u2019t gain additional abilities.",
+      "oracle_id": "74b631c5-9420-496e-8845-3b050d3d5340",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a permanent enters the battlefield as a copy of a card with a backup ability or a token is created that is a copy of that card, the order of the printed abilities is maintained.",
+      "oracle_id": "74b631c5-9420-496e-8845-3b050d3d5340",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Streetwise Negotiator\u2019s ability doesn\u2019t actually change any creature\u2019s power. It changes only the amount of combat damage the creature assigns. All other rules and effects that check power or toughness use the real values, even if they cause damage \u201cequal to a creature\u2019s power\u201d to be dealt. Notably, if Streetwise Negotiator (or the creature that gains its ability) fights, it uses its actual power to determine how much damage it deals.",
+      "oracle_id": "74b631c5-9420-496e-8845-3b050d3d5340",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "The abilities that backup grants to the target creature are determined only once, at the time the ability triggers. They won\u2019t change if the permanent with backup loses any abilities before the backup ability resolves.",
+      "oracle_id": "74b631c5-9420-496e-8845-3b050d3d5340",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Backup confers only abilities that are actually printed below it. Any abilities that are gained by the permanent are ignored, including abilities gained due to a resolving spell or ability or copy effects.",
+      "oracle_id": "79c90a68-1c31-4e16-be53-1304132da80f",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a backup ability causes another creature to gain abilities, the creature with backup will still have those abilities.",
+      "oracle_id": "79c90a68-1c31-4e16-be53-1304132da80f",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a backup ability targets the creature with backup, that creature will get +1/+1 counters, but it won\u2019t gain additional abilities.",
+      "oracle_id": "79c90a68-1c31-4e16-be53-1304132da80f",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a permanent enters the battlefield as a copy of a card with a backup ability or a token is created that is a copy of that card, the order of the printed abilities is maintained.",
+      "oracle_id": "79c90a68-1c31-4e16-be53-1304132da80f",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "The abilities that backup grants to the target creature are determined only once, at the time the ability triggers. They won\u2019t change if the permanent with backup loses any abilities before the backup ability resolves.",
+      "oracle_id": "79c90a68-1c31-4e16-be53-1304132da80f",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Backup confers only abilities that are actually printed below it. Any abilities that are gained by the permanent are ignored, including abilities gained due to a resolving spell or ability or copy effects.",
+      "oracle_id": "8652d88f-edca-4235-b942-6e7467608de8",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a backup ability causes another creature to gain abilities, the creature with backup will still have those abilities.",
+      "oracle_id": "8652d88f-edca-4235-b942-6e7467608de8",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a backup ability targets the creature with backup, that creature will get +1/+1 counters, but it won\u2019t gain additional abilities.",
+      "oracle_id": "8652d88f-edca-4235-b942-6e7467608de8",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a permanent enters the battlefield as a copy of a card with a backup ability or a token is created that is a copy of that card, the order of the printed abilities is maintained.",
+      "oracle_id": "8652d88f-edca-4235-b942-6e7467608de8",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "The abilities that backup grants to the target creature are determined only once, at the time the ability triggers. They won\u2019t change if the permanent with backup loses any abilities before the backup ability resolves.",
+      "oracle_id": "8652d88f-edca-4235-b942-6e7467608de8",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Backup confers only abilities that are actually printed below it. Any abilities that are gained by the permanent are ignored, including abilities gained due to a resolving spell or ability or copy effects.",
+      "oracle_id": "93107139-b743-4d62-b0ac-9997202e0562",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a backup ability causes another creature to gain abilities, the creature with backup will still have those abilities.",
+      "oracle_id": "93107139-b743-4d62-b0ac-9997202e0562",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a backup ability targets the creature with backup, that creature will get +1/+1 counters, but it won\u2019t gain additional abilities.",
+      "oracle_id": "93107139-b743-4d62-b0ac-9997202e0562",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a permanent enters the battlefield as a copy of a card with a backup ability or a token is created that is a copy of that card, the order of the printed abilities is maintained.",
+      "oracle_id": "93107139-b743-4d62-b0ac-9997202e0562",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "The abilities that backup grants to the target creature are determined only once, at the time the ability triggers. They won\u2019t change if the permanent with backup loses any abilities before the backup ability resolves.",
+      "oracle_id": "93107139-b743-4d62-b0ac-9997202e0562",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Act of Treason can target any creature, even one that's untapped or one you already control.",
+      "oracle_id": "9d08af23-9f4a-4097-9abc-3b17475ab744",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "Gaining control of a creature doesn't cause you to gain control of any Auras or Equipment attached to it.",
+      "oracle_id": "9d08af23-9f4a-4097-9abc-3b17475ab744",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each additional Hardened Scales you control will increase the number of +1/+1 counters placed on a creature you control by one.",
+      "oracle_id": "a1f3da21-af6d-450e-bf0b-985d158418e6",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a creature you control would enter the battlefield with a number of +1/+1 counters on it, it enters with that many plus one instead.",
+      "oracle_id": "a1f3da21-af6d-450e-bf0b-985d158418e6",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If two or more effects attempt to modify how many counters would be put on a creature you control, you choose the order to apply those effects, no matter who controls the sources of those effects.",
+      "oracle_id": "a1f3da21-af6d-450e-bf0b-985d158418e6",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "\"Flashback [cost]\" means \"You may cast this card from your graveyard by paying [cost] rather than paying its mana cost\" and \"If the flashback cost was paid, exile this card instead of putting it anywhere else any time it would leave the stack.\"",
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "A spell cast using flashback will always be exiled afterward, whether it resolves, is countered, or leaves the stack in some other way.",
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a card with flashback is put into your graveyard during your turn, you can cast it if it's legal to do so before any other player can take any actions.",
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost (such as a flashback cost) you're paying, add any cost increases, then apply any cost reductions. The mana value of the spell is determined only by its mana cost, no matter what the total cost to cast the spell was.",
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can cast a spell using flashback even if it was somehow put into your graveyard without having been cast.",
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "You must still follow any timing restrictions and permissions, including those based on the card's type. For instance, you can cast a sorcery using flashback only when you could normally cast a sorcery.",
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any \u201centers\u201d triggered ability of the copied creature will trigger when the token enters the battlefield. Any \u201cas [this creature] enters\u201d or \u201c[this creature] enters with\u201d abilities of the chosen creature will also work.",
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2025-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the copied creature has {X} in its mana cost, X is considered to be 0.",
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2025-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the copied creature is a token, the token that\u2019s created copies the original characteristics of that token as stated by the effect that created the token.",
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2025-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the copied creature is copying something else, then the token enters the battlefield as whatever that creature copied.",
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2025-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "The token copies exactly what was printed on the original creature and nothing else (unless that creature is copying something else or is a token; see below). It doesn\u2019t copy whether that creature is tapped or untapped, whether it has any counters on it or Auras and Equipment attached to it, or any non-copy effects that have changed its power, toughness, types, color, or so on.",
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2025-01-24",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

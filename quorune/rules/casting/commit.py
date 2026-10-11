@@ -1,4 +1,5 @@
 from __future__ import annotations
+from ...trigger_discovery import _ordered_event_sources
 
 import copy
 from collections.abc import Mapping, Sequence
@@ -21,6 +22,7 @@ from ...compiled_morph import compiled_fixed_mana_face_down_method_spec
 from ...compiled_flashback import compiled_fixed_mana_flashback_spec
 from ...compiled_madness import current_fixed_cast_lifecycle_spec
 from ...compiled_cast_lifecycles import compiled_fixed_cast_lifecycle_spec, compiled_mayhem_permission
+from .face_queries import prospective_cast_card
 from ...cast_lifecycles import (
     FixedCastLifecycleError,
     FixedCastLifecycleKind,
@@ -784,6 +786,7 @@ def _cast_lifecycle_stack_specs(
     card: Any,
     selected_option: Mapping[str, Any],
 ) -> tuple[FixedCastLifecycleSpec | None, FixedCastLifecycleSpec | None]:
+    card=prospective_cast_card(host,card,proposal.face)
     rebound = (
         compiled_fixed_cast_lifecycle_spec(
             host,
@@ -808,6 +811,7 @@ def _mark_selected_cast_lifecycle(
     rebound: FixedCastLifecycleSpec | None,
 ) -> None:
     if spec is not None and spec.kind in {
+        FixedCastLifecycleKind.AFTERMATH,
         FixedCastLifecycleKind.ESCAPE,
         FixedCastLifecycleKind.JUMP_START,
     }:
@@ -880,6 +884,8 @@ def _create_spell_item(
     card.zone = "stack"
     card.controller = proposal.seat
     card.active_face = proposal.face
+    from ..prototype import commit_prototype_cast
+    commit_prototype_cast(card,details.get('prototype'))
     if str(selected_option.get("kind") or "").casefold() == KICKER_MECHANIC_ID:
         mark_card_kicked(card)
     if selected_option.get("id") == FLASHBACK_CAST_OPTION_ID:
@@ -958,6 +964,7 @@ def _create_spell_item(
             "granted_improvise": used_improvise,
             "cost_option": proposal.cost_option_id,
             'kicked': selected_option.get('kind') == KICKER_MECHANIC_ID,
+            **({'cast_method':'prototype','prototype':details['prototype']} if details.get('cast_method')=='prototype' else {}),
             **lifecycle_context,
             **_fixed_cast_lifecycle_cost_context(costs),
             **(
@@ -1174,7 +1181,7 @@ def _dispatch_cast_events(
         targets=proposal.targets,
         creature_target_controllers=_cast_creature_target_controllers(host, item),
     ).to_context()
-    event_sources = list(host._semantic_event_sources())
+    event_sources = _ordered_event_sources(host,None)
     if all(source.object_id != card.object_id for source in event_sources):
         event_sources.append(card)
     host._dispatch_semantic_event(
@@ -1217,8 +1224,10 @@ def _revalidate_fixed_lifecycle_contract(
             str(exc),
             reason="stale_fixed_cast_lifecycle_contract",
         ) from exc
+    card=prospective_cast_card(host,card,proposal.face)
     current = current_fixed_cast_lifecycle_spec(host, card, proposed.kind)
     expected_origin = {
+        FixedCastLifecycleKind.AFTERMATH: "graveyard",
         FixedCastLifecycleKind.ESCAPE: "graveyard",
         FixedCastLifecycleKind.FORETELL: "exile",
         FixedCastLifecycleKind.JUMP_START: "graveyard",
@@ -1229,11 +1238,9 @@ def _revalidate_fixed_lifecycle_contract(
         FixedCastLifecycleKind.MAYHEM: "graveyard",
     }.get(proposed.kind)
     option_id = str(selected_option.get("id") or "")
-    valid_id = (
-        option_id == "retrace"
-        if proposed.kind is FixedCastLifecycleKind.RETRACE
-        else option_id == proposed.kind.value
-    )
+    if proposed.kind is FixedCastLifecycleKind.AFTERMATH:valid_id=True
+    elif proposed.kind is FixedCastLifecycleKind.RETRACE:valid_id=option_id=='retrace'
+    else:valid_id=option_id==proposed.kind.value
     if (
         current != proposed
         or selected_option.get("fixed_cast_lifecycle_fingerprint")
@@ -1363,6 +1370,9 @@ def commit_cast(
 
     card, record, program = _revalidate_source(host, proposal)
     details = dict(thaw_json(proposal.details))
+    from ..prototype import revalidate_prototype_cast
+    try:revalidate_prototype_cast(host,card,details)
+    except ValueError as exc:raise CastProposalError(str(exc),reason='stale_prototype_contract') from exc
     selected_option = _revalidate_cast_contracts(
         host,
         proposal,

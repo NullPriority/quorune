@@ -141,10 +141,16 @@ class FixedKeywordEntryCompilerTests(unittest.TestCase):
                 self.assertEqual(("counter.placement.quantity_replacement", FIXED_KEYWORD_ENTRY_CAPABILITY), entry.capability_dependencies)
                 self.assertEqual((mechanic,), entry.mechanics)
                 self.assertEqual(
-                    (mechanic, "cr-122-counters") if mechanic in {"fading", "vanishing"} else (mechanic,),
+                    (mechanic, "cr-122-counters", "cr-603-handling-triggered-abilities") if mechanic == "graft"
+                    else (mechanic, "cr-122-counters"),
                     lifecycle.mechanics,
                 )
-                self.assertEqual(mechanic == "graft", bool(lifecycle.residual_ids))
+                self.assertTrue(lifecycle.exact)
+                self.assertFalse(lifecycle.residual_ids)
+                if mechanic == "graft":
+                    self.assertEqual("permanent.enter", lifecycle.event)
+                    self.assertEqual("offer_graft_counter_movement", lifecycle.effects[0]["op"])
+                    self.assertIn("counter.lifecycle.graft", lifecycle.capability_dependencies)
                 keyword_end = record.oracle_text.index(" (")
                 self.assertEqual(
                     (0, keyword_end),
@@ -214,15 +220,19 @@ class FixedKeywordEntryCompilerTests(unittest.TestCase):
         for name in (
             "Graft Entry Fixture",
         ):
+            value = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+            for capability in value["capabilities"]:
+                if capability["id"] == "counter.lifecycle.graft":
+                    capability.update(status="blocked", blockers=["counter movement owner unavailable"])
             ir = compile_oracle_card(
                 self.db.lookup(name),
-                capability_registry=self.capabilities,
+                capability_registry=CapabilityRegistry(value),
                 capability_profile="commander_review",
             )
             self.assertNotEqual("exact", ir.status)
             self.assertTrue(
                 any(
-                    "remaining-lifecycle" in blocker
+                    "counter.lifecycle.graft" in blocker
                     for residual in ir.material_residuals
                     for blocker in residual.blockers
                 )

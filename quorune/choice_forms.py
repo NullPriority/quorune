@@ -461,7 +461,7 @@ def _special_fields(
             for row in _rows(context.get("candidates"))
             if row.get("id")
         ]
-        return [
+        fields = [
             {
                 "name": "attackers",
                 "label": "Attackers and defenders",
@@ -471,12 +471,17 @@ def _special_fields(
                 "rows": rows,
             }
         ]
+        if context.get('enlist'):
+            fields.append({'name':'enlist','label':'Enlist creatures','control':'assignment_map','required':False,'allow_none':True,'rows':copy.deepcopy(context['enlist']),'source_assignment':'attackers','exclude_assigned':True,'distinct_options':True})
+        return fields
     if decision_kind == "combat.blockers" and action_name == "block":
         legal = context.get("legal_blocks") or {}
+        capacities = (context.get('declaration_constraints') or {}).get('capacities') or {}
         rows = [
             {
                 "value": str(ref),
                 "label": str(ref),
+                **({'maximum':capacities[str(ref)]} if capacities.get(str(ref),1)>1 else {}),
                 "options": _options(
                     list(legal.get(str(ref), []))
                     if isinstance(legal, Mapping)

@@ -1,0 +1,144 @@
+{
+  "schema_version": 1,
+  "contract_version": 1,
+  "mechanic_id": "enlist",
+  "official_name": "Enlist",
+  "effective_date": "2026-08-07",
+  "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
+  "rule_references": [
+    "702.154",
+    "702.154a",
+    "702.154b",
+    "702.154c",
+    "702.154d",
+    "508.1g",
+    "603.12",
+    "607.2h",
+    "302.6",
+    "608.2h",
+    "107.1b"
+  ],
+  "glossary_references": [
+    "enlist"
+  ],
+  "dependencies": [
+    "declare-attackers-step",
+    "handling-triggered-abilities",
+    "continuous-effects",
+    "tap-and-untap"
+  ],
+  "coverage_status": "tested",
+  "trust_level": "untrusted",
+  "behavior": {
+    "zones": [
+      "battlefield",
+      "stack"
+    ],
+    "objects": [
+      "current trusted Enlist attacker",
+      "eligible distinct controlled nonattacking creature"
+    ],
+    "events": [
+      "optional attack cost tap",
+      "linked reflexive trigger",
+      "ordinary resolution modifier"
+    ],
+    "state_reads": [
+      "untapped controlled eligible creature",
+      "haste and acquisition history",
+      "accepted attack batch",
+      "current or last-known enlisted power"
+    ],
+    "state_writes": [
+      "canonical selected tap transaction",
+      "APNAP stack occurrence",
+      "temporary source power modifier"
+    ],
+    "costs": [
+      "optional tap of up to one eligible creature per Enlist instance"
+    ],
+    "timing": [
+      "taps as attackers are declared",
+      "power evaluated when reflexive trigger resolves"
+    ],
+    "targets": [],
+    "choices": [
+      "decline or choose distinct eligible nonattacking donors"
+    ],
+    "hidden_information": [],
+    "apnap": [
+      "ordinary attack and reflexive trigger batch with same-controller ordering"
+    ],
+    "layers": [
+      "current eligibility and power plus layer7c until-end-of-turn growth"
+    ],
+    "replacement_effects": [
+      "canonical tap and existing continuous owner"
+    ],
+    "copy": [
+      "typed copied keyword instances keep their source program provenance"
+    ],
+    "control_change": [
+      "original occurrence controller and attacker incarnation are pinned"
+    ],
+    "zone_change": [
+      "attacker new incarnation gets no old growth; departed donor uses pinned immediate LKI"
+    ],
+    "source_leaves": [
+      "reflexive growth cannot affect a blinked attacker"
+    ]
+  },
+  "variants": [
+    "decline",
+    "eligible haste donor",
+    "duplicate donor rejection",
+    "multiple printed instances",
+    "live power response",
+    "departed donor LKI",
+    "attacker blink",
+    "negative power zero-result",
+    "pending save/load"
+  ],
+  "witness_cards": [
+    {
+      "name": "Benalish Faithbonder",
+      "oracle_id": "278db664-4235-40f0-a926-3074a0e038c1"
+    },
+    {
+      "name": "Balduvian Berserker",
+      "oracle_id": "3a7b1d1c-1724-4208-943b-650a5d773653"
+    },
+    {
+      "name": "Coalition Warbrute",
+      "oracle_id": "84d67d87-2696-4c2f-9f10-29d5832bfbb6"
+    }
+  ],
+  "rulings": [],
+  "test_ids": [
+    "test_actual_attacker_blink_invalidates_reflexive_growth_and_replays",
+    "test_actual_enlisted_power_is_live_at_resolution_and_departure_uses_lki",
+    "test_actual_faithbonder_enlists_eligible_body_then_growth_and_replay",
+    "test_actual_negative_power_donor_gives_zero_boost_and_replays",
+    "test_actual_pending_enlist_trigger_save_load_keeps_paid_tap_and_original_power_reference",
+    "test_enlist_has_separate_optional_cost_marker_and_reflexive_power",
+    "test_enlist_open_grammar_and_boolean_instance_reject",
+    "test_enlist_wrong_principal_self_attacking_or_sick_source_rejects_atomically",
+    "test_model_negative_enlisted_power_uses_zero_result",
+    "test_omitting_enlist_trigger_mutant_is_killed",
+    "test_two_actual_attackers_cannot_enlist_same_donor_and_haste_allows_new_donor"
+  ],
+  "implementation": {
+    "component": "quorune.rules.enlist and existing attack, tap, scalar, trigger and temporary-characteristic owners",
+    "version": "typed-printed-enlist-v1",
+    "capability_ids": [
+      "combat.attack.enlist"
+    ],
+    "supported_slice": "Ordinary printed Enlist cost and linked power trigger with current source eligibility, live or last-known donor power and original attacker identity."
+  },
+  "known_blockers": [
+    "independently unsupported Enlist-dependent sibling effects",
+    "unrepresented acquired ability producers",
+    "aggregate mechanic trust does not imply complete card or match support"
+  ],
+  "review_status": "reviewed"
+}

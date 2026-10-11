@@ -107,6 +107,7 @@ def compiled_fixed_zone_cast_permission(
         and any(
             compiled_fixed_cast_lifecycle_spec(host, card, kind) is not None
             for kind in (
+                FixedCastLifecycleKind.AFTERMATH,
                 FixedCastLifecycleKind.ESCAPE,
                 FixedCastLifecycleKind.JUMP_START,
                 FixedCastLifecycleKind.RETRACE,

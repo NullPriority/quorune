@@ -109,8 +109,6 @@ def target_protection_verdict(
         )
     ):
         return TargetProtectionVerdict.CONTROLLER_HEXPROOF_FROM_COLOR
-    if snapshot.target_is_player:
-        return TargetProtectionVerdict.ALLOWED
     if "shroud" in snapshot.target_keywords:
         return TargetProtectionVerdict.SHROUD
     if (
@@ -118,6 +116,8 @@ def target_protection_verdict(
         and snapshot.acting_controller != snapshot.protected_controller
     ):
         return TargetProtectionVerdict.HEXPROOF
+    if snapshot.target_is_player:
+        return TargetProtectionVerdict.ALLOWED
     if snapshot.protection_verdict is ProtectionVerdict.BLOCKED:
         return TargetProtectionVerdict.PROTECTION
     if snapshot.protection_verdict is ProtectionVerdict.UNRESOLVED:

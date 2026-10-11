@@ -538,13 +538,23 @@ mandatory self-entry component. The compiler selects fade, +1/+1, or time
 counters from the typed keyword descriptor, emits one independent all-zone
 entry program for each printed instance, and routes the prospective placement
 through the existing nested zone-change and quantity-replacement transaction.
-It also retains a separate material lifecycle residual on the same keyword:
-Fading upkeep removal and sacrifice, Graft's enters trigger and counter move,
-and Vanishing upkeep removal and last-counter sacrifice remain unrepresented.
-Bare Vanishing, nonpositive or variable values, Oracle-equivalent prose, and
-granted, copied, or removed abilities outside the future shared typed
-ability-presence boundary also remain residual rather than gaining a
-family-specific runtime check.
+Their separate lifecycle programs use current trusted typed abilities. Fading
+removes an upkeep counter or sacrifices the source; Vanishing removes upkeep
+counters and separately sacrifices after its last time counter is removed.
+Graft checks its intervening source-counter condition, then offers its trigger
+controller a non-targeted counter move onto the other entering creature,
+including one controlled by another player. Source and recipient incarnations
+are pinned at trigger creation and revalidated at resolution.
+
+Counter movement prepares ordinary recipient placement replacements before
+removing any source counter. Once choices finish, the canonical counter state
+owner commits source removal and the replaced recipient quantity in one plan.
+An absent counter, departed or phased object, identical source and recipient,
+or wholly prevented placement changes neither object. Replacement quantity
+changes do not increase the number removed from the source. Declining remains
+legal, and pending choices retain the original identities across save/load.
+Variable and unsupported keyword values, unrepresented sibling abilities,
+Oracle-equivalent prose, and unrepresented counter prohibitions remain residual.
 
 Generic fixed prose self-entry counters use that same all-zone owner. The
 compiler accepts only one complete source sentence in which this object or its

@@ -714,13 +714,27 @@ class SemanticChoiceContinuation:
         )
 
 
+@dataclass(frozen=True,slots=True)
+class IntentResultAmount:
+    intent_index: int
+    effect_index: int
+    field_name: str
+
+    def __post_init__(self):
+        _integer(self.intent_index,field_name='result intent index')
+        _integer(self.effect_index,field_name='result effect index')
+        if self.field_name not in {'amount','count','quantity'}:raise SemanticChoiceError('Intent result amount field is unsupported')
+
+
 @dataclass(frozen=True, slots=True)
 class AutoContinue:
     reason: str
     prepend_effects: tuple[FrozenMap, ...] = ()
+    amount_from_result: IntentResultAmount | None = None
 
     def __post_init__(self) -> None:
         _string(self.reason, field_name="auto-continue reason")
+        if self.amount_from_result is not None and not isinstance(self.amount_from_result,IntentResultAmount):raise SemanticChoiceError('Automatic result amount binding must be typed')
         object.__setattr__(
             self,
             "prepend_effects",
@@ -731,6 +745,17 @@ class AutoContinue:
                 for effect in self.prepend_effects
             ),
         )
+
+
+    def resolved_effects(self,results):
+        if self.amount_from_result is None:return self.prepend_effects
+        spec=self.amount_from_result;amount=results.get(spec.intent_index)
+        if type(amount) is not int or amount<0:
+            raise SemanticChoiceError('Automatic result amount is missing or malformed')
+        if spec.effect_index>=len(self.prepend_effects) or spec.field_name not in self.prepend_effects[spec.effect_index]:
+            raise SemanticChoiceError('Automatic result destination is missing')
+        effects=list(self.prepend_effects);effects[spec.effect_index]=FrozenMap({**dict(effects[spec.effect_index]),spec.field_name:amount})
+        return tuple(effects)
 
 
 @dataclass(frozen=True, slots=True)

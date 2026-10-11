@@ -1,0 +1,1003 @@
+{
+  "cards": [
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}",
+      "name": "Act of Treason",
+      "oracle_id": "9d08af23-9f4a-4097-9abc-3b17475ab744",
+      "oracle_text": "Gain control of target creature until end of turn. Untap that creature. It gains haste until end of turn. (It can attack and {T} this turn.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-01-12",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "oracle_id": "b86d3142-568a-4eea-b1ae-5fcfc1453533",
+      "name": "Boon Reflection",
+      "mana_cost": "{4}{W}",
+      "cmc": 5.0,
+      "type_line": "Enchantment",
+      "oracle_text": "If you would gain life, you gain twice that much life instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-08-07",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      }
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Max speed",
+        "Menace",
+        "Start your engines!"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{R}",
+      "name": "Burnout Bashtronaut",
+      "oracle_id": "1b122fbb-c2e1-42d1-bfc5-fcacacdfa0bc",
+      "oracle_text": "Menace\nStart your engines! (If you have no speed, it starts at 1. It increases once on each of your turns when an opponent loses life. Max speed is 4.)\n{2}: This creature gets +1/+0 until end of turn.\nMax speed \u2014 This creature has double strike.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2025-02-14",
+      "toughness": "1",
+      "type_line": "Creature \u2014 Goblin Warrior"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Counterspell",
+      "oracle_id": "cc187110-1148-4090-bbb8-e205694a39f5",
+      "oracle_text": "Counter target spell.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Max speed",
+        "Start your engines!"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R}",
+      "name": "Endrider Catalyzer",
+      "oracle_id": "b4d970ed-f332-440c-8c2f-8a8a0191410b",
+      "oracle_text": "Start your engines! (If you have no speed, it starts at 1. It increases once on each of your turns when an opponent loses life. Max speed is 4.)\nMax speed \u2014 {T}: Add {R}{R}.",
+      "power": "3",
+      "produced_mana": [
+        "R"
+      ],
+      "released_at": "2025-02-14",
+      "toughness": "1",
+      "type_line": "Creature \u2014 Human Warrior"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Rebound"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Ephemerate",
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "oracle_text": "Exile target creature you control, then return it to the battlefield under its owner's control.\nRebound (If you cast this spell from your hand, exile it as it resolves. At the beginning of your next upkeep, you may cast this card from exile without paying its mana cost.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2019-06-14",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Max speed",
+        "Trample",
+        "Start your engines!"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}",
+      "name": "Goblin Surveyor",
+      "oracle_id": "237758f3-84b2-4e5b-a2c7-b28c893e2790",
+      "oracle_text": "Trample\nStart your engines! (If you have no speed, it starts at 1. It increases once on each of your turns when an opponent loses life. Max speed is 4.)\nMax speed \u2014 {3}, Exile this card from your graveyard: Draw a card.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2025-02-14",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Goblin Scout"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Max speed",
+        "Start your engines!"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Muraganda Raceway",
+      "oracle_id": "b5fa5651-d714-44d6-867b-be0e3224b7ed",
+      "oracle_text": "Start your engines! (If you have no speed, it starts at 1. It increases once on each of your turns when an opponent loses life. Max speed is 4.)\n{T}: Add {C}.\nMax speed \u2014 {T}: Add {C}{C}.",
+      "power": null,
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2025-02-14",
+      "toughness": null,
+      "type_line": "Land"
+    },
+    {
+      "oracle_id": "a9d288b8-cdc1-4e55-a0c9-d6edfc95e65d",
+      "name": "Shock",
+      "mana_cost": "{R}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Shock deals 2 damage to any target.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Max speed",
+        "Start your engines!"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{W}",
+      "name": "Swiftwing Assailant",
+      "oracle_id": "46b36d25-25bd-48c5-9a53-75230bb27dee",
+      "oracle_text": "Flying\nStart your engines! (If you have no speed, it starts at 1. It increases once on each of your turns when an opponent loses life. Max speed is 4.)\nMax speed \u2014 This creature gets +0/+1 and has vigilance.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2025-02-14",
+      "toughness": "3",
+      "type_line": "Creature \u2014 Bird Warrior"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Max speed",
+        "Start your engines!"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{B}{R}",
+      "name": "Far Fortune, End Boss",
+      "oracle_id": "8b9734c1-7185-40f6-8582-9f87109e3a09",
+      "oracle_text": "Start your engines! (If you have no speed, it starts at 1. It increases once on each of your turns when an opponent loses life. Max speed is 4.)\nWhenever you attack, Far Fortune deals 1 damage to each opponent.\nMax speed \u2014 If a source you control would deal damage to an opponent or a permanent an opponent controls, it deals that much damage plus 1 instead.",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2025-02-14",
+      "toughness": "5",
+      "type_line": "Legendary Creature \u2014 Human Mercenary"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Stifle",
+      "oracle_id": "b3b00911-ece7-4484-bc36-f211ce72b6cc",
+      "oracle_text": "Counter target activated or triggered ability. (Mana abilities can't be targeted.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2014-06-06",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Extort"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Syndic of Tithes",
+      "oracle_id": "8f5c52d2-0583-4c94-a043-15b2118877fa",
+      "oracle_text": "Extort (Whenever you cast a spell, you may pay {W/B}. If you do, each opponent loses 1 life and you gain that much life.)",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2024-02-23",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Human Cleric"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "Casting the card again due to rebound's delayed triggered ability is optional. If you choose not to cast the card, or if you can't (perhaps because there are no legal targets available), the card will stay exiled. You won't get another chance to cast it on a future turn. If you do cast the card, it's put into its owner's graveyard as normal once it resolves.",
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "published_at": "2019-06-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a spell with rebound that you cast from your hand is countered or doesn't resolve (most likely because its targets have become illegal), none of its effects will happen, including rebound. The spell will be put into its owner's graveyard and you won't get to cast it again on your next turn.",
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "published_at": "2019-06-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a token is exiled this way, it will cease to exist and won't return to the battlefield.",
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "published_at": "2019-06-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once the exiled creature returns, it's considered a new object with no relation to the object that it was. Auras attached to the exiled creature will be put into their owners' graveyards. Equipment attached to the exiled creature will become unattached and remain on the battlefield. Any counters on the exiled creature will cease to exist.",
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "published_at": "2019-06-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "A player \u201chas max speed\u201d if their speed is 4.",
+      "oracle_id": "1b122fbb-c2e1-42d1-bfc5-fcacacdfa0bc",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each player tracks their speed (or lack thereof) separately. Increasing your speed has no effect on whether another player has speed.",
+      "oracle_id": "1b122fbb-c2e1-42d1-bfc5-fcacacdfa0bc",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect needs to know what a player\u2019s speed is and that player doesn\u2019t have a speed, their speed is considered 0.",
+      "oracle_id": "1b122fbb-c2e1-42d1-bfc5-fcacacdfa0bc",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Start your engines! isn\u2019t a triggered ability. Increasing your speed to 1 is something that happens as a state-based action as soon as you control a permanent with the ability. Notably, this includes gaining control of a permanent with the ability that another player controls.",
+      "oracle_id": "1b122fbb-c2e1-42d1-bfc5-fcacacdfa0bc",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Your speed doesn\u2019t change until a spell or ability says so, such as the inherent triggered ability that cares about opponents losing life during your turn. Notably, losing control of permanents with start your engines! doesn\u2019t affect your speed.",
+      "oracle_id": "1b122fbb-c2e1-42d1-bfc5-fcacacdfa0bc",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "\u201cMax speed \u2014 [ability]\u201d means \u201cAs long as you have max speed, this object has [ability].\u201d If the granted ability functions in a zone other than the battlefield, the max speed ability does too.",
+      "oracle_id": "1b122fbb-c2e1-42d1-bfc5-fcacacdfa0bc",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "A player \u201chas max speed\u201d if their speed is 4.",
+      "oracle_id": "237758f3-84b2-4e5b-a2c7-b28c893e2790",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each player tracks their speed (or lack thereof) separately. Increasing your speed has no effect on whether another player has speed.",
+      "oracle_id": "237758f3-84b2-4e5b-a2c7-b28c893e2790",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect needs to know what a player\u2019s speed is and that player doesn\u2019t have a speed, their speed is considered 0.",
+      "oracle_id": "237758f3-84b2-4e5b-a2c7-b28c893e2790",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Start your engines! isn\u2019t a triggered ability. Increasing your speed to 1 is something that happens as a state-based action as soon as you control a permanent with the ability. Notably, this includes gaining control of a permanent with the ability that another player controls.",
+      "oracle_id": "237758f3-84b2-4e5b-a2c7-b28c893e2790",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Your speed doesn\u2019t change until a spell or ability says so, such as the inherent triggered ability that cares about opponents losing life during your turn. Notably, losing control of permanents with start your engines! doesn\u2019t affect your speed.",
+      "oracle_id": "237758f3-84b2-4e5b-a2c7-b28c893e2790",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "\u201cMax speed \u2014 [ability]\u201d means \u201cAs long as you have max speed, this object has [ability].\u201d If the granted ability functions in a zone other than the battlefield, the max speed ability does too.",
+      "oracle_id": "237758f3-84b2-4e5b-a2c7-b28c893e2790",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "A player \u201chas max speed\u201d if their speed is 4.",
+      "oracle_id": "46b36d25-25bd-48c5-9a53-75230bb27dee",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each player tracks their speed (or lack thereof) separately. Increasing your speed has no effect on whether another player has speed.",
+      "oracle_id": "46b36d25-25bd-48c5-9a53-75230bb27dee",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect needs to know what a player\u2019s speed is and that player doesn\u2019t have a speed, their speed is considered 0.",
+      "oracle_id": "46b36d25-25bd-48c5-9a53-75230bb27dee",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Start your engines! isn\u2019t a triggered ability. Increasing your speed to 1 is something that happens as a state-based action as soon as you control a permanent with the ability. Notably, this includes gaining control of a permanent with the ability that another player controls.",
+      "oracle_id": "46b36d25-25bd-48c5-9a53-75230bb27dee",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Your speed doesn\u2019t change until a spell or ability says so, such as the inherent triggered ability that cares about opponents losing life during your turn. Notably, losing control of permanents with start your engines! doesn\u2019t affect your speed.",
+      "oracle_id": "46b36d25-25bd-48c5-9a53-75230bb27dee",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "\u201cMax speed \u2014 [ability]\u201d means \u201cAs long as you have max speed, this object has [ability].\u201d If the granted ability functions in a zone other than the battlefield, the max speed ability does too.",
+      "oracle_id": "46b36d25-25bd-48c5-9a53-75230bb27dee",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Act of Treason can target any creature, even one that's untapped or one you already control.",
+      "oracle_id": "9d08af23-9f4a-4097-9abc-3b17475ab744",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "Gaining control of a creature doesn't cause you to gain control of any Auras or Equipment attached to it.",
+      "oracle_id": "9d08af23-9f4a-4097-9abc-3b17475ab744",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "A player \u201chas max speed\u201d if their speed is 4.",
+      "oracle_id": "b4d970ed-f332-440c-8c2f-8a8a0191410b",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each player tracks their speed (or lack thereof) separately. Increasing your speed has no effect on whether another player has speed.",
+      "oracle_id": "b4d970ed-f332-440c-8c2f-8a8a0191410b",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect needs to know what a player\u2019s speed is and that player doesn\u2019t have a speed, their speed is considered 0.",
+      "oracle_id": "b4d970ed-f332-440c-8c2f-8a8a0191410b",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Start your engines! isn\u2019t a triggered ability. Increasing your speed to 1 is something that happens as a state-based action as soon as you control a permanent with the ability. Notably, this includes gaining control of a permanent with the ability that another player controls.",
+      "oracle_id": "b4d970ed-f332-440c-8c2f-8a8a0191410b",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Your speed doesn\u2019t change until a spell or ability says so, such as the inherent triggered ability that cares about opponents losing life during your turn. Notably, losing control of permanents with start your engines! doesn\u2019t affect your speed.",
+      "oracle_id": "b4d970ed-f332-440c-8c2f-8a8a0191410b",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "\u201cMax speed \u2014 [ability]\u201d means \u201cAs long as you have max speed, this object has [ability].\u201d If the granted ability functions in a zone other than the battlefield, the max speed ability does too.",
+      "oracle_id": "b4d970ed-f332-440c-8c2f-8a8a0191410b",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "A player \u201chas max speed\u201d if their speed is 4.",
+      "oracle_id": "b5fa5651-d714-44d6-867b-be0e3224b7ed",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each player tracks their speed (or lack thereof) separately. Increasing your speed has no effect on whether another player has speed.",
+      "oracle_id": "b5fa5651-d714-44d6-867b-be0e3224b7ed",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect needs to know what a player\u2019s speed is and that player doesn\u2019t have a speed, their speed is considered 0.",
+      "oracle_id": "b5fa5651-d714-44d6-867b-be0e3224b7ed",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Start your engines! isn\u2019t a triggered ability. Increasing your speed to 1 is something that happens as a state-based action as soon as you control a permanent with the ability. Notably, this includes gaining control of a permanent with the ability that another player controls.",
+      "oracle_id": "b5fa5651-d714-44d6-867b-be0e3224b7ed",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Your speed doesn\u2019t change until a spell or ability says so, such as the inherent triggered ability that cares about opponents losing life during your turn. Notably, losing control of permanents with start your engines! doesn\u2019t affect your speed.",
+      "oracle_id": "b5fa5651-d714-44d6-867b-be0e3224b7ed",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "\u201cMax speed \u2014 [ability]\u201d means \u201cAs long as you have max speed, this object has [ability].\u201d If the granted ability functions in a zone other than the battlefield, the max speed ability does too.",
+      "oracle_id": "b5fa5651-d714-44d6-867b-be0e3224b7ed",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect would set your life total to a specific number that's higher than your current life total, that effect would cause you to gain life equal to the difference. Boon Reflection will then double the amount of life that effect would cause you to gain. For example, if you have 3 life and an effect says that your life total \u201cbecomes 10,\u201d your life total will actually become 17.",
+      "oracle_id": "b86d3142-568a-4eea-b1ae-5fcfc1453533",
+      "published_at": "2020-08-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "In a Two-Headed Giant game, only Boon Reflection's controller is affected by it. If that player's teammate gains life, Boon Reflection will have no effect, even when that life gain is applied to the shared team life total.",
+      "oracle_id": "b86d3142-568a-4eea-b1ae-5fcfc1453533",
+      "published_at": "2020-08-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "The effects of multiple Boon Reflections are cumulative. For example, if you control two Boon Reflections, you'll gain four times the original amount of life. If you control three Boon Reflections, you'll gain eight times the original amount, and so on.",
+      "oracle_id": "b86d3142-568a-4eea-b1ae-5fcfc1453533",
+      "published_at": "2020-08-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "A player \u201chas max speed\u201d if their speed is 4.",
+      "oracle_id": "8b9734c1-7185-40f6-8582-9f87109e3a09",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each player tracks their speed (or lack thereof) separately. Increasing your speed has no effect on whether another player has speed.",
+      "oracle_id": "8b9734c1-7185-40f6-8582-9f87109e3a09",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect needs to know what a player\u2019s speed is and that player doesn\u2019t have a speed, their speed is considered 0.",
+      "oracle_id": "8b9734c1-7185-40f6-8582-9f87109e3a09",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If another effect modifies how much damage your sources would deal, including preventing some of it, the player being dealt damage or the controller of the permanent being dealt damage chooses an order in which to apply those effects. If all of the damage is prevented, Far Fortune\u2019s last ability no longer applies.",
+      "oracle_id": "8b9734c1-7185-40f6-8582-9f87109e3a09",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If damage dealt by a source you control is being divided or assigned among multiple permanents an opponent controls or among an opponent and one or more permanents they control, divide the original amount before adding 1. For example, if you attack with a 5/5 creature with trample and your opponent blocks with a 2/2 creature, you can assign 2 damage to the blocker and 3 damage to the defending player. These amounts are then modified to 3 and 4, respectively.",
+      "oracle_id": "8b9734c1-7185-40f6-8582-9f87109e3a09",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Start your engines! isn\u2019t a triggered ability. Increasing your speed to 1 is something that happens as a state-based action as soon as you control a permanent with the ability. Notably, this includes gaining control of a permanent with the ability that another player controls.",
+      "oracle_id": "8b9734c1-7185-40f6-8582-9f87109e3a09",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "The additional 1 damage from Far Fortune\u2019s last ability is dealt by the same source as the original source of damage. The damage isn\u2019t dealt by Far Fortune unless Far Fortune is the original source of damage.",
+      "oracle_id": "8b9734c1-7185-40f6-8582-9f87109e3a09",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Your speed doesn\u2019t change until a spell or ability says so, such as the inherent triggered ability that cares about opponents losing life during your turn. Notably, losing control of permanents with start your engines! doesn\u2019t affect your speed.",
+      "oracle_id": "8b9734c1-7185-40f6-8582-9f87109e3a09",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "\u201cMax speed \u2014 [ability]\u201d means \u201cAs long as you have max speed, this object has [ability].\u201d If the granted ability functions in a zone other than the battlefield, the max speed ability does too.",
+      "oracle_id": "8b9734c1-7185-40f6-8582-9f87109e3a09",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "An activated ability has a \"Cost: Effect\" format. Look for the colon. A triggered ability starts with \"when\", \"whenever\", or \"at\".",
+      "oracle_id": "b3b00911-ece7-4484-bc36-f211ce72b6cc",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "It can target delayed triggered abilities. For example, a card that says \"Whenever a player cycles a card, you may exile target creature. If you do, return that creature to the battlefield at the beginning of the end step.\" triggers when a player cycles a card and creates a delayed trigger that happens at the beginning of the end step. You can choose to target the \"at the beginning of the end step\" trigger when it is placed on the stack at end of turn.",
+      "oracle_id": "b3b00911-ece7-4484-bc36-f211ce72b6cc",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "Turn-based actions and special actions like the normal card draw, combat damage, or turning a face-down creature face up can't be targeted.",
+      "oracle_id": "b3b00911-ece7-4484-bc36-f211ce72b6cc",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "The amount of life you gain from extort is based on the total amount of life lost, not necessarily the number of opponents you have. For example, if your opponent's life total can't change (perhaps because that player controls Platinum Emperion), you won't gain any life.",
+      "oracle_id": "8f5c52d2-0583-4c94-a043-15b2118877fa",
+      "published_at": "2024-01-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "The extort ability doesn't target any player.",
+      "oracle_id": "8f5c52d2-0583-4c94-a043-15b2118877fa",
+      "published_at": "2024-01-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "The extort ability resolves before the spell that caused it to trigger. The ability resolves even if that spell is countered.",
+      "oracle_id": "8f5c52d2-0583-4c94-a043-15b2118877fa",
+      "published_at": "2024-01-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may pay {W/B} a maximum of one time for each extort triggered ability. You decide whether to pay when the ability resolves.",
+      "oracle_id": "8f5c52d2-0583-4c94-a043-15b2118877fa",
+      "published_at": "2024-01-12",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

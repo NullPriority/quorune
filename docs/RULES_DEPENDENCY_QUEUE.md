@@ -2,7 +2,7 @@
 title: "Rules dependency queue"
 status: "generated"
 authoritative_source: "coverage/rules-dependency-queue.json"
-verified: "163e7ee709243713a12c2b68bed722acf346b070c3e6a3df2de70a19fb93678e"
+verified: "51089a24ee09964af771f739bd1d74a2ef1837bfae9778c168cc322039c43ca6"
 audience: "rules, compiler, and engine contributors"
 maintenance: "generated"
 generated_source: "coverage/rules-dependency-queue.json"
@@ -11,7 +11,7 @@ generation_command: ".\.venv\Scripts\python.exe scripts\update_rules_scheduler.p
 
 # Rules dependency queue
 
-Source fingerprint: `7f6e22b3889e69adaa14d4951c68573e4d16a9f07be3bdf5a2611a648e85e812`
+Source fingerprint: `d200693c45f1a05a55ead9ca49dbc92c8d9bc6c174a858e17a6633a3e02497a4`
 
 ## Current top-level state
 
@@ -40,7 +40,7 @@ Priority classes: `ci_correctness` → `replay_privacy_defect` → `prohibited_r
 | 4 | complete | implementation | false | `architecture:dedicated-owner-extraction` | `architecture_owner_or_mutation_defect` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
 | 5 | blocked | implementation | false | `architecture:engine-mutation-and-specificity-debt` | `architecture_owner_or_mutation_defect` | 1 | 0 | 0 | 0 | unknown | 0 | 47 |
 | 6 | complete | implementation | false | `assurance:critical-interaction-recovery` | `interaction_assurance` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
-| 7 | blocked | implementation | false | `frontier:continuous_layer:continuous-effect-layers-and-dependencies` | `rules_foundation` | 1 | 0 | 1743 | 3683 | 28.57377 | 0 | 0 |
+| 7 | blocked | implementation | false | `frontier:continuous_layer:continuous-effect-layers-and-dependencies` | `rules_foundation` | 1 | 0 | 1648 | 3539 | 27.016393 | 0 | 0 |
 | 8 | blocked | implementation | false | `interaction-implementation:residual.replacement.replacement-applicability` | `rules_foundation` | 1 | 0 | unknown | unknown | unknown | 0 | 0 |
 | 9 | blocked | implementation | false | `interaction-implementation:residual.replacement.self-replacement-and-prevention-ordering` | `rules_foundation` | 1 | 0 | unknown | unknown | unknown | 0 | 0 |
 | 10 | blocked | implementation | false | `interaction-implementation:residual.replacement.damage-prevention` | `rules_foundation` | 1 | 0 | unknown | unknown | unknown | 0 | 0 |
@@ -64,10 +64,10 @@ Priority classes: `ci_correctness` → `replay_privacy_defect` → `prohibited_r
 | 28 | blocked | implementation | false | `interaction-implementation:residual.event_binding.ordinary-saga-chapter-event-binding` | `rules_foundation` | 1 | 0 | unknown | unknown | unknown | 0 | 0 |
 | 29 | blocked | implementation | false | `interaction-implementation:residual.target_or_choice.random-outcome` | `rules_foundation` | 1 | 0 | unknown | unknown | unknown | 0 | 0 |
 | 30 | blocked | implementation | false | `rules:counter-producer-replacement-closure` | `rules_foundation` | 1 | 0 | unknown | unknown | unknown | 0 | 0 |
-| 31 | blocked | implementation | false | `frontier:effect_clause:typed-spell-additional-cost-clause` | `compiler_harvest` | 1 | 3 | 23 | 106 | 1.095238 | 0 | 0 |
+| 31 | blocked | implementation | false | `frontier:effect_clause:typed-spell-additional-cost-clause` | `compiler_harvest` | 1 | 3 | 20 | 102 | 0.952381 | 0 | 0 |
 | 32 | blocked | implementation | false | `bundle:fixed-exile-contexts` | `compiler_harvest` | 2 | 4 | 0 | 17 | 0.0 | 0 | 0 |
 | 33 | blocked | implementation | false | `bundle:fixed-token-creation-contexts` | `compiler_harvest` | 2 | 4 | 0 | 17 | 0.0 | 0 | 0 |
-| 34 | blocked | implementation | false | `frontier:effect_clause:ordered-effect-composition` | `compiler_harvest` | 1 | 3 | 0 | 424 | 0.0 | 0 | 0 |
+| 34 | blocked | implementation | false | `frontier:effect_clause:ordered-effect-composition` | `compiler_harvest` | 1 | 3 | 0 | 425 | 0.0 | 0 | 0 |
 | 35 | blocked | implementation | false | `frontier:effect_clause:unparsed-choose-one` | `compiler_harvest` | 1 | 3 | 0 | 170 | 0.0 | 0 | 0 |
 | 36 | blocked | implementation | false | `bundle:named-counter-doubling` | `compiler_harvest` | 5 | 3 | 0 | 0 | 0.0 | 0 | 0 |
 | 37 | blocked | implementation | false | `bundle:whole-hand-discard` | `compiler_harvest` | 3 | 3 | 0 | 0 | 0.0 | 0 | 0 |

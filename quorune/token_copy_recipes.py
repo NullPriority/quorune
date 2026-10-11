@@ -37,9 +37,10 @@ class TokenCopyExceptionSpec:
     add_keywords: tuple[str, ...] = ()
     add_ability_fragments: tuple[Mapping[str, Any], ...] = ()
     schema_version: int = 1
+    remove_mana_cost: bool = False
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version != 1 or type(self.remove_legendary) is not bool:
+        if type(self.schema_version) is not int or self.schema_version not in {1,2} or type(self.remove_legendary) is not bool or type(self.remove_mana_cost) is not bool or self.remove_mana_cost and self.schema_version!=2:
             raise TokenCopyRecipeError("Copy exception version or legendary flag is malformed")
         if (self.power is None) != (self.toughness is None) or any(
             value is not None and (type(value) is not int or value < 0)
@@ -69,19 +70,25 @@ class TokenCopyExceptionSpec:
         object.__setattr__(self, "add_ability_fragments", tuple(FrozenMap(ability_fragment_to_dict(fragment)) for fragment in fragments))
 
     def to_dict(self) -> dict[str, Any]:
-        return {"schema_version": self.schema_version, "remove_legendary": self.remove_legendary,
+        value={"schema_version": self.schema_version, "remove_legendary": self.remove_legendary,
             "add_card_types": list(self.add_card_types), "add_subtypes": list(self.add_subtypes),
             "creature_subtypes": list(self.creature_subtypes) if self.creature_subtypes is not None else None,
             "colors": list(self.colors) if self.colors is not None else None,
             "power": self.power, "toughness": self.toughness, "add_keywords": list(self.add_keywords),
             "add_ability_fragments": [thaw_value(fragment) for fragment in self.add_ability_fragments]}
+        if self.schema_version==2:value['remove_mana_cost']=self.remove_mana_cost
+        return value
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> "TokenCopyExceptionSpec":
         fields = {"schema_version", "remove_legendary", "add_card_types", "add_subtypes", "creature_subtypes", "colors", "power", "toughness", "add_keywords", "add_ability_fragments"}
+        if isinstance(value,Mapping) and value.get('schema_version')==2:fields=fields|{'remove_mana_cost'}
         if not isinstance(value, Mapping) or set(value) != fields:
             raise TokenCopyRecipeError("Copy exceptions have a closed complete schema")
-        return cls(**dict(value))
+        try:
+            return cls(**dict(value))
+        except TypeError as exc:
+            raise TokenCopyRecipeError('Copy exception fields are malformed') from exc
 
 
 @dataclass(frozen=True, slots=True)
@@ -122,6 +129,9 @@ class TokenCopyRecipeSpec:
 def apply_copy_exception(characteristics: Mapping[str, Any], exception: TokenCopyExceptionSpec) -> dict[str, Any]:
     """Apply CR 707.9 values before creation; never copy status or counters."""
     result = deepcopy(dict(characteristics))
+    if exception.remove_mana_cost:
+        result['mana_cost']=''
+        result['mana_value']=0
     card_types, subtypes, supertypes = type_parts(str(result.get("type_line") or ""))
     if exception.remove_legendary:
         supertypes.discard("legendary")

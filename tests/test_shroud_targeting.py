@@ -132,7 +132,7 @@ class ShroudCompilerTests(unittest.TestCase):
     def test_player_and_nonkeyword_shroud_wording_remain_residual(self):
         capabilities = load_default_capability_registry()
         for text, type_line, keywords in (
-            ("You have shroud.", "Creature — Test", ("Shroud",)),
+            ("You have shroud as long as you control an Island.", "Creature — Test", ("Shroud",)),
             (
                 "This creature can't be the target of spells or abilities.",
                 "Creature — Test",

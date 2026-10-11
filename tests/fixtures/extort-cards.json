@@ -1,0 +1,506 @@
+{
+  "cards": [
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}",
+      "name": "Act of Treason",
+      "oracle_id": "9d08af23-9f4a-4097-9abc-3b17475ab744",
+      "oracle_text": "Gain control of target creature until end of turn. Untap that creature. It gains haste until end of turn. (It can attack and {T} this turn.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-01-12",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Extort"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B}",
+      "name": "Basilica Screecher",
+      "oracle_id": "752ebcba-97fb-43a3-8811-d244164b3e16",
+      "oracle_text": "Flying\nExtort (Whenever you cast a spell, you may pay {W/B}. If you do, each opponent loses 1 life and you gain that much life.)",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2024-02-23",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Bat"
+    },
+    {
+      "oracle_id": "b86d3142-568a-4eea-b1ae-5fcfc1453533",
+      "name": "Boon Reflection",
+      "mana_cost": "{4}{W}",
+      "cmc": 5.0,
+      "type_line": "Enchantment",
+      "oracle_text": "If you would gain life, you gain twice that much life instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-08-07",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      }
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Extort"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{B}",
+      "name": "Crypt Ghast",
+      "oracle_id": "a3c8d817-7949-4dae-b9f5-f9d952479270",
+      "oracle_text": "Extort (Whenever you cast a spell, you may pay {W/B}. If you do, each opponent loses 1 life and you gain that much life.)\nWhenever you tap a Swamp for mana, add an additional {B}.",
+      "power": "2",
+      "produced_mana": [
+        "B"
+      ],
+      "released_at": "2024-01-12",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Spirit"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Extort"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Syndic of Tithes",
+      "oracle_id": "8f5c52d2-0583-4c94-a043-15b2118877fa",
+      "oracle_text": "Extort (Whenever you cast a spell, you may pay {W/B}. If you do, each opponent loses 1 life and you gain that much life.)",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2024-02-23",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Human Cleric"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Lifelink",
+        "Extort"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}{B}",
+      "name": "Tithe Drinker",
+      "oracle_id": "06b1fd96-a3ad-4ebd-9ea4-b3cfb4c9c43d",
+      "oracle_text": "Lifelink (Damage dealt by this creature also causes you to gain that much life.)\nExtort (Whenever you cast a spell, you may pay {W/B}. If you do, each opponent loses 1 life and you gain that much life.)",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2017-08-25",
+      "toughness": "1",
+      "type_line": "Creature \u2014 Vampire"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Split second"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{R}{R}",
+      "name": "Word of Seizing",
+      "oracle_id": "b80d2841-03b0-42d3-ac9b-51e793b1dc24",
+      "oracle_text": "Split second (As long as this spell is on the stack, players can't cast spells or activate abilities that aren't mana abilities.)\nUntap target permanent and gain control of it until end of turn. It gains haste until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2020-11-20",
+      "toughness": null,
+      "type_line": "Instant"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "The amount of life you gain from extort is based on the total amount of life lost, not necessarily the number of opponents you have. For example, if your opponent's life total can't change (perhaps because that player controls Platinum Emperion), you won't gain any life.",
+      "oracle_id": "06b1fd96-a3ad-4ebd-9ea4-b3cfb4c9c43d",
+      "published_at": "2024-01-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "The extort ability doesn't target any player.",
+      "oracle_id": "06b1fd96-a3ad-4ebd-9ea4-b3cfb4c9c43d",
+      "published_at": "2024-01-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "The extort ability resolves before the spell that caused it to trigger. The ability resolves even if that spell is countered.",
+      "oracle_id": "06b1fd96-a3ad-4ebd-9ea4-b3cfb4c9c43d",
+      "published_at": "2024-01-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may pay {W/B} a maximum of one time for each extort triggered ability. You decide whether to pay when the ability resolves.",
+      "oracle_id": "06b1fd96-a3ad-4ebd-9ea4-b3cfb4c9c43d",
+      "published_at": "2024-01-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "The amount of life you gain from extort is based on the total amount of life lost, not necessarily the number of opponents you have. For example, if your opponent's life total can't change (perhaps because that player controls Platinum Emperion), you won't gain any life.",
+      "oracle_id": "752ebcba-97fb-43a3-8811-d244164b3e16",
+      "published_at": "2024-01-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "The extort ability doesn't target any player.",
+      "oracle_id": "752ebcba-97fb-43a3-8811-d244164b3e16",
+      "published_at": "2024-01-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "The extort ability resolves before the spell that caused it to trigger. The ability resolves even if that spell is countered.",
+      "oracle_id": "752ebcba-97fb-43a3-8811-d244164b3e16",
+      "published_at": "2024-01-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may pay {W/B} a maximum of one time for each extort triggered ability. You decide whether to pay when the ability resolves.",
+      "oracle_id": "752ebcba-97fb-43a3-8811-d244164b3e16",
+      "published_at": "2024-01-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "The amount of life you gain from extort is based on the total amount of life lost, not necessarily the number of opponents you have. For example, if your opponent's life total can't change (perhaps because that player controls Platinum Emperion), you won't gain any life.",
+      "oracle_id": "8f5c52d2-0583-4c94-a043-15b2118877fa",
+      "published_at": "2024-01-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "The extort ability doesn't target any player.",
+      "oracle_id": "8f5c52d2-0583-4c94-a043-15b2118877fa",
+      "published_at": "2024-01-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "The extort ability resolves before the spell that caused it to trigger. The ability resolves even if that spell is countered.",
+      "oracle_id": "8f5c52d2-0583-4c94-a043-15b2118877fa",
+      "published_at": "2024-01-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may pay {W/B} a maximum of one time for each extort triggered ability. You decide whether to pay when the ability resolves.",
+      "oracle_id": "8f5c52d2-0583-4c94-a043-15b2118877fa",
+      "published_at": "2024-01-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "Act of Treason can target any creature, even one that's untapped or one you already control.",
+      "oracle_id": "9d08af23-9f4a-4097-9abc-3b17475ab744",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "Gaining control of a creature doesn't cause you to gain control of any Auras or Equipment attached to it.",
+      "oracle_id": "9d08af23-9f4a-4097-9abc-3b17475ab744",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "The amount of life you gain from extort is based on the total amount of life lost, not necessarily the number of opponents you have. For example, if your opponent's life total can't change (perhaps because that player controls Platinum Emperion), you won't gain any life.",
+      "oracle_id": "a3c8d817-7949-4dae-b9f5-f9d952479270",
+      "published_at": "2024-01-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "The extort ability doesn't target any player.",
+      "oracle_id": "a3c8d817-7949-4dae-b9f5-f9d952479270",
+      "published_at": "2024-01-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "The extort ability resolves before the spell that caused it to trigger. The ability resolves even if that spell is countered.",
+      "oracle_id": "a3c8d817-7949-4dae-b9f5-f9d952479270",
+      "published_at": "2024-01-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may pay {W/B} a maximum of one time for each extort triggered ability. You decide whether to pay when the ability resolves.",
+      "oracle_id": "a3c8d817-7949-4dae-b9f5-f9d952479270",
+      "published_at": "2024-01-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect would set your life total to a specific number that's higher than your current life total, that effect would cause you to gain life equal to the difference. Boon Reflection will then double the amount of life that effect would cause you to gain. For example, if you have 3 life and an effect says that your life total \u201cbecomes 10,\u201d your life total will actually become 17.",
+      "oracle_id": "b86d3142-568a-4eea-b1ae-5fcfc1453533",
+      "published_at": "2020-08-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "In a Two-Headed Giant game, only Boon Reflection's controller is affected by it. If that player's teammate gains life, Boon Reflection will have no effect, even when that life gain is applied to the shared team life total.",
+      "oracle_id": "b86d3142-568a-4eea-b1ae-5fcfc1453533",
+      "published_at": "2020-08-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "The effects of multiple Boon Reflections are cumulative. For example, if you control two Boon Reflections, you'll gain four times the original amount of life. If you control three Boon Reflections, you'll gain eight times the original amount, and so on.",
+      "oracle_id": "b86d3142-568a-4eea-b1ae-5fcfc1453533",
+      "published_at": "2020-08-07",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

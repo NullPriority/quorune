@@ -483,6 +483,11 @@ def compile_keyword_or_attached_grant_nodes(
 ) -> tuple[OracleNode, ...] | None:
     from .typed_token_ability_nodes import typed_token_ability_nodes
 
+    from .max_speed_nodes import max_speed_nodes
+    max_result=max_speed_nodes(record=record,face_id=face_id,node_id=node_id,line=line,material_line=material_line,span=span,source_name=source_name,keywords=keywords,printed_card_types=printed_card_types,
+        trusted_mechanics=trusted_mechanics,capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals,compile_inner=compile_inner,
+        effect_template=effect_template,trigger_effect_template=grant_effect_templates(True,printed_card_types,source_attachment_relation)[1],material_line_for=material_line_for)
+    if max_result is not None:return max_result
     typed_token_nodes = typed_token_ability_nodes(
         record=record,
         face_id=face_id,

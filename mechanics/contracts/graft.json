@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "contract_version": 1,
+  "mechanic_id": "graft",
+  "official_name": "Graft",
+  "effective_date": "2026-08-07",
+  "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
+  "rule_references": [
+    "702.58",
+    "702.58a",
+    "702.58b",
+    "122.5",
+    "603.4",
+    "400.7",
+    "614.16",
+    "616.1"
+  ],
+  "glossary_references": [
+    "graft"
+  ],
+  "dependencies": [
+    "handling-triggered-abilities",
+    "replacement-effects",
+    "counters"
+  ],
+  "coverage_status": "tested",
+  "trust_level": "untrusted",
+  "behavior": {
+    "zones": [
+      "battlefield",
+      "stack",
+      "prospective battlefield entry"
+    ],
+    "objects": [
+      "fixed Graft permanent",
+      "other entering creature of any controller"
+    ],
+    "events": [
+      "prospective self-entry counters",
+      "other creature entry",
+      "optional movement resolution"
+    ],
+    "state_reads": [
+      "current source counter",
+      "source and recipient incarnations",
+      "trigger controller",
+      "recipient replacement quantities"
+    ],
+    "state_writes": [
+      "atomic removal and replaced placement through canonical counter state"
+    ],
+    "costs": [],
+    "timing": [
+      "intervening condition at creation and resolution",
+      "replacement choices finish before removal"
+    ],
+    "targets": [],
+    "choices": [
+      "trigger controller may move or decline",
+      "affected recipient controller orders replacements"
+    ],
+    "hidden_information": [],
+    "apnap": [
+      "ordinary trigger batching and placement"
+    ],
+    "layers": [
+      "entry creature quality consumes current typed characteristics"
+    ],
+    "replacement_effects": [
+      "ordinary counter quantity replacements"
+    ],
+    "copy": [
+      "current trusted copied keyword programs use the same typed entry and lifecycle owners"
+    ],
+    "control_change": [
+      "trigger controller is locked at placement even if source changes controller"
+    ],
+    "zone_change": [
+      "either changed incarnation prevents movement"
+    ],
+    "source_leaves": [
+      "source departure prevents movement; no last-known counter substitution"
+    ]
+  },
+  "variants": [
+    "positive fixed values",
+    "multiple printed instances",
+    "foreign creature entry",
+    "non-targeted recipient",
+    "source or recipient departure",
+    "zero current source counters",
+    "replacement ordering",
+    "decline"
+  ],
+  "witness_cards": [
+    {
+      "name": "Llanowar Reborn",
+      "oracle_id": "92acb789-0e42-465c-ac16-40fefec48805"
+    },
+    {
+      "name": "Simic Initiate",
+      "oracle_id": "c7c37369-47f8-4027-a016-a2055307dd24"
+    },
+    {
+      "name": "Aquastrand Spider",
+      "oracle_id": "cea79fa0-2a76-41f3-846f-4d1a6ff5f629"
+    }
+  ],
+  "rulings": [],
+  "test_ids": [
+    "test_actual_foreign_entry_is_nontargeted_and_pending_reload_replays",
+    "test_actual_graft_cast_and_other_entry_transfer_decline_and_replay",
+    "test_choice_model_keeps_controller_and_both_incarnations_and_rejects_open_fields",
+    "test_departed_recipient_does_not_remove_source_counter_and_replays",
+    "test_fixed_graft_has_independent_entry_and_nontargeted_movement",
+    "test_graft_open_values_shapes_and_dependency_omission_fail_closed",
+    "test_model_movement_rejects_same_stale_phased_empty_and_zero_placement",
+    "test_omitting_atomic_movement_mutant_is_killed",
+    "test_replacement_order_defers_removal_then_moves_one_and_places_replaced_amount",
+    "test_source_bounce_before_graft_resolution_keeps_recipient_unchanged_and_replays"
+  ],
+  "implementation": {
+    "component": "quorune.rules.counter_movement.execute_counter_movement",
+    "version": "typed-fixed-graft-lifecycle-v1",
+    "capability_ids": [
+      "counter.lifecycle.graft"
+    ],
+    "supported_slice": "Fixed positive Graft entry and optional current-counter movement with original object identities and ordinary recipient counter replacement choices."
+  },
+  "known_blockers": [
+    "unrepresented sibling abilities keep whole cards unsupported",
+    "open Graft values and Oracle-equivalent prose",
+    "unrepresented counter prohibitions and acquired ability producers",
+    "aggregate mechanic trust does not imply complete card or match support"
+  ],
+  "review_status": "reviewed"
+}

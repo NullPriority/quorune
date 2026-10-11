@@ -20,6 +20,7 @@ from ..evolve import EVOLVE_EVENT_CONDITION_FIELD
 from ..echo import ECHO_MECHANIC_ID
 from ..fixed_keyword_entry_counters import FIXED_KEYWORD_ENTRY_MECHANICS
 from .umbra_armor_nodes import umbra_armor_keyword_node
+from .graveyard_copy_keyword_nodes import graveyard_copy_keyword_node
 from ..unleash import (
     UNLEASH_MECHANIC,
     unleash_block_handler_descriptor,
@@ -52,6 +53,9 @@ from .commander_pairing_nodes import (
 )
 from .cascade_nodes import CASCADE_MECHANIC_ID, cascade_keyword_node
 from .storm_nodes import STORM_MECHANIC_ID, storm_keyword_node
+from .extort_nodes import extort_keyword_node
+from .player_speed_nodes import start_engines_keyword_node
+from .stack_static_keyword_nodes import split_second_keyword_node
 from .bestow_nodes import fixed_mana_bestow_keyword_node
 from .flashback_nodes import ordinary_fixed_mana_flashback_keyword_node
 from .cast_lifecycle_nodes import fixed_cast_lifecycle_keyword_node
@@ -130,6 +134,7 @@ _AFTERLIFE_MECHANIC = AFTERLIFE_MECHANIC_ID
 _FACE_DOWN_METHOD_MECHANICS = frozenset(FACE_DOWN_CAST_METHODS)
 _TOXIC_MECHANIC = "toxic"
 _GROUPED_SPLIT_MECHANICS = (
+    'extort',
     _AFFINITY_MECHANIC,
     _BLOODTHIRST_MECHANIC,
     _SUNBURST_MECHANIC,
@@ -153,6 +158,8 @@ _PARAMETERIZED_SPLIT_MECHANICS = frozenset(
     }
 )
 _INSTANCE_PART_MECHANICS = (
+    'extort',
+    'split second',
     _AFFINITY_MECHANIC,
     _DELVE_MECHANIC,
     _EVOKE_MECHANIC,
@@ -179,6 +186,8 @@ _INSTANCE_PART_MECHANICS = (
 )
 _SPLIT_MECHANICS = frozenset(
     {
+        'split second',
+        'extort',
         PRINTED_FLASH_MECHANIC,
         _FABRICATE_MECHANIC,
         *_INSTANCE_PART_MECHANICS,
@@ -216,6 +225,7 @@ def keyword_node_plans(
             _DELVE_MECHANIC,
             _EVOKE_MECHANIC,
             _IMPROVISE_MECHANIC,
+            'split second',
         )
         if mechanic in mechanics
     ) + tuple(
@@ -343,6 +353,8 @@ def closed_special_keyword_node(
         "capability_profile": capability_profile,
         "residuals": residuals,
     }
+    split_second=split_second_keyword_node(node_id=node_id,line=line,span=span,mechanics=mechanics,capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
+    if split_second is not None:return split_second
     umbra = umbra_armor_keyword_node(**values)
     if umbra is not None:
         return umbra
@@ -404,12 +416,9 @@ def closed_special_keyword_node(
     morph = fixed_mana_morph_keyword_node(**values)
     if morph is not None:
         return morph
-    unearth = ordinary_unearth_keyword_node(**values)
-    if unearth is not None:
-        return unearth
-    kicker = fixed_mana_kicker_keyword_node(**values)
-    if kicker is not None:
-        return kicker
+    for lower in (graveyard_copy_keyword_node,ordinary_unearth_keyword_node,fixed_mana_kicker_keyword_node):
+        node=lower(**values)
+        if node is not None:return node
     renown = renown_keyword_node(
         **values,
         trusted_mechanics=trusted_mechanics,
@@ -417,6 +426,8 @@ def closed_special_keyword_node(
     if renown is not None:
         return renown
     for lower in (
+        start_engines_keyword_node,
+        extort_keyword_node,
         fixed_mana_evoke_keyword_node,
         cascade_keyword_node,
         storm_keyword_node,

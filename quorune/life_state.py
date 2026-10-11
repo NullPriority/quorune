@@ -33,6 +33,8 @@ def _record_life_change(
     host: LifeStateHost,
     transitions: Sequence["LifeTransition"],
 ) -> None:
+    from .rules.player_speed_state import queue_speed_loss_trigger
+    queue_speed_loss_trigger(host,transitions)
     recorder = getattr(host, "_record_turn_history", None)
     if not callable(recorder):
         return

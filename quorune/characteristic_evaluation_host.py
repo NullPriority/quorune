@@ -35,7 +35,7 @@ from .dynamic_characteristics import (
 )
 from .errors import GameRuleError
 from .model import CardInstance
-from .permanent_designations import permanent_numeric_designations
+from .rules.source_speed_designations import current_source_designations
 from .object_query import ObjectQueryResult, object_query_result
 from .semantic_runtime.ability_fragments import fragments_from_descriptors
 
@@ -332,8 +332,8 @@ class CharacteristicEvaluationHostMixin:
                 ):
                     result[object_id] = static_component_keys(
                         base.get("ability_fragments", ()),
-                        source_designations=permanent_numeric_designations(
-                            source
+                        source_designations=current_source_designations(
+                            self.state,source
                         ),
                     )
                     continue
@@ -356,8 +356,8 @@ class CharacteristicEvaluationHostMixin:
                 )
                 result[object_id] = static_component_keys(
                     effective.get("ability_fragments", ()),
-                    source_designations=permanent_numeric_designations(
-                        source
+                    source_designations=current_source_designations(
+                        self.state,source
                     ),
                 )
         return result
@@ -425,7 +425,7 @@ class CharacteristicEvaluationHostMixin:
         )
         return static_component_keys(
             effective.get("ability_fragments", ()),
-            source_designations=permanent_numeric_designations(prospective),
+            source_designations=current_source_designations(self.state,prospective),
         )
 
     def _effective_static_component_keys(
@@ -460,7 +460,7 @@ class CharacteristicEvaluationHostMixin:
             )
             return static_component_keys(
                 self._declared_component_fragments(card, base),
-                source_designations=permanent_numeric_designations(card),
+                source_designations=current_source_designations(self.state,card),
             )
         return self._effective_static_component_key_map().get(
             card.object_id, ()

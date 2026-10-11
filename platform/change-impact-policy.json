@@ -1652,6 +1652,202 @@
       ]
     },
     {
+      "id": "player-speed-and-max-speed-contract",
+      "patterns": [
+        "quorune/rules/player_speed_model.py",
+        "quorune/rules/player_speed_state.py",
+        "quorune/rules/source_speed_designations.py",
+        "quorune/rules/scoped_activated_abilities.py",
+        "quorune/compiler/player_speed_nodes.py",
+        "quorune/compiler/player_status_conditions.py",
+        "quorune/compiler/max_speed_nodes.py",
+        "quorune/semantic_runtime/player_speed.py",
+        "quorune/effect_runtime/player_speed.py",
+        "mechanics/contracts/start-your-engines.json",
+        "tests/fixtures/player-speed-cards.json"
+      ],
+      "test_modules": [
+        "test_player_speed",
+        "test_life_state",
+        "test_life_change",
+        "test_class_lifecycle",
+        "test_continuous_effect_components",
+        "test_extort_rules",
+        "test_card_program_trust",
+        "test_architecture_governance"
+      ]
+    },
+    {
+      "id": "selected-face-aftermath-casting-contract",
+      "patterns": [
+        "quorune/rules/casting/aftermath.py",
+        "quorune/rules/casting/face_queries.py",
+        "quorune/rules/casting/fixed_zone_validation.py",
+        "quorune/rules/face_characteristic_values.py",
+        "quorune/compiler/public_zone_program_closure.py",
+        "mechanics/contracts/aftermath.json",
+        "tests/fixtures/aftermath-cards.json"
+      ],
+      "test_modules": [
+        "test_aftermath_rules",
+        "test_fixed_casting_surface",
+        "test_fixed_zone_cast_lifecycles",
+        "test_fixed_target_reanimation",
+        "test_targeted_graveyard_return_effect_clauses",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "printed-backup-ability-contract",
+      "patterns": [
+        "quorune/compiler/backup_nodes.py",
+        "quorune/compiler/card_face_finalization.py",
+        "quorune/effect_runtime/temporary_ability_bundle.py",
+        "quorune/effect_runtime/characteristic_version_dispatch.py",
+        "quorune/rules/temporary_ability_grant.py",
+        "mechanics/contracts/backup.json",
+        "tests/fixtures/backup-cards.json"
+      ],
+      "test_modules": [
+        "test_backup_rules",
+        "test_counter_placement_events",
+        "test_typed_grant_carriers",
+        "test_target_characteristic_sets",
+        "test_fixed_query_quoted_ability_grants",
+        "test_toughness_assignment",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "graveyard-copy-keyword-contract",
+      "patterns": [
+        "quorune/compiler/graveyard_copy_keyword_nodes.py",
+        "quorune/semantic_runtime/graveyard_copy_keyword.py",
+        "quorune/token_copy_recipes.py",
+        "tests/fixtures/graveyard-copy-keyword-cards.json"
+      ],
+      "test_modules": [
+        "test_graveyard_copy_keywords",
+        "test_unearth_rules",
+        "test_fixed_token_production",
+        "test_token_creation_replacements",
+        "test_copy_objects",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "player-target-protection-contract",
+      "patterns": [
+        "quorune/compiler/player_target_protection_nodes.py",
+        "quorune/semantic_runtime/player_target_protection.py",
+        "tests/fixtures/player-target-protection-cards.json"
+      ],
+      "test_modules": [
+        "test_player_target_protection",
+        "test_hexproof_targeting",
+        "test_shroud_targeting",
+        "test_targeting_v070",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "extort-life-transfer-contract",
+      "patterns": [
+        "quorune/compiler/extort_nodes.py",
+        "quorune/semantic_choices/model.py",
+        "quorune/semantic_choices/preparation_coordination.py",
+        "quorune/semantic_choices/extort.py",
+        "quorune/semantic_choices/life_intent_commit.py",
+        "quorune/semantic_runtime/life_batch_intent.py",
+        "quorune/semantic_runtime/life_execution.py",
+        "quorune/rules/extort.py",
+        "quorune/rules/special_node_shapes.py",
+        "quorune/trigger_discovery.py",
+        "mechanics/contracts/extort.json",
+        "tests/fixtures/extort-cards.json"
+      ],
+      "test_modules": [
+        "test_extort_rules",
+        "test_life_change",
+        "test_life_effect_runtime",
+        "test_semantic_counter_replacement_continuations",
+        "test_source_maintenance",
+        "test_split_second_rules",
+        "test_card_program_trust",
+        "test_architecture_governance"
+      ]
+    },
+    {
+      "id": "split-second-priority-contract",
+      "patterns": [
+        "quorune/semantic_runtime/static_cast_rules.py",
+        "quorune/rules/activation/availability.py",
+        "quorune/compiler/keyword_nodes.py",
+        "mechanics/contracts/split-second.json",
+        "tests/fixtures/split-second-cards.json"
+      ],
+      "test_modules": [
+        "test_split_second_rules",
+        "test_casting_spells_rules",
+        "test_mana_abilities",
+        "test_morph_rules",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "commander-characteristic-query-contract",
+      "patterns": [
+        "quorune/object_predicate.py",
+        "quorune/object_query.py",
+        "quorune/continuous_effects.py",
+        "quorune/characteristic_evaluation.py",
+        "quorune/compiler/public_state_queries.py",
+        "quorune/compiler/continuous_templates.py",
+        "quorune/semantic_runtime/continuous_components.py",
+        "tests/fixtures/commander-characteristic-grants.json"
+      ],
+      "test_modules": [
+        "test_commander_characteristic_grants",
+        "test_continuous_compiler_hardening",
+        "test_object_query",
+        "test_continuous_effect_components",
+        "test_fixed_query_keyword_grants",
+        "test_fixed_query_quoted_ability_grants",
+        "test_fixed_zone_change_additional_costs",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "global-plural-characteristic-contract",
+      "patterns": [
+        "quorune/compiler/public_state_queries.py",
+        "tests/fixtures/global-plural-characteristic-sets.json"
+      ],
+      "test_modules": [
+        "test_global_plural_characteristic_sets",
+        "test_fixed_query_keyword_grants",
+        "test_fixed_evasion_grants",
+        "test_static_characteristic_labels",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "counted-spell-price-contract",
+      "patterns": [
+        "quorune/compiler/spell_additional_cost_nodes.py",
+        "quorune/replacement/replay.py",
+        "tests/fixtures/counted-spell-additional-costs.json"
+      ],
+      "test_modules": [
+        "test_counted_spell_additional_costs",
+        "test_fixed_zone_change_additional_costs",
+        "test_fixed_sacrifice_additional_costs",
+        "test_permanent_additional_costs",
+        "test_replacement_model_hardening",
+        "test_card_program_trust"
+      ]
+    },
+    {
       "id": "source-pronoun-result-contract",
       "patterns": [
         "quorune/compiler/source_self_effect_templates.py",
@@ -2646,6 +2842,101 @@
         "quorune/bulk.py"
       ],
       "windows_full": true
+    },
+    {
+      "id": "fixed-resolution-mana-consumer-contract",
+      "patterns": [
+        "quorune/compiler/fixed_resolution_mana.py",
+        "quorune/rules/fixed_resolution_mana_shapes.py",
+        "tests/fixtures/fixed-resolution-mana-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_resolution_mana",
+        "test_fixed_mana_abilities",
+        "test_public_quantity_mana",
+        "test_rules_scheduler"
+      ]
+    },
+    {
+      "id": "scoped-prevention-consumer-contract",
+      "patterns": [
+        "quorune/compiler/fixed_all_damage_prevention.py",
+        "quorune/damage_modifier_state.py",
+        "tests/fixtures/scoped-damage-prevention-cards.json"
+      ],
+      "test_modules": [
+        "test_scoped_damage_prevention",
+        "test_damage_replacement_model",
+        "test_rules_scheduler"
+      ]
+    },
+    {
+      "id": "prototype-card-form-consumer-contract",
+      "patterns": [
+        "quorune/prototype_model.py",
+        "quorune/rules/prototype.py",
+        "quorune/compiler/prototype_nodes.py",
+        "quorune/semantic_runtime/prototype.py"
+      ],
+      "test_modules": [
+        "test_prototype_rules",
+        "test_class_lifecycle",
+        "test_oracle_ir"
+      ]
+    },
+    {
+      "id": "graft-entry-lifecycle-consumer-contract",
+      "patterns": [
+        "quorune/compiler/graft_nodes.py",
+        "quorune/rules/graft_capability_shapes.py",
+        "quorune/semantic_choices/graft.py",
+        "tests/fixtures/graft-cards.json"
+      ],
+      "test_modules": [
+        "test_graft_rules",
+        "test_fixed_keyword_entry_counters",
+        "test_fading_rules",
+        "test_vanishing_rules"
+      ]
+    },
+    {
+      "id": "player-protection-consumer-contract",
+      "patterns": [
+        "quorune/compiler/player_target_protection_nodes.py",
+        "quorune/semantic_runtime/player_target_protection.py",
+        "tests/fixtures/player-target-protection-cards.json"
+      ],
+      "test_modules": [
+        "test_player_target_protection",
+        "test_oracle_ir",
+        "test_rules_scheduler"
+      ]
+    },
+    {
+      "id": "aftermath-test-database-contract",
+      "patterns": [
+        "quorune/rules/casting/aftermath.py",
+        "tests/fixtures/aftermath-cards.json"
+      ],
+      "test_modules": [
+        "test_aftermath_rules",
+        "test_fixed_casting_surface",
+        "test_fixed_zone_cast_lifecycles"
+      ]
+    },
+    {
+      "id": "new-composition-assurance-consumer-contract",
+      "patterns": [
+        "platform/reusable-piece-interaction-evidence.json",
+        "tests/fixtures/defender-permission-cards.json"
+      ],
+      "test_modules": [
+        "test_defender_permission",
+        "test_fixed_resolution_mana",
+        "test_player_target_protection",
+        "test_rules_scheduler",
+        "test_reusable_pieces"
+      ]
     }
   ],
   "symbol_rules": [

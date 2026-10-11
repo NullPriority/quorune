@@ -75,3 +75,11 @@ carriers combining quantity counters, public-quantity mana or whole-hand
 discard with unresolved prevention, replacement, Saga or choice siblings have
 separate whole-CardProgram admission witnesses. Those declarations establish
 fail-closed rejection; they do not claim the unresolved siblings are playable.
+
+Typed Aura restrictions and defender-permission grants have an original-card
+cast, illegal-target, actual-removal and replay witness. Player Shroud also
+composes with source-maintenance payment and canonical sacrifice redirection:
+declining the private payment removes the protection source and restores legal
+targeting. Fixed resolution mana beside unrepresented replacement siblings
+uses original complete-card admission witnesses; those combinations remain
+rejected even when the mana prefix is exact.

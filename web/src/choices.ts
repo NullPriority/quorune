@@ -381,12 +381,32 @@ function fieldErrors(field: ChoiceField, values: ChoiceValues): string[] {
       errors.push(`${label} requires ${field.minimum} choice(s).`);
     }
   } else if (control === "assignment_map") {
-    const assignments = Object.values(record(value)).map(stringValue);
+    const selected = record(value);
+    const sourceAssignment = record(values[stringValue(field.source_assignment)]);
+    const enlistUsed = new Set<string>();
+    for (const rawRow of list(field.rows)) {
+      const row = record(rawRow);
+      const entry = selected[stringValue(row.value)];
+      const refs = entry === undefined ? [] : Array.isArray(entry) ? entry.map(stringValue) : [stringValue(entry)];
+      if (refs.length && field.source_assignment && !sourceAssignment[stringValue(row.value)]) errors.push(`${label} requires a declared attacker.`);
+      if (field.exclude_assigned && refs.some((ref) => Object.hasOwn(sourceAssignment, ref))) errors.push(`${label} requires nonattacking creatures.`);
+      if (field.distinct_options) {
+        for (const ref of refs) {
+          if (enlistUsed.has(ref)) errors.push(`${label} cannot tap the same creature twice.`);
+          enlistUsed.add(ref);
+        }
+      }
+      if (refs.length > Number(row.maximum ?? 1) || new Set(refs).size !== refs.length) {
+        errors.push(`${label} requires distinct choices within each row's capacity.`);
+      }
+      const legal = new Set(list(row.options).map((option) => stringValue(record(option).value)));
+      if (refs.some((ref) => !legal.has(ref))) errors.push(`${label} contains an unavailable choice.`);
+    }
     for (const [group, rawMinimum] of Object.entries(
       record(field.minimum_group_sizes),
     )) {
       const minimum = Number(rawMinimum);
-      const count = assignments.filter((target) => target === group).length;
+      const count = Object.values(selected).filter((entry) => (Array.isArray(entry) ? entry.map(stringValue) : [stringValue(entry)]).includes(group)).length;
       if (count > 0 && count < minimum) {
         errors.push(
           `${label} requires either no assignments or at least ${minimum} assignments to ${group}.`,

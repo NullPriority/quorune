@@ -5,6 +5,7 @@ from types import SimpleNamespace
 import unittest
 
 from common import load_assets
+from quorune.carddb import CardRecord
 from quorune.compiler.continuous_templates import (
     controlled_creature_fixed_modifier,
     fixed_power_toughness_anthem_handler,
@@ -268,7 +269,7 @@ class ClosedContinuousGrammarTests(unittest.TestCase):
     def test_unsupported_qualities_remain_residual(self):
         unsupported = (
             "Snow creatures you control get +1/+1.",
-            "Commander creatures you control get +1/+1.",
+            "Commander creatures you control that were cast from the command zone get +1/+1.",
             "Nonwhite creatures you control get +1/+1.",
             "Artifact token creatures you control get +1/+1.",
         )
@@ -301,7 +302,7 @@ class ClosedContinuousGrammarTests(unittest.TestCase):
             for index, text in enumerate(
                 (
                     "Snow creatures you control get +1/+1.",
-                    "Commander creatures you control get +1/+1.",
+                    "Commander creatures you control that were cast from the command zone get +1/+1.",
                     "Nonwhite creatures you control get +1/+1.",
                     "Artifact token creatures you control get +1/+1.",
                 )
@@ -361,8 +362,8 @@ class ClosedContinuousGrammarTests(unittest.TestCase):
                 "Secret Plans": (
                     "Face-down creatures you control get +0/+1."
                 ),
-                "Guardian Augmenter": (
-                    "Commander creatures you control get +2/+2."
+                "Constructed Commander Cast-Origin Boundary": (
+                    "Commander creatures you control that were cast from the command zone get +2/+2."
                 ),
             }
             for index, (name, unsupported_line) in enumerate(cases.items()):
@@ -396,6 +397,26 @@ class ClosedContinuousGrammarTests(unittest.TestCase):
                     )
         finally:
             db.close()
+
+    def test_original_commander_anthem_promotes_without_approximating_sibling(self):
+        record = CardRecord(
+            oracle_id="d925e560-faa1-40a9-b25a-47065ee891e6", name="Guardian Augmenter",
+            mana_cost="{2}{G}", mana_value=3.0, type_line="Creature — Troll Wizard",
+            oracle_text="Flash\nCommander creatures you control get +2/+2.\nCommanders you control have hexproof.",
+            power="2", toughness="2", loyalty=None, defense=None, colors=("G",),
+            color_identity=("G",), keywords=("Flash",), produced_mana=(), layout="normal",
+            released_at="2026-04-24", legalities={"commander": "legal"}, faces=(), raw={},
+        )
+        ir = compile_oracle_card(record, capability_registry=load_default_capability_registry(),
+            capability_profile="commander_review")
+        anthem = next(node for face in ir.faces for node in face.nodes
+            if node.text == "Commander creatures you control get +2/+2.")
+        self.assertTrue(anthem.exact)
+        self.assertIs(True, anthem.handlers[0]["condition"]["predicate"]["commander"])
+        self.assertIn("state_query.commander.designation", anthem.capability_dependencies)
+        self.assertNotEqual("exact", ir.status, "The unrepresented noncreature commander sibling remains material")
+        self.assertTrue(any(residual.text == "Commanders you control have hexproof."
+            and residual.material for face in ir.faces for residual in face.residuals))
 
 
 if __name__ == "__main__":

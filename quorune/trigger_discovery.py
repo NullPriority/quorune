@@ -993,6 +993,15 @@ def _semantic_trigger_context(
             else {}
         ),
     }
+    from .effect_runtime.temporary_ability_bundle import printed_backup_source_context
+    stack_context.update(printed_backup_source_context(source,program))
+    if "identity_pinned_graft_counter_movement" in program.coverage:
+        recipient = next((card for card in host.state.cards.values()
+                          if card.ref == context.get("card")), None)
+        if recipient is None:
+            raise GameRuleError("Graft entry trigger lost its entering creature")
+        stack_context["source_logical_object_id"] = source.logical_object_id
+        stack_context["graft_recipient_identity"] = recipient.logical_object_id
     if "one_or_more_event_batch" in program.coverage:
         aggregation_scope = (
             {"damaged_player": context.get("player")}
@@ -1195,6 +1204,11 @@ def _shared_blitz_trigger_item(
     )
 
 
+def _ordered_event_sources(host,sources):
+    if sources is not None:return list(sources)
+    return sorted(host._semantic_event_sources(),key=lambda source:(source.zone_timestamp,source.object_id,source.logical_object_id))
+
+
 def dispatch_semantic_event(
     host: TriggerDiscoveryHost,
     event: str,
@@ -1210,9 +1224,7 @@ def dispatch_semantic_event(
     """Detect data-driven triggers for one normalized authoritative event."""
 
     triggered: list[StackItem] = []
-    candidates = (
-        list(sources) if sources is not None else host._semantic_event_sources()
-    )
+    candidates = _ordered_event_sources(host,sources)
     for source in candidates:
         evoke_item = _shared_evoke_trigger_item(host, source, event, context)
         if evoke_item is not None:

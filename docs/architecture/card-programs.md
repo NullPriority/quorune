@@ -9,6 +9,12 @@ maintenance: "hand-maintained"
 
 # CardProgram architecture
 
+Commander-qualified live grants retain physical designation in a typed object
+query, separate from copiable characteristics. Their owner/control relation is
+bound from the current grant-source controller. The outer grant and every inner
+quoted program require independent capability closure, including the scoped
+commander designation query. Ordinary copies receive no commander designation.
+
 `CardProgram` is the canonical, deterministic artifact that connects pinned
 Oracle input to runtime behavior. One artifact groups the executable abilities
 for an Oracle ID and records face identity, source hashes, provenance, typed

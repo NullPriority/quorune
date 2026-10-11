@@ -1,4 +1,7 @@
 from __future__ import annotations
+from .life_batch_intent import LifeLossBatchIntent
+from .counter_movement_intent import MoveCountersIntent
+from .life_execution import LIFE_INTENT_TYPES,execute_life_intent
 from .control_intents import GainControlIntent, GainControlSetIntent
 from ..whole_hand_discard_model import DiscardWholeHandsIntent
 from .whole_hand_discard import execute_whole_hand_discard
@@ -164,6 +167,7 @@ class SemanticIntentSink(
     def record_zone_move_intent(self, intent: RecordZoneMoveIntent) -> None: ...
 
     def apply_life_change_intent(self, intent: LifeChangeIntent) -> int: ...
+    def apply_life_loss_batch_intent(self, intent: LifeLossBatchIntent) -> int: ...
 
     def pay_life_intent(self, intent: PayLifeIntent) -> int: ...
 
@@ -753,17 +757,8 @@ def execute_intent_plan(sink: SemanticIntentSink, plan: IntentPlan) -> object:
             sink.record_zone_move_intent(intent)
             results.append((intent.object_ref, None))
             continue
-        if isinstance(intent, LifeChangeIntent):
-            result = sink.apply_life_change_intent(intent)
-            results.append((intent.player, result))
-            continue
-        if isinstance(intent, PayLifeIntent):
-            result = sink.pay_life_intent(intent)
-            results.append((intent.player, result))
-            continue
-        if isinstance(intent, PayManaCostIntent):
-            sink.pay_mana_cost_intent(intent)
-            results.append((intent.player, None))
+        if isinstance(intent, LIFE_INTENT_TYPES):
+            results.append(execute_life_intent(sink,intent))
             continue
         if isinstance(intent, COUNTER_PLACEMENT_INTENT_TYPES):
             results.append(_execute_counter_placement_intent(sink, intent))
@@ -771,6 +766,10 @@ def execute_intent_plan(sink: SemanticIntentSink, plan: IntentPlan) -> object:
         if isinstance(intent, RemoveCountersIntent):
             result = sink.remove_counters_intent(intent)
             results.append((_COUNTER_RESULT_KEY, result))
+            continue
+        if isinstance(intent, MoveCountersIntent):
+            from ..rules.counter_movement import execute_counter_movement
+            results.append((_COUNTER_RESULT_KEY, execute_counter_movement(sink, intent)))
             continue
         if isinstance(intent, RemoveAllCountersIntent):
             result = sink.remove_all_counters_intent(intent)

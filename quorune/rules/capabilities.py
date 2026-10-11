@@ -2,6 +2,9 @@ from __future__ import annotations
 from .counter_placement_capability_shapes import counter_placement_covered_mechanics
 from .control_capability_shapes import fixed_control_node_capabilities
 from .whole_hand_discard_shapes import whole_hand_discard_node_capabilities
+from .affected_player_choice_coverage import (
+    affected_player_choice_covered_mechanics as _affected_player_choice_covered_mechanics,
+)
 
 from dataclasses import dataclass
 import hashlib
@@ -117,6 +120,9 @@ from .fixed_resolution_characteristic_shapes import (
 from .optional_counter_capability_shapes import (
     optional_fixed_counter_event_trigger_node_capabilities,
 )
+from .graft_capability_shapes import graft_node_capabilities
+from .enlist_shapes import enlist_reflexive_capabilities
+from .fixed_resolution_mana_shapes import fixed_resolution_mana_capabilities
 from .fixed_controller_effect_shapes import (
     fixed_counter_controller_effect_sequence_node_capabilities,
     fixed_controller_effect_sequence_node_capabilities,
@@ -154,14 +160,6 @@ from ..compiler.modal_templates import (
     FIXED_CHOOSE_ONE_MODAL_MECHANIC,
     FIXED_NONREPEATING_MODAL_CAPABILITY,
     FIXED_NONREPEATING_MODAL_MECHANIC,
-)
-from ..compiler.affected_player_sacrifice_templates import (
-    FIXED_AFFECTED_PLAYER_SACRIFICE_CAPABILITY,
-    FIXED_AFFECTED_PLAYER_SACRIFICE_MECHANIC,
-)
-from ..compiler.affected_player_discard_templates import (
-    FIXED_AFFECTED_PLAYER_DISCARD_CAPABILITY,
-    FIXED_AFFECTED_PLAYER_DISCARD_MECHANIC,
 )
 from ..compiler.delayed_draw_templates import (
     FIXED_NEXT_TURN_DRAW_CAPABILITY,
@@ -318,6 +316,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     },
     "self-zone-move": ("zone.self_move.activated",), "madness": ("casting.madness.fixed_mana",), "typed-discard-cause": ("zone.discard.typed_cause",),
     'public-quantity-mana': ('mana.production.public_quantity',),
+    'fixed-resolution-mana':('mana.production.fixed_resolution',),
     'whole-hand-discard': ('zone.discard.whole_hand',),
     **{
         mechanic: ("combat.block.landwalk.basic_type",)
@@ -1103,6 +1102,9 @@ def _targeted_effect_capabilities(
         single_proliferate_node_capabilities,
         self_regeneration_node_capabilities,
         fixed_self_counter_keyword_action_node_capabilities,
+        graft_node_capabilities,
+        enlist_reflexive_capabilities,
+        fixed_resolution_mana_capabilities,
         fixed_bolster_node_capabilities,
         fixed_amass_node_capabilities,
         targeted_counter_node_capabilities,
@@ -1203,16 +1205,9 @@ def capability_dependencies_for_node(
 
     mechanic_values = tuple(str(value).casefold() for value in mechanic_ids)
     mechanics = set(mechanic_values)
-    if 'public-quantity-mana' in mechanics:
-        from .public_quantity_mana_shapes import public_quantity_mana_node_capabilities
-        return public_quantity_mana_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
-    from ..resolution_conditions import RESOLUTION_CONDITION_MECHANIC, RESOLUTION_CONDITION_OPERATION
-    if RESOLUTION_CONDITION_MECHANIC in mechanics or RESOLUTION_CONDITION_OPERATION in _nested_effect_operations(effects):
-        from .resolution_condition_shapes import resolution_condition_node_capabilities
-        return resolution_condition_node_capabilities(
-            effects=effects, target_schema=target_schema, mechanic_ids=mechanics,
-            cost_schema=cost_schema,
-        )
+    from .special_node_shapes import special_node_capabilities
+    special=special_node_capabilities(effects=effects,target_schema=target_schema,mechanics=mechanics,cost_schema=cost_schema)
+    if special is not None:return special
     if mechanics.intersection(
         {
             FIXED_CHOOSE_ONE_MODAL_MECHANIC,
@@ -1342,21 +1337,6 @@ def capability_dependencies_for_node(
     return tuple(sorted(dependencies))
 
 
-def _affected_player_choice_covered_mechanics(
-    supplied: set[str],
-) -> set[str]:
-    covered: set[str] = set()
-    for capability, mechanics in (
-        (FIXED_AFFECTED_PLAYER_DISCARD_CAPABILITY, {FIXED_AFFECTED_PLAYER_DISCARD_MECHANIC, "cr-402-hand"}),
-        ('zone.discard.whole_hand', {'whole-hand-discard', 'cr-402-hand'}),
-        (FIXED_HAND_INSPECTION_CAPABILITY, {FIXED_HAND_INSPECTION_MECHANIC, "cr-402-hand"}),
-        (FIXED_AFFECTED_PLAYER_SACRIFICE_CAPABILITY, {FIXED_AFFECTED_PLAYER_SACRIFICE_MECHANIC, "sacrifice"}),
-    ):
-        if capability in supplied:
-            covered.update(mechanics)
-    return covered
-
-
 def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
     mapping = {
         FIXED_OPTIONAL_EFFECT_CAPABILITY: FIXED_OPTIONAL_EFFECT_MECHANIC,
@@ -1451,6 +1431,8 @@ def capability_covered_mechanics(
         covered.add(RESOLUTION_CONDITION_MECHANIC)
     if "continuous.characteristics.changeling" in supplied:
         covered.add("changeling")
+    if 'permanent.transform.face_change' in supplied:
+        covered.update({'fixed-activated-source-transform','cr-701-transform'})
     if supplied.intersection({"target.public.player_or_damageable_permanent", "target.revalidate_resolution"}):
         covered.add("cr-115-targets")
     if "resolution.effect.fixed_homogeneous_target_set" in supplied:

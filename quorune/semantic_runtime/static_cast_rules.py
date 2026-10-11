@@ -29,6 +29,8 @@ STATIC_CAST_TIMING_HANDLER_ID = "rule.cast.timing.fixed-query.v1"
 STATIC_CAST_PROHIBITION_HANDLER_ID = "rule.cast.prohibition.fixed-public.v1"
 STATIC_CAST_LIMIT_HANDLER_ID = "rule.cast.limit.once-per-turn.v1"
 STATIC_UNCOUNTERABLE_HANDLER_ID = "rule.stack.uncounterable.fixed-query.v1"
+SPLIT_SECOND_HANDLER_ID = "rule.stack.split-second.v1"
+SPLIT_SECOND_CAPABILITY = "priority.stack.split_second"
 
 
 class StaticCastRuleKind(StrEnum):
@@ -36,6 +38,7 @@ class StaticCastRuleKind(StrEnum):
     CAST_PROHIBITION = "cast_prohibition"
     CAST_LIMIT = "cast_limit"
     UNCOUNTERABLE = "uncounterable"
+    SPLIT_SECOND = "split_second"
 
 
 class StaticCastPlayerScope(StrEnum):
@@ -224,6 +227,25 @@ class StaticCastRuleHandler:
         )
 
 
+@dataclass(frozen=True, slots=True)
+class SplitSecondHandler:
+    handler_id: str = SPLIT_SECOND_HANDLER_ID
+    schema_version: int = 1
+    family: str = 'rule.stack.split_second'
+    event: str = STATIC_CAST_RULE_EVENT
+    rule_references: tuple[str,...] = ('702.61a','702.61b','702.61c')
+    capability_dependencies: tuple[str,...] = (SPLIT_SECOND_CAPABILITY,)
+
+    def validate(self,descriptor):
+        exact_fields(descriptor,{'handler_id','schema_version','event'},field='Split second handler')
+        if descriptor['handler_id']!=self.handler_id or type(descriptor['schema_version']) is not int or descriptor['schema_version']!=1 or descriptor['event']!=self.event:
+            raise SemanticNodeError('Split second descriptor identity is malformed')
+        return StaticCastRuleKind.SPLIT_SECOND
+
+    def lower(self,descriptor,context):
+        return (self.validate(descriptor),)
+
+
 class StaticCastRuleRegistry(
     RuntimeComponentRegistry[StaticCastRuleSourceContext, StaticCastRule]
 ):
@@ -234,6 +256,7 @@ class StaticCastRuleRegistry(
 def default_static_cast_rule_registry() -> StaticCastRuleRegistry:
     registry = StaticCastRuleRegistry(
         (
+            SplitSecondHandler(),
             StaticCastRuleHandler(
                 STATIC_CAST_TIMING_HANDLER_ID,
                 StaticCastRuleKind.TIMING_PERMISSION,
@@ -287,6 +310,25 @@ class StaticCastRuleHost(Protocol):
     ) -> EnchantSpec | None: ...
 
 
+def split_second_is_active(host: StaticCastRuleHost) -> bool:
+    """Read only trusted stack-local static declarations on current spells."""
+    for item in host.state.stack:
+        if item.kind not in {'spell','spell_copy'}:continue
+        card=host.state.cards.get(item.card_object_id or '')
+        if card is None or card.zone!='stack':continue
+        source=host.state.cards.get(item.source_object_id or '') if item.kind=='spell_copy' else card
+        source=source or card
+        record=host.card_record(source)
+        if record is None:continue
+        for program in host.semantics.runtime_handler_programs_for_oracle(record.oracle_id,active_zone='stack',event=STATIC_CAST_RULE_EVENT):
+            if not host.semantic_program_is_current_trusted(program) or not program_matches_face(record,program,source,prospective_name=item.chosen_face):continue
+            for descriptor in program.handlers:
+                if descriptor.get('handler_id')==SPLIT_SECOND_HANDLER_ID:
+                    SplitSecondHandler().validate(descriptor)
+                    return True
+    return False
+
+
 def active_static_cast_rules(host: StaticCastRuleHost) -> tuple[StaticCastRule, ...]:
     registry = default_static_cast_rule_registry()
     rules: list[StaticCastRule] = []
@@ -322,7 +364,7 @@ def active_static_cast_rules(host: StaticCastRuleHost) -> tuple[StaticCastRule, 
                 attached_player=attached_player_seat(source),
             )
             for descriptor in program.handlers:
-                if registry.describe(str(descriptor.get("handler_id") or "")):
+                if descriptor.get('handler_id')!=SPLIT_SECOND_HANDLER_ID and registry.describe(str(descriptor.get("handler_id") or "")):
                     rules.extend(registry.lower(descriptor, context))
     return tuple(
         sorted(
@@ -455,6 +497,7 @@ def static_cast_prohibition_reason(
     *,
     face: Mapping[str, Any] | None = None,
 ) -> str | None:
+    if split_second_is_active(host):return 'split_second'
     rules = tuple(
         rule
         for rule in active_static_cast_rules(host)

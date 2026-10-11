@@ -1,0 +1,1182 @@
+{
+  "cards": [
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}",
+      "name": "Act of Treason",
+      "oracle_id": "9d08af23-9f4a-4097-9abc-3b17475ab744",
+      "oracle_text": "Gain control of target creature until end of turn. Untap that creature. It gains haste until end of turn. (It can attack and {T} this turn.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-01-12",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{B}",
+      "name": "Agent of the Iron Throne",
+      "oracle_id": "325032d5-c452-4454-8976-82f86fee5ab8",
+      "oracle_text": "Commander creatures you own have \"Whenever an artifact or creature you control is put into a graveyard from the battlefield, each opponent loses 1 life.\"",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2022-06-10",
+      "toughness": null,
+      "type_line": "Legendary Enchantment \u2014 Background"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}",
+      "name": "Bastion Protector",
+      "oracle_id": "858f53ef-3fec-4aa0-867d-b7f040614b3c",
+      "oracle_text": "Commander creatures you control get +2/+2 and have indestructible.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2026-06-26",
+      "toughness": "3",
+      "type_line": "Creature \u2014 Human Soldier"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}{R}",
+      "name": "Bloodsworn Steward",
+      "oracle_id": "a5ec7ccd-d1fe-4ca6-b019-d4616c233771",
+      "oracle_text": "Flying\nCommander creatures you control get +2/+2 and have haste.",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2021-11-19",
+      "toughness": "4",
+      "type_line": "Creature \u2014 Vampire Knight"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{U}",
+      "name": "Candlekeep Sage",
+      "oracle_id": "f9516b60-36dd-4f8a-bebb-ac1bc0961f07",
+      "oracle_text": "Commander creatures you own have \"When this creature enters or leaves the battlefield, draw a card.\"",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2022-06-10",
+      "toughness": null,
+      "type_line": "Legendary Enchantment \u2014 Background"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}",
+      "name": "Clan Crafter",
+      "oracle_id": "6ebd4b3f-246e-475f-8cec-838eaaf597e2",
+      "oracle_text": "Commander creatures you own have \"{2}, Sacrifice an artifact: Put a +1/+1 counter on this creature and draw a card.\"",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2022-06-10",
+      "toughness": null,
+      "type_line": "Legendary Enchantment \u2014 Background"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}",
+      "name": "Far Traveler",
+      "oracle_id": "b9432430-df01-497d-b025-7576dce830e4",
+      "oracle_text": "Commander creatures you own have \"At the beginning of your end step, exile up to one target tapped creature you control, then return it to the battlefield under its owner's control.\"",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2022-06-10",
+      "toughness": null,
+      "type_line": "Legendary Enchantment \u2014 Background"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}",
+      "name": "Flaming Fist",
+      "oracle_id": "cdaefc96-4560-43bb-9514-bf87657bd481",
+      "oracle_text": "Commander creatures you own have \"Whenever this creature attacks, it gains double strike until end of turn.\"",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2022-06-10",
+      "toughness": null,
+      "type_line": "Legendary Enchantment \u2014 Background"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Flying"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{0}",
+      "name": "Ornithopter",
+      "oracle_id": "a3a98bc9-caa0-49b7-951c-fe4e4f54e4ba",
+      "oracle_text": "Flying",
+      "power": "0",
+      "produced_mana": [],
+      "released_at": "2023-01-13",
+      "toughness": "2",
+      "type_line": "Artifact Creature \u2014 Thopter"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Silvercoat Lion",
+      "oracle_id": "e3c0b11e-7340-4e0a-98b7-91b38439d4f9",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2012-07-13",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Cat"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Partner",
+        "Scry"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}{U}",
+      "name": "Thrasios, Triton Hero",
+      "oracle_id": "3d867016-2601-4a37-a73d-308898d3bd37",
+      "oracle_text": "{4}: Scry 1, then reveal the top card of your library. If it's a land card, put it onto the battlefield tapped. Otherwise, draw a card.\nPartner (You can have two commanders if both have partner.)",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2016-11-11",
+      "toughness": "3",
+      "type_line": "Legendary Creature \u2014 Merfolk Wizard"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Lifelink",
+        "Partner"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}{B}",
+      "name": "Tymna the Weaver",
+      "oracle_id": "d15642e4-e61c-4d29-af48-de837991245e",
+      "oracle_text": "Lifelink\nAt the beginning of each of your postcombat main phases, you may pay X life, where X is the number of opponents that were dealt combat damage this turn. If you do, draw X cards.\nPartner (You can have two commanders if both have partner.)",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2016-11-11",
+      "toughness": "2",
+      "type_line": "Legendary Creature \u2014 Human Cleric"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "fixture:grant-commander-a",
+      "name": "Generic Grant Commander A",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "type_line": "Legendary Creature \u2014 Human",
+      "oracle_text": "Vigilance",
+      "power": "2",
+      "toughness": "6",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Vigilance"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "fixture:grant-commander-b",
+      "name": "Generic Grant Commander B",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "type_line": "Legendary Creature \u2014 Human",
+      "oracle_text": "Vigilance",
+      "power": "2",
+      "toughness": "6",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Vigilance"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "fixture:grant-commander-c",
+      "name": "Generic Grant Commander C",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "type_line": "Legendary Creature \u2014 Human",
+      "oracle_text": "Vigilance",
+      "power": "2",
+      "toughness": "6",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Vigilance"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "fixture:grant-commander-d",
+      "name": "Generic Grant Commander D",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "type_line": "Legendary Creature \u2014 Human",
+      "oracle_text": "Vigilance",
+      "power": "2",
+      "toughness": "6",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Vigilance"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "An effect that checks whether you control your commander is satisfied if you control one or both of your two commanders.",
+      "oracle_id": "325032d5-c452-4454-8976-82f86fee5ab8",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Both commanders start in the command zone, and the remaining 98 cards (or 58 cards in a Commander Draft game) of your deck are shuffled to become your library.",
+      "oracle_id": "325032d5-c452-4454-8976-82f86fee5ab8",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Choose a Background is a variant of the partner ability. You may have two commanders if one of them is a legendary creature with the choose a background ability and the other is a legendary Background enchantment. Backgrounds and cards with choose a Background do not interact with cards which have any other partner ability.",
+      "oracle_id": "325032d5-c452-4454-8976-82f86fee5ab8",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a card refers to a commander creature you own, a Background won't usually be counted or included for that effect. If another spell or ability causes your Background to become a creature, however, it will be included. Any effect that refers to your commander or a commander you own or control without specifying creature will apply to a Background that is your commander, as appropriate.",
+      "oracle_id": "325032d5-c452-4454-8976-82f86fee5ab8",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If something refers to your commander while you have two commanders, it refers to one of them of your choice. If you are instructed to perform an action on your commander (e.g. put it from the command zone into your hand due to Command Beacon), you choose one of your commanders at the time the effect happens.",
+      "oracle_id": "325032d5-c452-4454-8976-82f86fee5ab8",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control a Background that grants an ability to commander creatures you own, and you own more than one commander creature, each of them will have that ability.",
+      "oracle_id": "325032d5-c452-4454-8976-82f86fee5ab8",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your Commander deck has two commanders, you can include only cards whose own color identities are also found in your commanders\u2019 combined color identities.",
+      "oracle_id": "325032d5-c452-4454-8976-82f86fee5ab8",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your commander loses the choose a Background ability or stops being a Background during the game, as appropriate, it is still your commander.",
+      "oracle_id": "325032d5-c452-4454-8976-82f86fee5ab8",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once the game begins, your two commanders are tracked separately. If you cast one, you won\u2019t have to pay an additional {2} the first time you cast the other. A player loses the game after having been dealt 21 combat damage from any one of them, not from both of them combined (although your Background won\u2019t usually be a creature anyway).",
+      "oracle_id": "325032d5-c452-4454-8976-82f86fee5ab8",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can choose two commanders that are the same color or colors.",
+      "oracle_id": "325032d5-c452-4454-8976-82f86fee5ab8",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "No player may take another action while you're resolving the activated ability.",
+      "oracle_id": "3d867016-2601-4a37-a73d-308898d3bd37",
+      "published_at": "2016-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "An effect that checks whether you control your commander is satisfied if you control one or both of your two commanders.",
+      "oracle_id": "3d867016-2601-4a37-a73d-308898d3bd37",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Both commanders start in the command zone, and the remaining 98 cards (or 58 cards in a Commander Draft game) of your deck are shuffled to become your library.",
+      "oracle_id": "3d867016-2601-4a37-a73d-308898d3bd37",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If something refers to your commander while you have two commanders, it refers to one of them of your choice. If you are instructed to perform an action on your commander (e.g. put it from the command zone into your hand due to Command Beacon), you choose one of your commanders at the time the effect happens.",
+      "oracle_id": "3d867016-2601-4a37-a73d-308898d3bd37",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your Commander deck has two commanders, you can only include cards whose own color identities are also found in your commanders' combined color identities. If Falthis and Kediss are your commanders, your deck may contain cards with black and/or red in their color identity, but not cards with green, white, or blue.",
+      "oracle_id": "3d867016-2601-4a37-a73d-308898d3bd37",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once the game begins, your two commanders are tracked separately. If you cast one, you won't have to pay an additional {2} the first time you cast the other. A player loses the game after having been dealt 21 damage from any one of them, not from both of them combined.",
+      "oracle_id": "3d867016-2601-4a37-a73d-308898d3bd37",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "The nonland card you reveal will be the card you draw.",
+      "oracle_id": "3d867016-2601-4a37-a73d-308898d3bd37",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "To have two commanders, both must have the partner ability as the game begins. Losing the ability during the game doesn't cause either to cease to be your commander.",
+      "oracle_id": "3d867016-2601-4a37-a73d-308898d3bd37",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can choose two commanders with partner that are the same color or colors. In Commander Draft, you can even choose two of the same commander with partner if you drafted them. If you do this, make sure you keep the number of times you've cast each from the command zone clear for \"commander tax\" purposes.",
+      "oracle_id": "3d867016-2601-4a37-a73d-308898d3bd37",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "An effect that checks whether you control your commander is satisfied if you control one or both of your two commanders.",
+      "oracle_id": "6ebd4b3f-246e-475f-8cec-838eaaf597e2",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Both commanders start in the command zone, and the remaining 98 cards (or 58 cards in a Commander Draft game) of your deck are shuffled to become your library.",
+      "oracle_id": "6ebd4b3f-246e-475f-8cec-838eaaf597e2",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Choose a Background is a variant of the partner ability. You may have two commanders if one of them is a legendary creature with the choose a background ability and the other is a legendary Background enchantment. Backgrounds and cards with choose a Background do not interact with cards which have any other partner ability.",
+      "oracle_id": "6ebd4b3f-246e-475f-8cec-838eaaf597e2",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a card refers to a commander creature you own, a Background won't usually be counted or included for that effect. If another spell or ability causes your Background to become a creature, however, it will be included. Any effect that refers to your commander or a commander you own or control without specifying creature will apply to a Background that is your commander, as appropriate.",
+      "oracle_id": "6ebd4b3f-246e-475f-8cec-838eaaf597e2",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If something refers to your commander while you have two commanders, it refers to one of them of your choice. If you are instructed to perform an action on your commander (e.g. put it from the command zone into your hand due to Command Beacon), you choose one of your commanders at the time the effect happens.",
+      "oracle_id": "6ebd4b3f-246e-475f-8cec-838eaaf597e2",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control a Background that grants an ability to commander creatures you own, and you own more than one commander creature, each of them will have that ability.",
+      "oracle_id": "6ebd4b3f-246e-475f-8cec-838eaaf597e2",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your Commander deck has two commanders, you can include only cards whose own color identities are also found in your commanders\u2019 combined color identities.",
+      "oracle_id": "6ebd4b3f-246e-475f-8cec-838eaaf597e2",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your commander loses the choose a Background ability or stops being a Background during the game, as appropriate, it is still your commander.",
+      "oracle_id": "6ebd4b3f-246e-475f-8cec-838eaaf597e2",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once the game begins, your two commanders are tracked separately. If you cast one, you won\u2019t have to pay an additional {2} the first time you cast the other. A player loses the game after having been dealt 21 combat damage from any one of them, not from both of them combined (although your Background won\u2019t usually be a creature anyway).",
+      "oracle_id": "6ebd4b3f-246e-475f-8cec-838eaaf597e2",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can choose two commanders that are the same color or colors.",
+      "oracle_id": "6ebd4b3f-246e-475f-8cec-838eaaf597e2",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "A \"commander creature\" is a permanent that's both someone's commander and a creature.",
+      "oracle_id": "858f53ef-3fec-4aa0-867d-b7f040614b3c",
+      "published_at": "2015-11-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "Bastion Protector's ability applies to any commander creature you control, whether you own it or not.",
+      "oracle_id": "858f53ef-3fec-4aa0-867d-b7f040614b3c",
+      "published_at": "2015-11-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "Bastion Protector's ability doesn't apply to commanders that aren't currently creatures.",
+      "oracle_id": "858f53ef-3fec-4aa0-867d-b7f040614b3c",
+      "published_at": "2015-11-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "Act of Treason can target any creature, even one that's untapped or one you already control.",
+      "oracle_id": "9d08af23-9f4a-4097-9abc-3b17475ab744",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "Gaining control of a creature doesn't cause you to gain control of any Auras or Equipment attached to it.",
+      "oracle_id": "9d08af23-9f4a-4097-9abc-3b17475ab744",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "An effect that checks whether you control your commander is satisfied if you control one or both of your two commanders.",
+      "oracle_id": "b9432430-df01-497d-b025-7576dce830e4",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Both commanders start in the command zone, and the remaining 98 cards (or 58 cards in a Commander Draft game) of your deck are shuffled to become your library.",
+      "oracle_id": "b9432430-df01-497d-b025-7576dce830e4",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Choose a Background is a variant of the partner ability. You may have two commanders if one of them is a legendary creature with the choose a background ability and the other is a legendary Background enchantment. Backgrounds and cards with choose a Background do not interact with cards which have any other partner ability.",
+      "oracle_id": "b9432430-df01-497d-b025-7576dce830e4",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a card refers to a commander creature you own, a Background won't usually be counted or included for that effect. If another spell or ability causes your Background to become a creature, however, it will be included. Any effect that refers to your commander or a commander you own or control without specifying creature will apply to a Background that is your commander, as appropriate.",
+      "oracle_id": "b9432430-df01-497d-b025-7576dce830e4",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a token is exiled this way, it will cease to exist and won't return to the battlefield.",
+      "oracle_id": "b9432430-df01-497d-b025-7576dce830e4",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If something refers to your commander while you have two commanders, it refers to one of them of your choice. If you are instructed to perform an action on your commander (e.g. put it from the command zone into your hand due to Command Beacon), you choose one of your commanders at the time the effect happens.",
+      "oracle_id": "b9432430-df01-497d-b025-7576dce830e4",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control a Background that grants an ability to commander creatures you own, and you own more than one commander creature, each of them will have that ability.",
+      "oracle_id": "b9432430-df01-497d-b025-7576dce830e4",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your Commander deck has two commanders, you can include only cards whose own color identities are also found in your commanders\u2019 combined color identities.",
+      "oracle_id": "b9432430-df01-497d-b025-7576dce830e4",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your commander loses the choose a Background ability or stops being a Background during the game, as appropriate, it is still your commander.",
+      "oracle_id": "b9432430-df01-497d-b025-7576dce830e4",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once the game begins, your two commanders are tracked separately. If you cast one, you won\u2019t have to pay an additional {2} the first time you cast the other. A player loses the game after having been dealt 21 combat damage from any one of them, not from both of them combined (although your Background won\u2019t usually be a creature anyway).",
+      "oracle_id": "b9432430-df01-497d-b025-7576dce830e4",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "When the card returns to the battlefield, it will be a new object with no connection to the card that was exiled. Auras attached to the exiled creature will be put into their owners' graveyards. Any Equipment will become unattached and remain on the battlefield. Any counters on the exiled permanent will cease to exist.",
+      "oracle_id": "b9432430-df01-497d-b025-7576dce830e4",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can choose two commanders that are the same color or colors.",
+      "oracle_id": "b9432430-df01-497d-b025-7576dce830e4",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "An effect that checks whether you control your commander is satisfied if you control one or both of your two commanders.",
+      "oracle_id": "cdaefc96-4560-43bb-9514-bf87657bd481",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Both commanders start in the command zone, and the remaining 98 cards (or 58 cards in a Commander Draft game) of your deck are shuffled to become your library.",
+      "oracle_id": "cdaefc96-4560-43bb-9514-bf87657bd481",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Choose a Background is a variant of the partner ability. You may have two commanders if one of them is a legendary creature with the choose a background ability and the other is a legendary Background enchantment. Backgrounds and cards with choose a Background do not interact with cards which have any other partner ability.",
+      "oracle_id": "cdaefc96-4560-43bb-9514-bf87657bd481",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a card refers to a commander creature you own, a Background won't usually be counted or included for that effect. If another spell or ability causes your Background to become a creature, however, it will be included. Any effect that refers to your commander or a commander you own or control without specifying creature will apply to a Background that is your commander, as appropriate.",
+      "oracle_id": "cdaefc96-4560-43bb-9514-bf87657bd481",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If something refers to your commander while you have two commanders, it refers to one of them of your choice. If you are instructed to perform an action on your commander (e.g. put it from the command zone into your hand due to Command Beacon), you choose one of your commanders at the time the effect happens.",
+      "oracle_id": "cdaefc96-4560-43bb-9514-bf87657bd481",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control a Background that grants an ability to commander creatures you own, and you own more than one commander creature, each of them will have that ability.",
+      "oracle_id": "cdaefc96-4560-43bb-9514-bf87657bd481",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your Commander deck has two commanders, you can include only cards whose own color identities are also found in your commanders\u2019 combined color identities.",
+      "oracle_id": "cdaefc96-4560-43bb-9514-bf87657bd481",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your commander loses the choose a Background ability or stops being a Background during the game, as appropriate, it is still your commander.",
+      "oracle_id": "cdaefc96-4560-43bb-9514-bf87657bd481",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once the game begins, your two commanders are tracked separately. If you cast one, you won\u2019t have to pay an additional {2} the first time you cast the other. A player loses the game after having been dealt 21 combat damage from any one of them, not from both of them combined (although your Background won\u2019t usually be a creature anyway).",
+      "oracle_id": "cdaefc96-4560-43bb-9514-bf87657bd481",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can choose two commanders that are the same color or colors.",
+      "oracle_id": "cdaefc96-4560-43bb-9514-bf87657bd481",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "An effect that checks whether you control your commander is satisfied if you control one or both of your two commanders.",
+      "oracle_id": "d15642e4-e61c-4d29-af48-de837991245e",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Both commanders start in the command zone, and the remaining 98 cards (or 58 cards in a Commander Draft game) of your deck are shuffled to become your library.",
+      "oracle_id": "d15642e4-e61c-4d29-af48-de837991245e",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a player was dealt combat damage and subsequently lost the game, Tymna's triggered ability counts that player to determine the value of X.",
+      "oracle_id": "d15642e4-e61c-4d29-af48-de837991245e",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect creates an additional combat phase in a turn, it may also create an additional main phase after that combat phase. Tymna's ability triggers at the beginning of each of these postcombat main phases.",
+      "oracle_id": "d15642e4-e61c-4d29-af48-de837991245e",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If something refers to your commander while you have two commanders, it refers to one of them of your choice. If you are instructed to perform an action on your commander (e.g. put it from the command zone into your hand due to Command Beacon), you choose one of your commanders at the time the effect happens.",
+      "oracle_id": "d15642e4-e61c-4d29-af48-de837991245e",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your Commander deck has two commanders, you can only include cards whose own color identities are also found in your commanders' combined color identities. If Falthis and Kediss are your commanders, your deck may contain cards with black and/or red in their color identity, but not cards with green, white, or blue.",
+      "oracle_id": "d15642e4-e61c-4d29-af48-de837991245e",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once the game begins, your two commanders are tracked separately. If you cast one, you won't have to pay an additional {2} the first time you cast the other. A player loses the game after having been dealt 21 damage from any one of them, not from both of them combined.",
+      "oracle_id": "d15642e4-e61c-4d29-af48-de837991245e",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "To have two commanders, both must have the partner ability as the game begins. Losing the ability during the game doesn't cause either to cease to be your commander.",
+      "oracle_id": "d15642e4-e61c-4d29-af48-de837991245e",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can choose two commanders with partner that are the same color or colors. In Commander Draft, you can even choose two of the same commander with partner if you drafted them. If you do this, make sure you keep the number of times you've cast each from the command zone clear for \"commander tax\" purposes.",
+      "oracle_id": "d15642e4-e61c-4d29-af48-de837991245e",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "You must pay exactly X life or none. You can't pay less life to draw fewer cards.",
+      "oracle_id": "d15642e4-e61c-4d29-af48-de837991245e",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "An effect that checks whether you control your commander is satisfied if you control one or both of your two commanders.",
+      "oracle_id": "f9516b60-36dd-4f8a-bebb-ac1bc0961f07",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Both commanders start in the command zone, and the remaining 98 cards (or 58 cards in a Commander Draft game) of your deck are shuffled to become your library.",
+      "oracle_id": "f9516b60-36dd-4f8a-bebb-ac1bc0961f07",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Choose a Background is a variant of the partner ability. You may have two commanders if one of them is a legendary creature with the choose a background ability and the other is a legendary Background enchantment. Backgrounds and cards with choose a Background do not interact with cards which have any other partner ability.",
+      "oracle_id": "f9516b60-36dd-4f8a-bebb-ac1bc0961f07",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a card refers to a commander creature you own, a Background won't usually be counted or included for that effect. If another spell or ability causes your Background to become a creature, however, it will be included. Any effect that refers to your commander or a commander you own or control without specifying creature will apply to a Background that is your commander, as appropriate.",
+      "oracle_id": "f9516b60-36dd-4f8a-bebb-ac1bc0961f07",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If something refers to your commander while you have two commanders, it refers to one of them of your choice. If you are instructed to perform an action on your commander (e.g. put it from the command zone into your hand due to Command Beacon), you choose one of your commanders at the time the effect happens.",
+      "oracle_id": "f9516b60-36dd-4f8a-bebb-ac1bc0961f07",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control a Background that grants an ability to commander creatures you own, and you own more than one commander creature, each of them will have that ability.",
+      "oracle_id": "f9516b60-36dd-4f8a-bebb-ac1bc0961f07",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your Commander deck has two commanders, you can include only cards whose own color identities are also found in your commanders\u2019 combined color identities.",
+      "oracle_id": "f9516b60-36dd-4f8a-bebb-ac1bc0961f07",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your commander loses the choose a Background ability or stops being a Background during the game, as appropriate, it is still your commander.",
+      "oracle_id": "f9516b60-36dd-4f8a-bebb-ac1bc0961f07",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once the game begins, your two commanders are tracked separately. If you cast one, you won\u2019t have to pay an additional {2} the first time you cast the other. A player loses the game after having been dealt 21 combat damage from any one of them, not from both of them combined (although your Background won\u2019t usually be a creature anyway).",
+      "oracle_id": "f9516b60-36dd-4f8a-bebb-ac1bc0961f07",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can choose two commanders that are the same color or colors.",
+      "oracle_id": "f9516b60-36dd-4f8a-bebb-ac1bc0961f07",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

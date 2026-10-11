@@ -11,6 +11,11 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Align legacy compiler consumers with admitted commander, loyalty mana,
+  shared-color prevention, Prototype, Split Second and Graft productions.
+  Preserve explicit unsupported boundaries and add original-card interaction
+  evidence for Aura grants, source protection and mana/replacement admission.
+
 - Reject limited sacrifice-departure subscriptions consistently in compilation,
   semantic shape validation, and trust admission instead of silently dropping
   an admitted departing observer's trigger.
@@ -30,6 +35,84 @@ maintenance: "hand-maintained"
 
 - Preserve explicit sacrifice provenance for Fading and Vanishing cleanup
   through zone replacements, normalized trigger occurrences, and turn history.
+
+- Derive pinned index manifest hashes and counts from current source-bound
+  inputs so cached rules derivatives cannot restore stale manifest metadata.
+
+- Preserve qualified interaction-evidence test IDs and validate their
+  references in the cheap source checkpoint before corpus generation.
+
+- Compile fixed resolution mana bundles through the existing spell, trigger,
+  loyalty and mana owners, preserving additional costs and typed spending
+  restrictions.
+
+- Implement printed Enlist as an optional attack tap cost and linked power
+  trigger, with current eligibility, last-known donor power, pending replay
+  and client donor selection. Canonicalize attack history ordering.
+
+- Compile self-transform activations through the existing transform owner with
+  source and transform-count snapshots. Correct selected-face keyword presence
+  so front-face abilities do not persist after transformation.
+
+- Extend scoped prevention with sealed token, combat, attachment, counter and
+  color facts, including recipient changes during redirection. Canonicalize
+  accepted block pair order so saved command mappings replay deterministically.
+
+- Support fixed Prototype casting with shared cost and legality queries,
+  persistent stack and battlefield characteristics, copiable selected values,
+  and ordinary characteristic restoration on other zone transitions.
+
+- Support fixed additional and unlimited blocking capacity through current
+  source, attachment and query grants, with distinct pairings, shared
+  declaration constraints, complete combat damage and client selection.
+
+- Resolve fixed Graft's optional counter movement through one atomic counter
+  transaction with source and recipient incarnation checks, replacement-order
+  continuation and replay.
+
+- Start and retain player speed through canonical state-based actions and
+  source-free own-turn opponent life-loss triggers. Gate Max Speed abilities
+  by current controller speed across battlefield and graveyard contexts.
+
+- Offer supported split and modal spell faces separately and charge each
+  selected face's own cost. Preserve its spell characteristics and cost queries.
+  Aftermath halves cast only from graveyards and retain mandatory exile through
+  countering, free-cast permissions and pending private resolution choices.
+
+- Promote the existing closed fixed reanimation grammar during ordinary
+  trusted runtime registration, preserving its target and capability checks.
+
+- Resolve fixed Backup instances through complete printed ability bundles,
+  canonical counter placement and temporary recipient ability grants. Typed
+  donated activations and triggers use their recipient, including opponent
+  creatures, while source departure preserves the queued grant.
+
+- Activate fixed ordinary-mana Embalm and Eternalize through source exile and
+  canonical token-copy recipes. Their color, Zombie type, no mana cost and
+  Eternalize base stats remain copiable through token replacements and entry.
+
+- Apply fixed player hexproof and shroud through shared target legality,
+  following current trusted source abilities and control without persisting
+  player keyword state. Source departure and entry update target revalidation.
+
+- Resolve ordinary Extort instances with optional white or black payment,
+  simultaneous opponent life loss and gain equal to actual total life lost.
+  Replacement continuations preserve committed stages, and canonical cast-source
+  ordering keeps independent trigger decisions stable through replay.
+
+- Enforce Split second through shared cast and activation availability while
+  preserving mana abilities, triggered abilities, face-up special actions and
+  stack copies. The restriction lasts only while its spell remains on the stack.
+
+- Apply fixed stats, keywords and closed quoted abilities to commander creatures
+  through physical designation and distinct owner/control live queries. Partner
+  commanders remain separate, copies do not inherit designation, and borrowed
+  commanders use their current controller's accepted actions.
+
+- Compose mandatory fixed counted spell prices with their independently closed
+  results. Private discards and simultaneous sacrifices retain the casting
+  transaction, and later replacement choices preserve only validated prior
+  selected-object journals through save/load and replay.
 
 - Cast ordinary fixed-cost and bare Mayhem cards from their owner’s graveyard
   using current-turn discarded-card identity, existing timing, additional-cost

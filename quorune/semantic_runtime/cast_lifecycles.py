@@ -26,6 +26,8 @@ class FixedCastLifecycleHandler:
     family: str = "casting.lifecycle.fixed_public"
     event: str = FIXED_CAST_LIFECYCLE_RUNTIME_EVENT
     rule_references: tuple[str, ...] = (
+        "702.127",
+        "702.127a",
         "601.2b",
         "601.2f",
         "601.2h",
@@ -80,7 +82,7 @@ class FixedCastLifecycleHandler:
         )
         if (
             descriptor["handler_id"] != self.handler_id
-            or descriptor["schema_version"] != self.schema_version
+            or type(descriptor["schema_version"]) is not int or descriptor["schema_version"] != self.schema_version
             or descriptor["event"] != self.event
         ):
             raise SemanticNodeError(

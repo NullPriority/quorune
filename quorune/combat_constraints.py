@@ -1,7 +1,14 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from itertools import combinations
 from typing import Iterable, Literal, Mapping, Sequence
+
+DeclarationSelection = str | tuple[str,...]
+
+
+def selected_options(value):
+    return value if isinstance(value, tuple) else (value,) if isinstance(value, str) else ()
 
 
 RequirementKind = Literal[
@@ -36,15 +43,15 @@ class DeclarationRequirement:
     options: tuple[str, ...] = ()
     label: str = ""
 
-    def satisfied_by(self, declaration: Mapping[str, str]) -> bool:
+    def satisfied_by(self, declaration: Mapping[str, DeclarationSelection]) -> bool:
         if self.kind == "choose":
             return self.variable in declaration
         if self.kind == "choose_option":
-            return declaration.get(str(self.variable)) == self.option
+            return self.option in selected_options(declaration.get(str(self.variable)))
         if self.kind == "choose_option_in":
-            return declaration.get(str(self.variable)) in self.options
+            return any(option in self.options for option in selected_options(declaration.get(str(self.variable))))
         if self.kind == "option_used":
-            return self.option in declaration.values()
+            return any(self.option in selected_options(value) for value in declaration.values())
         raise DeclarationConstraintError(
             f"Unknown declaration requirement {self.kind!r}"
         )
@@ -97,7 +104,7 @@ class DeclarationRestriction:
         if self.kind != "minimum_variable_selections" and self.variables:
             raise ValueError(f"{self.kind} does not accept variables")
 
-    def error(self, declaration: Mapping[str, str]) -> str | None:
+    def error(self, declaration: Mapping[str, DeclarationSelection]) -> str | None:
         if (
             self.trigger_variable is not None
             and self.trigger_variable not in declaration
@@ -106,7 +113,7 @@ class DeclarationRestriction:
         uses = sum(
             1
             for selected in declaration.values()
-            if self.option is not None and selected == self.option
+            if self.option is not None and self.option in selected_options(selected)
         )
         total = len(declaration)
         variable_uses = sum(
@@ -178,7 +185,8 @@ class DeclarationEvaluation:
 class DeclarationProblem:
     """A finite combat declaration problem under CR 508.1d or 509.1c.
 
-    Each variable may be omitted or select exactly one option from its domain.
+    Each variable may be omitted or select distinct options up to its declared
+    capacity, which defaults to one.
     Restrictions are inviolable. Among declarations that obey them, a legal
     declaration must satisfy the greatest possible number of requirements.
     Costed options do not contribute to the free maximum unless the submitted
@@ -190,10 +198,15 @@ class DeclarationProblem:
     restrictions: tuple[DeclarationRestriction, ...] = ()
     costed_options: frozenset[tuple[str, str]] = frozenset()
     max_search_states: int = 200_000
+    capacities: Mapping[str, int] | None = None
 
     def __post_init__(self) -> None:
         if self.max_search_states < 1:
             raise ValueError("max_search_states must be positive")
+        if self.capacities is not None and any(
+            variable not in self.domains or type(capacity) is not int or capacity < 1
+            for variable,capacity in self.capacities.items()):
+            raise ValueError('Declaration capacities require positive exact counts for eligible objects')
         if len({item.requirement_id for item in self.requirements}) != len(
             self.requirements
         ):
@@ -213,30 +226,34 @@ class DeclarationProblem:
 
     def canonical_declaration(
         self,
-        declaration: Mapping[str, str],
-    ) -> dict[str, str]:
+        declaration: Mapping[str, DeclarationSelection],
+    ) -> dict[str, DeclarationSelection]:
         if not isinstance(declaration, Mapping):
             raise DeclarationConstraintError(
                 "Combat declaration must be a mapping"
             )
-        canonical: dict[str, str] = {}
+        canonical: dict[str, DeclarationSelection] = {}
         for raw_variable, raw_option in declaration.items():
             variable = str(raw_variable)
-            option = str(raw_option)
             if variable not in self.domains:
                 raise DeclarationConstraintError(
                     f"{variable} is not an eligible declaration object"
                 )
-            if option not in self.domains[variable]:
+            options = tuple(raw_option) if isinstance(raw_option,(list,tuple)) else (raw_option,)
+            if (not options or any(type(option) is not str or option not in self.domains[variable] for option in options)
+                    or len(options)!=len(set(options))):
                 raise DeclarationConstraintError(
-                    f"{option} is not legal for {variable}"
+                    f"Distinct eligible options are required for {variable}"
                 )
-            canonical[variable] = option
+            capacity=(self.capacities or {}).get(variable,1)
+            if len(options)>capacity:
+                raise DeclarationConstraintError(f'{variable} can select at most {capacity} options')
+            canonical[variable] = options[0] if len(options)==1 else tuple(sorted(options))
         return canonical
 
     def restriction_errors(
         self,
-        declaration: Mapping[str, str],
+        declaration: Mapping[str, DeclarationSelection],
     ) -> tuple[str, ...]:
         return tuple(
             error
@@ -246,7 +263,7 @@ class DeclarationProblem:
 
     def satisfied_requirement_ids(
         self,
-        declaration: Mapping[str, str],
+        declaration: Mapping[str, DeclarationSelection],
     ) -> tuple[str, ...]:
         return tuple(
             requirement.requirement_id
@@ -281,7 +298,7 @@ class DeclarationProblem:
         }
         best = 0
         states = 0
-        declaration: dict[str, str] = {}
+        declaration: dict[str, DeclarationSelection] = {}
 
         def search(index: int) -> bool:
             nonlocal best, states
@@ -303,10 +320,12 @@ class DeclarationProblem:
             variable = variables[index]
             # Requirement-satisfying branches occur before omission. This is
             # deterministic and usually proves the theoretical maximum early.
-            for option in domains[variable]:
-                declaration[variable] = option
-                if search(index + 1):
-                    return True
+            capacity=min((self.capacities or {}).get(variable,1),len(domains[variable]))
+            for count in range(1,capacity+1):
+                for options in combinations(domains[variable],count):
+                    declaration[variable] = options[0] if count==1 else options
+                    if search(index + 1):
+                        return True
             declaration.pop(variable, None)
             return search(index + 1)
 
@@ -315,15 +334,16 @@ class DeclarationProblem:
 
     def evaluate(
         self,
-        declaration: Mapping[str, str],
+        declaration: Mapping[str, DeclarationSelection],
     ) -> DeclarationEvaluation:
         canonical = self.canonical_declaration(declaration)
         satisfied = self.satisfied_requirement_ids(canonical)
         satisfied_set = set(satisfied)
         enabled_costed_options = frozenset(
-            selection
-            for selection in canonical.items()
-            if selection in self.costed_options
+            (variable,option)
+            for variable,value in canonical.items()
+            for option in selected_options(value)
+            if (variable,option) in self.costed_options
         )
         return DeclarationEvaluation(
             satisfied=satisfied,
@@ -339,7 +359,7 @@ class DeclarationProblem:
         )
 
     def projection(self) -> dict[str, object]:
-        return {
+        result = {
             "domains": {
                 variable: list(dict.fromkeys(self.domains[variable]))
                 for variable in sorted(self.domains)
@@ -352,3 +372,6 @@ class DeclarationProblem:
                 for variable, option in sorted(self.costed_options)
             ],
         }
+        if self.capacities and any(value>1 for value in self.capacities.values()):
+            result['capacities']={variable:self.capacities.get(variable,1) for variable in sorted(self.domains)}
+        return result

@@ -1,0 +1,859 @@
+{
+  "cards": [
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Enlist"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}",
+      "name": "Argivian Cavalier",
+      "oracle_id": "c45090bd-a589-45a0-8388-025b8e0b3487",
+      "oracle_text": "Enlist (As this creature attacks, you may tap a nonattacking creature you control without summoning sickness. When you do, add its power to this creature's until end of turn.)\nWhen this creature enters, create a 1/1 white Soldier creature token.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2022-09-09",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Orc Knight"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Enlist"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}",
+      "name": "Balduvian Berserker",
+      "oracle_id": "3a7b1d1c-1724-4208-943b-650a5d773653",
+      "oracle_text": "Enlist (As this creature attacks, you may tap a nonattacking creature you control without summoning sickness. When you do, add its power to this creature's until end of turn.)\nWhen this creature dies, it deals damage equal to its power to any target.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2022-09-09",
+      "toughness": "3",
+      "type_line": "Creature \u2014 Kor Berserker"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Vigilance",
+        "Enlist"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Benalish Faithbonder",
+      "oracle_id": "278db664-4235-40f0-a926-3074a0e038c1",
+      "oracle_text": "Vigilance\nEnlist (As this creature attacks, you may tap a nonattacking creature you control without summoning sickness. When you do, add its power to this creature's until end of turn.)",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2022-09-09",
+      "toughness": "3",
+      "type_line": "Creature \u2014 Human Cleric"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Lifelink",
+        "Backup",
+        "First strike"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{W}{W}",
+      "name": "Boon-Bringer Valkyrie",
+      "oracle_id": "8652d88f-edca-4235-b942-6e7467608de8",
+      "oracle_text": "Backup 1 (When this creature enters, put a +1/+1 counter on target creature. If that's another creature, it gains the following abilities until end of turn.)\nFlying, first strike, lifelink",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2023-04-21",
+      "toughness": "4",
+      "type_line": "Creature \u2014 Angel Warrior"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flashback"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}{U}",
+      "name": "Cackling Counterpart",
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "oracle_text": "Create a token that's a copy of target creature you control.\nFlashback {5}{U}{U} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-01-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Trample",
+        "Enlist"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{R}",
+      "name": "Coalition Warbrute",
+      "oracle_id": "84d67d87-2696-4c2f-9f10-29d5832bfbb6",
+      "oracle_text": "Enlist (As this creature attacks, you may tap a nonattacking creature you control without summoning sickness. When you do, add its power to this creature's until end of turn.)\nTrample",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2022-09-09",
+      "toughness": "4",
+      "type_line": "Creature \u2014 Minotaur Berserker"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Rebound"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Ephemerate",
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "oracle_text": "Exile target creature you control, then return it to the battlefield under its owner's control.\nRebound (If you cast this spell from your hand, exile it as it resolves. At the beginning of your next upkeep, you may cast this card from exile without paying its mana cost.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2019-06-14",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "5748ebf1-24e3-499d-ab7c-c2cebd462a24",
+      "name": "Giant Growth",
+      "mana_cost": "{G}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Target creature gets +3/+3 until end of turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Ward",
+        "Enlist"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{G}",
+      "name": "Hexbane Tortoise",
+      "oracle_id": "f3b4097f-b84f-4645-81f1-018366e40eeb",
+      "oracle_text": "Ward {2} (Whenever this creature becomes the target of a spell or ability an opponent controls, counter it unless that player pays {2}.)\nEnlist (As this creature attacks, you may tap a nonattacking creature you control without summoning sickness. When you do, add its power to this creature's until end of turn.)",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2022-09-09",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Turtle"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Twisted Image",
+      "oracle_id": "4a40cee1-fc09-4f97-aef8-440778d8c0ca",
+      "oracle_text": "Switch target creature's power and toughness until end of turn.\nDraw a card.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2018-03-16",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{B}",
+      "name": "Disfigure",
+      "oracle_id": "77eafe49-b9c5-461d-89c5-cec217dd2974",
+      "oracle_text": "Target creature gets -2/-2 until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2022-11-18",
+      "toughness": null,
+      "type_line": "Instant"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "Casting the card again due to rebound's delayed triggered ability is optional. If you choose not to cast the card, or if you can't (perhaps because there are no legal targets available), the card will stay exiled. You won't get another chance to cast it on a future turn. If you do cast the card, it's put into its owner's graveyard as normal once it resolves.",
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "published_at": "2019-06-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a spell with rebound that you cast from your hand is countered or doesn't resolve (most likely because its targets have become illegal), none of its effects will happen, including rebound. The spell will be put into its owner's graveyard and you won't get to cast it again on your next turn.",
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "published_at": "2019-06-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a token is exiled this way, it will cease to exist and won't return to the battlefield.",
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "published_at": "2019-06-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once the exiled creature returns, it's considered a new object with no relation to the object that it was. Auras attached to the exiled creature will be put into their owners' graveyards. Equipment attached to the exiled creature will become unattached and remain on the battlefield. Any counters on the exiled creature will cease to exist.",
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "published_at": "2019-06-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "The attacking player chooses whether to tap a creature for an enlist ability immediately after they tap the creatures that they have chosen to attack with. You can\u2019t choose to enlist a creature later.",
+      "oracle_id": "278db664-4235-40f0-a926-3074a0e038c1",
+      "published_at": "2022-09-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "To enlist a creature, that creature must be untapped, it must not be attacking (even if it has vigilance), and it must have haste or have been under that attacking player\u2019s control since the beginning of their current turn.",
+      "oracle_id": "278db664-4235-40f0-a926-3074a0e038c1",
+      "published_at": "2022-09-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "When a player taps a creature for an attacking creature\u2019s enlist ability, that attacking creature gets +X/+0 until end of turn, where X is the tapped creature\u2019s power. This is a triggered ability that goes on the stack immediately after attackers have been declared in the declare attackers step.",
+      "oracle_id": "278db664-4235-40f0-a926-3074a0e038c1",
+      "published_at": "2022-09-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may tap only one creature for an enlist ability of an attacking creature, and a single creature can\u2019t be tapped for more than one enlist ability.",
+      "oracle_id": "278db664-4235-40f0-a926-3074a0e038c1",
+      "published_at": "2022-09-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "The attacking player chooses whether to tap a creature for an enlist ability immediately after they tap the creatures that they have chosen to attack with. You can\u2019t choose to enlist a creature later.",
+      "oracle_id": "3a7b1d1c-1724-4208-943b-650a5d773653",
+      "published_at": "2022-09-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "To determine the amount of damage it deals, use Balduvian Berserker\u2019s power as it last existed on the battlefield, not its power in the graveyard.",
+      "oracle_id": "3a7b1d1c-1724-4208-943b-650a5d773653",
+      "published_at": "2022-09-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "To enlist a creature, that creature must be untapped, it must not be attacking (even if it has vigilance), and it must have haste or have been under that attacking player\u2019s control since the beginning of their current turn.",
+      "oracle_id": "3a7b1d1c-1724-4208-943b-650a5d773653",
+      "published_at": "2022-09-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "When a player taps a creature for an attacking creature\u2019s enlist ability, that attacking creature gets +X/+0 until end of turn, where X is the tapped creature\u2019s power. This is a triggered ability that goes on the stack immediately after attackers have been declared in the declare attackers step.",
+      "oracle_id": "3a7b1d1c-1724-4208-943b-650a5d773653",
+      "published_at": "2022-09-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may tap only one creature for an enlist ability of an attacking creature, and a single creature can\u2019t be tapped for more than one enlist ability.",
+      "oracle_id": "3a7b1d1c-1724-4208-943b-650a5d773653",
+      "published_at": "2022-09-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "Because damage remains marked on a creature until the damage is removed as the turn ends, nonlethal damage dealt to a creature may become lethal if you switch its power and toughness during that turn.",
+      "oracle_id": "4a40cee1-fc09-4f97-aef8-440778d8c0ca",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Effects that switch a creature's power and toughness apply after all other effects, regardless of when those effects began to apply. For instance, if you target a 1/2 creature then give it +2/+0 later in the turn, it's a 2/3 creature, not a 4/1 creature.",
+      "oracle_id": "4a40cee1-fc09-4f97-aef8-440778d8c0ca",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Switching a creature's power and toughness twice (or any even number of times) effectively returns the creature to the power and toughness it had before any switches.",
+      "oracle_id": "4a40cee1-fc09-4f97-aef8-440778d8c0ca",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "The attacking player chooses whether to tap a creature for an enlist ability immediately after they tap the creatures that they have chosen to attack with. You can\u2019t choose to enlist a creature later.",
+      "oracle_id": "84d67d87-2696-4c2f-9f10-29d5832bfbb6",
+      "published_at": "2022-09-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "To enlist a creature, that creature must be untapped, it must not be attacking (even if it has vigilance), and it must have haste or have been under that attacking player\u2019s control since the beginning of their current turn.",
+      "oracle_id": "84d67d87-2696-4c2f-9f10-29d5832bfbb6",
+      "published_at": "2022-09-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "When a player taps a creature for an attacking creature\u2019s enlist ability, that attacking creature gets +X/+0 until end of turn, where X is the tapped creature\u2019s power. This is a triggered ability that goes on the stack immediately after attackers have been declared in the declare attackers step.",
+      "oracle_id": "84d67d87-2696-4c2f-9f10-29d5832bfbb6",
+      "published_at": "2022-09-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may tap only one creature for an enlist ability of an attacking creature, and a single creature can\u2019t be tapped for more than one enlist ability.",
+      "oracle_id": "84d67d87-2696-4c2f-9f10-29d5832bfbb6",
+      "published_at": "2022-09-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "Backup confers only abilities that are actually printed below it. Any abilities that are gained by the permanent are ignored, including abilities gained due to a resolving spell or ability or copy effects.",
+      "oracle_id": "8652d88f-edca-4235-b942-6e7467608de8",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a backup ability causes another creature to gain abilities, the creature with backup will still have those abilities.",
+      "oracle_id": "8652d88f-edca-4235-b942-6e7467608de8",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a backup ability targets the creature with backup, that creature will get +1/+1 counters, but it won\u2019t gain additional abilities.",
+      "oracle_id": "8652d88f-edca-4235-b942-6e7467608de8",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a permanent enters the battlefield as a copy of a card with a backup ability or a token is created that is a copy of that card, the order of the printed abilities is maintained.",
+      "oracle_id": "8652d88f-edca-4235-b942-6e7467608de8",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "The abilities that backup grants to the target creature are determined only once, at the time the ability triggers. They won\u2019t change if the permanent with backup loses any abilities before the backup ability resolves.",
+      "oracle_id": "8652d88f-edca-4235-b942-6e7467608de8",
+      "published_at": "2023-04-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "\"Flashback [cost]\" means \"You may cast this card from your graveyard by paying [cost] rather than paying its mana cost\" and \"If the flashback cost was paid, exile this card instead of putting it anywhere else any time it would leave the stack.\"",
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "A spell cast using flashback will always be exiled afterward, whether it resolves, is countered, or leaves the stack in some other way.",
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a card with flashback is put into your graveyard during your turn, you can cast it if it's legal to do so before any other player can take any actions.",
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost (such as a flashback cost) you're paying, add any cost increases, then apply any cost reductions. The mana value of the spell is determined only by its mana cost, no matter what the total cost to cast the spell was.",
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can cast a spell using flashback even if it was somehow put into your graveyard without having been cast.",
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "You must still follow any timing restrictions and permissions, including those based on the card's type. For instance, you can cast a sorcery using flashback only when you could normally cast a sorcery.",
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any \u201centers\u201d triggered ability of the copied creature will trigger when the token enters the battlefield. Any \u201cas [this creature] enters\u201d or \u201c[this creature] enters with\u201d abilities of the chosen creature will also work.",
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2025-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the copied creature has {X} in its mana cost, X is considered to be 0.",
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2025-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the copied creature is a token, the token that\u2019s created copies the original characteristics of that token as stated by the effect that created the token.",
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2025-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the copied creature is copying something else, then the token enters the battlefield as whatever that creature copied.",
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2025-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "The token copies exactly what was printed on the original creature and nothing else (unless that creature is copying something else or is a token; see below). It doesn\u2019t copy whether that creature is tapped or untapped, whether it has any counters on it or Auras and Equipment attached to it, or any non-copy effects that have changed its power, toughness, types, color, or so on.",
+      "oracle_id": "9e2adca5-f39c-4a09-bcce-8238ebac2c4a",
+      "published_at": "2025-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "The attacking player chooses whether to tap a creature for an enlist ability immediately after they tap the creatures that they have chosen to attack with. You can\u2019t choose to enlist a creature later.",
+      "oracle_id": "c45090bd-a589-45a0-8388-025b8e0b3487",
+      "published_at": "2022-09-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "To enlist a creature, that creature must be untapped, it must not be attacking (even if it has vigilance), and it must have haste or have been under that attacking player\u2019s control since the beginning of their current turn.",
+      "oracle_id": "c45090bd-a589-45a0-8388-025b8e0b3487",
+      "published_at": "2022-09-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "When a player taps a creature for an attacking creature\u2019s enlist ability, that attacking creature gets +X/+0 until end of turn, where X is the tapped creature\u2019s power. This is a triggered ability that goes on the stack immediately after attackers have been declared in the declare attackers step.",
+      "oracle_id": "c45090bd-a589-45a0-8388-025b8e0b3487",
+      "published_at": "2022-09-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may tap only one creature for an enlist ability of an attacking creature, and a single creature can\u2019t be tapped for more than one enlist ability.",
+      "oracle_id": "c45090bd-a589-45a0-8388-025b8e0b3487",
+      "published_at": "2022-09-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "The attacking player chooses whether to tap a creature for an enlist ability immediately after they tap the creatures that they have chosen to attack with. You can\u2019t choose to enlist a creature later.",
+      "oracle_id": "f3b4097f-b84f-4645-81f1-018366e40eeb",
+      "published_at": "2022-09-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "To enlist a creature, that creature must be untapped, it must not be attacking (even if it has vigilance), and it must have haste or have been under that attacking player\u2019s control since the beginning of their current turn.",
+      "oracle_id": "f3b4097f-b84f-4645-81f1-018366e40eeb",
+      "published_at": "2022-09-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "When a player taps a creature for an attacking creature\u2019s enlist ability, that attacking creature gets +X/+0 until end of turn, where X is the tapped creature\u2019s power. This is a triggered ability that goes on the stack immediately after attackers have been declared in the declare attackers step.",
+      "oracle_id": "f3b4097f-b84f-4645-81f1-018366e40eeb",
+      "published_at": "2022-09-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may tap only one creature for an enlist ability of an attacking creature, and a single creature can\u2019t be tapped for more than one enlist ability.",
+      "oracle_id": "f3b4097f-b84f-4645-81f1-018366e40eeb",
+      "published_at": "2022-09-09",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

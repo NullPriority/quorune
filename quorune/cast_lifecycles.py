@@ -52,6 +52,7 @@ REBOUND_EXILE_CAST_PRODUCER = "rebound"
 
 
 class FixedCastLifecycleKind(str, Enum):
+    AFTERMATH = "aftermath"
     BLITZ = "blitz"
     BUYBACK = "buyback"
     DASH = "dash"
@@ -114,6 +115,7 @@ _JUMP_START = re.compile(
     r"^Jump-start(?:\s+\(.*\))?\.?$",
     re.IGNORECASE,
 )
+_AFTERMATH = re.compile(r"^Aftermath(?:\s+\(.*\))?\.?$",re.IGNORECASE)
 _FIXED_COUNTS = {
     "one": 1,
     "two": 2,
@@ -161,55 +163,8 @@ def _validate_fixed_lifecycle_mana(spec: Any, match: re.Match[str]) -> None:
 
 
 def _validate_fixed_zone_cast_spec(spec: Any) -> None:
-    if spec.kind in {
-        FixedCastLifecycleKind.JUMP_START,
-        FixedCastLifecycleKind.REBOUND,
-    }:
-        pattern = (
-            _JUMP_START
-            if spec.kind is FixedCastLifecycleKind.JUMP_START
-            else _REBOUND
-        )
-        if (
-            pattern.fullmatch(spec.oracle_line.strip()) is None
-            or spec.cost_text is not None
-            or spec.mana_cost is not None
-            or spec.counter_count is not None
-            or spec.exile_count is not None
-            or spec.schema_version != 3
-        ):
-            raise FixedCastLifecycleError(
-                f"{spec.kind.value.title()} requires its closed bare declaration"
-            )
-        return
-    pattern = {
-        FixedCastLifecycleKind.ESCAPE: _ESCAPE,
-        FixedCastLifecycleKind.FORETELL: _FORETELL,
-        FixedCastLifecycleKind.PLOT: _PLOT,
-    }[spec.kind]
-    match = pattern.fullmatch(spec.oracle_line.strip())
-    escape_count = (
-        _fixed_count(match.group("count"))
-        if match is not None and spec.kind is FixedCastLifecycleKind.ESCAPE
-        else None
-    )
-    count_is_valid = (
-        type(spec.exile_count) is int
-        and spec.exile_count > 0
-        and spec.exile_count == escape_count
-        if spec.kind is FixedCastLifecycleKind.ESCAPE
-        else spec.exile_count is None
-    )
-    if (
-        match is None
-        or spec.schema_version != 3
-        or spec.counter_count is not None
-        or not count_is_valid
-    ):
-        raise FixedCastLifecycleError(
-            "Fixed zone-cast lifecycle declaration is malformed"
-        )
-    _validate_fixed_lifecycle_mana(spec, match)
+    from .rules.casting.fixed_zone_validation import validate_fixed_zone_cast_spec
+    validate_fixed_zone_cast_spec(spec)
 
 
 @dataclass(frozen=True, slots=True)
@@ -265,6 +220,7 @@ class FixedCastLifecycleSpec:
                 _validate_fixed_lifecycle_mana(self, match)
             return
         if self.kind in {
+            FixedCastLifecycleKind.AFTERMATH,
             FixedCastLifecycleKind.ESCAPE,
             FixedCastLifecycleKind.FORETELL,
             FixedCastLifecycleKind.JUMP_START,
@@ -400,6 +356,7 @@ class FixedCastLifecycleSpec:
 
     def fixed_cost_option(self) -> dict[str, Any]:
         if self.kind in {
+            FixedCastLifecycleKind.AFTERMATH,
             FixedCastLifecycleKind.RETRACE,
             FixedCastLifecycleKind.SUSPEND,
             FixedCastLifecycleKind.JUMP_START,
@@ -468,6 +425,7 @@ class FixedCastLifecycleSpec:
         base_option: Mapping[str, Any],
     ) -> dict[str, Any]:
         if self.kind not in {
+            FixedCastLifecycleKind.AFTERMATH,
             FixedCastLifecycleKind.JUMP_START,
             FixedCastLifecycleKind.RETRACE,
             FixedCastLifecycleKind.MAYHEM,
@@ -492,7 +450,7 @@ class FixedCastLifecycleSpec:
                 FIXED_CAST_LIFECYCLE_CONTEXT_FIELD: self.to_dict(),
                 "fixed_cast_lifecycle_fingerprint": self.fingerprint,
                 "source_zone": "graveyard",
-                "_additional_option_costs": [] if self.kind is FixedCastLifecycleKind.MAYHEM else [
+                "_additional_option_costs": [] if self.kind in {FixedCastLifecycleKind.MAYHEM,FixedCastLifecycleKind.AFTERMATH} else [
                     retrace_land_discard_cost_descriptor()
                     if self.kind is FixedCastLifecycleKind.RETRACE
                     else jump_start_discard_cost_descriptor()
@@ -569,6 +527,7 @@ def compile_fixed_cast_lifecycle(
             schema_version=3,
         )
     for pattern, kind in (
+        (_AFTERMATH, FixedCastLifecycleKind.AFTERMATH),
         (_JUMP_START, FixedCastLifecycleKind.JUMP_START),
         (_REBOUND, FixedCastLifecycleKind.REBOUND),
     ):
@@ -851,7 +810,7 @@ def fixed_cast_lifecycle_resolution_destination(
     if not isinstance(raw, Mapping):
         return destination
     spec = FixedCastLifecycleSpec.from_dict(raw)
-    if spec.kind is FixedCastLifecycleKind.JUMP_START:
+    if spec.kind in {FixedCastLifecycleKind.JUMP_START,FixedCastLifecycleKind.AFTERMATH}:
         return "exile"
     if (
         spec.kind is FixedCastLifecycleKind.BUYBACK
@@ -897,6 +856,7 @@ def fixed_cast_lifecycle_replacement_effect_id(
     logical_object_id: str,
 ) -> str:
     if kind not in {
+        FixedCastLifecycleKind.AFTERMATH,
         FixedCastLifecycleKind.JUMP_START,
         FixedCastLifecycleKind.REBOUND,
     }:
@@ -929,6 +889,7 @@ def fixed_cast_lifecycle_stack_replacement(
     except (FixedCastLifecycleError, TypeError, ValueError):
         return None
     if spec.kind not in {
+        FixedCastLifecycleKind.AFTERMATH,
         FixedCastLifecycleKind.JUMP_START,
         FixedCastLifecycleKind.REBOUND,
     }:
@@ -969,7 +930,7 @@ def fixed_cast_lifecycle_stack_replacement(
         label=(
             f"{card.ref}: exile the resolving spell with Rebound"
             if rebound
-            else f"{card.ref}: exile the jump-started spell instead"
+            else f"{card.ref}: exile the {spec.kind.value} spell instead"
         ),
     )
 

@@ -9,6 +9,53 @@ maintenance: "hand-maintained"
 
 # Rules kernel
 
+Fixed mana-producing spells and ordinary entry or loyalty abilities resolve
+through the existing stack and mana-pool owner. Mana production does not make
+a spell, an entry trigger or a loyalty ability a mana ability. Additional
+sacrifice and loyalty costs commit before resolution; a countered spell adds
+no mana. Typed spending restrictions enter the canonical provenance lots and
+use the same public spell-type predicates for advertised and accepted payment.
+
+Enlist adds an optional tap cost to an accepted attack declaration. Each
+instance may tap one distinct eligible controlled nonattacking creature that
+has haste or has been controlled since the turn began. All choices validate
+before the canonical tap owner commits them. The linked reflexive trigger uses
+the donor's power on resolution, with immediate last-known power after
+departure. The original attacker incarnation receives the until-end-of-turn
+power modifier; a blinked attacker does not. Negative additive results use
+zero under CR 107.1b. Attack choices sort before history capture so saved
+mapping order cannot change replay.
+
+Self-transform activations pin the original source incarnation and its
+transform count when placed on the stack. The existing transform owner keeps
+the same permanent, counters, damage, attachments and acquisition history.
+A controller change preserves the original activation controller and source
+binding; a blink creates a new object and invalidates that activation. Current
+fixed keywords on a double-faced spell or permanent come from trusted printed
+programs for its selected face. The parent record's keyword union cannot keep
+front-face Defender on a transformed Flying creature.
+
+Prototype selection changes base mana cost, color, power and toughness while
+casting, on the stack and on the battlefield. It preserves the card's types
+and independently compiled abilities. Both normal and Prototype choices use
+the shared legality and payment owners, including available alternative costs.
+Copy snapshots retain the selected characteristics. Leaving the stack for a
+zone other than the battlefield, or leaving the battlefield, removes the
+selection; a blinked card returns with its ordinary printed characteristics.
+
+Multiple blocking consumes current typed additive or unlimited capacity at
+declaration. Ordinary single-attacker responses remain valid; extra pairings
+use a distinct attacker list for the blocker. The existing declaration solver
+checks per-pair evasion, defending player, costs and maximum requirements.
+Accepted pairs commit through the canonical combat relationship owner. Later
+loss of the permission does not undo those blocks. The graph owns all pairs;
+the legacy `blocking` field remains one representative blocking identity.
+Trigger occurrences, relative combat targets and damage snapshots consume the
+complete graph, and a blocker assigns its power once across its recipients.
+Validated pairs sort by attacker and blocker identity before commit. Client
+mapping order therefore cannot change the authoritative blocker list or saved
+command replay.
+
 Fixed selected-object tap costs may accompany a source tap symbol. The source
 and selected objects are distinct: the source cannot pay both costs. The source
 tap obeys creature acquisition timing; selected-object taps without a tap

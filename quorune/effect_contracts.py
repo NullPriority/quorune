@@ -25,6 +25,7 @@ EFFECT_FAMILY_CONTRACTS = (
                 "delayed_pact_payment",
                 "goad",
                 "gain_class_level",
+                "increase_speed",
                 "mana",
                 "next_spell_improvise",
                 "next_spell_uncounterable",

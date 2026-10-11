@@ -796,10 +796,16 @@ class FixedQueryKeywordGrantCompilerTests(unittest.TestCase):
         assert modified_type_union[1].state_predicate is not None
         self.assertTrue(modified_type_union[1].state_predicate.modified)
 
+        commander = fixed_characteristic_battlefield_query_subject("Commander creatures you control")
+        self.assertIsNotNone(commander)
+        self.assertEqual("source_controller", commander[0])
+        self.assertIs(True, commander[1].commander)
+        self.assertEqual(("creature",), commander[1].types_all)
+
         for unsupported in (
             "Creatures without flying",
             "Creatures with no abilities",
-            "Commander creatures you control",
+            "Commander creatures you control that were cast from the command zone",
             "Creatures that share a color with equipped creature",
             "Artifacts and enchantments with flying",
             "Enchanted permanent",

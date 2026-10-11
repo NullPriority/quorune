@@ -1,0 +1,156 @@
+{
+  "schema_version": 1,
+  "contract_version": 1,
+  "mechanic_id": "backup",
+  "official_name": "Backup",
+  "effective_date": "2026-08-07",
+  "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
+  "rule_references": [
+    "702.165",
+    "702.165a",
+    "702.165b",
+    "702.165c",
+    "702.165d",
+    "603.3b",
+    "603.3d",
+    "608.2b",
+    "611.2a",
+    "613.1f"
+  ],
+  "glossary_references": [
+    "backup"
+  ],
+  "dependencies": [
+    "handling-triggered-abilities",
+    "resolving-spells-and-abilities",
+    "counters",
+    "continuous-effects",
+    "targets"
+  ],
+  "coverage_status": "tested",
+  "trust_level": "untrusted",
+  "behavior": {
+    "zones": [
+      "battlefield source and recipient",
+      "stack for each locked entry trigger"
+    ],
+    "objects": [
+      "one independently represented Backup instance",
+      "one revalidated creature target",
+      "complete source-ordered printed ability bundle"
+    ],
+    "events": [
+      "source battlefield entry",
+      "fixed counter placement",
+      "temporary ability grant"
+    ],
+    "state_reads": [
+      "current applicable source ability",
+      "locked printed downstream bundle",
+      "source and target logical identity",
+      "current recipient abilities and controller"
+    ],
+    "state_writes": [
+      "canonical replacement-aware target counters",
+      "canonical until-end-of-turn continuous ability operations"
+    ],
+    "costs": [
+      "Backup resolution has no payment"
+    ],
+    "timing": [
+      "target chosen at trigger placement",
+      "counters finish before the separate grant",
+      "grants expire at end of turn"
+    ],
+    "targets": [
+      "any one legal creature, including source or opponent creature",
+      "self target receives only counters"
+    ],
+    "choices": [
+      "normal target and trigger-order choices",
+      "ordinary affected-player counter replacement order"
+    ],
+    "hidden_information": [
+      "recipient activated abilities retain controller-correct private results"
+    ],
+    "apnap": [
+      "independent entry triggers use ordinary APNAP and target placement"
+    ],
+    "layers": [
+      "temporary grants add fixed keywords and typed fragments in layer six"
+    ],
+    "replacement_effects": [
+      "counter replacements preserve the following grant cursor without duplication"
+    ],
+    "copy": [
+      "copied entry maintains inherited printed ordering; additional acquired abilities are excluded"
+    ],
+    "control_change": [
+      "queued trigger controller remains locked; donated abilities use current recipient controller"
+    ],
+    "zone_change": [
+      "recipient blink invalidates original incarnation; source departure does not cancel the grant"
+    ],
+    "source_leaves": [
+      "complete printed bundle remains available after source departure"
+    ]
+  },
+  "variants": [
+    "fixed Backup amount",
+    "fixed keyword bundles",
+    "closed static declaration fragments",
+    "independent activated or triggered child programs",
+    "self target",
+    "copied entry",
+    "pending counter replacements"
+  ],
+  "witness_cards": [
+    {
+      "name": "Chomping Kavu",
+      "oracle_id": "20a362c3-d278-437f-881c-e7d9fe78fc2d"
+    },
+    {
+      "name": "Bola Slinger",
+      "oracle_id": "6ff995f9-080d-4316-8fbe-39bf195db91b"
+    },
+    {
+      "name": "Streetwise Negotiator",
+      "oracle_id": "74b631c5-9420-496e-8845-3b050d3d5340"
+    },
+    {
+      "name": "Boon-Bringer Valkyrie",
+      "oracle_id": "8652d88f-edca-4235-b942-6e7467608de8"
+    },
+    {
+      "name": "Scorn-Blade Berserker",
+      "oracle_id": "93107139-b743-4d62-b0ac-9997202e0562"
+    }
+  ],
+  "test_ids": [
+    "test_actual_donated_sacrifice_activation_uses_recipient_and_private_draw_replay",
+    "test_self_target_only_gets_counters_and_donated_keywords_expire",
+    "test_actual_copy_entry_preserves_printed_order_and_excludes_gained_keyword",
+    "test_actual_source_departure_preserves_locked_bundle_and_target_blink_invalidates",
+    "test_actual_donated_attack_trigger_uses_recipient_target_and_replays",
+    "test_counter_replacement_pending_reload_retains_separate_following_grant",
+    "test_actual_static_donations_apply_recipient_block_and_damage_queries",
+    "test_source_order_keeps_only_complete_following_printed_keyword_bundle",
+    "test_triggered_and_activated_donations_use_independent_typed_children",
+    "test_malformed_bundle_and_counter_dependency_fail_closed",
+    "test_omitting_source_order_mutant_is_killed"
+  ],
+  "implementation": {
+    "component": "quorune.compiler.backup_nodes.compile_backup_faces",
+    "version": "printed-backup-bundles-v1",
+    "capability_ids": [
+      "trigger.keyword.backup"
+    ],
+    "supported_slice": "Fixed source-ordered Backup instances whose complete downstream printed abilities independently close, using existing target, counter, typed grant and continuous owners."
+  },
+  "known_blockers": [
+    "unsupported downstream bodies and keyword fragments keep the whole Backup bundle closed",
+    "unrepresented external ability acquisition or source-changing producers need their own contracts",
+    "the aggregate mechanic contract does not imply universal card or match support"
+  ],
+  "review_status": "reviewed"
+}

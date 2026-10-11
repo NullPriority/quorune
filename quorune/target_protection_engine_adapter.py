@@ -4,6 +4,7 @@ from collections.abc import Mapping
 from typing import Any, Protocol
 
 from .keyword_abilities import normalized_characteristic_keywords
+from .semantic_runtime.player_target_protection import current_player_target_keywords
 from .model import CardInstance, GameState
 from .protection import (
     ProtectionQueryHost,
@@ -59,7 +60,7 @@ def target_protection_verdict_for_row(
         acting_controller=acting_controller,
         protected_controller=protected_controller,
         target_is_player=target_is_player,
-        target_keywords=normalized_characteristic_keywords(characteristics),
+        target_keywords=(current_player_target_keywords(host,protected_controller) if target_is_player else normalized_characteristic_keywords(characteristics)),
         source_colors=frozenset(host._source_colors_for_ref(source_ref)),
         controller_hexproof_colors=frozenset(
             str(value).strip().upper()

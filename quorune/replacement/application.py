@@ -717,8 +717,13 @@ def _apply_effect_operations(
                     "target_owner": operation.target_owner,
                     "target_types": list(operation.target_types),
                     "target_subtypes": list(operation.target_subtypes),
+                    "target_combat_partners":list(operation.target_combat_partners),
+                    "target_colors":list(operation.target_colors),
+                    "source_and_target_block_pair":operation.target_logical_object_id in payload.get('source_combat_partners',()),
+                    "source_and_target_share_color":bool(set(payload.get('source_colors',()))&set(operation.target_colors)),
+                    "source_and_target_distinct":payload.get('source_logical_object_id')!=operation.target_logical_object_id,
                     "target_characteristics": sorted(
-                        {*operation.target_types, *operation.target_subtypes}
+                        {*operation.target_types, *operation.target_subtypes,*operation.target_supertypes,*operation.target_scope_facts}
                     ),
                 }
             )

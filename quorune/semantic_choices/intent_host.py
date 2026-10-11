@@ -1,4 +1,5 @@
 from __future__ import annotations
+from ..semantic_runtime.life_batch_intent import LifeLossBatchIntent
 from ..semantic_runtime.control_intents import GainControlIntent, GainControlSetIntent
 
 import copy
@@ -643,62 +644,13 @@ class SemanticChoiceIntentHostMixin:
             ),
         )
 
+    def apply_life_loss_batch_intent(self, intent: LifeLossBatchIntent) -> int:
+        from .life_intent_commit import apply_life_loss_batch_intent
+        return apply_life_loss_batch_intent(self,intent)
+
     def apply_life_change_intent(self, intent: LifeChangeIntent) -> int:
-        try:
-            prepared = prepare_life_change_batch(
-                self,
-                (
-                    LifeChangeRequest(
-                        event_id=(
-                            f"semantic.life:{self.state.revision}:"
-                            f"{self.state.event_sequence + 1}"
-                        ),
-                        player=intent.player,
-                        amount=intent.amount,
-                        source=intent.source_ref,
-                        source_controller=intent.actor,
-                        cause=intent.reason,
-                    ),
-                ),
-                effects=collect_life_change_replacement_effects(self),
-                selections=intent.replacement_selections,
-                require_all_selections=False,
-                batch_id=(
-                    f"replacement:semantic.life:{self.state.revision}:"
-                    f"{self.state.event_sequence + 1}"
-                ),
-            )
-            if prepared.pending is not None:
-                raise ReplacementChoiceRequired(
-                    batch=ReplacementEventBatch(
-                        batch_id=prepared.batch_id,
-                        events=prepared.events,
-                        apnap_order=tuple(self.apnap_order()),
-                        journal=prepared.journal,
-                    ),
-                    effects=prepared.effects,
-                    pending=prepared.pending,
-                )
-            committed = commit_life_change_batch(self, prepared)
-        except LifeChangeError as exc:
-            raise GameRuleError(str(exc)) from exc
-        record = committed.records[0]
-        self._log(
-            intent.actor,
-            "effect.life",
-            f"{intent.player}'s life changed by {record.delta}.",
-            {
-                "player": intent.player,
-                "requested_delta": intent.amount,
-                "delta": record.delta,
-                "reason": intent.reason,
-                "source": intent.source_ref,
-            },
-            importance=1,
-            changed_players=[intent.player],
-        )
-        dispatch_life_gain_records(self, committed.records)
-        return self.state.players[intent.player].life
+        from .life_intent_commit import apply_life_change_intent
+        return apply_life_change_intent(self,intent)
 
     def pay_life_intent(self, intent: PayLifeIntent) -> int:
         try:

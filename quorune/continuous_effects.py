@@ -122,6 +122,7 @@ def _matches(
         ),
         mana_value=int(state.mana_value),
         token=bool(context.get("token", False)),
+        commander=bool(context.get("commander",False)),
         tapped=bool(context.get("tapped", False)),
         phased_out=bool(context.get("phased_out", False)),
         known_to_actor=bool(context.get("known_to_actor", True)),

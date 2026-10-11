@@ -122,6 +122,20 @@ def validate_interaction_evidence(value: Mapping[str, Any]) -> None:
         identities.add(identity)
 
 
+def validate_interaction_test_references(
+    value: Mapping[str, Any], *, known_test_ids: Iterable[str],
+) -> None:
+    """Validate exact test identities before expensive corpus generation."""
+    validate_interaction_evidence(value)
+    known = set(known_test_ids)
+    missing = sorted({
+        str(row['test_id']) for row in value['declarations']
+        if row['test_id'] not in known
+    })
+    if missing:
+        raise ValueError('Interaction evidence references unknown tests: ' + ', '.join(missing))
+
+
 def build_interactions(
     cards: Sequence[Mapping[str, Any]],
     pieces: Mapping[str, InteractionPiece],
@@ -138,10 +152,9 @@ def build_interactions(
     no one printed card contains both pieces.
     """
 
-    validate_interaction_evidence(interaction_evidence)
+    validate_interaction_test_references(interaction_evidence, known_test_ids=known_test_ids)
     evidence_by_pair: dict[tuple[str, str], set[str]] = defaultdict(set)
     assurance_by_pair: dict[tuple[str, str], set[str]] = defaultdict(set)
-    known_tests = set(known_test_ids)
     for declaration in interaction_evidence["declarations"]:
         piece_ids = tuple(declaration["piece_ids"])
         unknown = set(piece_ids) - set(pieces)
@@ -151,10 +164,6 @@ def build_interactions(
                 + ", ".join(sorted(unknown))
             )
         test_id = str(declaration["test_id"])
-        if test_id not in known_tests:
-            raise ValueError(
-                f"Interaction evidence references unknown test {test_id}"
-            )
         for pair in combinations(piece_ids, 2):
             canonical_pair = tuple(sorted(pair))
             evidence_by_pair[canonical_pair].add(test_id)

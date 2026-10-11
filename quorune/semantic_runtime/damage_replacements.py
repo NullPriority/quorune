@@ -925,6 +925,10 @@ def collect_damage_replacement_effects(
                         target_owner=destination.owner,
                         target_types=destination.types,
                         target_subtypes=destination.subtypes,
+                        target_scope_facts=destination.scope_facts,
+                        target_combat_partners=destination.combat_partners,
+                        target_colors=destination.colors,
+                        target_supertypes=destination.supertypes,
                     )
                 attached = host.state.cards.get(
                     getattr(source, "attached_to", None) or ""

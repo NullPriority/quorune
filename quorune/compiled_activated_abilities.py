@@ -11,6 +11,7 @@ from .card_programs.admission import (
 )
 from .card_programs.validation import program_source_is_current
 from .replacement.immutable import thaw_value
+from .rules.scoped_activated_abilities import nonbattlefield_program_is_applicable
 from .semantic_runtime.activated_abilities import (
     activated_abilities_from_descriptors,
 )
@@ -100,6 +101,7 @@ def compiled_activated_abilities(
             continue
         if not program_source_is_current(host.card_db, program):
             continue
+        if not nonbattlefield_program_is_applicable(host,card,program):continue
         if any(
             descriptor_requires_complete_card_program(descriptor)
             for descriptor in program.handlers

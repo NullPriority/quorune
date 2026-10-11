@@ -458,6 +458,26 @@ test("assignment maps enforce server-issued conditional group minimums", () => {
   );
 });
 
+test("multi-block assignments enforce distinct edges, row capacity and menace counts", () => {
+  const blockers = form([{name:"blocks",label:"Blocks",control:"assignment_map",
+    rows:[{value:"B1",label:"First",maximum:2,options:[{value:"A1"},{value:"A2"},{value:"A3"}]},
+      {value:"B2",label:"Second",options:[{value:"A1"}]}],minimum_group_sizes:{A1:2}}]);
+  assert.deepEqual(validateChoices(blockers,{blocks:{B1:["A1","A2"],B2:"A1"}}),[]);
+  assert.match(validateChoices(blockers,{blocks:{B1:["A1","A2"]}}).join(" "),/at least 2/);
+  assert.match(validateChoices(blockers,{blocks:{B1:["A2","A2"]}}).join(" "),/distinct/);
+  assert.match(validateChoices(blockers,{blocks:{B1:["A1","A2","A3"]}}).join(" "),/capacity/);
+  assert.match(validateChoices(blockers,{blocks:{B2:["A1","A2"]}}).join(" "),/capacity|unavailable/);
+});
+
+test("Enlist assignment requires attacking sources and distinct nonattacking donors", () => {
+  const enlist = form([{name:"enlist",label:"Enlist",control:"assignment_map",source_assignment:"attackers",exclude_assigned:true,distinct_options:true,
+    rows:[{value:"A1",options:[{value:"A2"},{value:"A3"}]},{value:"A4",options:[{value:"A2"},{value:"A3"}]}]}]);
+  assert.deepEqual(validateChoices(enlist,{attackers:{A1:"B"},enlist:{A1:"A2"}}),[]);
+  assert.match(validateChoices(enlist,{attackers:{A1:"B"},enlist:{A4:"A2"}}).join(" "),/declared attacker/);
+  assert.match(validateChoices(enlist,{attackers:{A1:"B",A2:"B"},enlist:{A1:"A2"}}).join(" "),/nonattacking/);
+  assert.match(validateChoices(enlist,{attackers:{A1:"B",A4:"B"},enlist:{A1:"A2",A4:"A2"}}).join(" "),/twice/);
+});
+
 test("copy targets preserve defaults and validate each copy", () => {
   const copies = form([
     {

@@ -377,7 +377,7 @@ class BlockTransitionCommitAndResolutionTests(unittest.TestCase):
         )
         self.assertEqual(attacker.object_id, blocker.blocking)
 
-    def test_duplicate_blocker_assignment_is_rejected_until_multi_block_is_supported(
+    def test_duplicate_blocker_attacker_pair_is_rejected(
         self,
     ):
         first_attacker = self.card("A1", "A")
@@ -392,7 +392,7 @@ class BlockTransitionCommitAndResolutionTests(unittest.TestCase):
 
         with self.assertRaisesRegex(
             CombatRelationshipStateError,
-            "A blocker cannot be committed more than once",
+            "A blocker-attacker pair cannot be committed more than once",
         ):
             commit_block_declaration(
                 combat,
@@ -409,7 +409,7 @@ class BlockTransitionCommitAndResolutionTests(unittest.TestCase):
                     ),
                     BlockDeclarationAssignment(
                         blocker_object_id=blocker.object_id,
-                        attacker_object_id=second_attacker.object_id,
+                        attacker_object_id=first_attacker.object_id,
                     ),
                 ),
             )

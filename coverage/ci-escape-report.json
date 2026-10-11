@@ -1430,6 +1430,62 @@
       "resolution": "Keep every existing privacy, seat-scope, accepted-choice, and replay assertion. Force a token collision in the fixture and serialize all projected decision fields except the opaque cap for hidden-reference inspection. Confirm a real hidden reference injected into projected ctx still fails. Production token generation, projection, rules, and compiler remain unchanged.",
       "run_id": 37824288440,
       "summary": "The Amass privacy witness searched short hidden card references inside the entire decision JSON. A random opaque capability token happened to contain A71, failing the assertion although no projected choice data disclosed the card. A forced token collision reproduces the same test-only failure."
+    },
+    {
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "failed_surfaces": [
+        "PR / Python / ubuntu / functional-02 through functional-06 and functional-09",
+        "PR / Windows / functional-02 through functional-06 and functional-09"
+      ],
+      "head_sha": "51bba0c1fe226aa35ef4fbb33883d9833da3ca14",
+      "id": "ci-20261011-498-promoted-consumers",
+      "impact_edge_status": "added",
+      "regressions": [
+        "test_continuous_compiler_hardening.ClosedContinuousGrammarTests.test_original_commander_anthem_promotes_without_approximating_sibling",
+        "test_static_attached_control.StaticAttachedControlRuntimeTests.test_original_split_second_aura_has_whole_admission_and_actual_control_replay",
+        "test_fixed_mana_abilities.FixedManaCompilerTests.test_fixed_loyalty_mana_uses_resolution_producer_without_promoting_mana_leaf"
+      ],
+      "resolution": "Update each affected promoted integration expectation, preserve leaf rejection, and use a constructed nearest unsupported boundary. Add monotonic composition-source impact edges for every observed consumer. The exact promoted-consumer tests and actual original-card control replay pass; compiler and runtime behavior are unchanged.",
+      "run_id": 38125267611,
+      "summary": "The complete Ubuntu and Windows gate retained integration exclusions for newly admitted Commander queries, Graft, Prototype, player protection, Split second, scoped color prevention and loyalty resolution mana. Their leaf-compiler exclusions still hold, but the whole-card expectations did not follow the composition owners."
+    },
+    {
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "failed_surfaces": [
+        "PR / Python / ubuntu / functional-03",
+        "PR / Windows / functional-03"
+      ],
+      "head_sha": "51bba0c1fe226aa35ef4fbb33883d9833da3ca14",
+      "id": "ci-20261011-498-aftermath-fixture",
+      "impact_edge_status": "added",
+      "regressions": [
+        "test_aftermath_rules.AftermathCompilerTests.test_selected_half_has_bare_lifecycle_and_other_face_remains_ordinary",
+        "test_aftermath_rules.AftermathCompilerTests.test_zone_cast_dependency_omission_blocks_aftermath_half"
+      ],
+      "resolution": "Build one temporary database from the owned Aftermath fixture and retain original Oracle-ID selection and assertions. Add the Aftermath source/fixture consumer impact edge. Focused tests and canonical compact-fixture dependency validation pass; no environment-specific full database is required.",
+      "run_id": 38125267611,
+      "summary": "Aftermath compiler tests opened a developer-local full Scryfall database path absent from the compact CI environment, producing FileNotFoundError on both operating systems."
+    },
+    {
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "failed_surfaces": [
+        "PR / Generated + architecture",
+        "PR / Windows / generated-validation"
+      ],
+      "head_sha": "51bba0c1fe226aa35ef4fbb33883d9833da3ca14",
+      "id": "ci-20261011-498-interaction-witnesses",
+      "impact_edge_status": "added",
+      "regressions": [
+        "test_defender_permission.DefenderPermissionRuntimeTests.test_original_wall_aura_combines_restriction_grant_and_actual_removal_replay",
+        "test_fixed_resolution_mana.FixedResolutionManaRuntimeTests.test_original_mana_replacement_carriers_fail_closed_at_whole_runtime_admission",
+        "test_player_target_protection.PlayerProtectionRuntimeTests.test_shroud_source_sacrifice_redirects_then_restores_targetability_and_replays"
+      ],
+      "resolution": "Add actual Aura/grant and Shroud/sacrifice-redirection runtime witnesses with strict compiler admission, rollback, privacy and replay, plus whole-program fail-closed witnesses for both fixed-mana/replacement residual pairs using five original carriers. Register their exact qualified IDs and add consumer impact edges. Preserve scheduler debt prioritization and runtime-composition evidence requirements; canonical generation owns the refreshed interaction counts.",
+      "run_id": 38125267611,
+      "summary": "The regenerated corpus exposed four applicable high-risk pairs without explicit evidence. The rules scheduler correctly foregrounded assurance debt, causing stale harvest-selection assumptions to fail in Ubuntu and Windows generated governance."
     }
   ],
   "known_flaky_tests": [],
@@ -1490,7 +1546,7 @@
   ],
   "repository": "NullPriority/quorune",
   "schema_version": 2,
-  "source_fingerprint": "61fe73e828700d04fb1cd964eac0433d3c8b8fb4fdddc18ff4d30772c3109287",
+  "source_fingerprint": "d65a0a69ed61c485f0262f7b7d08df61a16ab90145dda5d1b701f05bd1b4bf0d",
   "summary": {
     "average_critical_path_seconds": 181.25,
     "average_pushes_per_merged_pr": null,
@@ -1500,13 +1556,13 @@
       "flaky_test": 9,
       "generated_artifact_drift": 10,
       "infrastructure": 1,
-      "missing_affected_test": 34,
+      "missing_affected_test": 37,
       "source_correctness": 22,
       "windows_compatibility": 1
     },
     "current_missing_impact_edges": [],
-    "deterministic_escape_count": 75,
-    "escape_count": 82,
+    "deterministic_escape_count": 78,
+    "escape_count": 85,
     "eventual_final_head_certification_pass_rate": 1.0,
     "eventual_final_head_certification_sample_size": 4,
     "first_eligible_head_certification_pass_rate": null,

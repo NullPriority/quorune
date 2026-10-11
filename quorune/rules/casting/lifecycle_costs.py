@@ -55,6 +55,7 @@ def with_fixed_cast_lifecycle_costs(
     }
     for spec in specs:
         if spec.kind in {
+            FixedCastLifecycleKind.AFTERMATH,
             FixedCastLifecycleKind.MADNESS,
             FixedCastLifecycleKind.MAYHEM,
             FixedCastLifecycleKind.ESCAPE,
@@ -138,7 +139,8 @@ def zone_lifecycle_base_options(
         )
     if card.zone != "graveyard":
         return []
-    result: list[dict[str, Any]] = []
+    aftermath=compiled_fixed_cast_lifecycle_spec(host,card,FixedCastLifecycleKind.AFTERMATH)
+    result: list[dict[str, Any]] = [aftermath.printed_zone_cost_option(option) for option in printed] if aftermath is not None else []
     if compiled_mayhem_permission(host, seat, card):
         mayhem = compiled_fixed_cast_lifecycle_spec(host, card, FixedCastLifecycleKind.MAYHEM)
         if mayhem is not None:

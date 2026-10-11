@@ -167,6 +167,7 @@ class CharacteristicQuantitySpec:
             len(query.zones) != 1
             or query.zones[0] not in {"battlefield", "graveyard", "hand"}
             or query.owner is not None
+            or query.commander is not None
             or query.controller is not None
             or query.exclude_ref is not None
             or query.known_to_actor is not None

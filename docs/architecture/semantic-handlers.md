@@ -67,6 +67,57 @@ stable inventory. A handler may request a narrowly defined continuation for a
 choice or replacement-aware transaction, but it may not retain mutable state
 or commit around the canonical owner. Rollback must leave no partial mutation.
 
+Casting offers and accepted commands use the same prospective selected-face
+view for printed costs and cost predicates. Face values enter before current
+characteristic layers, so an intrinsic Devoid definition still affects the
+cost query. Current split spells expose only
+the chosen half's mana value and colors; other zones retain combined split-card
+values. Aftermath uses the existing fixed lifecycle descriptor and canonical
+stack-departure self-replacement, including when countered. Pending private
+results preserve that lifecycle through save/load without replaying prior
+instructions.
+
+Implicit ordinary permanent-spell provenance binds the exact selected face
+name and its permanent type. Another face's permanent type cannot authorize an
+unsupported spell half under the trusted-only policy; offers and proposals
+share that same trust predicate.
+
+Player speed starts through the canonical state-based owner and persists after
+its starter leaves. Committed opponent life losses queue one source-free
+inherent trigger during the speed owner's turn, recording usage at creation.
+The closed `increase_speed` instruction checks its intervening limit and
+commits through the player speed owner. Current Max Speed abilities use the
+same source applicability model in battlefield and graveyard contexts, with
+exact equality to four rather than a minimum threshold.
+
+Prototype uses a current trusted complete-card marker in the existing ability
+registry. The cast owner creates an immutable prospective characteristic view,
+then pays and commits through ordinary casting. Its canonical annotation
+survives stack-to-battlefield resolution, participates in copiable snapshots,
+and is removed by other zone transitions. Costs and card abilities remain
+independent of the selected size and color.
+
+Printed self-transform activations use the existing `transform` instruction
+and source-pinned transform owner. The activation context captures the current
+transform count, while source-zone-object substitution rechecks incarnation.
+Shared current-face keyword queries consume trusted compiled keyword programs,
+so transforming removes old-face keywords while retaining costs and independent
+new-face abilities.
+
+Enlist's optional declaration taps and linked reflexive program use the
+existing tap, scalar, APNAP and continuous-effect owners. The trigger context
+pins the original attacker and donor, preserves paid taps across pending
+save/load, and reads current donor power or immediate departure LKI at
+resolution. Declining creates no tap or trigger, and unsupported sibling
+instructions remain closed independently.
+
+Fixed Graft uses the existing semantic-choice registry for its optional,
+non-targeted move. Its immutable movement intent pins both incarnations and
+retains the trigger controller. The counter coordinator resolves recipient
+replacement choices before the canonical counter owner commits source removal
+and replaced placement together. Saved replacement continuations preserve
+that movement identity and cannot repeat or redirect the removal.
+
 The existing generic direct-control operations share the authoritative control
 and acquisition-history owner. An indefinite control instruction invalidates
 an older end-of-turn restoration even when it names the current controller.
@@ -146,10 +197,24 @@ cost payment suppresses the default even when a replacement redirects its cards.
 
 A fixed semantic-choice life gain uses `LifeChangeIntent` rather than writing a
 life total directly. The intent host prepares the canonical life-change batch;
-when multiple replacements apply, the ordinary private replacement task stores
+its life-intent delegate also accepts one immutable simultaneous loss batch.
+Extort pays one chosen white or black vector, commits distinct opponent losses
+as one batch, and derives its later gain from the actual instruction result.
+Replacement suspension preserves the stage and committed loss amount through the
+existing preparation journal. No client can submit those internal stages.
+When multiple replacements apply, the ordinary private replacement task stores
 a closed life-intent identity and resumes only that uncommitted intent. The
 continuation decoder rejects unknown intent kinds and changed identity, and
 exact replay reissues the same semantic response and replacement selection.
+
+Backup commits canonical target counters before a version-seven temporary
+ability bundle. Its shared target decision permits any legal creature; a self
+target gets only the counters. A different target gains fixed keywords and
+typed ability fragments through the existing continuous-effect journal until
+end of turn. The compiled printed bundle is locked at trigger placement,
+survives source departure, and binds donated abilities to their recipient.
+Counter replacements may suspend before the following grant, preserving the
+cursor through save/load. Target incarnation revalidation remains shared.
 
 The existing counter-unless-payment choice additionally accepts a closed v2
 controller-payment descriptor. It locks the current target's controller for
@@ -220,6 +285,10 @@ target or normalized event-object identity before current-or-immediate-LKI
 reads; unrelated departures never inspect pending copy instructions. Fixed
 exceptions become copiable values, while separately granted Haste uses the
 existing incarnation-pinned continuous-effect owner with its stated duration.
+Embalm and Eternalize reuse a source snapshot captured before the activation's
+self-exile cost. Their fixed color, Zombie subtype, no-mana-cost and Eternalize
+base-stat exceptions become copiable token values through that same owner.
+Their keyword marker requires complete-card admission before activation.
 Independent next-end-step cleanup records actual created incarnations and uses
 one filtered simultaneous sacrifice or exile through the zone transaction.
 The token owner seals entry facts for the actual replacement-adjusted group,

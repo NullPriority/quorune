@@ -57,6 +57,7 @@ class FixedPublicStateConditionKind(StrEnum):
     OPPONENT_LIFE_AT_MOST = "opponent_life_at_most"
     OPPONENT_POISON_COUNTER_AT_LEAST = "opponent_poison_counter_at_least"
     CONTROLLER_IS_MONARCH = "controller_is_monarch"
+    CONTROLLER_MAX_SPEED = "controller_max_speed"
     SOURCE_ENTERED_THIS_TURN = "source_entered_this_turn"
     SOURCE_COUNTER_AT_LEAST = "source_counter_at_least"
     SOURCE_MATCHES_QUERY = "source_matches_query"
@@ -132,6 +133,7 @@ class FixedPublicStateConditionSnapshot:
     source_query_matches: bool | None = None
     attached_query_matches: bool | None = None
     condition_quantity: int | None = None
+    controller_speed: int = 0
 
     def __post_init__(self) -> None:
         if type(self.source_controller) is not str or not self.source_controller:
@@ -185,6 +187,8 @@ class FixedPublicStateConditionSnapshot:
             raise FixedPublicStateConditionError(
                 "Controller monarch status must be boolean"
             )
+        if type(self.controller_speed) is not int or self.controller_speed<0:
+            raise FixedPublicStateConditionError('Controller speed must be a nonnegative integer')
         normalized: list[tuple[str, int]] = []
         for raw_name, amount in self.source_counters:
             if type(raw_name) is not str:
@@ -516,6 +520,7 @@ class FixedPublicStateConditionSpec:
             FixedPublicStateConditionKind.SOURCE_MATCHES_QUERY,
             FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY,
             FixedPublicStateConditionKind.CONTROLLER_IS_MONARCH,
+            FixedPublicStateConditionKind.CONTROLLER_MAX_SPEED,
         }
         if (
             self.kind
@@ -573,6 +578,8 @@ class FixedPublicStateConditionSpec:
             )
         if self.kind is FixedPublicStateConditionKind.CONTROLLER_IS_MONARCH:
             return snapshot.controller_is_monarch
+        if self.kind is FixedPublicStateConditionKind.CONTROLLER_MAX_SPEED:
+            return snapshot.controller_speed==4
         if self.kind is FixedPublicStateConditionKind.SOURCE_ENTERED_THIS_TURN:
             return (
                 snapshot.turn_sequence > 0

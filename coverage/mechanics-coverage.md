@@ -10,7 +10,7 @@ maintenance: "generated"
 # Mechanics coverage
 
 - Effective date: `2026-08-07`
-- Discovered mechanics: 427
+- Discovered mechanics: 429
 - Trusted mechanics: 7
 - Oracle enrichment complete: false
 - Current snapshot complete: false

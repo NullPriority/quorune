@@ -43,7 +43,8 @@ def commit_state_based_principal_changes(host: StateBasedPrincipalHost) -> bool:
         return True
     losers = player_loss_seats(host.state, host.active_seats)
     if not losers:
-        return False
+        from .rules.player_speed_state import start_player_speeds
+        return start_player_speeds(host)
     host._eliminate_players(losers, reason="state-based loss")
     return True
 

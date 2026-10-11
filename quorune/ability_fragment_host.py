@@ -88,6 +88,10 @@ class AbilityFragmentHostMixin:
         error_type: type[Exception] | None = None,
     ) -> dict[str, Any]:
         base = base_card_characteristics(card, record)
+        from .rules.prototype import prototype_characteristic_values
+        base.update(prototype_characteristic_values(card))
+        from .rules.current_face_keywords import current_printed_face_keywords
+        base['keywords']=current_printed_face_keywords(self,card,record,base)
         base["ability_fragments"] = self._compiled_ability_fragment_dicts(
             card,
             error_type=error_type,

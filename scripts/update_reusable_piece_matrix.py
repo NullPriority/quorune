@@ -27,6 +27,7 @@ from quorune.reusable_pieces import (
     validate_reusable_piece_artifacts,
 )
 from quorune.rule_conformance import discover_unittest_ids
+from quorune.reusable_pieces.interactions import validate_interaction_test_references
 from quorune.rules.capabilities import (
     load_default_capability_registry,
 )
@@ -108,6 +109,12 @@ def _ruling_counts(db_path: Path | None) -> dict[str, int]:
         }
 
 
+def _known_test_ids() -> set[str]:
+    """Preserve exact qualified identities and the supported legacy leaf IDs."""
+    discovered = discover_unittest_ids(ROOT)
+    return discovered | {test_id.rsplit('.', 1)[-1] for test_id in discovered}
+
+
 def _build(
     *,
     db_path: Path | None,
@@ -125,10 +132,7 @@ def _build(
         platform_status=load_json(PLATFORM_INPUT),
         policy=load_reusable_piece_policy(ROOT),
         interaction_evidence=load_json(INTERACTION_EVIDENCE_INPUT),
-        known_test_ids={
-            test_id.rsplit(".", 1)[-1]
-            for test_id in discover_unittest_ids(ROOT)
-        },
+        known_test_ids=_known_test_ids(),
         baseline=baseline,
         ruling_counts=_ruling_counts(db_path),
     )
@@ -293,6 +297,9 @@ def main() -> int:
     args = parser.parse_args()
     if args.validate_policy:
         load_reusable_piece_policy(ROOT)
+        validate_interaction_test_references(
+            load_json(INTERACTION_EVIDENCE_INPUT), known_test_ids=_known_test_ids(),
+        )
         return 0
     if args.refresh_derived:
         artifacts = _load_tracked()

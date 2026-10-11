@@ -168,6 +168,7 @@ def fixed_query_quoted_ability_handler(
                 {
                     "continuous.ability.fixed_query_grant",
                     *fragment_capabilities,
+                    *(('state_query.commander.designation',) if condition['predicate'].get('commander') is True else ()),
                 }
             )
         ),
@@ -228,7 +229,7 @@ _FIXED_QUERY_POWER_TOUGHNESS = re.compile(
 )
 def fixed_power_toughness_anthem_handler(
     oracle_line: str,
-) -> tuple[str, Mapping[str, Any], str] | None:
+) -> tuple[str, Mapping[str, Any], str | tuple[str, ...]] | None:
     text = _TRAILING_REMINDER.sub("", oracle_line.strip()).strip()
     match = _FIXED_QUERY_POWER_TOUGHNESS.fullmatch(text)
     if match is None:
@@ -255,7 +256,7 @@ def fixed_power_toughness_anthem_handler(
             },
             "modifier": {"power": power, "toughness": toughness},
         },
-        "continuous.power_toughness.fixed_anthem",
+        ('continuous.power_toughness.fixed_anthem','state_query.commander.designation') if predicate.commander is True else "continuous.power_toughness.fixed_anthem",
     )
 
 
@@ -297,6 +298,7 @@ def fixed_query_keyword_grant_handler(
     capabilities = {
         "continuous.ability.fixed_query_keyword_grant",
         *_attached_ability_capabilities(abilities),
+        *(('state_query.commander.designation',) if predicate.commander is True else ()),
     }
     return (
         "continuous-fixed-query-keyword-grant-v2",
@@ -384,7 +386,7 @@ def fixed_query_characteristic_grant_handler(
                 "toughness": int(anthem[1]["modifier"]["toughness"]),
             },
         },
-        tuple(sorted({anthem[2], *keywords[2]})),
+        tuple(sorted({*((anthem[2],) if isinstance(anthem[2],str) else anthem[2]), *keywords[2]})),
     )
 
 
@@ -1410,7 +1412,7 @@ def fixed_public_state_characteristics_handler(
         ("variant.monarch.designate",)
         if source_condition.kind
         is FixedPublicStateConditionKind.CONTROLLER_IS_MONARCH
-        else ()
+        else ('variant.speed.player',) if source_condition.kind is FixedPublicStateConditionKind.CONTROLLER_MAX_SPEED else ()
     )
     return (
         "continuous-fixed-public-state-characteristics-v1",

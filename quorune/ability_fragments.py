@@ -39,6 +39,8 @@ from .declaration_fragments import (
     DeclarationRestrictionTemplate,
 )
 from .defender_permission import DefenderAttackPermission
+from .block_capacity_model import BlockCapacitySpec
+from .enlist_model import EnlistSpec
 from .as_unblocked import AsUnblockedAssignmentPermission
 from .toughness_assignment_model import ToughnessAssignmentSpec
 from .umbra_armor_model import UmbraArmorSpec
@@ -988,6 +990,8 @@ StaticAbilityFragment: TypeAlias = (
     | QueryCharacteristicModifierSpec
     | QueryPowerToughnessDefinitionSpec
     | DefenderAttackPermission
+    | BlockCapacitySpec
+    | EnlistSpec
     | AsUnblockedAssignmentPermission
     | ToughnessAssignmentSpec
     | UmbraArmorSpec
@@ -1047,6 +1051,10 @@ def ability_fragment_to_dict(
         kind = "query_power_toughness_definition"
     elif isinstance(fragment, DefenderAttackPermission):
         kind = "defender_attack_permission"
+    elif isinstance(fragment, BlockCapacitySpec):
+        kind = "block_capacity"
+    elif isinstance(fragment, EnlistSpec):
+        kind = 'enlist'
     elif isinstance(fragment, AsUnblockedAssignmentPermission):
         kind = "as_unblocked_assignment"
     elif isinstance(fragment,ToughnessAssignmentSpec):kind='toughness_assignment_rule'
@@ -1152,6 +1160,9 @@ def ability_fragment_from_dict(
             raise AbilityFragmentError(str(exc)) from exc
     if value["kind"] == "defender_attack_permission":
         return DefenderAttackPermission.from_dict(value["value"])
+    if value["kind"] == "block_capacity":
+        return BlockCapacitySpec.from_dict(value["value"])
+    if value['kind']=='enlist':return EnlistSpec.from_dict(dict(value['value']))
     if value["kind"] == "as_unblocked_assignment":
         return AsUnblockedAssignmentPermission.from_dict(value["value"])
     if value['kind']=='toughness_assignment_rule':return ToughnessAssignmentSpec.from_dict(value['value'])
@@ -1210,6 +1221,8 @@ def canonical_ability_fragments(
                 QueryCharacteristicModifierSpec,
                 QueryPowerToughnessDefinitionSpec,
                 DefenderAttackPermission,
+                BlockCapacitySpec,
+                EnlistSpec,
                 AsUnblockedAssignmentPermission,
                 ToughnessAssignmentSpec,
                 UmbraArmorSpec,

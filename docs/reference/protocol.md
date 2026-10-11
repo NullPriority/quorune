@@ -74,6 +74,18 @@ A client must:
 4. replace a stale decision when the packet carries `decision: null`; and
 5. submit only the action IDs and choice fields issued by the current decision.
 
+The `combat.attackers` response may include an optional `enlist` mapping from
+declared attacker references to eligible nonattacking creature references.
+Multiple Enlist instances use a distinct donor list. The issued choice form
+publishes current options, source assignments and distinct-use constraints;
+the server revalidates the entire declaration before tapping any donor.
+
+The `combat.blockers` response maps each blocker reference to one attacker
+reference or a list of distinct attacker references. Server-issued declaration
+capacities and choice-form row limits describe the allowed count. Every
+pairing must remain legal at submission; an ordinary creature retains capacity
+one. Existing single-reference payloads preserve their representation.
+
 Every network connection has an independent ephemeral cursor. Reconnect begins
 with a full packet, so cursor state is an optimization rather than replay or
 correctness authority. The Python `ProjectedClientView` implements the same

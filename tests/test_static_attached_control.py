@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from dataclasses import replace
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -214,13 +215,37 @@ class StaticAttachedControlRuntimeTests(unittest.TestCase):
         self.assertEqual('A',session.state.cards[body.object_id].controller)
         self.assertEqual(acquired,session.state.cards[body.object_id].acquired_control_timestamp)
 
-    def test_original_aura_with_unsupported_sibling_stays_out_of_runtime(self):
-        c=self.db.lookup('Take Possession')
+    def test_constructed_aura_with_unsupported_sibling_stays_out_of_runtime(self):
+        original=self.db.lookup('Take Possession')
+        c=replace(original, oracle_id='fixture-control-aura-variable-ward',
+            name='Generic Variable Ward Control Aura', oracle_text=original.oracle_text+'\nWard {X}',
+            keywords=(*original.keywords,'Ward'))
         ir=compile_oracle_card(c,capability_registry=self.registry,capability_profile='commander_review')
         self.assertNotEqual('exact',ir.status)
         self.assertTrue(any(n.exact and n.handlers and n.handlers[0].get('handler_id')=='continuous.control.attached-source.v1' for f in ir.faces for n in f.nodes))
         program=compile_best_available_card_program(self.db,c,semantic_registry=SemanticRegistry(),capability_registry=self.registry,capability_profile='commander_review')
         self.assertFalse(bind_card_program_runtime(program,capability_registry=self.registry,profile='commander_review')['strict_capability_ready'])
+
+    def test_original_split_second_aura_has_whole_admission_and_actual_control_replay(self):
+        c=self.db.lookup('Take Possession')
+        ir=compile_oracle_card(c,capability_registry=self.registry,capability_profile='commander_review')
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        program=compile_best_available_card_program(self.db,c,semantic_registry=SemanticRegistry(),
+            capability_registry=self.registry,capability_profile='commander_review')
+        self.assertTrue(bind_card_program_runtime(program,capability_registry=self.registry,
+            profile='commander_review')['strict_capability_ready'])
+        session=self.session(303020);engine=session.engine
+        body=self.add(engine,'Generic Bound Body',seat='B')
+        aura=self.add(engine,'Take Possession',zone='hand')
+        action=self.ready(session,aura,{'U':2,'C':5});self.checkpoint(session)
+        before=authoritative_state_hash(session.state)
+        denied=session.act('pilot:B',{'action_id':action['id'],'targets':[body.ref],'pay':'auto'})
+        self.assertFalse(denied.ok);self.assertEqual(before,authoritative_state_hash(session.state))
+        self.cast(session,aura,body)
+        current=session.state.cards[body.object_id]
+        self.assertEqual(('B','A'),(current.owner,current.controller))
+        self.assertEqual(body.object_id,session.state.cards[aura.object_id].attached_to)
+        self.replay(session,load=True)
 
     def test_original_gift_aura_replacement_siblings_reject_whole_runtime_admission(self):
         from high_risk_interaction_support import _observed_piece_ids

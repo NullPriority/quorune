@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "contract_version": 10,
+  "contract_version": 11,
   "mechanic_id": "cr-509-declare-blockers-step",
   "official_name": "Declare Blockers Step",
   "effective_date": "2026-08-07",
@@ -31,7 +31,10 @@
     "509.4a",
     "509.4b"
   ],
-  "glossary_references": ["Requirement", "Restriction"],
+  "glossary_references": [
+    "Requirement",
+    "Restriction"
+  ],
   "dependencies": [
     "combat",
     "illegal-actions",
@@ -44,7 +47,9 @@
   "coverage_status": "partial",
   "trust_level": "untrusted",
   "behavior": {
-    "zones": ["battlefield"],
+    "zones": [
+      "battlefield"
+    ],
     "objects": [
       "attacking creature",
       "blocking creature",
@@ -92,7 +97,8 @@
       "each defending player chooses zero or more legal blocks",
       "a menace attacker receives zero or at least two blockers",
       "not-alone, matching-companion, other-blocker, minimum/maximum blocker-count, and table-wide count restrictions are inviolable",
-      "the declaration must maximize represented block requirements only within the restriction-obeying declaration space"
+      "the declaration must maximize represented block requirements only within the restriction-obeying declaration space",
+      "A creature with current fixed additional or unlimited capacity may select distinct attacking creatures up to its capacity; the trigger and damage owners observe every accepted pairing."
     ],
     "hidden_information": [
       "blocker declarations use public combat and battlefield information"
@@ -152,45 +158,156 @@
     "exact filtered declarations replaying from the same projected domain",
     "pass-only blocker tasks skipped when no legal domain remains",
     "attack-or-block gates unlocked by a controlled creature death, including a token that later ceases to exist",
-    "recognized unsupported conditional block restrictions stopping fail closed"
+    "recognized unsupported conditional block restrictions stopping fail closed",
+    "fixed additional blocking capacity",
+    "unlimited blocking capacity",
+    "cumulative equipment capacity",
+    "conditional current capacity",
+    "multiple-blocker damage division"
   ],
   "witness_cards": [
-    {"name": "Mogg Flunkies", "oracle_id": "b92fc9c1-7264-4894-90b8-a193039489c5"},
-    {"name": "Bothersome Quasit", "oracle_id": "06cf7b77-ffd7-4192-903e-19bd06887ba1"},
-    {"name": "Wandering Wolf", "oracle_id": "1750cf0a-0709-4f02-90ea-572ff88a37a5"},
-    {"name": "Ironclaw Orcs", "oracle_id": "c645a616-0d7d-416c-b5f3-057b3a1666a0"},
-    {"name": "Troll of Khazad-dûm", "oracle_id": "222fd9fc-7af4-4269-bbb9-cd7b8ac029bd"},
-    {"name": "Phantom Warrior", "oracle_id": "23745133-e5e2-4ce3-b94a-73d0d3d8a013"},
-    {"name": "Welkin Tern", "oracle_id": "010c660a-a67b-48f0-a63a-15470eb89f69"},
-    {"name": "Bedlam", "oracle_id": "c28d4caf-9b7c-40b1-9cbe-275ca9dae06a"},
-    {"name": "Argothian Sprite", "oracle_id": "0dbcc5d8-9533-48fd-a69d-bbc6c72aaac5"},
-    {"name": "Amrou Seekers", "oracle_id": "396efb56-7a54-4d91-b2ce-7f3c62c3238b"},
-    {"name": "Canopy Cover", "oracle_id": "5b84101e-7e23-437d-835c-409bc061ecbb"},
-    {"name": "Air Bladder", "oracle_id": "25c8a3b0-c393-4fc6-a373-808cd8e9850c"},
-    {"name": "Dense Canopy", "oracle_id": "d182ab7d-77bd-49d1-9001-9b4016350181"},
-    {"name": "Rubblebelt Runner", "oracle_id": "3bfa51dd-daed-473a-8377-7bb34a2c3371"},
-    {"name": "Prehistoric Pet", "oracle_id": "2519ccc0-c206-41fb-aa15-2ef88025ff96"},
-    {"name": "Hunted Ghoul", "oracle_id": "12827076-450d-42b1-98ca-9f9279a539fc"},
-    {"name": "Veteran Brawlers", "oracle_id": "77a963a3-473a-4c34-bc46-8ef016a92c0c"},
-    {"name": "Mogg Toady", "oracle_id": "77c7ba06-d247-421d-9e0c-54c3000c1b78"},
-    {"name": "Topiary Stomper", "oracle_id": "e3fc10d2-2733-4265-8275-112c285fd11a"},
-    {"name": "Mindless Null", "oracle_id": "22ff4e16-5c66-4076-94cc-32c281d42f03"},
-    {"name": "Bouncing Beebles", "oracle_id": "4fa46972-d953-4328-9c31-96e134234133"},
-    {"name": "Arctic Foxes", "oracle_id": "898f0824-cf4c-4e34-8407-9a32fdae6dcb"},
-    {"name": "Orcish Conscripts", "oracle_id": "d99e1d08-32ca-49c5-97cc-e064d661202f"},
-    {"name": "Okk", "oracle_id": "f835a8d3-e117-4669-9952-6e9ce13b35fa"},
-    {"name": "Dream Prowler", "oracle_id": "b56c5b39-2465-4a25-b806-bb84866e576f"},
-    {"name": "Gutter Skulker // Gutter Shortcut", "oracle_id": "d2d753d4-3bb7-4503-8cc0-8f948b7a461e"},
-    {"name": "Jeskai Infiltrator", "oracle_id": "39b359c1-48b8-43a7-b972-54764eadd2c7"},
-    {"name": "Storm, Windrider", "oracle_id": "06e9287b-56d4-443e-97ba-b5dcdc4fa989"},
-    {"name": "Graxiplon", "oracle_id": "b81ed78a-1bcc-4a98-8d06-6c9fdff0a8d3"},
-    {"name": "Bontu the Glorified", "oracle_id": "c2679c32-a23d-4953-bb48-b46580439ce2"}
+    {
+      "name": "Mogg Flunkies",
+      "oracle_id": "b92fc9c1-7264-4894-90b8-a193039489c5"
+    },
+    {
+      "name": "Bothersome Quasit",
+      "oracle_id": "06cf7b77-ffd7-4192-903e-19bd06887ba1"
+    },
+    {
+      "name": "Wandering Wolf",
+      "oracle_id": "1750cf0a-0709-4f02-90ea-572ff88a37a5"
+    },
+    {
+      "name": "Ironclaw Orcs",
+      "oracle_id": "c645a616-0d7d-416c-b5f3-057b3a1666a0"
+    },
+    {
+      "name": "Troll of Khazad-d\u00fbm",
+      "oracle_id": "222fd9fc-7af4-4269-bbb9-cd7b8ac029bd"
+    },
+    {
+      "name": "Phantom Warrior",
+      "oracle_id": "23745133-e5e2-4ce3-b94a-73d0d3d8a013"
+    },
+    {
+      "name": "Welkin Tern",
+      "oracle_id": "010c660a-a67b-48f0-a63a-15470eb89f69"
+    },
+    {
+      "name": "Bedlam",
+      "oracle_id": "c28d4caf-9b7c-40b1-9cbe-275ca9dae06a"
+    },
+    {
+      "name": "Argothian Sprite",
+      "oracle_id": "0dbcc5d8-9533-48fd-a69d-bbc6c72aaac5"
+    },
+    {
+      "name": "Amrou Seekers",
+      "oracle_id": "396efb56-7a54-4d91-b2ce-7f3c62c3238b"
+    },
+    {
+      "name": "Canopy Cover",
+      "oracle_id": "5b84101e-7e23-437d-835c-409bc061ecbb"
+    },
+    {
+      "name": "Air Bladder",
+      "oracle_id": "25c8a3b0-c393-4fc6-a373-808cd8e9850c"
+    },
+    {
+      "name": "Dense Canopy",
+      "oracle_id": "d182ab7d-77bd-49d1-9001-9b4016350181"
+    },
+    {
+      "name": "Rubblebelt Runner",
+      "oracle_id": "3bfa51dd-daed-473a-8377-7bb34a2c3371"
+    },
+    {
+      "name": "Prehistoric Pet",
+      "oracle_id": "2519ccc0-c206-41fb-aa15-2ef88025ff96"
+    },
+    {
+      "name": "Hunted Ghoul",
+      "oracle_id": "12827076-450d-42b1-98ca-9f9279a539fc"
+    },
+    {
+      "name": "Veteran Brawlers",
+      "oracle_id": "77a963a3-473a-4c34-bc46-8ef016a92c0c"
+    },
+    {
+      "name": "Mogg Toady",
+      "oracle_id": "77c7ba06-d247-421d-9e0c-54c3000c1b78"
+    },
+    {
+      "name": "Topiary Stomper",
+      "oracle_id": "e3fc10d2-2733-4265-8275-112c285fd11a"
+    },
+    {
+      "name": "Mindless Null",
+      "oracle_id": "22ff4e16-5c66-4076-94cc-32c281d42f03"
+    },
+    {
+      "name": "Bouncing Beebles",
+      "oracle_id": "4fa46972-d953-4328-9c31-96e134234133"
+    },
+    {
+      "name": "Arctic Foxes",
+      "oracle_id": "898f0824-cf4c-4e34-8407-9a32fdae6dcb"
+    },
+    {
+      "name": "Orcish Conscripts",
+      "oracle_id": "d99e1d08-32ca-49c5-97cc-e064d661202f"
+    },
+    {
+      "name": "Okk",
+      "oracle_id": "f835a8d3-e117-4669-9952-6e9ce13b35fa"
+    },
+    {
+      "name": "Dream Prowler",
+      "oracle_id": "b56c5b39-2465-4a25-b806-bb84866e576f"
+    },
+    {
+      "name": "Gutter Skulker // Gutter Shortcut",
+      "oracle_id": "d2d753d4-3bb7-4503-8cc0-8f948b7a461e"
+    },
+    {
+      "name": "Jeskai Infiltrator",
+      "oracle_id": "39b359c1-48b8-43a7-b972-54764eadd2c7"
+    },
+    {
+      "name": "Storm, Windrider",
+      "oracle_id": "06e9287b-56d4-443e-97ba-b5dcdc4fa989"
+    },
+    {
+      "name": "Graxiplon",
+      "oracle_id": "b81ed78a-1bcc-4a98-8d06-6c9fdff0a8d3"
+    },
+    {
+      "name": "Bontu the Glorified",
+      "oracle_id": "c2679c32-a23d-4953-bb48-b46580439ce2"
+    },
+    {
+      "name": "Selesnya Sagittars",
+      "oracle_id": "027484b8-0df5-48b6-b69b-bb4e39c5ba81"
+    },
+    {
+      "name": "Echo Circlet",
+      "oracle_id": "17134950-fdb3-48d0-b541-419db673f4c9"
+    },
+    {
+      "name": "Palace Guard",
+      "oracle_id": "5c92f375-ae6a-4be5-a499-ab87d6bdc49b"
+    },
+    {
+      "name": "Trueheart Duelist",
+      "oracle_id": "a0185db5-8988-4f63-8f3c-a19b4807a431"
+    }
   ],
   "rulings": [
-    "Mogg Flunkies — 2018-03-16 — The other blocker need not block the same attacker.",
-    "Wandering Wolf — 2012-05-01 — The power comparison occurs only as blockers are declared.",
-    "Prehistoric Pet — 2026-01-27 — Once blocked, later power changes do not make it unblocked.",
-    "Mindless Null — 2009-10-01 — The Vampire condition matters only as blockers are declared; losing Vampires afterward does not undo the block."
+    "Mogg Flunkies \u2014 2018-03-16 \u2014 The other blocker need not block the same attacker.",
+    "Wandering Wolf \u2014 2012-05-01 \u2014 The power comparison occurs only as blockers are declared.",
+    "Prehistoric Pet \u2014 2026-01-27 \u2014 Once blocked, later power changes do not make it unblocked.",
+    "Mindless Null \u2014 2009-10-01 \u2014 The Vampire condition matters only as blockers are declared; losing Vampires afterward does not undo the block."
   ],
   "test_ids": [
     "test_contract_traces_every_cr_509_rule",
@@ -250,19 +367,32 @@
     "test_filtered_attack_and_block_target_relations",
     "test_shared_creature_subtype_condition_includes_changeling",
     "test_controlled_creature_death_uses_lki_and_survives_token_cleanup",
-    "test_parser_exactly_lowers_current_turn_declaration_families"
+    "test_parser_exactly_lowers_current_turn_declaration_families",
+    "test_actual_iona_aura_keeps_stats_vigilance_and_current_attached_capacity",
+    "test_actual_monarch_condition_changes_capacity_before_declaration_and_not_after",
+    "test_actual_query_source_and_tactician_counter_activation_gate_current_capacity",
+    "test_actual_trueheart_blocks_two_distinct_attackers_and_replays",
+    "test_actual_two_block_combat_damage_divides_once_and_preserves_both_recipients",
+    "test_actual_two_echo_equips_accumulate_and_bounce_after_blocks_keeps_all_edges",
+    "test_actual_unlimited_palace_guard_blocks_three_but_each_evasion_still_applies",
+    "test_fixed_additional_unlimited_attachment_and_query_grammar_is_closed",
+    "test_omitting_capacity_mutant_is_killed_by_actual_two_block_command",
+    "test_open_capacity_boolean_and_missing_capability_fail_closed",
+    "test_ordinary_body_cannot_use_multi_block_list_and_wrong_defender_is_atomic",
+    "test_set_declaration_requirements_restrictions_costs_and_capacity_share_solver",
+    "test_actual_monarch_condition_false_rejects_second_block_without_mutation"
   ],
   "implementation": {
-    "component": "DeclarationProblem, compiler-only declaration grammar, shared effective layer-6 declaration fragments, and the CommanderEngine blocker declaration/payment transition",
-    "version": "declare-blockers-step-v10"
+    "component": "DeclarationProblem, compiler-only declaration grammar, shared effective layer-6 declaration fragments, and the CommanderEngine blocker declaration/payment transition; fixed typed additive and unlimited capacity fragments, shared set-valued declaration solver, canonical multi-edge combat relationships and client row capacities",
+    "version": "declare-blockers-step-v11"
   },
   "known_blockers": [
     "compound-with-unrelated-effects, temporary, broader, uncompiled current-turn, and multi-block restriction/evasion grammar remains incomplete and recognized static families fail closed",
-    "only exact blocks-each-combat, must-be-blocked, lure, and menace grammar is represented; conditional, effect-granted, multi-block, and optional-cost grammar remains incomplete",
+    "only exact blocks-each-combat, must-be-blocked, lure, and menace grammar is represented; broader conditional, effect-granted, and optional-cost grammar remains incomplete",
     "optional, nonmana, variable, alternative, modified, and broader conditional block costs are not implemented",
     "declare-blockers trigger generation and APNAP placement are incomplete",
     "effects that cause blocks or put creatures onto the battlefield blocking are not implemented",
-    "one creature blocking several attackers is not supported"
+    "variable blocking capacities and unsupported extra-block producers remain incomplete"
   ],
   "review_status": "draft"
 }

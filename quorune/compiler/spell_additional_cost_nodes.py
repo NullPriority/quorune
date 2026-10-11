@@ -283,7 +283,7 @@ def typed_additional_cost_spell_node(
         cost = fixed_sacrifice_additional_cost_template(first_clause)
         cost_mechanics = ()
     if cost is None:
-        cost = fixed_zone_change_additional_cost_template(first_clause)
+        cost = fixed_zone_change_additional_cost_template(first_clause, allow_counted=True)
         cost_mechanics = ()
     if cost is None:
         cost = fixed_life_payment_additional_cost_template(first_clause)

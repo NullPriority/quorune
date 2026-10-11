@@ -66,6 +66,22 @@ def _normalized_generated_bytes(path: Path) -> bytes:
     return path.read_text(encoding="utf-8").encode("utf-8")
 
 
+def _pinned_manifest_metadata(manifest: Mapping[str, Any], documents: Mapping[str, Mapping[str, Any]]) -> dict[str, Any]:
+    """Derive index metadata from the authoritative, source-bound inputs."""
+    result = json.loads(json.dumps(manifest))
+    for name, document in documents.items():
+        if any(document.get(key) != manifest.get(key) for key in ('source_sha256', 'effective_date')):
+            raise RulesDerivedError(f'{name} points to a different pinned rules snapshot')
+    hashes = dict(result.get('derived_hashes') or {})
+    hashes.update({name: _json_hash(document) for name, document in documents.items()})
+    result['derived_hashes'] = hashes
+    result['rule_count'] = len(documents['rule-index.json']['rules'])
+    result['section_count'] = len(documents['rule-index.json']['sections'])
+    result['glossary_count'] = len(documents['glossary-index.json']['entries'])
+    result['mechanic_count'] = len(documents['mechanic-index.json']['mechanics'])
+    return result
+
+
 def expected_outputs() -> dict[str, bytes]:
     """Build review- and contract-derived artifacts without network access."""
 
@@ -98,7 +114,12 @@ def expected_outputs() -> dict[str, bytes]:
         card_data_snapshot=dict(manifest.get("card_data_snapshot") or {}),
         root=ROOT,
     )
-    derived_manifest = json.loads(json.dumps(manifest))
+    derived_manifest = _pinned_manifest_metadata(manifest, {
+        'rule-index.json': rule_index,
+        'mechanic-index.json': mechanic_index,
+        'glossary-index.json': _load('rules/glossary-index.json'),
+        'dependency-graph.json': _load('rules/dependency-graph.json'),
+    })
     hashes = dict(derived_manifest.get("derived_hashes") or {})
     hashes["conformance-cases.json"] = _json_hash(conformance)
     hashes["mechanics/registry.json"] = _json_hash(mechanics_registry)

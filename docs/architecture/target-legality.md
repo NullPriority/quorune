@@ -22,6 +22,14 @@ current projected rows and the complete predicate. The narrow
 immutable `TargetProtectionSnapshot`; the pure
 `target_protection_verdict` owner evaluates it.
 
+Fixed "you have hexproof" and "you have shroud" components derive player
+keywords from current effective, trusted battlefield abilities. Their grant
+follows the source's current controller and ends when its source leaves or
+phases out. Hexproof permits that player's own targeted spells and abilities;
+shroud prohibits them as well. Offers, accepted commands and resolution
+revalidation use the same snapshot, while untargeted instructions retain their
+ordinary recipients. The query introduces no stored player keyword state.
+
 Direct permanent schemas may also carry one typed public-state predicate.
 `PermanentStatePredicateSpec` is shared with affected-set queries and evaluates
 current tapped state, one named counter minimum, or positive current-turn

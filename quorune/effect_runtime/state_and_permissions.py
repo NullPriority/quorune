@@ -12,6 +12,7 @@ from ..permanent_designations import (
     advance_class_level,
 )
 from ..trigger_processing import schedule_delayed_trigger
+from .player_speed import apply_speed_increase
 
 
 OPERATIONS = effect_family_contract("state-and-permissions.v1").operations
@@ -313,6 +314,7 @@ def _apply_mana(
         "amount",
         "source",
         "retain_until",
+        'spend_restriction',
         "_runtime_source",
     }:
         raise GameRuleError("Semantic mana effect has unknown fields")
@@ -329,6 +331,10 @@ def _apply_mana(
         raise GameRuleError("Invalid semantic mana effect")
     source_ref = str(effect.get("source") or "")
     retain_until = effect.get("retain_until")
+    restriction = effect.get('spend_restriction')
+    from ..mana_restrictions import valid_mana_spend_restriction
+    if restriction is not None and not valid_mana_spend_restriction(restriction):
+        raise GameRuleError('Semantic mana spend restriction is malformed')
     if retain_until not in {None, "end_of_combat"}:
         raise GameRuleError("Semantic mana retention is unsupported")
     host._add_mana_to_pool(
@@ -339,6 +345,7 @@ def _apply_mana(
             and bool(host._mana_source_is_snow(source_ref))
         ),
         retention=retain_until,
+        restriction=restriction,
     )
     host._log(
         actor,
@@ -436,6 +443,7 @@ def _apply_delayed_pact_payment(
 
 
 HANDLERS = {
+    'increase_speed': apply_speed_increase,
     'add_counter_selected': _apply_add_counter_selected,
     'delayed_mana': _apply_delayed_mana,
     'delayed_pact_payment': _apply_delayed_pact_payment,

@@ -12,6 +12,7 @@ from ..fixed_keyword_entry_counters import (
 from ..rules.capabilities import CapabilityRegistry
 from .dependency_gate import explicit_capabilities_gate
 from .fading_nodes import fading_upkeep_node
+from .graft_nodes import graft_lifecycle_node
 from .vanishing_nodes import vanishing_lifecycle_nodes
 from .ir_model import (
     OracleNode,
@@ -107,7 +108,10 @@ def fixed_keyword_entry_nodes(
     ),) if mechanic == "fading" else vanishing_lifecycle_nodes(
         node_id=node_id, line=line, span=span, capability_registry=capability_registry,
         capability_profile=capability_profile, residuals=residuals,
-    ) if mechanic == "vanishing" else ()
+    ) if mechanic == "vanishing" else (graft_lifecycle_node(
+        node_id=node_id, line=line, span=span, capability_registry=capability_registry,
+        capability_profile=capability_profile, residuals=residuals,
+    ),) if mechanic == "graft" else ()
     lifecycle_residual_id = append_residual(
         residuals,
         kind="keyword_lifecycle",

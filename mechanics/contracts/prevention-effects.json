@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "contract_version": 1,
+  "contract_version": 2,
   "mechanic_id": "cr-615-prevention-effects",
   "official_name": "Prevention Effects",
   "effective_date": "2026-08-07",
@@ -93,9 +93,50 @@
     "static fixed reduction",
     "per-creature shield",
     "unpreventable damage",
-    "prevention trigger"
+    "prevention trigger",
+    "attacking recipient",
+    "own creature token recipient",
+    "enchanted creature source",
+    "current block-pair relationship",
+    "shared source-recipient color",
+    "fixed no-plus-one-counter source",
+    "redirected scope facts",
+    "pending replacement ordering"
   ],
-  "witness_cards": [],
+  "witness_cards": [
+    {
+      "name": "Emmara Tandris",
+      "oracle_id": "38a71429-e673-4de4-80a8-f59e5cf98acc"
+    },
+    {
+      "name": "Well-Laid Plans",
+      "oracle_id": "50343947-d127-4479-9c1b-8f5040a97afb"
+    },
+    {
+      "name": "Luminesce",
+      "oracle_id": "7b0f482d-35a3-47f1-8283-0fd47e30cc31"
+    },
+    {
+      "name": "Wall of Vapor",
+      "oracle_id": "7d08d128-863c-4cca-837f-847ff44acef5"
+    },
+    {
+      "name": "Hindervines",
+      "oracle_id": "8d13fabc-1e0f-41f2-8873-9f44b68f7e43"
+    },
+    {
+      "name": "Enchanted Being",
+      "oracle_id": "c98b725e-ca16-4576-bf53-653d4028d861"
+    },
+    {
+      "name": "Dolmen Gate",
+      "oracle_id": "d53d000f-c92f-4d70-ae60-8be3791da8a2"
+    },
+    {
+      "name": "Indentured Oaf",
+      "oracle_id": "d82bde29-1576-4736-a755-df9c37765202"
+    }
+  ],
   "rulings": [],
   "test_ids": [
     "test_contract_traces_every_cr_615_rule",
@@ -105,16 +146,37 @@
     "test_unpreventable_damage_applies_effect_once_without_preventing",
     "test_negative_prevention_amount_fails_closed",
     "test_negative_damage_amount_fails_closed_in_prevention",
-    "test_prevention_never_prevents_more_than_remaining_damage"
+    "test_prevention_never_prevents_more_than_remaining_damage",
+    "test_actual_wall_prevents_only_blocked_creature_damage_across_multiple_pairings",
+    "test_actual_shared_color_plans_prevents_creature_damage_only_with_matching_color",
+    "test_actual_shared_color_negative_keeps_unmatched_combat_damage",
+    "test_actual_emmara_source_bounce_removes_prevention_and_replays",
+    "test_actual_prevention_quantity_replacement_pending_reload_preserves_same_damage",
+    "test_actual_hindervines_preserves_only_countered_source_combat_damage",
+    "test_actual_luminesce_prevents_red_shock_but_not_blue_damage",
+    "test_actual_enchanted_source_prevention_follows_aura_damage_scope",
+    "test_actual_oaf_prevents_only_its_damage_to_red_creature",
+    "test_model_redirection_replaces_token_scope_facts_and_color_pair_result",
+    "test_model_unpreventable_damage_ignores_scoped_prevention_without_hiding_effect",
+    "test_damage_source_and_redirection_codecs_preserve_empty_legacy_forms",
+    "test_role_token_attachment_source_color_and_pair_scopes_are_closed",
+    "test_scope_codec_old_form_is_preserved_and_malformed_extensions_reject",
+    "test_actual_emmara_prevents_only_own_creature_token_shock_and_replays",
+    "test_actual_dolmen_attackers_take_no_combat_damage_but_unblocked_attacker_hits_player",
+    "test_omitting_token_fact_mutant_is_killed_by_actual_copy_and_damage"
   ],
   "implementation": {
-    "component": "replacement_effects.replacement_choice and replacement_effects.apply_replacement",
-    "version": "prevention-event-v1"
+    "component": "canonical damage snapshots, fixed all-damage compiler scopes, damage_prevention scope state and existing replacement application/ordering",
+    "version": "sealed-prevention-public-scopes-v2",
+    "capability_ids": [
+      "damage.prevention.persistent_amount"
+    ],
+    "supported_slice": "Fixed static and turn-bound prevention using current public combat, token, attachment, counter and color facts; excluded objects and unpreventable damage retain ordinary consequences."
   },
   "known_blockers": [
-    "generic prevention effects are not registered from active Oracle semantics",
-    "stateful cross-event shields and simultaneous source allocation are not represented",
-    "source selection, source-property rechecks, and prevention-trigger dispatch are not integrated with engine damage producers"
+    "independently unsupported siblings and unrepresented prevention producers remain residual",
+    "open counter or combat-role predicates, dynamic quantities and all-but-N prevention",
+    "chosen-color linked source selection and unsupported prevention consequences"
   ],
   "review_status": "draft"
 }

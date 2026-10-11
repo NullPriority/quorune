@@ -22,6 +22,10 @@ from ..rules.capabilities import (
     capability_dependencies_for_node,
 )
 from .modal_program_closure import is_closed_fixed_modal_program
+from .public_zone_program_closure import is_closed_reanimation_effect_program,is_closed_own_graveyard_return_program
+from .source_transform_program_closure import is_closed_source_transform_program
+from ..rules.enlist_shapes import is_closed_enlist_reflexive_program
+from ..rules.fixed_resolution_mana_shapes import is_closed_fixed_resolution_mana_program
 from .fixed_effect_payment_templates import is_closed_fixed_effect_payment_program
 from ..rules.stack_controller_payment_shapes import is_closed_stack_controller_payment_program
 from .declared_effect_amounts import is_closed_declared_amount_program
@@ -1202,20 +1206,7 @@ def _is_closed_targeted_own_graveyard_return_program(
 ) -> bool:
     """Recognize only the reviewed own-graveyard card return family."""
 
-    required = set(
-        targeted_own_graveyard_return_node_capabilities(
-            effects=program.effects,
-            target_schema=program.target_schema,
-            mechanic_ids=(
-                value
-                for value in program.coverage
-                if value in {"return-to-owner-hand", "cr-115-targets"}
-            ),
-        )
-    )
-    return bool(required) and required.issubset(
-        program.capability_dependencies
-    )
+    return is_closed_own_graveyard_return_program(program)
 
 
 def _is_closed_public_graveyard_card_exile_program(
@@ -1275,6 +1266,7 @@ def _is_closed_public_characteristic_set_program(program: SemanticProgram) -> bo
 
 def _closed_effect_recognizers():
     return (
+        is_closed_reanimation_effect_program,
         is_closed_public_quantity_mana_program, is_closed_whole_hand_discard_program, _is_closed_fixed_control_program, is_closed_scheduled_player_program, is_closed_target_characteristic_set_program,
         is_closed_fixed_modal_program,
         is_closed_fixed_effect_payment_program,
@@ -1282,7 +1274,7 @@ def _closed_effect_recognizers():
         _is_closed_declared_amount_program,
         _is_closed_public_query_amount_program,
         _is_closed_fixed_creature_power_damage_program,
-        _is_closed_fixed_damage_program, _is_closed_fixed_next_turn_draw_program,
+        _is_closed_fixed_damage_program, _is_closed_fixed_next_turn_draw_program,is_closed_source_transform_program,is_closed_enlist_reflexive_program,is_closed_fixed_resolution_mana_program,
         _is_closed_fixed_draw_program,
         _is_closed_fixed_mill_program,
         is_closed_fixed_impulse_access_program,

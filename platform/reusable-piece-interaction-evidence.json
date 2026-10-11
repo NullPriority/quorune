@@ -8606,6 +8606,799 @@
       ],
       "interaction_order": 2,
       "assertion": "An exactly registered generic Doctor companion with a fixed draw activation is paired with an actual Doctor during four-player setup. An offered and accepted activation draws privately without losing either commander designation, and pre-action replay reproduces the state."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_reunion_pays_two_private_discards_before_drawing_and_replays",
+      "piece_ids": [
+        "capability.casting.additional_cost.zone_change.fixed_discard",
+        "capability.zone.draw.library_to_hand"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.zone_change.fixed_discard",
+        "zone.draw.library_to_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Cathartic Reunion publishes a fixed two-card private discard price and draws only after accepted distinct discards. Underpayment, duplicate, foreign and source-card selections reject without mutation; replaced exile still pays the discard and pre-action replay is exact."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_bankrupt_commits_two_sacrifices_as_one_event_batch_and_replays",
+      "piece_ids": [
+        "capability.casting.additional_cost.fixed_sacrifice",
+        "capability.trigger.event.qualified_zone_change"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.fixed_sacrifice",
+        "trigger.event.qualified_zone_change"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Bankrupt in Blood pays two distinct creature sacrifices before drawing. Vengeful Townsfolk sees one simultaneous death batch and gets one counter, with exact pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_counted_discard_replacement_suspends_saves_and_replays",
+      "piece_ids": [
+        "capability.casting.additional_cost.zone_change.fixed_discard",
+        "capability.zone.change.destination_replacement"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.zone_change.fixed_discard",
+        "zone.change.destination_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual two-card discard cost suspends for competing Dauthi replacements on each object, rejects another principal atomically, survives pending save/load, and carries only prior selected-object journal identities into the second choice; both costs pay and replay exactly."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_atlantis_layer_grant_changes_block_offers_and_acceptance",
+      "piece_ids": [
+        "capability.combat.block.landwalk.basic_type",
+        "capability.continuous.ability.fixed_query_keyword_grant"
+      ],
+      "capability_ids": [
+        "combat.block.landwalk.basic_type",
+        "continuous.ability.fixed_query_keyword_grant"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Lord of Atlantis cast grants islandwalk to an opponent Merfolk. A defending Island removes its block offers and rejects submitted blocks atomically; after that Island leaves, offered and accepted blocks agree, with exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_clan_crafter_owned_borrowed_commander_activates_for_current_controller",
+      "piece_ids": [
+        "capability.continuous.ability.fixed_query_grant",
+        "capability.state_query.commander.designation"
+      ],
+      "capability_ids": [
+        "continuous.ability.fixed_query_grant",
+        "state_query.commander.designation"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Clan Crafter grants its closed sacrifice/counter/draw activation to an owned commander after another player controls it. Only the current controller may submit the offered activation, pays its artifact, receives private draw, and exact replay preserves the original designation."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_bastion_applies_only_to_current_controlled_designated_creatures",
+      "piece_ids": [
+        "capability.continuous.power_toughness.fixed_anthem",
+        "capability.state_query.commander.designation"
+      ],
+      "capability_ids": [
+        "continuous.power_toughness.fixed_anthem",
+        "state_query.commander.designation"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Bastion Protector grants fixed stats and indestructible only to currently controlled designated creature cards, including a foreign-owned borrowed commander. Its own source and an ordinary copy do not qualify; pending save/load and replay preserve physical status."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_real_partner_commanders_both_receive_bastion_without_designating_copies",
+      "piece_ids": [
+        "capability.format.commander.pairing.partner",
+        "capability.state_query.commander.designation"
+      ],
+      "capability_ids": [
+        "format.commander.pairing.partner",
+        "state_query.commander.designation"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Thrasios and Tymna paired setup creates distinct physical commander designations. Both current battlefield commanders receive the actual Bastion grant, with pending save/load and pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_copy_of_actual_commander_controlled_by_grant_player_remains_undesignated",
+      "piece_ids": [
+        "capability.continuous.ability.fixed_query_keyword_grant",
+        "capability.state_query.commander.designation"
+      ],
+      "capability_ids": [
+        "continuous.ability.fixed_query_keyword_grant",
+        "state_query.commander.designation"
+      ],
+      "interaction_order": 2,
+      "assertion": "A real copy token of a designated commander remains undesignated. Actual commander bounce with declined command-zone replacement and Act of Treason bring the copy under the grant player without making it eligible for Bastion indestructible, with exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_sudden_shock_blocks_casts_and_nonmana_abilities_but_allows_mana",
+      "piece_ids": [
+        "capability.mana.activated.fixed_output",
+        "capability.priority.stack.split_second"
+      ],
+      "capability_ids": [
+        "mana.activated.fixed_output",
+        "priority.stack.split_second"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Sudden Shock restricts response casts and nonmana activations for its caster and opponents, while an offered Island mana ability remains accepted; denied commands roll back atomically and replay preserves the completed damage."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_morph_face_up_special_action_remains_legal_during_split_second",
+      "piece_ids": [
+        "capability.casting.morph.fixed_mana",
+        "capability.priority.stack.split_second"
+      ],
+      "capability_ids": [
+        "casting.morph.fixed_mana",
+        "priority.stack.split_second"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Battering Craghorn is cast face down, then turns face up through its offered and accepted special action while actual Sudden Shock remains on the stack. The restriction stays active and pre-action replay preserves the sequence."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_cast_trigger_resolves_above_split_second_without_unlocking_priority",
+      "piece_ids": [
+        "capability.priority.stack.split_second",
+        "capability.trigger.placement.apnap"
+      ],
+      "capability_ids": [
+        "priority.stack.split_second",
+        "trigger.placement.apnap"
+      ],
+      "interaction_order": 2,
+      "assertion": "An exactly registered cast observer triggers above actual Sudden Shock and draws through ordinary APNAP placement and resolution; Split second remains active beneath it and exact pre-action replay reproduces the stack and hand."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_pending_payment_and_gain_replacement_preserve_committed_loss_after_reload",
+      "piece_ids": [
+        "capability.life.gain.replacement.static_multiplier",
+        "capability.trigger.keyword.extort"
+      ],
+      "capability_ids": [
+        "life.gain.replacement.static_multiplier",
+        "trigger.keyword.extort"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Extort pays once and commits each opponent loss before two real Boon Reflection replacements suspend its derived gain. Wrong-seat replacement input is atomic; pending payment and gain reload without repeating loss, and exact replay yields the replaced total."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_two_actual_sources_choose_independent_payments_for_one_cast",
+      "piece_ids": [
+        "capability.trigger.keyword.extort",
+        "capability.trigger.placement.apnap"
+      ],
+      "capability_ids": [
+        "trigger.keyword.extort",
+        "trigger.placement.apnap"
+      ],
+      "interaction_order": 2,
+      "assertion": "Two actual Extort sources trigger independently on one actual cast. The controller orders and pays one while declining the other; canonical cast-source enumeration keeps pending decisions and exact pre-action replay identical."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_queued_extort_retains_cast_controller_after_actual_source_bounce_or_control_change",
+      "piece_ids": [
+        "capability.priority.stack.split_second",
+        "capability.trigger.keyword.extort"
+      ],
+      "capability_ids": [
+        "priority.stack.split_second",
+        "trigger.keyword.extort"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Word of Seizing changes the Extort source controller in response to its queued trigger. The original trigger still offers payment only to its locked controller after the split-second response resolves; actual source bounce likewise leaves the trigger, with exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_control_change_moves_player_protection_and_replays",
+      "piece_ids": [
+        "capability.continuous.control.fixed_resolution",
+        "capability.target.player.static_hexproof_shroud"
+      ],
+      "capability_ids": [
+        "continuous.control.fixed_resolution",
+        "target.player.static_hexproof_shroud"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Act of Treason moves player hexproof to the source current controller and restores targeting of its former controller, with accepted Shock and exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_flash_entry_invalidates_existing_player_target_at_resolution",
+      "piece_ids": [
+        "capability.casting.timing.fixed_query_static",
+        "capability.target.player.static_hexproof_shroud"
+      ],
+      "capability_ids": [
+        "casting.timing.fixed_query_static",
+        "target.player.static_hexproof_shroud"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual trusted Vedalken Orrery permits Aegis of the Gods in response to Shock; new current player hexproof invalidates the selected player at resolution, preserving life and exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_canonical_token_replacement_pending_reload_retains_paid_source_snapshot",
+      "piece_ids": [
+        "capability.activation.graveyard_copy_keyword.fixed_mana",
+        "capability.token.creation.quantity_replacement"
+      ],
+      "capability_ids": [
+        "activation.graveyard_copy_keyword.fixed_mana",
+        "token.creation.quantity_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "An actual Sacred Cat Embalm activation pays and exiles once before generic trusted multiplier fixtures suspend token creation. Pending reload and wrong-principal rollback retain the original no-mana-cost white Zombie copy snapshot; four final tokens and exact replay prove the canonical interaction without asserting real multiplier producer admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_embalm_token_keeps_entry_trigger_and_copyable_exceptions",
+      "piece_ids": [
+        "capability.activation.graveyard_copy_keyword.fixed_mana",
+        "capability.trigger.event.qualified_zone_change"
+      ],
+      "capability_ids": [
+        "activation.graveyard_copy_keyword.fixed_mana",
+        "trigger.event.qualified_zone_change"
+      ],
+      "interaction_order": 2,
+      "assertion": "An actual Anointer Priest Embalm activation creates a token whose own entry trigger gains life through ordinary trigger placement and exact replay, while copiable color/type/no-mana-cost values remain intact."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_counter_replacement_pending_reload_retains_separate_following_grant",
+      "piece_ids": [
+        "capability.counter.placement.quantity_replacement",
+        "capability.trigger.keyword.backup"
+      ],
+      "capability_ids": [
+        "counter.placement.quantity_replacement",
+        "trigger.keyword.backup"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Hardened Scales and Doubling Season suspend Backup counter placement before its separate ability grant; explicit ordering produces four counters after pending reload and wrong-seat rollback, one grant and exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_copy_entry_preserves_printed_order_and_excludes_gained_keyword",
+      "piece_ids": [
+        "capability.token.creation.fixed_copy",
+        "capability.trigger.keyword.backup"
+      ],
+      "capability_ids": [
+        "token.creation.fixed_copy",
+        "trigger.keyword.backup"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Cackling Counterpart creates a copied Boon-Bringer Valkyrie whose Backup retains inherited printed order, grants its three printed keywords and excludes an original source gained Haste keyword, with exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_source_departure_preserves_locked_bundle_and_target_blink_invalidates",
+      "piece_ids": [
+        "capability.trigger.event.qualified_zone_change",
+        "capability.trigger.keyword.backup"
+      ],
+      "capability_ids": [
+        "trigger.event.qualified_zone_change",
+        "trigger.keyword.backup"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual source Unsummon preserves queued Backup donation, while actual recipient Ephemerate makes the original target incarnation illegal. Both paths use offered response spells and exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_static_donations_apply_recipient_block_and_damage_queries",
+      "piece_ids": [
+        "capability.combat.damage.assignment.toughness",
+        "capability.trigger.keyword.backup"
+      ],
+      "capability_ids": [
+        "combat.damage.assignment.toughness",
+        "trigger.keyword.backup"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Streetwise Negotiator Backup donates its independently represented toughness rule to its recipient; exact activation/target sequence replays before direct current-rule applicability checks."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_countered_aftermath_exiles_and_uncast_copy_has_no_replacement",
+      "piece_ids": [
+        "capability.casting.aftermath.selected_half",
+        "capability.stack.counter.effect"
+      ],
+      "capability_ids": [
+        "casting.aftermath.selected_half",
+        "stack.counter.effect"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Counterspell counters Fame cast from the graveyard; its intrinsic self-replacement sends the card to exile and the countered result never modifies the recipient, with exact replay. A separately scoped uncast-copy boundary receives no replacement."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_selected_half_color_cost_query_ignores_other_half_and_replays",
+      "piece_ids": [
+        "capability.casting.aftermath.selected_half",
+        "capability.casting.cost.modifier.fixed_query"
+      ],
+      "capability_ids": [
+        "casting.aftermath.selected_half",
+        "casting.cost.modifier.fixed_query"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Jet Medallion does not reduce red Fame cast through Aftermath because its other half is black. The selected cost query, accepted graveyard cast, mandatory exile and exact replay retain selected-half colors."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_market_pending_private_discard_reloads_without_repeating_draw",
+      "piece_ids": [
+        "capability.casting.aftermath.selected_half",
+        "capability.resolution.effect_sequence.fixed_controller"
+      ],
+      "capability_ids": [
+        "casting.aftermath.selected_half",
+        "resolution.effect_sequence.fixed_controller"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Market draws two cards before private discard suspension. Wrong-principal rollback and pending save/load retain the chosen half and mandatory exile without repeating draw; exact replay matches the result."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_simultaneous_opponent_losses_produce_one_inherent_trigger",
+      "piece_ids": [
+        "capability.trigger.keyword.extort",
+        "capability.variant.speed.player"
+      ],
+      "capability_ids": [
+        "trigger.keyword.extort",
+        "variant.speed.player"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Extort loses life simultaneously for three opponents during the speed owner turn; only one source-free inherent speed trigger increases speed, with exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_countered_inherent_trigger_consumes_turn_usage_and_pending_reload_replays",
+      "piece_ids": [
+        "capability.stack.counter.effect",
+        "capability.variant.speed.player"
+      ],
+      "capability_ids": [
+        "stack.counter.effect",
+        "variant.speed.player"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Stifle counters the source-free inherent speed trigger after pending save/load. The next qualifying loss in that same turn cannot retrigger it, and exact replay preserves consumed usage."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_control_change_starts_new_controller_without_moving_old_speed",
+      "piece_ids": [
+        "capability.continuous.control.fixed_resolution",
+        "capability.variant.speed.player"
+      ],
+      "capability_ids": [
+        "continuous.control.fixed_resolution",
+        "variant.speed.player"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Act of Treason transfers a Start Your Engines permanent. State-based stabilization starts the new controller speed while retaining the former controller designation, with exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_max_speed_damage_replacement_is_inactive_below_four",
+      "piece_ids": [
+        "capability.damage.replacement.static_quantity",
+        "capability.variant.speed.player"
+      ],
+      "capability_ids": [
+        "damage.replacement.static_quantity",
+        "variant.speed.player"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Far Fortune Max Speed damage replacement is gated below four; Shock deals two at speed three and three at speed four, with ordinary speed triggering and exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_graft_rules.GraftRuntimeTests.test_replacement_order_defers_removal_then_moves_one_and_places_replaced_amount",
+      "piece_ids": [
+        "capability.counter.lifecycle.graft",
+        "capability.counter.placement.quantity_replacement"
+      ],
+      "capability_ids": [
+        "counter.lifecycle.graft",
+        "counter.placement.quantity_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Graft suspends before source removal, reloads replacement order, and removes one while placing the replaced quantity with exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_graft_rules.GraftRuntimeTests.test_source_bounce_before_graft_resolution_keeps_recipient_unchanged_and_replays",
+      "piece_ids": [
+        "capability.counter.lifecycle.graft",
+        "capability.trigger.condition.fixed_public_state"
+      ],
+      "capability_ids": [
+        "counter.lifecycle.graft",
+        "trigger.condition.fixed_public_state"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual source bounce leaves the Graft recipient unchanged when its intervening source-counter condition no longer holds, with exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_block_capacity.BlockCapacityRuntimeTests.test_actual_two_echo_equips_accumulate_and_bounce_after_blocks_keeps_all_edges",
+      "piece_ids": [
+        "capability.combat.block.capacity",
+        "capability.continuous.attached.fixed_characteristics"
+      ],
+      "capability_ids": [
+        "combat.block.capacity",
+        "continuous.attached.fixed_characteristics"
+      ],
+      "interaction_order": 2,
+      "assertion": "Two actual Echo Circlet equip commands grant cumulative capacity; actual Disenchant after accepted multiple blocking removes a grant while preserving all relationships and exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_block_capacity.BlockCapacityRuntimeTests.test_actual_monarch_condition_changes_capacity_before_declaration_and_not_after",
+      "piece_ids": [
+        "capability.combat.block.capacity",
+        "capability.continuous.characteristics.fixed_public_state"
+      ],
+      "capability_ids": [
+        "combat.block.capacity",
+        "continuous.characteristics.fixed_public_state"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Entourage of Trest grants two-block capacity only while its controller is monarch; accepted multi-block action replays and an owner-level later monarch change preserves committed edges."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_block_capacity.BlockCapacityRuntimeTests.test_actual_query_source_and_tactician_counter_activation_gate_current_capacity",
+      "piece_ids": [
+        "capability.combat.block.capacity",
+        "capability.counter.producer.fixed_effect"
+      ],
+      "capability_ids": [
+        "combat.block.capacity",
+        "counter.producer.fixed_effect"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Cenn's Tactician activation puts a counter on its Soldier source and enables the independently compiled query capacity; the activation and current capacity replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_prototype_rules.PrototypeRuntimeTests.test_actual_prototype_token_copy_retains_alternate_copiable_values_and_replay",
+      "piece_ids": [
+        "capability.casting.prototype.characteristics",
+        "capability.token.creation.fixed_copy"
+      ],
+      "capability_ids": [
+        "casting.prototype.characteristics",
+        "token.creation.fixed_copy"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Cackling Counterpart copies an accepted prototyped Blitz Automaton, retaining mana cost, color, mana value, size and Haste with exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_prototype_rules.PrototypeRuntimeTests.test_actual_black_prototype_uses_color_cost_reduction_and_preserves_deathtouch",
+      "piece_ids": [
+        "capability.casting.cost.modifier.fixed_query",
+        "capability.casting.prototype.characteristics"
+      ],
+      "capability_ids": [
+        "casting.cost.modifier.fixed_query",
+        "casting.prototype.characteristics"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Jet Medallion reduces a black Prototype spell while the ordinary colorless spell retains its printed generic cost, with accepted cast and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_prototype_rules.PrototypeRuntimeTests.test_actual_countered_prototype_restores_graveyard_values_and_replay",
+      "piece_ids": [
+        "capability.casting.prototype.characteristics",
+        "capability.zone.change.destination_replacement"
+      ],
+      "capability_ids": [
+        "casting.prototype.characteristics",
+        "zone.change.destination_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Counterspell counters a prototyped spell; the canonical graveyard transition resets selected characteristics, with exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_scoped_damage_prevention.ScopedPreventionRuntimeTests.test_actual_emmara_prevents_only_own_creature_token_shock_and_replays",
+      "piece_ids": [
+        "capability.damage.prevention.persistent_amount",
+        "capability.token.creation.fixed_copy"
+      ],
+      "capability_ids": [
+        "damage.prevention.persistent_amount",
+        "token.creation.fixed_copy"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Cackling token copy receives Emmara prevention while the original nontoken takes Shock damage, with exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_scoped_damage_prevention.ScopedPreventionRuntimeTests.test_actual_prevention_quantity_replacement_pending_reload_preserves_same_damage",
+      "piece_ids": [
+        "capability.damage.prevention.persistent_amount",
+        "capability.damage.replacement.static_quantity"
+      ],
+      "capability_ids": [
+        "damage.prevention.persistent_amount",
+        "damage.replacement.static_quantity"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Furnace and Emmara ordering suspends damage, reloads, preserves recipient scope and prevention, rejects the wrong principal and replays."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_scoped_damage_prevention.ScopedPreventionRuntimeTests.test_actual_wall_prevents_only_blocked_creature_damage_across_multiple_pairings",
+      "piece_ids": [
+        "capability.combat.damage.assignment.canonical",
+        "capability.damage.prevention.persistent_amount"
+      ],
+      "capability_ids": [
+        "combat.damage.assignment.canonical",
+        "damage.prevention.persistent_amount"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual graph records two defending pairings; Wall of Vapor prevents its own assigned damage while the second blocker takes damage, including replay of noncanonical block input order."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_actual_gossipmonger_source_and_selected_tap_costs_transform_same_object",
+      "piece_ids": [
+        "capability.activation.selected_tap.fixed",
+        "capability.permanent.transform.face_change"
+      ],
+      "capability_ids": [
+        "activation.selected_tap.fixed",
+        "permanent.transform.face_change"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Gossipmonger pays source tap and another selected creature tap before transforming the same permanent, with source-reuse rollback and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_actual_control_change_keeps_original_activation_controller_and_source_binding",
+      "piece_ids": [
+        "capability.continuous.control.fixed_resolution",
+        "capability.permanent.transform.face_change"
+      ],
+      "capability_ids": [
+        "continuous.control.fixed_resolution",
+        "permanent.transform.face_change"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Word of Seizing changes source controller above an accepted transform activation; original activation controller and source identity remain valid through transform and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_actual_source_blink_before_activation_resolution_does_not_transform_new_object",
+      "piece_ids": [
+        "capability.permanent.transform.face_change",
+        "capability.zone.change.destination_replacement"
+      ],
+      "capability_ids": [
+        "permanent.transform.face_change",
+        "zone.change.destination_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Ephemerate changes the source incarnation before activation resolution; the new front-face object stays untransformed and replay is exact."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_enlist_rules.EnlistRuntimeTests.test_actual_enlisted_power_is_live_at_resolution_and_departure_uses_lki",
+      "piece_ids": [
+        "capability.combat.attack.enlist",
+        "capability.quantity_expression.scalar_effect_amount"
+      ],
+      "capability_ids": [
+        "combat.attack.enlist",
+        "quantity_expression.scalar_effect_amount"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Giant Growth above Enlist changes donor power; actual Unsummon departure uses immediate LKI instead of declaration power, with replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_enlist_rules.EnlistRuntimeTests.test_actual_faithbonder_enlists_eligible_body_then_growth_and_replay",
+      "piece_ids": [
+        "capability.activation.selected_tap.fixed",
+        "capability.combat.attack.enlist"
+      ],
+      "capability_ids": [
+        "activation.selected_tap.fixed",
+        "combat.attack.enlist"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Enlist attack taps its distinct donor through the canonical tap transaction while Vigilance keeps its attacker untapped, then grows through ordinary trigger resolution and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_enlist_rules.EnlistRuntimeTests.test_actual_attacker_blink_invalidates_reflexive_growth_and_replays",
+      "piece_ids": [
+        "capability.combat.attack.enlist",
+        "capability.zone.change.destination_replacement"
+      ],
+      "capability_ids": [
+        "combat.attack.enlist",
+        "zone.change.destination_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Ephemerate blinks the attacker before Enlist resolves; the new incarnation receives no old growth and replay remains exact."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_fixed_resolution_mana.FixedResolutionManaRuntimeTests.test_actual_culling_sacrifice_is_paid_but_countered_spell_produces_no_mana",
+      "piece_ids": [
+        "capability.casting.additional_cost.fixed_sacrifice",
+        "capability.mana.production.fixed_resolution"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.fixed_sacrifice",
+        "mana.production.fixed_resolution"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Culling the Weak sacrifices its additional-cost creature before Counterspell; the countered spell produces no mana, with exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_fixed_resolution_mana.FixedResolutionManaRuntimeTests.test_actual_entry_mana_uses_stack_and_survives_source_departure",
+      "piece_ids": [
+        "capability.mana.production.fixed_resolution",
+        "capability.target.revalidate_resolution"
+      ],
+      "capability_ids": [
+        "mana.production.fixed_resolution",
+        "target.revalidate_resolution"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Unsummon returns Burning-Tree Emissary while its mana trigger remains on the stack; that trigger adds its fixed bundle with exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_fixed_resolution_mana.FixedResolutionManaRuntimeTests.test_actual_geosurge_restricted_mana_rejects_instant_and_pays_creature",
+      "piece_ids": [
+        "capability.mana.activated.restricted_fixed_output",
+        "capability.mana.production.fixed_resolution"
+      ],
+      "capability_ids": [
+        "mana.activated.restricted_fixed_output",
+        "mana.production.fixed_resolution"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Geosurge resolution uses the shared canonical restricted-mana provenance and spending predicates to reject Shock and pay for Blitz Automaton, with replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_defender_permission.DefenderPermissionRuntimeTests.test_original_wall_aura_combines_restriction_grant_and_actual_removal_replay",
+      "piece_ids": [
+        "capability.attachment.aura.typed_restriction",
+        "capability.continuous.ability.fixed_query_grant"
+      ],
+      "capability_ids": [
+        "attachment.aura.typed_restriction",
+        "continuous.ability.fixed_query_grant"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Animate Wall has strict whole-program admission, rejects a non-Wall cast target without mutation, attaches through an accepted cast and grants only the enchanted Wall the represented defender permission. Actual Disenchant removes the Aura and the permission; pre-cast command replay and pending load preserve the full consequences."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_fixed_resolution_mana.FixedResolutionManaRuntimeTests.test_original_mana_replacement_carriers_fail_closed_at_whole_runtime_admission",
+      "piece_ids": [
+        "capability.mana.production.fixed_resolution",
+        "residual.replacement.replacement-applicability"
+      ],
+      "capability_ids": [
+        "mana.production.fixed_resolution"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Urabrask, Cabal Ritual, Valki, Esper Origins and Lake of the Dead retain observed fixed-resolution mana and replacement-applicability pieces. All five original whole CardPrograms reach canonical runtime binding and reject strict and compatible admission with material replacement siblings; no unsupported replacement execution is claimed."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_fixed_resolution_mana.FixedResolutionManaRuntimeTests.test_original_mana_replacement_carriers_fail_closed_at_whole_runtime_admission",
+      "piece_ids": [
+        "capability.mana.production.fixed_resolution",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ],
+      "capability_ids": [
+        "mana.production.fixed_resolution"
+      ],
+      "interaction_order": 2,
+      "assertion": "The same five original complete Oracle carriers retain self-replacement/ordering residuals beside recognized fixed-resolution mana and are rejected by canonical whole-program runtime binding. This proves the supported-prefix exclusion boundary rather than successful unsupported composition."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_player_target_protection.PlayerProtectionRuntimeTests.test_shroud_source_sacrifice_redirects_then_restores_targetability_and_replays",
+      "piece_ids": [
+        "capability.target.player.static_hexproof_shroud",
+        "capability.zone.change.destination_replacement"
+      ],
+      "capability_ids": [
+        "target.player.static_hexproof_shroud",
+        "zone.change.destination_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "A correctly registered whole generic shroud source initially forbids targeting its controller. Its upkeep maintenance trigger offers a private optional payment and accepts decline without targeting the protected player; the canonical destination replacement redirects the sacrifice to exile while preserving sacrifice history, then removing the source restores legal player targeting. An accepted Shock resolves after protection ends; wrong-principal and protected-target attempts roll back and the pre-action command sequence replays exactly. Original Solitary Confinement separately retains its unsupported whole-program admission boundary."
     }
   ]
 }
