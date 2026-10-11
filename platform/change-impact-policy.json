@@ -3168,6 +3168,22 @@
         "test_scheduled_player_triggers",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "bound-event-optional-payment-contract",
+      "patterns": [
+        "quorune/compiler/optional_payment_templates.py",
+        "quorune/compiler/trigger_result_templates.py",
+        "quorune/compiler/fixed_target_effect_sequences.py",
+        "tests/fixtures/binding-aware-event-payments.json"
+      ],
+      "test_modules": [
+        "test_fixed_optional_mana_payment_triggers",
+        "test_fixed_target_effect_sequences",
+        "test_fixed_token_creation_effects",
+        "test_bound_effect_programs",
+        "test_oracle_corpus_examples"
+      ]
     }
   ],
   "symbol_rules": [

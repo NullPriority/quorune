@@ -10,7 +10,18 @@ from .fixed_source_combat_growth import fixed_source_combat_growth_effect_templa
 from .fixed_entry_return_requirements import fixed_entry_return_effect_template
 
 
-def binding_effect_template(binding, body: str, *, card_name: str, effect_template):
+def binding_effect_template(binding, body: str, *, card_name: str, effect_template, _allow_payment: bool = True):
+    if _allow_payment:
+        from .optional_payment_templates import binding_aware_optional_mana_payment_template
+        payment = binding_aware_optional_mana_payment_template(
+            body,
+            compile_result=lambda text: binding_effect_template(
+                binding, text, card_name=card_name,
+                effect_template=effect_template, _allow_payment=False,
+            ),
+        )
+        if payment is not None:
+            return payment
     from .affected_player_discard_templates import damage_player_discard_result
     discard = damage_player_discard_result(binding, body)
     if discard is not None:

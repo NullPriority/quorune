@@ -123,6 +123,51 @@ def payment_continuation(effect) -> SemanticChoiceContinuation:
 
 
 class FixedOptionalManaPaymentCompilerTests(unittest.TestCase):
+    # CR 201.5, 400.7 and 608.2c: the paid result refers to the original
+    # triggering source or sealed entering object, not a later same-name/ref
+    # object. Payment is offered at resolution. "When you do" creates a
+    # distinct reflexive trigger and remains outside this payment wrapper.
+    def test_fixed_payment_preserves_bound_source_result_incarnation(self):
+        text = "Whenever this creature attacks, you may pay {W}. If you do, it gains flying until end of turn."
+        ir = self.compile(text)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        wrapper = ir.faces[0].nodes[0].effects[0]
+        self.assertEqual(OPTIONAL_MANA_PAYMENT_OPERATION, wrapper["op"])
+        self.assertEqual("$controller", wrapper["player"])
+        self.assertEqual(1, wrapper["cost"]["W"])
+        self.assertEqual("$source.zone_object", wrapper["effects"][0]["card"])
+
+    def test_fixed_payment_can_wrap_sealed_entering_object_copy_recipe(self):
+        text = "Whenever another nontoken artifact you control enters, you may pay {2}. If you do, create a token that's a copy of that artifact."
+        ir = self.compile(text)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        wrapper = ir.faces[0].nodes[0].effects[0]
+        self.assertEqual(OPTIONAL_MANA_PAYMENT_OPERATION, wrapper["op"])
+        self.assertEqual(2, wrapper["cost"]["GENERIC"])
+        self.assertIsNone(ir.faces[0].nodes[0].target_schema)
+
+    def test_bound_payment_nested_variable_and_reflexive_forms_remain_residual(self):
+        bodies = (
+            "you may pay {X}. If you do, it gains flying until end of turn.",
+            "you may pay {0}. If you do, it gains flying until end of turn.",
+            "you may pay {W}. When you do, it gains flying until end of turn.",
+            "you may pay {W}. If you do, you may pay {W}. If you do, it gains flying until end of turn.",
+            "you may pay {W}. If you do, it gains an unknown ability until end of turn.",
+        )
+        for body in bodies:
+            with self.subTest(body=body):
+                ir = self.compile("Whenever this creature attacks, " + body)
+                self.assertNotEqual("exact", ir.status)
+                self.assertTrue(ir.material_residuals)
+
+    def test_bound_payment_compiler_omission_mutant_is_killed(self):
+        text = "Whenever another nontoken artifact you control enters, you may pay {2}. If you do, create a token that's a copy of that artifact."
+        self.assertEqual("exact", self.compile(text).status)
+        with mock.patch("quorune.compiler.optional_payment_templates.binding_aware_optional_mana_payment_template", return_value=None):
+            mutant = self.compile(text)
+        self.assertNotEqual("exact", mutant.status)
+        self.assertTrue(mutant.material_residuals)
+
     def test_fixed_payment_interaction_evidence_obeys_current_pair_contract(self):
         import json
         from common import ROOT
@@ -1046,6 +1091,227 @@ class FixedResolutionPaymentActionTests(unittest.TestCase):
                     self.assertTrue(engine.state.cards[target.object_id].tapped)
                     self.assertEqual('graveyard',engine.state.cards[payment.object_id].zone)
                 self.replay(session)
+
+
+class BoundEventPaymentRuntimeTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from common import ROOT
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition, DeckEntry
+        from scripts.build_test_database import build_fixture_database
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "bound-event-payments.sqlite3"
+        build_fixture_database([ROOT / "tests/fixtures/bound-effect-program-cards.json",
+            ROOT / "tests/fixtures/binding-aware-event-payments.json"], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Bound payment", [
+            DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 99),
+        ], ["Generic Bound Commander"])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    import test_bound_effect_programs as _witnesses
+    session = _witnesses.BoundEffectProgramRuntimeTests.session
+    add = _witnesses.BoundEffectProgramRuntimeTests.add
+    checkpoint = _witnesses.BoundEffectProgramRuntimeTests.checkpoint
+    resolve = _witnesses.BoundEffectProgramRuntimeTests.resolve
+    replay = _witnesses.BoundEffectProgramRuntimeTests.replay
+
+    def assert_whole_admission(self, session, name):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        program = compile_best_available_card_program(self.db, self.db.lookup(name),
+            semantic_registry=session.engine.semantics, capability_registry=self.registry,
+            capability_profile="commander_review")
+        binding = bind_card_program_runtime(program, capability_registry=self.registry, profile="commander_review")
+        self.assertTrue(binding["strict_capability_ready"], binding)
+
+    def ready(self, session, source, mana):
+        self.assert_whole_admission(session, source.printed_name)
+        engine = session.engine
+        engine.permissions.invalidate_current()
+        session.state.pending_decision = None
+        session.state.active_player = "A"
+        session.state.started = True
+        session.state.phase = "precombat_main"
+        session.state.step = "main"
+        session.state.players["A"].mana_pool.update(mana)
+        engine._grant_priority("A")
+        engine.pump()
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        return next(action for action in actions if action.get("card") == source.ref)
+
+    def begin_attack(self, session, source, mana):
+        from quorune.model import CombatState
+        engine = session.engine
+        engine.permissions.invalidate_current()
+        session.state.pending_decision = None
+        session.state.active_player = "A"
+        session.state.started = True
+        session.state.phase = "combat"
+        session.state.step = "declare_attackers"
+        session.state.phase_index = 5
+        session.state.combat = CombatState()
+        session.state.players["A"].mana_pool.update(mana)
+        source.acquired_control_turn_count = -1
+        engine._issue_attackers()
+        self.checkpoint(session)
+        result = session.act("pilot:A", {"a": "attack", "atk": {source.ref: "B"}})
+        self.assertTrue(result.ok, result.summary)
+
+    def cast_response(self, session, source, **choices):
+        for _ in range(8):
+            self.assertEqual("priority", session.state.pending_decision.kind)
+            if session.pending_principals() == ["pilot:A"]:
+                actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                action = next(action for action in actions if action.get("card") == source.ref)
+                result = session.act("pilot:A", {"action_id": action["id"], "pay": "auto", **choices})
+                self.assertTrue(result.ok, result.summary)
+                return
+            self.assertTrue(session.act(session.pending_principals()[0], {"action_id": "pass"}).ok)
+        self.fail("Response did not reach the controlling player's priority")
+
+    def pass_until_zone(self, session, source, zone):
+        for _ in range(16):
+            if session.state.cards[source.object_id].zone == zone:
+                return
+            self.assertEqual("priority", session.state.pending_decision.kind)
+            result = session.act(session.pending_principals()[0], {"action_id": "pass"})
+            self.assertTrue(result.ok, result.summary)
+        self.fail("Accepted spell did not reach the expected zone")
+
+    def test_paid_attack_result_does_not_affect_reentered_source(self):
+        session = self.session(332030)
+        engine = session.engine
+        source = self.add(engine, "Generic Flash Attack Payment")
+        bounce = self.add(engine, "Unsummon", zone="hand")
+        self.assert_whole_admission(session, source.printed_name)
+        self.assert_whole_admission(session, bounce.printed_name)
+        original_incarnation = source.logical_object_id
+        self.begin_attack(session, source, {"W": 3, "U": 1})
+        self.cast_response(session, bounce, targets=[source.ref])
+        self.pass_until_zone(session, source, "hand")
+        self.cast_response(session, source)
+        self.pass_until_zone(session, source, "battlefield")
+        self.assertNotEqual(original_incarnation, session.state.cards[source.object_id].logical_object_id)
+        self.resolve(session)
+        self.assertEqual(["A"], session.state.pending_decision.actors)
+        session = self.replay(session, load=True)
+        result = session.act("pilot:A", {"action_id": "choose", "pay": True})
+        self.assertTrue(result.ok, result.summary)
+        self.resolve(session)
+        current = session.state.cards[source.object_id]
+        self.assertNotIn("Flying", session.engine._effective_card_data(current)["keywords"])
+        self.assertEqual(0, session.state.players["A"].mana_pool.get("W", 0))
+        self.replay(session, load=True)
+
+    def test_original_mirrorworks_copies_departed_entering_object_information(self):
+        session = self.session(332031)
+        engine = session.engine
+        self.add(engine, "Mirrorworks")
+        source = self.add(engine, "Generic Entering Artifact Body", zone="hand")
+        bounce = self.add(engine, "Unsummon", zone="hand")
+        original = engine._effective_card_data(source)
+        action = self.ready(session, source, {"C": 4, "U": 1})
+        self.checkpoint(session)
+        self.assertTrue(session.act("pilot:A", {"action_id": action["id"], "pay": "auto"}).ok)
+        self.pass_until_zone(session, source, "battlefield")
+        self.cast_response(session, bounce, targets=[source.ref])
+        self.pass_until_zone(session, source, "hand")
+        self.resolve(session)
+        self.assertEqual(["A"], session.state.pending_decision.actors)
+        session = self.replay(session, load=True)
+        result = session.act("pilot:A", {"action_id": "choose", "pay": True})
+        self.assertTrue(result.ok, result.summary)
+        self.resolve(session)
+        tokens = [card for card in session.state.cards.values() if card.zone == "battlefield" and card.object_kind == "token"]
+        self.assertEqual(1, len(tokens))
+        copy = session.engine._effective_card_data(tokens[0])
+        for field in ("name", "type_line", "power", "toughness", "mana_cost", "colors"):
+            self.assertEqual(original[field], copy[field], field)
+        self.assertEqual("hand", session.state.cards[source.object_id].zone)
+        self.assertEqual(0, session.state.players["A"].mana_pool.get("C", 0))
+        self.replay(session, load=True)
+
+    def test_original_cricket_payment_is_private_affordable_and_replays(self):
+        from quorune.record import authoritative_state_hash
+        for pay in (True, False):
+            with self.subTest(pay=pay):
+                session = self.session(332010 + int(pay))
+                source = self.add(session.engine, "Order of the Golden Cricket")
+                self.assert_whole_admission(session, source.printed_name)
+                self.begin_attack(session, source, {"W": 1})
+                self.resolve(session)
+                self.assertEqual(["A"], session.state.pending_decision.actors)
+                for seat in "BCD":
+                    self.assertIsNone(session.packet("pilot:" + seat, full=True)["decision"])
+                session = self.replay(session, load=True)
+                before = authoritative_state_hash(session.state)
+                denied = session.act("pilot:B", {"action_id": "choose", "pay": True})
+                self.assertFalse(denied.ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+                result = session.act("pilot:A", {"action_id": "choose", "pay": pay})
+                self.assertTrue(result.ok, result.summary)
+                self.resolve(session)
+                current = session.state.cards[source.object_id]
+                keywords = session.engine._effective_card_data(current)["keywords"]
+                self.assertEqual(pay, "Flying" in keywords)
+                self.assertEqual(0 if pay else 1, session.state.players["A"].mana_pool.get("W", 0))
+                self.replay(session, load=True)
+
+    def test_original_cricket_unaffordable_payment_rejects_without_result(self):
+        from quorune.record import authoritative_state_hash
+        session = self.session(3320110)
+        source = self.add(session.engine, "Order of the Golden Cricket")
+        self.begin_attack(session, source, {})
+        self.resolve(session)
+        session = self.replay(session, load=True)
+        for pay in (True, "yes"):
+            with self.subTest(pay=pay):
+                before = authoritative_state_hash(session.state)
+                rejected = session.act("pilot:A", {"action_id": "choose", "pay": pay})
+                self.assertFalse(rejected.ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+        declined = session.act("pilot:A", {"action_id": "choose", "pay": False})
+        self.assertTrue(declined.ok, declined.summary)
+        self.resolve(session)
+        self.assertNotIn("Flying", session.engine._effective_card_data(session.state.cards[source.object_id])["keywords"])
+        self.replay(session, load=True)
+
+    def test_original_mirrorworks_paid_entry_creates_exact_copy_and_replays(self):
+        session = self.session(332020)
+        engine = session.engine
+        self.add(engine, "Mirrorworks")
+        source = self.add(engine, "Generic Entering Artifact Body", zone="hand")
+        self.assert_whole_admission(session, "Mirrorworks")
+        self.assert_whole_admission(session, source.printed_name)
+        action = self.ready(session, source, {"C": 4})
+        self.checkpoint(session)
+        result = session.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.resolve(session)
+        self.assertEqual("battlefield", session.state.cards[source.object_id].zone)
+        self.assertEqual(["A"], session.state.pending_decision.actors)
+        for seat in "BCD":
+            self.assertIsNone(session.packet("pilot:" + seat, full=True)["decision"])
+        session = self.replay(session, load=True)
+        result = session.act("pilot:A", {"action_id": "choose", "pay": True})
+        self.assertTrue(result.ok, result.summary)
+        self.resolve(session)
+        tokens = [card for card in session.state.cards.values() if card.zone == "battlefield" and card.object_kind == "token"]
+        self.assertEqual(1, len(tokens))
+        copy = session.engine._effective_card_data(tokens[0])
+        original = session.engine._effective_card_data(session.state.cards[source.object_id])
+        for field in ("name", "type_line", "power", "toughness", "mana_cost", "colors"):
+            self.assertEqual(original[field], copy[field], field)
+        self.assertEqual(0, session.state.players["A"].mana_pool.get("C", 0))
+        self.replay(session, load=True)
 
 
 if __name__ == "__main__":

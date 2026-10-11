@@ -597,7 +597,12 @@ independently exact atomic effect. It preserves body-owned targets at trigger
 placement and delegates the private resolution decision to the existing
 optional-payment handler. Acceptance rechecks affordability and commits the
 canonical mana-payment intent before resuming the typed body; decline commits
-nothing. Variable, hybrid, Phyrexian, snow, zero, restricted, and nonmana
+nothing. Normalized trigger bodies retain their bound result references inside
+the payment wrapper: source characteristic changes use the triggering source's
+logical incarnation, and entering-object token copies use the sealed event
+object and its current or last-known copiable information. A returned source
+incarnation receives no characteristic change from the old trigger. Variable,
+hybrid, Phyrexian, snow, zero, restricted, and nonmana
 costs, reflexive `when you do` forms, nested or repeated choices, linked
 results, and multi-effect or independently inexact bodies remain residual.
 

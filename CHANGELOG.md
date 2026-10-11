@@ -11,6 +11,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Preserve occurrence-bound source and entering-object references inside fixed
+  optional mana payments. Paid source results respect the original incarnation,
+  and entering-object copies retain current or last-known copiable information.
+
 - Lower fixed controller and occurrence-bound player discards through the
   existing private APNAP selection owner. Keep trigger control separate from
   the affected player's choice and retain untargeted resolution and replay.

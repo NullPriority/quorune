@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "3083e9633994181238ed6643fcac5a48289767cba8d869ff437e0537e5181c3a",
-  "declaration_source_fingerprint": "68d567062997ad80339bd649c4078db08f28b0d8f3c2165bc364bdb4def20eac",
+  "registry_fingerprint": "57ea40f7fdf7fff7812a2d8e4bccbd45879b67c51be6fe1ecc08b6d13c6182ea",
+  "declaration_source_fingerprint": "dcbb3c8ce36d6a19eba9b0fc6e6bbd82ebe6846f7ef4953cebf1c5c00f65a7db",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -57556,13 +57556,60 @@
     {
       "capability_id": "effect.choice.optional_fixed_mana_payment",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.BoundEventPaymentRuntimeTests.test_original_mirrorworks_copies_departed_entering_object_information",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "201.5",
+        "400.7",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Mirrorworks observes an accepted artifact cast, then an Unsummon response; the paid token retains the departed event object's copiable information and exact pre-cast replay."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.BoundEventPaymentRuntimeTests.test_paid_attack_result_does_not_affect_reentered_source",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "201.5",
+        "400.7",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual attack, Unsummon response, Flash recast and payment leave the new source incarnation without Flying; pending save/load and pre-attack replay agree."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentCompilerTests.test_fixed_payment_with_unrepresented_prevention_fails_closed",
       "official_rule_ids": [
         "109.5",
         "118.12",
+        "201.5",
+        "400.7",
         "603.5",
         "608.2c",
         "608.2d",
+        "608.2h",
         "609.1"
       ],
       "supported_profiles": [
@@ -57579,9 +57626,12 @@
       "official_rule_ids": [
         "109.5",
         "118.12",
+        "201.5",
+        "400.7",
         "603.5",
         "608.2c",
         "608.2d",
+        "608.2h",
         "609.1"
       ],
       "supported_profiles": [
@@ -57598,9 +57648,12 @@
       "official_rule_ids": [
         "109.5",
         "118.12",
+        "201.5",
+        "400.7",
         "603.5",
         "608.2c",
         "608.2d",
+        "608.2h",
         "609.1"
       ],
       "supported_profiles": [
@@ -57617,9 +57670,12 @@
       "official_rule_ids": [
         "109.5",
         "118.12",
+        "201.5",
+        "400.7",
         "603.5",
         "608.2c",
         "608.2d",
+        "608.2h",
         "609.1"
       ],
       "supported_profiles": [
@@ -57636,9 +57692,12 @@
       "official_rule_ids": [
         "109.5",
         "118.12",
+        "201.5",
+        "400.7",
         "603.5",
         "608.2c",
         "608.2d",
+        "608.2h",
         "609.1"
       ],
       "supported_profiles": [
@@ -57655,9 +57714,12 @@
       "official_rule_ids": [
         "109.5",
         "118.12",
+        "201.5",
+        "400.7",
         "603.5",
         "608.2c",
         "608.2d",
+        "608.2h",
         "609.1"
       ],
       "supported_profiles": [
@@ -57670,13 +57732,38 @@
     {
       "capability_id": "effect.choice.optional_fixed_mana_payment",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.BoundEventPaymentRuntimeTests.test_original_cricket_payment_is_private_affordable_and_replays",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "201.5",
+        "400.7",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Golden Cricket uses accepted four-seat attacks; only the trigger controller receives and can answer the payment decision, wrong-principal input rolls back, and paid or declined results save/load and replay from before attack."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentIntegrationTests.test_real_card_payment_is_private_commits_before_draw_and_replays",
       "official_rule_ids": [
         "109.5",
         "118.12",
+        "201.5",
+        "400.7",
         "603.5",
         "608.2c",
         "608.2d",
+        "608.2h",
         "609.1"
       ],
       "supported_profiles": [
@@ -57693,9 +57780,12 @@
       "official_rule_ids": [
         "109.5",
         "118.12",
+        "201.5",
+        "400.7",
         "603.5",
         "608.2c",
         "608.2d",
+        "608.2h",
         "609.1"
       ],
       "supported_profiles": [
@@ -57712,9 +57802,12 @@
       "official_rule_ids": [
         "109.5",
         "118.12",
+        "201.5",
+        "400.7",
         "603.5",
         "608.2c",
         "608.2d",
+        "608.2h",
         "609.1"
       ],
       "supported_profiles": [
@@ -57727,13 +57820,38 @@
     {
       "capability_id": "effect.choice.optional_fixed_mana_payment",
       "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentCompilerTests.test_bound_payment_compiler_omission_mutant_is_killed",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "201.5",
+        "400.7",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Omitting the binding-aware wrapper fails the independently expected exact event-copy production."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "mutation",
       "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentCompilerTests.test_compiler_shape_and_handler_mutants_fail_closed",
       "official_rule_ids": [
         "109.5",
         "118.12",
+        "201.5",
+        "400.7",
         "603.5",
         "608.2c",
         "608.2d",
+        "608.2h",
         "609.1"
       ],
       "supported_profiles": [
@@ -57750,9 +57868,12 @@
       "official_rule_ids": [
         "109.5",
         "118.12",
+        "201.5",
+        "400.7",
         "603.5",
         "608.2c",
         "608.2d",
+        "608.2h",
         "609.1"
       ],
       "supported_profiles": [
@@ -57765,13 +57886,38 @@
     {
       "capability_id": "effect.choice.optional_fixed_mana_payment",
       "evidence_class": "negative",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentCompilerTests.test_bound_payment_nested_variable_and_reflexive_forms_remain_residual",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "201.5",
+        "400.7",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Variable, zero, nested, unknown-ability and reflexive attack-payment bodies remain material residuals."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "negative",
       "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentCompilerTests.test_compiler_shape_and_handler_mutants_fail_closed",
       "official_rule_ids": [
         "109.5",
         "118.12",
+        "201.5",
+        "400.7",
         "603.5",
         "608.2c",
         "608.2d",
+        "608.2h",
         "609.1"
       ],
       "supported_profiles": [
@@ -57788,9 +57934,12 @@
       "official_rule_ids": [
         "109.5",
         "118.12",
+        "201.5",
+        "400.7",
         "603.5",
         "608.2c",
         "608.2d",
+        "608.2h",
         "609.1"
       ],
       "supported_profiles": [
@@ -57807,9 +57956,12 @@
       "official_rule_ids": [
         "109.5",
         "118.12",
+        "201.5",
+        "400.7",
         "603.5",
         "608.2c",
         "608.2d",
+        "608.2h",
         "609.1"
       ],
       "supported_profiles": [
@@ -57826,9 +57978,12 @@
       "official_rule_ids": [
         "109.5",
         "118.12",
+        "201.5",
+        "400.7",
         "603.5",
         "608.2c",
         "608.2d",
+        "608.2h",
         "609.1"
       ],
       "supported_profiles": [
@@ -57841,13 +57996,38 @@
     {
       "capability_id": "effect.choice.optional_fixed_mana_payment",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.BoundEventPaymentRuntimeTests.test_original_mirrorworks_paid_entry_creates_exact_copy_and_replays",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "201.5",
+        "400.7",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Mirrorworks resolves its actual entry trigger and private payment to one exact token copy with complete resource payment and pre-cast replay."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentChoiceTests.test_pay_decline_unpayable_and_stale_affordability_are_atomic",
       "official_rule_ids": [
         "109.5",
         "118.12",
+        "201.5",
+        "400.7",
         "603.5",
         "608.2c",
         "608.2d",
+        "608.2h",
         "609.1"
       ],
       "supported_profiles": [
@@ -57864,9 +58044,12 @@
       "official_rule_ids": [
         "109.5",
         "118.12",
+        "201.5",
+        "400.7",
         "603.5",
         "608.2c",
         "608.2d",
+        "608.2h",
         "609.1"
       ],
       "supported_profiles": [
@@ -57879,13 +58062,38 @@
     {
       "capability_id": "effect.choice.optional_fixed_mana_payment",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentCompilerTests.test_fixed_payment_can_wrap_sealed_entering_object_copy_recipe",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "201.5",
+        "400.7",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A fixed resolution payment wraps an event-object token-copy recipe without turning its occurrence binding into a target."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentCompilerTests.test_fixed_payment_composes_across_normalized_trigger_families",
       "official_rule_ids": [
         "109.5",
         "118.12",
+        "201.5",
+        "400.7",
         "603.5",
         "608.2c",
         "608.2d",
+        "608.2h",
         "609.1"
       ],
       "supported_profiles": [
@@ -57898,13 +58106,38 @@
     {
       "capability_id": "effect.choice.optional_fixed_mana_payment",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentCompilerTests.test_fixed_payment_preserves_bound_source_result_incarnation",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "201.5",
+        "400.7",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A paid attack result retains the particular triggering source's logical incarnation."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentCompilerTests.test_fixed_resolution_payments_share_cost_result_and_carrier_owners",
       "official_rule_ids": [
         "109.5",
         "118.12",
+        "201.5",
+        "400.7",
         "603.5",
         "608.2c",
         "608.2d",
+        "608.2h",
         "609.1"
       ],
       "supported_profiles": [
@@ -57921,9 +58154,12 @@
       "official_rule_ids": [
         "109.5",
         "118.12",
+        "201.5",
+        "400.7",
         "603.5",
         "608.2c",
         "608.2d",
+        "608.2h",
         "609.1"
       ],
       "supported_profiles": [
@@ -57940,9 +58176,12 @@
       "official_rule_ids": [
         "109.5",
         "118.12",
+        "201.5",
+        "400.7",
         "603.5",
         "608.2c",
         "608.2d",
+        "608.2h",
         "609.1"
       ],
       "supported_profiles": [
@@ -57955,13 +58194,38 @@
     {
       "capability_id": "effect.choice.optional_fixed_mana_payment",
       "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.BoundEventPaymentRuntimeTests.test_original_cricket_payment_is_private_affordable_and_replays",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "201.5",
+        "400.7",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Golden Cricket uses accepted four-seat attacks; only the trigger controller receives and can answer the payment decision, wrong-principal input rolls back, and paid or declined results save/load and replay from before attack."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "privacy",
       "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentIntegrationTests.test_real_card_payment_is_private_commits_before_draw_and_replays",
       "official_rule_ids": [
         "109.5",
         "118.12",
+        "201.5",
+        "400.7",
         "603.5",
         "608.2c",
         "608.2d",
+        "608.2h",
         "609.1"
       ],
       "supported_profiles": [
@@ -57978,9 +58242,12 @@
       "official_rule_ids": [
         "109.5",
         "118.12",
+        "201.5",
+        "400.7",
         "603.5",
         "608.2c",
         "608.2d",
+        "608.2h",
         "609.1"
       ],
       "supported_profiles": [
@@ -57993,13 +58260,38 @@
     {
       "capability_id": "effect.choice.optional_fixed_mana_payment",
       "evidence_class": "replay",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.BoundEventPaymentRuntimeTests.test_original_cricket_payment_is_private_affordable_and_replays",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "201.5",
+        "400.7",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Golden Cricket uses accepted four-seat attacks; only the trigger controller receives and can answer the payment decision, wrong-principal input rolls back, and paid or declined results save/load and replay from before attack."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "replay",
       "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentChoiceTests.test_v2_payment_candidates_are_independent_of_checkpoint_object_order",
       "official_rule_ids": [
         "109.5",
         "118.12",
+        "201.5",
+        "400.7",
         "603.5",
         "608.2c",
         "608.2d",
+        "608.2h",
         "609.1"
       ],
       "supported_profiles": [
@@ -58016,9 +58308,12 @@
       "official_rule_ids": [
         "109.5",
         "118.12",
+        "201.5",
+        "400.7",
         "603.5",
         "608.2c",
         "608.2d",
+        "608.2h",
         "609.1"
       ],
       "supported_profiles": [
@@ -58035,9 +58330,12 @@
       "official_rule_ids": [
         "109.5",
         "118.12",
+        "201.5",
+        "400.7",
         "603.5",
         "608.2c",
         "608.2d",
+        "608.2h",
         "609.1"
       ],
       "supported_profiles": [
@@ -58054,9 +58352,12 @@
       "official_rule_ids": [
         "109.5",
         "118.12",
+        "201.5",
+        "400.7",
         "603.5",
         "608.2c",
         "608.2d",
+        "608.2h",
         "609.1"
       ],
       "supported_profiles": [
@@ -58069,13 +58370,60 @@
     {
       "capability_id": "effect.choice.optional_fixed_mana_payment",
       "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.BoundEventPaymentRuntimeTests.test_original_cricket_payment_is_private_affordable_and_replays",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "201.5",
+        "400.7",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Golden Cricket uses accepted four-seat attacks; only the trigger controller receives and can answer the payment decision, wrong-principal input rolls back, and paid or declined results save/load and replay from before attack."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.BoundEventPaymentRuntimeTests.test_original_cricket_unaffordable_payment_rejects_without_result",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "201.5",
+        "400.7",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual attack payment with no mana rejects pay and malformed input atomically; decline changes no source characteristics and replays exactly."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "rollback",
       "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentChoiceTests.test_v2_malformed_object_choices_fail_before_intent_creation",
       "official_rule_ids": [
         "109.5",
         "118.12",
+        "201.5",
+        "400.7",
         "603.5",
         "608.2c",
         "608.2d",
+        "608.2h",
         "609.1"
       ],
       "supported_profiles": [
@@ -58092,9 +58440,12 @@
       "official_rule_ids": [
         "109.5",
         "118.12",
+        "201.5",
+        "400.7",
         "603.5",
         "608.2c",
         "608.2d",
+        "608.2h",
         "609.1"
       ],
       "supported_profiles": [
@@ -101586,5 +101937,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "738ed9695a3f6653ceb4dd4410b027d8ae4fe2e77e5674e7d13257ec84faf01a"
+  "fingerprint": "69f9116e6b0c340acd3bb6ca9887e149505a34a934461ea4ffcab465be5b296b"
 }

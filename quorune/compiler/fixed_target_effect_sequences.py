@@ -58,7 +58,7 @@ _SOURCE_GETS_AND_GAINS = re.compile(
 )
 _SOURCE_GAINS_MULTIPLE = re.compile(
     r"this (?P<kind>artifact|creature|enchantment|permanent|spacecraft|vehicle) "
-    r"gains (?P<keywords>.+?\s+and\s+.+?) until end of turn\.?",
+    r"gains (?P<keywords>.+?) until end of turn\.?",
     re.IGNORECASE,
 )
 _SOURCE_COLOR = re.compile(
