@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Preserve explicit sacrifice provenance for Fading and Vanishing cleanup
+  through zone replacements, normalized trigger occurrences, and turn history.
+
 - Cast ordinary fixed-cost and bare Mayhem cards from their owner’s graveyard
   using current-turn discarded-card identity, existing timing, additional-cost
   and land-play owners. Prior lifecycle descriptor versions remain readable.

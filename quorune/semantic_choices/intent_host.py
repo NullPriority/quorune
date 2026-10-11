@@ -490,6 +490,7 @@ class SemanticChoiceIntentHostMixin:
                 intent.destination,
                 destination_controller=intent.new_controller,
                 effect_entry_counters=intent.effect_entry_counters,
+                transition_kind=intent.transition_kind,
                 selections=replacement_selections,
                 error_type=GameRuleError,
             )
@@ -503,6 +504,7 @@ class SemanticChoiceIntentHostMixin:
             semantic_events=intent.semantic_events,
             replacement_selections=replacement_selections,
             prepared_replacement=prepared_replacement,
+            transition_kind=intent.transition_kind,
         )
         return card.ref
 

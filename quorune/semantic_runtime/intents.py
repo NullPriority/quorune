@@ -645,8 +645,11 @@ class ZoneMoveIntent:
     expected_zone_change_counter: int | None = None
     effect_entry_counters: tuple[EffectEntryCounter, ...] = ()
     replacement_selections: tuple[str | FrozenMap, ...] = ()
+    transition_kind: ZoneTransitionKind = ZoneTransitionKind.ORDINARY
 
     def __post_init__(self) -> None:
+        if not isinstance(self.transition_kind, ZoneTransitionKind):
+            raise ValueError("Zone move transition kind must be typed")
         if self.expected_zone_change_counter is not None and (
             type(self.expected_zone_change_counter) is not int
             or self.expected_zone_change_counter < 0
