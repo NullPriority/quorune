@@ -4029,7 +4029,7 @@
         "summary": "Compile and resolve each ordinary printed Sunburst instance as a mandatory affected-object entry-counter replacement whose quantity is the number of distinct colors of mana spent to cast the resolving spell.",
         "inputs": ["one source-spanned printed Sunburst keyword instance", "printed face creature or noncreature card type", "same physical card resolving from the stack", "immutable distinct WUBRG cast-payment provenance", "prospective battlefield controller", "complete represented zone and counter replacement set"],
         "outputs": ["one independent entry replacement per Sunburst instance", "printed creatures receive +1/+1 counters and other permanents receive charge counters", "replacement-aware counter placement by the destination controller", "canonical replacement ordering and journal", "exact replay"],
-        "exclusions": ["objects entering from a zone other than the stack", "spell copies and other objects that were not cast", "casts with no colored mana spent", "granted, copied, removed, or face-down Sunburst outside trusted typed ability propagation", "Modular—Sunburst variable linkage", "unrepresented zone or counter replacement families"]
+        "exclusions": ["objects entering from a zone other than the stack", "spell copies and other objects that were not cast", "casts with no colored mana spent", "granted, copied, removed, or face-down Sunburst outside trusted typed ability propagation", "Modularâ€”Sunburst variable linkage", "unrepresented zone or counter replacement families"]
       },
       "dependencies": ["counter.placement.quantity_replacement"],
       "implementation_components": ["quorune.model.StackItem", "quorune.rules.casting.commit._create_spell_item", "quorune.semantic_runtime.sunburst.SunburstSpec", "quorune.compiler.keyword_nodes.sunburst_keyword_node", "quorune.entry_counter_coordination.prepare_resolving_entry_replacement", "quorune.semantic_runtime.sunburst.SunburstEntryCounterHandler", "quorune.semantic_runtime.zone_replacements.capture_zone_change_replacement_snapshot"],
@@ -4299,7 +4299,7 @@
         "summary": "Compile each positive integral printed Modular instance as one replacement-aware self-entry counter ability and one independent battlefield-to-graveyard trigger that may place its last-known +1/+1 counter count on a targeted artifact creature.",
         "inputs": ["one printed Modular N instance", "positive integral N", "source physical identity and departing logical incarnation", "complete public last-known counter map", "one legal artifact creature target", "frozen trigger controller"],
         "outputs": ["replacement-aware +1/+1 entry counters", "one independent departure trigger per Modular instance", "mandatory target selection before priority", "optional replacement-aware LKI-sized counter placement", "exact replay"],
-        "exclusions": ["Modular—Sunburst", "granted or copied Modular outside trusted typed ability propagation", "Oracle-equivalent nonkeyword wording", "trigger-doubling policies beyond ordinary represented trigger placement", "unrepresented target protection or counter replacement families"]
+        "exclusions": ["Modularâ€”Sunburst", "granted or copied Modular outside trusted typed ability propagation", "Oracle-equivalent nonkeyword wording", "trigger-doubling policies beyond ordinary represented trigger placement", "unrepresented target protection or counter replacement families"]
       },
       "dependencies": ["counter.placement.quantity_replacement", "target.permanent.characteristic_predicate", "target.revalidate_resolution", "trigger.event.normalized_zone_change", "trigger.placement.apnap"],
       "implementation_components": ["quorune.modular.ModularSpec", "quorune.modular.modular_counter_snapshot", "quorune.compiler.keyword_nodes.modular_keyword_nodes", "quorune.semantic_runtime.self_entry_counters.SelfEntryCounterHandler", "quorune.trigger_discovery.dispatch_semantic_event", "quorune.semantic_choices.modular.ModularCounterTransferHandler", "quorune.counter_placement.place_counters_on_refs"],
@@ -5590,28 +5590,111 @@
     },
     {
       "id": "continuous.resolution.declaration_rules_until_end_of_turn",
-      "version": 3,
-      "official_rules": ["508.1c", "509.1b", "611.2c", "514.2"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 4,
+      "official_rules": [
+        "508.1c",
+        "509.1b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
-        "summary": "Create one typed resolution-created combat declaration rule for a locked target or source battlefield incarnation and expire it in cleanup without turning the rule into an ability or characteristic.",
-        "inputs": ["typed resolving stack/source identity", "one revalidated shared qualified permanent target or current source creature", "locked physical and logical object identity", "one object-anchored typed declaration prohibition", "until-end-of-turn duration"],
-        "outputs": ["immutable replay-pinned declaration-rule journal entry", "composition with current effective static declaration abilities", "survival through ability removal and source departure", "cleanup expiration", "no effect on a returned logical object"],
-        "exclusions": ["ability or characteristic grants", "two-object source-relative rules", "source-relative controller restrictions", "dynamic predicates", "open declaration grammar", "durations other than until end of turn"]
+        "summary": "Create one typed resolution-created combat declaration rule for locked target/source incarnations or a live public creature group and expire it in cleanup without turning the rule into an ability or characteristic.",
+        "inputs": [
+          "typed resolving stack/source identity",
+          "one revalidated shared qualified permanent target, one through six creature targets, or the current source creature",
+          "locked physical and logical identities or one live public creature query",
+          "any, resolving-controller, or resolving-controller-opponent group relation",
+          "one object-anchored typed declaration prohibition",
+          "until-end-of-turn duration"
+        ],
+        "outputs": [
+          "immutable replay-pinned declaration-rule journal entry",
+          "composition with current effective static declaration abilities",
+          "locked targets survive later characteristic changes but not incarnation changes",
+          "live groups persist when empty and include matching later entrants using current public characteristics",
+          "survival through ability removal and source departure",
+          "cleanup expiration"
+        ],
+        "exclusions": [
+          "ability or characteristic grants",
+          "two-object source-relative rules",
+          "ambiguous other-group antecedents",
+          "variable or more-than-six target cardinalities",
+          "unsupported hidden or source-relative predicates",
+          "open declaration grammar",
+          "durations other than until end of turn"
+        ]
       },
       "dependencies": [],
-      "implementation_components": ["quorune.declaration_rule_effects.ResolutionDeclarationRuleEffect", "quorune.continuous_effect_state.create_resolution_declaration_rule_effect", "quorune.continuous_effect_state.active_resolution_declaration_rule_effects", "quorune.continuous_effect_state.expire_end_of_turn_continuous_effects", "quorune.rules.temporary_declaration_restrictions.commit_temporary_declaration_restriction", "quorune.rules.temporary_declaration_restrictions.current_declaration_restrictions", "quorune.effect_runtime.declaration_effects._apply_grant_declaration_restriction_until_end_of_turn"],
-      "positive_tests": ["test_closed_activated_temporary_declaration_restrictions_compile", "test_source_and_creature_subtype_subjects_compile_closed_shapes", "test_spell_triggered_source_and_subtype_contexts_share_owner", "test_compiled_source_activation_locks_rule_to_source_incarnation", "test_all_four_restrictions_change_declaration_behavior_and_expire"],
-      "negative_tests": ["test_open_temporary_declaration_restriction_grammar_stays_residual", "test_illegal_target_at_resolution_commits_no_declaration_rule", "test_malformed_temporary_restriction_rolls_back_without_effect"],
-      "interaction_tests": ["test_resolved_rule_survives_ability_removal_while_static_rule_does_not", "test_source_departure_preserves_rule_but_target_reentry_does_not", "test_all_four_restrictions_change_declaration_behavior_and_expire"],
-      "multiplayer_tests": ["test_four_player_projection_exposes_only_public_declaration_facts"],
-      "privacy_tests": ["test_four_player_projection_exposes_only_public_declaration_facts"],
-      "replay_tests": ["test_resolved_rule_survives_ability_removal_while_static_rule_does_not", "test_cleanup_expiration_is_exactly_replayable"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "implementation_components": [
+        "quorune.declaration_rule_effects.ResolutionDeclarationRuleEffect",
+        "quorune.continuous_effect_state.create_resolution_declaration_rule_effect",
+        "quorune.continuous_effect_state.active_resolution_declaration_rule_effects",
+        "quorune.continuous_effect_state.expire_end_of_turn_continuous_effects",
+        "quorune.rules.temporary_declaration_restrictions.commit_temporary_declaration_restriction",
+        "quorune.rules.temporary_declaration_restrictions.current_declaration_restrictions",
+        "quorune.effect_runtime.declaration_effects._apply_grant_declaration_restriction_until_end_of_turn"
+      ],
+      "positive_tests": [
+        "test_closed_activated_temporary_declaration_restrictions_compile",
+        "test_source_and_creature_subtype_subjects_compile_closed_shapes",
+        "test_spell_triggered_source_and_subtype_contexts_share_owner",
+        "test_compiled_source_activation_locks_rule_to_source_incarnation",
+        "test_all_four_restrictions_change_declaration_behavior_and_expire",
+        "test_bounded_target_groups_keep_target_count_and_one_rule_instruction",
+        "test_public_group_rules_preserve_live_controller_and_keyword_predicates",
+        "test_original_falter_live_empty_group_includes_later_entrants_and_rechecks_flying",
+        "test_original_blizzard_revalidates_each_target_and_retains_only_resolved_incarnations"
+      ],
+      "negative_tests": [
+        "test_open_temporary_declaration_restriction_grammar_stays_residual",
+        "test_illegal_target_at_resolution_commits_no_declaration_rule",
+        "test_malformed_temporary_restriction_rolls_back_without_effect",
+        "test_ambiguous_groups_unbounded_targets_and_other_durations_remain_residual",
+        "test_group_rule_missing_authority_and_query_producer_remain_residual",
+        "test_group_rule_codecs_keep_legacy_fields_and_reject_malformed_live_queries",
+        "test_malformed_group_recipients_roll_back_before_journal_mutation"
+      ],
+      "interaction_tests": [
+        "test_resolved_rule_survives_ability_removal_while_static_rule_does_not",
+        "test_source_departure_preserves_rule_but_target_reentry_does_not",
+        "test_all_four_restrictions_change_declaration_behavior_and_expire",
+        "test_original_falter_live_empty_group_includes_later_entrants_and_rechecks_flying",
+        "test_original_blizzard_revalidates_each_target_and_retains_only_resolved_incarnations"
+      ],
+      "multiplayer_tests": [
+        "test_four_player_projection_exposes_only_public_declaration_facts",
+        "test_original_falter_live_empty_group_includes_later_entrants_and_rechecks_flying",
+        "test_original_blizzard_revalidates_each_target_and_retains_only_resolved_incarnations"
+      ],
+      "privacy_tests": [
+        "test_four_player_projection_exposes_only_public_declaration_facts",
+        "test_original_falter_live_empty_group_includes_later_entrants_and_rechecks_flying",
+        "test_original_blizzard_revalidates_each_target_and_retains_only_resolved_incarnations"
+      ],
+      "replay_tests": [
+        "test_resolved_rule_survives_ability_removal_while_static_rule_does_not",
+        "test_cleanup_expiration_is_exactly_replayable",
+        "test_original_falter_live_empty_group_includes_later_entrants_and_rechecks_flying",
+        "test_original_blizzard_revalidates_each_target_and_retains_only_resolved_incarnations"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "not_applicable",
-      "dependency_fail_closed_rationale": "The closed public declaration rule has no optional capability dependency; unsupported grammar and durations remain compiler residuals.",
+      "dependency_fail_closed_rationale": "Fixed group target predicates require the existing target revalidation authority. Live groups use the existing public query and combat declaration owners; unsupported recipient modes and durations remain residual. Exact authority and producer omissions are exercised by the group compiler regression.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "test_resolved_rule_survives_ability_removal_while_static_rule_does_not rejects either suppressing the journaled rule or incorrectly routing it through layer-6 ability evaluation.",
+      "implementation_mutation_rationale": "test_live_query_omission_mutant_is_killed_by_original_falter suppresses only live-query membership and fails at the expected block-prohibition assertion after original Turn to Frog removes Flying from the attackers. Existing single-target evidence also rejects dropping the journaled rule or treating it as an ability.",
       "blockers": [],
       "status": "trusted"
     },

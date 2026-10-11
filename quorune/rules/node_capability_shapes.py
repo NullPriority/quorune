@@ -1080,6 +1080,43 @@ def temporary_declaration_restriction_node_capabilities(
         return ()
     effect = effects[0]
     kind = effect.get("restriction")
+    group_target = set(effect) == {"op", "cards", "restriction"} and effect.get("cards") == "$targets"
+    live_group = set(effect) == {"op", "set", "restriction"}
+    if group_target or live_group:
+        from ..affected_permanents import AffectedPermanentSetSpec, PermanentControllerRelation
+        from ..declaration_rule_effects import declaration_group_query_is_closed
+        if effect.get("op") != "grant_declaration_restriction_until_end_of_turn" or kind not in TEMPORARY_DECLARATION_RESTRICTION_KINDS:
+            return ()
+        schema = dict(target_schema or {})
+        if group_target:
+            maximum = schema.get("count")
+            if type(maximum) is not int or not 1 <= maximum <= 6:
+                return ()
+            if "up_to" in schema and (type(schema["up_to"]) is not int or schema["up_to"] != maximum):
+                return ()
+            single = {key: value for key, value in schema.items() if key != "up_to"}
+            single["count"] = 1
+            if not direct_permanent_target_schema_is_closed(single) or not (
+                "creature" in single.get("types_all", ()) or single.get("types_any") == ["creature"]
+            ):
+                return ()
+        else:
+            try:
+                spec = AffectedPermanentSetSpec.from_dict(effect["set"])
+            except (TypeError, ValueError):
+                return ()
+            if schema or not declaration_group_query_is_closed(spec.query) or spec.exclude_source or spec.controller_relation not in {
+                PermanentControllerRelation.ANY, PermanentControllerRelation.ACTOR, PermanentControllerRelation.OPPONENTS,
+            }:
+                return ()
+        required = {"cr-611-continuous-effects", *temporary_declaration_restriction(str(kind)).mechanics}
+        if group_target:
+            required.add("cr-115-targets")
+        if not required.issubset({str(value).casefold() for value in mechanic_ids}):
+            return ()
+        return ("combat.declaration.typed_components", "continuous.resolution.declaration_rules_until_end_of_turn",
+                *(direct_target_predicate_capabilities(single) if group_target else public_state_query_capabilities(spec.query.state_predicate)),
+                *(("target.revalidate_resolution",) if group_target else ()))
     if (
         set(effect) != {"op", "card", "restriction"}
         or effect.get("op")

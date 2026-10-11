@@ -65,15 +65,27 @@ than printed mana value or mana actually paid. The full predicate remains a
 resolution-time target check. Variable bounds, ability mana-value predicates,
 multiple numeric fields, and unrepresented result linkage remain residual.
 
-`compiler/temporary_declaration_templates.py` lowers one fixed attack, block,
-attack-and-block, or unblockable instruction over the source or one shared
-direct permanent target. Qualified targets preserve fixed current power,
-subtype, controller, and source-exclusion predicates through announcement and
-resolution. The declaration-rule owner then locks the resulting incarnation
-until cleanup; changing a characteristic after creation does not remove the
-resolved prohibition. A changed predicate before resolution prevents creation.
-The rule remains distinct from a granted ability. Two-object instructions,
-unrepresented dynamic predicates, and different durations remain residual.
+`compiler/temporary_declaration_templates.py` lowers fixed attack, block,
+attack-and-block, or unblockable instructions over the source, one shared
+direct permanent target, or one through six targets with a common creature
+predicate. An optional target group may choose fewer targets. Qualified targets
+preserve fixed current power, subtype, controller, and source-exclusion
+predicates through announcement and resolution. The declaration-rule owner
+locks each surviving target incarnation until cleanup; later characteristic
+changes do not remove its resolved prohibition. A changed predicate before
+resolution prevents creation for that target.
+
+Nontargeted creature-group rules instead retain a typed live public battlefield
+query, optionally restricted to the resolving controller or that controller's
+opponents. An initially empty group still creates the rule. Later entrants,
+current control, and current keywords determine applicability at declaration
+time. Keyword predicates consume the shared effective combat keyword query.
+This follows the separate game-rule boundary in CR 611.2c rather than the locked
+membership of characteristic grants. Both recipient modes use the existing
+continuous-effect journal and expire in cleanup. The rule remains distinct from
+a granted ability. Ambiguous "other" groups, variable target counts,
+two-object restrictions, unrepresented predicates, and different durations
+remain residual.
 
 `compiler/extra_turn_templates.py` lowers one through ten fixed extra turns
 after the current turn for the resolving controller or one ordinary player or

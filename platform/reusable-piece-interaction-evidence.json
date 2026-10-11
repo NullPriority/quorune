@@ -9419,6 +9419,36 @@
     {"evidence_class":"interaction","assurance_kind":"runtime_composition","test_id":"tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_taste_adds_live_bonus_to_foreign_creature_and_private_draw_removes_it","piece_ids":["capability.continuous.characteristics.fixed_public_state","capability.zone.draw.library_to_hand"],"capability_ids":["continuous.characteristics.fixed_public_state","zone.draw.library_to_hand"],"interaction_order":2,"assertion":"Original Taste for Mayhem is cast on a B-controlled creature by A. Its ordinary +2/+0 and additional +2/+0 stack when A's hand empties during an actual Divination cast, then the private draw removes only the conditional bonus. A foreign creature remains unaffected; unauthorized casting rolls back. Pending save/load and complete pre-aura replay agree, with nonactor projections exposing only hand counts."},
     {"evidence_class":"interaction","assurance_kind":"runtime_composition","test_id":"tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityRuntimeTests.test_original_soulless_one_counts_noncreature_kindreds_across_public_zones","piece_ids":["capability.continuous.characteristics.query_count_modifier","capability.continuous.characteristics.query_power_toughness_definition"],"capability_ids":["continuous.characteristics.query_count_modifier","continuous.characteristics.query_power_toughness_definition"],"interaction_order":2,"assertion":"Original Soulless One and an independently admitted battlefield modifier share current bare Zombie predicates while retaining their distinct public-zone scopes and layers. Foreign noncreature Kindreds count; non-Zombie creatures do not. Stack and entry quantities, principal rollback/projection, pending save/load and full pre-cast replay agree."},
     {"evidence_class":"interaction","assurance_kind":"runtime_composition","test_id":"tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityRuntimeTests.test_original_pride_and_priest_count_foreign_noncreature_elves","piece_ids":["capability.mana.production.public_quantity","capability.quantity_expression.public_query_effect_amount"],"capability_ids":["mana.production.public_quantity","quantity_expression.public_query_effect_amount"],"interaction_order":2,"assertion":"Accepted original Priest of Titania and Wirewood Pride actions consume the same public Elf membership, including a foreign noncreature Kindred. The activation pays its tap price and produces two green mana; the paid spell adds +2/+2 to a foreign Human. Full pre-activation replay preserves both prices and results."},
-    {"evidence_class":"interaction","assurance_kind":"runtime_composition","test_id":"tests.test_fixed_player_life_effects.EachPlayerLifeRuntimeTests.test_original_smallpox_keeps_zero_life_players_in_resolution_choices","piece_ids":["capability.choice.affected_player.fixed_discard","capability.life.change.effect"],"capability_ids":["choice.affected_player.fixed_discard","life.change.effect"],"interaction_order":2,"assertion":"Original Smallpox's all-player loss precedes private discard and public sacrifices without stabilizing zero-life participants during resolution; all principals complete their choices before simultaneous loss, and pending/final pre-cast replay agrees."}
+    {"evidence_class":"interaction","assurance_kind":"runtime_composition","test_id":"tests.test_fixed_player_life_effects.EachPlayerLifeRuntimeTests.test_original_smallpox_keeps_zero_life_players_in_resolution_choices","piece_ids":["capability.choice.affected_player.fixed_discard","capability.life.change.effect"],"capability_ids":["choice.affected_player.fixed_discard","life.change.effect"],"interaction_order":2,"assertion":"Original Smallpox's all-player loss precedes private discard and public sacrifices without stabilizing zero-life participants during resolution; all principals complete their choices before simultaneous loss, and pending/final pre-cast replay agrees."},
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_falter_live_empty_group_includes_later_entrants_and_rechecks_flying",
+      "piece_ids": [
+        "capability.continuous.resolution.declaration_rules_until_end_of_turn",
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "capability_ids": [
+        "continuous.resolution.declaration_rules_until_end_of_turn",
+        "continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Falter persists over an empty group and late entrants; actual Jump and Turn to Frog change current Flying while real block offers and commands distinguish live declaration applicability, with save/load and pre-cast replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_blizzard_revalidates_each_target_and_retains_only_resolved_incarnations",
+      "piece_ids": [
+        "capability.continuous.resolution.declaration_rules_until_end_of_turn",
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "capability_ids": [
+        "continuous.resolution.declaration_rules_until_end_of_turn",
+        "continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Unearthly Blizzard retains only the surviving target incarnation, whose actual Jump keyword change leaves its rule intact; returned Flash and unselected creatures remain legal blockers, with save/load and replay."
+    }
   ]
 }

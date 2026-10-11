@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "7552781b4a344eb2551105841c40b098adea463d3d79d6b59cb4fe6fb90c5ade",
-  "declaration_source_fingerprint": "85a28026efadf7f2a576c05d431550e38bc169869334492a1cc917c42233e15a",
+  "registry_fingerprint": "5f32e91892bd7e230099d9f5fa396953d1717273cd5b94a99155b0ef254775c7",
+  "declaration_source_fingerprint": "9d90e32899b3f3d6ac3b54cbae971860a0c8829651cfcf779dbac7937c90f603",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -35641,6 +35641,40 @@
     {
       "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
       "evidence_class": "interaction",
+      "test_id": "tests.test_temporary_declaration_restriction_effects.GroupDeclarationRuntimeTests.test_original_blizzard_revalidates_each_target_and_retains_only_resolved_incarnations",
+      "official_rule_ids": [
+        "508.1c",
+        "509.1b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Unearthly Blizzard targets two creatures; actual Unsummon removes one before resolution and its Flash return has a new incarnation. The surviving target keeps the rule after actual Jump grants Flying; ordinary block offers, accepted and forbidden commands, pending save/load and pre-cast replay distinguish both recipients."
+    },
+    {
+      "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_temporary_declaration_restriction_effects.GroupDeclarationRuntimeTests.test_original_falter_live_empty_group_includes_later_entrants_and_rechecks_flying",
+      "official_rule_ids": [
+        "508.1c",
+        "509.1b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Falter resolves with no matching creatures, then affects later Flash entrants. Actual Jump changes one blocker predicate; two original Turn to Frog spells make the attackers ground creatures so Flying cannot mask the prohibition. Real four-seat block offers and commands, pending save/load, private decision projection and pre-cast replay distinguish live membership."
+    },
+    {
+      "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
+      "evidence_class": "interaction",
       "test_id": "tests.test_temporary_declaration_restriction_effects.QualifiedDeclarationRuntimeTests.test_original_tunneler_power_target_revalidates_and_resolved_rule_locks",
       "official_rule_ids": [
         "508.1c",
@@ -35709,6 +35743,40 @@
     {
       "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_temporary_declaration_restriction_effects.GroupDeclarationRuntimeTests.test_original_blizzard_revalidates_each_target_and_retains_only_resolved_incarnations",
+      "official_rule_ids": [
+        "508.1c",
+        "509.1b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Unearthly Blizzard targets two creatures; actual Unsummon removes one before resolution and its Flash return has a new incarnation. The surviving target keeps the rule after actual Jump grants Flying; ordinary block offers, accepted and forbidden commands, pending save/load and pre-cast replay distinguish both recipients."
+    },
+    {
+      "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_temporary_declaration_restriction_effects.GroupDeclarationRuntimeTests.test_original_falter_live_empty_group_includes_later_entrants_and_rechecks_flying",
+      "official_rule_ids": [
+        "508.1c",
+        "509.1b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Falter resolves with no matching creatures, then affects later Flash entrants. Actual Jump changes one blocker predicate; two original Turn to Frog spells make the attackers ground creatures so Flying cannot mask the prohibition. Real four-seat block offers and commands, pending save/load, private decision projection and pre-cast replay distinguish live membership."
+    },
+    {
+      "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_temporary_declaration_restriction_effects.QualifiedDeclarationRuntimeTests.test_original_tunneler_power_target_revalidates_and_resolved_rule_locks",
       "official_rule_ids": [
         "508.1c",
@@ -35739,6 +35807,40 @@
         "commander_review"
       ],
       "applicability_note": "Apply the public restriction consistently in a four-player declaration domain without leaking journal identities."
+    },
+    {
+      "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_temporary_declaration_restriction_effects.GroupDeclarationCompilerTests.test_group_rule_missing_authority_and_query_producer_remain_residual",
+      "official_rule_ids": [
+        "508.1c",
+        "509.1b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Removing existing target revalidation or declaration-rule authority, or the shared battlefield query producer, prevents exact admission."
+    },
+    {
+      "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_temporary_declaration_restriction_effects.GroupDeclarationRuntimeTests.test_live_query_omission_mutant_is_killed_by_original_falter",
+      "official_rule_ids": [
+        "508.1c",
+        "509.1b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Suppressing only live query evaluation is killed at the explicit live-rule prohibition assertion, after real admitted helpers eliminate independent Flying restrictions."
     },
     {
       "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
@@ -35790,6 +35892,74 @@
         "commander_review"
       ],
       "applicability_note": "Refuse source-relative, exception-bearing, and otherwise open declaration-rule grammar at compilation."
+    },
+    {
+      "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_temporary_declaration_restriction_effects.GroupDeclarationCompilerTests.test_ambiguous_groups_unbounded_targets_and_other_durations_remain_residual",
+      "official_rule_ids": [
+        "508.1c",
+        "509.1b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Ambiguous other groups, variable target cardinality, unrelated durations, malformed bounds and hidden owner filters remain unadmitted."
+    },
+    {
+      "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_temporary_declaration_restriction_effects.GroupDeclarationCompilerTests.test_group_rule_codecs_keep_legacy_fields_and_reject_malformed_live_queries",
+      "official_rule_ids": [
+        "508.1c",
+        "509.1b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Legacy locked payloads remain readable; version-two live queries round-trip and reject hidden, phased, unbound, mixed-recipient and malformed fields. Both shapes expire in cleanup."
+    },
+    {
+      "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_temporary_declaration_restriction_effects.GroupDeclarationCompilerTests.test_group_rule_missing_authority_and_query_producer_remain_residual",
+      "official_rule_ids": [
+        "508.1c",
+        "509.1b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Removing existing target revalidation or declaration-rule authority, or the shared battlefield query producer, prevents exact admission."
+    },
+    {
+      "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_temporary_declaration_restriction_effects.GroupDeclarationRuntimeTests.test_malformed_group_recipients_roll_back_before_journal_mutation",
+      "official_rule_ids": [
+        "508.1c",
+        "509.1b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Duplicate, excessive, non-string and conflicting recipient modes, unsupported public sets and unknown restrictions fail with unchanged authoritative state."
     },
     {
       "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
@@ -35896,6 +36066,91 @@
     {
       "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
       "evidence_class": "positive",
+      "test_id": "tests.test_temporary_declaration_restriction_effects.GroupDeclarationCompilerTests.test_bounded_target_groups_keep_target_count_and_one_rule_instruction",
+      "official_rule_ids": [
+        "508.1c",
+        "509.1b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed and optional creature target groups retain exact cardinality, source span, and one shared typed declaration instruction."
+    },
+    {
+      "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_declaration_restriction_effects.GroupDeclarationCompilerTests.test_group_rule_codecs_keep_legacy_fields_and_reject_malformed_live_queries",
+      "official_rule_ids": [
+        "508.1c",
+        "509.1b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Legacy locked payloads remain readable; version-two live queries round-trip and reject hidden, phased, unbound, mixed-recipient and malformed fields. Both shapes expire in cleanup."
+    },
+    {
+      "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_declaration_restriction_effects.GroupDeclarationCompilerTests.test_public_group_rules_preserve_live_controller_and_keyword_predicates",
+      "official_rule_ids": [
+        "508.1c",
+        "509.1b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Live public creature queries retain global, controller, opponent, and negative-keyword predicates without becoming target sets."
+    },
+    {
+      "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_declaration_restriction_effects.GroupDeclarationRuntimeTests.test_original_blizzard_revalidates_each_target_and_retains_only_resolved_incarnations",
+      "official_rule_ids": [
+        "508.1c",
+        "509.1b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Unearthly Blizzard targets two creatures; actual Unsummon removes one before resolution and its Flash return has a new incarnation. The surviving target keeps the rule after actual Jump grants Flying; ordinary block offers, accepted and forbidden commands, pending save/load and pre-cast replay distinguish both recipients."
+    },
+    {
+      "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_declaration_restriction_effects.GroupDeclarationRuntimeTests.test_original_falter_live_empty_group_includes_later_entrants_and_rechecks_flying",
+      "official_rule_ids": [
+        "508.1c",
+        "509.1b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Falter resolves with no matching creatures, then affects later Flash entrants. Actual Jump changes one blocker predicate; two original Turn to Frog spells make the attackers ground creatures so Flying cannot mask the prohibition. Real four-seat block offers and commands, pending save/load, private decision projection and pre-cast replay distinguish live membership."
+    },
+    {
+      "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
+      "evidence_class": "positive",
       "test_id": "tests.test_temporary_declaration_restriction_effects.QualifiedDeclarationCompilerTests.test_qualified_temporary_rules_preserve_complete_target_predicates",
       "official_rule_ids": [
         "508.1c",
@@ -35947,6 +36202,40 @@
     {
       "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
       "evidence_class": "privacy",
+      "test_id": "tests.test_temporary_declaration_restriction_effects.GroupDeclarationRuntimeTests.test_original_blizzard_revalidates_each_target_and_retains_only_resolved_incarnations",
+      "official_rule_ids": [
+        "508.1c",
+        "509.1b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Unearthly Blizzard targets two creatures; actual Unsummon removes one before resolution and its Flash return has a new incarnation. The surviving target keeps the rule after actual Jump grants Flying; ordinary block offers, accepted and forbidden commands, pending save/load and pre-cast replay distinguish both recipients."
+    },
+    {
+      "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_temporary_declaration_restriction_effects.GroupDeclarationRuntimeTests.test_original_falter_live_empty_group_includes_later_entrants_and_rechecks_flying",
+      "official_rule_ids": [
+        "508.1c",
+        "509.1b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Falter resolves with no matching creatures, then affects later Flash entrants. Actual Jump changes one blocker predicate; two original Turn to Frog spells make the attackers ground creatures so Flying cannot mask the prohibition. Real four-seat block offers and commands, pending save/load, private decision projection and pre-cast replay distinguish live membership."
+    },
+    {
+      "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
+      "evidence_class": "privacy",
       "test_id": "tests.test_temporary_declaration_restriction_effects.QualifiedDeclarationRuntimeTests.test_original_tunneler_power_target_revalidates_and_resolved_rule_locks",
       "official_rule_ids": [
         "508.1c",
@@ -35977,6 +36266,57 @@
         "commander_review"
       ],
       "applicability_note": "Keep effect, source, physical, and logical identities authoritative-only while exposing the public legal declaration domain."
+    },
+    {
+      "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
+      "evidence_class": "property",
+      "test_id": "tests.test_temporary_declaration_restriction_effects.GroupDeclarationCompilerTests.test_group_rule_codecs_keep_legacy_fields_and_reject_malformed_live_queries",
+      "official_rule_ids": [
+        "508.1c",
+        "509.1b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Legacy locked payloads remain readable; version-two live queries round-trip and reject hidden, phased, unbound, mixed-recipient and malformed fields. Both shapes expire in cleanup."
+    },
+    {
+      "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_temporary_declaration_restriction_effects.GroupDeclarationRuntimeTests.test_original_blizzard_revalidates_each_target_and_retains_only_resolved_incarnations",
+      "official_rule_ids": [
+        "508.1c",
+        "509.1b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Unearthly Blizzard targets two creatures; actual Unsummon removes one before resolution and its Flash return has a new incarnation. The surviving target keeps the rule after actual Jump grants Flying; ordinary block offers, accepted and forbidden commands, pending save/load and pre-cast replay distinguish both recipients."
+    },
+    {
+      "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_temporary_declaration_restriction_effects.GroupDeclarationRuntimeTests.test_original_falter_live_empty_group_includes_later_entrants_and_rechecks_flying",
+      "official_rule_ids": [
+        "508.1c",
+        "509.1b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Falter resolves with no matching creatures, then affects later Flash entrants. Actual Jump changes one blocker predicate; two original Turn to Frog spells make the attackers ground creatures so Flying cannot mask the prohibition. Real four-seat block offers and commands, pending save/load, private decision projection and pre-cast replay distinguish live membership."
     },
     {
       "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
@@ -36028,6 +36368,57 @@
         "commander_review"
       ],
       "applicability_note": "Round-trip and exactly replay the typed declaration-rule journal entry without consulting Oracle prose."
+    },
+    {
+      "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_temporary_declaration_restriction_effects.GroupDeclarationRuntimeTests.test_malformed_group_recipients_roll_back_before_journal_mutation",
+      "official_rule_ids": [
+        "508.1c",
+        "509.1b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Duplicate, excessive, non-string and conflicting recipient modes, unsupported public sets and unknown restrictions fail with unchanged authoritative state."
+    },
+    {
+      "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_temporary_declaration_restriction_effects.GroupDeclarationRuntimeTests.test_original_blizzard_revalidates_each_target_and_retains_only_resolved_incarnations",
+      "official_rule_ids": [
+        "508.1c",
+        "509.1b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Unearthly Blizzard targets two creatures; actual Unsummon removes one before resolution and its Flash return has a new incarnation. The surviving target keeps the rule after actual Jump grants Flying; ordinary block offers, accepted and forbidden commands, pending save/load and pre-cast replay distinguish both recipients."
+    },
+    {
+      "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_temporary_declaration_restriction_effects.GroupDeclarationRuntimeTests.test_original_falter_live_empty_group_includes_later_entrants_and_rechecks_flying",
+      "official_rule_ids": [
+        "508.1c",
+        "509.1b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Falter resolves with no matching creatures, then affects later Flash entrants. Actual Jump changes one blocker predicate; two original Turn to Frog spells make the attackers ground creatures so Flying cannot mask the prohibition. Real four-seat block offers and commands, pending save/load, private decision projection and pre-cast replay distinguish live membership."
     },
     {
       "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
@@ -47596,7 +47987,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "applicability_note": "Reject zero, variable, malformed, and Modular\u2014Sunburst values without emitting executable entry or departure behavior."
+      "applicability_note": "Reject zero, variable, malformed, and Modular\u00e2\u20ac\u201dSunburst values without emitting executable entry or departure behavior."
     },
     {
       "capability_id": "counter.producer.modular",
@@ -105183,5 +105574,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "821015e85201c0fa0b64011ac8bcb6721a63aca8b859300756baa4d6f7546a67"
+  "fingerprint": "47c5779cd716be1bd4398e398f0079eb5fcad56abb92ab5c06556315706ffbea"
 }

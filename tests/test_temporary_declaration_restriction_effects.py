@@ -1059,5 +1059,341 @@ class QualifiedDeclarationRuntimeTests(unittest.TestCase):
                 self.replay(session, load=True)
 
 
+class GroupDeclarationCompilerTests(unittest.TestCase):
+    """CR 611.2c: explicit targets stay bound; group rules stay live.
+
+    A nontargeted rule about creatures can affect later entrants or objects
+    whose matching characteristics change. It is not a keyword grant and
+    does not freeze a characteristic-modifying affected set.
+    """
+
+    def compile(self, text):
+        return compile_oracle_card(
+            qualified_declaration_record(text, type_line="Sorcery"),
+            capability_registry=load_default_capability_registry(),
+            capability_profile="commander_review")
+
+    def test_bounded_target_groups_keep_target_count_and_one_rule_instruction(self):
+        from test_qualified_zone_event_queries import query_record
+
+        registry = load_default_capability_registry()
+        for text, maximum, optional in (
+            ("Two target creatures can't block this turn.", 2, False),
+            ("Up to three target creatures can't be blocked this turn.", 3, True),
+        ):
+            with self.subTest(text=text):
+                card = replace(query_record(text), type_line="Sorcery", power=None, toughness=None)
+                ir = compile_oracle_card(card, capability_registry=registry)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                self.assertEqual(maximum, node.target_schema["count"])
+                self.assertEqual(optional, bool(node.target_schema.get("up_to")))
+                self.assertEqual("$targets", node.effects[0]["cards"])
+                self.assertEqual(text, node.text)
+
+    def test_public_group_rules_preserve_live_controller_and_keyword_predicates(self):
+        from test_qualified_zone_event_queries import query_record
+
+        registry = load_default_capability_registry()
+        for text, relation in (
+            ("All creatures can't block this turn.", "any"),
+            ("Creatures you control can't be blocked this turn.", "actor"),
+            ("Creatures your opponents control can't block this turn.", "opponents"),
+            ("Creatures without flying can't block this turn.", "any"),
+        ):
+            with self.subTest(text=text):
+                card = replace(query_record(text), type_line="Sorcery", power=None, toughness=None)
+                ir = compile_oracle_card(card, capability_registry=registry)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                self.assertIsNone(node.target_schema)
+                self.assertEqual(relation, node.effects[0]["set"]["controller_relation"])
+                self.assertEqual(["creature"], node.effects[0]["set"]["query"]["types_all"])
+                if "without flying" in text:
+                    self.assertEqual(["flying"], node.effects[0]["set"]["query"]["keywords_none"])
+
+    def test_group_rule_missing_authority_and_query_producer_remain_residual(self):
+        from quorune.rules.capabilities import CapabilityRegistry
+
+        cases = (
+            ("Two target creatures can't block this turn.", "target.revalidate_resolution"),
+            ("Creatures without flying can't block this turn.",
+             "continuous.resolution.declaration_rules_until_end_of_turn"),
+        )
+        for text, capability in cases:
+            with self.subTest(text=text):
+                self.assertEqual("exact", self.compile(text).status)
+                raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
+                next(row for row in raw["capabilities"] if row["id"] == capability).update(
+                    status="blocked", blockers=["group declaration authority unavailable"])
+                blocked = compile_oracle_card(
+                    qualified_declaration_record(text, type_line="Sorcery"),
+                    capability_registry=CapabilityRegistry(raw), capability_profile="commander_review")
+                self.assertNotEqual("exact", blocked.status)
+        with patch("quorune.compiler.temporary_declaration_templates.fixed_battlefield_query_subject", return_value=None):
+            self.assertNotEqual("exact", self.compile(cases[1][0]).status)
+
+    def test_group_rule_codecs_keep_legacy_fields_and_reject_malformed_live_queries(self):
+        from quorune.continuous_effect_model import ContinuousObjectIdentity, ContinuousEffectError
+        from quorune.object_predicate import ObjectQuerySpec
+
+        old = ResolutionDeclarationRuleEffect("DR-old", "source", 1,
+            temporary_declaration_restriction("cant_block"), (ContinuousObjectIdentity("object", "incarnation"),))
+        self.assertNotIn("schema_version", old.to_dict())
+        self.assertEqual(old, ResolutionDeclarationRuleEffect.from_dict(old.to_dict()))
+        live = ResolutionDeclarationRuleEffect("DR-live", "source", 2,
+            temporary_declaration_restriction("cant_block"), (), live_query=ObjectQuerySpec(
+                zones=("battlefield",), types_all=("creature",), keywords_none=("flying",), controller="B"))
+        self.assertEqual(2, live.to_dict()["schema_version"])
+        self.assertEqual(live, ResolutionDeclarationRuleEffect.from_dict(live.to_dict()))
+        for changed in (
+            {"schema_version": True}, {"schema_version": 1}, {"live_query": None},
+            {"locked_objects": old.to_dict()["locked_objects"]}, {"extra": True},
+        ):
+            with self.subTest(changed=changed), self.assertRaises(ContinuousEffectError):
+                ResolutionDeclarationRuleEffect.from_dict({**live.to_dict(), **changed})
+        for query in (
+            ObjectQuerySpec(zones=("hand",), types_all=("creature",)),
+            ObjectQuerySpec(zones=("battlefield",), types_all=("artifact",)),
+            ObjectQuerySpec(zones=("battlefield",), types_all=("creature",), known_to_actor=True),
+            ObjectQuerySpec(zones=("battlefield",), types_all=("creature",), include_phased_out=True),
+            ObjectQuerySpec(zones=("battlefield",), types_all=("creature",), controller="$controller"),
+        ):
+            with self.assertRaises(ContinuousEffectError):
+                replace(live, live_query=query)
+        state = GameState.__new__(GameState)
+        state.continuous_effects = [old, live]
+        self.assertEqual(2, expire_end_of_turn_continuous_effects(state))
+        self.assertEqual([], state.continuous_effects)
+
+    def test_ambiguous_groups_unbounded_targets_and_other_durations_remain_residual(self):
+        from test_qualified_zone_event_queries import query_record
+        from quorune.rules.node_capability_shapes import temporary_declaration_restriction_node_capabilities
+
+        registry = load_default_capability_registry()
+        for text in (
+            "Other creatures can't attack this turn.",
+            "X target creatures can't block this turn.",
+            "Two or more target creatures can't block this turn.",
+            "Creatures you control can't be blocked until your next turn.",
+            "Creatures a player chooses can't block this turn.",
+        ):
+            with self.subTest(text=text):
+                self.assertNotEqual("exact", compile_oracle_card(
+                    replace(query_record(text), type_line="Sorcery", power=None, toughness=None),
+                    capability_registry=registry,
+                ).status)
+        text = "Two target creatures can't block this turn."
+        ir = compile_oracle_card(replace(query_record(text), type_line="Sorcery", power=None, toughness=None), capability_registry=registry)
+        node = ir.faces[0].nodes[0]
+        for changed in ({"count": True}, {"count": 7}, {"up_to": True}, {"owner": "you"}):
+            self.assertEqual((), temporary_declaration_restriction_node_capabilities(
+                effects=node.effects, target_schema={**node.target_schema, **changed}, mechanic_ids=node.mechanics))
+
+
+class GroupDeclarationRuntimeTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from quorune.deck import DeckDefinition, DeckEntry
+        from scripts.build_test_database import build_fixture_database
+
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "group-declarations.sqlite3"
+        build_fixture_database([
+            ROOT / "tests/fixtures/bound-effect-program-cards.json",
+            ROOT / "tests/fixtures/group-declaration-rules.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Group declarations", [
+            DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 10),
+        ], ["Generic Bound Commander"])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    import test_bound_effect_programs as _bound
+    session = _bound.BoundEffectProgramRuntimeTests.session
+    add = _bound.BoundEffectProgramRuntimeTests.add
+    ready = _bound.BoundEffectProgramRuntimeTests.ready
+    checkpoint = _bound.BoundEffectProgramRuntimeTests.checkpoint
+    resolve = _bound.BoundEffectProgramRuntimeTests.resolve
+    replay = _bound.BoundEffectProgramRuntimeTests.replay
+    advance_to = QualifiedDeclarationRuntimeTests.advance_to
+
+    def offered(self, session, seat, card):
+        rows = session.packet("pilot:" + seat, full=True)["decision"]["ctx"]["legal"]["actions"]
+        return next(row for row in rows if row.get("card") == card.ref)
+
+    def priority_to(self, session, seat):
+        for _ in range(5):
+            if session.state.priority_player == seat:
+                return
+            self.assertTrue(session.act(session.pending_principals()[0], {"action_id": "pass"}).ok)
+        self.fail("Priority did not reach " + seat)
+
+    def assert_whole_admission(self, name):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.semantics import SemanticRegistry
+
+        program = compile_best_available_card_program(
+            self.db, self.db.lookup(name), semantic_registry=SemanticRegistry(),
+            capability_registry=self.registry, capability_profile="commander_review",
+        )
+        self.assertTrue(bind_card_program_runtime(program, capability_registry=self.registry,
+            profile="commander_review")["strict_capability_ready"])
+
+    def attack_and_check_blocks(self, session, attackers, forbidden, allowed):
+        self.advance_to(session, "combat.attackers")
+        accepted = session.act("pilot:A", {"a": "attack", "atk": {card.ref: "B" for card in attackers}})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.advance_to(session, "combat.blockers")
+        packet = session.packet("pilot:B", full=True)
+        legal = packet["decision"]["ctx"]["legal_blocks"]
+        for card in forbidden:
+            self.assertNotIn(attackers[0].ref, legal.get(card.ref, ()), "live-rule prohibition missing")
+        for card in allowed:
+            self.assertIn(attackers[0].ref, legal[card.ref])
+        for seat in "ACD":
+            self.assertIsNone(session.packet("pilot:" + seat, full=True)["decision"])
+        self.replay(session, load=True)
+        before = authoritative_state_hash(session.state)
+        denied = session.act("pilot:B", {"a": "block", "blk": {forbidden[0].ref: attackers[0].ref}})
+        self.assertFalse(denied.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act("pilot:B", {"a": "block", "blk": {allowed[0].ref: attackers[0].ref}})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.replay(session, load=True)
+
+    def test_malformed_group_recipients_roll_back_before_journal_mutation(self):
+        from quorune.object_predicate import ObjectQuerySpec
+        from quorune.affected_permanents import AffectedPermanentSetSpec
+
+        session = self.session(seed=611209)
+        target = self.add(session.engine, "Generic Group Flash Ground", seat="B", zone="battlefield")
+        spec = AffectedPermanentSetSpec(
+            query=ObjectQuerySpec(zones=("battlefield",), types_all=("creature",)))
+        malformed = (
+            {"cards": [target.ref, target.ref]},
+            {"cards": [True]},
+            {"cards": [target.ref] * 7},
+            {"cards": target.ref},
+            {"cards": [target.ref], "card": target.ref},
+            {"set": {**spec.to_dict(), "exclude_source": True}},
+            {"set": {**spec.to_dict(), "query": ObjectQuerySpec(
+                zones=("battlefield",), types_all=("artifact",)).to_dict()}},
+            {"set": spec.to_dict(), "cards": []},
+            {"cards": [], "restriction": "arbitrary"},
+        )
+        for recipients in malformed:
+            with self.subTest(recipients=recipients):
+                before = authoritative_state_hash(session.state)
+                with self.assertRaises(GameRuleError):
+                    session.engine.apply_effect({
+                        "op": "grant_declaration_restriction_until_end_of_turn",
+                        "restriction": "cant_block", **recipients}, actor="A")
+                self.assertEqual(before, authoritative_state_hash(session.state))
+
+    def test_original_falter_live_empty_group_includes_later_entrants_and_rechecks_flying(self):
+        session = self.session(344101)
+        engine = session.engine
+        attackers = [self.add(engine, "Generic Group Flash Flyer", ref="falter-attacker-" + str(i)) for i in range(2)]
+        for card in attackers:
+            card.acquired_control_turn_count = -1
+        flyer = self.add(engine, "Generic Group Flash Flyer", seat="B", ref="existing-flyer")
+        late = [self.add(engine, "Generic Group Flash Ground", seat="B", zone="hand", ref="late-ground-" + str(i)) for i in range(2)]
+        source = self.add(engine, "Falter", zone="hand")
+        jump = self.add(engine, "Jump", zone="hand")
+        grounding = [self.add(engine, "Turn to Frog", zone="hand", ref="grounding-" + str(i)) for i in range(2)]
+        session.state.players["B"].mana_pool.update({"U": 2})
+        session.state.phase_index = TURN_STEPS.index(("precombat_main", "main"))
+        self.assert_whole_admission(source.printed_name)
+        action = self.ready(session, source, {"R": 2, "U": 7})
+        self.checkpoint(session)
+        before = authoritative_state_hash(session.state)
+        denied = session.act("pilot:B", {"action_id": action["id"], "pay": "auto"})
+        self.assertFalse(denied.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        rule = next(effect for effect in session.state.continuous_effects if isinstance(effect, ResolutionDeclarationRuleEffect))
+        self.assertEqual((), rule.locked_objects)
+        self.assertEqual(("flying",), rule.live_query.keywords_none)
+        self.replay(session, load=True)
+        self.priority_to(session, "B")
+        for card in late:
+            action = self.offered(session, "B", card)
+            accepted = session.act("pilot:B", {"action_id": action["id"], "pay": "auto"})
+            self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        self.priority_to(session, "A")
+        action = self.offered(session, "A", jump)
+        accepted = session.act("pilot:A", {"action_id": action["id"], "targets": [late[0].ref], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        self.assert_whole_admission(grounding[0].printed_name)
+        for spell, attacker in zip(grounding, attackers):
+            action = self.offered(session, "A", spell)
+            accepted = session.act("pilot:A", {"action_id": action["id"], "targets": [attacker.ref], "pay": "auto"})
+            self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        self.attack_and_check_blocks(session, attackers, [late[1]], [flyer, late[0]])
+
+    def test_original_blizzard_revalidates_each_target_and_retains_only_resolved_incarnations(self):
+        session = self.session(344102)
+        engine = session.engine
+        attackers = [self.add(engine, "Generic Bound Body", ref="blizzard-attacker-" + str(i)) for i in range(2)]
+        for card in attackers:
+            card.acquired_control_turn_count = -1
+        departed = self.add(engine, "Generic Group Flash Ground", seat="B", ref="blizzard-returning")
+        retained = self.add(engine, "Generic Bound Body", seat="B", ref="blizzard-retained")
+        ordinary = self.add(engine, "Generic Bound Body", seat="B", ref="blizzard-unselected")
+        source = self.add(engine, "Unearthly Blizzard", zone="hand")
+        bounce = self.add(engine, "Unsummon", zone="hand")
+        jump = self.add(engine, "Jump", zone="hand")
+        session.state.players["B"].mana_pool.update({"U": 1})
+        session.state.phase_index = TURN_STEPS.index(("precombat_main", "main"))
+        self.assert_whole_admission(source.printed_name)
+        action = self.ready(session, source, {"R": 3, "U": 4})
+        self.checkpoint(session)
+        accepted = session.act("pilot:A", {"action_id": action["id"], "targets": [departed.ref, retained.ref], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        action = self.offered(session, "A", bounce)
+        accepted = session.act("pilot:A", {"action_id": action["id"], "targets": [departed.ref], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        self.assertEqual("hand", session.state.cards[departed.object_id].zone)
+        rule = next(effect for effect in session.state.continuous_effects if isinstance(effect, ResolutionDeclarationRuleEffect))
+        self.assertIsNone(rule.live_query)
+        self.assertEqual([retained.object_id], [identity.object_id for identity in rule.locked_objects])
+        self.priority_to(session, "B")
+        action = self.offered(session, "B", departed)
+        accepted = session.act("pilot:B", {"action_id": action["id"], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        self.priority_to(session, "A")
+        action = self.offered(session, "A", jump)
+        accepted = session.act("pilot:A", {"action_id": action["id"], "targets": [retained.ref], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        self.attack_and_check_blocks(session, attackers, [retained], [ordinary, departed])
+
+    def test_live_query_omission_mutant_is_killed_by_original_falter(self):
+        from quorune import continuous_effect_state as owner
+        original = owner.active_resolution_declaration_rule_effects
+
+        def omit_live_query(state, card, **kwargs):
+            return original(state, card, query_row=None)
+
+        with patch("quorune.rules.temporary_declaration_restrictions.active_resolution_declaration_rule_effects", side_effect=omit_live_query):
+            with self.assertRaisesRegex(AssertionError, "live-rule prohibition missing"):
+                self.test_original_falter_live_empty_group_includes_later_entrants_and_rechecks_flying()
+
+
 if __name__ == "__main__":
     unittest.main()

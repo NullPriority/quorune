@@ -3262,13 +3262,24 @@
       "id": "qualified-declaration-rule-contract",
       "patterns": [
         "quorune/compiler/temporary_declaration_templates.py",
-        "tests/fixtures/qualified-declaration-cards.json"
+        "tests/fixtures/qualified-declaration-cards.json",
+        "quorune/rules/temporary_declaration_restrictions.py",
+        "quorune/declaration_rule_effects.py",
+        "quorune/continuous_effect_state.py",
+        "quorune/effect_runtime/declaration_effects.py",
+        "quorune/rules/node_capability_shapes.py",
+        "quorune/compiler/closed_static_nodes.py",
+        "tests/fixtures/group-declaration-rules.json"
       ],
       "test_modules": [
         "test_temporary_declaration_restriction_effects",
         "test_combat_declaration_restrictions",
         "test_temporary_target_interactions",
-        "test_oracle_corpus_examples"
+        "test_oracle_corpus_examples",
+        "test_continuous_effect_duration",
+        "test_fixed_source_characteristic_effects",
+        "test_card_program_trust",
+        "test_game_record_v3"
       ]
     },
     {

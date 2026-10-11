@@ -1,0 +1,481 @@
+{
+  "cards": [
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R}",
+      "name": "Falter",
+      "oracle_id": "d4b50749-a016-4aff-8d70-a1707cabf57b",
+      "oracle_text": "Creatures without flying can't block this turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2014-06-16",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Jump",
+      "oracle_id": "f7518456-45ed-41d4-bd3c-5aacea28eb35",
+      "oracle_text": "Target creature gains flying until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2009-07-17",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{U}{U}",
+      "name": "Keeper of Keys",
+      "oracle_id": "1fa0f877-e26c-4a26-8c69-4bf8fcdd30b5",
+      "oracle_text": "When this creature enters, you become the monarch.\nAt the beginning of your upkeep, if you're the monarch, creatures you control can't be blocked this turn.",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2016-08-26",
+      "toughness": "4",
+      "type_line": "Creature \u2014 Human Rogue Mutant"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Haste"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{5}{R}",
+      "name": "Markov Warlord",
+      "oracle_id": "2279005d-5434-49ce-b16a-212759c5775a",
+      "oracle_text": "Haste (This creature can attack and {T} as soon as it comes under your control.)\nWhen this creature enters, up to two target creatures can't block this turn.",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2012-02-03",
+      "toughness": "4",
+      "type_line": "Creature \u2014 Vampire Warrior"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}",
+      "name": "Turn to Frog",
+      "oracle_id": "74c4c1e2-c50d-4c8f-889a-0d5674dc6d67",
+      "oracle_text": "Until end of turn, target creature loses all abilities and becomes a blue Frog with base power and toughness 1/1.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-02-23",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}",
+      "name": "Unearthly Blizzard",
+      "oracle_id": "3066802a-35d0-4e07-99e2-b495398d88b6",
+      "oracle_text": "Up to three target creatures can't block this turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2004-10-01",
+      "toughness": null,
+      "type_line": "Sorcery \u2014 Arcane"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "fixture-group-flash-ground",
+      "id": "fixture-group-flash-ground",
+      "name": "Generic Group Flash Ground",
+      "mana_cost": "{U}",
+      "cmc": 1,
+      "type_line": "Creature \u2014 Human",
+      "oracle_text": "Flash",
+      "power": "2",
+      "toughness": "6",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flash"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "fixture-group-flash-flyer",
+      "id": "fixture-group-flash-flyer",
+      "name": "Generic Group Flash Flyer",
+      "mana_cost": "{U}",
+      "cmc": 1,
+      "type_line": "Creature \u2014 Human",
+      "oracle_text": "Flash\nFlying",
+      "power": "1",
+      "toughness": "1",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flash",
+        "Flying"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "Abilities that trigger whenever you \"become the monarch\" trigger only if you aren't already the monarch. For example, if you are already the monarch as Custodi Lich enters the battlefield, its last ability won't trigger.",
+      "oracle_id": "1fa0f877-e26c-4a26-8c69-4bf8fcdd30b5",
+      "published_at": "2016-08-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "Being the monarch carries two inherent triggered abilities. \"At the beginning of the monarch's end step, that player draws a card\" and \"Whenever a creature deals combat damage to the monarch, its controller becomes the monarch.\"",
+      "oracle_id": "1fa0f877-e26c-4a26-8c69-4bf8fcdd30b5",
+      "published_at": "2016-08-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the triggered ability that causes the monarch to draw a card goes on the stack, and a different player becomes the monarch before that ability resolves, the first player will still draw the card.",
+      "oracle_id": "1fa0f877-e26c-4a26-8c69-4bf8fcdd30b5",
+      "published_at": "2016-08-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "The game starts with no monarch. Once an effect makes one player the monarch, the game will have exactly one monarch from that point forward.",
+      "oracle_id": "1fa0f877-e26c-4a26-8c69-4bf8fcdd30b5",
+      "published_at": "2016-08-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "The last ability of Keeper of Keys checks to see if you're the monarch as your upkeep begins. If you're not, the ability won't trigger at all. You won't be able to do anything that would make you the monarch during your upkeep in time to have that ability trigger. The ability will also check to see if you're the monarch as it tries to resolve. If you're not the monarch at that time, the ability will have no effect.",
+      "oracle_id": "1fa0f877-e26c-4a26-8c69-4bf8fcdd30b5",
+      "published_at": "2016-08-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "The last ability of Keeper of Keys will affect all creatures you control that turn, even if they weren't on the battlefield or weren't creatures as the ability resolved.",
+      "oracle_id": "1fa0f877-e26c-4a26-8c69-4bf8fcdd30b5",
+      "published_at": "2016-08-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "The creatures can't block any creatures that turn, not just Markov Warlord.",
+      "oracle_id": "2279005d-5434-49ce-b16a-212759c5775a",
+      "published_at": "2011-01-22",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may target zero, one, or two creatures with Markov Warlord's \"enters\" triggered ability.",
+      "oracle_id": "2279005d-5434-49ce-b16a-212759c5775a",
+      "published_at": "2011-01-22",
+      "source": "wotc"
+    },
+    {
+      "comment": "Effects that modify a creature\u2019s power and/or toughness, such as the effect of Titanic Growth, will apply to the creature no matter when they started to take effect. The same is true for any counters that change its power and/or toughness and effects that switch its power and toughness.",
+      "oracle_id": "74c4c1e2-c50d-4c8f-889a-0d5674dc6d67",
+      "published_at": "2014-07-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If one of the Theros block Gods is affected by Turn to Frog, it will be a legendary 1/1 blue Frog enchantment creature with no abilities. If it stops being a creature, perhaps because your devotion to its color(s) decreased, it will be a legendary blue enchantment with no abilities. The way continuous effects work, the God\u2019s type-changing ability is applied before the effect that removes that ability is applied.",
+      "oracle_id": "74c4c1e2-c50d-4c8f-889a-0d5674dc6d67",
+      "published_at": "2014-07-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the affected creature gains an ability after Turn to Frog resolves, it will keep that ability.",
+      "oracle_id": "74c4c1e2-c50d-4c8f-889a-0d5674dc6d67",
+      "published_at": "2014-07-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "The creature will lose all other colors and creature types, but it will retain any other card types (such as artifact) or supertypes (such as legendary) it may have.",
+      "oracle_id": "74c4c1e2-c50d-4c8f-889a-0d5674dc6d67",
+      "published_at": "2014-07-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Turn to Frog doesn\u2019t counter abilities that have already triggered or been activated. In particular, there is no way to cast this spell to stop a creature\u2019s ability that says \u201cAt the beginning of your upkeep,\u201d \u201cWhen this creature enters the battlefield,\u201d or similar from triggering.",
+      "oracle_id": "74c4c1e2-c50d-4c8f-889a-0d5674dc6d67",
+      "published_at": "2014-07-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Turn to Frog overwrites all previous effects that set the creature\u2019s base power and toughness to specific values. Any power- or toughness-setting effects that start to apply after Turn to Frog resolves will overwrite this effect.",
+      "oracle_id": "74c4c1e2-c50d-4c8f-889a-0d5674dc6d67",
+      "published_at": "2014-07-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "To work as an evasion ability, an attacking creature must already have flying when the declare blockers step begins. Once a creature has become blocked, giving it flying won\u2019t change that.",
+      "oracle_id": "f7518456-45ed-41d4-bd3c-5aacea28eb35",
+      "published_at": "2009-10-01",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

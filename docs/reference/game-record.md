@@ -99,6 +99,15 @@ snapshot and resolution-start timestamp. `source_continuity` is omitted from
 card payloads until needed. Version one and absent-marker states retain their
 earlier control path; the new fixed-control capability requires version two.
 
+Resolution-created declaration rules retain their legacy locked-object payload
+when they apply to explicit target or source incarnations. Live creature-group
+rules use an additive `schema_version: 2` payload with `live_query` and an empty
+`locked_objects` list. The query contains any bound controller identity and
+public predicate; save/load preserves empty groups so later entrants can match.
+The decoder accepts the legacy shape and the exact version-two shape, rejecting
+unknown fields, malformed queries, or mixed live and locked recipients. Both
+shapes expire through the same continuous-effect cleanup owner.
+
 An optional source untap uses a version-one owned continuation inside the
 pending decision. It retains the physical turn and step, immutable participation
 plan, public battlefield incarnations, available subjects, and held trigger
