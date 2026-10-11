@@ -241,6 +241,12 @@ validation before any census. When their owners are affected, the same phase
 also checks the exact target-corpus carrier contract and mutation patch-target
 integrity. Shared quantity grammar changes select only the exact adjacent
 exclusion and public-condition contract witnesses, not their whole modules.
+The reusable-piece policy sentinel also validates interaction evidence against
+the statically discovered test inventory before any corpus generation. Exact
+qualified test IDs and existing legacy leaf IDs are retained; a wrong module
+or class cannot pass merely because its method name exists. The generator uses
+the same inventory and validation owner.
+
 This phase does not execute the broader behavioral inventory. Non-harvest declarations use the existing
 transition parser rather than a separate permissive metadata check. The workflow
 is not subscribed to `ready_for_review`, so moving an unchanged draft into review does

@@ -4,6 +4,7 @@ import copy
 import json
 from pathlib import Path
 import unittest
+from unittest.mock import patch
 
 from jsonschema import Draft202012Validator
 
@@ -273,6 +274,39 @@ def _artifacts() -> dict:
 
 
 class ReusablePieceInventoryTests(unittest.TestCase):
+    def test_qualified_interaction_test_id_matches_full_inventory(self) -> None:
+        inputs = _inputs()
+        test_id = 'tests.test_fixture.ExactTests.test_flying_reach'
+        inputs['interaction_evidence']['declarations'][0]['test_id'] = test_id
+        inputs['known_test_ids'].add(test_id)
+        artifacts = build_reusable_piece_artifacts(**inputs)
+        validate_reusable_piece_artifacts(artifacts, policy=inputs['policy'])
+
+    def test_qualified_interaction_rejects_wrong_class_with_matching_leaf(self) -> None:
+        from quorune.reusable_pieces.interactions import validate_interaction_test_references
+        evidence = _inputs()['interaction_evidence']
+        evidence['declarations'][0]['test_id'] = 'tests.test_fixture.WrongTests.test_flying_reach'
+        with self.assertRaisesRegex(ValueError, 'unknown tests'):
+            validate_interaction_test_references(evidence, known_test_ids={
+                'tests.test_fixture.ExactTests.test_flying_reach', 'test_flying_reach',
+            })
+
+    def test_policy_sentinel_checks_interactions_without_building_corpus(self) -> None:
+        from scripts import update_reusable_piece_matrix as writer
+        evidence = _inputs()['interaction_evidence']
+        test_id = 'tests.test_fixture.ExactTests.test_flying_reach'
+        evidence['declarations'][0]['test_id'] = test_id
+        with patch.object(writer, 'discover_unittest_ids', return_value={test_id}), \
+             patch.object(writer, 'load_json', return_value=evidence), \
+             patch.object(writer, '_build') as build, \
+             patch('sys.argv', ['update_reusable_piece_matrix.py', '--validate-policy']):
+            self.assertEqual({test_id, 'test_flying_reach'}, writer._known_test_ids())
+            self.assertEqual(0, writer.main())
+            evidence['declarations'][0]['test_id'] = 'tests.test_fixture.WrongTests.test_flying_reach'
+            with self.assertRaisesRegex(ValueError, 'unknown tests'):
+                writer.main()
+            build.assert_not_called()
+
     def test_architecture_projection_accepts_baseline_and_audit_schemas(self) -> None:
         expected = {
             "card_named_helpers": 1,

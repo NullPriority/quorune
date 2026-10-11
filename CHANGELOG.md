@@ -31,6 +31,9 @@ maintenance: "hand-maintained"
 - Preserve explicit sacrifice provenance for Fading and Vanishing cleanup
   through zone replacements, normalized trigger occurrences, and turn history.
 
+- Preserve qualified interaction-evidence test IDs and validate their
+  references in the cheap source checkpoint before corpus generation.
+
 - Compile fixed resolution mana bundles through the existing spell, trigger,
   loyalty and mana owners, preserving additional costs and typed spending
   restrictions.
