@@ -3185,6 +3185,20 @@
         "test_bound_effect_programs",
         "test_oracle_corpus_examples"
       ]
+    },
+    {
+      "id": "flavor-named-trigger-contract",
+      "patterns": [
+        "quorune/compiler/draw_templates.py",
+        "tests/fixtures/flavor-named-trigger-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_counter_event_triggers",
+        "test_oracle_corpus_examples",
+        "test_bound_effect_programs",
+        "test_fixed_token_creation_effects",
+        "test_card_program_v2"
+      ]
     }
   ],
   "symbol_rules": [

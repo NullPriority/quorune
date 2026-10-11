@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Normalize numeric and punctuated ability or flavor names before complete
+  typed trigger compilation, retaining printed spans and every body condition.
+
 - Distinguish fixed paid counter results from free optional counter placement,
   retaining target selection, payment-before-placement and exact replay.
 

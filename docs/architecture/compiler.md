@@ -55,6 +55,14 @@ Oracle IR, recognized semantic nodes, dependency declarations, material
 residuals, and a canonical `CardProgram`. For the same inputs and compiler
 version, the result must be deterministic.
 
+The shared trigger-label normalizer accepts leading ability and flavor names
+with numeric words, hyphens, apostrophes, and question or exclamation marks.
+Under CR 207.2c-d these names add no rules meaning. The original text and span
+remain attached to the node, while the complete triggered body still requires
+its existing typed event, condition, result, and capability owners. Inner
+dashes, nontrigger bodies, reflexive triggers, and unsupported instructions
+retain their existing admission boundaries.
+
 An independently bound source-self trigger can normalize a source-led result
 using “it,” “him,” or “her” before exact leaf compilation. This narrow production
 admits direct source stat, damage, and counter results. It preserves the full

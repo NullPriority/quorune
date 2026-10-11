@@ -1,0 +1,127 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned flavor-named triggers and a generic qualifying creature spell",
+  "cards": [
+    {
+      "oracle_id": "fb839b8c-a2b3-42fb-a7a2-8552b7656004",
+      "name": "Screamer-Killer",
+      "mana_cost": "{4}{R}",
+      "cmc": 5.0,
+      "type_line": "Creature \u2014 Tyranid",
+      "oracle_text": "Trample\nBio-Plasmic Scream \u2014 Whenever you cast a creature spell with mana value 5 or greater, this creature deals 5 damage to any target.",
+      "power": "5",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Trample",
+        "Bio-Plasmic Scream"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-10-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "80312910-5d53-44f1-9982-e46dc7532abb",
+      "name": "The Unbeatable Squirrel Girl",
+      "mana_cost": "{1}{G}{G}{G}",
+      "cmc": 4.0,
+      "type_line": "Legendary Creature \u2014 Squirrel Human Hero",
+      "oracle_text": "Do You Like Squirrels? \u2014 Whenever The Unbeatable Squirrel Girl enters or attacks, create a 1/1 green Squirrel creature token.\nI LOVE Squirrels! \u2014 {1}{G}{G}{G}: Create X 1/1 green Squirrel creature tokens, where X is the number of Squirrels you control.",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "I LOVE Squirrels!"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "fixture-flavor-trigger-big-spell",
+      "name": "Generic Flavor Trigger Big Spell",
+      "mana_cost": "{5}",
+      "cmc": 5,
+      "type_line": "Creature \u2014 Test",
+      "oracle_text": "Vigilance",
+      "power": "4",
+      "toughness": "4",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Vigilance"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "id": "fixture-flavor-trigger-big-spell"
+    }
+  ]
+}

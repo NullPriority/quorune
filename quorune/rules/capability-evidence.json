@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "registry_fingerprint": "57ea40f7fdf7fff7812a2d8e4bccbd45879b67c51be6fe1ecc08b6d13c6182ea",
-  "declaration_source_fingerprint": "f9d3de3d8d6d02e3214e812d681dc98dd85224a20ac1733e299cd4b8d08fe84e",
+  "declaration_source_fingerprint": "0945a553aa688e33c0addcfa967e5dc3e06d3ac4bf52e2fe8d8d0ad51ba6898e",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -83583,6 +83583,31 @@
     {
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_counter_event_triggers.FlavorNamedTriggerCompilerTests.test_flavor_label_omission_mutant_is_killed",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Restoring the old label grammar kills the independently expected hyphenated flavor-trigger admission."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "mutation",
       "test_id": "tests.test_source_pronoun_results.SourcePronounRuntimeTests.test_source_body_normalization_omission_mutant_is_killed_by_original_firstblade",
       "official_rule_ids": [
         "115.1",
@@ -83833,6 +83858,31 @@
     {
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "negative",
+      "test_id": "tests.test_fixed_counter_event_triggers.FlavorNamedTriggerCompilerTests.test_flavor_labels_keep_unrepresented_bodies_and_inner_dashes_residual",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An outer flavor name never discards an unrepresented body, reflexive trigger, modal instruction or inner-dash clause."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "negative",
       "test_id": "tests.test_source_pronoun_results.SourcePronounCompilerTests.test_new_token_or_target_pronoun_is_not_rebound_to_source",
       "official_rule_ids": [
         "115.1",
@@ -84054,6 +84104,31 @@
         "commander_review"
       ],
       "applicability_note": "Lower the bounded source-self, ordinal, mana-value, origin, turn, Kicker, Historic, fixed-color permanent, and Adventure grammar to immutable typed event predicates."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_event_triggers.FlavorNamedTriggerCompilerTests.test_flavor_and_numeric_trigger_labels_preserve_body_and_source",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "CR 207.2c-d labels with hyphens, punctuation or numeric words preserve complete event, condition, result and original-source fields."
     },
     {
       "capability_id": "trigger.effect.fixed_event",
@@ -87620,6 +87695,22 @@
     {
       "capability_id": "trigger.event.normalized_spell_cast",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_event_triggers.FlavorNamedTriggerRuntimeTests.test_original_screamer_flavor_trigger_uses_real_cast_target_and_replay",
+      "official_rule_ids": [
+        "601.2i",
+        "603.2",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Screamer-Killer observes an accepted qualifying creature cast, selects a public player target through its controller, rejects unauthorized cast/target input atomically, deals exactly five damage and preserves pending and final save/load and pre-cast replay."
+    },
+    {
+      "capability_id": "trigger.event.normalized_spell_cast",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_cast_characteristics_use_one_sealed_stack_snapshot",
       "official_rule_ids": [
         "601.2i",
@@ -87700,6 +87791,22 @@
     {
       "capability_id": "trigger.event.normalized_spell_cast",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_counter_event_triggers.FlavorNamedTriggerRuntimeTests.test_original_screamer_flavor_trigger_uses_real_cast_target_and_replay",
+      "official_rule_ids": [
+        "601.2i",
+        "603.2",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Screamer-Killer observes an accepted qualifying creature cast, selects a public player target through its controller, rejects unauthorized cast/target input atomically, deals exactly five damage and preserves pending and final save/load and pre-cast replay."
+    },
+    {
+      "capability_id": "trigger.event.normalized_spell_cast",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_spell_cast_predicates_share_v4_event_and_stack_source",
       "official_rule_ids": [
         "601.2i",
@@ -87748,6 +87855,22 @@
     {
       "capability_id": "trigger.event.normalized_spell_cast",
       "evidence_class": "negative",
+      "test_id": "tests.test_fixed_counter_event_triggers.FlavorNamedTriggerRuntimeTests.test_original_screamer_flavor_keeps_cast_mana_value_predicate",
+      "official_rule_ids": [
+        "601.2i",
+        "603.2",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An actual accepted two-mana creature cast remains below original Screamer-Killer's printed threshold, creates no target choice or damage, and replays exactly."
+    },
+    {
+      "capability_id": "trigger.event.normalized_spell_cast",
+      "evidence_class": "negative",
       "test_id": "tests.test_prowess_rules.ProwessCompilerTests.test_spell_cast_event_rejects_malformed_context_without_mutation",
       "official_rule_ids": [
         "601.2i",
@@ -87792,6 +87915,22 @@
         "commander_review"
       ],
       "applicability_note": "Seal ordered public target references in schema-v5 cast facts while reading historical schema-v4 events without reinterpretation."
+    },
+    {
+      "capability_id": "trigger.event.normalized_spell_cast",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_event_triggers.FlavorNamedTriggerRuntimeTests.test_original_screamer_flavor_trigger_uses_real_cast_target_and_replay",
+      "official_rule_ids": [
+        "601.2i",
+        "603.2",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Screamer-Killer observes an accepted qualifying creature cast, selects a public player target through its controller, rejects unauthorized cast/target input atomically, deals exactly five damage and preserves pending and final save/load and pre-cast replay."
     },
     {
       "capability_id": "trigger.event.normalized_spell_cast",
@@ -87940,6 +88079,22 @@
     {
       "capability_id": "trigger.event.normalized_spell_cast",
       "evidence_class": "replay",
+      "test_id": "tests.test_fixed_counter_event_triggers.FlavorNamedTriggerRuntimeTests.test_original_screamer_flavor_trigger_uses_real_cast_target_and_replay",
+      "official_rule_ids": [
+        "601.2i",
+        "603.2",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Screamer-Killer observes an accepted qualifying creature cast, selects a public player target through its controller, rejects unauthorized cast/target input atomically, deals exactly five damage and preserves pending and final save/load and pre-cast replay."
+    },
+    {
+      "capability_id": "trigger.event.normalized_spell_cast",
+      "evidence_class": "replay",
       "test_id": "tests.test_prowess_rules.ProwessRuntimeTests.test_prowess_trigger_and_resolution_replay_exactly",
       "official_rule_ids": [
         "601.2i",
@@ -87952,6 +88107,22 @@
         "commander_review"
       ],
       "applicability_note": "Replay the normalized cast occurrence, trigger placement, and resulting authoritative state hash exactly."
+    },
+    {
+      "capability_id": "trigger.event.normalized_spell_cast",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_counter_event_triggers.FlavorNamedTriggerRuntimeTests.test_original_screamer_flavor_trigger_uses_real_cast_target_and_replay",
+      "official_rule_ids": [
+        "601.2i",
+        "603.2",
+        "603.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Screamer-Killer observes an accepted qualifying creature cast, selects a public player target through its controller, rejects unauthorized cast/target input atomically, deals exactly five damage and preserves pending and final save/load and pre-cast replay."
     },
     {
       "capability_id": "trigger.event.normalized_target_announcement",
@@ -94706,6 +94877,38 @@
     {
       "capability_id": "trigger.subscription.fixed_multi_event",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_event_triggers.FlavorNamedTriggerRuntimeTests.test_original_squirrel_flavor_attack_creates_one_token_and_replays",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Squirrel Girl's accepted attack produces one controlled green 1/1 Squirrel token through its labeled multi-event ability, with exact replay from before the action."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_event_triggers.FlavorNamedTriggerRuntimeTests.test_original_squirrel_flavor_entry_creates_one_token_and_replays",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Squirrel Girl's accepted cast and entry produces one controlled green 1/1 Squirrel token through its labeled multi-event ability, with exact replay from before the action."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_fixed_multi_event_source_triggers_share_events_and_replay",
       "official_rule_ids": [
         "603.2",
@@ -94785,6 +94988,38 @@
     },
     {
       "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_event_triggers.FlavorNamedTriggerRuntimeTests.test_original_squirrel_flavor_attack_creates_one_token_and_replays",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Squirrel Girl's accepted attack produces one controlled green 1/1 Squirrel token through its labeled multi-event ability, with exact replay from before the action."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_event_triggers.FlavorNamedTriggerRuntimeTests.test_original_squirrel_flavor_entry_creates_one_token_and_replays",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Squirrel Girl's accepted cast and entry produces one controlled green 1/1 Squirrel token through its labeled multi-event ability, with exact replay from before the action."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_fixed_multi_event_source_triggers_share_events_and_replay",
       "official_rule_ids": [
@@ -94798,6 +95033,38 @@
         "commander_review"
       ],
       "applicability_note": "Project public entry and attack trigger facts to every seat without exposing source physical or logical identities."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_counter_event_triggers.FlavorNamedTriggerRuntimeTests.test_original_squirrel_flavor_attack_creates_one_token_and_replays",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Squirrel Girl's accepted attack produces one controlled green 1/1 Squirrel token through its labeled multi-event ability, with exact replay from before the action."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_counter_event_triggers.FlavorNamedTriggerRuntimeTests.test_original_squirrel_flavor_entry_creates_one_token_and_replays",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Squirrel Girl's accepted cast and entry produces one controlled green 1/1 Squirrel token through its labeled multi-event ability, with exact replay from before the action."
     },
     {
       "capability_id": "trigger.subscription.fixed_multi_event",
@@ -102047,5 +102314,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "5059c5425d68ac0a8ea9f992e0ee491d4d71df781a571631bbef8260ae51994c"
+  "fingerprint": "b4645fb6221d942cbf9d1a0a6da39887ed225d5086392ce13c3530a7f0ba79d0"
 }
