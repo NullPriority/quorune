@@ -821,5 +821,168 @@ class TypedDynamicCharacteristicRuntimeTests(unittest.TestCase):
         self.assertTrue(replay["ok"], replay)
 
 
+class KindredSubtypeQuantityCompilerTests(unittest.TestCase):
+    def test_bare_subtype_quantities_do_not_add_a_creature_card_type(self):
+        for wording in (
+            "Zombies on the battlefield", "Zombie cards in all graveyards",
+            "other Zombies you control",
+        ):
+            with self.subTest(wording=wording):
+                quantity = query_characteristic_quantity(
+                    wording, source_name="Generic Source", definition_extensions=True,
+                )
+                self.assertIsNotNone(quantity)
+                self.assertEqual((), quantity.query.types_all)
+                self.assertEqual((), quantity.query.types_any)
+                self.assertEqual(("zombie",), quantity.query.subtypes_all)
+        union = query_characteristic_quantity(
+            "Elves and/or Goblins on the battlefield", source_name="Generic Source",
+            definition_extensions=True,
+        )
+        self.assertIsNotNone(union)
+        self.assertEqual((), union.query.types_all)
+        self.assertEqual({"elf", "goblin"}, set(union.query.subtypes_any))
+        creature = query_characteristic_quantity(
+            "creature cards in all graveyards", source_name="Generic Source", definition_extensions=True,
+        )
+        self.assertEqual(("creature",), creature.query.types_all)
+        self.assertEqual((), creature.query.subtypes_all)
+        self.assertIsNone(query_characteristic_quantity(
+            "NotARealSubtype on the battlefield", source_name="Generic Source",
+        ))
+
+
+class KindredSubtypeQuantityRuntimeTests(unittest.TestCase):
+    """CR 109.2/205.3m: bare creature subtypes include Kindred objects.
+
+    Original Soulless One counts itself, a noncreature Zombie permanent,
+    and a noncreature Zombie card in another player's graveyard. The subtype
+    alone does not imply the Creature card type.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        from common import ROOT
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition, DeckEntry
+        from scripts.build_test_database import build_fixture_database
+
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "kindred-quantities.sqlite3"
+        build_fixture_database([
+            ROOT / "tests/fixtures/bound-effect-program-cards.json",
+            ROOT / "tests/fixtures/kindred-subtype-quantities.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Kindred quantities", [
+            DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 10),
+        ], ["Generic Bound Commander"])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    import test_bound_effect_programs as _bound
+    session = _bound.BoundEffectProgramRuntimeTests.session
+    add = _bound.BoundEffectProgramRuntimeTests.add
+    ready = _bound.BoundEffectProgramRuntimeTests.ready
+    checkpoint = _bound.BoundEffectProgramRuntimeTests.checkpoint
+    resolve = _bound.BoundEffectProgramRuntimeTests.resolve
+    replay = _bound.BoundEffectProgramRuntimeTests.replay
+
+    def test_original_soulless_one_counts_noncreature_kindreds_across_public_zones(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.semantics import SemanticRegistry
+
+        session = self.session(344001)
+        engine = session.engine
+        permanent = self.add(engine, "Generic Kindred Zombie Enchantment", seat="B", ref="kindred-permanent")
+        grave = self.add(engine, "Generic Kindred Zombie Enchantment", seat="C", zone="graveyard", ref="kindred-grave")
+        self.add(engine, "Generic Bound Body", seat="D", ref="non-zombie")
+        modifier = self.add(engine, "Generic Kindred Quantity Modifier")
+        source = self.add(engine, "Soulless One", zone="hand")
+        for name in (source.printed_name, permanent.printed_name, modifier.printed_name):
+            program = compile_best_available_card_program(
+                self.db, self.db.lookup(name), semantic_registry=SemanticRegistry(),
+                capability_registry=self.registry, capability_profile="commander_review",
+            )
+            self.assertTrue(bind_card_program_runtime(
+                program, capability_registry=self.registry, profile="commander_review",
+            )["strict_capability_ready"])
+        action = self.ready(session, source, {"B": 4})
+        self.checkpoint(session)
+        from quorune.record import authoritative_state_hash
+        before = authoritative_state_hash(session.state)
+        denied = session.act("pilot:B", {"action_id": action["id"], "pay": "auto"})
+        self.assertFalse(denied.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(2, engine._numeric_stat(source.object_id, "power"))
+        self.assertEqual(3, engine._numeric_stat(modifier.object_id, "power"))
+        self.assertEqual(7, engine._numeric_stat(modifier.object_id, "toughness"))
+        for seat in "BCD":
+            packet = session.packet("pilot:" + seat, full=True)
+            self.assertIsNone(packet["decision"])
+            self.assertNotIn("hand", packet["state"]["players"]["A"])
+        self.replay(session, load=True)
+        self.resolve(session)
+        self.assertEqual("battlefield", session.state.cards[source.object_id].zone)
+        self.assertEqual(3, engine._numeric_stat(source.object_id, "power"))
+        self.assertEqual(3, engine._numeric_stat(source.object_id, "toughness"))
+        self.assertEqual(4, engine._numeric_stat(modifier.object_id, "power"))
+        self.assertEqual(8, engine._numeric_stat(modifier.object_id, "toughness"))
+        self.assertEqual("battlefield", session.state.cards[permanent.object_id].zone)
+        self.assertEqual("graveyard", session.state.cards[grave.object_id].zone)
+        self.replay(session, load=True)
+
+    def test_implied_creature_type_omission_mutant_is_killed_by_original_soulless_one(self):
+        from quorune.compiler import query_characteristic_templates as owner
+
+        original = owner._query_quantity_descriptor
+
+        def restrict_to_creatures(*args, **kwargs):
+            parsed = original(*args, **kwargs)
+            if parsed is None:
+                return None
+            query, excluded = parsed
+            if query.subtypes_all or query.subtypes_any:
+                query = replace(query, types_all=("creature",))
+            return query, excluded
+
+        with mock.patch.object(owner, "_query_quantity_descriptor", side_effect=restrict_to_creatures):
+            with self.assertRaisesRegex(AssertionError, "2 != 0|3 != 1"):
+                self.test_original_soulless_one_counts_noncreature_kindreds_across_public_zones()
+
+    def test_original_pride_and_priest_count_foreign_noncreature_elves(self):
+        session = self.session(344002)
+        engine = session.engine
+        kindred = self.add(engine, "Generic Kindred Elf Enchantment", seat="C", ref="foreign-elf-kindred")
+        target = self.add(engine, "Generic Bound Body", seat="B", ref="pride-target")
+        priest = self.add(engine, "Priest of Titania")
+        priest.acquired_control_turn_count = -1
+        spell = self.add(engine, "Wirewood Pride", zone="hand")
+        action = self.ready(session, priest, {})
+        self.checkpoint(session)
+        accepted = session.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertTrue(session.state.cards[priest.object_id].tapped)
+        self.assertEqual(2, session.state.players["A"].mana_pool.get("G", 0))
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        action = next(row for row in actions if row.get("card") == spell.ref)
+        accepted = session.act("pilot:A", {"action_id": action["id"], "targets": [target.ref], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        self.assertEqual(4, engine._numeric_stat(target.object_id, "power"))
+        self.assertEqual(8, engine._numeric_stat(target.object_id, "toughness"))
+        self.assertEqual(1, session.state.players["A"].mana_pool.get("G", 0))
+        self.assertEqual("battlefield", session.state.cards[kindred.object_id].zone)
+        self.replay(session, load=True)
+
+
 if __name__ == "__main__":
     unittest.main()

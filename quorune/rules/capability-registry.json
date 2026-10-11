@@ -4900,11 +4900,22 @@
     },
     {
       "id": "continuous.characteristics.query_count_modifier",
-      "version": 2,
-      "official_rules": ["604.1", "611.3a", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b"],
+      "version": 3,
+      "official_rules": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
-        "summary": "Apply copied typed self modifiers in layers 6 and 7c from closed layer-5 public quantities, including explicit distinct values, mana-value reductions, colored mana symbols, fixed nonnegative arithmetic and two leaf sums.",
+        "summary": "Apply copied typed self modifiers in layers 6 and 7c from closed layer-5 public quantities, including explicit distinct values, mana-value reductions, colored mana symbols, fixed nonnegative arithmetic and two leaf sums. Bare creature-subtype queries include Kindred objects; explicit Creature card-type predicates remain separate.",
         "inputs": ["active phased-in battlefield source", "copied typed query-characteristic fragment", "controller, opponent, or global public zone relation", "layer-5 object types, subtypes, colors, token state, source attachments, source counters, or raw controller hand size", "per-object or fixed minimum calculation", "fixed power/toughness amount, supported fixed keywords, or both"],
         "outputs": ["controller-correct and multiplayer-correct live quantity", "cycle-safe layer-5 characteristic predicate", "ordinary layer-6 keyword and layer-7c power/toughness effects", "copiable executable fragment", "hidden-identity-free hand count"],
         "exclusions": ["Devotion and its modifiers, chosen, named, modified, shared-type, top-library, hidden-identity, inverted existence, and ability-presence counts", "dynamic coefficients, base-setting, type, color, two-object comparison, modal, attached-subject, and quoted-rule carriers outside their existing owners", "negative or open arithmetic, nested sums, power/toughness aggregates, historical-event, combat-state, life, emblem, dungeon, party, and unsupported keyword conditions", "ability-addition or ability-removal applicability outside the shared layer-6 ability-presence query"]
@@ -5053,11 +5064,20 @@
     },
     {
       "id": "quantity_expression.public_query_effect_amount",
-      "version": 5,
-      "official_rules": ["608.2h", "611.2c", "613.1d", "613.1e", "613.4c"],
+      "version": 6,
+      "official_rules": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c"
+      ],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
-        "summary": "Resolve a closed current public quantity into an existing typed numeric result owner. Versioned quantities add distinct basic/card types and colors, maximum/total mana value, colored mana symbols, fixed positive multipliers and nonnegative offsets, or exactly two independent public leaf counts; instruction-scoped declarations retain one value.",
+        "summary": "Resolve a closed current public quantity into an existing typed numeric result owner. Versioned quantities add distinct basic/card types and colors, maximum/total mana value, colored mana symbols, fixed positive multipliers and nonnegative offsets, or exactly two independent public leaf counts; instruction-scoped declarations retain one value. Bare creature-subtype queries include Kindred objects; explicit Creature card-type predicates remain separate.",
         "inputs": ["one source-spanned effect instruction, optionally in a closed existing ordered component program", "stack object's locked controller", "controller or global battlefield, graveyard, or identity-free hand count", "cycle-safe layer-5 types, subtypes, supertypes, colors, colorlessness, and token state", "fixed signed coefficient", "existing fixed effect operation and target schema", "source-self or direct-target temporary power/toughness result, optionally beside fixed supported keywords"],
         "outputs": ["one deterministic resolution-time integer", "unchanged typed life, damage, draw, token, counter placement, or layer-7c characteristic instruction", "current layer-5 characteristic query", "copy-controller-correct and multiplayer-correct result", "current direct-target revalidation and granted-ability applicability", "hidden-identity-free hand count"],
         "exclusions": ["source-counter, attachment-derived, opponent-relative, source-excluding, ability-presence, combat-state, tapped-state, hidden-identity, and later-layer effect quantities", "linked-result, this-way, chosen, modal, optional, conditional, multiple-target, and unsupported compound sequences outside existing owners", "dynamic targets, coefficients or token definitions, negative/open arithmetic, nested sums, comparisons, power/toughness aggregates, Devotion and its modifiers, party, and unsupported collection fields", "base-setting, type, color, control, copy, name, text, variable-duration, dynamic-keyword, text-changed, and independently unsupported quoted or granted result abilities"]
@@ -5080,11 +5100,19 @@
     },
     {
       "id": "continuous.characteristics.query_power_toughness_definition",
-      "version": 2,
-      "official_rules": ["604.3", "611.3a", "613.1g", "613.4a"],
+      "version": 3,
+      "official_rules": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.3",
+        "611.3a",
+        "613.1g",
+        "613.4a"
+      ],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
-        "summary": "Define one or both printed power/toughness fields in all zones from closed layer-5 public quantities. Versioned reductions preserve distinctness, mana-value and colored-symbol meaning, fixed arithmetic, two independent leaf sums and separate paired-field offsets.",
+        "summary": "Define one or both printed power/toughness fields in all zones from closed layer-5 public quantities. Versioned reductions preserve distinctness, mana-value and colored-symbol meaning, fixed arithmetic, two independent leaf sums and separate paired-field offsets. Bare creature-subtype queries include Kindred objects; explicit Creature card-type predicates remain separate.",
         "inputs": ["one source-spanned source-possessive power, toughness, or paired definition", "copied typed all-zone definition fragment", "controller, opponent, global, public-graveyard, raw hand-size, or source-counter quantity", "layer-5 object types, subtypes, supertypes, colors, token state, and source exclusion"],
         "outputs": ["controller-correct and multiplayer-correct live quantity", "cycle-safe layer-5 characteristic predicate", "all-zone characteristic-defining layer-7a power and/or toughness setting", "copiable executable fragment", "hidden-identity-free hand count"],
         "exclusions": ["chosen players, types, colors, names, and private object identities", "Devotion and its modifiers, party, sticker, history, tapped, face-down, linked-exile, and aggregate-counter quantities", "negative/open arithmetic, nested or more-than-two sums, comparisons, conditional/combat-state and quoted or granted definitions", "ability-addition or ability-removal applicability outside the shared layer-6 ability-presence query"]

@@ -11,6 +11,12 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Count matching Kindred permanents and cards in bare creature-subtype
+  quantities, retaining explicit Creature card-type constraints.
+
+- Reset successive priority passes after a confirmed concession so a wrapped
+  priority window accepts the remaining player's next pass.
+
 - Align legacy compiler consumers with admitted commander, loyalty mana,
   shared-color prevention, Prototype, Split Second and Graft productions.
   Preserve explicit unsupported boundaries and add original-card interaction

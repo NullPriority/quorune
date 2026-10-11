@@ -1,0 +1,233 @@
+{
+  "cards": [
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Priest of Titania",
+      "oracle_id": "3a198a16-17b9-481e-b516-5bc945c7e247",
+      "oracle_text": "{T}: Add {G} for each Elf on the battlefield.",
+      "power": "1",
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2024-06-14",
+      "toughness": "1",
+      "type_line": "Creature \u2014 Elf Druid"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{B}",
+      "name": "Soulless One",
+      "oracle_id": "27d98b94-a8a1-442b-8940-4ffab51b5164",
+      "oracle_text": "Soulless One's power and toughness are each equal to the number of Zombies on the battlefield plus the number of Zombie cards in all graveyards.",
+      "power": "*",
+      "produced_mana": [],
+      "released_at": "2009-09-04",
+      "toughness": "*",
+      "type_line": "Creature \u2014 Zombie Avatar"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}",
+      "name": "Wirewood Pride",
+      "oracle_id": "ff19f10c-777c-4688-b1ab-99e53afaf629",
+      "oracle_text": "Target creature gets +X/+X until end of turn, where X is the number of Elves on the battlefield.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2002-10-07",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "fixture-kindred-zombie-enchantment",
+      "name": "Generic Kindred Zombie Enchantment",
+      "mana_cost": "{1}{B}",
+      "cmc": 2,
+      "type_line": "Kindred Enchantment \u2014 Zombie",
+      "oracle_text": "",
+      "power": null,
+      "toughness": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "id": "fixture-kindred-zombie-enchantment"
+    },
+    {
+      "oracle_id": "fixture-kindred-elf-enchantment",
+      "name": "Generic Kindred Elf Enchantment",
+      "mana_cost": "{1}{B}",
+      "cmc": 2,
+      "type_line": "Kindred Enchantment \u2014 Elf",
+      "oracle_text": "",
+      "power": null,
+      "toughness": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "id": "fixture-kindred-elf-enchantment"
+    },
+    {
+      "oracle_id": "fixture-kindred-quantity-modifier",
+      "id": "fixture-kindred-quantity-modifier",
+      "name": "Generic Kindred Quantity Modifier",
+      "mana_cost": "{B}",
+      "cmc": 1,
+      "type_line": "Creature \u2014 Human",
+      "oracle_text": "This creature gets +1/+1 for each Zombie on the battlefield.",
+      "power": "2",
+      "toughness": "6",
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "Priest of Titania's ability counts all Elves on the battlefield. This includes Priest of Titania itself as well as Elves controlled by other players.",
+      "oracle_id": "3a198a16-17b9-481e-b516-5bc945c7e247",
+      "published_at": "2024-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Priest of Titania's ability is a mana ability. It doesn't use the stack and players can't respond to it. Notably, this means other players can't try to remove Elves from the battlefield after you activate this ability but before it resolves.",
+      "oracle_id": "3a198a16-17b9-481e-b516-5bc945c7e247",
+      "published_at": "2024-06-07",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}
