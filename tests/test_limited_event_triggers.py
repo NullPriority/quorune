@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from copy import deepcopy
+from dataclasses import fields
 import json
 from pathlib import Path
 import tempfile
@@ -16,7 +17,7 @@ from quorune.oracle_ir import compile_oracle_card, generated_programs
 from quorune.record import authoritative_state_hash
 from quorune.rules.capabilities import load_default_capability_registry
 from quorune.rules.trigger_limits import TriggerLimitSpec
-from quorune.semantics import SemanticProgram
+from quorune.semantics import SemanticProgram, SemanticRegistry
 from scripts.build_test_database import build_fixture_database
 from test_qualified_zone_event_queries import query_record
 import test_bound_effect_programs as witnesses
@@ -24,6 +25,18 @@ import test_counter_placement_events as counter_witnesses
 
 
 class LimitedEventTriggerCompilerTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / 'limit-shapes.sqlite3'
+        build_fixture_database([ROOT / 'tests/fixtures/limited-event-triggers.json'], path)
+        cls.db = CardDatabase(path)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
     def test_closed_limit_preserves_span_and_dependency(self):
         text='Whenever one or more +1/+1 counters are put on this creature, draw a card. This ability triggers only once each turn.'
         ir=compile_oracle_card(query_record(text),capability_registry=load_default_capability_registry())
@@ -39,6 +52,8 @@ class LimitedEventTriggerCompilerTests(unittest.TestCase):
         for text in (
             'Whenever you gain life, draw a card. Do this only once each turn.',
             'Whenever a creature dies, draw a card. This ability triggers only once each turn.',
+            'When you sacrifice this creature, draw a card. This ability triggers only once each turn.',
+            'Whenever a player sacrifices a permanent, draw a card. This ability triggers only once each turn.',
             'Whenever you gain life, you win the game. This ability triggers only once each turn.',
             'Whenever you gain life, draw a card. This ability triggers only once during your turn.',
         ):
@@ -68,6 +83,26 @@ class LimitedEventTriggerCompilerTests(unittest.TestCase):
         old['trigger_limit']=TriggerLimitSpec().to_dict();old['active_zone']='battlefield';old['event']='life.gained'
         with self.assertRaises(ValueError):SemanticProgram.from_dict(old)
 
+    def test_departure_shape_and_forged_trust_binding_fail_closed(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.rules.trigger_limits import validate_program_trigger_limit
+        registry = load_default_capability_registry()
+        record = query_record('Whenever one or more +1/+1 counters are put on this creature, draw a card. This ability triggers only once each turn.')
+        program = next(program for program in generated_programs(self.db, record, trust_level='trusted',
+            capability_registry=registry, capability_profile='commander_review') if program.trigger_limit is not None)
+        serialized = program.to_dict()
+        self.assertEqual(serialized, SemanticProgram.from_dict(serialized).to_dict(), 'Supported historical v1 shapes remain readable')
+        for event in ('permanent.sacrificed', 'permanent.sacrificed.self', 'permanent.leave.self', 'creature.dies', 'multi.event'):
+            with self.subTest(event=event):
+                with self.assertRaisesRegex(ValueError, 'nondeparture'):
+                    SemanticProgram.from_dict({**serialized, 'event': event})
+                forged = SimpleNamespace(**{**{field.name: getattr(program, field.name) for field in fields(program)}, 'event': event})
+                with self.assertRaisesRegex(ValueError, 'nondeparture'):
+                    validate_program_trigger_limit(forged)
+                binding = bind_semantic_program_runtime(forged, capability_registry=registry, profile='commander_review')
+                self.assertFalse(binding['strict'])
+                self.assertTrue(any(row.startswith('runtime_trigger_limit:invalid:') for row in binding['blockers']))
+
 
 class LimitedEventTriggerRuntimeTests(unittest.TestCase):
     @classmethod
@@ -92,6 +127,23 @@ class LimitedEventTriggerRuntimeTests(unittest.TestCase):
         action=next(a for a in actions if a.get('card')==spell.ref)
         result=session.act(session.pending_principals()[0],{'action_id':action['id'],'targets':list(targets),'pay':'auto'})
         self.assertTrue(result.ok,result.summary)
+
+    def test_limited_sacrifice_departure_cards_fail_whole_program_admission(self):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+        for name in ('Generic Limited Self Sacrifice Observer', 'Generic Limited External Sacrifice Observer'):
+            with self.subTest(name=name):
+                record = self.db.lookup(name)
+                ir = compile_oracle_card(record, capability_registry=self.registry,
+                    capability_profile='commander_review')
+                self.assertNotEqual('exact', ir.status)
+                self.assertTrue(ir.material_residuals)
+                program = compile_best_available_card_program(self.db, record,
+                    semantic_registry=SemanticRegistry(), capability_registry=self.registry, capability_profile='commander_review')
+                binding = bind_card_program_runtime(program, capability_registry=self.registry,
+                    profile='commander_review')
+                self.assertFalse(binding['strict_capability_ready'])
+                self.assertTrue(binding['blockers'])
 
     def test_actual_counter_events_draw_once_and_replay(self):
         session=self.session(301001);engine=session.engine

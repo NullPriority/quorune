@@ -44,7 +44,7 @@
       "mana_cost": "{G}{W}{U}",
       "name": "Bant Charm",
       "oracle_id": "324889d6-c857-41ed-bb60-408809fc9964",
-      "oracle_text": "Choose one \u2014\n\u2022 Destroy target artifact.\n\u2022 Put target creature on the bottom of its owner's library.\n\u2022 Counter target instant spell.",
+      "oracle_text": "Choose one —\n• Destroy target artifact.\n• Put target creature on the bottom of its owner's library.\n• Counter target instant spell.",
       "power": null,
       "produced_mana": [],
       "released_at": "2022-07-08",
@@ -145,7 +145,7 @@
       "produced_mana": [],
       "released_at": "2023-04-21",
       "toughness": "2",
-      "type_line": "Creature \u2014 Vampire Soldier"
+      "type_line": "Creature — Vampire Soldier"
     },
     {
       "cmc": 4.0,
@@ -190,7 +190,7 @@
       "produced_mana": [],
       "released_at": "2023-11-17",
       "toughness": "4",
-      "type_line": "Artifact Creature \u2014 Golem"
+      "type_line": "Artifact Creature — Golem"
     },
     {
       "cmc": 1.0,
@@ -374,14 +374,14 @@
       "produced_mana": [],
       "released_at": "2021-11-19",
       "toughness": "2",
-      "type_line": "Creature \u2014 Human Wizard"
+      "type_line": "Creature — Human Wizard"
     },
     {
       "oracle_id": "fixture:limited-life-observer",
       "name": "Generic Limited Life Observer",
       "mana_cost": "{W}",
       "cmc": 1,
-      "type_line": "Creature \u2014 Human",
+      "type_line": "Creature — Human",
       "oracle_text": "Whenever you gain life, if you control two or more creatures, draw a card. This ability triggers only once each turn.",
       "power": "2",
       "toughness": "6",
@@ -421,6 +421,54 @@
       },
       "power": null,
       "toughness": null
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000001983",
+      "name": "Generic Limited Self Sacrifice Observer",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "type_line": "Creature",
+      "oracle_text": "When you sacrifice this creature, draw a card. This ability triggers only once each turn.\nSacrifice this creature: Add {C}.",
+      "power": "2",
+      "toughness": "6",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Vigilance"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000001984",
+      "name": "Generic Limited External Sacrifice Observer",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "type_line": "Creature",
+      "oracle_text": "Whenever a player sacrifices a permanent, draw a card. This ability triggers only once each turn.\nSacrifice this creature: Add {C}.",
+      "power": "2",
+      "toughness": "6",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Vigilance"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
     }
   ],
   "fixture_kind": "public_exact-list_card_data",
@@ -480,13 +528,13 @@
       "source": "wotc"
     },
     {
-      "comment": "Effects that modify a creature\u2019s power and/or toughness, such as the effect of Titanic Growth, will apply to the creature no matter when they started to take effect. The same is true for any counters that change its power and/or toughness and effects that switch its power and toughness.",
+      "comment": "Effects that modify a creature’s power and/or toughness, such as the effect of Titanic Growth, will apply to the creature no matter when they started to take effect. The same is true for any counters that change its power and/or toughness and effects that switch its power and toughness.",
       "oracle_id": "74c4c1e2-c50d-4c8f-889a-0d5674dc6d67",
       "published_at": "2014-07-18",
       "source": "wotc"
     },
     {
-      "comment": "If one of the Theros block Gods is affected by Turn to Frog, it will be a legendary 1/1 blue Frog enchantment creature with no abilities. If it stops being a creature, perhaps because your devotion to its color(s) decreased, it will be a legendary blue enchantment with no abilities. The way continuous effects work, the God\u2019s type-changing ability is applied before the effect that removes that ability is applied.",
+      "comment": "If one of the Theros block Gods is affected by Turn to Frog, it will be a legendary 1/1 blue Frog enchantment creature with no abilities. If it stops being a creature, perhaps because your devotion to its color(s) decreased, it will be a legendary blue enchantment with no abilities. The way continuous effects work, the God’s type-changing ability is applied before the effect that removes that ability is applied.",
       "oracle_id": "74c4c1e2-c50d-4c8f-889a-0d5674dc6d67",
       "published_at": "2014-07-18",
       "source": "wotc"
@@ -504,13 +552,13 @@
       "source": "wotc"
     },
     {
-      "comment": "Turn to Frog doesn\u2019t counter abilities that have already triggered or been activated. In particular, there is no way to cast this spell to stop a creature\u2019s ability that says \u201cAt the beginning of your upkeep,\u201d \u201cWhen this creature enters the battlefield,\u201d or similar from triggering.",
+      "comment": "Turn to Frog doesn’t counter abilities that have already triggered or been activated. In particular, there is no way to cast this spell to stop a creature’s ability that says “At the beginning of your upkeep,” “When this creature enters the battlefield,” or similar from triggering.",
       "oracle_id": "74c4c1e2-c50d-4c8f-889a-0d5674dc6d67",
       "published_at": "2014-07-18",
       "source": "wotc"
     },
     {
-      "comment": "Turn to Frog overwrites all previous effects that set the creature\u2019s base power and toughness to specific values. Any power- or toughness-setting effects that start to apply after Turn to Frog resolves will overwrite this effect.",
+      "comment": "Turn to Frog overwrites all previous effects that set the creature’s base power and toughness to specific values. Any power- or toughness-setting effects that start to apply after Turn to Frog resolves will overwrite this effect.",
       "oracle_id": "74c4c1e2-c50d-4c8f-889a-0d5674dc6d67",
       "published_at": "2014-07-18",
       "source": "wotc"
@@ -552,7 +600,7 @@
       "source": "wotc"
     },
     {
-      "comment": "If the triggered ability is modal (that is, if it says, \"Choose one \u2014\" or similar), the mode is copied and can't be changed.",
+      "comment": "If the triggered ability is modal (that is, if it says, \"Choose one —\" or similar), the mode is copied and can't be changed.",
       "oracle_id": "cf751552-156f-4f81-ac94-9814dce099f9",
       "published_at": "2018-03-16",
       "source": "wotc"

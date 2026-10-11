@@ -14,6 +14,10 @@ typed characteristic query grammar. The compiler marks their generated
 trigger for one occurrence per committed simultaneous batch, scoped to source
 incarnation and ability identity. Separate batches remain separate events.
 The once-each-turn descriptor independently limits qualifying entry triggers.
+Departure subscriptions, including source and external sacrifice events, remain
+outside that descriptor's admitted scope. The compiler, semantic shape validator
+and runtime trust binder share the same exclusion; an independently supported
+unrestricted sacrifice observer is unaffected.
 Result references that require the entire matching object set remain
 residuals, as do unsupported sibling abilities.
 

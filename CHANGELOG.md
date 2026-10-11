@@ -11,6 +11,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Reject limited sacrifice-departure subscriptions consistently in compilation,
+  semantic shape validation, and trust admission instead of silently dropping
+  an admitted departing observer's trigger.
+
 - Advertise source-counter mana quantities after their exact counter-removal
   price, using a detached preview of the canonical payment plan.
 

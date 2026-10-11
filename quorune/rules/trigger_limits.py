@@ -6,6 +6,16 @@ from dataclasses import dataclass
 from typing import Any, Mapping
 
 TRIGGER_ONCE_PER_TURN_CAPABILITY = "trigger.usage.once_per_turn"
+UNSUPPORTED_LIMITED_TRIGGER_EVENTS = frozenset({
+    "unresolved", "resolve", "activate", "multi.event", "artifact.graveyard",
+    "permanent.graveyard", "permanent.leave", "creature.dies", "spell.countered",
+    "permanent.sacrificed",
+})
+
+
+def supported_trigger_limit_event(event: str) -> bool:
+    return bool(type(event) is str and event
+        and event.removesuffix(".self") not in UNSUPPORTED_LIMITED_TRIGGER_EVENTS)
 
 
 @dataclass(frozen=True, slots=True)
@@ -33,7 +43,7 @@ def validate_program_trigger_limit(program: Any) -> None:
     if program.trigger_limit is None:
         return
     TriggerLimitSpec.from_dict(program.trigger_limit)
-    if program.active_zone != "battlefield" or program.event in {"resolve", "activate"}:
-        raise ValueError("Trigger limits require a battlefield triggered ability")
+    if program.active_zone != "battlefield" or not supported_trigger_limit_event(program.event):
+        raise ValueError("Trigger limits require a supported nondeparture battlefield event")
     if TRIGGER_ONCE_PER_TURN_CAPABILITY not in program.capability_dependencies:
         raise ValueError("Trigger limits require their usage capability dependency")
