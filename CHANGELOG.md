@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Route qualified regeneration through the shared permanent-target query,
+  preserving Kindred subtype targets and resolution-time counter predicates.
+
 - Compile fixed controller and player-target extra turns through the canonical
   scheduler, retaining ordinary prices, target revalidation, turn order and
   replay without a second turn journal.

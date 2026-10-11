@@ -6995,14 +6995,14 @@
     },
     {
       "id": "permanent.regeneration.fixed_effect",
-      "version": 1,
+      "version": 2,
       "official_rules": ["506.4", "701.19", "701.19a", "701.19c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
         "summary": "Compile and execute one exact fixed direct-target, attached-creature, or named-source regeneration instruction by creating an identity-pinned public shield on the resolved phased-in battlefield permanent.",
-        "inputs": ["exact supported fixed regeneration instruction", "revalidated direct permanent target or current/LKI attachment reference or named source", "phased-in battlefield incarnation", "represented effect or damage state-based destruction"],
+        "inputs": ["exact supported fixed regeneration instruction", "revalidated shared direct permanent target including subtype, color, controller and named-counter predicates or current/LKI attachment reference or named source", "phased-in battlefield incarnation", "represented effect or damage state-based destruction"],
         "outputs": ["one public regeneration shield on the resolved permanent", "one replaced destruction event", "tapped permanent with no marked or Deathtouch damage", "canonical removal from combat", "exact command replay"],
-        "exclusions": ["static regeneration abilities", "variable, repeated, optional, conditional, subtype-qualified, color-qualified, controller-qualified, or multiple-target regeneration", "affected-player ordering between regeneration and shield-counter replacements", "sacrifice, exile, zero-toughness, and other non-destruction zone changes", "unrepresented attachment, target, destruction, or continuous-effect semantics"]
+        "exclusions": ["static regeneration abilities", "variable, repeated, optional, conditional, unrepresented-predicate, or multiple-target regeneration", "affected-player ordering between regeneration and shield-counter replacements", "sacrifice, exile, zero-toughness, and other non-destruction zone changes", "unrepresented attachment, target, destruction, or continuous-effect semantics"]
       },
       "dependencies": ["permanent.destroy.effect", "permanent.destroy.state_based_damage"],
       "implementation_components": ["quorune.compiler.regeneration_templates.FixedRegenerationEffectTemplate", "quorune.rules.node_capability_shapes.self_regeneration_node_capabilities", "quorune.semantic_runtime.regeneration_handlers.CreateRegenerationShieldHandler", "quorune.regeneration.create_regeneration_shield", "quorune.regeneration.apply_regeneration_replacement", "quorune.destruction.prepare_destructions", "quorune.destruction.commit_destruction_plan", "quorune.tap_state.set_permanent_tapped", "quorune.damage_results.clear_permanent_damage"],

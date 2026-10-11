@@ -1651,14 +1651,18 @@ ordinary effect and cost closure. Wording that permits another Exhaust use
 remains a material residual.
 
 Exact fixed regeneration instructions lower to one `regenerate` operation over
-`$source.zone_object`, a revalidated direct artifact, creature, or permanent
-target, or the typed current-or-last-known creature attached to the source.
+`$source.zone_object`, a revalidated direct permanent target, or the typed
+current-or-last-known creature attached to the source. Direct targets reuse the
+shared closed predicate grammar for subtype unions, colors, controller
+relations, and current named-counter membership. A bare creature subtype does
+not require the Creature card type; a matching noncreature Kindred permanent
+is eligible. The full target predicate is revalidated before shield creation.
 Exact direct-target and fixed-set destruction may carry an immediately
 adjacent cannot-be-regenerated rider as a flag on the same destruction effect.
 Cost, event, target-predicate, and sibling-effect compilation remain
 independent, so unsupported surrounding grammar stays residual even when the
 fixed effect sentence matches. Static, variable, repeated, optional,
-conditional, qualified, controller-relative, multiple-target, damage-linked,
+conditional, unrepresented predicates, multiple-target, damage-linked,
 delayed, and linked-result forms remain outside this family.
 
 Fixed mass-damage lowering uses the same complete `ObjectQuerySpec` descriptor

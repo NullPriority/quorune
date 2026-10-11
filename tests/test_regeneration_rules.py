@@ -10,7 +10,7 @@ from unittest.mock import patch
 
 from common import ROOT, keep_all, make_session
 from quorune.attachment_references import AttachmentReferenceKind
-from quorune.carddb import CardDatabase
+from quorune.carddb import CardDatabase, CardRecord
 from quorune import damage_results, tap_state
 from quorune.compiler.regeneration_templates import (
     fixed_regeneration_effect_template,
@@ -298,7 +298,7 @@ class RegenerationCompilerTests(unittest.TestCase):
             "{B}: Regenerate this creature",
             "{B}: Regenerate this permanent.",
             "{B}: Regenerate another creature.",
-            "{B}: Regenerate target Elf.",
+            "{B}: Regenerate target Elf with power equal to the number of cards in your hand.",
             "{B}: Regenerate two target creatures.",
             "{B}: Regenerate this creature twice.",
             "{B}: Regenerate this creature only if it attacked this turn.",
@@ -1283,6 +1283,181 @@ class RegenerationRuntimeTests(unittest.TestCase):
                         reason="disposition mutation witness",
                     ).entries[0].disposition,
                 )
+
+
+def qualified_regeneration_record(text, *, type_line="Creature \u2014 Test"):
+    return CardRecord(oracle_id="fixture-qualified-regeneration", name="Qualified Regeneration Witness",
+        mana_cost="{2}", mana_value=2, type_line=type_line, oracle_text=text,
+        power="2" if "Creature" in type_line else None, toughness="2" if "Creature" in type_line else None,
+        loyalty=None, defense=None, colors=(), color_identity=(), keywords=(), produced_mana=(),
+        layout="normal", released_at="2026-08-07", legalities={"commander": "legal"}, faces=(), raw={})
+
+
+class QualifiedRegenerationCompilerTests(unittest.TestCase):
+    # CR 701.19a-c: resolution creates one shield for the particular permanent.
+    # A bare creature subtype also matches a noncreature Kindred permanent;
+    # qualification does not narrow it to creatures or change the shield owner.
+    @classmethod
+    def setUpClass(cls):
+        cls.registry = load_default_capability_registry()
+
+    def compile(self, text, *, type_line="Creature \u2014 Test"):
+        return compile_oracle_card(qualified_regeneration_record(text, type_line=type_line),
+            capability_registry=self.registry, capability_profile="commander_review")
+
+    def test_qualified_regeneration_reuses_full_direct_permanent_target_contract(self):
+        cases = (
+            ("{B}: Regenerate target Elf.", "subtypes_any", ["elf"]),
+            ("{2}: Regenerate target Samurai.", "subtypes_any", ["samurai"]),
+            ("{1}{B}: Regenerate target Zombie you control.", "controller_relation", "you"),
+            ("{1}{G}: Regenerate target green creature.", "colors_any", ["G"]),
+            ("{1}{G}: Regenerate target creature with a +1/+1 counter on it.", "types_any", ["creature"]),
+            ("{2}: Regenerate target Shade, Skeleton, Specter, Spirit, Vampire, Wraith, or Zombie.", "subtypes_any", ["shade", "skeleton", "specter", "spirit", "vampire", "wraith", "zombie"]),
+        )
+        for text, field, expected in cases:
+            with self.subTest(text=text):
+                ir = self.compile(text)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                self.assertEqual(({"op": "regenerate", "card": "$target.0"},), node.effects)
+                self.assertEqual(expected, node.target_schema[field])
+                self.assertIn("permanent.regeneration.fixed_effect", node.capability_dependencies)
+                self.assertIn("target.revalidate_resolution", node.capability_dependencies)
+                if text.endswith("Samurai."):
+                    self.assertNotIn("types_any", node.target_schema)
+
+    def test_normalized_regeneration_trigger_retains_its_closed_result_owner(self):
+        ir = self.compile("Whenever you cast a Spirit or Arcane spell, regenerate target creature.")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        self.assertIn("permanent.regeneration.fixed_effect", ir.faces[0].nodes[0].capability_dependencies)
+
+    def test_qualified_regeneration_exclusions_dependency_and_omission_mutant(self):
+        text = "{1}{B}: Regenerate target Zombie."
+        self.assertEqual("exact", self.compile(text).status)
+        for body in ("Regenerate target player.", "Regenerate target creature card in a graveyard.",
+                     "Regenerate two target Zombies.", "Regenerate target Zombie with power equal to the number of cards in your hand."):
+            with self.subTest(body=body):
+                ir = self.compile("{1}: " + body)
+                self.assertNotEqual("exact", ir.status)
+                self.assertTrue(ir.material_residuals)
+        raw = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+        next(row for row in raw["capabilities"] if row["id"] == "permanent.regeneration.fixed_effect").update(
+            status="blocked", blockers=["qualified shield owner unavailable"])
+        blocked = compile_oracle_card(qualified_regeneration_record(text), capability_registry=CapabilityRegistry(raw), capability_profile="commander_review")
+        self.assertNotEqual("exact", blocked.status)
+        with patch("quorune.oracle_ir.fixed_regeneration_effect_template", return_value=None):
+            mutant = self.compile(text)
+        self.assertNotEqual("exact", mutant.status)
+
+
+class QualifiedRegenerationRuntimeTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from quorune.deck import DeckDefinition, DeckEntry
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "qualified-regeneration.sqlite3"
+        build_fixture_database([ROOT / "tests/fixtures/bound-effect-program-cards.json",
+            ROOT / "tests/fixtures/qualified-regeneration-cards.json"], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Qualified regeneration", [DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 99)], ["Generic Bound Commander"])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    import test_bound_effect_programs as _witnesses
+    session = _witnesses.BoundEffectProgramRuntimeTests.session
+    add = _witnesses.BoundEffectProgramRuntimeTests.add
+    ready = _witnesses.BoundEffectProgramRuntimeTests.ready
+    checkpoint = _witnesses.BoundEffectProgramRuntimeTests.checkpoint
+    resolve = _witnesses.BoundEffectProgramRuntimeTests.resolve
+    replay = _witnesses.BoundEffectProgramRuntimeTests.replay
+
+    def assert_whole_admission(self, session, name):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        program = compile_best_available_card_program(self.db, self.db.lookup(name), semantic_registry=session.engine.semantics,
+            capability_registry=self.registry, capability_profile="commander_review")
+        binding = bind_card_program_runtime(program, capability_registry=self.registry, profile="commander_review")
+        self.assertTrue(binding["strict_capability_ready"], binding)
+
+    def test_original_boneknitter_regenerates_foreign_kindred_zombie_and_replays(self):
+        session = self.session(337010)
+        source = self.add(session.engine, "Boneknitter")
+        target = self.add(session.engine, "Generic Kindred Zombie Enchantment", seat="B")
+        wrong = self.add(session.engine, "Generic Bound Body", seat="B")
+        spell = self.add(session.engine, "Naturalize", zone="hand")
+        self.assert_whole_admission(session, source.printed_name)
+        action = self.ready(session, source, {"B": 2, "G": 1, "C": 1})
+        self.assertIn(target.ref, action["target_schema"]["legal_refs"])
+        self.assertNotIn(wrong.ref, action["target_schema"]["legal_refs"])
+        self.checkpoint(session)
+        before = authoritative_state_hash(session.state)
+        for principal, recipient in (("pilot:B", target.ref), ("pilot:A", wrong.ref)):
+            rejected = session.act(principal, {"action_id": action["id"], "targets": [recipient], "pay": "auto"})
+            self.assertFalse(rejected.ok)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+        activated = session.act("pilot:A", {"action_id": action["id"], "targets": [target.ref],
+            "pay": "manual", "payment": {"B": 1, "C": 1}})
+        self.assertTrue(activated.ok, activated.summary)
+        self.resolve(session)
+        self.assertEqual(1, session.state.cards[target.object_id].regeneration_shields)
+        self.assertFalse(session.state.cards[target.object_id].tapped)
+        self.assertEqual(1, session.state.players["A"].mana_pool.get("G", 0))
+        session = self.replay(session, load=True)
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        action = next(action for action in actions if action.get("card") == spell.ref)
+        cast = session.act("pilot:A", {"action_id": action["id"], "targets": [target.ref], "pay": "auto"})
+        self.assertTrue(cast.ok, cast.summary)
+        self.resolve(session)
+        protected = session.state.cards[target.object_id]
+        self.assertEqual("battlefield", protected.zone)
+        self.assertTrue(protected.tapped)
+        self.assertEqual(0, protected.regeneration_shields)
+        self.assertEqual("B", protected.controller)
+        self.assertEqual("B", protected.owner)
+        self.assertEqual("graveyard", session.state.cards[spell.object_id].zone)
+        for seat in "ABCD":
+            public = session.packet("pilot:" + seat, full=True)["state"]
+            row = next(row for row in public["players"]["B"]["bf"] if row["id"] == target.ref)
+            self.assertEqual(0, row.get("regen", 0))
+        self.replay(session, load=True)
+
+    def test_original_sporeback_counter_target_revalidates_after_hexmage_response(self):
+        session = self.session(337011)
+        source = self.add(session.engine, "Sporeback Troll")
+        source.counters["+1/+1"] = 2
+        target = self.add(session.engine, "Generic Bound Body")
+        target.counters["+1/+1"] = 1
+        remover = self.add(session.engine, "Vampire Hexmage", seat="B")
+        self.assert_whole_admission(session, source.printed_name)
+        self.assert_whole_admission(session, remover.printed_name)
+        action = self.ready(session, source, {"G": 2})
+        self.assertIn(target.ref, action["target_schema"]["legal_refs"])
+        self.checkpoint(session)
+        activated = session.act("pilot:A", {"action_id": action["id"], "targets": [target.ref], "pay": "auto"})
+        self.assertTrue(activated.ok, activated.summary)
+        self.assertTrue(session.act("pilot:A", {"action_id": "pass"}).ok)
+        actions = session.packet("pilot:B", full=True)["decision"]["ctx"]["legal"]["actions"]
+        action = next(action for action in actions if action["id"].startswith("activate:" + remover.ref + ":"))
+        response = session.act("pilot:B", {"action_id": action["id"], "targets": [target.ref], "pay": "auto"})
+        self.assertTrue(response.ok, response.summary)
+        for _ in range(12):
+            if session.state.cards[target.object_id].counters.get("+1/+1", 0) == 0:
+                break
+            passed = session.act(session.pending_principals()[0], {"action_id": "pass"})
+            self.assertTrue(passed.ok, passed.summary)
+        self.assertEqual(0, session.state.cards[target.object_id].counters.get("+1/+1", 0))
+        session = self.replay(session, load=True)
+        self.resolve(session)
+        self.assertEqual(0, session.state.cards[target.object_id].regeneration_shields)
+        self.assertEqual("battlefield", session.state.cards[target.object_id].zone)
+        self.assertEqual("graveyard", session.state.cards[remover.object_id].zone)
+        self.assertEqual(0, session.state.players["A"].mana_pool.get("G", 0))
+        self.replay(session, load=True)
 
 
 if __name__ == "__main__":

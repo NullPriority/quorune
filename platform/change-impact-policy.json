@@ -3228,6 +3228,20 @@
         "test_oracle_corpus_examples",
         "test_bound_effect_programs"
       ]
+    },
+    {
+      "id": "qualified-regeneration-contract",
+      "patterns": [
+        "quorune/compiler/regeneration_templates.py",
+        "quorune/rules/destruction_regeneration_capability_shapes.py",
+        "tests/fixtures/qualified-regeneration-cards.json"
+      ],
+      "test_modules": [
+        "test_regeneration_rules",
+        "test_fixed_counter_event_triggers",
+        "test_targeted_destruction_effect_clauses",
+        "test_oracle_corpus_examples"
+      ]
     }
   ],
   "symbol_rules": [
