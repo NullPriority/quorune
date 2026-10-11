@@ -46,6 +46,9 @@ maintenance: "hand-maintained"
 - Lower fixed controller and occurrence-bound player discards through the
   existing private APNAP selection owner. Keep trigger control separate from
   the affected player's choice and retain untargeted resolution and replay.
+- Count matching Kindred permanents and cards in bare creature-subtype
+  quantities, retaining explicit Creature card-type constraints.
+
 - Reset successive priority passes after a confirmed concession so a wrapped
   priority window accepts the remaining player's next pass.
 
