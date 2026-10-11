@@ -54,7 +54,7 @@ class PublicQuantityManaCompilerTests(unittest.TestCase):
         for text in ('{T}: Add {G} for each card exiled with this artifact.',
                      '{T}: Add {G} for each creature you control. Draw a card.',
                      '{T}, Discard a card: Add {G} for each creature you control.',
-                     '−2: Add {R} for each Mountain you control.',
+                     '−2: Add {R} for each chosen land type you control.',
                      '{T}: Add {G} for each chosen creature type you control.'):
             with self.subTest(text=text):
                 ir=compile_oracle_card(replace(query_record(text),type_line='Artifact'),capability_registry=load_default_capability_registry())
@@ -69,6 +69,20 @@ class PublicQuantityManaCompilerTests(unittest.TestCase):
                      'Add X mana in any combination of colors, where X is the number of creatures you control.'):
             ir=compile_oracle_card(replace(query_record(text),type_line='Sorcery'),capability_registry=load_default_capability_registry())
             self.assertNotEqual('exact',ir.status)
+
+    def test_quantity_loyalty_mana_is_stack_effect_without_activated_mana_handler(self):
+        record = replace(query_record('−2: Add {R} for each Mountain you control.'),
+            type_line='Legendary Planeswalker — Generic', loyalty='4')
+        ir = compile_oracle_card(record, capability_registry=load_default_capability_registry(),
+            capability_profile='commander_review')
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        node = next(node for face in ir.faces for node in face.nodes if node.kind == 'activated_ability')
+        self.assertEqual(-2, node.cost['loyalty_delta'])
+        self.assertEqual('public-quantity-resolution-mana-v1', node.template_id)
+        self.assertEqual('mana', node.effects[0]['op'])
+        self.assertEqual('public_query_effect_amount', node.effects[0]['amount']['kind'])
+        self.assertFalse(any(handler.get('handler_id') == 'ability.activated.mana.public-quantity.v1'
+            for handler in node.handlers))
 
     def test_quantity_mana_missing_producer_and_handler_dependencies_fail_closed(self):
         source=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))

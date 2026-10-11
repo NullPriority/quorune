@@ -298,7 +298,7 @@ class DamageReplacementModelTests(DamageReplacementPipelineBase):
             "Prevent all damage a source of your choice would deal this turn.",
             "Prevent all damage creatures with power 4 or less would deal this turn.",
             "Prevent all damage that would be dealt to a creature by another "
-            "creature if they share a color.",
+            "creature if they share a creature type.",
         ):
             with self.subTest(unsupported=unsupported):
                 self.assertIsNone(
@@ -307,6 +307,16 @@ class DamageReplacementModelTests(DamageReplacementPipelineBase):
                         card_name="Generic Prevention Fixture",
                     )
                 )
+
+        shared = fixed_all_damage_prevention_specs(
+            "Prevent all damage that would be dealt to a creature by another creature if they share a color.",
+            card_name="Generic Prevention Fixture",
+        )
+        self.assertIsNotNone(shared)
+        self.assertEqual(1, len(shared))
+        self.assertTrue(shared[0].shared_color)
+        self.assertEqual(("creature",), shared[0].source.characteristics_all)
+        self.assertEqual(("creature",), shared[0].recipient.characteristics_all)
 
     def add_card(
         self,

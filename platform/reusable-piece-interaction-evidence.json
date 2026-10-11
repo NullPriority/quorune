@@ -9341,6 +9341,64 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Geosurge resolution uses the shared canonical restricted-mana provenance and spending predicates to reject Shock and pay for Blitz Automaton, with replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_defender_permission.DefenderPermissionRuntimeTests.test_original_wall_aura_combines_restriction_grant_and_actual_removal_replay",
+      "piece_ids": [
+        "capability.attachment.aura.typed_restriction",
+        "capability.continuous.ability.fixed_query_grant"
+      ],
+      "capability_ids": [
+        "attachment.aura.typed_restriction",
+        "continuous.ability.fixed_query_grant"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Animate Wall has strict whole-program admission, rejects a non-Wall cast target without mutation, attaches through an accepted cast and grants only the enchanted Wall the represented defender permission. Actual Disenchant removes the Aura and the permission; pre-cast command replay and pending load preserve the full consequences."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_fixed_resolution_mana.FixedResolutionManaRuntimeTests.test_original_mana_replacement_carriers_fail_closed_at_whole_runtime_admission",
+      "piece_ids": [
+        "capability.mana.production.fixed_resolution",
+        "residual.replacement.replacement-applicability"
+      ],
+      "capability_ids": [
+        "mana.production.fixed_resolution"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Urabrask, Cabal Ritual, Valki, Esper Origins and Lake of the Dead retain observed fixed-resolution mana and replacement-applicability pieces. All five original whole CardPrograms reach canonical runtime binding and reject strict and compatible admission with material replacement siblings; no unsupported replacement execution is claimed."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_fixed_resolution_mana.FixedResolutionManaRuntimeTests.test_original_mana_replacement_carriers_fail_closed_at_whole_runtime_admission",
+      "piece_ids": [
+        "capability.mana.production.fixed_resolution",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ],
+      "capability_ids": [
+        "mana.production.fixed_resolution"
+      ],
+      "interaction_order": 2,
+      "assertion": "The same five original complete Oracle carriers retain self-replacement/ordering residuals beside recognized fixed-resolution mana and are rejected by canonical whole-program runtime binding. This proves the supported-prefix exclusion boundary rather than successful unsupported composition."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_player_target_protection.PlayerProtectionRuntimeTests.test_shroud_source_sacrifice_redirects_then_restores_targetability_and_replays",
+      "piece_ids": [
+        "capability.target.player.static_hexproof_shroud",
+        "capability.zone.change.destination_replacement"
+      ],
+      "capability_ids": [
+        "target.player.static_hexproof_shroud",
+        "zone.change.destination_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "A correctly registered whole generic shroud source initially forbids targeting its controller. Its upkeep maintenance trigger offers a private optional payment and accepts decline without targeting the protected player; the canonical destination replacement redirects the sacrifice to exile while preserving sacrifice history, then removing the source restores legal player targeting. An accepted Shock resolves after protection ends; wrong-principal and protected-target attempts roll back and the pre-action command sequence replays exactly. Original Solitary Confinement separately retains its unsupported whole-program admission boundary."
     }
   ]
 }

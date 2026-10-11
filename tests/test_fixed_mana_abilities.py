@@ -492,7 +492,7 @@ class FixedManaCompilerTests(unittest.TestCase):
         for text in (
             "{T}: Add {G} for each creature you control if you attacked this turn.",
             "{T}: Add {G}. Spend this mana only to cast spells from exile.",
-            "+1: Add {G}.",
+            "+1: Add one mana of any color.",
             "{T}: Target player adds {G}.",
             "Discard a card: Add {G}.",
             "Exile a card from your graveyard: Add {B}.",
@@ -508,6 +508,20 @@ class FixedManaCompilerTests(unittest.TestCase):
                 self.assertNotEqual("exact", ir.status)
                 self.assertTrue(ir.material_residuals)
                 self.assertFalse(any(node.handlers for node in ir.faces[0].nodes))
+
+    def test_fixed_loyalty_mana_uses_resolution_producer_without_promoting_mana_leaf(self):
+        text = "+1: Add {G}."
+        ability = parse_activated_abilities(card_name="Typed Mana Relic", oracle_text=text)[0]
+        self.assertIsNone(compile_fixed_activated_mana_ability(ability))
+        ir = compile_oracle_card(replace(record(text), type_line="Legendary Planeswalker — Generic", loyalty="3"),
+            capability_registry=load_default_capability_registry(), capability_profile="commander_review")
+        self.assertEqual("exact", ir.status)
+        node = next(node for face in ir.faces for node in face.nodes if node.kind == "activated_ability")
+        self.assertEqual(1, node.cost["loyalty_delta"])
+        self.assertEqual("fixed-resolution-mana-bundle-v1", node.template_id)
+        self.assertEqual(({"op": "mana", "player": "$controller", "color": "G", "amount": 1,
+            "source": "$source"},), node.effects)
+        self.assertIn("mana.production.fixed_resolution", node.capability_dependencies)
 
     def test_parenthesized_basic_land_reminder_is_not_an_executable_program(self):
         card = replace(

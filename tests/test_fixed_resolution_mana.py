@@ -64,6 +64,33 @@ class FixedResolutionManaRuntimeTests(unittest.TestCase):
     replay=witnesses.BoundEffectProgramRuntimeTests.replay
     resolve=counter_witnesses.CounterPlacementEventRuntimeTests.resolve
 
+    def test_original_mana_replacement_carriers_fail_closed_at_whole_runtime_admission(self):
+        from high_risk_interaction_support import _observed_piece_ids
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.compiler.unlock_frontier import analyze_card_unlocks
+        from quorune.semantics import SemanticRegistry
+        pieces = {'capability.mana.production.fixed_resolution',
+            'residual.replacement.replacement-applicability',
+            'residual.replacement.self-replacement-and-prevention-ordering'}
+        for oid in ('4b1da9aa-a30c-44b8-a10e-f9dc3fe70b6f','5b5bf1fa-6502-4790-b66b-f0f8504ebc7c',
+                '907ae517-22d5-4ac7-bc3a-3f4d5eaeeb57','947b40a2-e272-4ef6-85fb-3d767a21bc7a',
+                'bdf476e5-1d57-4b17-b45b-d52fd75aadeb'):
+            with self.subTest(oracle_id=oid):
+                record = self.db.by_oracle_id(oid)
+                ir = compile_oracle_card(record, capability_registry=self.registry, capability_profile='commander_review')
+                program = compile_best_available_card_program(self.db, record, semantic_registry=SemanticRegistry(),
+                    capability_registry=self.registry, capability_profile='commander_review')
+                row = analyze_card_unlocks(ir, program=program, program_error=None,
+                    capabilities=self.registry, profile='commander_review')
+                self.assertLessEqual(pieces, _observed_piece_ids(row))
+                self.assertEqual('residual', row['card_program_status'])
+                self.assertIsNone(row['hard_construction_failure'])
+                binding = bind_card_program_runtime(program, capability_registry=self.registry, profile='commander_review')
+                self.assertFalse(binding['strict_capability_ready'])
+                self.assertFalse(binding['compatible_ready'])
+                self.assertIn('trust_basis:unresolved', binding['blockers'])
+
     def test_actual_dark_ritual_uses_stack_and_adds_exact_black_bundle_then_replays(self):
         s=self.session(328001);e=s.engine;source=self.add(e,'Dark Ritual',zone='hand')
         action=self.ready(s,source,{'B':1});self.checkpoint(s);before=authoritative_state_hash(e.state)

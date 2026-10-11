@@ -376,6 +376,47 @@ class DefenderPermissionRuntimeTests(unittest.TestCase):
         self.assertTrue(defender_prohibits_attack(engine._effective_card_data(other)))
         self.replay(session,load=True)
 
+    def test_original_wall_aura_combines_restriction_grant_and_actual_removal_replay(self):
+        from quorune.oracle_ir import compile_oracle_card
+        from high_risk_interaction_support import _observed_piece_ids
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.compiler.unlock_frontier import analyze_card_unlocks
+        from quorune.semantics import SemanticRegistry
+        record = self.db.by_oracle_id('c7a6a165-b709-46e0-ae42-6f69a17c0621')
+        ir = compile_oracle_card(record, capability_registry=self.registry, capability_profile='commander_review')
+        program = compile_best_available_card_program(self.db, record, semantic_registry=SemanticRegistry(),
+            capability_registry=self.registry, capability_profile='commander_review')
+        row = analyze_card_unlocks(ir, program=program, program_error=None,
+            capabilities=self.registry, profile='commander_review')
+        self.assertLessEqual({'capability.attachment.aura.typed_restriction',
+            'capability.continuous.ability.fixed_query_grant'}, _observed_piece_ids(row))
+        self.assertTrue(bind_card_program_runtime(program, capability_registry=self.registry,
+            profile='commander_review')['strict_capability_ready'])
+        session=self.session(288015);engine=session.engine
+        aura=self.add(engine,'Animate Wall',zone='hand')
+        removal=self.add(engine,'Disenchant',zone='hand')
+        wall=self.add(engine,'Steel Wall');wall.acquired_control_turn_count=-1
+        other=self.add(engine,'Steel Wall',ref='unenchanted-wall');other.acquired_control_turn_count=-1
+        nonwall=self.add(engine,'Generic Bound Body')
+        action=self.ready(session,aura,{'W':3,'C':1});self.checkpoint(session)
+        self.assertNotIn(nonwall.ref,action['target_schema']['legal_refs'])
+        before=authoritative_state_hash(session.state)
+        denied=session.act('pilot:A',{'action_id':action['id'],'pay':'auto','targets':[nonwall.ref]})
+        self.assertFalse(denied.ok);self.assertEqual(before,authoritative_state_hash(session.state))
+        accepted=session.act('pilot:A',{'action_id':action['id'],'pay':'auto','targets':[wall.ref]})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        self.assertEqual(wall.object_id,session.state.cards[aura.object_id].attached_to)
+        self.assertFalse(defender_prohibits_attack(engine._effective_card_data(session.state.cards[wall.object_id])))
+        self.assertTrue(defender_prohibits_attack(engine._effective_card_data(session.state.cards[other.object_id])))
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        remove=next(action for action in actions if action.get('card')==removal.ref)
+        accepted=session.act('pilot:A',{'action_id':remove['id'],'pay':'auto','targets':[aura.ref]})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        self.assertEqual('graveyard',session.state.cards[aura.object_id].zone)
+        self.assertTrue(defender_prohibits_attack(engine._effective_card_data(session.state.cards[wall.object_id])))
+        self.replay(session,load=True)
+
     def test_attached_permission_follows_current_attachment_and_disappears_with_aura(self):
         session=self.session(288014);engine=session.engine
         aura=self.add(engine,'Generic Attached Defender Permission',zone='hand')

@@ -17,10 +17,21 @@ import test_counter_placement_events as counter_witnesses
 
 
 class AftermathCompilerTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / 'aftermath-compiler.sqlite3'
+        build_fixture_database([ROOT / 'tests/fixtures/aftermath-cards.json'], path)
+        cls.db = CardDatabase(path)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
     def test_selected_half_has_bare_lifecycle_and_other_face_remains_ordinary(self):
-        with CardDatabase(ROOT/'data/scryfall-current.sqlite3') as db:
-            # Explicit pinned Oracle identity avoids same-name synthetic aliases.
-            ir=compile_oracle_card(db.by_oracle_id('16da9e4b-c6ee-4e70-8653-31ca147f3b01'),capability_registry=load_default_capability_registry())
+        # Explicit pinned Oracle identity avoids same-name synthetic aliases.
+        ir=compile_oracle_card(self.db.by_oracle_id('16da9e4b-c6ee-4e70-8653-31ca147f3b01'),capability_registry=load_default_capability_registry())
         self.assertEqual('exact',ir.status,ir.material_residuals)
         nodes=[(f.face_name,n) for f in ir.faces for n in f.nodes if 'aftermath' in n.mechanics]
         self.assertEqual(1,len(nodes));self.assertEqual('Fame',nodes[0][0]);self.assertEqual('all',nodes[0][1].active_zone)
@@ -45,8 +56,7 @@ class AftermathCompilerTests(unittest.TestCase):
         value=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
         row=next(c for c in value['capabilities'] if c['id']=='casting.lifecycle.fixed_zone_cast');row['status']='blocked';row['blockers']=['omitted-zone-cast-owner']
         registry=CapabilityRegistry(value);registry.mark_evidence_verified('0'*64)
-        with CardDatabase(ROOT/'data/scryfall-current.sqlite3') as db:
-            self.assertNotEqual('exact',compile_oracle_card(db.by_oracle_id('16da9e4b-c6ee-4e70-8653-31ca147f3b01'),capability_registry=registry).status)
+        self.assertNotEqual('exact',compile_oracle_card(self.db.by_oracle_id('16da9e4b-c6ee-4e70-8653-31ca147f3b01'),capability_registry=registry).status)
 
 
 class AftermathRuntimeTests(unittest.TestCase):

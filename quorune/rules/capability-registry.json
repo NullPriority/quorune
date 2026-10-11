@@ -12528,7 +12528,7 @@
       ],
       "negative_tests": [
         "test_malformed_and_conditional_static_control_remain_closed",
-        "test_original_aura_with_unsupported_sibling_stays_out_of_runtime"
+        "test_constructed_aura_with_unsupported_sibling_stays_out_of_runtime"
       ],
       "interaction_tests": [
         "test_actual_aura_cast_controls_recipient_and_bounce_restores_initial_custody",

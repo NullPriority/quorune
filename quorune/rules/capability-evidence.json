@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "0cb69ea07bfcf6b120f08e40181c3def84e9d6545131216bfd0f4acbcdc4a4df",
-  "declaration_source_fingerprint": "cb6d202d6602fd32d19d86e0d15d933d5e6ddc7cf698b1c665ff9dcd5576c2b6",
+  "registry_fingerprint": "0ed1d73f099ffa091aceafa9c32132f0ad058a2398585477308f1272f3251fb6",
+  "declaration_source_fingerprint": "fdee05323b1ef92b3da11658dfdedf19e97870ee57f0ffd1282a4f33b253d058",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -32697,7 +32697,7 @@
     {
       "capability_id": "continuous.control.attached_source",
       "evidence_class": "negative",
-      "test_id": "tests.test_static_attached_control.StaticAttachedControlRuntimeTests.test_original_aura_with_unsupported_sibling_stays_out_of_runtime",
+      "test_id": "tests.test_static_attached_control.StaticAttachedControlRuntimeTests.test_constructed_aura_with_unsupported_sibling_stays_out_of_runtime",
       "official_rule_ids": [
         "303.4e",
         "611.3b",
@@ -32710,7 +32710,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "applicability_note": "Original Take Possession retains exact static-control leaf and unresolved Split Second sibling; complete canonical runtime binding remains closed."
+      "applicability_note": "A constructed control Aura retains its exact static-control and Split Second leaves beside unrepresented variable Ward; complete canonical runtime binding remains closed."
     },
     {
       "capability_id": "continuous.control.attached_source",
@@ -101014,5 +101014,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "ce96c733af8abff94ede5714533d923063e1b6670984e0edd377a5411de02b4f"
+  "fingerprint": "fa8de222ebe2cf82dc7aafcb43bc59f238ade4b53f781e33b466575eff19f8d0"
 }

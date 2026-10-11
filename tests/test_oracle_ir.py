@@ -1912,7 +1912,7 @@ class OracleIRTests(unittest.TestCase):
         for oracle_id, oracle_text in (
             ("fixture-hexproof-from-black", "Hexproof from black"),
             ("fixture-hexproof-from-each-color", "Hexproof from each color"),
-            ("fixture-player-hexproof", "You have hexproof."),
+            ("fixture-player-hexproof", "You have hexproof from black."),
         ):
             with self.subTest(oracle_text=oracle_text):
                 unsupported = compile_oracle_card(

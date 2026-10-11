@@ -205,7 +205,7 @@ class ClassLifecycleCompilerTests(unittest.TestCase):
                 keywords=("Level Up",),
             ),
             class_record(
-                "Prototype {1}{W} — 2/2",
+                "Prototype {X}{W} — 2/2",
                 layout="prototype",
                 type_line="Artifact Creature — Construct",
                 keywords=("Prototype",),
@@ -225,6 +225,15 @@ class ClassLifecycleCompilerTests(unittest.TestCase):
                 if record.layout != "leveler":
                     self.assertNotEqual("exact", compiled.status)
                     self.assertTrue(compiled.material_residuals)
+
+    def test_supported_prototype_form_does_not_become_class_lifecycle(self):
+        compiled = self.compile(class_record("Prototype {1}{W} — 2/2", layout="prototype",
+            type_line="Artifact Creature — Construct", keywords=("Prototype",)))
+        self.assertEqual("exact", compiled.status)
+        self.assertTrue(any("casting.prototype.characteristics" in node.capability_dependencies
+            for face in compiled.faces for node in face.nodes))
+        self.assertFalse(any(node.template_id in {REMINDER_TEMPLATE, ACTIVATION_TEMPLATE, SCOPE_TEMPLATE}
+            for face in compiled.faces for node in face.nodes))
 
     def test_class_level_trigger_and_no_maximum_hand_size_compile_exactly(self):
         compiled = self.compile(

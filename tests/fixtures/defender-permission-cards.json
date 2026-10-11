@@ -47,7 +47,7 @@
       "produced_mana": [],
       "released_at": "2007-09-10",
       "toughness": null,
-      "type_line": "Enchantment \u2014 Aura"
+      "type_line": "Enchantment — Aura"
     },
     {
       "cmc": 3.0,
@@ -145,7 +145,7 @@
       "produced_mana": [],
       "released_at": "2025-04-11",
       "toughness": "4",
-      "type_line": "Creature \u2014 Insect"
+      "type_line": "Creature — Insect"
     },
     {
       "cmc": 3.0,
@@ -196,7 +196,7 @@
       "produced_mana": [],
       "released_at": "2017-03-31",
       "toughness": "4",
-      "type_line": "Creature \u2014 Cyclops"
+      "type_line": "Creature — Cyclops"
     },
     {
       "cmc": 2.0,
@@ -290,7 +290,7 @@
       "produced_mana": [],
       "released_at": "2020-09-25",
       "toughness": "3",
-      "type_line": "Artifact Creature \u2014 Gargoyle"
+      "type_line": "Artifact Creature — Gargoyle"
     },
     {
       "cmc": 5.0,
@@ -335,12 +335,12 @@
       "mana_cost": "{4}{U}",
       "name": "Spire Serpent",
       "oracle_id": "6c0c5832-416f-405f-bb44-c24be6f9d081",
-      "oracle_text": "Defender\nMetalcraft \u2014 As long as you control three or more artifacts, this creature gets +2/+2 and can attack as though it didn't have defender.",
+      "oracle_text": "Defender\nMetalcraft — As long as you control three or more artifacts, this creature gets +2/+2 and can attack as though it didn't have defender.",
       "power": "3",
       "produced_mana": [],
       "released_at": "2011-05-14",
       "toughness": "5",
-      "type_line": "Creature \u2014 Serpent"
+      "type_line": "Creature — Serpent"
     },
     {
       "cmc": 1.0,
@@ -385,7 +385,7 @@
       "produced_mana": [],
       "released_at": "2011-05-14",
       "toughness": "4",
-      "type_line": "Artifact Creature \u2014 Wall"
+      "type_line": "Artifact Creature — Wall"
     },
     {
       "cmc": 4.0,
@@ -434,7 +434,7 @@
       "produced_mana": [],
       "released_at": "2001-04-11",
       "toughness": "5",
-      "type_line": "Creature \u2014 Wall"
+      "type_line": "Creature — Wall"
     },
     {
       "cmc": 1.0,
@@ -479,7 +479,7 @@
       "produced_mana": [],
       "released_at": "2011-05-14",
       "toughness": "4",
-      "type_line": "Artifact Creature \u2014 Wall"
+      "type_line": "Artifact Creature — Wall"
     },
     {
       "cmc": 1.0,
@@ -567,7 +567,7 @@
       "produced_mana": [],
       "released_at": "1998-10-12",
       "toughness": "6",
-      "type_line": "Artifact Creature \u2014 Wall"
+      "type_line": "Artifact Creature — Wall"
     },
     {
       "cmc": 2.0,
@@ -616,7 +616,7 @@
       "produced_mana": [],
       "released_at": "2025-08-01",
       "toughness": "2",
-      "type_line": "Artifact Creature \u2014 Robot Soldier"
+      "type_line": "Artifact Creature — Robot Soldier"
     },
     {
       "cmc": 3.0,
@@ -667,7 +667,7 @@
       "produced_mana": [],
       "released_at": "2018-10-05",
       "toughness": "3",
-      "type_line": "Creature \u2014 Cyclops"
+      "type_line": "Creature — Cyclops"
     },
     {
       "cmc": 1,
@@ -755,7 +755,55 @@
       "produced_mana": [],
       "released_at": "2011-05-14",
       "toughness": null,
-      "type_line": "Enchantment \u2014 Aura"
+      "type_line": "Enchantment — Aura"
+    },
+    {
+      "oracle_id": "a7e97fa9-4b72-4548-b854-5be5f18a6f1a",
+      "name": "Disenchant",
+      "mana_cost": "{1}{W}",
+      "type_line": "Instant",
+      "oracle_text": "Destroy target artifact or enchantment.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 2.0
     }
   ],
   "fixture_kind": "public_exact-list_card_data",
@@ -803,7 +851,7 @@
       "source": "wotc"
     },
     {
-      "comment": "High Alert\u2019s first ability doesn\u2019t actually change any creature\u2019s power. It changes only the amount of combat damage it assigns. All other rules and effects that check power or toughness use the real values. For example, Titanic Brawl won\u2019t cause a creature to fight with its toughness under High Alert.",
+      "comment": "High Alert’s first ability doesn’t actually change any creature’s power. It changes only the amount of combat damage it assigns. All other rules and effects that check power or toughness use the real values. For example, Titanic Brawl won’t cause a creature to fight with its toughness under High Alert.",
       "oracle_id": "5f657279-cc0f-4431-b517-47bd1c7109b6",
       "published_at": "2019-01-25",
       "source": "wotc"

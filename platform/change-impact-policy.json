@@ -1808,6 +1808,7 @@
       ],
       "test_modules": [
         "test_commander_characteristic_grants",
+        "test_continuous_compiler_hardening",
         "test_object_query",
         "test_continuous_effect_components",
         "test_fixed_query_keyword_grants",
@@ -2841,6 +2842,101 @@
         "quorune/bulk.py"
       ],
       "windows_full": true
+    },
+    {
+      "id": "fixed-resolution-mana-consumer-contract",
+      "patterns": [
+        "quorune/compiler/fixed_resolution_mana.py",
+        "quorune/rules/fixed_resolution_mana_shapes.py",
+        "tests/fixtures/fixed-resolution-mana-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_resolution_mana",
+        "test_fixed_mana_abilities",
+        "test_public_quantity_mana",
+        "test_rules_scheduler"
+      ]
+    },
+    {
+      "id": "scoped-prevention-consumer-contract",
+      "patterns": [
+        "quorune/compiler/fixed_all_damage_prevention.py",
+        "quorune/damage_modifier_state.py",
+        "tests/fixtures/scoped-damage-prevention-cards.json"
+      ],
+      "test_modules": [
+        "test_scoped_damage_prevention",
+        "test_damage_replacement_model",
+        "test_rules_scheduler"
+      ]
+    },
+    {
+      "id": "prototype-card-form-consumer-contract",
+      "patterns": [
+        "quorune/prototype_model.py",
+        "quorune/rules/prototype.py",
+        "quorune/compiler/prototype_nodes.py",
+        "quorune/semantic_runtime/prototype.py"
+      ],
+      "test_modules": [
+        "test_prototype_rules",
+        "test_class_lifecycle",
+        "test_oracle_ir"
+      ]
+    },
+    {
+      "id": "graft-entry-lifecycle-consumer-contract",
+      "patterns": [
+        "quorune/compiler/graft_nodes.py",
+        "quorune/rules/graft_capability_shapes.py",
+        "quorune/semantic_choices/graft.py",
+        "tests/fixtures/graft-cards.json"
+      ],
+      "test_modules": [
+        "test_graft_rules",
+        "test_fixed_keyword_entry_counters",
+        "test_fading_rules",
+        "test_vanishing_rules"
+      ]
+    },
+    {
+      "id": "player-protection-consumer-contract",
+      "patterns": [
+        "quorune/compiler/player_target_protection_nodes.py",
+        "quorune/semantic_runtime/player_target_protection.py",
+        "tests/fixtures/player-target-protection-cards.json"
+      ],
+      "test_modules": [
+        "test_player_target_protection",
+        "test_oracle_ir",
+        "test_rules_scheduler"
+      ]
+    },
+    {
+      "id": "aftermath-test-database-contract",
+      "patterns": [
+        "quorune/rules/casting/aftermath.py",
+        "tests/fixtures/aftermath-cards.json"
+      ],
+      "test_modules": [
+        "test_aftermath_rules",
+        "test_fixed_casting_surface",
+        "test_fixed_zone_cast_lifecycles"
+      ]
+    },
+    {
+      "id": "new-composition-assurance-consumer-contract",
+      "patterns": [
+        "platform/reusable-piece-interaction-evidence.json",
+        "tests/fixtures/defender-permission-cards.json"
+      ],
+      "test_modules": [
+        "test_defender_permission",
+        "test_fixed_resolution_mana",
+        "test_player_target_protection",
+        "test_rules_scheduler",
+        "test_reusable_pieces"
+      ]
     }
   ],
   "symbol_rules": [

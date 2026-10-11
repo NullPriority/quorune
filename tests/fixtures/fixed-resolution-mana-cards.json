@@ -789,6 +789,339 @@
       "released_at": "2026-04-24",
       "toughness": null,
       "type_line": "Instant"
+    },
+    {
+      "oracle_id": "4b1da9aa-a30c-44b8-a10e-f9dc3fe70b6f",
+      "name": "Urabrask // The Great Work",
+      "mana_cost": "{2}{R}{R} // ",
+      "cmc": 4.0,
+      "type_line": "Legendary Creature — Phyrexian Praetor // Enchantment — Saga",
+      "oracle_text": "Urabrask: First strike\nWhenever you cast an instant or sorcery spell, Urabrask deals 1 damage to target opponent. Add {R}.\n{R}: Exile Urabrask, then return it to the battlefield transformed under its owner's control. Activate only as a sorcery and only if you've cast three or more instant and/or sorcery spells this turn.\n//\nThe Great Work: (As this Saga enters and after your draw step, add a lore counter.)\nI — This Saga deals 3 damage to target opponent and each creature they control.\nII — Create three Treasure tokens.\nIII — Until end of turn, you may cast instant and sorcery spells from any graveyard. If a spell cast this way would be put into a graveyard, exile it instead. Exile this Saga, then return it to the battlefield (front face up).",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Transform",
+        "First strike",
+        "Treasure"
+      ],
+      "produced_mana": [
+        "R"
+      ],
+      "layout": "transform",
+      "released_at": "2023-04-21",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "card_faces": [
+        {
+          "colors": [
+            "R"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{R}{R}",
+          "name": "Urabrask",
+          "oracle_text": "First strike\nWhenever you cast an instant or sorcery spell, Urabrask deals 1 damage to target opponent. Add {R}.\n{R}: Exile Urabrask, then return it to the battlefield transformed under its owner's control. Activate only as a sorcery and only if you've cast three or more instant and/or sorcery spells this turn.",
+          "power": "4",
+          "toughness": "4",
+          "type_line": "Legendary Creature — Phyrexian Praetor"
+        },
+        {
+          "colors": [
+            "R"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "The Great Work",
+          "oracle_text": "(As this Saga enters and after your draw step, add a lore counter.)\nI — This Saga deals 3 damage to target opponent and each creature they control.\nII — Create three Treasure tokens.\nIII — Until end of turn, you may cast instant and sorcery spells from any graveyard. If a spell cast this way would be put into a graveyard, exile it instead. Exile this Saga, then return it to the battlefield (front face up).",
+          "power": null,
+          "toughness": null,
+          "type_line": "Enchantment — Saga"
+        }
+      ]
+    },
+    {
+      "oracle_id": "5b5bf1fa-6502-4790-b66b-f0f8504ebc7c",
+      "name": "Cabal Ritual",
+      "mana_cost": "{1}{B}",
+      "cmc": 2.0,
+      "type_line": "Instant",
+      "oracle_text": "Add {B}{B}{B}.\nThreshold — Add {B}{B}{B}{B}{B} instead if there are seven or more cards in your graveyard.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Threshold"
+      ],
+      "produced_mana": [
+        "B"
+      ],
+      "layout": "normal",
+      "released_at": "2014-06-16",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "907ae517-22d5-4ac7-bc3a-3f4d5eaeeb57",
+      "name": "Valki, God of Lies // Tibalt, Cosmic Impostor",
+      "mana_cost": "{1}{B} // {5}{B}{R}",
+      "cmc": 2.0,
+      "type_line": "Legendary Creature — God // Legendary Planeswalker — Tibalt",
+      "oracle_text": "Valki, God of Lies: When Valki enters, each opponent reveals their hand. For each opponent, exile a creature card they revealed this way until Valki leaves the battlefield.\n{X}: Choose a creature card exiled with Valki with mana value X. Valki becomes a copy of that card.\n//\nTibalt, Cosmic Impostor: As Tibalt enters, you get an emblem with \"You may play cards exiled with Tibalt, Cosmic Impostor, and you may spend mana as though it were mana of any color to cast those spells.\"\n+2: Exile the top card of each player's library.\n−3: Exile target artifact or creature.\n−8: Exile all graveyards. Add {R}{R}{R}.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "R"
+      ],
+      "layout": "modal_dfc",
+      "released_at": "2021-02-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "card_faces": [
+        {
+          "colors": [
+            "B"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{B}",
+          "name": "Valki, God of Lies",
+          "oracle_text": "When Valki enters, each opponent reveals their hand. For each opponent, exile a creature card they revealed this way until Valki leaves the battlefield.\n{X}: Choose a creature card exiled with Valki with mana value X. Valki becomes a copy of that card.",
+          "power": "2",
+          "toughness": "1",
+          "type_line": "Legendary Creature — God"
+        },
+        {
+          "colors": [
+            "B",
+            "R"
+          ],
+          "defense": null,
+          "loyalty": "5",
+          "mana_cost": "{5}{B}{R}",
+          "name": "Tibalt, Cosmic Impostor",
+          "oracle_text": "As Tibalt enters, you get an emblem with \"You may play cards exiled with Tibalt, Cosmic Impostor, and you may spend mana as though it were mana of any color to cast those spells.\"\n+2: Exile the top card of each player's library.\n−3: Exile target artifact or creature.\n−8: Exile all graveyards. Add {R}{R}{R}.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Legendary Planeswalker — Tibalt"
+        }
+      ]
+    },
+    {
+      "oracle_id": "947b40a2-e272-4ef6-85fb-3d767a21bc7a",
+      "name": "Esper Origins // Summon: Esper Maduin",
+      "mana_cost": "{1}{G} // ",
+      "cmc": 2.0,
+      "type_line": "Sorcery // Enchantment Creature — Saga Elemental",
+      "oracle_text": "Esper Origins: Surveil 2. You gain 2 life. If this spell was cast from a graveyard, exile it, then put it onto the battlefield transformed under its owner's control with a finality counter on it. (If a creature with a finality counter on it would die, exile it instead.)\nFlashback {3}{G} (You may cast this card from your graveyard for its flashback cost. Then exile it.)\n//\nSummon: Esper Maduin: (As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Reveal the top card of your library. If it's a permanent card, put it into your hand.\nII — Add {G}{G}.\nIII — Other creatures you control get +2/+2 and gain trample until end of turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Surveil",
+        "Transform",
+        "Flashback"
+      ],
+      "produced_mana": [
+        "G"
+      ],
+      "layout": "transform",
+      "released_at": "2025-06-13",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "card_faces": [
+        {
+          "colors": [
+            "G"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{G}",
+          "name": "Esper Origins",
+          "oracle_text": "Surveil 2. You gain 2 life. If this spell was cast from a graveyard, exile it, then put it onto the battlefield transformed under its owner's control with a finality counter on it. (If a creature with a finality counter on it would die, exile it instead.)\nFlashback {3}{G} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+          "power": null,
+          "toughness": null,
+          "type_line": "Sorcery"
+        },
+        {
+          "colors": [
+            "G"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Summon: Esper Maduin",
+          "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Reveal the top card of your library. If it's a permanent card, put it into your hand.\nII — Add {G}{G}.\nIII — Other creatures you control get +2/+2 and gain trample until end of turn.",
+          "power": "4",
+          "toughness": "4",
+          "type_line": "Enchantment Creature — Saga Elemental"
+        }
+      ]
+    },
+    {
+      "oracle_id": "bdf476e5-1d57-4b17-b45b-d52fd75aadeb",
+      "name": "Lake of the Dead",
+      "mana_cost": "",
+      "cmc": 0.0,
+      "type_line": "Land",
+      "oracle_text": "If this land would enter, sacrifice a Swamp instead. If you do, put this land onto the battlefield. If you don't, put it into its owner's graveyard.\n{T}: Add {B}.\n{T}, Sacrifice a Swamp: Add {B}{B}{B}{B}.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "B"
+      ],
+      "layout": "normal",
+      "released_at": "2014-06-16",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
     }
   ],
   "fixture_kind": "public_exact-list_card_data",

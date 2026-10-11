@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "61fe73e828700d04fb1cd964eac0433d3c8b8fb4fdddc18ff4d30772c3109287"
+verified: "d65a0a69ed61c485f0262f7b7d08df61a16ab90145dda5d1b701f05bd1b4bf0d"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -15,8 +15,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 - Observation window: 2026-08-25T03:52:06Z through 2026-08-25T20:56:41Z
 - Observed population: tracked recent pull requests (n=4)
-- Escapes: 82
-- Deterministic escapes: 75
+- Escapes: 85
+- Deterministic escapes: 78
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: null
@@ -111,6 +111,9 @@ This report classifies observed deterministic failures that escaped the local qu
 | `ci-20261003-67` | [37081568937](https://github.com/NullPriority/quorune/actions/runs/37081568937) | `missing_affected_test` | `added` | The unchanged test fails in 0.004 seconds with the new first rule ID. Bind additive and removal mutations to the stable changed-python-test ID, preserving the exact rejection reason and all policy assertions; the corrected test passes in 0.006 seconds. Add this consumer to the same harvest impact edge. No policy algorithm or semantic census input changes. |
 | `ci-20261006-485-persistence-watchdog` | [37410280657](https://github.com/NullPriority/quorune/actions/runs/37410280657) | `flaky_test` | `not_applicable` | The unchanged exact test passes locally in 50.74 seconds. Use one bounded thirty-second deadlock watchdog for the existing save-start/release barriers, acknowledgement and cleanup waits; preserve every pending-progress, no-premature-acknowledgement and committed-result assertion. The corrected exact test passes in 53.37 seconds. Server production and semantic corpus inputs remain unchanged, and the complete gate already selects the module. |
 | `ci-20261008-81` | [37824288440](https://github.com/NullPriority/quorune/actions/runs/37824288440) | `flaky_test` | `not_applicable` | Keep every existing privacy, seat-scope, accepted-choice, and replay assertion. Force a token collision in the fixture and serialize all projected decision fields except the opaque cap for hidden-reference inspection. Confirm a real hidden reference injected into projected ctx still fails. Production token generation, projection, rules, and compiler remain unchanged. |
+| `ci-20261011-498-promoted-consumers` | [38125267611](https://github.com/NullPriority/quorune/actions/runs/38125267611) | `missing_affected_test` | `added` | Update each affected promoted integration expectation, preserve leaf rejection, and use a constructed nearest unsupported boundary. Add monotonic composition-source impact edges for every observed consumer. The exact promoted-consumer tests and actual original-card control replay pass; compiler and runtime behavior are unchanged. |
+| `ci-20261011-498-aftermath-fixture` | [38125267611](https://github.com/NullPriority/quorune/actions/runs/38125267611) | `missing_affected_test` | `added` | Build one temporary database from the owned Aftermath fixture and retain original Oracle-ID selection and assertions. Add the Aftermath source/fixture consumer impact edge. Focused tests and canonical compact-fixture dependency validation pass; no environment-specific full database is required. |
+| `ci-20261011-498-interaction-witnesses` | [38125267611](https://github.com/NullPriority/quorune/actions/runs/38125267611) | `missing_affected_test` | `added` | Add actual Aura/grant and Shroud/sacrifice-redirection runtime witnesses with strict compiler admission, rollback, privacy and replay, plus whole-program fail-closed witnesses for both fixed-mana/replacement residual pairs using five original carriers. Register their exact qualified IDs and add consumer impact edges. Preserve scheduler debt prioritization and runtime-composition evidence requirements; canonical generation owns the refreshed interaction counts. |
 
 ## Measurement limitations
 

@@ -92,7 +92,7 @@
       "produced_mana": [],
       "released_at": "2014-05-02",
       "toughness": "1",
-      "type_line": "Enchantment Creature \u2014 Human Soldier"
+      "type_line": "Enchantment Creature — Human Soldier"
     },
     {
       "cmc": 2.0,
@@ -141,7 +141,7 @@
       "produced_mana": [],
       "released_at": "2024-11-15",
       "toughness": "4",
-      "type_line": "Artifact Creature \u2014 Wall"
+      "type_line": "Artifact Creature — Wall"
     },
     {
       "cmc": 4.0,
@@ -237,7 +237,7 @@
       "produced_mana": [],
       "released_at": "2021-07-23",
       "toughness": "1",
-      "type_line": "Creature \u2014 Human Soldier"
+      "type_line": "Creature — Human Soldier"
     },
     {
       "cmc": 3.0,
@@ -287,7 +287,7 @@
       "produced_mana": [],
       "released_at": "2023-05-12",
       "toughness": "3",
-      "type_line": "Creature \u2014 Angel Cleric"
+      "type_line": "Creature — Angel Cleric"
     },
     {
       "oracle_id": "a9d288b8-cdc1-4e55-a0c9-d6edfc95e65d",
@@ -383,7 +383,7 @@
       "produced_mana": [],
       "released_at": "2017-08-25",
       "toughness": "5",
-      "type_line": "Creature \u2014 Cat Spirit"
+      "type_line": "Creature — Cat Spirit"
     },
     {
       "cmc": 2.0,
@@ -430,7 +430,7 @@
       "produced_mana": [],
       "released_at": "2007-07-13",
       "toughness": "2",
-      "type_line": "Creature \u2014 Human Cleric"
+      "type_line": "Creature — Human Cleric"
     },
     {
       "cmc": 1.0,
@@ -521,6 +521,194 @@
       "released_at": "2022-07-08",
       "toughness": null,
       "type_line": "Artifact"
+    },
+    {
+      "oracle_id": "d41ab41d-07c8-4f6d-be5e-7aec9f5f6365",
+      "name": "Solitary Confinement",
+      "mana_cost": "{2}{W}",
+      "cmc": 3.0,
+      "type_line": "Enchantment",
+      "oracle_text": "At the beginning of your upkeep, sacrifice this enchantment unless you discard a card.\nSkip your draw step.\nYou have shroud. (You can't be the target of spells or abilities.)\nPrevent all damage that would be dealt to you.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-06-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 1,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Generic Shroud Sacrifice Enchantment",
+      "oracle_id": "fixture-generic-shroud-sacrifice-enchantment",
+      "oracle_text": "You have shroud.\nAt the beginning of your upkeep, sacrifice this enchantment unless you pay {1}.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2014-05-02",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{B}{B}",
+      "name": "Generic Cleanup Destination Replacement",
+      "oracle_id": "00000000-0000-4000-8000-000000001986",
+      "oracle_text": "If a card would be put into an opponent's graveyard from anywhere, instead exile it with a void counter on it.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2025-04-11",
+      "toughness": "2",
+      "type_line": "Creature — Dauthi Rogue"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Mountain",
+      "oracle_id": "a3fb7228-e76b-4e96-a40e-20b5fed75685",
+      "oracle_text": "({T}: Add {R}.)",
+      "power": null,
+      "produced_mana": [
+        "R"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Mountain"
     }
   ],
   "fixture_kind": "public_exact-list_card_data",

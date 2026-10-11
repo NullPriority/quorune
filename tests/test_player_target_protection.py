@@ -65,6 +65,75 @@ class PlayerProtectionRuntimeTests(unittest.TestCase):
     resolve=witnesses.BoundEffectProgramRuntimeTests.resolve
     replay=witnesses.BoundEffectProgramRuntimeTests.replay
 
+    def test_original_player_shroud_with_zone_replacement_stays_out_of_whole_runtime(self):
+        from high_risk_interaction_support import _observed_piece_ids
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.compiler.unlock_frontier import analyze_card_unlocks
+        from quorune.semantics import SemanticRegistry
+        record = self.db.by_oracle_id('d41ab41d-07c8-4f6d-be5e-7aec9f5f6365')
+        ir = compile_oracle_card(record, capability_registry=self.registry, capability_profile='commander_review')
+        program = compile_best_available_card_program(self.db, record, semantic_registry=SemanticRegistry(),
+            capability_registry=self.registry, capability_profile='commander_review')
+        row = analyze_card_unlocks(ir, program=program, program_error=None,
+            capabilities=self.registry, profile='commander_review')
+        self.assertLessEqual({'capability.target.player.static_hexproof_shroud',
+            'capability.zone.change.destination_replacement'}, _observed_piece_ids(row))
+        self.assertEqual('residual', row['card_program_status'])
+        self.assertIsNone(row['hard_construction_failure'])
+        binding = bind_card_program_runtime(program, capability_registry=self.registry, profile='commander_review')
+        self.assertFalse(binding['strict_capability_ready'])
+        self.assertFalse(binding['compatible_ready'])
+        self.assertIn('trust_basis:unresolved', binding['blockers'])
+
+    def test_shroud_source_sacrifice_redirects_then_restores_targetability_and_replays(self):
+        from high_risk_interaction_support import _observed_piece_ids
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.compiler.unlock_frontier import analyze_card_unlocks
+        from quorune.semantics import SemanticRegistry
+        record=self.db.by_oracle_id('fixture-generic-shroud-sacrifice-enchantment')
+        ir=compile_oracle_card(record,capability_registry=self.registry,capability_profile='commander_review')
+        program=compile_best_available_card_program(self.db,record,semantic_registry=SemanticRegistry(),
+            capability_registry=self.registry,capability_profile='commander_review')
+        row=analyze_card_unlocks(ir,program=program,program_error=None,capabilities=self.registry,profile='commander_review')
+        self.assertLessEqual({'capability.target.player.static_hexproof_shroud',
+            'capability.zone.change.destination_replacement'},_observed_piece_ids(row))
+        self.assertTrue(bind_card_program_runtime(program,capability_registry=self.registry,
+            profile='commander_review')['strict_capability_ready'])
+        s=self.session(317020);e=s.engine
+        source=self.add(e,'Generic Shroud Sacrifice Enchantment')
+        self.add(e,'Generic Cleanup Destination Replacement',seat='B')
+        shock=self.add(e,'Shock',zone='hand')
+        self.add(e,'Mountain')
+        action=self.ready(s,shock,{});self.checkpoint(s)
+        self.assertNotIn('A',action['target_schema']['legal_refs'])
+        before=authoritative_state_hash(s.state)
+        denied=s.act('pilot:A',{'action_id':action['id'],'targets':['A'],'pay':'auto'})
+        self.assertFalse(denied.ok);self.assertEqual(before,authoritative_state_hash(s.state))
+        from test_scheduled_player_triggers import ScheduledPlayerTriggerRuntimeTests
+        ScheduledPlayerTriggerRuntimeTests.enter_upkeep_from_untap(self,s,'A')
+        self.resolve(s)
+        self.assertIsNotNone(s.state.pending_decision)
+        self.assertEqual(['A'],s.state.pending_decision.actors)
+        for seat in 'BCD':self.assertIsNone(s.packet('pilot:'+seat,full=True)['decision'])
+        s=self.replay(s,load=True);e=s.engine
+        before=authoritative_state_hash(s.state)
+        denied=s.act('pilot:B',{'action_id':'choose','pay':False})
+        self.assertFalse(denied.ok);self.assertEqual(before,authoritative_state_hash(s.state))
+        identity=s.state.cards[source.object_id].logical_object_id
+        accepted=s.act('pilot:A',{'action_id':'choose','pay':False});self.assertTrue(accepted.ok,accepted.summary)
+        self.resolve(s)
+        self.assertEqual('exile',s.state.cards[source.object_id].zone)
+        self.assertTrue(any(event.kind=='permanent_sacrificed' and event.object_incarnation==identity
+            for event in s.state.turn_history.events))
+        actions=s.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        spell=next(a for a in actions if a.get('card')==shock.ref)
+        self.assertIn('A',spell['target_schema']['legal_refs'])
+        accepted=s.act('pilot:A',{'action_id':spell['id'],'targets':['A'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(s)
+        self.assertEqual(38,s.state.players['A'].life);self.replay(s,load=True)
+
     def test_actual_sources_share_offers_commands_privacy_and_replay(self):
         for name,keyword in (('Aegis of the Gods','hexproof'),('True Believer','shroud')):
             s=self.session(317001 if keyword=='hexproof' else 317002);e=s.engine

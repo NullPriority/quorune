@@ -11,6 +11,11 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Align legacy compiler consumers with admitted commander, loyalty mana,
+  shared-color prevention, Prototype, Split Second and Graft productions.
+  Preserve explicit unsupported boundaries and add original-card interaction
+  evidence for Aura grants, source protection and mana/replacement admission.
+
 - Reject limited sacrifice-departure subscriptions consistently in compilation,
   semantic shape validation, and trust admission instead of silently dropping
   an admitted departing observer's trigger.
