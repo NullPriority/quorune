@@ -107,6 +107,7 @@
       "test_declare_blockers_rules",
       "test_draw_restrictions",
       "test_draw_step_rules",
+      "test_enlist_rules",
       "test_exact_land_families",
       "test_fixed_casting_surface",
       "test_fixed_combat_entry_keyword_lifecycles",

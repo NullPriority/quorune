@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .rules.enlist import enlist_offer_rows,prepare_enlist_costs,commit_enlist_costs,enlist_trigger_items
 
 import copy
 import hashlib
@@ -5518,6 +5519,7 @@ class CommanderEngine(
             payload_by_actor={
                 active: {
                     "candidates": candidates,
+                    **({'enlist':rows} if (rows:=enlist_offer_rows(self,active,candidates)) else {}),
                     "defenders": [
                         *[
                             seat
@@ -5780,7 +5782,10 @@ class CommanderEngine(
                 "The attack declaration has unresolved restriction or cost semantics"
             )
         self._validate_declaration_requirements(problem, canonical)
+        chosen.sort(key=lambda pair:(pair[0].ref,pair[0].object_id))
+        enlist_plans=prepare_enlist_costs(self,active,chosen,response.get('enlist'))
         tap_declared_attackers(self, (card for card, _details in chosen))
+        commit_enlist_costs(self,enlist_plans)
         requirements, selected_costs = self._selected_declaration_mana(
             locked_costs,
             canonical,
@@ -5845,6 +5850,7 @@ class CommanderEngine(
             changed_players=[active],
         )
         attack_triggers: list[StackItem] = []
+        attack_triggers.extend(enlist_trigger_items(self,enlist_plans))
         attack_triggers.extend(
             attack_transitions.attack_transition_stack_items(self)
         )

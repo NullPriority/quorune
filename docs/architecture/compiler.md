@@ -420,6 +420,14 @@ The shared declaration solver selects distinct attacker sets up to current
 capacity while retaining costs and maximum requirement satisfaction. Open
 quantities and independently unsupported siblings remain residual.
 
+Printed Enlist compiles separate typed attack-cost and reflexive growth
+components. The shared attack declaration exposes optional donor assignments
+and validates untapped state, control history, haste, source exclusion and
+distinct use. Reflexive effects retain source and donor incarnations and reuse
+the existing live-or-last-known scalar power owner. Multiple printed instances
+remain independent, and unrepresented Enlist-dependent sibling instructions
+retain their residuals.
+
 Fixed all-damage prevention shares the existing scope codec for static and
 turn-bound forms. Closed source and recipient predicates include attacking
 creatures, own creature tokens, enchanted creature sources, accepted combat

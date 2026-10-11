@@ -9,6 +9,16 @@ maintenance: "hand-maintained"
 
 # Rules kernel
 
+Enlist adds an optional tap cost to an accepted attack declaration. Each
+instance may tap one distinct eligible controlled nonattacking creature that
+has haste or has been controlled since the turn began. All choices validate
+before the canonical tap owner commits them. The linked reflexive trigger uses
+the donor's power on resolution, with immediate last-known power after
+departure. The original attacker incarnation receives the until-end-of-turn
+power modifier; a blinked attacker does not. Negative additive results use
+zero under CR 107.1b. Attack choices sort before history capture so saved
+mapping order cannot change replay.
+
 Self-transform activations pin the original source incarnation and its
 transform count when placed on the stack. The existing transform owner keeps
 the same permanent, counters, damage, attachments and acquisition history.

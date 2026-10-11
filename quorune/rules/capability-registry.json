@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 220,
+  "registry_version": 221,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -13790,6 +13790,106 @@
       "dependency_fail_closed_rationale": "Omitting Prototype descriptor or complete-card admission removes selected cast offers and rejects accepted requests.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Omitting the alternate characteristic view fails the actual selected Prototype cast and cost witness.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "combat.attack.enlist",
+      "version": 1,
+      "official_rules": [
+        "702.154a",
+        "702.154b",
+        "702.154c",
+        "702.154d",
+        "508.1g",
+        "603.12",
+        "607.2h",
+        "302.6",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Current printed Enlist optionally taps distinct eligible controlled nonattacking creatures as attack costs, then places linked reflexive triggers using enlisted live or last-known power and original attacker incarnation.",
+        "inputs": [
+          "typed Enlist instances",
+          "current eligible nonattacking creature",
+          "accepted attack declaration",
+          "live or last-known enlisted power"
+        ],
+        "outputs": [
+          "canonical tap costs",
+          "ordinary reflexive triggers",
+          "source power modifier until end of turn"
+        ],
+        "exclusions": [
+          "unsupported Enlist-dependent sibling effects",
+          "unrepresented acquired producers",
+          "runtime Oracle interpretation"
+        ]
+      },
+      "dependencies": [
+        "activation.selected_tap.fixed",
+        "trigger.placement.apnap",
+        "quantity_expression.scalar_effect_amount",
+        "continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "implementation_components": [
+        "quorune.compiler.enlist_nodes.enlist_keyword_node",
+        "quorune.compiler.enlist_nodes.enlist_reflexive_node",
+        "quorune.semantic_runtime.enlist.EnlistAbilityFragmentHandler",
+        "quorune.rules.enlist.prepare_enlist_costs",
+        "quorune.rules.enlist.commit_enlist_costs",
+        "quorune.rules.enlist.enlist_trigger_items"
+      ],
+      "positive_tests": [
+        "test_enlist_has_separate_optional_cost_marker_and_reflexive_power",
+        "test_actual_faithbonder_enlists_eligible_body_then_growth_and_replay"
+      ],
+      "negative_tests": [
+        "test_enlist_open_grammar_and_boolean_instance_reject",
+        "test_enlist_wrong_principal_self_attacking_or_sick_source_rejects_atomically",
+        "test_two_actual_attackers_cannot_enlist_same_donor_and_haste_allows_new_donor",
+        "test_actual_negative_power_donor_gives_zero_boost_and_replays",
+        "test_model_negative_enlisted_power_uses_zero_result"
+      ],
+      "interaction_tests": [
+        "test_actual_faithbonder_enlists_eligible_body_then_growth_and_replay",
+        "test_actual_enlisted_power_is_live_at_resolution_and_departure_uses_lki",
+        "test_actual_attacker_blink_invalidates_reflexive_growth_and_replays",
+        "test_two_actual_attackers_cannot_enlist_same_donor_and_haste_allows_new_donor",
+        "test_actual_negative_power_donor_gives_zero_boost_and_replays",
+        "test_actual_pending_enlist_trigger_save_load_keeps_paid_tap_and_original_power_reference"
+      ],
+      "multiplayer_tests": [
+        "test_actual_faithbonder_enlists_eligible_body_then_growth_and_replay"
+      ],
+      "privacy_tests": [
+        "test_actual_faithbonder_enlists_eligible_body_then_growth_and_replay"
+      ],
+      "replay_tests": [
+        "test_actual_faithbonder_enlists_eligible_body_then_growth_and_replay",
+        "test_actual_enlisted_power_is_live_at_resolution_and_departure_uses_lki",
+        "test_actual_attacker_blink_invalidates_reflexive_growth_and_replays",
+        "test_two_actual_attackers_cannot_enlist_same_donor_and_haste_allows_new_donor",
+        "test_actual_negative_power_donor_gives_zero_boost_and_replays",
+        "test_actual_pending_enlist_trigger_save_load_keeps_paid_tap_and_original_power_reference"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Omitting typed Enlist capability or either marker/reflexive component keeps keyword and supported attack cost unavailable.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the reflexive trigger fails actual accepted Enlist attack and final power.",
       "blockers": [],
       "status": "trusted"
     }

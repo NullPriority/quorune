@@ -9758,6 +9758,490 @@
       "applicability_note": "Actual registered temporary permission preserves selected-set duration, shared modifier timestamp, event composition and activation usage."
     },
     {
+      "capability_id": "combat.attack.enlist",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_enlist_rules.EnlistRuntimeTests.test_actual_attacker_blink_invalidates_reflexive_growth_and_replays",
+      "official_rule_ids": [
+        "702.154a",
+        "702.154b",
+        "702.154c",
+        "702.154d",
+        "508.1g",
+        "603.12",
+        "607.2h",
+        "302.6",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Optional Enlist taps and original source identity persist through pending triggers; live or last-known enlisted power is resolved through the canonical scalar owner, with negative additive results using zero."
+    },
+    {
+      "capability_id": "combat.attack.enlist",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_enlist_rules.EnlistRuntimeTests.test_actual_enlisted_power_is_live_at_resolution_and_departure_uses_lki",
+      "official_rule_ids": [
+        "702.154a",
+        "702.154b",
+        "702.154c",
+        "702.154d",
+        "508.1g",
+        "603.12",
+        "607.2h",
+        "302.6",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Optional Enlist taps and original source identity persist through pending triggers; live or last-known enlisted power is resolved through the canonical scalar owner, with negative additive results using zero."
+    },
+    {
+      "capability_id": "combat.attack.enlist",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_enlist_rules.EnlistRuntimeTests.test_actual_faithbonder_enlists_eligible_body_then_growth_and_replay",
+      "official_rule_ids": [
+        "702.154a",
+        "702.154b",
+        "702.154c",
+        "702.154d",
+        "508.1g",
+        "603.12",
+        "607.2h",
+        "302.6",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current printed Enlist optionally taps distinct eligible controlled nonattacking creatures as attack costs, then places linked reflexive triggers using enlisted live or last-known power and original attacker incarnation."
+    },
+    {
+      "capability_id": "combat.attack.enlist",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_enlist_rules.EnlistRuntimeTests.test_actual_negative_power_donor_gives_zero_boost_and_replays",
+      "official_rule_ids": [
+        "702.154a",
+        "702.154b",
+        "702.154c",
+        "702.154d",
+        "508.1g",
+        "603.12",
+        "607.2h",
+        "302.6",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Optional Enlist taps and original source identity persist through pending triggers; live or last-known enlisted power is resolved through the canonical scalar owner, with negative additive results using zero."
+    },
+    {
+      "capability_id": "combat.attack.enlist",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_enlist_rules.EnlistRuntimeTests.test_actual_pending_enlist_trigger_save_load_keeps_paid_tap_and_original_power_reference",
+      "official_rule_ids": [
+        "702.154a",
+        "702.154b",
+        "702.154c",
+        "702.154d",
+        "508.1g",
+        "603.12",
+        "607.2h",
+        "302.6",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Optional Enlist taps and original source identity persist through pending triggers; live or last-known enlisted power is resolved through the canonical scalar owner, with negative additive results using zero."
+    },
+    {
+      "capability_id": "combat.attack.enlist",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_enlist_rules.EnlistRuntimeTests.test_two_actual_attackers_cannot_enlist_same_donor_and_haste_allows_new_donor",
+      "official_rule_ids": [
+        "702.154a",
+        "702.154b",
+        "702.154c",
+        "702.154d",
+        "508.1g",
+        "603.12",
+        "607.2h",
+        "302.6",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Optional Enlist taps and original source identity persist through pending triggers; live or last-known enlisted power is resolved through the canonical scalar owner, with negative additive results using zero."
+    },
+    {
+      "capability_id": "combat.attack.enlist",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_enlist_rules.EnlistRuntimeTests.test_actual_faithbonder_enlists_eligible_body_then_growth_and_replay",
+      "official_rule_ids": [
+        "702.154a",
+        "702.154b",
+        "702.154c",
+        "702.154d",
+        "508.1g",
+        "603.12",
+        "607.2h",
+        "302.6",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current printed Enlist optionally taps distinct eligible controlled nonattacking creatures as attack costs, then places linked reflexive triggers using enlisted live or last-known power and original attacker incarnation."
+    },
+    {
+      "capability_id": "combat.attack.enlist",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_enlist_rules.EnlistRuntimeTests.test_omitting_enlist_trigger_mutant_is_killed",
+      "official_rule_ids": [
+        "702.154a",
+        "702.154b",
+        "702.154c",
+        "702.154d",
+        "508.1g",
+        "603.12",
+        "607.2h",
+        "302.6",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current printed Enlist optionally taps distinct eligible controlled nonattacking creatures as attack costs, then places linked reflexive triggers using enlisted live or last-known power and original attacker incarnation."
+    },
+    {
+      "capability_id": "combat.attack.enlist",
+      "evidence_class": "negative",
+      "test_id": "tests.test_enlist_rules.EnlistCompilerTests.test_enlist_open_grammar_and_boolean_instance_reject",
+      "official_rule_ids": [
+        "702.154a",
+        "702.154b",
+        "702.154c",
+        "702.154d",
+        "508.1g",
+        "603.12",
+        "607.2h",
+        "302.6",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current printed Enlist optionally taps distinct eligible controlled nonattacking creatures as attack costs, then places linked reflexive triggers using enlisted live or last-known power and original attacker incarnation."
+    },
+    {
+      "capability_id": "combat.attack.enlist",
+      "evidence_class": "negative",
+      "test_id": "tests.test_enlist_rules.EnlistRuntimeTests.test_actual_negative_power_donor_gives_zero_boost_and_replays",
+      "official_rule_ids": [
+        "702.154a",
+        "702.154b",
+        "702.154c",
+        "702.154d",
+        "508.1g",
+        "603.12",
+        "607.2h",
+        "302.6",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Optional Enlist taps and original source identity persist through pending triggers; live or last-known enlisted power is resolved through the canonical scalar owner, with negative additive results using zero."
+    },
+    {
+      "capability_id": "combat.attack.enlist",
+      "evidence_class": "negative",
+      "test_id": "tests.test_enlist_rules.EnlistRuntimeTests.test_enlist_wrong_principal_self_attacking_or_sick_source_rejects_atomically",
+      "official_rule_ids": [
+        "702.154a",
+        "702.154b",
+        "702.154c",
+        "702.154d",
+        "508.1g",
+        "603.12",
+        "607.2h",
+        "302.6",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current printed Enlist optionally taps distinct eligible controlled nonattacking creatures as attack costs, then places linked reflexive triggers using enlisted live or last-known power and original attacker incarnation."
+    },
+    {
+      "capability_id": "combat.attack.enlist",
+      "evidence_class": "negative",
+      "test_id": "tests.test_enlist_rules.EnlistRuntimeTests.test_model_negative_enlisted_power_uses_zero_result",
+      "official_rule_ids": [
+        "702.154a",
+        "702.154b",
+        "702.154c",
+        "702.154d",
+        "508.1g",
+        "603.12",
+        "607.2h",
+        "302.6",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Optional Enlist taps and original source identity persist through pending triggers; live or last-known enlisted power is resolved through the canonical scalar owner, with negative additive results using zero."
+    },
+    {
+      "capability_id": "combat.attack.enlist",
+      "evidence_class": "negative",
+      "test_id": "tests.test_enlist_rules.EnlistRuntimeTests.test_two_actual_attackers_cannot_enlist_same_donor_and_haste_allows_new_donor",
+      "official_rule_ids": [
+        "702.154a",
+        "702.154b",
+        "702.154c",
+        "702.154d",
+        "508.1g",
+        "603.12",
+        "607.2h",
+        "302.6",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Optional Enlist taps and original source identity persist through pending triggers; live or last-known enlisted power is resolved through the canonical scalar owner, with negative additive results using zero."
+    },
+    {
+      "capability_id": "combat.attack.enlist",
+      "evidence_class": "positive",
+      "test_id": "tests.test_enlist_rules.EnlistCompilerTests.test_enlist_has_separate_optional_cost_marker_and_reflexive_power",
+      "official_rule_ids": [
+        "702.154a",
+        "702.154b",
+        "702.154c",
+        "702.154d",
+        "508.1g",
+        "603.12",
+        "607.2h",
+        "302.6",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current printed Enlist optionally taps distinct eligible controlled nonattacking creatures as attack costs, then places linked reflexive triggers using enlisted live or last-known power and original attacker incarnation."
+    },
+    {
+      "capability_id": "combat.attack.enlist",
+      "evidence_class": "positive",
+      "test_id": "tests.test_enlist_rules.EnlistRuntimeTests.test_actual_faithbonder_enlists_eligible_body_then_growth_and_replay",
+      "official_rule_ids": [
+        "702.154a",
+        "702.154b",
+        "702.154c",
+        "702.154d",
+        "508.1g",
+        "603.12",
+        "607.2h",
+        "302.6",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current printed Enlist optionally taps distinct eligible controlled nonattacking creatures as attack costs, then places linked reflexive triggers using enlisted live or last-known power and original attacker incarnation."
+    },
+    {
+      "capability_id": "combat.attack.enlist",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_enlist_rules.EnlistRuntimeTests.test_actual_faithbonder_enlists_eligible_body_then_growth_and_replay",
+      "official_rule_ids": [
+        "702.154a",
+        "702.154b",
+        "702.154c",
+        "702.154d",
+        "508.1g",
+        "603.12",
+        "607.2h",
+        "302.6",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current printed Enlist optionally taps distinct eligible controlled nonattacking creatures as attack costs, then places linked reflexive triggers using enlisted live or last-known power and original attacker incarnation."
+    },
+    {
+      "capability_id": "combat.attack.enlist",
+      "evidence_class": "replay",
+      "test_id": "tests.test_enlist_rules.EnlistRuntimeTests.test_actual_attacker_blink_invalidates_reflexive_growth_and_replays",
+      "official_rule_ids": [
+        "702.154a",
+        "702.154b",
+        "702.154c",
+        "702.154d",
+        "508.1g",
+        "603.12",
+        "607.2h",
+        "302.6",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Optional Enlist taps and original source identity persist through pending triggers; live or last-known enlisted power is resolved through the canonical scalar owner, with negative additive results using zero."
+    },
+    {
+      "capability_id": "combat.attack.enlist",
+      "evidence_class": "replay",
+      "test_id": "tests.test_enlist_rules.EnlistRuntimeTests.test_actual_enlisted_power_is_live_at_resolution_and_departure_uses_lki",
+      "official_rule_ids": [
+        "702.154a",
+        "702.154b",
+        "702.154c",
+        "702.154d",
+        "508.1g",
+        "603.12",
+        "607.2h",
+        "302.6",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Optional Enlist taps and original source identity persist through pending triggers; live or last-known enlisted power is resolved through the canonical scalar owner, with negative additive results using zero."
+    },
+    {
+      "capability_id": "combat.attack.enlist",
+      "evidence_class": "replay",
+      "test_id": "tests.test_enlist_rules.EnlistRuntimeTests.test_actual_faithbonder_enlists_eligible_body_then_growth_and_replay",
+      "official_rule_ids": [
+        "702.154a",
+        "702.154b",
+        "702.154c",
+        "702.154d",
+        "508.1g",
+        "603.12",
+        "607.2h",
+        "302.6",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current printed Enlist optionally taps distinct eligible controlled nonattacking creatures as attack costs, then places linked reflexive triggers using enlisted live or last-known power and original attacker incarnation."
+    },
+    {
+      "capability_id": "combat.attack.enlist",
+      "evidence_class": "replay",
+      "test_id": "tests.test_enlist_rules.EnlistRuntimeTests.test_actual_negative_power_donor_gives_zero_boost_and_replays",
+      "official_rule_ids": [
+        "702.154a",
+        "702.154b",
+        "702.154c",
+        "702.154d",
+        "508.1g",
+        "603.12",
+        "607.2h",
+        "302.6",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Optional Enlist taps and original source identity persist through pending triggers; live or last-known enlisted power is resolved through the canonical scalar owner, with negative additive results using zero."
+    },
+    {
+      "capability_id": "combat.attack.enlist",
+      "evidence_class": "replay",
+      "test_id": "tests.test_enlist_rules.EnlistRuntimeTests.test_actual_pending_enlist_trigger_save_load_keeps_paid_tap_and_original_power_reference",
+      "official_rule_ids": [
+        "702.154a",
+        "702.154b",
+        "702.154c",
+        "702.154d",
+        "508.1g",
+        "603.12",
+        "607.2h",
+        "302.6",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Optional Enlist taps and original source identity persist through pending triggers; live or last-known enlisted power is resolved through the canonical scalar owner, with negative additive results using zero."
+    },
+    {
+      "capability_id": "combat.attack.enlist",
+      "evidence_class": "replay",
+      "test_id": "tests.test_enlist_rules.EnlistRuntimeTests.test_two_actual_attackers_cannot_enlist_same_donor_and_haste_allows_new_donor",
+      "official_rule_ids": [
+        "702.154a",
+        "702.154b",
+        "702.154c",
+        "702.154d",
+        "508.1g",
+        "603.12",
+        "607.2h",
+        "302.6",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Optional Enlist taps and original source identity persist through pending triggers; live or last-known enlisted power is resolved through the canonical scalar owner, with negative additive results using zero."
+    },
+    {
       "capability_id": "combat.attack.haste",
       "evidence_class": "interaction",
       "test_id": "tests.test_declare_attackers_rules.DeclareAttackersRuleTests.test_haste_attack_permission_uses_current_effective_keywords",

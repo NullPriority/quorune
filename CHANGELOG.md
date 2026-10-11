@@ -31,6 +31,10 @@ maintenance: "hand-maintained"
 - Preserve explicit sacrifice provenance for Fading and Vanishing cleanup
   through zone replacements, normalized trigger occurrences, and turn history.
 
+- Implement printed Enlist as an optional attack tap cost and linked power
+  trigger, with current eligibility, last-known donor power, pending replay
+  and client donor selection. Canonicalize attack history ordering.
+
 - Compile self-transform activations through the existing transform owner with
   source and transform-count snapshots. Correct selected-face keyword presence
   so front-face abilities do not persist after transformation.

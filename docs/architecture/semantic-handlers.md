@@ -104,6 +104,13 @@ Shared current-face keyword queries consume trusted compiled keyword programs,
 so transforming removes old-face keywords while retaining costs and independent
 new-face abilities.
 
+Enlist's optional declaration taps and linked reflexive program use the
+existing tap, scalar, APNAP and continuous-effect owners. The trigger context
+pins the original attacker and donor, preserves paid taps across pending
+save/load, and reads current donor power or immediate departure LKI at
+resolution. Declining creates no tap or trigger, and unsupported sibling
+instructions remain closed independently.
+
 Fixed Graft uses the existing semantic-choice registry for its optional,
 non-targeted move. Its immutable movement intent pins both incarnations and
 retains the trigger controller. The counter coordinator resolves recipient

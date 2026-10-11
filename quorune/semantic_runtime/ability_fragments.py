@@ -47,6 +47,7 @@ from .player_target_protection import PlayerTargetProtectionHandler
 from .graveyard_copy_keyword import GraveyardCopyKeywordHandler
 from .player_speed import StartEnginesHandler
 from .prototype import PrototypeAbilityHandler
+from .enlist import EnlistAbilityFragmentHandler
 
 
 ENCHANT_FRAGMENT_HANDLER_ID = "ability.static.enchant.v1"
@@ -1363,6 +1364,7 @@ def default_ability_fragment_registry() -> AbilityFragmentRegistry:
             DefenderPermissionAbilityFragmentHandler(),
             BlockCapacityAbilityFragmentHandler(),
             PrototypeAbilityHandler(),
+            EnlistAbilityFragmentHandler(),
             AsUnblockedAssignmentFragmentHandler(),
             ToughnessAssignmentFragmentHandler(),
             UmbraArmorFragmentHandler(),
