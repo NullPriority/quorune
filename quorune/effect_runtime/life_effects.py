@@ -176,15 +176,40 @@ def _apply_lose_life(
     reason: str,
 ) -> int:
     seat = str(effect.get("player") or actor)
+    all_players = "scope" in effect
+    if all_players and (
+        effect.get("scope") != "all_active_players"
+        or "player" in effect
+        or type(effect.get("amount")) is not int
+        or effect["amount"] < 0
+    ):
+        raise GameRuleError("Life-loss player scope is unsupported or contradictory")
+    players = tuple(host.active_seats) if all_players else (seat,)
     amount = max(0, int(effect.get("amount", 0)))
     prepared = _commit(
         host,
-        (LifeChange(seat, -amount),),
+        tuple(LifeChange(player, -amount) for player in players),
         effect=effect,
         actor=actor,
         reason=reason,
     )
     result = _result(prepared)
+    if all_players:
+        host._log(
+            actor,
+            "effect.life",
+            _loss_summary(result, players) + ".",
+            {
+                "players": list(players),
+                "requested_amount": amount,
+                "deltas": {player: result.for_player(player).delta for player in players},
+                _REASON_FIELD: reason,
+                **result.to_dict(),
+            },
+            importance=2,
+            changed_players=list(result.changed_players),
+        )
+        return amount
     player_result = result.for_player(seat)
     host._log(
         actor,

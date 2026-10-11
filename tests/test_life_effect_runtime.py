@@ -128,6 +128,32 @@ class LifeEffectRuntimeTests(unittest.TestCase):
 
         self.assertEqual(40, host.state.players["B"].life)
 
+    def test_all_player_loss_uses_one_batch_and_rejects_contradictory_scope(self):
+        host = _Host()
+        host.state.players["D"] = SimpleNamespace(life=40)
+        with mock.patch.object(life_effects, "_commit", wraps=life_effects._commit) as commit:
+            self.assertEqual(3, self.apply(host, {
+                "op": "lose_life", "scope": "all_active_players", "amount": 3,
+            }, actor="C"))
+        self.assertEqual(1, commit.call_count)
+        self.assertEqual(["A", "B", "C"], [change.player for change in commit.call_args.args[1]])
+        self.assertEqual((37, 37, 37), self._life(host))
+        self.assertEqual(40, host.state.players["D"].life)
+        details = host.logs[-1][0][3]
+        self.assertEqual(["A", "B", "C"], details["players"])
+        self.assertEqual({"A", "B", "C"}, {event["player"] for event in details["life_events"]})
+        for additions in (
+            {"scope": "some_players"}, {"scope": None}, {"player": "A"},
+            {"amount": True}, {"amount": -1}, {"amount": 1.5},
+        ):
+            with self.subTest(additions=additions):
+                before = tuple(player.life for player in host.state.players.values())
+                logs = len(host.logs)
+                with self.assertRaises(GameRuleError):
+                    self.apply(host, {"op": "lose_life", "scope": "all_active_players", "amount": 2, **additions})
+                self.assertEqual(before, tuple(player.life for player in host.state.players.values()))
+                self.assertEqual(logs, len(host.logs))
+
     def test_drain_log_reports_final_replacement_adjusted_values(self):
         host = _Host()
         effects = (

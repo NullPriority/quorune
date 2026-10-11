@@ -11,6 +11,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Compile each-player life loss through the existing simultaneous life owner,
+  preserving controller inclusion, departed-seat exclusion, shared global
+  quantities, prices, and complete resolution before state-based actions.
+
 - Admit fixed stack mana-value counter predicates and align the shared target
   projection with announced X, preserving the existing counter and payment
   owners and ordinary replay.

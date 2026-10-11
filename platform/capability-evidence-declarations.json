@@ -32865,11 +32865,16 @@
     {"capability_id":"library.visibility.top.static","evidence_class":"positive","test_id":"tests.test_static_action_permissions.PublicLibraryActionPermissionCompilerTests.test_public_library_permission_contract_matrix","official_rule_ids":["401.2","401.3","611.3b","613.1f"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Lower private and public current-library-top visibility through one typed static action-permission owner."},
     {"capability_id":"library.visibility.top.static","evidence_class":"privacy","test_id":"tests.test_static_action_permissions.PublicLibraryActionPermissionRuntimeTests.test_library_top_visibility_and_action_privacy_replay","official_rule_ids":["401.2","401.3","611.3b","613.1f"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Expose exactly the current top identity to authorized principals and no deeper library cards."},
     {"capability_id":"library.visibility.top.static","evidence_class":"replay","test_id":"tests.test_static_action_permissions.PublicLibraryActionPermissionRuntimeTests.test_library_top_visibility_and_action_privacy_replay","official_rule_ids":["401.2","401.3","611.3b","613.1f"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Replay top-card changes and permission applicability to the same principal-scoped projection."},
+    {"capability_id":"life.change.effect","evidence_class":"interaction","test_id":"tests.test_fixed_player_life_effects.EachPlayerLifeRuntimeTests.test_original_caustic_death_trigger_keeps_departed_controller_and_all_players","official_rule_ids":["101.3","101.4","115.1","119.1","119.2","119.3","119.4","119.9","608.2b","608.2c","704.4"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Actual Murder destroys B's original Caustic Hound and its normalized death trigger loses four life for all players under the departed source's B controller. Canonical records retain that controller, with complete pre-cast replay."},
+    {"capability_id":"life.change.effect","evidence_class":"interaction","test_id":"tests.test_fixed_player_life_effects.EachPlayerLifeRuntimeTests.test_original_guildmage_includes_controller_and_stabilizes_one_batch_after_concession","official_rule_ids":["101.3","101.4","115.1","119.1","119.2","119.3","119.4","119.9","608.2b","608.2c","704.4"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"An accepted original Guildmage activation pays its full mana price, then an actual D concession excludes that departed seat. A, B and C lose life in one batch including the controller; B and C lose simultaneously after resolution. Unauthorized activation rolls back and pending/final pre-activation replay agrees."},
+    {"capability_id":"life.change.effect","evidence_class":"interaction","test_id":"tests.test_fixed_player_life_effects.EachPlayerLifeRuntimeTests.test_original_shepherd_uses_global_resolution_count_and_zero_after_source_bounce","official_rule_ids":["101.3","101.4","115.1","119.1","119.2","119.3","119.4","119.9","608.2b","608.2c","704.4"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Shepherd pays its tap price and counts foreign Zombies, including a noncreature Kindred, for one global loss amount. An actual source bounce before resolution leaves zero Zombies and produces zero loss while retaining prices. Pending/final replay agrees."},
+    {"capability_id":"life.change.effect","evidence_class":"interaction","test_id":"tests.test_fixed_player_life_effects.EachPlayerLifeRuntimeTests.test_original_smallpox_keeps_zero_life_players_in_resolution_choices","official_rule_ids":["101.3","101.4","115.1","119.1","119.2","119.3","119.4","119.9","608.2b","608.2c","704.4"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"An actual original Smallpox cast performs simultaneous life loss, private APNAP discard, public creature sacrifice and public land sacrifice in printed order. Zero-life B and C still participate in all choices, and only leave after complete resolution. Pending and final save/load and pre-cast replay agree."},
+    {"capability_id":"life.change.effect","evidence_class":"interaction","test_id":"tests.test_fixed_player_life_effects.EachPlayerLifeRuntimeTests.test_original_supplicant_pays_private_discard_before_all_player_loss","official_rule_ids":["101.3","101.4","115.1","119.1","119.2","119.3","119.4","119.9","608.2b","608.2c","704.4"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Supplicant pays its black mana, tap and private hand discard before any life loss. Unauthorized activation rolls back and nonactors receive no decision or private hand contents; one all-player result and complete replay agree."},
     {
       "capability_id": "life.change.effect",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_player_life_effects.FixedPlayerLifeRuntimeTests.test_target_opponent_drain_replacement_and_replay_are_exact",
-      "official_rule_ids": ["101.3", "115.1", "119.1", "119.2", "119.3", "119.4", "119.9", "608.2b"],
+      "official_rule_ids": ["101.3", "101.4", "115.1", "119.1", "119.2", "119.3", "119.4", "119.9", "608.2b", "608.2c", "704.4"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Target one opponent through the shared player-target boundary, then commit the fixed loss and replacement-adjusted controller gain in one typed life batch and replay the exact result."
     },
@@ -32877,7 +32882,7 @@
       "capability_id": "life.change.effect",
       "evidence_class": "interaction",
       "test_id": "tests.test_life_effect_runtime.LifeEffectRuntimeTests.test_drain_log_reports_final_replacement_adjusted_values",
-      "official_rule_ids": ["101.3", "115.1", "119.1", "119.2", "119.3", "119.4", "119.9", "608.2b"],
+      "official_rule_ids": ["101.3", "101.4", "115.1", "119.1", "119.2", "119.3", "119.4", "119.9", "608.2b", "608.2c", "704.4"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Commit a represented fixed life gain or life loss instruction through one replacement-capable typed life-change batch before mutating player life totals."
     },
@@ -32885,15 +32890,19 @@
       "capability_id": "life.change.effect",
       "evidence_class": "interaction",
       "test_id": "tests.test_semantic_counter_replacement_continuations.SemanticCounterReplacementContinuationTests.test_semantic_life_intent_replacement_suspends_and_replays_exactly",
-      "official_rule_ids": ["101.3", "115.1", "119.1", "119.2", "119.3", "119.4", "119.9", "608.2b"],
+      "official_rule_ids": ["101.3", "101.4", "115.1", "119.1", "119.2", "119.3", "119.4", "119.9", "608.2b", "608.2c", "704.4"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Suspend a semantic-choice life gain before mutation, resolve competing replacements through its closed typed identity, and commit the adjusted result exactly once."
     },
+    {"capability_id":"life.change.effect","evidence_class":"multiplayer","test_id":"tests.test_fixed_player_life_effects.EachPlayerLifeRuntimeTests.test_original_caustic_death_trigger_keeps_departed_controller_and_all_players","official_rule_ids":["101.3","101.4","115.1","119.1","119.2","119.3","119.4","119.9","608.2b","608.2c","704.4"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Actual Murder destroys B's original Caustic Hound and its normalized death trigger loses four life for all players under the departed source's B controller. Canonical records retain that controller, with complete pre-cast replay."},
+    {"capability_id":"life.change.effect","evidence_class":"multiplayer","test_id":"tests.test_fixed_player_life_effects.EachPlayerLifeRuntimeTests.test_original_guildmage_includes_controller_and_stabilizes_one_batch_after_concession","official_rule_ids":["101.3","101.4","115.1","119.1","119.2","119.3","119.4","119.9","608.2b","608.2c","704.4"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"An accepted original Guildmage activation pays its full mana price, then an actual D concession excludes that departed seat. A, B and C lose life in one batch including the controller; B and C lose simultaneously after resolution. Unauthorized activation rolls back and pending/final pre-activation replay agrees."},
+    {"capability_id":"life.change.effect","evidence_class":"multiplayer","test_id":"tests.test_fixed_player_life_effects.EachPlayerLifeRuntimeTests.test_original_shepherd_uses_global_resolution_count_and_zero_after_source_bounce","official_rule_ids":["101.3","101.4","115.1","119.1","119.2","119.3","119.4","119.9","608.2b","608.2c","704.4"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Shepherd pays its tap price and counts foreign Zombies, including a noncreature Kindred, for one global loss amount. An actual source bounce before resolution leaves zero Zombies and produces zero loss while retaining prices. Pending/final replay agrees."},
+    {"capability_id":"life.change.effect","evidence_class":"multiplayer","test_id":"tests.test_fixed_player_life_effects.EachPlayerLifeRuntimeTests.test_original_smallpox_keeps_zero_life_players_in_resolution_choices","official_rule_ids":["101.3","101.4","115.1","119.1","119.2","119.3","119.4","119.9","608.2b","608.2c","704.4"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"An actual original Smallpox cast performs simultaneous life loss, private APNAP discard, public creature sacrifice and public land sacrifice in printed order. Zero-life B and C still participate in all choices, and only leave after complete resolution. Pending and final save/load and pre-cast replay agree."},
     {
       "capability_id": "life.change.effect",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_player_life_effects.FixedPlayerLifeRuntimeTests.test_each_opponent_drain_is_one_four_player_life_batch",
-      "official_rule_ids": ["101.3", "115.1", "119.1", "119.2", "119.3", "119.4", "119.9", "608.2b"],
+      "official_rule_ids": ["101.3", "101.4", "115.1", "119.1", "119.2", "119.3", "119.4", "119.9", "608.2b", "608.2c", "704.4"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Lose fixed life for each of three opponents and apply one replacement-adjusted controller gain through a single four-player batch."
     },
@@ -32901,7 +32910,7 @@
       "capability_id": "life.change.effect",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_player_life_effects.FixedPlayerLifeRuntimeTests.test_target_opponent_drain_replacement_and_replay_are_exact",
-      "official_rule_ids": ["101.3", "115.1", "119.1", "119.2", "119.3", "119.4", "119.9", "608.2b"],
+      "official_rule_ids": ["101.3", "101.4", "115.1", "119.1", "119.2", "119.3", "119.4", "119.9", "608.2b", "608.2c", "704.4"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Expose only the three opposing seats as legal targets in four-player state and leave the controller outside the target-opponent relation."
     },
@@ -32909,7 +32918,7 @@
       "capability_id": "life.change.effect",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_life_effect_runtime.LifeEffectRuntimeTests.test_table_wide_loss_and_drain_are_simultaneous_typed_batches",
-      "official_rule_ids": ["101.3", "115.1", "119.1", "119.2", "119.3", "119.4", "119.9", "608.2b"],
+      "official_rule_ids": ["101.3", "101.4", "115.1", "119.1", "119.2", "119.3", "119.4", "119.9", "608.2b", "608.2c", "704.4"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Commit a represented fixed life gain or life loss instruction through one replacement-capable typed life-change batch before mutating player life totals."
     },
@@ -32917,15 +32926,16 @@
       "capability_id": "life.change.effect",
       "evidence_class": "mutation",
       "test_id": "tests.test_capability_implementation_mutations.CapabilityImplementationMutationTests.test_life_effect_commit_mutant_is_killed",
-      "official_rule_ids": ["101.3", "115.1", "119.1", "119.2", "119.3", "119.4", "119.9", "608.2b"],
+      "official_rule_ids": ["101.3", "101.4", "115.1", "119.1", "119.2", "119.3", "119.4", "119.9", "608.2b", "608.2c", "704.4"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Commit a represented fixed life gain or life loss instruction through one replacement-capable typed life-change batch before mutating player life totals."
     },
+    {"capability_id":"life.change.effect","evidence_class":"mutation","test_id":"tests.test_fixed_player_life_effects.EachPlayerLifeCompilerTests.test_each_player_producer_and_authority_omissions_fail_closed","official_rule_ids":["101.3","101.4","115.1","119.1","119.2","119.3","119.4","119.9","608.2b","608.2c","704.4"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Removing the existing life producer or its authority kills admission independently."},
     {
       "capability_id": "life.change.effect",
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_player_life_effects.FixedPlayerLifeCompilerTests.test_life_capability_dependencies_and_compiler_mutation_fail_closed",
-      "official_rule_ids": ["101.3", "115.1", "119.1", "119.2", "119.3", "119.4", "119.9", "608.2b"],
+      "official_rule_ids": ["101.3", "101.4", "115.1", "119.1", "119.2", "119.3", "119.4", "119.9", "608.2b", "608.2c", "704.4"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Remove the shared fixed player-life production and independently block life or target closure so no represented node retains exact admission."
     },
@@ -32933,15 +32943,16 @@
       "capability_id": "life.change.effect",
       "evidence_class": "mutation",
       "test_id": "tests.test_semantic_counter_replacement_continuations.SemanticCounterReplacementContinuationTests.test_tampered_semantic_life_intent_fails_closed_without_mutation",
-      "official_rule_ids": ["101.3", "115.1", "119.1", "119.2", "119.3", "119.4", "119.9", "608.2b"],
+      "official_rule_ids": ["101.3", "101.4", "115.1", "119.1", "119.2", "119.3", "119.4", "119.9", "608.2b", "608.2c", "704.4"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Change the private resumable life amount and prove closed semantic-intent validation rejects the command without changing life or any authoritative state."
     },
+    {"capability_id":"life.change.effect","evidence_class":"negative","test_id":"tests.test_fixed_player_life_effects.EachPlayerLifeCompilerTests.test_each_player_shapes_and_separate_player_quantities_fail_closed","official_rule_ids":["101.3","101.4","115.1","119.1","119.2","119.3","119.4","119.9","608.2b","608.2c","704.4"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Unknown player relations, per-player relative quantities, unbound X, linked gains, Boolean amounts and contradictory scopes fail closed."},
     {
       "capability_id": "life.change.effect",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_player_life_effects.FixedPlayerLifeCompilerTests.test_dynamic_and_simultaneous_unowned_life_shapes_remain_residual",
-      "official_rule_ids": ["101.3", "115.1", "119.1", "119.2", "119.3", "119.4", "119.9", "608.2b"],
+      "official_rule_ids": ["101.3", "101.4", "115.1", "119.1", "119.2", "119.3", "119.4", "119.9", "608.2b", "608.2c", "704.4"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Keep dynamic amounts, target-player drains, each-player loss, life-total setting, exchanges, and mismatched drains outside the closed compiler grammar."
     },
@@ -32949,15 +32960,16 @@
       "capability_id": "life.change.effect",
       "evidence_class": "negative",
       "test_id": "tests.test_life_effect_runtime.LifeEffectRuntimeTests.test_invalid_batch_member_rolls_back_every_life_change",
-      "official_rule_ids": ["101.3", "115.1", "119.1", "119.2", "119.3", "119.4", "119.9", "608.2b"],
+      "official_rule_ids": ["101.3", "101.4", "115.1", "119.1", "119.2", "119.3", "119.4", "119.9", "608.2b", "608.2c", "704.4"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Commit a represented fixed life gain or life loss instruction through one replacement-capable typed life-change batch before mutating player life totals."
     },
+    {"capability_id":"life.change.effect","evidence_class":"positive","test_id":"tests.test_fixed_player_life_effects.EachPlayerLifeCompilerTests.test_each_player_fixed_loss_preserves_scope_and_whole_program_admission","official_rule_ids":["101.3","101.4","115.1","119.1","119.2","119.3","119.4","119.9","608.2b","608.2c","704.4"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Closed spell, activation, compound discard-price and upkeep forms preserve an explicit all-active-player scope, printed spans and independent whole-program admission without targeting."},
     {
       "capability_id": "life.change.effect",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_player_life_effects.FixedPlayerLifeCompilerTests.test_spell_and_activated_player_life_nodes_are_exact_and_spanned",
-      "official_rule_ids": ["101.3", "115.1", "119.1", "119.2", "119.3", "119.4", "119.9", "608.2b"],
+      "official_rule_ids": ["101.3", "101.4", "115.1", "119.1", "119.2", "119.3", "119.4", "119.9", "608.2b", "608.2c", "704.4"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Lower fixed player gain, player or opponent loss, target-opponent drain, and each-opponent drain through one source-spanned grammar in spell and activated contexts."
     },
@@ -32965,7 +32977,7 @@
       "capability_id": "life.change.effect",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_player_life_effects.FixedPlayerLifeRuntimeTests.test_target_player_gain_uses_live_replacement_owner",
-      "official_rule_ids": ["101.3", "115.1", "119.1", "119.2", "119.3", "119.4", "119.9", "608.2b"],
+      "official_rule_ids": ["101.3", "101.4", "115.1", "119.1", "119.2", "119.3", "119.4", "119.9", "608.2b", "608.2c", "704.4"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Cast a compiler-owned target-player gain spell and commit the doubled result through the live replacement and life owners."
     },
@@ -32973,7 +32985,7 @@
       "capability_id": "life.change.effect",
       "evidence_class": "positive",
       "test_id": "tests.test_life_effect_runtime.LifeEffectRuntimeTests.test_life_and_loss_commit_through_the_typed_batch_owner",
-      "official_rule_ids": ["101.3", "115.1", "119.1", "119.2", "119.3", "119.4", "119.9", "608.2b"],
+      "official_rule_ids": ["101.3", "101.4", "115.1", "119.1", "119.2", "119.3", "119.4", "119.9", "608.2b", "608.2c", "704.4"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Commit a represented fixed life gain or life loss instruction through one replacement-capable typed life-change batch before mutating player life totals."
     },
@@ -32981,23 +32993,30 @@
       "capability_id": "life.change.effect",
       "evidence_class": "positive",
       "test_id": "tests.test_oracle_ir.OracleIRTests.test_fixed_life_self_enter_trigger_replays_exactly",
-      "official_rule_ids": ["101.3", "115.1", "119.1", "119.2", "119.3", "119.4", "119.9", "608.2b"],
+      "official_rule_ids": ["101.3", "101.4", "115.1", "119.1", "119.2", "119.3", "119.4", "119.9", "608.2b", "608.2c", "704.4"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Commit a represented fixed life gain or life loss instruction through one replacement-capable typed life-change batch before mutating player life totals."
     },
+    {"capability_id":"life.change.effect","evidence_class":"privacy","test_id":"tests.test_fixed_player_life_effects.EachPlayerLifeRuntimeTests.test_original_smallpox_keeps_zero_life_players_in_resolution_choices","official_rule_ids":["101.3","101.4","115.1","119.1","119.2","119.3","119.4","119.9","608.2b","608.2c","704.4"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"An actual original Smallpox cast performs simultaneous life loss, private APNAP discard, public creature sacrifice and public land sacrifice in printed order. Zero-life B and C still participate in all choices, and only leave after complete resolution. Pending and final save/load and pre-cast replay agree."},
+    {"capability_id":"life.change.effect","evidence_class":"privacy","test_id":"tests.test_fixed_player_life_effects.EachPlayerLifeRuntimeTests.test_original_supplicant_pays_private_discard_before_all_player_loss","official_rule_ids":["101.3","101.4","115.1","119.1","119.2","119.3","119.4","119.9","608.2b","608.2c","704.4"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Supplicant pays its black mana, tap and private hand discard before any life loss. Unauthorized activation rolls back and nonactors receive no decision or private hand contents; one all-player result and complete replay agree."},
     {
       "capability_id": "life.change.effect",
       "evidence_class": "privacy",
       "test_id": "tests.test_semantic_counter_replacement_continuations.SemanticCounterReplacementContinuationTests.test_semantic_life_intent_replacement_suspends_and_replays_exactly",
-      "official_rule_ids": ["101.3", "115.1", "119.1", "119.2", "119.3", "119.4", "119.9", "608.2b"],
+      "official_rule_ids": ["101.3", "101.4", "115.1", "119.1", "119.2", "119.3", "119.4", "119.9", "608.2b", "608.2c", "704.4"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Keep the semantic response, typed life intent, replacement batch, and internal source identity out of every projected replacement choice."
     },
+    {"capability_id":"life.change.effect","evidence_class":"replay","test_id":"tests.test_fixed_player_life_effects.EachPlayerLifeRuntimeTests.test_original_caustic_death_trigger_keeps_departed_controller_and_all_players","official_rule_ids":["101.3","101.4","115.1","119.1","119.2","119.3","119.4","119.9","608.2b","608.2c","704.4"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Actual Murder destroys B's original Caustic Hound and its normalized death trigger loses four life for all players under the departed source's B controller. Canonical records retain that controller, with complete pre-cast replay."},
+    {"capability_id":"life.change.effect","evidence_class":"replay","test_id":"tests.test_fixed_player_life_effects.EachPlayerLifeRuntimeTests.test_original_guildmage_includes_controller_and_stabilizes_one_batch_after_concession","official_rule_ids":["101.3","101.4","115.1","119.1","119.2","119.3","119.4","119.9","608.2b","608.2c","704.4"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"An accepted original Guildmage activation pays its full mana price, then an actual D concession excludes that departed seat. A, B and C lose life in one batch including the controller; B and C lose simultaneously after resolution. Unauthorized activation rolls back and pending/final pre-activation replay agrees."},
+    {"capability_id":"life.change.effect","evidence_class":"replay","test_id":"tests.test_fixed_player_life_effects.EachPlayerLifeRuntimeTests.test_original_shepherd_uses_global_resolution_count_and_zero_after_source_bounce","official_rule_ids":["101.3","101.4","115.1","119.1","119.2","119.3","119.4","119.9","608.2b","608.2c","704.4"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Shepherd pays its tap price and counts foreign Zombies, including a noncreature Kindred, for one global loss amount. An actual source bounce before resolution leaves zero Zombies and produces zero loss while retaining prices. Pending/final replay agrees."},
+    {"capability_id":"life.change.effect","evidence_class":"replay","test_id":"tests.test_fixed_player_life_effects.EachPlayerLifeRuntimeTests.test_original_smallpox_keeps_zero_life_players_in_resolution_choices","official_rule_ids":["101.3","101.4","115.1","119.1","119.2","119.3","119.4","119.9","608.2b","608.2c","704.4"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"An actual original Smallpox cast performs simultaneous life loss, private APNAP discard, public creature sacrifice and public land sacrifice in printed order. Zero-life B and C still participate in all choices, and only leave after complete resolution. Pending and final save/load and pre-cast replay agree."},
+    {"capability_id":"life.change.effect","evidence_class":"replay","test_id":"tests.test_fixed_player_life_effects.EachPlayerLifeRuntimeTests.test_original_supplicant_pays_private_discard_before_all_player_loss","official_rule_ids":["101.3","101.4","115.1","119.1","119.2","119.3","119.4","119.9","608.2b","608.2c","704.4"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Supplicant pays its black mana, tap and private hand discard before any life loss. Unauthorized activation rolls back and nonactors receive no decision or private hand contents; one all-player result and complete replay agree."},
     {
       "capability_id": "life.change.effect",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_player_life_effects.FixedPlayerLifeRuntimeTests.test_target_opponent_drain_replacement_and_replay_are_exact",
-      "official_rule_ids": ["101.3", "115.1", "119.1", "119.2", "119.3", "119.4", "119.9", "608.2b"],
+      "official_rule_ids": ["101.3", "101.4", "115.1", "119.1", "119.2", "119.3", "119.4", "119.9", "608.2b", "608.2c", "704.4"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the selected opponent, fixed activated cost, replacement-adjusted loss and gain, life journal, and final authoritative hash."
     },
@@ -33005,7 +33024,7 @@
       "capability_id": "life.change.effect",
       "evidence_class": "replay",
       "test_id": "tests.test_oracle_ir.OracleIRTests.test_fixed_life_self_enter_trigger_replays_exactly",
-      "official_rule_ids": ["101.3", "115.1", "119.1", "119.2", "119.3", "119.4", "119.9", "608.2b"],
+      "official_rule_ids": ["101.3", "101.4", "115.1", "119.1", "119.2", "119.3", "119.4", "119.9", "608.2b", "608.2c", "704.4"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Commit a represented fixed life gain or life loss instruction through one replacement-capable typed life-change batch before mutating player life totals."
     },
@@ -33013,10 +33032,13 @@
       "capability_id": "life.change.effect",
       "evidence_class": "replay",
       "test_id": "tests.test_semantic_counter_replacement_continuations.SemanticCounterReplacementContinuationTests.test_semantic_life_intent_replacement_suspends_and_replays_exactly",
-      "official_rule_ids": ["101.3", "115.1", "119.1", "119.2", "119.3", "119.4", "119.9", "608.2b"],
+      "official_rule_ids": ["101.3", "101.4", "115.1", "119.1", "119.2", "119.3", "119.4", "119.9", "608.2b", "608.2c", "704.4"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the semantic object choice and replacement selection to the identical authoritative life total and final state hash."
     },
+    {"capability_id":"life.change.effect","evidence_class":"rollback","test_id":"tests.test_fixed_player_life_effects.EachPlayerLifeRuntimeTests.test_original_guildmage_includes_controller_and_stabilizes_one_batch_after_concession","official_rule_ids":["101.3","101.4","115.1","119.1","119.2","119.3","119.4","119.9","608.2b","608.2c","704.4"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"An accepted original Guildmage activation pays its full mana price, then an actual D concession excludes that departed seat. A, B and C lose life in one batch including the controller; B and C lose simultaneously after resolution. Unauthorized activation rolls back and pending/final pre-activation replay agrees."},
+    {"capability_id":"life.change.effect","evidence_class":"rollback","test_id":"tests.test_fixed_player_life_effects.EachPlayerLifeRuntimeTests.test_original_supplicant_pays_private_discard_before_all_player_loss","official_rule_ids":["101.3","101.4","115.1","119.1","119.2","119.3","119.4","119.9","608.2b","608.2c","704.4"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Supplicant pays its black mana, tap and private hand discard before any life loss. Unauthorized activation rolls back and nonactors receive no decision or private hand contents; one all-player result and complete replay agree."},
+    {"capability_id":"life.change.effect","evidence_class":"rollback","test_id":"tests.test_life_effect_runtime.LifeEffectRuntimeTests.test_all_player_loss_uses_one_batch_and_rejects_contradictory_scope","official_rule_ids":["101.3","101.4","115.1","119.1","119.2","119.3","119.4","119.9","608.2b","608.2c","704.4"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"The canonical owner submits exactly one batch over all active players and rejects contradictory, unknown, negative, Boolean or fractional scoped input before mutation."},
     {
       "capability_id": "life.gain.replacement.static_multiplier",
       "evidence_class": "interaction",

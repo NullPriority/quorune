@@ -244,11 +244,17 @@ residuals.
 
 `compiler/life_templates.py` owns fixed life changes shared by spell and
 activated contexts. In addition to controller gain/loss, it lowers one direct
-player gain or loss, one opponent-only loss or equal drain, and one equal
-each-opponent drain. Direct targets use the ordinary public player-target and
-resolution-revalidation boundary; table-wide drains use one canonical life
-batch. Dynamic amounts, target-player drains that could affect the controller,
-each-player loss, life-total setting, exchanges, and unequal drains remain
+player gain or loss, one opponent-only loss or equal drain, one equal
+each-opponent drain, and one each-player loss. Direct targets use the ordinary
+public player-target and resolution-revalidation boundary. Each-player loss
+uses an exact `all_active_players` scope on the existing loss operation and
+commits one simultaneous canonical life batch, including its controller and
+excluding players who left before resolution. The existing quantity producer
+may supply one shared global count; each player's separate relative quantity
+remains unrepresented. Ordered private discard and public sacrifice choices
+continue before state-based stabilization, even for participants at zero life.
+Unrepresented dynamic amounts, target-player drains that could affect the controller,
+life-total setting, exchanges, and unequal drains remain
 source-spanned residuals.
 
 `compiler/mill_templates.py` owns one mandatory positive fixed-count Mill

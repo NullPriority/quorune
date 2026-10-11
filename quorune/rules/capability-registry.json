@@ -2251,14 +2251,26 @@
     },
     {
       "id": "life.change.effect",
-      "version": 3,
-      "official_rules": ["101.3", "115.1", "119.1", "119.2", "119.3", "119.4", "119.9", "608.2b"],
+      "version": 4,
+      "official_rules": [
+        "101.3",
+        "101.4",
+        "115.1",
+        "119.1",
+        "119.2",
+        "119.3",
+        "119.4",
+        "119.9",
+        "608.2b",
+        "608.2c",
+        "704.4"
+      ],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
-        "summary": "Compile and commit represented fixed controller, direct-player, target-opponent, each-opponent, and drain life instructions through one replacement-capable typed life-change batch before mutating player life totals.",
+        "summary": "Compile and commit represented fixed controller, direct-player, target-opponent, each-opponent, all-active-player, and drain life instructions through one replacement-capable typed life-change batch before mutating player life totals.",
         "inputs": ["resolved active or selected player relation", "fixed integral life delta", "source/controller facts", "closed semantic-intent identity", "ordered replacement selections"],
         "outputs": ["validated life-state plan", "private replacement continuation", "replacement journal", "canonical resolved gain or loss", "authoritative life mutation"],
-        "exclusions": ["paying life costs", "setting or exchanging life totals", "dynamic life amounts", "target-player drains that may affect the controller", "each-player loss", "life-gain prevention not represented by a trusted component"]
+        "exclusions": ["paying life costs", "setting or exchanging life totals", "unrepresented dynamic or player-relative quantities", "target-player drains that may affect the controller", "life-gain prevention not represented by a trusted component"]
       },
       "dependencies": [],
       "implementation_components": ["quorune.compiler.life_templates.fixed_life_effect_template", "quorune.rules.fixed_controller_effect_shapes.fixed_life_node_capabilities", "quorune.effect_runtime.life_effects._commit", "quorune.semantic_choices.intent_host.SemanticChoiceIntentHostMixin.apply_life_change_intent", "quorune.semantic_choices.counter_coordination.continue_semantic_completion", "quorune.semantic_choices.intent_replacement.semantic_intent_identity", "quorune.replacement.replay.ReplacementContinuation", "quorune.life_change.prepare_life_change_batch", "quorune.life_change.commit_life_change_batch", "quorune.life_state.plan_life_changes", "quorune.life_state.apply_life_changes"],

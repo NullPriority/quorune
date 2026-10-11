@@ -41,6 +41,7 @@
     "tests/fixtures/defender-permission-cards.json",
     "tests/fixtures/devoid-characteristics-cards.json",
     "tests/fixtures/draw-rules-cards.json",
+    "tests/fixtures/each-player-life-cards.json",
     "tests/fixtures/echo-rules-cards.json",
     "tests/fixtures/enlist-cards.json",
     "tests/fixtures/entry-designation-cards.json",

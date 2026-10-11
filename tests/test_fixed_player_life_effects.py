@@ -205,7 +205,7 @@ class FixedPlayerLifeCompilerTests(unittest.TestCase):
 
         for text in (
             "Target player loses X life.",
-            "Each player loses 1 life.",
+            "Each player who controls a Zombie loses 1 life.",
             "Target player's life total becomes 10.",
             "Exchange your life total with this creature's power.",
         ):
@@ -248,6 +248,96 @@ class FixedPlayerLifeCompilerTests(unittest.TestCase):
         ):
             with self.assertRaises(AssertionError):
                 assert_exact()
+
+
+class EachPlayerLifeCompilerTests(unittest.TestCase):
+    """CR 101.4/119.3: one instruction affects all participating players.
+
+    The controller is included, a player who left the game is excluded, and
+    the canonical life batch commits before state-based stabilization. This
+    grammar does not turn each player's separate object count into one total.
+    """
+
+    def test_each_player_fixed_loss_preserves_scope_and_whole_program_admission(self):
+        from types import SimpleNamespace
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.semantics import SemanticRegistry
+
+        registry = load_default_capability_registry()
+        for text, type_line in (
+            ("Each player loses 2 life.", "Sorcery"),
+            ("{2}{B}: Each player loses 1 life.", "Creature — Human"),
+            ("{B}, {T}, Discard a card: Each player loses 2 life.", "Creature — Human"),
+            ("At the beginning of your upkeep, each player loses 1 life.", "Enchantment"),
+        ):
+            with self.subTest(text=text):
+                card = fixture_card(text, type_line=type_line)
+                ir = compile_oracle_card(card, capability_registry=registry)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                self.assertEqual("all_active_players", node.effects[0]["scope"])
+                self.assertNotIn("player", node.effects[0])
+                self.assertIsNone(node.target_schema)
+                self.assertEqual(text, node.text)
+                program = compile_best_available_card_program(
+                    SimpleNamespace(rulings=lambda _record: ()), card,
+                    semantic_registry=SemanticRegistry(), capability_registry=registry,
+                    capability_profile="commander_review",
+                )
+                self.assertTrue(bind_card_program_runtime(
+                    program, capability_registry=registry, profile="commander_review",
+                )["strict_capability_ready"])
+
+    def test_each_player_global_quantity_uses_one_shared_public_count(self):
+        registry = load_default_capability_registry()
+        ir = compile_oracle_card(fixture_card(
+            "{T}: Each player loses 1 life for each Zombie on the battlefield.",
+            type_line="Creature — Zombie",
+        ), capability_registry=registry)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        effect = ir.faces[0].nodes[0].effects[0]
+        self.assertEqual("all_active_players", effect["scope"])
+        self.assertEqual("all_zones", effect["amount"]["quantity"]["scope"])
+        self.assertEqual(["zombie"], effect["amount"]["quantity"]["query"]["subtypes_all"])
+
+    def test_each_player_shapes_and_separate_player_quantities_fail_closed(self):
+        registry = load_default_capability_registry()
+        for text in (
+            "Each player loses 1 life for each creature they control.",
+            "Each player who controls a Zombie loses 1 life.",
+            "{B}: Each player loses X life.",
+            "Each player loses 1 life and you gain that much life.",
+        ):
+            with self.subTest(text=text):
+                self.assertNotEqual("exact", compile_oracle_card(
+                    fixture_card(text, type_line="Creature — Human"),
+                    capability_registry=registry,
+                ).status)
+        for effect in (
+            {"op": "lose_life", "scope": "all_active_players", "amount": True},
+            {"op": "lose_life", "scope": "all_active_players", "player": "$controller", "amount": 1},
+            {"op": "lose_life", "scope": "some_players", "amount": 1},
+        ):
+            self.assertEqual((), fixed_life_node_capabilities(
+                effects=(effect,), target_schema=None,
+                mechanic_ids=("cr-119-life", "cr-101-the-magic-golden-rules"),
+            ))
+
+    def test_each_player_producer_and_authority_omissions_fail_closed(self):
+        text = "Each player loses 1 life."
+        registry = load_default_capability_registry()
+        with mock.patch.object(oracle_ir_module, "fixed_life_effect_template", return_value=None):
+            self.assertNotEqual("exact", compile_oracle_card(
+                fixture_card(text), capability_registry=registry,
+            ).status)
+        value = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+        row = next(row for row in value["capabilities"] if row["id"] == LIFE_CAPABILITY_ID)
+        row["status"] = "blocked"
+        row["blockers"] = ["focused all-player loss authority omission"]
+        self.assertNotEqual("exact", compile_oracle_card(
+            fixture_card(text), capability_registry=CapabilityRegistry(value),
+        ).status)
 
 
 class FixedPlayerLifeRuntimeTests(unittest.TestCase):
@@ -462,6 +552,216 @@ class FixedPlayerLifeRuntimeTests(unittest.TestCase):
                 for seat in ("A", "C", "D")
             },
         )
+
+
+class EachPlayerLifeRuntimeTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from quorune.deck import DeckDefinition, DeckEntry
+
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "each-player-life.sqlite3"
+        build_fixture_database([
+            ROOT / "tests/fixtures/bound-effect-program-cards.json",
+            ROOT / "tests/fixtures/each-player-life-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Each player life", [
+            DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 10),
+        ], ["Generic Bound Commander"])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    import test_bound_effect_programs as _bound
+    session = _bound.BoundEffectProgramRuntimeTests.session
+    add = _bound.BoundEffectProgramRuntimeTests.add
+    ready = _bound.BoundEffectProgramRuntimeTests.ready
+    checkpoint = _bound.BoundEffectProgramRuntimeTests.checkpoint
+    resolve = _bound.BoundEffectProgramRuntimeTests.resolve
+    replay = _bound.BoundEffectProgramRuntimeTests.replay
+
+    def assert_whole_admission(self, name):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.semantics import SemanticRegistry
+
+        program = compile_best_available_card_program(
+            self.db, self.db.lookup(name), semantic_registry=SemanticRegistry(),
+            capability_registry=self.registry, capability_profile="commander_review",
+        )
+        self.assertTrue(bind_card_program_runtime(
+            program, capability_registry=self.registry, profile="commander_review",
+        )["strict_capability_ready"])
+
+    def all_player_life_event(self, session):
+        return next(event for event in reversed(session.state.events)
+                    if event.code == "effect.life" and "players" in event.details)
+
+    def test_original_guildmage_includes_controller_and_stabilizes_one_batch_after_concession(self):
+        session = self.session(342001)
+        engine = session.engine
+        source = self.add(engine, "Orzhov Guildmage")
+        self.assert_whole_admission(source.printed_name)
+        self.ready(session, source, {"B": 3})
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        action = next(row for row in actions if row["id"].startswith("activate:" + source.ref + ":") and row.get("ability") == "ab2")
+        for seat, life in zip("ABCD", (3, 1, 1, 3)):
+            session.state.players[seat].life = life
+        self.checkpoint(session)
+        before = authoritative_state_hash(session.state)
+        denied = session.act("pilot:B", {"action_id": action["id"], "pay": "auto"})
+        self.assertFalse(denied.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual([3, 1, 1, 3], [session.state.players[seat].life for seat in "ABCD"])
+        self.assertEqual(0, session.state.players["A"].mana_pool.get("B", 0))
+        for seat in "ABC":
+            self.assertTrue(session.act("pilot:" + seat, {"action_id": "pass"}).ok)
+        conceded = session.act("pilot:D", {"action_id": "concede", "choices": {"confirm_concede": True}})
+        self.assertTrue(conceded.ok, conceded.summary)
+        self.replay(session, load=True)
+        self.resolve(session)
+        self.assertEqual([2, 0, 0, 3], [session.state.players[seat].life for seat in "ABCD"])
+        self.assertEqual([True, False, False, False], [session.state.players[seat].in_game for seat in "ABCD"])
+        event = self.all_player_life_event(session)
+        self.assertEqual(["A", "B", "C"], event.details["players"])
+        self.assertEqual({"A", "B", "C"}, {row["player"] for row in event.details["life_events"]})
+        self.assertEqual(3, len(event.details["life_events"]))
+        self.replay(session, load=True)
+
+    def test_original_shepherd_uses_global_resolution_count_and_zero_after_source_bounce(self):
+        for amount in (4, 0):
+            with self.subTest(amount=amount):
+                session = self.session(342010 + amount)
+                engine = session.engine
+                source = self.add(engine, "Shepherd of Rot")
+                source.acquired_control_turn_count = -1
+                self.add(engine, "Generic Bound Body", seat="D", ref="non-zombie")
+                if amount:
+                    self.add(engine, "Shepherd of Rot", seat="B", ref="foreign-zombie-B")
+                    self.add(engine, "Shepherd of Rot", seat="C", ref="foreign-zombie-C")
+                    kindred = self.add(engine, "Generic Kindred Zombie Enchantment", seat="D", ref="foreign-zombie-kindred")
+                    self.assert_whole_admission(kindred.printed_name)
+                bounce = self.add(engine, "Unsummon", zone="hand")
+                self.assert_whole_admission(source.printed_name)
+                action = self.ready(session, source, {"U": 1})
+                self.checkpoint(session)
+                accepted = session.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+                self.assertTrue(accepted.ok, accepted.summary)
+                self.assertTrue(session.state.cards[source.object_id].tapped)
+                if not amount:
+                    actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                    response = next(row for row in actions if row.get("card") == bounce.ref)
+                    accepted = session.act("pilot:A", {"action_id": response["id"], "targets": [source.ref], "pay": "auto"})
+                    self.assertTrue(accepted.ok, accepted.summary)
+                self.replay(session, load=True)
+                self.resolve(session)
+                self.assertEqual([40 - amount] * 4, [session.state.players[seat].life for seat in "ABCD"])
+                event = self.all_player_life_event(session)
+                self.assertEqual(list("ABCD"), event.details["players"])
+                self.assertEqual(amount, event.details["requested_amount"])
+                if not amount:
+                    self.assertEqual("hand", session.state.cards[source.object_id].zone)
+                    self.assertEqual(0, session.state.players["A"].mana_pool.get("U", 0))
+                self.replay(session, load=True)
+
+    def test_original_supplicant_pays_private_discard_before_all_player_loss(self):
+        session = self.session(342020)
+        source = self.add(session.engine, "Skirsdag Supplicant")
+        source.acquired_control_turn_count = -1
+        chosen = self.add(session.engine, "Generic Bound Plains", zone="hand", ref="discard-price")
+        self.assert_whole_admission(source.printed_name)
+        action = self.ready(session, source, {"B": 1})
+        self.checkpoint(session)
+        before = authoritative_state_hash(session.state)
+        denied = session.act("pilot:B", {"action_id": action["id"], "cost_cards": [chosen.ref], "pay": "auto"})
+        self.assertFalse(denied.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act("pilot:A", {"action_id": action["id"], "cost_cards": [chosen.ref], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual("graveyard", session.state.cards[chosen.object_id].zone)
+        self.assertTrue(session.state.cards[source.object_id].tapped)
+        self.assertEqual(0, session.state.players["A"].mana_pool.get("B", 0))
+        self.assertEqual([40] * 4, [session.state.players[seat].life for seat in "ABCD"])
+        for seat in "BCD":
+            packet = session.packet("pilot:" + seat, full=True)
+            self.assertIsNone(packet["decision"])
+            self.assertNotIn("hand", packet["state"]["players"]["A"])
+        self.replay(session, load=True)
+        self.resolve(session)
+        self.assertEqual([38] * 4, [session.state.players[seat].life for seat in "ABCD"])
+        self.replay(session, load=True)
+
+    def test_original_smallpox_keeps_zero_life_players_in_resolution_choices(self):
+        """CR 704.4: life, discard, creature and land happen before SBAs."""
+        session = self.session(342030)
+        engine = session.engine
+        creatures = {}
+        lands = {}
+        discard = {}
+        for seat in "ABCD":
+            creatures[seat] = self.add(engine, "Generic Bound Body", seat=seat, ref="pox-creature-" + seat)
+            lands[seat] = self.add(engine, "Generic Bound Plains", seat=seat, ref="pox-land-" + seat)
+            discard[seat] = self.add(engine, "Generic Bound Plains", seat=seat, zone="hand", ref="pox-discard-" + seat)
+            session.state.players[seat].life = 1 if seat in "BC" else 2
+        source = self.add(engine, "Smallpox", zone="hand")
+        self.assert_whole_admission(source.printed_name)
+        action = self.ready(session, source, {"B": 2})
+        self.checkpoint(session)
+        accepted = session.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        self.assertEqual([1, 0, 0, 1], [session.state.players[seat].life for seat in "ABCD"])
+        self.assertTrue(all(session.state.players[seat].in_game for seat in "ABCD"))
+        for group, selected in (("discard", discard), ("creature", creatures), ("land", lands)):
+            for seat in "ABCD":
+                with self.subTest(group=group, seat=seat):
+                    self.assertEqual("pilot:" + seat, session.pending_principals()[0])
+                    self.assertTrue(session.state.players[seat].in_game)
+                    if group == "discard":
+                        for other in "ABCD":
+                            if other != seat:
+                                self.assertIsNone(session.packet("pilot:" + other, full=True)["decision"])
+                    if group == "creature" and seat == "B":
+                        self.replay(session, load=True)
+                    accepted = session.act("pilot:" + seat, {"action_id": "choose", "cards": [selected[seat].ref]})
+                    self.assertTrue(accepted.ok, accepted.summary)
+                    if group != "land" or seat != "D":
+                        self.assertTrue(all(session.state.players[player].in_game for player in "ABCD"))
+        self.assertFalse(session.state.players["B"].in_game)
+        self.assertFalse(session.state.players["C"].in_game)
+        self.assertTrue(session.state.players["A"].in_game)
+        self.assertTrue(session.state.players["D"].in_game)
+        for seat in "AD":
+            for selected in (discard, creatures, lands):
+                self.assertEqual("graveyard", session.state.cards[selected[seat].object_id].zone)
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        self.replay(session, load=True)
+
+    def test_original_caustic_death_trigger_keeps_departed_controller_and_all_players(self):
+        session = self.session(342040)
+        engine = session.engine
+        observer = self.add(engine, "Caustic Hound", seat="B")
+        source = self.add(engine, "Murder", zone="hand")
+        self.assert_whole_admission(observer.printed_name)
+        action = self.ready(session, source, {"B": 3})
+        self.checkpoint(session)
+        accepted = session.act("pilot:A", {"action_id": action["id"], "targets": [observer.ref], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        self.assertEqual("graveyard", session.state.cards[observer.object_id].zone)
+        self.assertEqual([36] * 4, [session.state.players[seat].life for seat in "ABCD"])
+        event = self.all_player_life_event(session)
+        self.assertEqual("B", event.actor)
+        self.assertEqual(list("ABCD"), event.details["players"])
+        self.assertEqual({"B"}, {row["source_controller"] for row in event.details["life_events"]})
+        self.replay(session, load=True)
 
 
 if __name__ == "__main__":
