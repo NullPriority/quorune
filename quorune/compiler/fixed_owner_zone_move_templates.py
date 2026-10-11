@@ -22,6 +22,9 @@ from ..rules.source_references import (
 from ..targets import TargetGroup
 from ..util import stable_json
 from .fixed_entry_return_requirements import FixedEntryReturnRequirementSpec
+from .direct_target import direct_permanent_target_spec
+from .return_to_hand_templates import _own_graveyard_characteristic_target
+from ..rules.graveyard_card_targets import GraveyardCardTargetKind, OwnGraveyardCardTargetSpec
 
 
 class FixedOwnerZoneMoveReference(str, Enum):
@@ -242,7 +245,8 @@ def _battlefield_owner_zone_target_schema(
             },
         ]
         return schema
-    return None
+    direct = direct_permanent_target_spec("target " + subject)
+    return direct.to_target_schema() if direct is not None else None
 
 
 def _targeted_owner_library_move(
@@ -279,10 +283,31 @@ def _targeted_owner_library_move(
     )
 
 
+def _targeted_own_graveyard_library_move(text: str) -> FixedOwnerZoneMoveTemplate | None:
+    match = re.fullmatch(
+        r"Put target (?P<subject>.+?) from your graveyard "
+        r"(?P<edge>on top of|on the bottom of) (?:your|its owner['’]s) library\.?",
+        " ".join(text.strip().split()), re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    subject = match["subject"].casefold()
+    kind = next((kind for kind in GraveyardCardTargetKind if kind.value == subject), None)
+    spec = OwnGraveyardCardTargetSpec(kind) if kind is not None else (
+        _own_graveyard_characteristic_target(subject.removesuffix(" card")) if subject.endswith(" card") else None)
+    if spec is None:
+        return None
+    return FixedOwnerZoneMoveTemplate(reference=FixedOwnerZoneMoveReference.TARGET, destination="library",
+        subject_id="own-graveyard-" + subject.replace(" ", "-"), target_schema=spec.to_target_schema(),
+        library_position="top" if match["edge"].casefold() == "on top of" else "bottom")
+
+
 def _targeted_public_card_owner_move(
     text: str,
 ) -> FixedOwnerZoneMoveTemplate | None:
     normalized = " ".join(text.strip().split())
+    owned = _targeted_own_graveyard_library_move(normalized)
+    if owned is not None:return owned
     graveyard = re.fullmatch(
         r"Put target (?P<subject>card|artifact, instant, or sorcery card) "
         r"from a graveyard on the bottom of its owner['’]s library\.?",

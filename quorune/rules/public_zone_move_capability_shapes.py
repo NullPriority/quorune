@@ -29,7 +29,9 @@ from ..util import stable_json
 from .graveyard_card_targets import (
     GraveyardCardTargetError,
     PublicGraveyardCardTargetSpec,
+    OwnGraveyardCardTargetSpec,
 )
+from .permanent_predicate_capability_shapes import direct_permanent_target_schema_is_closed, direct_target_predicate_capabilities
 
 
 _PLAYER_TARGETS = (
@@ -158,7 +160,17 @@ def _closed_owner_zone_target_schema(value: Mapping[str, Any] | None) -> bool:
         TargetGroup.from_mapping(value)
     except (TypeError, ValueError):
         return False
-    return stable_json(dict(value)) in _OWNER_ZONE_TARGET_SCHEMAS
+    if stable_json(dict(value)) in _OWNER_ZONE_TARGET_SCHEMAS:
+        return True
+    if value.get("zones") == ["battlefield"]:
+        return direct_permanent_target_schema_is_closed(value)
+    if value.get("zones") == ["graveyard"]:
+        try:
+            OwnGraveyardCardTargetSpec.from_target_schema(value)
+        except (GraveyardCardTargetError, TypeError, ValueError):
+            return False
+        return True
+    return False
 
 
 def _closed_return_choice(effect: Mapping[str, Any]) -> bool:
@@ -274,6 +286,7 @@ def fixed_owner_zone_move_node_capabilities(
                 return ()
     return (
         FIXED_OWNER_ZONE_MOVE_CAPABILITY,
+        *(direct_target_predicate_capabilities(target_schema) if targeted and target_schema.get("zones") == ["battlefield"] else ()),
         *(("target.revalidate_resolution",) if targeted else ()),
         *(("attachment.reference.current_or_lki",) if attached else ()),
     )

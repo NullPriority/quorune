@@ -11,6 +11,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Compile owned-graveyard library placement and qualified battlefield library
+  targets through the existing owner-destination move, with one shared live
+  promotion and admission boundary.
+
 - Route qualified regeneration through the shared permanent-target query,
   preserving Kindred subtype targets and resolution-time counter predicates.
 

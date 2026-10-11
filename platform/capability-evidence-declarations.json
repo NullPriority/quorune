@@ -54713,6 +54713,9 @@
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Compose source incarnation, sacrificed-Aura last-known attachment, owner-relative choice, target revalidation, and canonical replacement-aware zone movement."
     },
+    {"capability_id":"zone.single_owner_move.fixed_destination","evidence_class":"interaction","test_id":"tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_graveyard_library_activations_preserve_owner_position_and_replay","official_rule_ids":["108.3","109.2","400.2","400.3","400.4","400.7","401.7","608.2b","608.2c","701.24"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."},
+    {"capability_id":"zone.single_owner_move.fixed_destination","evidence_class":"interaction","test_id":"tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_graveyard_library_target_revalidates_after_creeper_response","official_rule_ids":["108.3","109.2","400.2","400.3","400.4","400.7","401.7","608.2b","608.2c","701.24"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"An actual Crypt Creeper response exiles the announced owned-graveyard target before Barkform's paid result resolves. The original target revalidates, creates no library move and preserves both prices with exact pre-activation replay."},
+    {"capability_id":"zone.single_owner_move.fixed_destination","evidence_class":"interaction","test_id":"tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_king_crab_returns_borrowed_green_creature_to_owners_library","official_rule_ids":["108.3","109.2","400.2","400.3","400.4","400.7","401.7","608.2b","608.2c","701.24"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original King Crab selects a green creature owned by B but controlled by A, rejects unauthorized activation and moves it to B's library top with A's library unchanged; the full pre-action record replays exactly."},
     {
       "capability_id": "zone.single_owner_move.fixed_destination",
       "evidence_class": "multiplayer",
@@ -54721,6 +54724,7 @@
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Collect one public creature choice from each of four players in APNAP order before one simultaneous owner-hand move and Commander replacement."
     },
+    {"capability_id":"zone.single_owner_move.fixed_destination","evidence_class":"multiplayer","test_id":"tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_graveyard_library_activations_preserve_owner_position_and_replay","official_rule_ids":["108.3","109.2","400.2","400.3","400.4","400.7","401.7","608.2b","608.2c","701.24"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."},
     {
       "capability_id": "zone.single_owner_move.fixed_destination",
       "evidence_class": "mutation",
@@ -54729,6 +54733,8 @@
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Reject changed operation, object reference, destination, position, target schema, choice scope, and open descriptor fields before capability closure."
     },
+    {"capability_id":"zone.single_owner_move.fixed_destination","evidence_class":"mutation","test_id":"tests.test_fixed_public_zone_moves.TargetedOwnerLibraryCompilerTests.test_owner_library_live_promotion_requires_the_existing_closed_shape","official_rule_ids":["108.3","109.2","400.2","400.3","400.4","400.7","401.7","608.2b","608.2c","701.24"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Removing the shared owner-zone promotion recognizer leaves an actual generated activation provisional; the current shape promotes it through the ordinary verified registry path."},
+    {"capability_id":"zone.single_owner_move.fixed_destination","evidence_class":"mutation","test_id":"tests.test_fixed_public_zone_moves.TargetedOwnerLibraryCompilerTests.test_owner_library_scope_and_mutants_remain_fail_closed","official_rule_ids":["108.3","109.2","400.2","400.3","400.4","400.7","401.7","608.2b","608.2c","701.24"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Omitting the owned graveyard production kills exact admission independently of the destination handler."},
     {
       "capability_id": "zone.single_owner_move.fixed_destination",
       "evidence_class": "negative",
@@ -54737,6 +54743,7 @@
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Keep heterogeneous spell-or-permanent targets, arbitrary positions, controller destinations, broader choices, and unsupported historic predicates residual."
     },
+    {"capability_id":"zone.single_owner_move.fixed_destination","evidence_class":"negative","test_id":"tests.test_fixed_public_zone_moves.TargetedOwnerLibraryCompilerTests.test_owner_library_scope_and_mutants_remain_fail_closed","official_rule_ids":["108.3","109.2","400.2","400.3","400.4","400.7","401.7","608.2b","608.2c","701.24"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Foreign-owner, Boolean-count and extra-field shapes, multiple or linked moves and dynamic predicates cannot gain owner-library closure."},
     {
       "capability_id": "zone.single_owner_move.fixed_destination",
       "evidence_class": "positive",
@@ -54745,6 +54752,8 @@
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Lower fixed target, source, enchanted-object, controller-choice, and each-player-choice owner-destination moves across spell, trigger, activated, and modal contexts."
     },
+    {"capability_id":"zone.single_owner_move.fixed_destination","evidence_class":"positive","test_id":"tests.test_fixed_public_zone_moves.TargetedOwnerLibraryCompilerTests.test_owned_graveyard_library_moves_preserve_origin_owner_type_and_position","official_rule_ids":["108.3","109.2","400.2","400.3","400.4","400.7","401.7","608.2b","608.2c","701.24"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Owned public graveyard cards preserve origin, type, actor ownership and exact top/bottom destination through the existing owner move."},
+    {"capability_id":"zone.single_owner_move.fixed_destination","evidence_class":"positive","test_id":"tests.test_fixed_public_zone_moves.TargetedOwnerLibraryCompilerTests.test_qualified_battlefield_library_moves_share_current_permanent_query","official_rule_ids":["108.3","109.2","400.2","400.3","400.4","400.7","401.7","608.2b","608.2c","701.24"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Color, current controller and combat-state battlefield predicates share the full direct permanent target authority."},
     {
       "capability_id": "zone.single_owner_move.fixed_destination",
       "evidence_class": "privacy",
@@ -54753,6 +54762,7 @@
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Project public choices and the Commander result without exposing physical or logical object identities or unrelated private hand and library contents."
     },
+    {"capability_id":"zone.single_owner_move.fixed_destination","evidence_class":"privacy","test_id":"tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_graveyard_library_activations_preserve_owner_position_and_replay","official_rule_ids":["108.3","109.2","400.2","400.3","400.4","400.7","401.7","608.2b","608.2c","701.24"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."},
     {
       "capability_id": "zone.single_owner_move.fixed_destination",
       "evidence_class": "replay",
@@ -54761,6 +54771,9 @@
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay target selection, control change, owner-library insertion, graveyard recycling, new incarnations, and the final authoritative hash."
     },
+    {"capability_id":"zone.single_owner_move.fixed_destination","evidence_class":"replay","test_id":"tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_graveyard_library_activations_preserve_owner_position_and_replay","official_rule_ids":["108.3","109.2","400.2","400.3","400.4","400.7","401.7","608.2b","608.2c","701.24"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."},
+    {"capability_id":"zone.single_owner_move.fixed_destination","evidence_class":"replay","test_id":"tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_graveyard_library_target_revalidates_after_creeper_response","official_rule_ids":["108.3","109.2","400.2","400.3","400.4","400.7","401.7","608.2b","608.2c","701.24"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"An actual Crypt Creeper response exiles the announced owned-graveyard target before Barkform's paid result resolves. The original target revalidates, creates no library move and preserves both prices with exact pre-activation replay."},
+    {"capability_id":"zone.single_owner_move.fixed_destination","evidence_class":"replay","test_id":"tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_king_crab_returns_borrowed_green_creature_to_owners_library","official_rule_ids":["108.3","109.2","400.2","400.3","400.4","400.7","401.7","608.2b","608.2c","701.24"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original King Crab selects a green creature owned by B but controlled by A, rejects unauthorized activation and moves it to B's library top with A's library unchanged; the full pre-action record replays exactly."},
     {
       "capability_id": "zone.single_owner_move.fixed_destination",
       "evidence_class": "rollback",
@@ -54768,6 +54781,7 @@
       "official_rule_ids": ["108.3", "109.2", "400.2", "400.3", "400.4", "400.7", "401.7", "608.2b", "608.2c", "701.24"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
-    }
+    },
+    {"capability_id":"zone.single_owner_move.fixed_destination","evidence_class":"rollback","test_id":"tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_graveyard_library_activations_preserve_owner_position_and_replay","official_rule_ids":["108.3","109.2","400.2","400.3","400.4","400.7","401.7","608.2b","608.2c","701.24"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."}
   ]
 }

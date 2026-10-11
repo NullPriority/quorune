@@ -1019,6 +1019,12 @@ creature, one controller-selected tapped land, and one creature selected by
 each player lower to the existing target, attachment-reference, APNAP choice,
 and zone-transition owners. Library moves admit only top, bottom, second,
 third, or fourth position, plus the exact enchanted-creature shuffle form.
+Qualified battlefield targets reuse the shared full permanent predicate.
+Owned graveyard cards reuse the closed graveyard-card query and may move to
+the owner's library top or bottom. The complete origin, ownership, predicate,
+and incarnation remain resolution-time checks. Live registration promotes
+these programs only through the same closed shape used by CardProgram
+admission; private library projection does not publish the ordered contents.
 Heterogeneous spell-or-permanent targets, hidden selection, broader mass
 choices, controller destinations, alternative costs, delayed or linked moves,
 and arbitrary positions remain source-spanned residuals.

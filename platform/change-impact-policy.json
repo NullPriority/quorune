@@ -3242,6 +3242,21 @@
         "test_targeted_destruction_effect_clauses",
         "test_oracle_corpus_examples"
       ]
+    },
+    {
+      "id": "targeted-owner-library-contract",
+      "patterns": [
+        "quorune/compiler/fixed_owner_zone_move_templates.py",
+        "quorune/rules/public_zone_move_capability_shapes.py",
+        "tests/fixtures/targeted-owner-library-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_public_zone_moves",
+        "test_targeted_graveyard_return_effect_clauses",
+        "test_targeted_return_to_hand_effect_clauses",
+        "test_card_program_trust",
+        "test_oracle_corpus_examples"
+      ]
     }
   ],
   "symbol_rules": [

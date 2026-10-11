@@ -2612,5 +2612,208 @@ class CommanderZoneMoveRuntimeTests(_RuntimeBase):
         self.assertEqual(before, authoritative_state_hash(engine.state))
 
 
+class TargetedOwnerLibraryCompilerTests(unittest.TestCase):
+    # CR 400.3, 400.7 and 401.2: cards go to their owner's library, the chosen
+    # incarnation and full public predicate are revalidated, and top/bottom
+    # ordering remains private after the public-origin move.
+    @classmethod
+    def setUpClass(cls):
+        cls.registry = load_default_capability_registry()
+
+    def compile(self, text, *, type_line="Instant"):
+        return compile_oracle_card(card_record(text, type_line=type_line),
+            capability_registry=self.registry, capability_profile="commander_review")
+
+    def test_owned_graveyard_library_moves_preserve_origin_owner_type_and_position(self):
+        cases = (
+            ("Put target card from your graveyard on the bottom of your library.", "bottom", None),
+            ("Put target creature card from your graveyard on top of your library.", "top", ["creature"]),
+            ("Put target enchantment card from your graveyard on top of your library.", "top", ["enchantment"]),
+        )
+        for text, position, types in cases:
+            with self.subTest(text=text):
+                ir = self.compile(text)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                self.assertEqual(({"op": "move", "card": "$target.0", "destination": "library", "position": position},), node.effects)
+                self.assertEqual(["graveyard"], node.target_schema["zones"])
+                self.assertEqual("you", node.target_schema["owner_relation"])
+                if types is not None:self.assertEqual(types, node.target_schema["types_any"])
+
+    def test_qualified_battlefield_library_moves_share_current_permanent_query(self):
+        for text, field, value in (
+            ("Put target green creature on top of its owner's library.", "colors_any", ["G"]),
+            ("Put target creature you control on top of its owner's library.", "controller_relation", "you"),
+            ("Put target attacking or blocking creature on top of its owner's library.", "combat_state", "attacking_or_blocking"),
+        ):
+            with self.subTest(text=text):
+                ir = self.compile(text)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                self.assertEqual(value, ir.faces[0].nodes[0].target_schema[field])
+
+    def test_owner_library_scope_and_mutants_remain_fail_closed(self):
+        text = "Put target creature card from your graveyard on top of your library."
+        node = self.compile(text).faces[0].nodes[0]
+        from quorune.rules.public_zone_move_capability_shapes import fixed_owner_zone_move_node_capabilities
+        for schema in ({**node.target_schema, "owner_relation": "opponent"},
+                       {**node.target_schema, "count": True}, {**node.target_schema, "unexpected": True}):
+            with self.subTest(schema=schema):
+                self.assertEqual((), fixed_owner_zone_move_node_capabilities(effects=node.effects,
+                    target_schema=schema, mechanic_ids=node.mechanics))
+        for body in ("Put two target cards from your graveyard on top of your library.",
+                     "Put target card from your graveyard into your hand, then put it on top of your library.",
+                     "Put target creature with power equal to cards in your hand on top of its owner's library."):
+            with self.subTest(body=body):
+                ir = self.compile(body)
+                self.assertNotEqual("exact", ir.status)
+                self.assertTrue(ir.material_residuals)
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
+        next(row for row in raw["capabilities"] if row["id"] == FIXED_OWNER_ZONE_MOVE_CAPABILITY).update(
+            status="blocked", blockers=["owner library mover unavailable"])
+        blocked = compile_oracle_card(card_record(text), capability_registry=CapabilityRegistry(raw), capability_profile="commander_review")
+        self.assertNotEqual("exact", blocked.status)
+        with patch("quorune.compiler.fixed_owner_zone_move_templates._targeted_own_graveyard_library_move", return_value=None):
+            mutant = self.compile(text)
+        self.assertNotEqual("exact", mutant.status)
+
+    def test_owner_library_live_promotion_requires_the_existing_closed_shape(self):
+        from quorune.oracle_ir import register_generated_programs
+        from quorune.semantics import SemanticRegistry
+        class Rulings:
+            def rulings(self, record):return ()
+        record = card_record("{2}: Put target card from your graveyard on the bottom of your library.", type_line="Creature \u2014 Test")
+        def register():
+            registry = SemanticRegistry()
+            register_generated_programs(Rulings(), registry, [record], trust_level="provisional",
+                capability_registry=self.registry, capability_profile="commander_review",
+                promote_exact_runtime_handlers=True, promote_exact_trigger_programs=True,
+                promote_exact_effect_programs=True, promote_exact_capability_declarations=True)
+            return registry.programs_for_oracle(record.oracle_id)
+        self.assertTrue(all(program.trust_level == "trusted" for program in register()))
+        with patch("quorune.compiler.program_generation._is_closed_fixed_owner_zone_move_program", return_value=False):
+            programs = register()
+        self.assertTrue(programs)
+        self.assertTrue(any(program.trust_level == "provisional" for program in programs))
+
+
+class TargetedOwnerLibraryRuntimeTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from quorune.deck import DeckDefinition, DeckEntry
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "targeted-owner-library.sqlite3"
+        build_fixture_database([ROOT / "tests/fixtures/bound-effect-program-cards.json",
+            ROOT / "tests/fixtures/targeted-owner-library-cards.json"], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Owner library", [DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 99)], ["Generic Bound Commander"])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    import test_bound_effect_programs as _witnesses
+    session = _witnesses.BoundEffectProgramRuntimeTests.session
+    add = _witnesses.BoundEffectProgramRuntimeTests.add
+    checkpoint = _witnesses.BoundEffectProgramRuntimeTests.checkpoint
+    resolve = _witnesses.BoundEffectProgramRuntimeTests.resolve
+    replay = _witnesses.BoundEffectProgramRuntimeTests.replay
+
+    def ready(self, session, source, mana, zone):
+        self._witnesses.BoundEffectProgramRuntimeTests.ready(self, session, source, mana)
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        return next(action for action in actions if action["id"].startswith("activate:" + source.ref + ":")
+            and action.get("target_schema", {}).get("zones") == [zone])
+
+    def assert_whole_admission(self, session, name):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        program = compile_best_available_card_program(self.db, self.db.lookup(name), semantic_registry=session.engine.semantics,
+            capability_registry=self.registry, capability_profile="commander_review")
+        binding = bind_card_program_runtime(program, capability_registry=self.registry, profile="commander_review")
+        self.assertTrue(binding["strict_capability_ready"], binding)
+
+    def test_original_graveyard_library_activations_preserve_owner_position_and_replay(self):
+        for name, mana, position in (("Barkform Harvester", {"C": 2}, 0), ("Volrath's Stronghold", {"B": 2}, -1)):
+            with self.subTest(source=name):
+                session = self.session(338010 + (position == 0))
+                source = self.add(session.engine, name)
+                target = self.add(session.engine, "Generic Bound Body", zone="graveyard")
+                wrong = self.add(session.engine, "Generic Bound Body", seat="B", zone="graveyard", ref="foreign-grave-card")
+                self.assert_whole_admission(session, name)
+                action = self.ready(session, source, mana, "graveyard")
+                legal = action["target_schema"]["legal_refs"]
+                self.assertIn(target.ref, legal)
+                self.assertNotIn(wrong.ref, legal)
+                self.checkpoint(session)
+                before = authoritative_state_hash(session.state)
+                rejected = session.act("pilot:A", {"action_id": action["id"], "targets": [wrong.ref], "pay": "auto"})
+                self.assertFalse(rejected.ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+                accepted = session.act("pilot:A", {"action_id": action["id"], "targets": [target.ref], "pay": "auto"})
+                self.assertTrue(accepted.ok, accepted.summary)
+                session = self.replay(session, load=True)
+                self.resolve(session)
+                self.assertEqual("library", session.state.cards[target.object_id].zone)
+                self.assertEqual(target.object_id, session.state.players["A"].zones["library"][position])
+                self.assertEqual("graveyard", session.state.cards[wrong.object_id].zone)
+                for seat in "BCD":
+                    public = session.packet("pilot:" + seat, full=True)["state"]
+                    self.assertIsInstance(public["players"]["A"]["lib_n"], int)
+                    self.assertNotIn("lib", public["players"]["A"])
+                self.replay(session, load=True)
+
+    def test_original_king_crab_returns_borrowed_green_creature_to_owners_library(self):
+        session = self.session(338012)
+        source = self.add(session.engine, "King Crab")
+        target = self.add(session.engine, "Generic Owner Library Green Body")
+        target.owner = "B"
+        wrong = self.add(session.engine, "Generic Bound Body", seat="B")
+        self.assert_whole_admission(session, source.printed_name)
+        before_a = len(session.state.players["A"].zones["library"])
+        before_b = len(session.state.players["B"].zones["library"])
+        action = self.ready(session, source, {"U": 2}, "battlefield")
+        self.assertIn(target.ref, action["target_schema"]["legal_refs"])
+        self.assertNotIn(wrong.ref, action["target_schema"]["legal_refs"])
+        self.checkpoint(session)
+        before = authoritative_state_hash(session.state)
+        denied = session.act("pilot:B", {"action_id": action["id"], "targets": [target.ref], "pay": "auto"})
+        self.assertFalse(denied.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act("pilot:A", {"action_id": action["id"], "targets": [target.ref], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        self.assertEqual(target.object_id, session.state.players["B"].zones["library"][-1])
+        self.assertEqual(before_b + 1, len(session.state.players["B"].zones["library"]))
+        self.assertEqual(before_a, len(session.state.players["A"].zones["library"]))
+        self.assertEqual("library", session.state.cards[target.object_id].zone)
+        self.replay(session, load=True)
+
+    def test_original_graveyard_library_target_revalidates_after_creeper_response(self):
+        session = self.session(338013)
+        source = self.add(session.engine, "Barkform Harvester")
+        target = self.add(session.engine, "Generic Bound Body", zone="graveyard")
+        remover = self.add(session.engine, "Crypt Creeper", seat="B")
+        self.assert_whole_admission(session, source.printed_name)
+        self.assert_whole_admission(session, remover.printed_name)
+        action = self.ready(session, source, {"C": 2}, "graveyard")
+        self.checkpoint(session)
+        accepted = session.act("pilot:A", {"action_id": action["id"], "targets": [target.ref], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertTrue(session.act("pilot:A", {"action_id": "pass"}).ok)
+        actions = session.packet("pilot:B", full=True)["decision"]["ctx"]["legal"]["actions"]
+        action = next(action for action in actions if action["id"].startswith("activate:" + remover.ref + ":"))
+        response = session.act("pilot:B", {"action_id": action["id"], "targets": [target.ref], "pay": "auto"})
+        self.assertTrue(response.ok, response.summary)
+        self.resolve(session)
+        self.assertEqual("exile", session.state.cards[target.object_id].zone)
+        self.assertNotIn(target.object_id, session.state.players["A"].zones["library"])
+        self.assertEqual("graveyard", session.state.cards[remover.object_id].zone)
+        self.assertEqual(0, session.state.players["A"].mana_pool.get("C", 0))
+        self.replay(session, load=True)
+
+
 if __name__ == "__main__":
     unittest.main()
