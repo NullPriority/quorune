@@ -146,6 +146,31 @@ class FixedOptionalManaPaymentCompilerTests(unittest.TestCase):
         self.assertEqual(2, wrapper["cost"]["GENERIC"])
         self.assertIsNone(ir.faces[0].nodes[0].target_schema)
 
+    def test_paid_counter_result_is_not_a_free_optional_counter_choice(self):
+        # CR 118.12 and 122.1: a paid counter result is conditional on paying
+        # its mana price; choosing to place a counter alone does not pay it.
+        cases = (
+            ("Whenever you gain life, you may pay {W}. If you do, put a +1/+1 counter on target creature.", "$target.0"),
+            ("Whenever another artifact you control enters, you may pay {1}. If you do, put a +1/+1 counter on this creature.", "$source.zone_object"),
+        )
+        for text, recipient in cases:
+            with self.subTest(text=text):
+                ir = self.compile(text)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                wrapper = ir.faces[0].nodes[0].effects[0]
+                self.assertEqual(OPTIONAL_MANA_PAYMENT_OPERATION, wrapper["op"])
+                self.assertEqual("$controller", wrapper["player"])
+                self.assertEqual(recipient, wrapper["effects"][0]["card"])
+                self.assertEqual("place_counters", wrapper["effects"][0]["op"])
+
+    def test_paid_counter_carrier_omission_mutant_is_killed(self):
+        text = "Whenever you gain life, you may pay {W}. If you do, put a +1/+1 counter on target creature."
+        self.assertEqual("exact", self.compile(text).status)
+        with mock.patch("quorune.compiler.fixed_counter_trigger_nodes.fixed_counter_event_trigger_node", return_value=None):
+            mutant = self.compile(text)
+        self.assertNotEqual("exact", mutant.status)
+        self.assertTrue(mutant.material_residuals)
+
     def test_bound_payment_nested_variable_and_reflexive_forms_remain_residual(self):
         bodies = (
             "you may pay {X}. If you do, it gains flying until end of turn.",
@@ -1282,6 +1307,60 @@ class BoundEventPaymentRuntimeTests(unittest.TestCase):
         self.assertTrue(declined.ok, declined.summary)
         self.resolve(session)
         self.assertNotIn("Flying", session.engine._effective_card_data(session.state.cards[source.object_id])["keywords"])
+        self.replay(session, load=True)
+
+    def test_original_steward_selects_target_before_paid_counter_result_and_replays(self):
+        from quorune.record import authoritative_state_hash
+        for pay in (True, False):
+            with self.subTest(pay=pay):
+                session = self.session(333020 + int(pay))
+                engine = session.engine
+                self.add(engine, "Serene Steward")
+                target = self.add(engine, "Generic Entering Artifact Body", seat="B")
+                spell = self.add(engine, "Generic Payment Life Gain", zone="hand")
+                self.assert_whole_admission(session, "Serene Steward")
+                life_before = session.state.players["A"].life
+                action = self.ready(session, spell, {"G": 1, "W": 1})
+                self.checkpoint(session)
+                self.assertTrue(session.act("pilot:A", {"action_id": action["id"], "pay": "auto"}).ok)
+                self.assertEqual("semantic.target", self.resolve(session).kind)
+                self.assertEqual(life_before + 1, session.state.players["A"].life)
+                self.assertEqual(1, session.state.players["A"].mana_pool.get("W", 0))
+                before = authoritative_state_hash(session.state)
+                denied = session.act("pilot:B", {"action_id": "choose", "targets": [target.ref]})
+                self.assertFalse(denied.ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+                selected = session.act("pilot:A", {"action_id": "choose", "targets": [target.ref]})
+                self.assertTrue(selected.ok, selected.summary)
+                self.resolve(session)
+                self.assertEqual(0, session.state.cards[target.object_id].counters.get("+1/+1", 0))
+                for seat in "BCD":
+                    self.assertIsNone(session.packet("pilot:" + seat, full=True)["decision"])
+                session = self.replay(session, load=True)
+                paid = session.act("pilot:A", {"action_id": "choose", "pay": pay})
+                self.assertTrue(paid.ok, paid.summary)
+                self.resolve(session)
+                self.assertEqual(int(pay), session.state.cards[target.object_id].counters.get("+1/+1", 0))
+                self.assertEqual(0 if pay else 1, session.state.players["A"].mana_pool.get("W", 0))
+                self.replay(session, load=True)
+
+    def test_original_pangolin_payment_places_one_source_counter_and_replays(self):
+        session = self.session(333030)
+        engine = session.engine
+        source = self.add(engine, "Oreplate Pangolin")
+        entering = self.add(engine, "Generic Entering Artifact Body", zone="hand")
+        self.assert_whole_admission(session, source.printed_name)
+        action = self.ready(session, entering, {"C": 3})
+        self.checkpoint(session)
+        self.assertTrue(session.act("pilot:A", {"action_id": action["id"], "pay": "auto"}).ok)
+        self.resolve(session)
+        self.assertEqual(0, session.state.cards[source.object_id].counters.get("+1/+1", 0))
+        session = self.replay(session, load=True)
+        paid = session.act("pilot:A", {"action_id": "choose", "pay": True})
+        self.assertTrue(paid.ok, paid.summary)
+        self.resolve(session)
+        self.assertEqual(1, session.state.cards[source.object_id].counters.get("+1/+1", 0))
+        self.assertEqual(0, session.state.players["A"].mana_pool.get("C", 0))
         self.replay(session, load=True)
 
     def test_original_mirrorworks_paid_entry_creates_exact_copy_and_replays(self):

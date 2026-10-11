@@ -601,7 +601,11 @@ nothing. Normalized trigger bodies retain their bound result references inside
 the payment wrapper: source characteristic changes use the triggering source's
 logical incarnation, and entering-object token copies use the sealed event
 object and its current or last-known copiable information. A returned source
-incarnation receives no characteristic change from the old trigger. Variable,
+incarnation receives no characteristic change from the old trigger. A paid
+counter result retains the mana-payment wrapper; the counter-trigger compiler
+does not interpret `you may pay` as a free optional counter-placement choice.
+Placement targets are chosen before the resolving payment, and decline places
+no counters. Variable,
 hybrid, Phyrexian, snow, zero, restricted, and nonmana
 costs, reflexive `when you do` forms, nested or repeated choices, linked
 results, and multi-effect or independently inexact bodies remain residual.

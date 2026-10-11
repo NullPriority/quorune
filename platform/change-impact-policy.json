@@ -3173,6 +3173,7 @@
       "id": "bound-event-optional-payment-contract",
       "patterns": [
         "quorune/compiler/optional_payment_templates.py",
+        "quorune/compiler/fixed_counter_trigger_nodes.py",
         "quorune/compiler/trigger_result_templates.py",
         "quorune/compiler/fixed_target_effect_sequences.py",
         "tests/fixtures/binding-aware-event-payments.json"

@@ -1246,7 +1246,7 @@ def fixed_counter_event_trigger_node(
     ):
         return None
     optional_match = re.fullmatch(
-        r"you may (?P<body>.+)",
+        r"you may (?P<body>(?!pay\b).+)",
         binding.body,
         re.IGNORECASE,
     )

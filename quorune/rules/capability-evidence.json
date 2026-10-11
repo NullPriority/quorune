@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "registry_fingerprint": "57ea40f7fdf7fff7812a2d8e4bccbd45879b67c51be6fe1ecc08b6d13c6182ea",
-  "declaration_source_fingerprint": "dcbb3c8ce36d6a19eba9b0fc6e6bbd82ebe6846f7ef4953cebf1c5c00f65a7db",
+  "declaration_source_fingerprint": "f9d3de3d8d6d02e3214e812d681dc98dd85224a20ac1733e299cd4b8d08fe84e",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -57578,6 +57578,50 @@
     {
       "capability_id": "effect.choice.optional_fixed_mana_payment",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.BoundEventPaymentRuntimeTests.test_original_pangolin_payment_places_one_source_counter_and_replays",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "201.5",
+        "400.7",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Oreplate Pangolin observes an accepted artifact cast and pays the remaining generic mana before placing one counter on its particular source; pending and final save/load and pre-cast replay agree."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.BoundEventPaymentRuntimeTests.test_original_steward_selects_target_before_paid_counter_result_and_replays",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "201.5",
+        "400.7",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Serene Steward observes an actual accepted life-gain spell; its controller chooses an opponent-controlled creature before the private payment. Pay places one counter and decline places none, with wrong-principal rollback and exact pre-cast replay."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_optional_mana_payment_triggers.BoundEventPaymentRuntimeTests.test_paid_attack_result_does_not_affect_reentered_source",
       "official_rule_ids": [
         "109.5",
@@ -57860,6 +57904,28 @@
         "commander_review"
       ],
       "applicability_note": "Remove the compiler production and mutate cost, chooser, field, nesting, and nested-effect boundaries so exact trust disappears."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentCompilerTests.test_paid_counter_carrier_omission_mutant_is_killed",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "201.5",
+        "400.7",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Removing the dedicated counter-trigger carrier kills paid counter admission rather than shifting it into an inappropriate generic body."
     },
     {
       "capability_id": "effect.choice.optional_fixed_mana_payment",
@@ -58172,6 +58238,28 @@
     {
       "capability_id": "effect.choice.optional_fixed_mana_payment",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentCompilerTests.test_paid_counter_result_is_not_a_free_optional_counter_choice",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "201.5",
+        "400.7",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed life-gain and artifact-entry triggers retain the required mana price around their target or particular-source counter placement."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedResolutionPaymentActionTests.test_two_card_payment_published_form_and_command_cardinalities_agree",
       "official_rule_ids": [
         "109.5",
@@ -58278,6 +58366,28 @@
         "commander_review"
       ],
       "applicability_note": "Original Golden Cricket uses accepted four-seat attacks; only the trigger controller receives and can answer the payment decision, wrong-principal input rolls back, and paid or declined results save/load and replay from before attack."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.BoundEventPaymentRuntimeTests.test_original_steward_selects_target_before_paid_counter_result_and_replays",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "201.5",
+        "400.7",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Both original Steward pay and decline branches reconstruct the life event, target choice, payment and final counter state from before the accepted spell cast."
     },
     {
       "capability_id": "effect.choice.optional_fixed_mana_payment",
@@ -101937,5 +102047,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "69f9116e6b0c340acd3bb6ca9887e149505a34a934461ea4ffcab465be5b296b"
+  "fingerprint": "5059c5425d68ac0a8ea9f992e0ee491d4d71df781a571631bbef8260ae51994c"
 }

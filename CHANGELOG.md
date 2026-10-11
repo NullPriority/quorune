@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Distinguish fixed paid counter results from free optional counter placement,
+  retaining target selection, payment-before-placement and exact replay.
+
 - Preserve occurrence-bound source and entering-object references inside fixed
   optional mana payments. Paid source results respect the original incarnation,
   and entering-object copies retain current or last-known copiable information.
