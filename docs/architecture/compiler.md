@@ -176,8 +176,7 @@ This production contains no card names or mechanic-specific runtime behavior.
 controller grammar across spell, triggered, and activated contexts. It requires
 exactly one positive fixed ordinary draw plus one represented fixed controller
 life change, Scry, or private discard of one through four cards, in either
-printed order. The controller-discard leaf exists only inside this complete
-sequence and reuses the affected-player private selection and simultaneous
+printed order. The controller-discard leaf reuses the affected-player private selection and simultaneous
 replacement-aware move owner. Targets, affected-player groups, random or
 optional discards, dynamic quantities, conditional or linked results, and
 larger sequences remain source-spanned residuals or route through a different
@@ -736,8 +735,16 @@ the actual destinations. Spell, triggered, activated, and fixed Choose one
 modal bodies share the descriptor. Random, optional, variable, all-hand,
 revealed or qualified, linked-result, cost, cleanup, and keyword-specific
 discard forms remain source-spanned residuals. A separate controller relation
-permits one through four cards only as a leaf of the closed fixed draw sequence
-described above; standalone controller discards remain outside this owner.
+permits one through four cards as a standalone instruction or as a leaf of the
+closed fixed draw sequence described above. Sealed player-damage and scheduled
+upkeep occurrences can bind an unqualified discard of one through three cards
+to that affected player. The effect actor remains the triggering controller;
+the affected player alone receives the private choice. A separate printed
+controller life result retains its controller recipient. These productions use
+distinct shape-gated capabilities and the existing APNAP choice and zone owners.
+Random or qualified selections, variable quantities and linked discard costs
+remain outside this scope. An insufficient hand discards only available cards;
+an empty hand introduces no mandatory private choice.
 
 `compiler/hand_inspection_templates.py` owns the distinct targeted-hand
 inspection grammar. It preserves public reveal versus controller-only look in

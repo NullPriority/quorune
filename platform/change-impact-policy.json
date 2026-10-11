@@ -393,38 +393,149 @@
     },
     {
       "id": "toughness-combat-assignment-contract",
-      "patterns": ["quorune/toughness_assignment.py", "quorune/toughness_assignment_model.py", "quorune/toughness_assignment_rule.py", "quorune/compiler/toughness_assignment_templates.py", "quorune/rules/toughness_assignment_effect.py", "quorune/rules/closed_effect_program_shapes.py", "tests/fixtures/toughness-assignment-cards.json"],
-      "test_modules": ["test_toughness_assignment", "test_combat_damage_assignment", "test_combat_damage_snapshot", "test_combat_damage_rules", "test_closed_effect_programs", "test_defender_permission", "test_card_program_trust"]
+      "patterns": [
+        "quorune/toughness_assignment.py",
+        "quorune/toughness_assignment_model.py",
+        "quorune/toughness_assignment_rule.py",
+        "quorune/compiler/toughness_assignment_templates.py",
+        "quorune/rules/toughness_assignment_effect.py",
+        "quorune/rules/closed_effect_program_shapes.py",
+        "tests/fixtures/toughness-assignment-cards.json"
+      ],
+      "test_modules": [
+        "test_toughness_assignment",
+        "test_combat_damage_assignment",
+        "test_combat_damage_snapshot",
+        "test_combat_damage_rules",
+        "test_closed_effect_programs",
+        "test_defender_permission",
+        "test_card_program_trust"
+      ]
     },
     {
       "id": "as-unblocked-assignment-contract",
-      "patterns": ["quorune/as_unblocked.py", "quorune/as_unblocked_rule.py", "quorune/compiler/as_unblocked_templates.py", "quorune/rules/as_unblocked_effect.py", "quorune/combat_damage_assignment.py", "quorune/combat_damage_values.py", "quorune/combat_damage_snapshot.py", "quorune/combat_damage_engine_adapter.py", "tests/fixtures/as-unblocked-assignment-cards.json"],
-      "test_modules": ["test_as_unblocked_assignment", "test_combat_damage_assignment", "test_combat_damage_snapshot", "test_combat_damage_sequence", "test_combat_damage_rules", "test_combat_keyword_rules", "test_card_program_trust", "test_choice_forms"]
+      "patterns": [
+        "quorune/as_unblocked.py",
+        "quorune/as_unblocked_rule.py",
+        "quorune/compiler/as_unblocked_templates.py",
+        "quorune/rules/as_unblocked_effect.py",
+        "quorune/combat_damage_assignment.py",
+        "quorune/combat_damage_values.py",
+        "quorune/combat_damage_snapshot.py",
+        "quorune/combat_damage_engine_adapter.py",
+        "tests/fixtures/as-unblocked-assignment-cards.json"
+      ],
+      "test_modules": [
+        "test_as_unblocked_assignment",
+        "test_combat_damage_assignment",
+        "test_combat_damage_snapshot",
+        "test_combat_damage_sequence",
+        "test_combat_damage_rules",
+        "test_combat_keyword_rules",
+        "test_card_program_trust",
+        "test_choice_forms"
+      ]
     },
     {
       "id": "power-up-activation-contract",
-      "patterns": ["quorune/power_up.py", "quorune/power_up_model.py", "quorune/compiler/power_up_templates.py", "quorune/activated_ability_descriptor.py", "quorune/activation_usage.py", "quorune/activation_mana_cost.py", "tests/fixtures/power-up-cards.json"],
-      "test_modules": ["test_power_up", "test_query_scaled_counters", "test_complex_activation_mana_costs", "test_fixed_source_effect_sequences", "test_activated_abilities", "test_card_program_trust", "test_casting_activation_proposal_equivalence"]
+      "patterns": [
+        "quorune/power_up.py",
+        "quorune/power_up_model.py",
+        "quorune/compiler/power_up_templates.py",
+        "quorune/activated_ability_descriptor.py",
+        "quorune/activation_usage.py",
+        "quorune/activation_mana_cost.py",
+        "tests/fixtures/power-up-cards.json"
+      ],
+      "test_modules": [
+        "test_power_up",
+        "test_query_scaled_counters",
+        "test_complex_activation_mana_costs",
+        "test_fixed_source_effect_sequences",
+        "test_activated_abilities",
+        "test_card_program_trust",
+        "test_casting_activation_proposal_equivalence"
+      ]
     },
     {
       "id": "query-scaled-counter-contract",
-      "patterns": ["quorune/compiler/public_query_effect_amounts.py", "quorune/compiler/query_counter_sequences.py", "quorune/compiler/effect_template_composition.py", "quorune/abilities.py", "tests/fixtures/query-scaled-counter-cards.json"],
-      "test_modules": ["test_query_scaled_counters", "test_public_query_effect_amounts", "test_closed_effect_programs", "test_bound_effect_programs", "test_activated_abilities", "test_counter_placement_events", "test_card_program_trust"]
+      "patterns": [
+        "quorune/compiler/public_query_effect_amounts.py",
+        "quorune/compiler/query_counter_sequences.py",
+        "quorune/compiler/effect_template_composition.py",
+        "quorune/abilities.py",
+        "tests/fixtures/query-scaled-counter-cards.json"
+      ],
+      "test_modules": [
+        "test_query_scaled_counters",
+        "test_public_query_effect_amounts",
+        "test_closed_effect_programs",
+        "test_bound_effect_programs",
+        "test_activated_abilities",
+        "test_counter_placement_events",
+        "test_card_program_trust"
+      ]
     },
     {
       "id": "defender-permission-contract",
-      "patterns": ["quorune/defender.py", "quorune/defender_permission.py", "quorune/compiler/defender_permission_templates.py", "quorune/compiler/closed_static_nodes.py", "quorune/rules/defender_permission_effect.py", "tests/fixtures/defender-permission-cards.json"],
-      "test_modules": ["test_defender_permission", "test_defender_rules", "test_combat_keyword_rules", "test_fixed_public_state_characteristics", "test_combat_declaration_restrictions", "test_card_program_trust", "test_rules_scheduler"]
+      "patterns": [
+        "quorune/defender.py",
+        "quorune/defender_permission.py",
+        "quorune/compiler/defender_permission_templates.py",
+        "quorune/compiler/closed_static_nodes.py",
+        "quorune/rules/defender_permission_effect.py",
+        "tests/fixtures/defender-permission-cards.json"
+      ],
+      "test_modules": [
+        "test_defender_permission",
+        "test_defender_rules",
+        "test_combat_keyword_rules",
+        "test_fixed_public_state_characteristics",
+        "test_combat_declaration_restrictions",
+        "test_card_program_trust",
+        "test_rules_scheduler"
+      ]
     },
     {
       "id": "private-hand-entry-contract",
-      "patterns": ["quorune/compiler/hand_entry_templates.py", "quorune/hand_entry_queries.py", "quorune/hand_entry_move.py", "quorune/semantic_choices/object_selection.py", "quorune/rules/public_zone_move_capability_shapes.py", "tests/fixtures/hand-entry-expansion-cards.json"],
-      "test_modules": ["test_hand_entry_expansion", "test_fixed_public_zone_moves", "test_aura_targeting_entry", "test_riot_rules", "test_card_program_trust", "test_rules_scheduler"]
+      "patterns": [
+        "quorune/compiler/hand_entry_templates.py",
+        "quorune/hand_entry_queries.py",
+        "quorune/hand_entry_move.py",
+        "quorune/semantic_choices/object_selection.py",
+        "quorune/rules/public_zone_move_capability_shapes.py",
+        "tests/fixtures/hand-entry-expansion-cards.json"
+      ],
+      "test_modules": [
+        "test_hand_entry_expansion",
+        "test_fixed_public_zone_moves",
+        "test_aura_targeting_entry",
+        "test_riot_rules",
+        "test_card_program_trust",
+        "test_rules_scheduler"
+      ]
     },
     {
       "id": "linked-exile-return-contract",
-      "patterns": ["quorune/compiler/linked_exile_return_templates.py", "quorune/linked_exile_return.py", "quorune/linked_exile_return_model.py", "quorune/rules/linked_exile_return_shapes.py", "tests/fixtures/linked-exile-return-cards.json"],
-      "test_modules": ["test_linked_exile_return", "test_targeted_exile_effect_clauses", "test_high_risk_interaction_assurance", "test_oracle_ir", "test_fixed_target_reanimation", "test_zone_trigger_events", "test_delayed_triggers", "test_card_program_trust", "test_fixed_optional_effect_choices", "test_rules_scheduler"]
+      "patterns": [
+        "quorune/compiler/linked_exile_return_templates.py",
+        "quorune/linked_exile_return.py",
+        "quorune/linked_exile_return_model.py",
+        "quorune/rules/linked_exile_return_shapes.py",
+        "tests/fixtures/linked-exile-return-cards.json"
+      ],
+      "test_modules": [
+        "test_linked_exile_return",
+        "test_targeted_exile_effect_clauses",
+        "test_high_risk_interaction_assurance",
+        "test_oracle_ir",
+        "test_fixed_target_reanimation",
+        "test_zone_trigger_events",
+        "test_delayed_triggers",
+        "test_card_program_trust",
+        "test_fixed_optional_effect_choices",
+        "test_rules_scheduler"
+      ]
     },
     {
       "id": "fixed-resolution-control-contract",
@@ -455,13 +566,57 @@
     },
     {
       "id": "normalized-tap-state-event-contract",
-      "patterns": ["quorune/compiler/tap_state_event_bindings.py", "quorune/rules/tap_state_event_capability_shapes.py", "quorune/tap_state.py", "quorune/public_tap_state_sets.py", "quorune/untap_step_coordination.py", "tests/fixtures/linked-exile-return-cards.json"],
-      "test_modules": ["test_linked_exile_return", "test_fixed_counter_event_triggers", "test_targeted_tap_state_effect_clauses", "test_untap_step_rules", "test_typed_untap_step_participation", "test_declare_attackers_rules", "test_fixed_activation_tap_costs", "test_ordinary_crew", "test_mana_abilities", "test_game_record_v3", "test_card_program_trust", "test_rules_scheduler", "test_high_risk_interaction_assurance"]
+      "patterns": [
+        "quorune/compiler/tap_state_event_bindings.py",
+        "quorune/rules/tap_state_event_capability_shapes.py",
+        "quorune/tap_state.py",
+        "quorune/public_tap_state_sets.py",
+        "quorune/untap_step_coordination.py",
+        "tests/fixtures/linked-exile-return-cards.json"
+      ],
+      "test_modules": [
+        "test_linked_exile_return",
+        "test_fixed_counter_event_triggers",
+        "test_targeted_tap_state_effect_clauses",
+        "test_untap_step_rules",
+        "test_typed_untap_step_participation",
+        "test_declare_attackers_rules",
+        "test_fixed_activation_tap_costs",
+        "test_ordinary_crew",
+        "test_mana_abilities",
+        "test_game_record_v3",
+        "test_card_program_trust",
+        "test_rules_scheduler",
+        "test_high_risk_interaction_assurance"
+      ]
     },
     {
       "id": "scalar-effect-amount-contract",
-      "patterns": ["quorune/scalar_effect_amount_model.py", "quorune/scalar_effect_amounts.py", "quorune/compiler/scalar_effect_amounts.py", "tests/fixtures/scalar-effect-amount-cards.json"],
-      "test_modules": ["test_scalar_effect_amounts", "test_declared_effect_amounts", "test_public_query_effect_amounts", "test_public_query_action_registration", "test_oracle_ir", "test_fixed_target_effect_sequences", "test_fixed_source_characteristic_effects", "test_temporary_target_interactions", "test_high_risk_interaction_assurance", "test_card_program_trust", "test_zone_trigger_events", "test_fixed_creature_power_damage", "test_mentor_rules", "test_station_rules", "test_targeted_return_to_hand_effect_clauses", "test_delayed_triggers", "test_rules_scheduler"]
+      "patterns": [
+        "quorune/scalar_effect_amount_model.py",
+        "quorune/scalar_effect_amounts.py",
+        "quorune/compiler/scalar_effect_amounts.py",
+        "tests/fixtures/scalar-effect-amount-cards.json"
+      ],
+      "test_modules": [
+        "test_scalar_effect_amounts",
+        "test_declared_effect_amounts",
+        "test_public_query_effect_amounts",
+        "test_public_query_action_registration",
+        "test_oracle_ir",
+        "test_fixed_target_effect_sequences",
+        "test_fixed_source_characteristic_effects",
+        "test_temporary_target_interactions",
+        "test_high_risk_interaction_assurance",
+        "test_card_program_trust",
+        "test_zone_trigger_events",
+        "test_fixed_creature_power_damage",
+        "test_mentor_rules",
+        "test_station_rules",
+        "test_targeted_return_to_hand_effect_clauses",
+        "test_delayed_triggers",
+        "test_rules_scheduler"
+      ]
     },
     {
       "id": "fixed-single-object-reanimation-contract",
@@ -915,11 +1070,11 @@
         "quorune/rules/casting/proposal.py",
         "quorune/rules/casting_additional_costs.py",
         "quorune/selection/exile_cast.py",
-          "quorune/semantic_runtime/cast_lifecycles.py",
-          "quorune/semantic_runtime/zone_replacements.py",
-          "quorune/rules/staged_cast_lifecycles.py",
-          "quorune/stack_resolution.py",
-          "quorune/turn_priority_owner.py",
+        "quorune/semantic_runtime/cast_lifecycles.py",
+        "quorune/semantic_runtime/zone_replacements.py",
+        "quorune/rules/staged_cast_lifecycles.py",
+        "quorune/stack_resolution.py",
+        "quorune/turn_priority_owner.py",
         "quorune/zone_object_state.py",
         "tests/fixtures/fixed-zone-cast-lifecycles.json",
         "tests/test_fixed_zone_cast_lifecycles.py"
@@ -1408,8 +1563,16 @@
     },
     {
       "id": "fixed-mana-registered-dependency-contract",
-      "patterns": ["quorune/compiler/activated_mana_nodes.py", "quorune/fixed_mana_abilities.py", "quorune/semantic_runtime/mana_abilities.py"],
-      "test_modules": ["test_fixed_mana_abilities", "test_fixed_source_characteristic_effects", "test_fixed_token_production"]
+      "patterns": [
+        "quorune/compiler/activated_mana_nodes.py",
+        "quorune/fixed_mana_abilities.py",
+        "quorune/semantic_runtime/mana_abilities.py"
+      ],
+      "test_modules": [
+        "test_fixed_mana_abilities",
+        "test_fixed_source_characteristic_effects",
+        "test_fixed_token_production"
+      ]
     },
     {
       "id": "fixed-resolution-characteristic-effect-contract",
@@ -2030,7 +2193,11 @@
         "quorune/compiler/resolution_effect_templates.py",
         "tests/fixtures/source-reference-closure-cards.json"
       ],
-      "test_modules": ["test_source_references", "test_fixed_source_characteristic_effects", "test_card_program_trust"]
+      "test_modules": [
+        "test_source_references",
+        "test_fixed_source_characteristic_effects",
+        "test_card_program_trust"
+      ]
     },
     {
       "id": "fixed-optional-effect-choice-contract",
@@ -2108,10 +2275,14 @@
         "tests/test_temporary_target_interactions.py"
       ],
       "test_modules": [
-        "test_activated_draw_abilities", "test_card_program_trust",
-        "test_closed_effect_programs", "test_fixed_target_effect_sequences",
-        "test_landwalk", "test_regeneration_rules",
-        "test_rules_scheduler", "test_semantic_choice_characterization",
+        "test_activated_draw_abilities",
+        "test_card_program_trust",
+        "test_closed_effect_programs",
+        "test_fixed_target_effect_sequences",
+        "test_landwalk",
+        "test_regeneration_rules",
+        "test_rules_scheduler",
+        "test_semantic_choice_characterization",
         "test_temporary_target_interactions"
       ]
     },
@@ -2140,23 +2311,58 @@
       ],
       "test_modules": [
         "test_ability_word_event_triggers",
-        "test_capability_evidence", "test_card_program_trust",
+        "test_capability_evidence",
+        "test_card_program_trust",
         "test_counter_qualified_zone_events",
         "test_counter_doubling",
         "test_fixed_counter_placement_effects",
         "test_fixed_multikind_counter_batches",
         "test_exact_mishra_closure",
-        "test_fixed_counter_event_triggers", "test_fixed_counter_zone_triggers",
-        "test_fixed_query_quoted_ability_grants", "test_fixed_token_production", "test_game_record_v3",
-        "test_high_risk_interaction_assurance", "test_qualified_zone_event_queries",
-        "test_rules_scheduler", "test_turn_history_rules", "test_typed_ability_fragments",
+        "test_fixed_counter_event_triggers",
+        "test_fixed_counter_zone_triggers",
+        "test_fixed_query_quoted_ability_grants",
+        "test_fixed_token_production",
+        "test_game_record_v3",
+        "test_high_risk_interaction_assurance",
+        "test_qualified_zone_event_queries",
+        "test_rules_scheduler",
+        "test_turn_history_rules",
+        "test_typed_ability_fragments",
         "test_zone_trigger_events"
       ]
     },
     {
       "id": "controller-program-composition-contract",
-      "patterns": ["quorune/compiler/resolution_condition_templates.py", "quorune/compiler/effect_template_composition.py", "quorune/resolution_conditions.py", "quorune/rules/resolution_condition_shapes.py", "quorune/rules/fixed_effect_clause_shapes.py", "quorune/semantic_choices/resolution_condition.py", "scripts/controller_program_measurement.py", "tests/fixtures/resolution-public-condition-cards.json"],
-      "test_modules": ["test_amass_rules", "test_bolster_rules", "test_bound_effect_programs", "test_card_program_trust", "test_closed_effect_programs", "test_delayed_triggers", "test_fixed_effect_clause_sequences", "test_fixed_optional_effect_choices", "test_fixed_public_state_characteristics", "test_fixed_source_characteristic_effects", "test_fixed_target_effect_sequences", "test_high_risk_interaction_assurance", "test_mechanic_contracts", "test_mill_rules", "test_resolution_public_conditions", "test_rules_scheduler", "test_surveil_rules", "test_targeted_return_to_hand_effect_clauses"]
+      "patterns": [
+        "quorune/compiler/resolution_condition_templates.py",
+        "quorune/compiler/effect_template_composition.py",
+        "quorune/resolution_conditions.py",
+        "quorune/rules/resolution_condition_shapes.py",
+        "quorune/rules/fixed_effect_clause_shapes.py",
+        "quorune/semantic_choices/resolution_condition.py",
+        "scripts/controller_program_measurement.py",
+        "tests/fixtures/resolution-public-condition-cards.json"
+      ],
+      "test_modules": [
+        "test_amass_rules",
+        "test_bolster_rules",
+        "test_bound_effect_programs",
+        "test_card_program_trust",
+        "test_closed_effect_programs",
+        "test_delayed_triggers",
+        "test_fixed_effect_clause_sequences",
+        "test_fixed_optional_effect_choices",
+        "test_fixed_public_state_characteristics",
+        "test_fixed_source_characteristic_effects",
+        "test_fixed_target_effect_sequences",
+        "test_high_risk_interaction_assurance",
+        "test_mechanic_contracts",
+        "test_mill_rules",
+        "test_resolution_public_conditions",
+        "test_rules_scheduler",
+        "test_surveil_rules",
+        "test_targeted_return_to_hand_effect_clauses"
+      ]
     },
     {
       "id": "bound-effect-program-contract",
@@ -2170,12 +2376,19 @@
         "tests/test_bound_effect_programs.py"
       ],
       "test_modules": [
-        "test_activated_draw_abilities", "test_bound_effect_programs",
-        "test_card_program_trust", "test_closed_effect_programs",
-        "test_fixed_affected_player_discards", "test_fixed_controller_effect_sequences", "test_fixed_counter_event_triggers",
-        "test_fixed_effect_clause_sequences", "test_fixed_target_effect_sequences",
-        "test_high_risk_interaction_assurance", "test_rules_scheduler",
-        "test_semantic_choice_characterization", "test_temporary_target_interactions"
+        "test_activated_draw_abilities",
+        "test_bound_effect_programs",
+        "test_card_program_trust",
+        "test_closed_effect_programs",
+        "test_fixed_affected_player_discards",
+        "test_fixed_controller_effect_sequences",
+        "test_fixed_counter_event_triggers",
+        "test_fixed_effect_clause_sequences",
+        "test_fixed_target_effect_sequences",
+        "test_high_risk_interaction_assurance",
+        "test_rules_scheduler",
+        "test_semantic_choice_characterization",
+        "test_temporary_target_interactions"
       ]
     },
     {
@@ -2936,6 +3149,24 @@
         "test_player_target_protection",
         "test_rules_scheduler",
         "test_reusable_pieces"
+      ]
+    },
+    {
+      "id": "fixed-context-player-discard-contract",
+      "patterns": [
+        "quorune/compiler/affected_player_discard_templates.py",
+        "quorune/compiler/trigger_result_templates.py",
+        "quorune/compiler/scheduled_player_triggers.py",
+        "quorune/rules/affected_player_discard_capability_shapes.py",
+        "quorune/rules/affected_player_choice_coverage.py",
+        "quorune/rules/scheduled_player_shapes.py",
+        "tests/fixtures/fixed-context-discard-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_affected_player_discards",
+        "test_fixed_controller_effect_sequences",
+        "test_scheduled_player_triggers",
+        "test_card_program_trust"
       ]
     }
   ],

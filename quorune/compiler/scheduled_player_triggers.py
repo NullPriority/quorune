@@ -7,6 +7,10 @@ import re
 
 from .fixed_public_event_trigger_bindings import FixedPublicEventBindingSpec
 from .fixed_controller_effect_sequences import _clauses
+from .affected_player_discard_templates import (
+    FIXED_CONTEXT_PLAYER_DISCARD_MECHANIC,
+    FIXED_CONTROLLER_DISCARD_MECHANIC,
+)
 
 SCHEDULED_PLAYER_CAPABILITY = 'trigger.event.scheduled_player_result'
 SCHEDULED_PLAYER_MECHANIC = 'scheduled-player-event-result'
@@ -42,20 +46,34 @@ def scheduled_player_result(binding, body, *, effect_template, card_name):
             *(m for m in mechanics if m!='cr-115-targets'),SCHEDULED_PLAYER_MECHANIC)))),True
     if not re.match(r'(?:that player|they)\b',body,re.I):return None
     normalized=re.sub(r'\b(?:that player|they)\b','you',body,flags=re.I)
-    normalized=re.sub(r'\b(loses|gains|draws|mills)\b',lambda m:m[0][:-1],normalized,flags=re.I)
+    normalized=re.sub(r'\b(loses|gains|draws|mills|discards)\b',lambda m:m[0][:-1],normalized,flags=re.I)
     template,effects,schema,mechanics=effect_template(normalized,card_name=card_name)
     if template is None or schema is not None or not 1<=len(effects)<=2:return None
     clauses = _clauses(body) if len(effects) == 2 else (body,)
     if clauses is None or len(clauses) != len(effects):return None
     results=[]
+    result_mechanics=[]
     player = '$context.player'
     for clause, effect in zip(clauses, effects):
-        if effect.get('op') not in {'life','lose_life','draw','mill'} or effect.get('player')!='$controller':return None
+        discard = effect.get('op') == 'choose_cards_apnap'
+        if discard:
+            if effect.get('actor') != '$controller' or effect.get('players') != ['$controller']:
+                return None
+        elif effect.get('op') not in {'life','lose_life','draw','mill'} or effect.get('player')!='$controller':return None
         subject = re.match(r'(that player|they|you)\b', clause, re.I)
         if subject is not None:
             player = '$controller' if subject[1].casefold() == 'you' else '$context.player'
-        elif not re.match(r'(?:loses?|gains?|draws?|mills?)\b', clause, re.I):
+        elif not re.match(r'(?:loses?|gains?|draws?|mills?|discards?)\b', clause, re.I):
             return None
-        result=deepcopy(dict(effect));result['player']=player;results.append(result)
+        result=deepcopy(dict(effect))
+        if discard:
+            if player == '$context.player' and effect.get('count') not in {1, 2, 3}:
+                return None
+            result['players']=[player]
+            result_mechanics.append(FIXED_CONTEXT_PLAYER_DISCARD_MECHANIC if player == '$context.player' else FIXED_CONTROLLER_DISCARD_MECHANIC)
+        else:
+            result['player']=player
+        results.append(result)
     return ('scheduled-player-fixed-result-v1',tuple(results),None,tuple(dict.fromkeys((
-        *(m for m in mechanics if m!='fixed-controller-effect-sequence'),SCHEDULED_PLAYER_MECHANIC)))),True
+        *(m for m in mechanics if m not in {'fixed-controller-effect-sequence', 'closed-effect-program', 'bound-effect-program', FIXED_CONTROLLER_DISCARD_MECHANIC}),
+        *result_mechanics,SCHEDULED_PLAYER_MECHANIC)))),True

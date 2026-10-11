@@ -51,6 +51,8 @@ from .affected_player_sacrifice_capability_shapes import (
 )
 from .affected_player_discard_capability_shapes import (
     fixed_affected_player_discard_node_capabilities,
+    fixed_controller_discard_node_capabilities,
+    fixed_context_player_discard_node_capabilities,
 )
 from .entry_return_capability_shapes import fixed_entry_return_node_capabilities
 from .node_capability_shapes import (
@@ -1077,6 +1079,8 @@ def _targeted_effect_capabilities(
         fixed_next_turn_draw_node_capabilities,
         fixed_draw_node_capabilities,
         fixed_affected_player_discard_node_capabilities,
+        fixed_controller_discard_node_capabilities,
+        fixed_context_player_discard_node_capabilities,
         fixed_affected_player_sacrifice_node_capabilities,
         fixed_entry_return_node_capabilities,
         fixed_mill_node_capabilities, tap_state_event_player_node_capabilities, scheduled_player_node_capabilities,

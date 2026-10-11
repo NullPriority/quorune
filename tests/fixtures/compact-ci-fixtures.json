@@ -47,6 +47,7 @@
     "tests/fixtures/extort-cards.json",
     "tests/fixtures/fading-cards.json",
     "tests/fixtures/fixed-battlefield-query-characteristics-cards.json",
+    "tests/fixtures/fixed-context-discard-cards.json",
     "tests/fixtures/fixed-control-effects.json",
     "tests/fixtures/fixed-counter-keyword-activations.json",
     "tests/fixtures/fixed-effect-clause-sequence-cards.json",

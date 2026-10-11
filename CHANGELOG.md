@@ -11,6 +11,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Lower fixed controller and occurrence-bound player discards through the
+  existing private APNAP selection owner. Keep trigger control separate from
+  the affected player's choice and retain untargeted resolution and replay.
+
 - Align legacy compiler consumers with admitted commander, loyalty mana,
   shared-color prevention, Prototype, Split Second and Graft productions.
   Preserve explicit unsupported boundaries and add original-card interaction

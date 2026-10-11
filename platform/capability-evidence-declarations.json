@@ -8428,6 +8428,248 @@
       "applicability_note": "Replay the accepted typed graveyard cast through the ordinary command journal to the same final state."
     },
     {
+      "capability_id": "choice.affected_player.fixed_controller_discard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_affected_player_discards.ContextDiscardRuntimeTests.test_context_discard_runtime_is_private_principal_correct_and_replays",
+      "official_rule_ids": [
+        "101.4",
+        "109.5",
+        "603.3a",
+        "608.2c",
+        "609.3",
+        "701.9",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Standalone fixed controller discards of one through four unqualified cards reuse the affected-player private choice and replacement-aware simultaneous discard owner."
+    },
+    {
+      "capability_id": "choice.affected_player.fixed_controller_discard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_affected_player_discards.ContextDiscardRuntimeTests.test_controller_discard_uses_short_hand_and_skips_empty_hand",
+      "official_rule_ids": [
+        "101.4",
+        "109.5",
+        "603.3a",
+        "608.2c",
+        "609.3",
+        "701.9",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Standalone fixed controller discards of one through four unqualified cards reuse the affected-player private choice and replacement-aware simultaneous discard owner."
+    },
+    {
+      "capability_id": "choice.affected_player.fixed_controller_discard",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_affected_player_discards.ContextDiscardRuntimeTests.test_context_discard_runtime_is_private_principal_correct_and_replays",
+      "official_rule_ids": [
+        "101.4",
+        "109.5",
+        "603.3a",
+        "608.2c",
+        "609.3",
+        "701.9",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Standalone fixed controller discards of one through four unqualified cards reuse the affected-player private choice and replacement-aware simultaneous discard owner."
+    },
+    {
+      "capability_id": "choice.affected_player.fixed_controller_discard",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_affected_player_discards.ContextDiscardRuntimeTests.test_controller_discard_uses_short_hand_and_skips_empty_hand",
+      "official_rule_ids": [
+        "101.4",
+        "109.5",
+        "603.3a",
+        "608.2c",
+        "609.3",
+        "701.9",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Standalone fixed controller discards of one through four unqualified cards reuse the affected-player private choice and replacement-aware simultaneous discard owner."
+    },
+    {
+      "capability_id": "choice.affected_player.fixed_controller_discard",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_affected_player_discards.FixedAffectedPlayerDiscardCompilerTests.test_context_discard_scope_and_shape_boundaries_fail_closed",
+      "official_rule_ids": [
+        "101.4",
+        "109.5",
+        "603.3a",
+        "608.2c",
+        "609.3",
+        "701.9",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The exact compiler/shape boundary witness removes each producer and rejects malformed actor, context player, count and private-selection shapes; the original action witnesses establish execution and replay separately."
+    },
+    {
+      "capability_id": "choice.affected_player.fixed_controller_discard",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_affected_player_discards.FixedAffectedPlayerDiscardCompilerTests.test_context_discard_scope_and_shape_boundaries_fail_closed",
+      "official_rule_ids": [
+        "101.4",
+        "109.5",
+        "603.3a",
+        "608.2c",
+        "609.3",
+        "701.9",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Standalone fixed controller discards of one through four unqualified cards reuse the affected-player private choice and replacement-aware simultaneous discard owner."
+    },
+    {
+      "capability_id": "choice.affected_player.fixed_controller_discard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_affected_player_discards.FixedAffectedPlayerDiscardCompilerTests.test_standalone_controller_discard_uses_private_affected_player_choice",
+      "official_rule_ids": [
+        "101.4",
+        "109.5",
+        "603.3a",
+        "608.2c",
+        "609.3",
+        "701.9",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Standalone fixed controller discards of one through four unqualified cards reuse the affected-player private choice and replacement-aware simultaneous discard owner."
+    },
+    {
+      "capability_id": "choice.affected_player.fixed_controller_discard",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_affected_player_discards.ContextDiscardRuntimeTests.test_context_discard_runtime_is_private_principal_correct_and_replays",
+      "official_rule_ids": [
+        "101.4",
+        "109.5",
+        "603.3a",
+        "608.2c",
+        "609.3",
+        "701.9",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Standalone fixed controller discards of one through four unqualified cards reuse the affected-player private choice and replacement-aware simultaneous discard owner."
+    },
+    {
+      "capability_id": "choice.affected_player.fixed_controller_discard",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_affected_player_discards.ContextDiscardRuntimeTests.test_controller_discard_uses_short_hand_and_skips_empty_hand",
+      "official_rule_ids": [
+        "101.4",
+        "109.5",
+        "603.3a",
+        "608.2c",
+        "609.3",
+        "701.9",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Standalone fixed controller discards of one through four unqualified cards reuse the affected-player private choice and replacement-aware simultaneous discard owner."
+    },
+    {
+      "capability_id": "choice.affected_player.fixed_controller_discard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_affected_player_discards.ContextDiscardRuntimeTests.test_context_discard_runtime_is_private_principal_correct_and_replays",
+      "official_rule_ids": [
+        "101.4",
+        "109.5",
+        "603.3a",
+        "608.2c",
+        "609.3",
+        "701.9",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Standalone fixed controller discards of one through four unqualified cards reuse the affected-player private choice and replacement-aware simultaneous discard owner."
+    },
+    {
+      "capability_id": "choice.affected_player.fixed_controller_discard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_affected_player_discards.ContextDiscardRuntimeTests.test_controller_discard_uses_short_hand_and_skips_empty_hand",
+      "official_rule_ids": [
+        "101.4",
+        "109.5",
+        "603.3a",
+        "608.2c",
+        "609.3",
+        "701.9",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Standalone fixed controller discards of one through four unqualified cards reuse the affected-player private choice and replacement-aware simultaneous discard owner."
+    },
+    {
       "capability_id": "choice.affected_player.fixed_discard",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_affected_player_discards.FixedAffectedPlayerDiscardRuntimeTests.test_discard_choice_resumes_following_typed_effect",
@@ -49859,6 +50101,336 @@
       "official_rule_ids": ["101.4", "603.3", "603.3b", "603.3d"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay a waiting untap trigger that is put on the stack before upkeep priority."
+    },
+    {
+      "capability_id": "trigger.result.fixed_context_player_discard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_affected_player_discards.ContextDiscardRuntimeTests.test_mixed_upkeep_discards_for_active_player_and_gains_for_controller",
+      "official_rule_ids": [
+        "101.4",
+        "109.5",
+        "603.3a",
+        "608.2c",
+        "609.3",
+        "701.9",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed untargeted discards of one through three cards bind the affected player from a sealed upkeep or normalized player-damage occurrence while retaining the trigger controller as effect actor."
+    },
+    {
+      "capability_id": "trigger.result.fixed_context_player_discard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_affected_player_discards.ContextDiscardRuntimeTests.test_original_mists_upkeep_discard_retains_affected_player_and_replays",
+      "official_rule_ids": [
+        "101.4",
+        "109.5",
+        "603.3a",
+        "608.2c",
+        "609.3",
+        "701.9",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed untargeted discards of one through three cards bind the affected player from a sealed upkeep or normalized player-damage occurrence while retaining the trigger controller as effect actor."
+    },
+    {
+      "capability_id": "trigger.result.fixed_context_player_discard",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_affected_player_discards.ContextDiscardRuntimeTests.test_original_specter_combat_discard_ignores_player_shroud_and_replays",
+      "official_rule_ids": [
+        "101.4",
+        "109.5",
+        "603.3a",
+        "608.2c",
+        "609.3",
+        "701.9",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed untargeted discards of one through three cards bind the affected player from a sealed upkeep or normalized player-damage occurrence while retaining the trigger controller as effect actor."
+    },
+    {
+      "capability_id": "trigger.result.fixed_context_player_discard",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_affected_player_discards.ContextDiscardRuntimeTests.test_mixed_upkeep_discards_for_active_player_and_gains_for_controller",
+      "official_rule_ids": [
+        "101.4",
+        "109.5",
+        "603.3a",
+        "608.2c",
+        "609.3",
+        "701.9",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed untargeted discards of one through three cards bind the affected player from a sealed upkeep or normalized player-damage occurrence while retaining the trigger controller as effect actor."
+    },
+    {
+      "capability_id": "trigger.result.fixed_context_player_discard",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_affected_player_discards.ContextDiscardRuntimeTests.test_original_mists_upkeep_discard_retains_affected_player_and_replays",
+      "official_rule_ids": [
+        "101.4",
+        "109.5",
+        "603.3a",
+        "608.2c",
+        "609.3",
+        "701.9",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed untargeted discards of one through three cards bind the affected player from a sealed upkeep or normalized player-damage occurrence while retaining the trigger controller as effect actor."
+    },
+    {
+      "capability_id": "trigger.result.fixed_context_player_discard",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_affected_player_discards.ContextDiscardRuntimeTests.test_original_specter_combat_discard_ignores_player_shroud_and_replays",
+      "official_rule_ids": [
+        "101.4",
+        "109.5",
+        "603.3a",
+        "608.2c",
+        "609.3",
+        "701.9",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed untargeted discards of one through three cards bind the affected player from a sealed upkeep or normalized player-damage occurrence while retaining the trigger controller as effect actor."
+    },
+    {
+      "capability_id": "trigger.result.fixed_context_player_discard",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_affected_player_discards.FixedAffectedPlayerDiscardCompilerTests.test_context_discard_scope_and_shape_boundaries_fail_closed",
+      "official_rule_ids": [
+        "101.4",
+        "109.5",
+        "603.3a",
+        "608.2c",
+        "609.3",
+        "701.9",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The exact compiler/shape boundary witness removes each producer and rejects malformed actor, context player, count and private-selection shapes; the original action witnesses establish execution and replay separately."
+    },
+    {
+      "capability_id": "trigger.result.fixed_context_player_discard",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_affected_player_discards.FixedAffectedPlayerDiscardCompilerTests.test_context_discard_scope_and_shape_boundaries_fail_closed",
+      "official_rule_ids": [
+        "101.4",
+        "109.5",
+        "603.3a",
+        "608.2c",
+        "609.3",
+        "701.9",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed untargeted discards of one through three cards bind the affected player from a sealed upkeep or normalized player-damage occurrence while retaining the trigger controller as effect actor."
+    },
+    {
+      "capability_id": "trigger.result.fixed_context_player_discard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_affected_player_discards.FixedAffectedPlayerDiscardCompilerTests.test_combat_damage_discard_preserves_trigger_controller_and_damaged_player",
+      "official_rule_ids": [
+        "101.4",
+        "109.5",
+        "603.3a",
+        "608.2c",
+        "609.3",
+        "701.9",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed untargeted discards of one through three cards bind the affected player from a sealed upkeep or normalized player-damage occurrence while retaining the trigger controller as effect actor."
+    },
+    {
+      "capability_id": "trigger.result.fixed_context_player_discard",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_affected_player_discards.ContextDiscardRuntimeTests.test_mixed_upkeep_discards_for_active_player_and_gains_for_controller",
+      "official_rule_ids": [
+        "101.4",
+        "109.5",
+        "603.3a",
+        "608.2c",
+        "609.3",
+        "701.9",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed untargeted discards of one through three cards bind the affected player from a sealed upkeep or normalized player-damage occurrence while retaining the trigger controller as effect actor."
+    },
+    {
+      "capability_id": "trigger.result.fixed_context_player_discard",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_affected_player_discards.ContextDiscardRuntimeTests.test_original_mists_upkeep_discard_retains_affected_player_and_replays",
+      "official_rule_ids": [
+        "101.4",
+        "109.5",
+        "603.3a",
+        "608.2c",
+        "609.3",
+        "701.9",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed untargeted discards of one through three cards bind the affected player from a sealed upkeep or normalized player-damage occurrence while retaining the trigger controller as effect actor."
+    },
+    {
+      "capability_id": "trigger.result.fixed_context_player_discard",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_affected_player_discards.ContextDiscardRuntimeTests.test_original_specter_combat_discard_ignores_player_shroud_and_replays",
+      "official_rule_ids": [
+        "101.4",
+        "109.5",
+        "603.3a",
+        "608.2c",
+        "609.3",
+        "701.9",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed untargeted discards of one through three cards bind the affected player from a sealed upkeep or normalized player-damage occurrence while retaining the trigger controller as effect actor."
+    },
+    {
+      "capability_id": "trigger.result.fixed_context_player_discard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_affected_player_discards.ContextDiscardRuntimeTests.test_mixed_upkeep_discards_for_active_player_and_gains_for_controller",
+      "official_rule_ids": [
+        "101.4",
+        "109.5",
+        "603.3a",
+        "608.2c",
+        "609.3",
+        "701.9",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed untargeted discards of one through three cards bind the affected player from a sealed upkeep or normalized player-damage occurrence while retaining the trigger controller as effect actor."
+    },
+    {
+      "capability_id": "trigger.result.fixed_context_player_discard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_affected_player_discards.ContextDiscardRuntimeTests.test_original_mists_upkeep_discard_retains_affected_player_and_replays",
+      "official_rule_ids": [
+        "101.4",
+        "109.5",
+        "603.3a",
+        "608.2c",
+        "609.3",
+        "701.9",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed untargeted discards of one through three cards bind the affected player from a sealed upkeep or normalized player-damage occurrence while retaining the trigger controller as effect actor."
+    },
+    {
+      "capability_id": "trigger.result.fixed_context_player_discard",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_affected_player_discards.ContextDiscardRuntimeTests.test_original_specter_combat_discard_ignores_player_shroud_and_replays",
+      "official_rule_ids": [
+        "101.4",
+        "109.5",
+        "603.3a",
+        "608.2c",
+        "609.3",
+        "701.9",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed untargeted discards of one through three cards bind the affected player from a sealed upkeep or normalized player-damage occurrence while retaining the trigger controller as effect actor."
     },
     {"capability_id": "trigger.source.fixed_maintenance", "evidence_class": "interaction", "test_id": "tests.test_source_maintenance.SourceMaintenanceActionTests.test_trusted_avatar_payment_replacement_pending_resumes_once_and_replays", "official_rule_ids": ["118.3", "118.12", "118.12a", "201.5", "400.7", "603.3", "603.3a", "608.2c", "701.21a"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Actual registered printed-card commands preserve full costs, locked trigger controller, original source incarnation and canonical replacement continuations with independent expected results."},
     {"capability_id": "trigger.source.fixed_maintenance", "evidence_class": "interaction", "test_id": "tests.test_source_maintenance.SourceMaintenanceActionTests.test_trusted_granted_maintenance_uses_recipient_after_grant_source_leaves", "official_rule_ids": ["118.3", "118.12", "118.12a", "201.5", "400.7", "603.3", "603.3a", "608.2c", "701.21a"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "The printed global grant creates a recipient-controller trigger with the recipient incarnation, and removal of the granting permanent after placement preserves accepted recipient sacrifice and exact replay."},

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 222,
+  "registry_version": 223,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -10369,14 +10369,14 @@
     },
     {
       "id": "choice.affected_player.fixed_discard",
-      "version": 2,
+      "version": 3,
       "official_rules": ["101.4", "115.1", "608.2b", "608.2c", "701.9", "701.9a", "701.9c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
-        "summary": "Compile and resolve one mandatory fixed affected-player discard, including a controller-only leaf inside the fixed draw sequence, by collecting private hand choices in APNAP order and committing every chosen card through one replacement-aware simultaneous zone transaction.",
-        "inputs": ["one source-spanned target-player, target-opponent, each-player, or each-opponent discard instruction with a fixed count from one through three, or one controller discard of one through four cards inside the closed fixed draw sequence", "one closed hand-zone ObjectQuerySpec", "affected players' private current hands", "stable actor-private card refs", "applicable zone-destination replacements"],
+        "summary": "Compile and resolve one mandatory fixed affected-player discard, including independently shape-gated controller and sealed-event recipient producers, by collecting private hand choices in APNAP order and committing every chosen card through one replacement-aware simultaneous zone transaction.",
+        "inputs": ["one source-spanned fixed discard instruction admitted by its target, group, controller-sequence or independently shape-gated controller/event-recipient producer", "one closed hand-zone ObjectQuerySpec", "affected players' private current hands", "stable actor-private card refs", "applicable zone-destination replacements"],
         "outputs": ["one affected-seat-scoped private choice at a time", "APNAP-ordered collection without early mutation or prior-choice disclosure", "one simultaneous replacement-aware discard commit", "normalized public post-move zone-change and discard events", "exact continuation replay"],
-        "exclusions": ["random, optional, variable, all-hand, half-hand, named-card, type-qualified, revealed-card, or arbitrary-number discards", "controller discards outside the closed two-instruction fixed draw sequence", "effects where another player chooses or observes the discarded cards", "linked discard results and conditional follow-ups outside independently closed sequence grammar", "discard costs, cleanup discards, Ward and Equip costs, Madness, Cycling, and other keyword-specific discard procedures"]
+        "exclusions": ["random, optional, variable, all-hand, half-hand, named-card, type-qualified, revealed-card, or arbitrary-number discards", "controller or event-recipient discards without an independently closed producer", "effects where another player chooses or observes the discarded cards", "linked discard results and conditional follow-ups outside independently closed sequence grammar", "discard costs, cleanup discards, Ward and Equip costs, Madness, Cycling, and other keyword-specific discard procedures"]
       },
       "dependencies": ["zone.change.destination_replacement"],
       "implementation_components": ["quorune.compiler.affected_player_discard_templates.FixedAffectedPlayerDiscardTemplate", "quorune.compiler.affected_player_discard_templates.fixed_affected_player_discard_effect_template", "quorune.compiler.affected_player_discard_templates.fixed_controller_discard_effect_template", "quorune.compiler.fixed_controller_effect_sequences.fixed_controller_effect_sequence_template", "quorune.rules.affected_player_discard_capability_shapes.fixed_affected_player_discard_node_capabilities", "quorune.selection.apnap.ApnapChoiceOwnerMixin", "quorune.semantic_choices.apnap_commit.ApnapObjectCommitHandler", "quorune.semantic_runtime.intents.MoveObjectsSimultaneouslyIntent", "quorune.semantic_choices.preparation_coordination.continue_semantic_preparation", "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously"],
@@ -13992,6 +13992,186 @@
       "dependency_fail_closed_rationale": "Omitting fixed resolution mana capability blocks exact effect admission.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Omitting the registered mana effect fails an actual Dark Ritual cast and final pool.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "choice.affected_player.fixed_controller_discard",
+      "version": 1,
+      "official_rules": [
+        "101.4",
+        "109.5",
+        "603.3a",
+        "608.2c",
+        "609.3",
+        "701.9",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Standalone fixed controller discards of one through four unqualified cards reuse the affected-player private choice and replacement-aware simultaneous discard owner.",
+        "inputs": [
+          "one complete fixed discard instruction",
+          "one explicit controller or event-player relation",
+          "affected player private current hand",
+          "original triggering controller and sealed occurrence context"
+        ],
+        "outputs": [
+          "one affected-seat-scoped private choice at a time",
+          "APNAP-ordered collection without early mutation or prior-choice disclosure",
+          "one simultaneous replacement-aware discard commit",
+          "normalized public post-move zone-change and discard events",
+          "exact continuation replay"
+        ],
+        "exclusions": [
+          "random, qualified, linked-result or variable discards",
+          "discard costs and cleanup",
+          "arbitrary or unsealed context player expressions",
+          "unknown siblings and unsupported event bindings"
+        ]
+      },
+      "dependencies": [
+        "choice.affected_player.fixed_discard"
+      ],
+      "implementation_components": [
+        "quorune.rules.affected_player_discard_capability_shapes.fixed_controller_discard_node_capabilities",
+        "quorune.selection.apnap.ApnapChoiceOwnerMixin",
+        "quorune.semantic_choices.apnap_commit.ApnapObjectCommitHandler",
+        "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously",
+        "quorune.rules.affected_player_discard_capability_shapes.is_closed_fixed_bound_discard_program"
+      ],
+      "positive_tests": [
+        "test_standalone_controller_discard_uses_private_affected_player_choice"
+      ],
+      "negative_tests": [
+        "test_context_discard_scope_and_shape_boundaries_fail_closed"
+      ],
+      "interaction_tests": [
+        "test_context_discard_runtime_is_private_principal_correct_and_replays",
+        "test_controller_discard_uses_short_hand_and_skips_empty_hand"
+      ],
+      "multiplayer_tests": [
+        "test_context_discard_runtime_is_private_principal_correct_and_replays",
+        "test_controller_discard_uses_short_hand_and_skips_empty_hand"
+      ],
+      "privacy_tests": [
+        "test_context_discard_runtime_is_private_principal_correct_and_replays",
+        "test_controller_discard_uses_short_hand_and_skips_empty_hand"
+      ],
+      "replay_tests": [
+        "test_context_discard_runtime_is_private_principal_correct_and_replays",
+        "test_controller_discard_uses_short_hand_and_skips_empty_hand"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Missing the affected-player choice or destination-replacement owner rejects whole-program admission; malformed actors, player references and fixed counts remain closed.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "The exact compiler/shape boundary witness removes each producer and rejects malformed actor, context player, count and private-selection shapes; the original action witnesses establish execution and replay separately.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "trigger.result.fixed_context_player_discard",
+      "version": 1,
+      "official_rules": [
+        "101.4",
+        "109.5",
+        "603.3a",
+        "608.2c",
+        "609.3",
+        "701.9",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Fixed untargeted discards of one through three cards bind the affected player from a sealed upkeep or normalized player-damage occurrence while retaining the trigger controller as effect actor.",
+        "inputs": [
+          "one complete fixed discard instruction",
+          "one explicit controller or event-player relation",
+          "affected player private current hand",
+          "original triggering controller and sealed occurrence context"
+        ],
+        "outputs": [
+          "one affected-seat-scoped private choice at a time",
+          "APNAP-ordered collection without early mutation or prior-choice disclosure",
+          "one simultaneous replacement-aware discard commit",
+          "normalized public post-move zone-change and discard events",
+          "exact continuation replay"
+        ],
+        "exclusions": [
+          "random, qualified, linked-result or variable discards",
+          "discard costs and cleanup",
+          "arbitrary or unsealed context player expressions",
+          "unknown siblings and unsupported event bindings"
+        ]
+      },
+      "dependencies": [
+        "choice.affected_player.fixed_discard"
+      ],
+      "implementation_components": [
+        "quorune.rules.affected_player_discard_capability_shapes.fixed_context_player_discard_node_capabilities",
+        "quorune.selection.apnap.ApnapChoiceOwnerMixin",
+        "quorune.semantic_choices.apnap_commit.ApnapObjectCommitHandler",
+        "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously",
+        "quorune.rules.affected_player_discard_capability_shapes.is_closed_fixed_bound_discard_program"
+      ],
+      "positive_tests": [
+        "test_combat_damage_discard_preserves_trigger_controller_and_damaged_player"
+      ],
+      "negative_tests": [
+        "test_context_discard_scope_and_shape_boundaries_fail_closed"
+      ],
+      "interaction_tests": [
+        "test_original_specter_combat_discard_ignores_player_shroud_and_replays",
+        "test_original_mists_upkeep_discard_retains_affected_player_and_replays",
+        "test_mixed_upkeep_discards_for_active_player_and_gains_for_controller"
+      ],
+      "multiplayer_tests": [
+        "test_original_specter_combat_discard_ignores_player_shroud_and_replays",
+        "test_original_mists_upkeep_discard_retains_affected_player_and_replays",
+        "test_mixed_upkeep_discards_for_active_player_and_gains_for_controller"
+      ],
+      "privacy_tests": [
+        "test_original_specter_combat_discard_ignores_player_shroud_and_replays",
+        "test_original_mists_upkeep_discard_retains_affected_player_and_replays",
+        "test_mixed_upkeep_discards_for_active_player_and_gains_for_controller"
+      ],
+      "replay_tests": [
+        "test_original_specter_combat_discard_ignores_player_shroud_and_replays",
+        "test_original_mists_upkeep_discard_retains_affected_player_and_replays",
+        "test_mixed_upkeep_discards_for_active_player_and_gains_for_controller"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Missing the affected-player choice or destination-replacement owner rejects whole-program admission; malformed actors, player references and fixed counts remain closed.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "The exact compiler/shape boundary witness removes each producer and rejects malformed actor, context player, count and private-selection shapes; the original action witnesses establish execution and replay separately.",
       "blockers": [],
       "status": "trusted"
     }

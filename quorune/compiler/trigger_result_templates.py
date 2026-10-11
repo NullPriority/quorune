@@ -11,6 +11,10 @@ from .fixed_entry_return_requirements import fixed_entry_return_effect_template
 
 
 def binding_effect_template(binding, body: str, *, card_name: str, effect_template):
+    from .affected_player_discard_templates import damage_player_discard_result
+    discard = damage_player_discard_result(binding, body)
+    if discard is not None:
+        return discard
     specialized = fixed_source_combat_growth_effect_template(body, event=binding.event.value, variant=binding.variant)
     if specialized[0] is not None:return specialized,True
     if binding.variant in {'source_attacks','this_creature_blocks','this_creature_becomes_blocked','source_public_tap_state_transition'}:

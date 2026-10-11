@@ -14,6 +14,7 @@ from ..attachment_references import AttachmentReferenceKind
 from .affected_player_discard_templates import (
     fixed_affected_player_discard_effect_template,
 )
+from . import affected_player_discard_templates as _discard
 from .affected_player_sacrifice_templates import (
     fixed_affected_player_sacrifice_effect_template,
 )
@@ -197,6 +198,8 @@ def typed_resolution_effect_template(
     )
     if affected_player_sacrifice is not None:
         return affected_player_sacrifice.compiled()
+    if (controller_discard := _discard.standalone_controller_discard_effect_template(text)) is not None:
+        return controller_discard
     affected_player_discard = fixed_affected_player_discard_effect_template(
         text
     )
