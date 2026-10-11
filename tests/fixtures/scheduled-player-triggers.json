@@ -92,14 +92,14 @@
       "produced_mana": [],
       "released_at": "2004-10-01",
       "toughness": "5",
-      "type_line": "Legendary Creature \u2014 Demon Spirit"
+      "type_line": "Legendary Creature — Demon Spirit"
     },
     {
       "oracle_id": "fixture:opponent-upkeep-loss",
       "name": "Generic Opponent Upkeep Loss",
       "mana_cost": "{W}",
       "cmc": 1,
-      "type_line": "Creature \u2014 Human",
+      "type_line": "Creature — Human",
       "oracle_text": "At the beginning of each opponent's upkeep, that player loses 1 life.",
       "power": "2",
       "toughness": "6",
@@ -212,7 +212,7 @@
       "produced_mana": [],
       "released_at": "2024-01-12",
       "toughness": null,
-      "type_line": "Enchantment \u2014 Aura"
+      "type_line": "Enchantment — Aura"
     },
     {
       "cmc": 1,
@@ -303,6 +303,30 @@
       "released_at": "2007-09-10",
       "toughness": null,
       "type_line": "Artifact"
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000001981",
+      "name": "Generic Mixed Opponent Upkeep Result",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "type_line": "Creature — Human",
+      "oracle_text": "At the beginning of each opponent's upkeep, that player draws a card and you gain 1 life.",
+      "power": "2",
+      "toughness": "6",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Vigilance"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
     }
   ],
   "fixture_kind": "public_exact-list_card_data",

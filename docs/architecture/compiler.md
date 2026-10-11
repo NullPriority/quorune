@@ -33,7 +33,9 @@ damage source references retain their ordinary last known source information.
 
 Scheduled each-player and each-opponent upkeep triggers preserve the trigger
 source's controller separately from the active player. Fixed nontargeted
-draw, life, mill, and damage results bind to the recorded step player. A
+draw, life, mill, and damage results preserve each clause's original subject.
+“That player” and inherited subjects bind to the recorded step player; an
+explicit “you” remains bound to the resolving trigger controller. A
 current enchanted-object controller schedule uses the reciprocal attachment
 and the recipient's controller at discovery. Changing custody later does not
 change the queued result's affected player. Unsupported player roles,

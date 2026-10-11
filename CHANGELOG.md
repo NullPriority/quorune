@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Preserve distinct step-player and trigger-controller recipients in mixed
+  scheduled draw and life results.
+
 - Bind copied and retargeted becomes-target announcements to the selected
   incarnation, preserving stale-target retention without triggering a returned
   permanent.
