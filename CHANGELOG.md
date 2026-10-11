@@ -11,6 +11,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Bind copied and retargeted becomes-target announcements to the selected
+  incarnation, preserving stale-target retention without triggering a returned
+  permanent.
+
 - Preserve explicit sacrifice provenance for Fading and Vanishing cleanup
   through zone replacements, normalized trigger occurrences, and turn history.
 

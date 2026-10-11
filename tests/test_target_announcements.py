@@ -37,7 +37,8 @@ class TargetAnnouncementTests(unittest.TestCase):
         with mock.patch.object(owner, 'target_announcement_binding_spec', return_value=None):
             self.assertNotEqual('exact', compile_oracle_card(record, capability_registry=load_default_capability_registry()).status)
     def test_target_occurrence_pins_stack_controller_and_each_current_object_once(self):
-        rows = [SimpleNamespace(ref=ref, zone='battlefield', phased_out=False, controller='B', logical_object_id=ref + ':1') for ref in ('FIRST', 'SECOND')]
+        rows = [SimpleNamespace(ref=ref, object_id=ref, zone_change_counter=1,
+            zone='battlefield', phased_out=False, controller='B', logical_object_id=ref + ':1') for ref in ('FIRST', 'SECOND')]
         published = []
         host = SimpleNamespace(
             state=SimpleNamespace(cards={row.ref: row for row in rows}),
@@ -45,7 +46,9 @@ class TargetAnnouncementTests(unittest.TestCase):
             _effective_card_data=lambda _card: {'type_line': 'Creature'},
             _dispatch_semantic_event=lambda event, ctx, **kwargs: published.append((event, ctx)),
         )
-        item = SimpleNamespace(ref='STACK', controller='A', kind='spell', targets=['FIRST', 'FIRST', 'SECOND'])
+        item = SimpleNamespace(ref='STACK', controller='A', kind='spell', targets=['FIRST', 'FIRST', 'SECOND'],
+            context={'target_snapshots': {ref: {'ref': ref, 'object_id': ref, 'zone_change_counter': 1}
+                for ref in ('FIRST', 'SECOND')}})
         dispatch_target_announcements(host, item)
         self.assertEqual(['FIRST', 'SECOND'], [ctx['card'] for _, ctx in published])
         self.assertEqual(['A', 'A'], [ctx['stack_controller'] for _, ctx in published])
@@ -58,7 +61,8 @@ class TargetAnnouncementTests(unittest.TestCase):
     def test_current_phased_or_departed_target_creates_no_occurrence(self):
         published = []
         host = SimpleNamespace(state=SimpleNamespace(cards={'ref': SimpleNamespace(ref='FIRST', zone='graveyard', phased_out=False)}), _dispatch_semantic_event=lambda *args, **kwargs: published.append(args))
-        item = SimpleNamespace(ref='STACK', controller='A', kind='spell_copy', targets=['FIRST'])
+        item = SimpleNamespace(ref='STACK', controller='A', kind='spell_copy', targets=['FIRST'],
+            context={'target_snapshots': {'FIRST': {'ref': 'FIRST'}}})
         dispatch_target_announcements(host, item)
         self.assertFalse(published)
         with self.assertRaises(ValueError):
@@ -86,6 +90,8 @@ class TargetAnnouncementActionTests(unittest.TestCase):
             ROOT / 'tests/fixtures/scryfall-exact-lists.json',
             ROOT / 'tests/fixtures/library-search-qualifier-cards.json',
             ROOT / 'tests/fixtures/target-announcements.json',
+            ROOT / 'tests/fixtures/storm-cards.json',
+            ROOT / 'tests/fixtures/partial-copy-targets-cards.json',
         ], path)
         cls.db = CardDatabase(path); cls.registry = load_default_capability_registry()
         cls.deck = DeckDefinition('Target occurrence deck', [DeckEntry('Generic Payment Commander', 1, 'commander'), DeckEntry('Generic Payment Plains', 30)], ['Generic Payment Commander'])
@@ -101,7 +107,8 @@ class TargetAnnouncementActionTests(unittest.TestCase):
         engine.state.priority_player = None; engine.state.priority_passes = []
         names = {'Tethered Skirge', "Shapers' Sanctuary", 'Giant Growth', 'Shock', 'Prodigal Sorcerer',
             'Triton Fortune Hunter', 'Lagonna-Band Trailblazer', 'Tar Pit Warrior', 'Cloudshift',
-            'Air Elemental', 'Llanowar Elves', 'Oran-Rief Recluse', 'Generic Payment Commander', 'Generic Payment Plains'}
+            'Air Elemental', 'Llanowar Elves', 'Oran-Rief Recluse', 'Generic Payment Commander', 'Generic Payment Plains',
+            'Astral Steel', 'Generic Copy Prior Spell Fixture'}
         records = tuple(record for record in self.db.iter_cards() if record.name in names and compile_oracle_card(record, capability_registry=self.registry, capability_profile='commander_review').status == 'exact')
         register_generated_programs(self.db, engine.semantics, records, trust_level='trusted', capability_registry=self.registry, capability_profile='commander_review', promote_exact_runtime_handlers=True, promote_exact_trigger_programs=True, promote_exact_effect_programs=True, promote_exact_capability_declarations=True)
         return session
@@ -139,6 +146,87 @@ class TargetAnnouncementActionTests(unittest.TestCase):
             result = replay_record(path, self.db, verify=True)
         self.assertTrue(result['ok'], {key: value for key, value in result.items() if key != 'events'})
         self.assertEqual(expected, result['final_state_hash'])
+
+    def test_actual_storm_copy_retained_stale_target_never_targets_returned_incarnation(self):
+        for retain in (True, False):
+            with self.subTest(retain=retain):
+                session = self.session(1150220 + int(retain))
+                engine = session.engine
+                victim = self.add(engine, 'Tethered Skirge', ref='RETURNED')
+                prior = self.add(engine, 'Generic Copy Prior Spell Fixture', ref='PRIOR', zone='hand', seat='B')
+                spell_card = self.add(engine, 'Astral Steel', ref='STEEL', zone='hand', seat='B')
+                blink = self.add(engine, 'Cloudshift', ref='BLINK', zone='hand')
+                from quorune.card_programs.adapters import compile_best_available_card_program
+                from quorune.card_programs import bind_card_program_runtime
+                for card in (victim, prior, spell_card, blink):
+                    program = compile_best_available_card_program(self.db, self.db.lookup(card.printed_name),
+                        semantic_registry=engine.semantics, capability_registry=self.registry,
+                        capability_profile='commander_review')
+                    self.assertTrue(bind_card_program_runtime(program, capability_registry=self.registry,
+                        profile='commander_review')['strict_capability_ready'])
+                self.priority(session, 'B', {'G': 4, 'W': 4, 'C': 8})
+                engine.state.players['A'].mana_pool.update({'W': 4})
+                self.checkpoint(session)
+
+                def cast(card, targets=()):
+                    seat = card.controller
+                    for _ in range(8):
+                        if session.state.priority_player == seat:
+                            break
+                        self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
+                    actions = session.packet('pilot:' + seat, full=True)['decision']['legal_actions']
+                    self.assertTrue(any(row['id'] == 'cast:' + card.ref for row in actions))
+                    result = session.act('pilot:' + seat, {'action_id': 'cast:' + card.ref,
+                        'targets': list(targets), 'pay': 'auto'})
+                    self.assertTrue(result.ok, result.summary)
+
+                def resolve_top():
+                    top = session.state.stack[-1].stack_id
+                    for _ in range(16):
+                        if all(item.stack_id != top for item in session.state.stack):
+                            return
+                        if session.state.pending_decision.kind != 'priority':
+                            return
+                        result = session.act(session.pending_principals()[0], {'action_id': 'pass'})
+                        self.assertTrue(result.ok, result.summary)
+                    self.fail('The selected stack object did not resolve')
+
+                cast(prior)
+                self.resolve(session)
+                cast(spell_card, (victim.ref,))
+                original = next(item for item in session.state.stack if item.kind == 'spell')
+                snapshot = deepcopy(original.context['target_snapshots'][victim.ref])
+                old_identity = victim.logical_object_id
+                cast(blink, (victim.ref,))
+                resolve_top()  # The blink's actual becomes-target life-loss trigger.
+                resolve_top()  # Cloudshift leaves and returns the target.
+                self.assertNotEqual(old_identity, victim.logical_object_id)
+                self.assertEqual('battlefield', victim.zone)
+                resolve_top()  # The already-created Storm trigger asks for copy targets.
+                self.assertEqual('semantic.storm', session.state.pending_decision.kind)
+                self.replay(session)
+                with tempfile.TemporaryDirectory() as directory:
+                    path = Path(directory) / 'pending-retained-target'
+                    session.save(path)
+                    session = CommanderSession.load(self.db, path)
+                engine = session.engine
+                current = session.state.cards[victim.object_id]
+                before = authoritative_state_hash(session.state)
+                rejected = session.act('pilot:A', {'action_id': 'choose', 'copy_targets': [[{'retain': 0}]]})
+                self.assertFalse(rejected.ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+                response = {'retain': 0} if retain else {'ref': current.ref}
+                with mock.patch.object(engine, '_dispatch_semantic_event', wraps=engine._dispatch_semantic_event) as dispatch:
+                    accepted = session.act('pilot:B', {'action_id': 'choose', 'copy_targets': [[response]]})
+                self.assertTrue(accepted.ok, accepted.summary)
+                copied = next(item for item in session.state.stack if item.kind == 'spell_copy')
+                if retain:
+                    self.assertEqual(snapshot, copied.context['target_snapshots'][current.ref])
+                events = [call.args[1] for call in dispatch.call_args_list if call.args[0] == 'object.became_target']
+                self.resolve(session)
+                self.assertEqual((38, []) if retain else (37, [current.logical_object_id]),
+                    (session.state.players['A'].life, [event['card_object_identity'] for event in events]))
+                self.replay(session)
 
     def test_actual_targeted_cast_and_ability_each_trigger_once_and_replay(self):
         for mode in ('spell', 'ability'):
@@ -219,6 +307,19 @@ class TargetAnnouncementActionTests(unittest.TestCase):
         self.assertEqual(3, trigger_count())
         engine.retarget_stack_item_intent(RetargetStackItemIntent(actor='B', target_stack_ref=copied.ref, targets=(second.ref,), target_groups=FrozenMap(), source_stack_ref=spell.ref))
         self.assertEqual(3, trigger_count(), 'Keeping the same target is no new target occurrence')
+        old_identity = second.logical_object_id
+        engine.move_card(second.object_id, 'exile', log=False)
+        engine.move_card(second.object_id, 'battlefield', controller='A', log=False)
+        self.assertNotEqual(old_identity, second.logical_object_id)
+        with mock.patch.object(engine, '_dispatch_semantic_event', wraps=engine._dispatch_semantic_event) as dispatch:
+            engine.retarget_stack_item_intent(RetargetStackItemIntent(actor='B', target_stack_ref=copied.ref,
+                targets=(second.ref,), target_groups=FrozenMap(), source_stack_ref=spell.ref))
+        events = [call.args[1] for call in dispatch.call_args_list if call.args[0] == 'object.became_target']
+        self.assertEqual([second.logical_object_id], [event['card_object_identity'] for event in events])
+        self.assertEqual(4, trigger_count(), 'Explicit retargeting selects the new incarnation under the same ref')
+        engine.retarget_stack_item_intent(RetargetStackItemIntent(actor='B', target_stack_ref=copied.ref,
+            targets=(second.ref,), target_groups=FrozenMap(), source_stack_ref=spell.ref))
+        self.assertEqual(4, trigger_count())
 
     def test_pending_target_draw_choice_loads_and_keeps_actor_private(self):
         session = self.session(1150207); engine = session.engine

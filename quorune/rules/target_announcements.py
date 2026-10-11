@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Any, Mapping
+from ..selection.target_query import target_identity_matches_snapshot
 
 
 TARGET_ANNOUNCEMENT_CAPABILITY = 'trigger.event.normalized_target_announcement'
@@ -38,13 +39,22 @@ class TargetAnnouncement:
 
 def dispatch_target_announcements(
     host: Any, item: Any, *, previous_targets: tuple[str, ...] = (),
+    previous_target_snapshots: Mapping[str, Any] | None = None,
     trigger_batch: list[Any] | None = None,
 ) -> None:
     """A stack object targets each new current permanent once per occurrence."""
     previous = set(previous_targets)
+    snapshots = item.context.get('target_snapshots', {})
     for ref in dict.fromkeys(item.targets):
-        if ref in previous:
+        snapshot = snapshots.get(ref) if isinstance(snapshots, Mapping) else None
+        if not isinstance(snapshot, Mapping) or not target_identity_matches_snapshot(host, ref, snapshot):
             continue
+        if ref in previous:
+            if previous_target_snapshots is None:
+                continue
+            old = previous_target_snapshots.get(ref)
+            if isinstance(old, Mapping) and target_identity_matches_snapshot(host, ref, old):
+                continue
         card = next((card for card in host.state.cards.values() if card.ref == ref and
             card.zone == 'battlefield' and not card.phased_out), None)
         if card is None:

@@ -1220,6 +1220,7 @@ class SemanticChoiceIntentHostMixin:
                 "The stack object selected for retargeting no longer exists"
             )
         previous_targets = tuple(target.targets)
+        previous_target_snapshots = target.context.get("target_snapshots", {})
         target.targets = list(intent.targets)
         target.context["target_groups"] = thaw_value(intent.target_groups)
         target.context["target_snapshots"] = {
@@ -1227,7 +1228,8 @@ class SemanticChoiceIntentHostMixin:
         }
         target.context["targets_revalidated"] = False
         from ..rules.target_announcements import dispatch_target_announcements
-        dispatch_target_announcements(self, target, previous_targets=previous_targets)
+        dispatch_target_announcements(self, target, previous_targets=previous_targets,
+            previous_target_snapshots=previous_target_snapshots)
         self._log(
             intent.actor,
             "stack.retarget",

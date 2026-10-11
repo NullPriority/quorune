@@ -91,6 +91,13 @@ remain readable as original-target retention; grouped current-reference
 selections distinguish new targets. Ordinary casting and unrelated retargeting
 receive no copy retention exemption.
 
+Normalized becomes-target occurrences use those committed snapshots as well.
+A retained departed incarnation creates no occurrence on a returned permanent
+with the same public reference. Choosing that returned incarnation explicitly
+does create an occurrence; retargeting compares incarnations before suppressing
+an unchanged-target announcement. Copies retain their own stack occurrence and
+do not publish a cast event.
+
 The current representation fails closed before copy commitment if one
 assignment would require different incarnations sharing the same public
 reference, or if a changed relational assignment requires unavailable current
