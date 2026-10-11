@@ -5778,8 +5778,8 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v312-consolidated-correctness",
-      "compiler_version": "oracle-ir-v312",
+      "transition_id": "oracle-ir-v313-consolidated-correctness",
+      "compiler_version": "oracle-ir-v313",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],

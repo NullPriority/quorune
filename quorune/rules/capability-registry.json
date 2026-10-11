@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 204,
+  "registry_version": 205,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -11757,7 +11757,7 @@
     },
     {
       "id": "trigger.event.scheduled_player_result",
-      "version": 2,
+      "version": 3,
       "official_rules": [
         "109.5",
         "503.1",
@@ -11807,6 +11807,7 @@
       ],
       "negative_tests": [
         "test_unknown_bound_results_and_monarch_schedules_remain_residual",
+        "test_mixed_scheduled_shape_rejects_malformed_second_player",
         "test_bound_player_damage_shape_requires_exact_player_and_positive_amount"
       ],
       "interaction_tests": [

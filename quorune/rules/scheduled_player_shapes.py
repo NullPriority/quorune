@@ -20,7 +20,7 @@ def scheduled_player_node_capabilities(*,effects:Sequence[Mapping[str,Any]],targ
         field,fields,capability=layouts[op]
         reference='target' if op=='damage' else 'player'
         players = {'$context.player'} if op == 'damage' else {'$context.player', '$controller'}
-        if set(effect)!=fields or effect.get(reference) not in players or type(effect.get(field)) is not int:
+        if set(effect)!=fields or type(effect.get(reference)) is not str or effect.get(reference) not in players or type(effect.get(field)) is not int:
             return ()
         if (effect[field]==0 if op=='life' else effect[field]<=0):return ()
         if op=='draw' and effect['private'] is not True:return ()

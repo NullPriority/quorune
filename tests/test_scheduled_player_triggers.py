@@ -50,6 +50,15 @@ class ScheduledPlayerTriggerCompilerTests(unittest.TestCase):
         for changes in ({'target':'$controller'},{'amount':True},{'source':'$target.0'},{'extra':1}):
             self.assertEqual((),scheduled_player_node_capabilities(**{**args,'effects':({**effect,**changes},)}))
 
+    def test_mixed_scheduled_shape_rejects_malformed_second_player(self):
+        from quorune.rules.scheduled_player_shapes import scheduled_player_node_capabilities
+        draw = {'op': 'draw', 'player': '$context.player', 'count': 1, 'private': True}
+        for player in ([], {}, None, True, '$target.0'):
+            with self.subTest(player=player):
+                self.assertEqual((), scheduled_player_node_capabilities(effects=(draw,
+                    {'op': 'life', 'player': player, 'delta': 1}), target_schema=None,
+                    mechanic_ids=('scheduled-player-event-result',)))
+
 
 class ScheduledPlayerTriggerRuntimeTests(unittest.TestCase):
     @classmethod
