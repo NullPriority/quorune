@@ -375,7 +375,7 @@
       },
       "candidate_bundles": [
         {
-          "bundle_id": "bundle:batched-card-support-v330",
+          "bundle_id": "bundle:batched-card-support-v328",
           "member_family_ids": [
             "activated_effect:add-mana",
             "activated_effect:ordered-effect-composition",
@@ -5782,11 +5782,11 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v330-batched-card-support",
+      "transition_id": "oracle-ir-v328-batched-card-support",
       "compiler_version": "oracle-ir-v330",
-      "bundle_id": "bundle:batched-card-support-v330",
+      "bundle_id": "bundle:batched-card-support-v328",
       "candidate_ids": [
-        "bundle:batched-card-support-v330"
+        "bundle:batched-card-support-v328"
       ],
       "family_ids": [
         "activated_effect:add-mana",
@@ -5832,7 +5832,7 @@
         "variant.speed.player",
         "zone.reanimate.fixed_target"
       ],
-      "measurement_id": "measurement:batched-card-support-v330",
+      "measurement_id": "measurement:batched-card-support-v328",
       "non_harvest_reason": null
     },
 

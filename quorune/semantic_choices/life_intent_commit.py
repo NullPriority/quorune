@@ -76,4 +76,3 @@ def apply_life_change_intent(host, intent: LifeChangeIntent) -> int:
     )
     dispatch_life_gain_records(host, committed.records)
     return host.state.players[intent.player].life
-
