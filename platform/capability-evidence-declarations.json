@@ -19342,6 +19342,7 @@
       ],
       "applicability_note": "Original global canonical subtype plural grants use one current set across layer-six keywords and fixed stats, all controllers and source exclusion; actual block legality, private commands and replay preserve authority."
     },
+    {"capability_id":"continuous.resolution.declaration_rules_until_end_of_turn","evidence_class":"interaction","test_id":"tests.test_temporary_declaration_restriction_effects.QualifiedDeclarationRuntimeTests.test_original_tunneler_power_target_revalidates_and_resolved_rule_locks","official_rule_ids":["508.1c","509.1b","611.2c","514.2"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Goblin Tunneler advertises only current power-at-most-two targets and rejects unauthorized activation atomically. Actual Giant Growth before resolution invalidates the target and leaves blocking legal; growth after resolution changes power without removing the locked unblockable rule. Ordinary attack/block commands, principal-private blocker decisions, pending save/load and pre-activation replay distinguish both branches."},
     {
       "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
       "evidence_class": "interaction",
@@ -19366,6 +19367,7 @@
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Preserve source-independent duration after source departure and stop applying the rule to a returned target incarnation."
     },
+    {"capability_id":"continuous.resolution.declaration_rules_until_end_of_turn","evidence_class":"multiplayer","test_id":"tests.test_temporary_declaration_restriction_effects.QualifiedDeclarationRuntimeTests.test_original_tunneler_power_target_revalidates_and_resolved_rule_locks","official_rule_ids":["508.1c","509.1b","611.2c","514.2"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Goblin Tunneler advertises only current power-at-most-two targets and rejects unauthorized activation atomically. Actual Giant Growth before resolution invalidates the target and leaves blocking legal; growth after resolution changes power without removing the locked unblockable rule. Ordinary attack/block commands, principal-private blocker decisions, pending save/load and pre-activation replay distinguish both branches."},
     {
       "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
       "evidence_class": "multiplayer",
@@ -19374,6 +19376,7 @@
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Apply the public restriction consistently in a four-player declaration domain without leaking journal identities."
     },
+    {"capability_id":"continuous.resolution.declaration_rules_until_end_of_turn","evidence_class":"mutation","test_id":"tests.test_temporary_declaration_restriction_effects.QualifiedDeclarationCompilerTests.test_qualified_temporary_rule_missing_authority_and_producer_remain_residual","official_rule_ids":["508.1c","509.1b","611.2c","514.2"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Omitting the shared target producer kills qualified admission through both activation and ordinary result compilation."},
     {
       "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
       "evidence_class": "mutation",
@@ -19390,6 +19393,7 @@
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Refuse source-relative, exception-bearing, and otherwise open declaration-rule grammar at compilation."
     },
+    {"capability_id":"continuous.resolution.declaration_rules_until_end_of_turn","evidence_class":"negative","test_id":"tests.test_temporary_declaration_restriction_effects.QualifiedDeclarationCompilerTests.test_qualified_temporary_rule_missing_authority_and_producer_remain_residual","official_rule_ids":["508.1c","509.1b","611.2c","514.2"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Missing numeric target authority, variable bounds, two-object instructions and other durations remain material."},
     {
       "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
       "evidence_class": "negative",
@@ -19430,6 +19434,7 @@
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Represent source-self and pinned subtype target subjects through the same duration-bound typed operation."
     },
+    {"capability_id":"continuous.resolution.declaration_rules_until_end_of_turn","evidence_class":"positive","test_id":"tests.test_temporary_declaration_restriction_effects.QualifiedDeclarationCompilerTests.test_qualified_temporary_rules_preserve_complete_target_predicates","official_rule_ids":["508.1c","509.1b","611.2c","514.2"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Fixed power, controller, subtype and source-exclusion targets retain the shared direct permanent predicate and its required authority."},
     {
       "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
       "evidence_class": "positive",
@@ -19446,6 +19451,7 @@
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Commit a real compiled source-self rule against the source's exact current battlefield incarnation."
     },
+    {"capability_id":"continuous.resolution.declaration_rules_until_end_of_turn","evidence_class":"privacy","test_id":"tests.test_temporary_declaration_restriction_effects.QualifiedDeclarationRuntimeTests.test_original_tunneler_power_target_revalidates_and_resolved_rule_locks","official_rule_ids":["508.1c","509.1b","611.2c","514.2"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Goblin Tunneler advertises only current power-at-most-two targets and rejects unauthorized activation atomically. Actual Giant Growth before resolution invalidates the target and leaves blocking legal; growth after resolution changes power without removing the locked unblockable rule. Ordinary attack/block commands, principal-private blocker decisions, pending save/load and pre-activation replay distinguish both branches."},
     {
       "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
       "evidence_class": "privacy",
@@ -19454,6 +19460,7 @@
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Keep effect, source, physical, and logical identities authoritative-only while exposing the public legal declaration domain."
     },
+    {"capability_id":"continuous.resolution.declaration_rules_until_end_of_turn","evidence_class":"replay","test_id":"tests.test_temporary_declaration_restriction_effects.QualifiedDeclarationRuntimeTests.test_original_tunneler_power_target_revalidates_and_resolved_rule_locks","official_rule_ids":["508.1c","509.1b","611.2c","514.2"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Goblin Tunneler advertises only current power-at-most-two targets and rejects unauthorized activation atomically. Actual Giant Growth before resolution invalidates the target and leaves blocking legal; growth after resolution changes power without removing the locked unblockable rule. Ordinary attack/block commands, principal-private blocker decisions, pending save/load and pre-activation replay distinguish both branches."},
     {
       "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
       "evidence_class": "replay",
@@ -19470,6 +19477,7 @@
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Round-trip and exactly replay the typed declaration-rule journal entry without consulting Oracle prose."
     },
+    {"capability_id":"continuous.resolution.declaration_rules_until_end_of_turn","evidence_class":"rollback","test_id":"tests.test_temporary_declaration_restriction_effects.QualifiedDeclarationRuntimeTests.test_original_tunneler_power_target_revalidates_and_resolved_rule_locks","official_rule_ids":["508.1c","509.1b","611.2c","514.2"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Goblin Tunneler advertises only current power-at-most-two targets and rejects unauthorized activation atomically. Actual Giant Growth before resolution invalidates the target and leaves blocking legal; growth after resolution changes power without removing the locked unblockable rule. Ordinary attack/block commands, principal-private blocker decisions, pending save/load and pre-activation replay distinguish both branches."},
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
       "evidence_class": "interaction",

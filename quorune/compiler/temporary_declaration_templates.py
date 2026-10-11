@@ -11,6 +11,7 @@ from ..rules.temporary_declaration_restrictions import (
     temporary_declaration_restriction,
 )
 from .creature_subtypes import canonical_creature_subtype
+from .direct_target import DirectPermanentTargetSpec, direct_permanent_target_spec
 
 
 _TARGET_TEMPORARY_DECLARATION_RESTRICTION = re.compile(
@@ -41,6 +42,7 @@ class ActivatedTemporaryDeclarationRestrictionTemplate:
     restriction: TemporaryDeclarationRestrictionKind
     card_reference: str = "$target.0"
     creature_subtype: str | None = None
+    target_spec: DirectPermanentTargetSpec | None = None
 
     def __post_init__(self) -> None:
         temporary_declaration_restriction(self.restriction)
@@ -54,9 +56,14 @@ class ActivatedTemporaryDeclarationRestrictionTemplate:
             raise ValueError(
                 "Temporary declaration creature subtype is unsupported"
             )
+        if self.target_spec is not None and (not isinstance(self.target_spec, DirectPermanentTargetSpec)
+                or self.card_reference != "$target.0" or self.creature_subtype is not None):
+            raise ValueError("Qualified declaration target must be one closed direct permanent query")
 
     @property
     def template_id(self) -> str:
+        if self.target_spec is not None:
+            return f"temporary-target-{self.target_spec.slug}-{self.restriction.replace('_', '-')}-eot-v2"
         subject = (
             "temporary-source"
             if self.card_reference == "$source"
@@ -80,6 +87,8 @@ class ActivatedTemporaryDeclarationRestrictionTemplate:
     def target_schema(self) -> Mapping[str, Any] | None:
         if self.card_reference == "$source":
             return None
+        if self.target_spec is not None:
+            return self.target_spec.to_target_schema()
         schema: dict[str, Any] = {
             "zones": ["battlefield"],
             "categories": ["permanent"],
@@ -146,6 +155,13 @@ def temporary_declaration_restriction_effect_template(
                 "unblockable",
                 creature_subtype=subtype,
             )
+    qualified = re.fullmatch(r"(?P<subject>(?:another )?target .+?) can't "
+        r"(?P<restriction>attack or block|attack|block|be blocked) this turn\.?", normalized, re.I)
+    if qualified is not None:
+        spec = direct_permanent_target_spec(qualified["subject"])
+        if spec is not None:
+            return ActivatedTemporaryDeclarationRestrictionTemplate(
+                _RESTRICTION_KINDS[qualified["restriction"].casefold()], target_spec=spec)
     if not allow_source:
         return None
     source_match = _SOURCE_TEMPORARY_DECLARATION_RESTRICTION.fullmatch(

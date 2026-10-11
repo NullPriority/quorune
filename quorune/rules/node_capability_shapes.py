@@ -1074,27 +1074,7 @@ def temporary_declaration_restriction_node_capabilities(
         return ()
     schema = dict(target_schema or {})
     target_subject = effect.get("card") == "$target.0"
-    ordinary_creature_schema = {
-        "zones": ["battlefield"],
-        "categories": ["permanent"],
-        "types_any": ["creature"],
-        "count": 1,
-    }
-    subtype_schema = bool(
-        set(schema) == {"zones", "categories", "subtypes_any", "count"}
-        and schema.get("zones") == ["battlefield"]
-        and schema.get("categories") == ["permanent"]
-        and schema.get("count") == 1
-        and isinstance(schema.get("subtypes_any"), list)
-        and len(schema["subtypes_any"]) == 1
-        and canonical_creature_subtype(schema["subtypes_any"][0])
-        == schema["subtypes_any"][0]
-    )
-    if (
-        target_subject
-        and schema != ordinary_creature_schema
-        and not subtype_schema
-    ) or (not target_subject and schema):
+    if (target_subject and not direct_permanent_target_schema_is_closed(target_schema)) or (not target_subject and schema):
         return ()
     required_mechanics = {
         "cr-611-continuous-effects",
@@ -1108,6 +1088,7 @@ def temporary_declaration_restriction_node_capabilities(
     return (
         "combat.declaration.typed_components",
         "continuous.resolution.declaration_rules_until_end_of_turn",
+        *(direct_target_predicate_capabilities(target_schema) if target_subject else ()),
         *(("target.revalidate_resolution",) if target_subject else ()),
     )
 

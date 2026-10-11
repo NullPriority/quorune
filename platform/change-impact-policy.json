@@ -3257,6 +3257,19 @@
         "test_card_program_trust",
         "test_oracle_corpus_examples"
       ]
+    },
+    {
+      "id": "qualified-declaration-rule-contract",
+      "patterns": [
+        "quorune/compiler/temporary_declaration_templates.py",
+        "tests/fixtures/qualified-declaration-cards.json"
+      ],
+      "test_modules": [
+        "test_temporary_declaration_restriction_effects",
+        "test_combat_declaration_restrictions",
+        "test_temporary_target_interactions",
+        "test_oracle_corpus_examples"
+      ]
     }
   ],
   "symbol_rules": [

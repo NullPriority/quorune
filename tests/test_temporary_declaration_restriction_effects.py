@@ -7,9 +7,9 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from common import DB_PATH, keep_all, load_assets, make_session
+from common import DB_PATH, ROOT, keep_all, load_assets, make_session
 from quorune.ability_fragments import ability_fragment_to_dict
-from quorune.carddb import CardDatabase
+from quorune.carddb import CardDatabase, CardRecord
 from quorune.compiler.temporary_declaration_templates import (
     ActivatedTemporaryDeclarationRestrictionTemplate,
     activated_temporary_declaration_restriction_effect_template,
@@ -34,6 +34,7 @@ from quorune.record import (
     replay_record,
 )
 from quorune.rules.capabilities import load_default_capability_registry
+from unittest.mock import patch
 from quorune.rules.temporary_declaration_restrictions import (
     commit_temporary_declaration_restriction,
     temporary_declaration_restriction,
@@ -127,7 +128,7 @@ class ActivatedTemporaryDeclarationRestrictionTemplateTests(unittest.TestCase):
             "Target creature can't be blocked except by Walls this turn.",
             "Target creature can't block this turn and you gain 1 life.",
             "Up to one target creature can't block this turn.",
-            "Another target creature can't block this turn.",
+            "Another target creature can't block this creature this turn.",
             "Target creature can't block next turn.",
             "Target creature can block this turn.",
             "Target Nonsense can't be blocked this turn.",
@@ -905,6 +906,157 @@ class TemporaryDeclarationRestrictionRuntimeTests(unittest.TestCase):
             before_stale,
             authoritative_state_hash(engine.state),
         )
+
+
+def qualified_declaration_record(text, *, type_line="Creature \u2014 Test"):
+    return CardRecord(oracle_id="fixture-qualified-declaration", name="Qualified Declaration Witness",
+        mana_cost="{2}", mana_value=2, type_line=type_line, oracle_text=text,
+        power="2" if "Creature" in type_line else None, toughness="2" if "Creature" in type_line else None,
+        loyalty=None, defense=None, colors=(), color_identity=(), keywords=(), produced_mana=(),
+        layout="normal", released_at="2026-08-07", legalities={"commander": "legal"}, faces=(), raw={})
+
+
+class QualifiedDeclarationCompilerTests(unittest.TestCase):
+    # CR 508.1c, 509.1b and 611.2c: a full target predicate is announced and
+    # revalidated; the resolved prohibition binds that incarnation and does
+    # not become an ability or a continuing predicate on later characteristics.
+    @classmethod
+    def setUpClass(cls):
+        cls.registry = load_default_capability_registry()
+
+    def compile(self, text, *, type_line="Creature \u2014 Test"):
+        return compile_oracle_card(qualified_declaration_record(text, type_line=type_line),
+            capability_registry=self.registry, capability_profile="commander_review")
+
+    def test_qualified_temporary_rules_preserve_complete_target_predicates(self):
+        cases = (
+            ("{1}: Another target creature can't block this turn.", "source_exclusion"),
+            ("{T}: Target creature with power 2 or less can't be blocked this turn.", "numeric_characteristic"),
+            ("{1}, {T}: Target creature you control with power 2 or less can't be blocked this turn.", "controller_relation"),
+            ("{2}: Target Ninja creature can't be blocked this turn.", "subtypes_any"),
+            ("{1}: Target creature an opponent controls can't attack or block this turn.", "controller_relation"),
+        )
+        for text, field in cases:
+            with self.subTest(text=text):
+                ir = self.compile(text)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                self.assertIn(field, node.target_schema)
+                self.assertEqual("grant_declaration_restriction_until_end_of_turn", node.effects[0]["op"])
+                self.assertIn("target.revalidate_resolution", node.capability_dependencies)
+                if field not in {"controller_relation", "source_exclusion"}:
+                    self.assertIn("target.permanent.characteristic_predicate", node.capability_dependencies)
+
+    def test_qualified_temporary_rule_missing_authority_and_producer_remain_residual(self):
+        from quorune.rules.capabilities import CapabilityRegistry
+        text = "{T}: Target creature with power 2 or less can't be blocked this turn."
+        self.assertEqual("exact", self.compile(text).status)
+        for body in ("Target creature with power X or less can't be blocked this turn.",
+                     "Target creature can't block this creature this turn.",
+                     "Target creature can't be blocked until your next turn."):
+            with self.subTest(body=body):
+                self.assertNotEqual("exact", self.compile("{1}: " + body).status)
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
+        next(row for row in raw["capabilities"] if row["id"] == "target.permanent.characteristic_predicate").update(
+            status="blocked", blockers=["numeric target authority unavailable"])
+        blocked = compile_oracle_card(qualified_declaration_record(text), capability_registry=CapabilityRegistry(raw), capability_profile="commander_review")
+        self.assertNotEqual("exact", blocked.status)
+        with patch("quorune.compiler.temporary_declaration_templates.direct_permanent_target_spec", return_value=None):
+            mutant = self.compile(text)
+        self.assertNotEqual("exact", mutant.status)
+
+
+class QualifiedDeclarationRuntimeTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from quorune.deck import DeckDefinition, DeckEntry
+        from scripts.build_test_database import build_fixture_database
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "qualified-declaration.sqlite3"
+        build_fixture_database([ROOT / "tests/fixtures/bound-effect-program-cards.json",
+            ROOT / "tests/fixtures/qualified-declaration-cards.json"], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Qualified declaration", [DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 99)], ["Generic Bound Commander"])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    import test_bound_effect_programs as _witnesses
+    session = _witnesses.BoundEffectProgramRuntimeTests.session
+    add = _witnesses.BoundEffectProgramRuntimeTests.add
+    checkpoint = _witnesses.BoundEffectProgramRuntimeTests.checkpoint
+    resolve = _witnesses.BoundEffectProgramRuntimeTests.resolve
+    replay = _witnesses.BoundEffectProgramRuntimeTests.replay
+
+    def advance_to(self, session, kind):
+        for _ in range(16):
+            if session.state.pending_decision.kind == kind:return
+            self.assertEqual("priority", session.state.pending_decision.kind)
+            passed = session.act(session.pending_principals()[0], {"action_id": "pass"})
+            self.assertTrue(passed.ok, passed.summary)
+        self.fail("Ordinary priority did not reach " + kind)
+
+    def test_original_tunneler_power_target_revalidates_and_resolved_rule_locks(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        for grow_before_resolution in (True, False):
+            with self.subTest(grow_before_resolution=grow_before_resolution):
+                session = self.session(339010 + int(grow_before_resolution))
+                engine = session.engine
+                source = self.add(engine, "Goblin Tunneler")
+                target = self.add(engine, "Generic Bound Body")
+                ordinary = self.add(engine, "Generic Qualified Declaration Large Body")
+                blocker = self.add(engine, "Generic Bound Body", seat="B", ref="defending-body")
+                growth = self.add(engine, "Giant Growth", zone="hand")
+                target.acquired_control_turn_count = ordinary.acquired_control_turn_count = -1
+                program = compile_best_available_card_program(self.db, self.db.lookup(source.printed_name),
+                    semantic_registry=engine.semantics, capability_registry=self.registry, capability_profile="commander_review")
+                binding = bind_card_program_runtime(program, capability_registry=self.registry, profile="commander_review")
+                self.assertTrue(binding["strict_capability_ready"], binding)
+                session.state.phase_index = TURN_STEPS.index(("precombat_main", "main"))
+                action = self._witnesses.BoundEffectProgramRuntimeTests.ready(self, session, source, {"G": 1})
+                self.assertIn(target.ref, action["target_schema"]["legal_refs"])
+                self.assertNotIn(ordinary.ref, action["target_schema"]["legal_refs"])
+                self.checkpoint(session)
+                before = authoritative_state_hash(session.state)
+                denied = session.act("pilot:B", {"action_id": action["id"], "targets": [target.ref], "pay": "auto"})
+                self.assertFalse(denied.ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+                activated = session.act("pilot:A", {"action_id": action["id"], "targets": [target.ref], "pay": "auto"})
+                self.assertTrue(activated.ok, activated.summary)
+                if not grow_before_resolution:self.resolve(session)
+                actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                action = next(action for action in actions if action.get("card") == growth.ref)
+                cast = session.act("pilot:A", {"action_id": action["id"], "targets": [target.ref], "pay": "auto"})
+                self.assertTrue(cast.ok, cast.summary)
+                self.resolve(session)
+                self.assertEqual("5", session.engine._effective_card_data(session.state.cards[target.object_id])["power"])
+                self.advance_to(session, "combat.attackers")
+                attack = session.act("pilot:A", {"a": "attack", "atk": {target.ref: "B", ordinary.ref: "B"}})
+                self.assertTrue(attack.ok, attack.summary)
+                self.advance_to(session, "combat.blockers")
+                for seat in "ACD":self.assertIsNone(session.packet("pilot:" + seat, full=True)["decision"])
+                legal = session.packet("pilot:B", full=True)["decision"]["ctx"]["legal_blocks"][blocker.ref]
+                self.assertIn(ordinary.ref, legal)
+                self.assertEqual(grow_before_resolution, target.ref in legal)
+                session = self.replay(session, load=True)
+                before = authoritative_state_hash(session.state)
+                blocks = {blocker.ref: target.ref}
+                result = session.act("pilot:B", {"a": "block", "blk": blocks})
+                if grow_before_resolution:
+                    self.assertTrue(result.ok, result.summary)
+                else:
+                    self.assertFalse(result.ok)
+                    self.assertEqual(before, authoritative_state_hash(session.state))
+                    accepted = session.act("pilot:B", {"a": "block", "blk": {blocker.ref: ordinary.ref}})
+                    self.assertTrue(accepted.ok, accepted.summary)
+                self.assertTrue(session.state.cards[source.object_id].tapped)
+                self.assertEqual(0, session.state.players["A"].mana_pool.get("G", 0))
+                self.replay(session, load=True)
 
 
 if __name__ == "__main__":

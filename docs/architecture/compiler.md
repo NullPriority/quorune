@@ -55,6 +55,16 @@ Oracle IR, recognized semantic nodes, dependency declarations, material
 residuals, and a canonical `CardProgram`. For the same inputs and compiler
 version, the result must be deterministic.
 
+`compiler/temporary_declaration_templates.py` lowers one fixed attack, block,
+attack-and-block, or unblockable instruction over the source or one shared
+direct permanent target. Qualified targets preserve fixed current power,
+subtype, controller, and source-exclusion predicates through announcement and
+resolution. The declaration-rule owner then locks the resulting incarnation
+until cleanup; changing a characteristic after creation does not remove the
+resolved prohibition. A changed predicate before resolution prevents creation.
+The rule remains distinct from a granted ability. Two-object instructions,
+unrepresented dynamic predicates, and different durations remain residual.
+
 `compiler/extra_turn_templates.py` lowers one through ten fixed extra turns
 after the current turn for the resolving controller or one ordinary player or
 opponent target. Each turn is a separate existing `extra_turn` instruction;

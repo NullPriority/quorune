@@ -5545,12 +5545,12 @@
     },
     {
       "id": "continuous.resolution.declaration_rules_until_end_of_turn",
-      "version": 2,
+      "version": 3,
       "official_rules": ["508.1c", "509.1b", "611.2c", "514.2"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
         "summary": "Create one typed resolution-created combat declaration rule for a locked target or source battlefield incarnation and expire it in cleanup without turning the rule into an ability or characteristic.",
-        "inputs": ["typed resolving stack/source identity", "one revalidated target creature or current source creature", "locked physical and logical object identity", "one object-anchored typed declaration prohibition", "until-end-of-turn duration"],
+        "inputs": ["typed resolving stack/source identity", "one revalidated shared qualified permanent target or current source creature", "locked physical and logical object identity", "one object-anchored typed declaration prohibition", "until-end-of-turn duration"],
         "outputs": ["immutable replay-pinned declaration-rule journal entry", "composition with current effective static declaration abilities", "survival through ability removal and source departure", "cleanup expiration", "no effect on a returned logical object"],
         "exclusions": ["ability or characteristic grants", "two-object source-relative rules", "source-relative controller restrictions", "dynamic predicates", "open declaration grammar", "durations other than until end of turn"]
       },
