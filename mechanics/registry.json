@@ -1,5 +1,5 @@
 {
-  "contract_count": 135,
+  "contract_count": 143,
   "contracts": [
     {
       "mechanic_id": "cr-602-activating-activated-abilities",
@@ -20,6 +20,12 @@
       "version": 2
     },
     {
+      "mechanic_id": "aftermath",
+      "path": "mechanics/contracts/aftermath.json",
+      "sha256": "f348394b21071a6d0d028b02fb82260f4a38161aec7cdd17eb5dd80a4f4f2dfa",
+      "version": 1
+    },
+    {
       "mechanic_id": "amass",
       "path": "mechanics/contracts/amass.json",
       "sha256": "871965460d58befdc9683420f96d6236458de181953dfb0138ff826fbadbb88e",
@@ -29,6 +35,12 @@
       "mechanic_id": "cr-407-ante",
       "path": "mechanics/contracts/ante.json",
       "sha256": "7831efaf6a3c30c28f65becb75e0d6fbab684f47a3b1a03030ee684711997e4e",
+      "version": 1
+    },
+    {
+      "mechanic_id": "backup",
+      "path": "mechanics/contracts/backup.json",
+      "sha256": "1ea04e6437b8812f54bd9a7afc8f1694639f45bb283e48ee7bb0e91a334ca490",
       "version": 1
     },
     {
@@ -190,8 +202,8 @@
     {
       "mechanic_id": "cr-509-declare-blockers-step",
       "path": "mechanics/contracts/declare-blockers-step.json",
-      "sha256": "6dcca19404c390fa59e640a4bca24c095655c0dd70319e605d4b7614d79d8fbf",
-      "version": 10
+      "sha256": "0c9430cc056e5b32bbb82497137caaddadfaec4a0e38ccd469a1dc9a3c51a505",
+      "version": 11
     },
     {
       "mechanic_id": "defender",
@@ -278,6 +290,12 @@
       "version": 1
     },
     {
+      "mechanic_id": "enlist",
+      "path": "mechanics/contracts/enlist.json",
+      "sha256": "9db194aae96675e707d7edf38dc7c5385207f0e8d380b8bc288b2009cda194b2",
+      "version": 1
+    },
+    {
       "mechanic_id": "escape",
       "path": "mechanics/contracts/escape.json",
       "sha256": "0898196003d043f3dbd63122d797ed619235f8a276f608c91bcfd65221e0e657",
@@ -312,6 +330,12 @@
       "path": "mechanics/contracts/exile.json",
       "sha256": "6fbf1a3a8d8f43d654760f543d035ef6e0e051aeb5fe3efe44e70fbc433fa6a3",
       "version": 3
+    },
+    {
+      "mechanic_id": "extort",
+      "path": "mechanics/contracts/extort.json",
+      "sha256": "3a09551f7e3a782c2e763bba949c85b2485def22d03b62152d1767b9ee15daa8",
+      "version": 1
     },
     {
       "mechanic_id": "fear",
@@ -365,6 +389,12 @@
       "mechanic_id": "goad",
       "path": "mechanics/contracts/goad.json",
       "sha256": "3de4584497a92f47b3f6a79942ca34ceb25c0c94965cdca272656a4f9778b3c4",
+      "version": 1
+    },
+    {
+      "mechanic_id": "graft",
+      "path": "mechanics/contracts/graft.json",
+      "sha256": "6b0b69e55e7ef84fcd21087af93e880665b2aad1c95a2b577ae68ae9dd965576",
       "version": 1
     },
     {
@@ -490,8 +520,8 @@
     {
       "mechanic_id": "cr-605-mana-abilities",
       "path": "mechanics/contracts/mana-abilities.json",
-      "sha256": "f6f564d6b03cc84091c36df086f1f544a03dc332ce610ee17c0292b1479f717c",
-      "version": 3
+      "sha256": "c22e8b463a8949a5037caf0c40c0a15e038145c856dfac7926362286003b80b7",
+      "version": 4
     },
     {
       "mechanic_id": "melee",
@@ -574,13 +604,19 @@
     {
       "mechanic_id": "cr-615-prevention-effects",
       "path": "mechanics/contracts/prevention-effects.json",
-      "sha256": "f3a8954352b5c1e389ca9d95345ff73af5a87862ae7d539c8595e3dd3d9f33a3",
-      "version": 1
+      "sha256": "24f70a70a68c63c5bb5a521f430ed0da6f80772ba0cbb2b00760c258f857cdaa",
+      "version": 2
     },
     {
       "mechanic_id": "protection",
       "path": "mechanics/contracts/protection.json",
       "sha256": "58e57a49fb29bdd800e39db94d0f3e871960ec165c726b69d7ba1483d780bea7",
+      "version": 1
+    },
+    {
+      "mechanic_id": "prototype",
+      "path": "mechanics/contracts/prototype.json",
+      "sha256": "9fab797fc6fce6ca64196067eb281ff43334ace83dbfa5d3084230b5c8a76530",
       "version": 1
     },
     {
@@ -682,8 +718,8 @@
     {
       "mechanic_id": "daybound-and-nightbound",
       "path": "mechanics/contracts/spell-history-transformations.json",
-      "sha256": "63ff4cc2763dcf2ae5c5004a4a515713f404674fcb3c49e93b849ec24c30c9c4",
-      "version": 1
+      "sha256": "a4d3e40a5a91db51e3db15b0545adb7bb677c4b1631792daed52d141ad1c1a66",
+      "version": 2
     },
     {
       "mechanic_id": "cr-600-general",
@@ -692,9 +728,21 @@
       "version": 1
     },
     {
+      "mechanic_id": "split-second",
+      "path": "mechanics/contracts/split-second.json",
+      "sha256": "5bdec5ff8d498605d9837b56e633a7b7933fecac6f237ef1f181868c99667862",
+      "version": 1
+    },
+    {
       "mechanic_id": "cr-405-stack",
       "path": "mechanics/contracts/stack.json",
       "sha256": "32f5bd54726153ab509d89eea514a7523ef1e1e470ca28253b790faebda27397",
+      "version": 1
+    },
+    {
+      "mechanic_id": "start-your-engines",
+      "path": "mechanics/contracts/start-your-engines.json",
+      "sha256": "85d954d1fab1ec4c94edf2537595bc39b2d5291c1f7523c4d1a208a51318f3a0",
       "version": 1
     },
     {
@@ -917,19 +965,42 @@
     },
     {
       "category": "additional_rules",
-      "contract_path": null,
-      "coverage_status": "unclassified",
+      "contract_path": "mechanics/contracts/aftermath.json",
+      "contract_sha256": "f348394b21071a6d0d028b02fb82260f4a38161aec7cdd17eb5dd80a4f4f2dfa",
+      "contract_version": 1,
+      "coverage_status": "tested",
       "dependencies": [
         "702"
       ],
-      "implementation_component": null,
+      "implementation_component": "quorune.rules.casting.aftermath.aftermath_cast_prohibition_reason",
+      "implementation_version": "selected-half-aftermath-v1",
       "kind": "keyword_ability",
+      "known_blockers": [
+        "unsupported result bodies or sibling mechanics keep complete cards untrusted",
+        "fused split spells and unrepresented acquired keyword producers remain outside the slice",
+        "aggregate mechanic trust does not imply universal card or match support"
+      ],
       "mechanic_id": "aftermath",
       "official_name": "Aftermath",
       "rule_references": [
         "702.127"
       ],
-      "test_ids": [],
+      "test_ids": [
+        "test_selected_half_has_bare_lifecycle_and_other_face_remains_ordinary",
+        "test_aftermath_descriptor_rejects_costs_wrong_shapes_and_nonsplit_carrier",
+        "test_zone_cast_dependency_omission_blocks_aftermath_half",
+        "test_both_split_faces_publish_and_accept_own_costs_with_rollback_and_replay",
+        "test_actual_aftermath_only_offers_its_half_from_graveyard_resolves_and_replays",
+        "test_hand_half_is_ordinary_and_aftermath_cannot_override_its_offer",
+        "test_actual_countered_aftermath_exiles_and_uncast_copy_has_no_replacement",
+        "test_actual_market_pending_private_discard_reloads_without_repeating_draw",
+        "test_canonical_free_cast_permission_never_overrides_other_zone_prohibition",
+        "test_selected_half_color_cost_query_ignores_other_half_and_replays",
+        "test_omitting_selected_face_cost_mutant_is_killed",
+        "test_omitting_aftermath_stack_designation_mutant_is_killed",
+        "test_modal_back_spell_uses_own_cost_and_permanent_destination_and_replays",
+        "test_strict_modal_unknown_face_is_hidden_and_rejected_before_mutation"
+      ],
       "trust_level": "untrusted"
     },
     {
@@ -1053,19 +1124,39 @@
     },
     {
       "category": "additional_rules",
-      "contract_path": null,
-      "coverage_status": "unclassified",
+      "contract_path": "mechanics/contracts/backup.json",
+      "contract_sha256": "1ea04e6437b8812f54bd9a7afc8f1694639f45bb283e48ee7bb0e91a334ca490",
+      "contract_version": 1,
+      "coverage_status": "tested",
       "dependencies": [
         "702"
       ],
-      "implementation_component": null,
+      "implementation_component": "quorune.compiler.backup_nodes.compile_backup_faces",
+      "implementation_version": "printed-backup-bundles-v1",
       "kind": "keyword_ability",
+      "known_blockers": [
+        "unsupported downstream bodies and keyword fragments keep the whole Backup bundle closed",
+        "unrepresented external ability acquisition or source-changing producers need their own contracts",
+        "the aggregate mechanic contract does not imply universal card or match support"
+      ],
       "mechanic_id": "backup",
       "official_name": "Backup",
       "rule_references": [
         "702.165"
       ],
-      "test_ids": [],
+      "test_ids": [
+        "test_actual_donated_sacrifice_activation_uses_recipient_and_private_draw_replay",
+        "test_self_target_only_gets_counters_and_donated_keywords_expire",
+        "test_actual_copy_entry_preserves_printed_order_and_excludes_gained_keyword",
+        "test_actual_source_departure_preserves_locked_bundle_and_target_blink_invalidates",
+        "test_actual_donated_attack_trigger_uses_recipient_target_and_replays",
+        "test_counter_replacement_pending_reload_retains_separate_following_grant",
+        "test_actual_static_donations_apply_recipient_block_and_damage_queries",
+        "test_source_order_keeps_only_complete_following_printed_keyword_bundle",
+        "test_triggered_and_activated_donations_use_independent_typed_children",
+        "test_malformed_bundle_and_counter_dependency_fail_closed",
+        "test_omitting_source_order_mutant_is_killed"
+      ],
       "trust_level": "untrusted"
     },
     {
@@ -1671,14 +1762,14 @@
     {
       "category": "additional_rules",
       "contract_path": "mechanics/contracts/spell-history-transformations.json",
-      "contract_sha256": "63ff4cc2763dcf2ae5c5004a4a515713f404674fcb3c49e93b849ec24c30c9c4",
-      "contract_version": 1,
+      "contract_sha256": "a4d3e40a5a91db51e3db15b0545adb7bb677c4b1631792daed52d141ad1c1a66",
+      "contract_version": 2,
       "coverage_status": "tested",
       "dependencies": [
         "702"
       ],
-      "implementation_component": "DayNightBoundSpec, SpellHistoryTransformSpec, bounded turn history, paired-face compiler nodes, shared component applicability, day/night coordination, permanent transform owner, zone entry, untap ordering, normalized triggers, projection, persistence, and replay",
-      "implementation_version": "spell-history-transformations-v1",
+      "implementation_component": "DayNightBoundSpec, SpellHistoryTransformSpec, bounded turn history, paired-face compiler nodes, shared component applicability, day/night coordination, permanent transform owner, zone entry, untap ordering, normalized triggers, projection, persistence, and replay; fixed printed self-transform activations through shared cost owners and captured transform count",
+      "implementation_version": "source-pinned-transformations-v2",
       "kind": "keyword_ability",
       "known_blockers": [
         "explicit make-day or make-night effects",
@@ -1699,7 +1790,17 @@
         "test_transform_capability_and_compiler_mutations_fail_closed",
         "test_day_night_entry_untap_and_shared_component_applicability",
         "test_legacy_transform_intervening_identity_and_transform_count",
-        "test_simultaneous_transform_apnap_state_and_replay"
+        "test_simultaneous_transform_apnap_state_and_replay",
+        "test_actual_gossipmonger_source_and_selected_tap_costs_transform_same_object",
+        "test_actual_source_blink_before_activation_resolution_does_not_transform_new_object",
+        "test_actual_control_change_keeps_original_activation_controller_and_source_binding",
+        "test_actual_gargoyle_cast_then_transform_uses_offered_front_and_new_flying_face",
+        "test_omitting_selected_face_keyword_filter_mutant_is_killed",
+        "test_fixed_self_transform_has_same_generic_owner_and_count_snapshot",
+        "test_targeted_and_unrepresented_transform_variants_stay_residual",
+        "test_actual_ulvenwald_transform_preserves_object_and_uses_back_mana_ability",
+        "test_two_actual_gargoyle_activations_transform_only_once_since_stack_placement",
+        "test_omitting_activation_transform_count_mutant_is_killed"
       ],
       "trust_level": "untrusted"
     },
@@ -2126,19 +2227,39 @@
     },
     {
       "category": "additional_rules",
-      "contract_path": null,
-      "coverage_status": "unclassified",
+      "contract_path": "mechanics/contracts/enlist.json",
+      "contract_sha256": "9db194aae96675e707d7edf38dc7c5385207f0e8d380b8bc288b2009cda194b2",
+      "contract_version": 1,
+      "coverage_status": "tested",
       "dependencies": [
         "702"
       ],
-      "implementation_component": null,
+      "implementation_component": "quorune.rules.enlist and existing attack, tap, scalar, trigger and temporary-characteristic owners",
+      "implementation_version": "typed-printed-enlist-v1",
       "kind": "keyword_ability",
+      "known_blockers": [
+        "independently unsupported Enlist-dependent sibling effects",
+        "unrepresented acquired ability producers",
+        "aggregate mechanic trust does not imply complete card or match support"
+      ],
       "mechanic_id": "enlist",
       "official_name": "Enlist",
       "rule_references": [
         "702.154"
       ],
-      "test_ids": [],
+      "test_ids": [
+        "test_actual_attacker_blink_invalidates_reflexive_growth_and_replays",
+        "test_actual_enlisted_power_is_live_at_resolution_and_departure_uses_lki",
+        "test_actual_faithbonder_enlists_eligible_body_then_growth_and_replay",
+        "test_actual_negative_power_donor_gives_zero_boost_and_replays",
+        "test_actual_pending_enlist_trigger_save_load_keeps_paid_tap_and_original_power_reference",
+        "test_enlist_has_separate_optional_cost_marker_and_reflexive_power",
+        "test_enlist_open_grammar_and_boolean_instance_reject",
+        "test_enlist_wrong_principal_self_attacking_or_sick_source_rejects_atomically",
+        "test_model_negative_enlisted_power_uses_zero_result",
+        "test_omitting_enlist_trigger_mutant_is_killed",
+        "test_two_actual_attackers_cannot_enlist_same_donor_and_haste_allows_new_donor"
+      ],
       "trust_level": "untrusted"
     },
     {
@@ -2424,19 +2545,40 @@
     },
     {
       "category": "additional_rules",
-      "contract_path": null,
-      "coverage_status": "unclassified",
+      "contract_path": "mechanics/contracts/extort.json",
+      "contract_sha256": "3a09551f7e3a782c2e763bba949c85b2485def22d03b62152d1767b9ee15daa8",
+      "contract_version": 1,
+      "coverage_status": "tested",
       "dependencies": [
         "702"
       ],
-      "implementation_component": null,
+      "implementation_component": "quorune.semantic_choices.extort.ExtortChoiceHandler",
+      "implementation_version": "typed-ordered-extort-v1",
       "kind": "keyword_ability",
+      "known_blockers": [
+        "unrepresented outer Extort grants and copied/text-changed keyword producers need separate typed contracts",
+        "independently unsupported result or static siblings prevent whole-card admission",
+        "external unrepresented life-prohibition producers remain unsupported"
+      ],
       "mechanic_id": "extort",
       "official_name": "Extort",
       "rule_references": [
         "702.101"
       ],
-      "test_ids": [],
+      "test_ids": [
+        "test_each_keyword_instance_has_independent_cast_trigger_and_fixed_hybrid_choice",
+        "test_extort_stage_shape_and_dependency_omissions_fail_closed",
+        "test_actual_extort_white_and_black_payments_transfer_total_opponent_loss_and_replay",
+        "test_decline_or_unpayable_extort_does_not_lose_life",
+        "test_prevented_opponent_loss_contributes_zero_to_gain",
+        "test_actual_gain_multiplier_applies_after_total_loss",
+        "test_pending_payment_and_gain_replacement_preserve_committed_loss_after_reload",
+        "test_two_actual_sources_choose_independent_payments_for_one_cast",
+        "test_loss_batch_replacement_suspends_before_any_loss_and_resumes_after_reload",
+        "test_queued_extort_retains_cast_controller_after_actual_source_bounce_or_control_change",
+        "test_omitting_actual_loss_gain_mutant_is_killed_by_four_player_transfer",
+        "test_source_order_omission_mutant_is_killed_by_two_source_replay"
+      ],
       "trust_level": "untrusted"
     },
     {
@@ -2661,6 +2803,23 @@
         "test_current_keywords_are_case_insensitive_and_redundant"
       ],
       "trust_level": "trusted"
+    },
+    {
+      "category": "additional_rules",
+      "contract_path": null,
+      "coverage_status": "unclassified",
+      "dependencies": [
+        "702"
+      ],
+      "implementation_component": null,
+      "kind": "keyword_ability",
+      "mechanic_id": "for-mirrodin",
+      "official_name": "For Mirrodin!",
+      "rule_references": [
+        "702.163"
+      ],
+      "test_ids": [],
+      "trust_level": "untrusted"
     },
     {
       "category": "additional_rules",
@@ -2930,19 +3089,39 @@
     },
     {
       "category": "additional_rules",
-      "contract_path": null,
-      "coverage_status": "unclassified",
+      "contract_path": "mechanics/contracts/graft.json",
+      "contract_sha256": "6b0b69e55e7ef84fcd21087af93e880665b2aad1c95a2b577ae68ae9dd965576",
+      "contract_version": 1,
+      "coverage_status": "tested",
       "dependencies": [
         "702"
       ],
-      "implementation_component": null,
+      "implementation_component": "quorune.rules.counter_movement.execute_counter_movement",
+      "implementation_version": "typed-fixed-graft-lifecycle-v1",
       "kind": "keyword_ability",
+      "known_blockers": [
+        "unrepresented sibling abilities keep whole cards unsupported",
+        "open Graft values and Oracle-equivalent prose",
+        "unrepresented counter prohibitions and acquired ability producers",
+        "aggregate mechanic trust does not imply complete card or match support"
+      ],
       "mechanic_id": "graft",
       "official_name": "Graft",
       "rule_references": [
         "702.58"
       ],
-      "test_ids": [],
+      "test_ids": [
+        "test_actual_foreign_entry_is_nontargeted_and_pending_reload_replays",
+        "test_actual_graft_cast_and_other_entry_transfer_decline_and_replay",
+        "test_choice_model_keeps_controller_and_both_incarnations_and_rejects_open_fields",
+        "test_departed_recipient_does_not_remove_source_counter_and_replays",
+        "test_fixed_graft_has_independent_entry_and_nontargeted_movement",
+        "test_graft_open_values_shapes_and_dependency_omission_fail_closed",
+        "test_model_movement_rejects_same_stale_phased_empty_and_zero_placement",
+        "test_omitting_atomic_movement_mutant_is_killed",
+        "test_replacement_order_defers_removal_then_moves_one_and_places_replaced_amount",
+        "test_source_bounce_before_graft_resolution_keeps_recipient_unchanged_and_replays"
+      ],
       "trust_level": "untrusted"
     },
     {
@@ -4187,19 +4366,41 @@
     },
     {
       "category": "additional_rules",
-      "contract_path": null,
-      "coverage_status": "unclassified",
+      "contract_path": "mechanics/contracts/prototype.json",
+      "contract_sha256": "9fab797fc6fce6ca64196067eb281ff43334ace83dbfa5d3084230b5c8a76530",
+      "contract_version": 1,
+      "coverage_status": "tested",
       "dependencies": [
         "702"
       ],
-      "implementation_component": null,
+      "implementation_component": "quorune.rules.prototype, quorune.prototype_model and existing casting characteristic/copy/zone owners",
+      "implementation_version": "fixed-prototype-characteristics-v1",
       "kind": "keyword_ability",
+      "known_blockers": [
+        "independently unsupported siblings remain residual",
+        "variable or complex alternate characteristic grammar",
+        "unrepresented copied acquired Prototype cast producers",
+        "aggregate mechanic trust does not imply complete card or match support"
+      ],
       "mechanic_id": "prototype",
       "official_name": "Prototype",
       "rule_references": [
         "702.160"
       ],
-      "test_ids": [],
+      "test_ids": [
+        "test_actual_black_prototype_uses_color_cost_reduction_and_preserves_deathtouch",
+        "test_actual_combat_thresher_keeps_entry_draw_double_strike_and_private_replay",
+        "test_actual_countered_prototype_restores_graveyard_values_and_replay",
+        "test_actual_prototype_blink_restores_printed_characteristics_and_replays",
+        "test_actual_prototype_offer_cost_color_size_persist_to_battlefield_and_replay",
+        "test_actual_prototype_token_copy_retains_alternate_copiable_values_and_replay",
+        "test_canonical_free_permission_combines_with_prototype_and_replays",
+        "test_canonical_spell_copy_of_prototype_keeps_selected_values_through_resolution",
+        "test_fixed_prototype_compiles_closed_alternate_characteristics_and_full_admission",
+        "test_omitting_prototype_characteristics_mutant_is_killed",
+        "test_prototype_open_grammar_boolean_and_missing_dependency_fail_closed",
+        "test_unsupported_prototype_request_and_underpayment_reject_before_mutation"
+      ],
       "trust_level": "untrusted"
     },
     {
@@ -4851,19 +5052,35 @@
     },
     {
       "category": "additional_rules",
-      "contract_path": null,
-      "coverage_status": "unclassified",
+      "contract_path": "mechanics/contracts/split-second.json",
+      "contract_sha256": "5bdec5ff8d498605d9837b56e633a7b7933fecac6f237ef1f181868c99667862",
+      "contract_version": 1,
+      "coverage_status": "tested",
       "dependencies": [
         "702"
       ],
-      "implementation_component": null,
+      "implementation_component": "quorune.semantic_runtime.static_cast_rules.SplitSecondHandler",
+      "implementation_version": "stack-split-second-v1",
       "kind": "keyword_ability",
+      "known_blockers": [
+        "independently unsupported result siblings prevent whole-card runtime admission",
+        "arbitrary text-changing or externally granted stack-static producers require their own typed propagation contracts"
+      ],
       "mechanic_id": "split-second",
       "official_name": "Split Second",
       "rule_references": [
         "702.61"
       ],
-      "test_ids": [],
+      "test_ids": [
+        "test_keyword_is_a_stack_local_source_spanned_static_declaration",
+        "test_combined_flash_and_split_second_keep_independent_keyword_declarations",
+        "test_malformed_descriptors_and_dependency_omission_fail_closed",
+        "test_actual_sudden_shock_blocks_casts_and_nonmana_abilities_but_allows_mana",
+        "test_cast_trigger_resolves_above_split_second_without_unlocking_priority",
+        "test_split_second_copy_restricts_until_last_spell_copy_leaves",
+        "test_actual_morph_face_up_special_action_remains_legal_during_split_second",
+        "test_split_second_query_omission_mutant_is_killed_by_actual_offer"
+      ],
       "trust_level": "untrusted"
     },
     {
@@ -4898,6 +5115,47 @@
         "702.157"
       ],
       "test_ids": [],
+      "trust_level": "untrusted"
+    },
+    {
+      "category": "additional_rules",
+      "contract_path": "mechanics/contracts/start-your-engines.json",
+      "contract_sha256": "85d954d1fab1ec4c94edf2537595bc39b2d5291c1f7523c4d1a208a51318f3a0",
+      "contract_version": 1,
+      "coverage_status": "tested",
+      "dependencies": [
+        "702"
+      ],
+      "implementation_component": "quorune.rules.player_speed_state.commit_speed_increase",
+      "implementation_version": "typed-player-speed-v1",
+      "kind": "keyword_ability",
+      "known_blockers": [
+        "unsupported speed-referencing quantities, searches and sibling bodies remain residual",
+        "unrepresented acquired starter or Max Speed producers require separate contracts",
+        "aggregate mechanic trust does not imply universal card or match support"
+      ],
+      "mechanic_id": "start-your-engines",
+      "official_name": "Start Your Engines!",
+      "rule_references": [
+        "702.179"
+      ],
+      "test_ids": [
+        "test_start_marker_and_max_speed_fixed_stats_keep_independent_closed_scope",
+        "test_max_speed_graveyard_and_mana_children_have_live_parent_condition",
+        "test_speed_shapes_and_dependency_omission_reject_boolean_negative_or_open_values",
+        "test_actual_start_and_damage_trigger_increment_only_once_own_turn_and_replay",
+        "test_actual_max_speed_graveyard_ability_is_offered_only_at_four_and_replays",
+        "test_actual_max_speed_mana_mode_and_fixed_keyword_follow_controller_speed",
+        "test_actual_source_bounce_keeps_speed_and_later_damage_still_triggers",
+        "test_countered_inherent_trigger_consumes_turn_usage_and_pending_reload_replays",
+        "test_other_turn_and_self_loss_do_not_trigger_speed",
+        "test_actual_max_speed_damage_replacement_is_inactive_below_four",
+        "test_actual_simultaneous_opponent_losses_produce_one_inherent_trigger",
+        "test_actual_control_change_starts_new_controller_without_moving_old_speed",
+        "test_new_own_turn_can_trigger_again_while_absent_speed_still_cannot",
+        "test_zero_resolved_loss_does_not_trigger_and_direct_increase_creates_speed",
+        "test_omitting_speed_life_loss_trigger_mutant_is_killed"
+      ],
       "trust_level": "untrusted"
     },
     {
@@ -9143,20 +9401,20 @@
     {
       "category": "turn_structure",
       "contract_path": "mechanics/contracts/declare-blockers-step.json",
-      "contract_sha256": "6dcca19404c390fa59e640a4bca24c095655c0dd70319e605d4b7614d79d8fbf",
-      "contract_version": 10,
+      "contract_sha256": "0c9430cc056e5b32bbb82497137caaddadfaec4a0e38ccd469a1dc9a3c51a505",
+      "contract_version": 11,
       "coverage_status": "partial",
       "dependencies": [],
-      "implementation_component": "DeclarationProblem, compiler-only declaration grammar, shared effective layer-6 declaration fragments, and the CommanderEngine blocker declaration/payment transition",
-      "implementation_version": "declare-blockers-step-v10",
+      "implementation_component": "DeclarationProblem, compiler-only declaration grammar, shared effective layer-6 declaration fragments, and the CommanderEngine blocker declaration/payment transition; fixed typed additive and unlimited capacity fragments, shared set-valued declaration solver, canonical multi-edge combat relationships and client row capacities",
+      "implementation_version": "declare-blockers-step-v11",
       "kind": "rules_section",
       "known_blockers": [
         "compound-with-unrelated-effects, temporary, broader, uncompiled current-turn, and multi-block restriction/evasion grammar remains incomplete and recognized static families fail closed",
-        "only exact blocks-each-combat, must-be-blocked, lure, and menace grammar is represented; conditional, effect-granted, multi-block, and optional-cost grammar remains incomplete",
+        "only exact blocks-each-combat, must-be-blocked, lure, and menace grammar is represented; broader conditional, effect-granted, and optional-cost grammar remains incomplete",
         "optional, nonmana, variable, alternative, modified, and broader conditional block costs are not implemented",
         "declare-blockers trigger generation and APNAP placement are incomplete",
         "effects that cause blocks or put creatures onto the battlefield blocking are not implemented",
-        "one creature blocking several attackers is not supported"
+        "variable blocking capacities and unsupported extra-block producers remain incomplete"
       ],
       "mechanic_id": "cr-509-declare-blockers-step",
       "official_name": "Declare Blockers Step",
@@ -9221,7 +9479,20 @@
         "test_filtered_attack_and_block_target_relations",
         "test_shared_creature_subtype_condition_includes_changeling",
         "test_controlled_creature_death_uses_lki_and_survives_token_cleanup",
-        "test_parser_exactly_lowers_current_turn_declaration_families"
+        "test_parser_exactly_lowers_current_turn_declaration_families",
+        "test_actual_iona_aura_keeps_stats_vigilance_and_current_attached_capacity",
+        "test_actual_monarch_condition_changes_capacity_before_declaration_and_not_after",
+        "test_actual_query_source_and_tactician_counter_activation_gate_current_capacity",
+        "test_actual_trueheart_blocks_two_distinct_attackers_and_replays",
+        "test_actual_two_block_combat_damage_divides_once_and_preserves_both_recipients",
+        "test_actual_two_echo_equips_accumulate_and_bounce_after_blocks_keeps_all_edges",
+        "test_actual_unlimited_palace_guard_blocks_three_but_each_evasion_still_applies",
+        "test_fixed_additional_unlimited_attachment_and_query_grammar_is_closed",
+        "test_omitting_capacity_mutant_is_killed_by_actual_two_block_command",
+        "test_open_capacity_boolean_and_missing_capability_fail_closed",
+        "test_ordinary_body_cannot_use_multi_block_list_and_wrong_defender_is_atomic",
+        "test_set_declaration_requirements_restrictions_costs_and_capacity_share_solver",
+        "test_actual_monarch_condition_false_rejects_second_block_without_mutation"
       ],
       "trust_level": "untrusted"
     },
@@ -9611,12 +9882,12 @@
     {
       "category": "spells_abilities_effects",
       "contract_path": "mechanics/contracts/mana-abilities.json",
-      "contract_sha256": "f6f564d6b03cc84091c36df086f1f544a03dc332ce610ee17c0292b1479f717c",
-      "contract_version": 3,
+      "contract_sha256": "c22e8b463a8949a5037caf0c40c0a15e038145c856dfac7926362286003b80b7",
+      "contract_version": 4,
       "coverage_status": "partial",
       "dependencies": [],
-      "implementation_component": "FixedActivatedManaAbilitySpec, IntrinsicBasicLandManaSpec, typed CardProgram card-form declarations, activation query, ManaAbilityRuntime, and the canonical mana-activation transaction",
-      "implementation_version": "typed-mana-ability-v3",
+      "implementation_component": "FixedActivatedManaAbilitySpec, IntrinsicBasicLandManaSpec, typed CardProgram card-form declarations, activation query, ManaAbilityRuntime, and the canonical mana-activation transaction, fixed_resolution_mana compiler, existing spell/trigger/loyalty stack and semantic mana effect owners",
+      "implementation_version": "typed-mana-ability-v4",
       "kind": "rules_section",
       "known_blockers": [
         "the CR 605.1a exclusion for costs or effects that move cards to or from a library is not yet a complete typed classifier outside the closed fixed-output families",
@@ -9624,7 +9895,8 @@
         "dynamic, conditional, side-effecting, fixed-colored restricted, and spending restrictions outside the three exact represented forms remain outside the fixed-output capabilities",
         "explicit mana activation during arbitrary rule/effect payment windows is not exposed as a general nested decision",
         "activation reentrancy is not represented as a state that can be independently tested",
-        "mana-production replacement and trigger integration is incomplete"
+        "mana-production replacement and trigger integration is incomplete",
+        "Resolution-time variable or chosen-color output, conditional self-replacements such as Threshold, and unrepresented linked effects remain residuals."
       ],
       "mechanic_id": "cr-605-mana-abilities",
       "official_name": "Mana Abilities",
@@ -9632,39 +9904,50 @@
         "605"
       ],
       "test_ids": [
-        "test_contract_traces_every_cr_605_rule",
         "test_activated_mana_ability_excludes_targets_and_loyalty",
-        "test_mana_classification_survives_zero_output_or_unavailability",
         "test_activated_mana_ability_resolves_without_using_stack",
-        "test_mana_ability_can_activate_during_spell_payment",
-        "test_mana_producing_spell_is_not_a_mana_ability",
-        "test_token_reminder_text_does_not_create_source_mana_ability",
-        "test_mana_drain_schedules_exact_next_main_phase_mana",
-        "test_treasure_exposes_color_choice_and_auto_payment_sacrifices_it",
-        "test_recordless_mana_plan_ignores_submitted_side_effects",
-        "test_fixed_output_compiler_lowers_source_spanned_cardprogram",
-        "test_fixed_output_compiler_leaves_dynamic_and_restricted_variants_residual",
-        "test_fixed_output_compiler_rejects_library_movement_costs_and_effects",
-        "test_parenthesized_basic_land_reminder_is_not_an_executable_program",
-        "test_compiled_alternative_output_is_advertised_accepted_and_replayed",
-        "test_compiled_fixed_output_offer_and_activation_share_modes",
-        "test_compiled_fixed_output_can_pay_during_casting",
-        "test_fixed_mandatory_costs_commit_through_canonical_owners",
+        "test_actual_channel_suns_adds_all_five_colors_and_replays",
+        "test_actual_culling_sacrifice_is_paid_but_countered_spell_produces_no_mana",
+        "test_actual_dark_ritual_uses_stack_and_adds_exact_black_bundle_then_replays",
+        "test_actual_entry_mana_uses_stack_and_survives_source_departure",
+        "test_actual_geosurge_restricted_mana_rejects_instant_and_pays_creature",
+        "test_actual_loyalty_mana_uses_stack_and_counter_cost_then_replays",
+        "test_actual_revolt_entry_checks_departure_history",
         "test_changed_executable_oracle_fails_closed_instead_of_reparsing_mana",
-        "test_invalid_compiled_mana_mode_rolls_back",
-        "test_invalid_mode_rolls_back_fixed_mandatory_costs",
-        "test_compiled_fixed_output_is_controller_scoped_in_four_player_game",
-        "test_compiled_fixed_output_projection_exposes_no_hidden_cards",
+        "test_compiled_alternative_output_is_advertised_accepted_and_replayed",
         "test_compiled_fixed_output_activation_replays_exactly",
+        "test_compiled_fixed_output_can_pay_during_casting",
+        "test_compiled_fixed_output_is_controller_scoped_in_four_player_game",
+        "test_compiled_fixed_output_offer_and_activation_share_modes",
+        "test_compiled_fixed_output_projection_exposes_no_hidden_cards",
+        "test_compiled_restricted_mana_is_controller_scoped_and_replays",
+        "test_compiler_lowers_investigate_afterlife_and_extended_token_definitions",
+        "test_contract_traces_every_cr_605_rule",
+        "test_dynamic_restricted_and_malformed_mana_remain_closed",
+        "test_fixed_mandatory_costs_commit_through_canonical_owners",
+        "test_fixed_output_compiler_leaves_dynamic_and_restricted_variants_residual",
+        "test_fixed_output_compiler_lowers_source_spanned_cardprogram",
+        "test_fixed_output_compiler_rejects_library_movement_costs_and_effects",
+        "test_fixed_symbol_bundles_are_closed_separate_outputs",
+        "test_intrinsic_basic_land_mana_compiler_and_runtime_mutants_are_killed",
         "test_intrinsic_basic_land_mana_compiler_binds_type_line_and_reminder",
+        "test_intrinsic_basic_land_mana_offer_submission_and_replay_are_controller_scoped",
         "test_intrinsic_basic_land_mana_rejects_malformed_descriptors_and_near_misses",
         "test_intrinsic_basic_land_mana_uses_live_effective_land_types",
-        "test_intrinsic_basic_land_mana_offer_submission_and_replay_are_controller_scoped",
-        "test_intrinsic_basic_land_mana_compiler_and_runtime_mutants_are_killed",
+        "test_invalid_compiled_mana_mode_rolls_back",
+        "test_invalid_mode_rolls_back_fixed_mandatory_costs",
+        "test_mana_ability_can_activate_during_spell_payment",
+        "test_mana_classification_survives_zero_output_or_unavailability",
+        "test_mana_drain_schedules_exact_next_main_phase_mana",
+        "test_mana_producing_spell_is_not_a_mana_ability",
         "test_murmuring_bosk_intrinsic_mana_executes_while_replacement_stays_residual",
-        "test_compiler_lowers_investigate_afterlife_and_extended_token_definitions",
-        "test_compiled_restricted_mana_is_controller_scoped_and_replays",
-        "test_predefined_token_profiles_enforce_mana_and_impulse_rules"
+        "test_omitting_mana_result_mutant_is_killed_by_actual_ritual",
+        "test_parenthesized_basic_land_reminder_is_not_an_executable_program",
+        "test_predefined_token_profiles_enforce_mana_and_impulse_rules",
+        "test_recordless_mana_plan_ignores_submitted_side_effects",
+        "test_restricted_bundle_allows_each_spell_type_but_no_ability_payment",
+        "test_token_reminder_text_does_not_create_source_mana_ability",
+        "test_treasure_exposes_color_choice_and_auto_payment_sacrifices_it"
       ],
       "trust_level": "untrusted"
     },
@@ -9967,17 +10250,17 @@
     {
       "category": "spells_abilities_effects",
       "contract_path": "mechanics/contracts/prevention-effects.json",
-      "contract_sha256": "f3a8954352b5c1e389ca9d95345ff73af5a87862ae7d539c8595e3dd3d9f33a3",
-      "contract_version": 1,
+      "contract_sha256": "24f70a70a68c63c5bb5a521f430ed0da6f80772ba0cbb2b00760c258f857cdaa",
+      "contract_version": 2,
       "coverage_status": "partial",
       "dependencies": [],
-      "implementation_component": "replacement_effects.replacement_choice and replacement_effects.apply_replacement",
-      "implementation_version": "prevention-event-v1",
+      "implementation_component": "canonical damage snapshots, fixed all-damage compiler scopes, damage_prevention scope state and existing replacement application/ordering",
+      "implementation_version": "sealed-prevention-public-scopes-v2",
       "kind": "rules_section",
       "known_blockers": [
-        "generic prevention effects are not registered from active Oracle semantics",
-        "stateful cross-event shields and simultaneous source allocation are not represented",
-        "source selection, source-property rechecks, and prevention-trigger dispatch are not integrated with engine damage producers"
+        "independently unsupported siblings and unrepresented prevention producers remain residual",
+        "open counter or combat-role predicates, dynamic quantities and all-but-N prevention",
+        "chosen-color linked source selection and unsupported prevention consequences"
       ],
       "mechanic_id": "cr-615-prevention-effects",
       "official_name": "Prevention Effects",
@@ -9992,7 +10275,24 @@
         "test_unpreventable_damage_applies_effect_once_without_preventing",
         "test_negative_prevention_amount_fails_closed",
         "test_negative_damage_amount_fails_closed_in_prevention",
-        "test_prevention_never_prevents_more_than_remaining_damage"
+        "test_prevention_never_prevents_more_than_remaining_damage",
+        "test_actual_wall_prevents_only_blocked_creature_damage_across_multiple_pairings",
+        "test_actual_shared_color_plans_prevents_creature_damage_only_with_matching_color",
+        "test_actual_shared_color_negative_keeps_unmatched_combat_damage",
+        "test_actual_emmara_source_bounce_removes_prevention_and_replays",
+        "test_actual_prevention_quantity_replacement_pending_reload_preserves_same_damage",
+        "test_actual_hindervines_preserves_only_countered_source_combat_damage",
+        "test_actual_luminesce_prevents_red_shock_but_not_blue_damage",
+        "test_actual_enchanted_source_prevention_follows_aura_damage_scope",
+        "test_actual_oaf_prevents_only_its_damage_to_red_creature",
+        "test_model_redirection_replaces_token_scope_facts_and_color_pair_result",
+        "test_model_unpreventable_damage_ignores_scoped_prevention_without_hiding_effect",
+        "test_damage_source_and_redirection_codecs_preserve_empty_legacy_forms",
+        "test_role_token_attachment_source_color_and_pair_scopes_are_closed",
+        "test_scope_codec_old_form_is_preserved_and_malformed_extensions_reject",
+        "test_actual_emmara_prevents_only_own_creature_token_shock_and_replays",
+        "test_actual_dolmen_attackers_take_no_combat_damage_but_unblocked_attacker_hits_player",
+        "test_omitting_token_fact_mutant_is_killed_by_actual_copy_and_damage"
       ],
       "trust_level": "untrusted"
     },
