@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 217,
+  "registry_version": 218,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -13416,6 +13416,110 @@
       "dependency_fail_closed_rationale": "Omitting current blocking capacity prevents exact grammar admission and extra command pairings.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Omitting the capacity consumer makes the actual two-attacker block command fail.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "casting.prototype.characteristics",
+      "version": 1,
+      "official_rules": [
+        "702.160a",
+        "718.2",
+        "718.2a",
+        "718.3",
+        "718.3a",
+        "718.3b",
+        "718.3c",
+        "718.3d",
+        "718.4",
+        "718.5",
+        "601.2b",
+        "601.2f",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Fixed Prototype mana cost, color, power and toughness selected before shared cast legality and payment, retained on the stack and resolving permanent and as copiable values; other zones and new incarnations restore printed characteristics.",
+        "inputs": [
+          "trusted complete-card Prototype descriptor",
+          "explicit server-offered cast selection",
+          "current source zone and ordinary cost alternatives"
+        ],
+        "outputs": [
+          "shared prospective casting characteristics",
+          "canonical stack annotation",
+          "copiable alternate characteristics until zone departure"
+        ],
+        "exclusions": [
+          "variable or complex Prototype characteristics",
+          "unrepresented sibling abilities",
+          "runtime Oracle interpretation"
+        ]
+      },
+      "dependencies": [
+        "token.creation.fixed_copy"
+      ],
+      "implementation_components": [
+        "quorune.compiler.prototype_nodes.prototype_keyword_node",
+        "quorune.semantic_runtime.prototype.PrototypeAbilityHandler",
+        "quorune.rules.prototype.prototype_cast_view",
+        "quorune.rules.prototype.prototype_characteristic_values",
+        "quorune.rules.prototype.commit_prototype_cast",
+        "quorune.rules.casting.face_queries.current_printed_cast_mana_cost",
+        "quorune.zone_object_state.reset_card_after_zone_change"
+      ],
+      "positive_tests": [
+        "test_fixed_prototype_compiles_closed_alternate_characteristics_and_full_admission",
+        "test_actual_prototype_offer_cost_color_size_persist_to_battlefield_and_replay",
+        "test_actual_prototype_blink_restores_printed_characteristics_and_replays"
+      ],
+      "negative_tests": [
+        "test_prototype_open_grammar_boolean_and_missing_dependency_fail_closed",
+        "test_unsupported_prototype_request_and_underpayment_reject_before_mutation"
+      ],
+      "interaction_tests": [
+        "test_actual_prototype_offer_cost_color_size_persist_to_battlefield_and_replay",
+        "test_actual_prototype_blink_restores_printed_characteristics_and_replays",
+        "test_actual_prototype_token_copy_retains_alternate_copiable_values_and_replay",
+        "test_actual_countered_prototype_restores_graveyard_values_and_replay",
+        "test_actual_black_prototype_uses_color_cost_reduction_and_preserves_deathtouch",
+        "test_canonical_free_permission_combines_with_prototype_and_replays",
+        "test_actual_combat_thresher_keeps_entry_draw_double_strike_and_private_replay"
+      ],
+      "multiplayer_tests": [
+        "test_actual_prototype_offer_cost_color_size_persist_to_battlefield_and_replay",
+        "test_actual_prototype_blink_restores_printed_characteristics_and_replays"
+      ],
+      "privacy_tests": [
+        "test_actual_prototype_offer_cost_color_size_persist_to_battlefield_and_replay",
+        "test_actual_prototype_blink_restores_printed_characteristics_and_replays"
+      ],
+      "replay_tests": [
+        "test_actual_prototype_offer_cost_color_size_persist_to_battlefield_and_replay",
+        "test_actual_prototype_blink_restores_printed_characteristics_and_replays",
+        "test_actual_prototype_token_copy_retains_alternate_copiable_values_and_replay",
+        "test_actual_countered_prototype_restores_graveyard_values_and_replay",
+        "test_actual_black_prototype_uses_color_cost_reduction_and_preserves_deathtouch",
+        "test_canonical_free_permission_combines_with_prototype_and_replays",
+        "test_actual_combat_thresher_keeps_entry_draw_double_strike_and_private_replay",
+        "test_unsupported_prototype_request_and_underpayment_reject_before_mutation"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Omitting Prototype descriptor or complete-card admission removes selected cast offers and rejects accepted requests.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the alternate characteristic view fails the actual selected Prototype cast and cost witness.",
       "blockers": [],
       "status": "trusted"
     }

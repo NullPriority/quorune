@@ -234,6 +234,7 @@
       "test_flashback_rules",
       "test_morph_rules",
       "test_proliferate_rules",
+      "test_prototype_rules",
       "test_semantic_handlers",
       "test_station_rules",
       "test_temporary_declaration_restriction_effects",

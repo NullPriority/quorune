@@ -9116,6 +9116,51 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Cenn's Tactician activation puts a counter on its Soldier source and enables the independently compiled query capacity; the activation and current capacity replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_prototype_rules.PrototypeRuntimeTests.test_actual_prototype_token_copy_retains_alternate_copiable_values_and_replay",
+      "piece_ids": [
+        "capability.casting.prototype.characteristics",
+        "capability.token.creation.fixed_copy"
+      ],
+      "capability_ids": [
+        "casting.prototype.characteristics",
+        "token.creation.fixed_copy"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Cackling Counterpart copies an accepted prototyped Blitz Automaton, retaining mana cost, color, mana value, size and Haste with exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_prototype_rules.PrototypeRuntimeTests.test_actual_black_prototype_uses_color_cost_reduction_and_preserves_deathtouch",
+      "piece_ids": [
+        "capability.casting.cost.modifier.fixed_query",
+        "capability.casting.prototype.characteristics"
+      ],
+      "capability_ids": [
+        "casting.cost.modifier.fixed_query",
+        "casting.prototype.characteristics"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Jet Medallion reduces a black Prototype spell while the ordinary colorless spell retains its printed generic cost, with accepted cast and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_prototype_rules.PrototypeRuntimeTests.test_actual_countered_prototype_restores_graveyard_values_and_replay",
+      "piece_ids": [
+        "capability.casting.prototype.characteristics",
+        "capability.zone.change.destination_replacement"
+      ],
+      "capability_ids": [
+        "casting.prototype.characteristics",
+        "zone.change.destination_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Counterspell counters a prototyped spell; the canonical graveyard transition resets selected characteristics, with exact replay."
     }
   ]
 }

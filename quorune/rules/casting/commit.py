@@ -884,6 +884,8 @@ def _create_spell_item(
     card.zone = "stack"
     card.controller = proposal.seat
     card.active_face = proposal.face
+    from ..prototype import commit_prototype_cast
+    commit_prototype_cast(card,details.get('prototype'))
     if str(selected_option.get("kind") or "").casefold() == KICKER_MECHANIC_ID:
         mark_card_kicked(card)
     if selected_option.get("id") == FLASHBACK_CAST_OPTION_ID:
@@ -962,6 +964,7 @@ def _create_spell_item(
             "granted_improvise": used_improvise,
             "cost_option": proposal.cost_option_id,
             'kicked': selected_option.get('kind') == KICKER_MECHANIC_ID,
+            **({'cast_method':'prototype','prototype':details['prototype']} if details.get('cast_method')=='prototype' else {}),
             **lifecycle_context,
             **_fixed_cast_lifecycle_cost_context(costs),
             **(
@@ -1367,6 +1370,9 @@ def commit_cast(
 
     card, record, program = _revalidate_source(host, proposal)
     details = dict(thaw_json(proposal.details))
+    from ..prototype import revalidate_prototype_cast
+    try:revalidate_prototype_cast(host,card,details)
+    except ValueError as exc:raise CastProposalError(str(exc),reason='stale_prototype_contract') from exc
     selected_option = _revalidate_cast_contracts(
         host,
         proposal,

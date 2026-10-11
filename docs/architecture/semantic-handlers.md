@@ -90,6 +90,13 @@ commits through the player speed owner. Current Max Speed abilities use the
 same source applicability model in battlefield and graveyard contexts, with
 exact equality to four rather than a minimum threshold.
 
+Prototype uses a current trusted complete-card marker in the existing ability
+registry. The cast owner creates an immutable prospective characteristic view,
+then pays and commits through ordinary casting. Its canonical annotation
+survives stack-to-battlefield resolution, participates in copiable snapshots,
+and is removed by other zone transitions. Costs and card abilities remain
+independent of the selected size and color.
+
 Fixed Graft uses the existing semantic-choice registry for its optional,
 non-targeted move. Its immutable movement intent pins both incarnations and
 retains the trigger controller. The counter coordinator resolves recipient

@@ -9,6 +9,14 @@ maintenance: "hand-maintained"
 
 # Rules kernel
 
+Prototype selection changes base mana cost, color, power and toughness while
+casting, on the stack and on the battlefield. It preserves the card's types
+and independently compiled abilities. Both normal and Prototype choices use
+the shared legality and payment owners, including available alternative costs.
+Copy snapshots retain the selected characteristics. Leaving the stack for a
+zone other than the battlefield, or leaving the battlefield, removes the
+selection; a blinked card returns with its ordinary printed characteristics.
+
 Multiple blocking consumes current typed additive or unlimited capacity at
 declaration. Ordinary single-attacker responses remain valid; extra pairings
 use a distinct attacker list for the blocker. The existing declaration solver

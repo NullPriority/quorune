@@ -16,6 +16,14 @@ def prospective_cast_record(record,face):
     return replace(record,type_line=str(face.get('type_line') or ''),mana_cost=str(face.get('mana_cost') or '')) if face else record
 
 
+def current_printed_cast_mana_cost(host,card,record):
+    from ..prototype import prototype_characteristic_values
+    values=prototype_characteristic_values(card)
+    if values:return values['mana_cost']
+    face=host._select_cast_face(record,card.active_face)
+    return str(face.get('mana_cost') or '') if face is not None else record.mana_cost
+
+
 def cast_resolution_is_trusted(host,record,face,program):
     return host.semantic_program_is_current_trusted(program) if program is not None else host._trusted_generic_spell(prospective_cast_record(record,face))
 
@@ -34,12 +42,20 @@ def offered_cast_methods(host,card):
     from ...morph import FACE_DOWN_CAST_METHODS
     record=host.card_record(card)
     faces=tuple(str(f['name']) for f in record.faces) if record is not None and record.layout in {'split','modal_dfc'} else (None,)
-    return tuple((None,name) for name in faces)+tuple((method,None) for method in FACE_DOWN_CAST_METHODS)
+    from ..prototype import compiled_prototype_spec
+    prototype=(('prototype',None),) if compiled_prototype_spec(host,card) is not None else ()
+    return tuple((None,name) for name in faces)+prototype+tuple((method,None) for method in FACE_DOWN_CAST_METHODS)
 
 
 def candidate_zone_cast_permission(host,seat,card):
     if host._compiled_zone_cast_permission(seat,card):return True
-    return any(host._compiled_zone_cast_permission(seat,prospective_cast_card(host,card,name)) for method,name in offered_cast_methods(host,card) if method is None and name is not None)
+    return any(host._compiled_zone_cast_permission(seat,selected_cast_card_view(host,card,name,method)) for method,name in offered_cast_methods(host,card) if method=='prototype' or method is None and name is not None)
+
+
+def selected_cast_card_view(host,card,face_name=None,cast_method=None):
+    from ..prototype import prototype_cast_view
+    view=prospective_cast_card(host,card,face_name)
+    return prototype_cast_view(host,view,host.card_record(view),cast_method)[0]
 
 
 def cast_offer_id(card,record,face,cast_method=None):

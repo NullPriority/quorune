@@ -246,6 +246,7 @@ def reset_card_after_zone_change(
                 "pending_aura_zone",
                 "face_down_characteristics",
                 "face_down_method",
+                "prototype_characteristics",
                 FIXED_CAST_LIFECYCLE_STACK_ANNOTATION,
             }
         )

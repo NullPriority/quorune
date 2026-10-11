@@ -3,8 +3,9 @@ from __future__ import annotations
 import copy
 from collections.abc import Mapping
 from dataclasses import replace
-from .face_queries import prospective_cast_card,cast_resolution_is_trusted,cast_offer_id,selected_cast_program
+from .face_queries import prospective_cast_card,cast_resolution_is_trusted,cast_offer_id,selected_cast_program,selected_cast_card_view
 from .aftermath import aftermath_cast_prohibition_reason
+from ..prototype import prototype_cast_view,compiled_prototype_spec
 from typing import Any, Protocol
 
 from ...aura import EnchantSpec, enchant_spec_to_dict, is_aura_type_line
@@ -147,7 +148,7 @@ def _resolve_cast_source(host: CastProposalHost, request: CastProposalRequest) -
     if (
         card.zone not in {"hand", "command"}
         and not internally_authorized
-        and not host._compiled_zone_cast_permission(request.actor, prospective_cast_card(host,card,request.required_face or request.face))
+        and not host._compiled_zone_cast_permission(request.actor, selected_cast_card_view(host,card,request.required_face or request.face,request.cast_method))
     ):
         raise CastProposalError(
             f"Casting {card.printed_name} from {card.zone} is not authorized by a compiled zone permission.",
@@ -301,7 +302,7 @@ def _required_face_down_method_spec(
     card: Any,
     cast_method: str | None,
 ) -> Any | None:
-    if cast_method is None:
+    if cast_method is None or cast_method=='prototype':
         return None
     method_spec = compiled_fixed_mana_face_down_method_spec(
         host,
@@ -703,6 +704,7 @@ def build_cast_proposal(
     record = host.card_record(card)
     if not record:
         raise CastProposalError("Cannot cast a custom token", reason="custom_token")
+    card,record=prototype_cast_view(host,card,record,request.cast_method)
     face = (
         None
         if request.cast_method in FACE_DOWN_CAST_METHODS
@@ -780,6 +782,7 @@ def build_cast_proposal(
                 "mana_cost": mana_cost,
                 "during_resolution": request.during_resolution,
                 "cast_method": request.cast_method,
+                **({'prototype':compiled_prototype_spec(host,card).to_dict()} if request.cast_method=='prototype' else {}),
                 **(
                     {
                         (
@@ -870,6 +873,8 @@ def build_cast_offer(
     record = host.card_record(card)
     if not record:
         return CastProposalResult("unavailable", "custom_token")
+    try:card,record=prototype_cast_view(host,card,record,cast_method)
+    except CastProposalError as exc:return CastProposalResult(exc.status,exc.reason)
     method_spec, method_error = _offered_face_down_method_spec(
         host,
         card,
@@ -975,10 +980,13 @@ def build_cast_offer(
     if method_spec is not None:
         payload["cost"] = "{3}"
         payload["cast_method"] = cast_method
+    elif cast_method=='prototype':
+        payload['cost']=record.mana_cost
+        payload['cast_method']='prototype'
     cast_name = str(front.get("name") or "") if front else record.name
     cast_cost = str(front.get("mana_cost") or "") if front else record.mana_cost
     offer = ActionOffer(
-        action_id=cast_offer_id(card,record,front,cast_method if method_spec is not None else None),
+        action_id=cast_offer_id(card,record,front,cast_method),
         action="cast",
         seat=seat,
         label=(

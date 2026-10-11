@@ -7698,6 +7698,656 @@
     {"capability_id":"casting.prohibition.fixed_public","evidence_class":"positive","test_id":"tests.test_static_action_rules.StaticActionRuleCompilerTests.test_static_action_rule_contract_matrix","official_rule_ids":["101.2","601.2","601.2e","601.3"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Lower fixed player, spell-query, period, zone, and chosen-name cast prohibitions."},
     {"capability_id":"casting.prohibition.fixed_public","evidence_class":"privacy","test_id":"tests.test_static_action_rules.StaticActionRuleRuntimeTests.test_static_action_rules_replay_and_four_player_projection","official_rule_ids":["101.2","601.2","601.2e","601.3"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Expose only the ordinary legal cast catalog to each authorized principal."},
     {"capability_id":"casting.prohibition.fixed_public","evidence_class":"replay","test_id":"tests.test_static_action_rules.StaticActionRuleRuntimeTests.test_static_action_rules_replay_and_four_player_projection","official_rule_ids":["101.2","601.2","601.2e","601.3"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Replay the current restriction source and accepted cast result exactly."},
+    {
+      "capability_id": "casting.prototype.characteristics",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_prototype_rules.PrototypeRuntimeTests.test_actual_black_prototype_uses_color_cost_reduction_and_preserves_deathtouch",
+      "official_rule_ids": [
+        "702.160a",
+        "718.2",
+        "718.2a",
+        "718.3",
+        "718.3a",
+        "718.3b",
+        "718.3c",
+        "718.3d",
+        "718.4",
+        "718.5",
+        "601.2b",
+        "601.2f",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Prototype mana cost, color, power and toughness selected before shared cast legality and payment, retained on the stack and resolving permanent and as copiable values; other zones and new incarnations restore printed characteristics."
+    },
+    {
+      "capability_id": "casting.prototype.characteristics",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_prototype_rules.PrototypeRuntimeTests.test_actual_combat_thresher_keeps_entry_draw_double_strike_and_private_replay",
+      "official_rule_ids": [
+        "702.160a",
+        "718.2",
+        "718.2a",
+        "718.3",
+        "718.3a",
+        "718.3b",
+        "718.3c",
+        "718.3d",
+        "718.4",
+        "718.5",
+        "601.2b",
+        "601.2f",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Prototype mana cost, color, power and toughness selected before shared cast legality and payment, retained on the stack and resolving permanent and as copiable values; other zones and new incarnations restore printed characteristics."
+    },
+    {
+      "capability_id": "casting.prototype.characteristics",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_prototype_rules.PrototypeRuntimeTests.test_actual_countered_prototype_restores_graveyard_values_and_replay",
+      "official_rule_ids": [
+        "702.160a",
+        "718.2",
+        "718.2a",
+        "718.3",
+        "718.3a",
+        "718.3b",
+        "718.3c",
+        "718.3d",
+        "718.4",
+        "718.5",
+        "601.2b",
+        "601.2f",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Prototype mana cost, color, power and toughness selected before shared cast legality and payment, retained on the stack and resolving permanent and as copiable values; other zones and new incarnations restore printed characteristics."
+    },
+    {
+      "capability_id": "casting.prototype.characteristics",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_prototype_rules.PrototypeRuntimeTests.test_actual_prototype_blink_restores_printed_characteristics_and_replays",
+      "official_rule_ids": [
+        "702.160a",
+        "718.2",
+        "718.2a",
+        "718.3",
+        "718.3a",
+        "718.3b",
+        "718.3c",
+        "718.3d",
+        "718.4",
+        "718.5",
+        "601.2b",
+        "601.2f",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Prototype mana cost, color, power and toughness selected before shared cast legality and payment, retained on the stack and resolving permanent and as copiable values; other zones and new incarnations restore printed characteristics."
+    },
+    {
+      "capability_id": "casting.prototype.characteristics",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_prototype_rules.PrototypeRuntimeTests.test_actual_prototype_offer_cost_color_size_persist_to_battlefield_and_replay",
+      "official_rule_ids": [
+        "702.160a",
+        "718.2",
+        "718.2a",
+        "718.3",
+        "718.3a",
+        "718.3b",
+        "718.3c",
+        "718.3d",
+        "718.4",
+        "718.5",
+        "601.2b",
+        "601.2f",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Prototype mana cost, color, power and toughness selected before shared cast legality and payment, retained on the stack and resolving permanent and as copiable values; other zones and new incarnations restore printed characteristics."
+    },
+    {
+      "capability_id": "casting.prototype.characteristics",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_prototype_rules.PrototypeRuntimeTests.test_actual_prototype_token_copy_retains_alternate_copiable_values_and_replay",
+      "official_rule_ids": [
+        "702.160a",
+        "718.2",
+        "718.2a",
+        "718.3",
+        "718.3a",
+        "718.3b",
+        "718.3c",
+        "718.3d",
+        "718.4",
+        "718.5",
+        "601.2b",
+        "601.2f",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Prototype mana cost, color, power and toughness selected before shared cast legality and payment, retained on the stack and resolving permanent and as copiable values; other zones and new incarnations restore printed characteristics."
+    },
+    {
+      "capability_id": "casting.prototype.characteristics",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_prototype_rules.PrototypeRuntimeTests.test_canonical_free_permission_combines_with_prototype_and_replays",
+      "official_rule_ids": [
+        "702.160a",
+        "718.2",
+        "718.2a",
+        "718.3",
+        "718.3a",
+        "718.3b",
+        "718.3c",
+        "718.3d",
+        "718.4",
+        "718.5",
+        "601.2b",
+        "601.2f",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Prototype mana cost, color, power and toughness selected before shared cast legality and payment, retained on the stack and resolving permanent and as copiable values; other zones and new incarnations restore printed characteristics."
+    },
+    {
+      "capability_id": "casting.prototype.characteristics",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_prototype_rules.PrototypeRuntimeTests.test_actual_prototype_blink_restores_printed_characteristics_and_replays",
+      "official_rule_ids": [
+        "702.160a",
+        "718.2",
+        "718.2a",
+        "718.3",
+        "718.3a",
+        "718.3b",
+        "718.3c",
+        "718.3d",
+        "718.4",
+        "718.5",
+        "601.2b",
+        "601.2f",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Prototype mana cost, color, power and toughness selected before shared cast legality and payment, retained on the stack and resolving permanent and as copiable values; other zones and new incarnations restore printed characteristics."
+    },
+    {
+      "capability_id": "casting.prototype.characteristics",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_prototype_rules.PrototypeRuntimeTests.test_actual_prototype_offer_cost_color_size_persist_to_battlefield_and_replay",
+      "official_rule_ids": [
+        "702.160a",
+        "718.2",
+        "718.2a",
+        "718.3",
+        "718.3a",
+        "718.3b",
+        "718.3c",
+        "718.3d",
+        "718.4",
+        "718.5",
+        "601.2b",
+        "601.2f",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Prototype mana cost, color, power and toughness selected before shared cast legality and payment, retained on the stack and resolving permanent and as copiable values; other zones and new incarnations restore printed characteristics."
+    },
+    {
+      "capability_id": "casting.prototype.characteristics",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_prototype_rules.PrototypeRuntimeTests.test_omitting_prototype_characteristics_mutant_is_killed",
+      "official_rule_ids": [
+        "702.160a",
+        "718.2",
+        "718.2a",
+        "718.3",
+        "718.3a",
+        "718.3b",
+        "718.3c",
+        "718.3d",
+        "718.4",
+        "718.5",
+        "601.2b",
+        "601.2f",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Prototype mana cost, color, power and toughness selected before shared cast legality and payment, retained on the stack and resolving permanent and as copiable values; other zones and new incarnations restore printed characteristics."
+    },
+    {
+      "capability_id": "casting.prototype.characteristics",
+      "evidence_class": "negative",
+      "test_id": "tests.test_prototype_rules.PrototypeCompilerTests.test_prototype_open_grammar_boolean_and_missing_dependency_fail_closed",
+      "official_rule_ids": [
+        "702.160a",
+        "718.2",
+        "718.2a",
+        "718.3",
+        "718.3a",
+        "718.3b",
+        "718.3c",
+        "718.3d",
+        "718.4",
+        "718.5",
+        "601.2b",
+        "601.2f",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Prototype mana cost, color, power and toughness selected before shared cast legality and payment, retained on the stack and resolving permanent and as copiable values; other zones and new incarnations restore printed characteristics."
+    },
+    {
+      "capability_id": "casting.prototype.characteristics",
+      "evidence_class": "negative",
+      "test_id": "tests.test_prototype_rules.PrototypeRuntimeTests.test_unsupported_prototype_request_and_underpayment_reject_before_mutation",
+      "official_rule_ids": [
+        "702.160a",
+        "718.2",
+        "718.2a",
+        "718.3",
+        "718.3a",
+        "718.3b",
+        "718.3c",
+        "718.3d",
+        "718.4",
+        "718.5",
+        "601.2b",
+        "601.2f",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Prototype mana cost, color, power and toughness selected before shared cast legality and payment, retained on the stack and resolving permanent and as copiable values; other zones and new incarnations restore printed characteristics."
+    },
+    {
+      "capability_id": "casting.prototype.characteristics",
+      "evidence_class": "positive",
+      "test_id": "tests.test_prototype_rules.PrototypeCompilerTests.test_fixed_prototype_compiles_closed_alternate_characteristics_and_full_admission",
+      "official_rule_ids": [
+        "702.160a",
+        "718.2",
+        "718.2a",
+        "718.3",
+        "718.3a",
+        "718.3b",
+        "718.3c",
+        "718.3d",
+        "718.4",
+        "718.5",
+        "601.2b",
+        "601.2f",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Prototype mana cost, color, power and toughness selected before shared cast legality and payment, retained on the stack and resolving permanent and as copiable values; other zones and new incarnations restore printed characteristics."
+    },
+    {
+      "capability_id": "casting.prototype.characteristics",
+      "evidence_class": "positive",
+      "test_id": "tests.test_prototype_rules.PrototypeRuntimeTests.test_actual_prototype_blink_restores_printed_characteristics_and_replays",
+      "official_rule_ids": [
+        "702.160a",
+        "718.2",
+        "718.2a",
+        "718.3",
+        "718.3a",
+        "718.3b",
+        "718.3c",
+        "718.3d",
+        "718.4",
+        "718.5",
+        "601.2b",
+        "601.2f",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Prototype mana cost, color, power and toughness selected before shared cast legality and payment, retained on the stack and resolving permanent and as copiable values; other zones and new incarnations restore printed characteristics."
+    },
+    {
+      "capability_id": "casting.prototype.characteristics",
+      "evidence_class": "positive",
+      "test_id": "tests.test_prototype_rules.PrototypeRuntimeTests.test_actual_prototype_offer_cost_color_size_persist_to_battlefield_and_replay",
+      "official_rule_ids": [
+        "702.160a",
+        "718.2",
+        "718.2a",
+        "718.3",
+        "718.3a",
+        "718.3b",
+        "718.3c",
+        "718.3d",
+        "718.4",
+        "718.5",
+        "601.2b",
+        "601.2f",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Prototype mana cost, color, power and toughness selected before shared cast legality and payment, retained on the stack and resolving permanent and as copiable values; other zones and new incarnations restore printed characteristics."
+    },
+    {
+      "capability_id": "casting.prototype.characteristics",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_prototype_rules.PrototypeRuntimeTests.test_actual_prototype_blink_restores_printed_characteristics_and_replays",
+      "official_rule_ids": [
+        "702.160a",
+        "718.2",
+        "718.2a",
+        "718.3",
+        "718.3a",
+        "718.3b",
+        "718.3c",
+        "718.3d",
+        "718.4",
+        "718.5",
+        "601.2b",
+        "601.2f",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Prototype mana cost, color, power and toughness selected before shared cast legality and payment, retained on the stack and resolving permanent and as copiable values; other zones and new incarnations restore printed characteristics."
+    },
+    {
+      "capability_id": "casting.prototype.characteristics",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_prototype_rules.PrototypeRuntimeTests.test_actual_prototype_offer_cost_color_size_persist_to_battlefield_and_replay",
+      "official_rule_ids": [
+        "702.160a",
+        "718.2",
+        "718.2a",
+        "718.3",
+        "718.3a",
+        "718.3b",
+        "718.3c",
+        "718.3d",
+        "718.4",
+        "718.5",
+        "601.2b",
+        "601.2f",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Prototype mana cost, color, power and toughness selected before shared cast legality and payment, retained on the stack and resolving permanent and as copiable values; other zones and new incarnations restore printed characteristics."
+    },
+    {
+      "capability_id": "casting.prototype.characteristics",
+      "evidence_class": "replay",
+      "test_id": "tests.test_prototype_rules.PrototypeRuntimeTests.test_actual_black_prototype_uses_color_cost_reduction_and_preserves_deathtouch",
+      "official_rule_ids": [
+        "702.160a",
+        "718.2",
+        "718.2a",
+        "718.3",
+        "718.3a",
+        "718.3b",
+        "718.3c",
+        "718.3d",
+        "718.4",
+        "718.5",
+        "601.2b",
+        "601.2f",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Prototype mana cost, color, power and toughness selected before shared cast legality and payment, retained on the stack and resolving permanent and as copiable values; other zones and new incarnations restore printed characteristics."
+    },
+    {
+      "capability_id": "casting.prototype.characteristics",
+      "evidence_class": "replay",
+      "test_id": "tests.test_prototype_rules.PrototypeRuntimeTests.test_actual_combat_thresher_keeps_entry_draw_double_strike_and_private_replay",
+      "official_rule_ids": [
+        "702.160a",
+        "718.2",
+        "718.2a",
+        "718.3",
+        "718.3a",
+        "718.3b",
+        "718.3c",
+        "718.3d",
+        "718.4",
+        "718.5",
+        "601.2b",
+        "601.2f",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Prototype mana cost, color, power and toughness selected before shared cast legality and payment, retained on the stack and resolving permanent and as copiable values; other zones and new incarnations restore printed characteristics."
+    },
+    {
+      "capability_id": "casting.prototype.characteristics",
+      "evidence_class": "replay",
+      "test_id": "tests.test_prototype_rules.PrototypeRuntimeTests.test_actual_countered_prototype_restores_graveyard_values_and_replay",
+      "official_rule_ids": [
+        "702.160a",
+        "718.2",
+        "718.2a",
+        "718.3",
+        "718.3a",
+        "718.3b",
+        "718.3c",
+        "718.3d",
+        "718.4",
+        "718.5",
+        "601.2b",
+        "601.2f",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Prototype mana cost, color, power and toughness selected before shared cast legality and payment, retained on the stack and resolving permanent and as copiable values; other zones and new incarnations restore printed characteristics."
+    },
+    {
+      "capability_id": "casting.prototype.characteristics",
+      "evidence_class": "replay",
+      "test_id": "tests.test_prototype_rules.PrototypeRuntimeTests.test_actual_prototype_blink_restores_printed_characteristics_and_replays",
+      "official_rule_ids": [
+        "702.160a",
+        "718.2",
+        "718.2a",
+        "718.3",
+        "718.3a",
+        "718.3b",
+        "718.3c",
+        "718.3d",
+        "718.4",
+        "718.5",
+        "601.2b",
+        "601.2f",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Prototype mana cost, color, power and toughness selected before shared cast legality and payment, retained on the stack and resolving permanent and as copiable values; other zones and new incarnations restore printed characteristics."
+    },
+    {
+      "capability_id": "casting.prototype.characteristics",
+      "evidence_class": "replay",
+      "test_id": "tests.test_prototype_rules.PrototypeRuntimeTests.test_actual_prototype_offer_cost_color_size_persist_to_battlefield_and_replay",
+      "official_rule_ids": [
+        "702.160a",
+        "718.2",
+        "718.2a",
+        "718.3",
+        "718.3a",
+        "718.3b",
+        "718.3c",
+        "718.3d",
+        "718.4",
+        "718.5",
+        "601.2b",
+        "601.2f",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Prototype mana cost, color, power and toughness selected before shared cast legality and payment, retained on the stack and resolving permanent and as copiable values; other zones and new incarnations restore printed characteristics."
+    },
+    {
+      "capability_id": "casting.prototype.characteristics",
+      "evidence_class": "replay",
+      "test_id": "tests.test_prototype_rules.PrototypeRuntimeTests.test_actual_prototype_token_copy_retains_alternate_copiable_values_and_replay",
+      "official_rule_ids": [
+        "702.160a",
+        "718.2",
+        "718.2a",
+        "718.3",
+        "718.3a",
+        "718.3b",
+        "718.3c",
+        "718.3d",
+        "718.4",
+        "718.5",
+        "601.2b",
+        "601.2f",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Prototype mana cost, color, power and toughness selected before shared cast legality and payment, retained on the stack and resolving permanent and as copiable values; other zones and new incarnations restore printed characteristics."
+    },
+    {
+      "capability_id": "casting.prototype.characteristics",
+      "evidence_class": "replay",
+      "test_id": "tests.test_prototype_rules.PrototypeRuntimeTests.test_canonical_free_permission_combines_with_prototype_and_replays",
+      "official_rule_ids": [
+        "702.160a",
+        "718.2",
+        "718.2a",
+        "718.3",
+        "718.3a",
+        "718.3b",
+        "718.3c",
+        "718.3d",
+        "718.4",
+        "718.5",
+        "601.2b",
+        "601.2f",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Prototype mana cost, color, power and toughness selected before shared cast legality and payment, retained on the stack and resolving permanent and as copiable values; other zones and new incarnations restore printed characteristics."
+    },
+    {
+      "capability_id": "casting.prototype.characteristics",
+      "evidence_class": "replay",
+      "test_id": "tests.test_prototype_rules.PrototypeRuntimeTests.test_unsupported_prototype_request_and_underpayment_reject_before_mutation",
+      "official_rule_ids": [
+        "702.160a",
+        "718.2",
+        "718.2a",
+        "718.3",
+        "718.3a",
+        "718.3b",
+        "718.3c",
+        "718.3d",
+        "718.4",
+        "718.5",
+        "601.2b",
+        "601.2f",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed Prototype mana cost, color, power and toughness selected before shared cast legality and payment, retained on the stack and resolving permanent and as copiable values; other zones and new incarnations restore printed characteristics."
+    },
     {"capability_id":"casting.timing.fixed_query_static","evidence_class":"interaction","test_id":"tests.test_static_action_rules.StaticActionRuleRuntimeTests.test_qualified_aura_timing_distinguishes_enchant_creature_from_land","official_rule_ids":["117.1a","304.5","307.5","601.2","702.5","702.5a","702.8","702.8a","702.8b"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Recompute current source conditions, selected-face spell queries, and the compiler-pinned Enchant restriction for offer and commit."},
     {"capability_id":"casting.timing.fixed_query_static","evidence_class":"multiplayer","test_id":"tests.test_static_action_rules.StaticActionRuleRuntimeTests.test_static_action_rules_replay_and_four_player_projection","official_rule_ids":["117.1a","304.5","307.5","601.2","702.5","702.5a","702.8","702.8a","702.8b"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Separate controller-scoped and all-player instant-timing permissions in four-player state."},
     {"capability_id":"casting.timing.fixed_query_static","evidence_class":"mutation","test_id":"tests.test_static_action_rules.StaticActionRuleCompilerTests.test_static_action_rule_compiler_mutant_is_killed","official_rule_ids":["117.1a","304.5","307.5","601.2","702.5","702.5a","702.8","702.8a","702.8b"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Kill removal of the shared static action-rule compiler production."},

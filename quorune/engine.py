@@ -3194,12 +3194,8 @@ class CommanderEngine(
         record = self.card_record(card)
         if record is None:
             return [], False
-        face = self._select_cast_face(record,card.active_face)
-        mana_cost = (
-            str(face.get("mana_cost") or "")
-            if face is not None
-            else record.mana_cost
-        )
+        from .rules.casting.face_queries import current_printed_cast_mana_cost
+        mana_cost = current_printed_cast_mana_cost(self,card,record)
         variants = [self._mana_vector(None)]
         has_x = False
         for symbol in parse_mana_symbols(mana_cost):

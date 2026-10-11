@@ -805,6 +805,15 @@ abilities, type or subtype unions, qualified predicates, and Crew, Station,
 Convoke, and Improvise semantics retain their existing independent owners or
 remain source-spanned residuals.
 
+Fixed Prototype lowers an all-zone, complete-card characteristic descriptor
+through the existing ability component registry. Shared cast offers and
+accepted proposals choose the alternate mana cost, color and size before
+checking permissions, costs and targets. Prototype is a characteristic choice,
+so an independently authorized alternative cost still applies. The stack and
+resolving permanent retain the choice as copiable values; ordinary zone reset
+restores printed characteristics on other transitions. Variable sizes, complex
+mana symbols and independently unsupported siblings remain residual.
+
 `compiler/keyword_nodes.py` owns one closed ordinary fixed-mana Morph
 production. It lowers the turn-up cost to a typed all-zone runtime component;
 the casting proposal owner separately supplies the face-down `{3}` creature-

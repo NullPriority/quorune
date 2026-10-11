@@ -1,0 +1,151 @@
+{
+  "schema_version": 1,
+  "contract_version": 1,
+  "mechanic_id": "prototype",
+  "official_name": "Prototype",
+  "effective_date": "2026-08-07",
+  "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
+  "rule_references": [
+    "702.160a",
+    "718.2",
+    "718.2a",
+    "718.3",
+    "718.3a",
+    "718.3b",
+    "718.3c",
+    "718.3d",
+    "718.4",
+    "718.5",
+    "601.2b",
+    "601.2f",
+    "400.7"
+  ],
+  "glossary_references": [
+    "prototype",
+    "prototype cards"
+  ],
+  "dependencies": [
+    "casting-spells",
+    "continuous-effects",
+    "copying-objects"
+  ],
+  "coverage_status": "tested",
+  "trust_level": "untrusted",
+  "behavior": {
+    "zones": [
+      "all cast-permitted zones",
+      "stack",
+      "battlefield"
+    ],
+    "objects": [
+      "complete trusted Prototype card",
+      "copiable selected alternate characteristics"
+    ],
+    "events": [
+      "Prototype cast selection",
+      "normal cost and legality queries",
+      "stack-to-battlefield resolution",
+      "new-zone reset"
+    ],
+    "state_reads": [
+      "fixed alternate mana cost power toughness",
+      "current source descriptor admission",
+      "independent casting permissions and cost modifiers"
+    ],
+    "state_writes": [
+      "canonical cast annotation retained onto battlefield",
+      "normal zone reset removes selected characteristics elsewhere"
+    ],
+    "costs": [
+      "Prototype is a characteristic selection, not an alternative cost; independently authorized alternatives still apply"
+    ],
+    "timing": [
+      "same timing as the resulting spell"
+    ],
+    "targets": [
+      "independent printed sibling target owners"
+    ],
+    "choices": [
+      "normal or Prototype casting"
+    ],
+    "hidden_information": [
+      "ordinary cast reveal and independently closed private entry draw"
+    ],
+    "apnap": [
+      "ordinary cast and entry trigger owners"
+    ],
+    "layers": [
+      "alternate base mana cost color power toughness before ordinary layers"
+    ],
+    "replacement_effects": [
+      "ordinary costs and zone replacements"
+    ],
+    "copy": [
+      "token-copy producer retains selected copiable values; direct canonical spell-copy owner diagnostic also preserves them"
+    ],
+    "control_change": [
+      "changing controller does not change selected characteristics"
+    ],
+    "zone_change": [
+      "stack-to-battlefield keeps selection; all other transitions reset it"
+    ],
+    "source_leaves": [
+      "blink returns the ordinary printed card"
+    ]
+  },
+  "variants": [
+    "fixed ordinary mana",
+    "colored Prototype",
+    "normal vs Prototype offer",
+    "color cost reduction",
+    "countered departure",
+    "blink",
+    "actual token copying",
+    "canonical free alternative",
+    "entry triggered ability"
+  ],
+  "witness_cards": [
+    {
+      "name": "Goring Warplow",
+      "oracle_id": "02457c7f-eced-4bf3-9b61-309b4ceab2d5"
+    },
+    {
+      "name": "Combat Thresher",
+      "oracle_id": "0c460bdd-460b-4312-9ed2-32f3809a7d36"
+    },
+    {
+      "name": "Blitz Automaton",
+      "oracle_id": "19f344ee-031d-4346-9553-c5d32b02df43"
+    }
+  ],
+  "test_ids": [
+    "test_actual_black_prototype_uses_color_cost_reduction_and_preserves_deathtouch",
+    "test_actual_combat_thresher_keeps_entry_draw_double_strike_and_private_replay",
+    "test_actual_countered_prototype_restores_graveyard_values_and_replay",
+    "test_actual_prototype_blink_restores_printed_characteristics_and_replays",
+    "test_actual_prototype_offer_cost_color_size_persist_to_battlefield_and_replay",
+    "test_actual_prototype_token_copy_retains_alternate_copiable_values_and_replay",
+    "test_canonical_free_permission_combines_with_prototype_and_replays",
+    "test_canonical_spell_copy_of_prototype_keeps_selected_values_through_resolution",
+    "test_fixed_prototype_compiles_closed_alternate_characteristics_and_full_admission",
+    "test_omitting_prototype_characteristics_mutant_is_killed",
+    "test_prototype_open_grammar_boolean_and_missing_dependency_fail_closed",
+    "test_unsupported_prototype_request_and_underpayment_reject_before_mutation"
+  ],
+  "implementation": {
+    "component": "quorune.rules.prototype, quorune.prototype_model and existing casting characteristic/copy/zone owners",
+    "version": "fixed-prototype-characteristics-v1",
+    "capability_ids": [
+      "casting.prototype.characteristics"
+    ],
+    "supported_slice": "Complete trusted fixed-mana fixed-size Prototype cards; shared selected casting and stack/battlefield copiable values."
+  },
+  "known_blockers": [
+    "independently unsupported siblings remain residual",
+    "variable or complex alternate characteristic grammar",
+    "unrepresented copied acquired Prototype cast producers",
+    "aggregate mechanic trust does not imply complete card or match support"
+  ],
+  "review_status": "reviewed",
+  "rulings": []
+}
