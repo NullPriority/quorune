@@ -13451,11 +13451,11 @@
       "applicable_high_risk_pairs": 380,
       "applicable_piece_pairs": 110673,
       "available": true,
-      "covered_high_risk_pairs": 376,
-      "covered_piece_pairs": 1165,
+      "covered_high_risk_pairs": 380,
+      "covered_piece_pairs": 1169,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "5a1b2ada9e3310ff022f9222c34b471612b95a8934dfe02fd10a9966824b0c0d",
-      "uncovered_high_risk_pairs": 4
+      "source_fingerprint": "015df526b2afe049ef3913161aeb6ae8aae6e1a62551ff3389543646b2bbde9a",
+      "uncovered_high_risk_pairs": 0
     },
     "migration_queue": [],
     "missing_dedicated_owners": [],
@@ -36958,11 +36958,11 @@
           "rollback": 95
         },
         "declaration_count": 4819,
-        "declaration_source_fingerprint": "cb6d202d6602fd32d19d86e0d15d933d5e6ddc7cf698b1c665ff9dcd5576c2b6",
-        "fingerprint": "ce96c733af8abff94ede5714533d923063e1b6670984e0edd377a5411de02b4f",
-        "registry_fingerprint": "0cb69ea07bfcf6b120f08e40181c3def84e9d6545131216bfd0f4acbcdc4a4df"
+        "declaration_source_fingerprint": "fdee05323b1ef92b3da11658dfdedf19e97870ee57f0ffd1282a4f33b253d058",
+        "fingerprint": "fa8de222ebe2cf82dc7aafcb43bc59f238ade4b53f781e33b466575eff19f8d0",
+        "registry_fingerprint": "0ed1d73f099ffa091aceafa9c32132f0ad058a2398585477308f1272f3251fb6"
       },
-      "fingerprint": "0cb69ea07bfcf6b120f08e40181c3def84e9d6545131216bfd0f4acbcdc4a4df",
+      "fingerprint": "0ed1d73f099ffa091aceafa9c32132f0ad058a2398585477308f1272f3251fb6",
       "implementation_mutation_status_counts": {
         "killed": 347,
         "not_run": 4
@@ -37320,7 +37320,7 @@
         "contract_fingerprint": "0fa4e2cbb48e1bdad8d5f3e8948c22bd51a04a8baa687cff376b9b2971fbccf7",
         "exact_cards_with_template": 729,
         "exact_nodes": 907,
-        "fingerprint": "a92e031dc0e77a2e55c79d1bbd12720fb946807ca050d331caf524e2dc5ce9d3",
+        "fingerprint": "393fa60bd5362a6bb978ff165eb40b151002ad4fb464055a8cdeda500b4135d2",
         "grammar_source_fingerprint": "38f34441bc16c10d17486ea1a5bccfbcf8ce637024e0d69e0b585b6654ca9f4d",
         "identity_fingerprint": "dfabb183033bf62307a0cc27d6db98855eb018fd8a60b59c96b04e8a6f83a7f9",
         "present": true,
@@ -37332,7 +37332,7 @@
         "contract_fingerprint": "0fa4e2cbb48e1bdad8d5f3e8948c22bd51a04a8baa687cff376b9b2971fbccf7",
         "exact_cards_with_template": 751,
         "exact_nodes": 940,
-        "fingerprint": "0de08a3f80d0bcc9d7f9cefd899e654f3cc48dc9967082d2a1605fde211cc01d",
+        "fingerprint": "6d201aeb80a63d600c548f6bfbbb60c74cc8da68c8c2b23afe2aca9e6dab2692",
         "grammar_source_fingerprint": "38f34441bc16c10d17486ea1a5bccfbcf8ce637024e0d69e0b585b6654ca9f4d",
         "identity_fingerprint": "015761f4b397f3b0f5baad890d228ffa58b115f7edb1d7c46f11583218ff80ee",
         "present": true,
@@ -37351,7 +37351,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "780b9ea599b7f865ea9b895cc8d106960c4179879e9353f68d83b71c72a0a550",
+      "fingerprint": "262d635c0fd96fca9a8845ed41617d7d62f4cf03692abe942ef41b50d444d4e4",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -38209,14 +38209,14 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 5594,
-      "discovered_total": 8903,
+      "conventional_ast_cases": 5603,
+      "discovered_total": 8912,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 264,
         "fuzz_named": 1,
         "privacy_or_projection_named": 91,
-        "replay_named": 540,
+        "replay_named": 543,
         "server_named": 43
       },
       "reconciles": true,

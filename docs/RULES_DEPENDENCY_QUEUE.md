@@ -2,7 +2,7 @@
 title: "Rules dependency queue"
 status: "generated"
 authoritative_source: "coverage/rules-dependency-queue.json"
-verified: "83912f70a0b68467c3c76010f23bd8c7a0d40363d9d283efb41e9062349e1ca0"
+verified: "51089a24ee09964af771f739bd1d74a2ef1837bfae9778c168cc322039c43ca6"
 audience: "rules, compiler, and engine contributors"
 maintenance: "generated"
 generated_source: "coverage/rules-dependency-queue.json"
@@ -11,7 +11,7 @@ generation_command: ".\.venv\Scripts\python.exe scripts\update_rules_scheduler.p
 
 # Rules dependency queue
 
-Source fingerprint: `3e0b3faa65c9e6cd630927ce568b04a5e16b963e42513ae5a660cf4d1c315238`
+Source fingerprint: `d200693c45f1a05a55ead9ca49dbc92c8d9bc6c174a858e17a6633a3e02497a4`
 
 ## Current top-level state
 
@@ -20,9 +20,9 @@ Source fingerprint: `3e0b3faa65c9e6cd630927ce568b04a5e16b963e42513ae5a660cf4d1c3
 - Subsystems: `21`
 - Selected subsystem: `replacement-prevention`
 - Selected batch: `counter-producer-replacement-closure`
-- Selected cross-program work: `assurance:critical-interaction-recovery`
-- Selected work class: `interaction_assurance`
-- Selected work state: `implementation`
+- Selected cross-program work: `none`
+- Selected work class: `none`
+- Selected work state: `none`
 - Measurement grants gameplay trust: `not_applicable`
 
 ## Cross-program work selection
@@ -34,12 +34,12 @@ Priority classes: `ci_correctness` → `replay_privacy_defect` → `prohibited_r
 
 | Rank | Selection | Work state | Implementation eligible | Candidate | Class | Members | Contexts | Complete cards | Residuals | Cards/hour | Runtime text | Direct writes |
 |---:|---|---|---|---|---|---:|---:|---:|---:|---:|---:|---:|
-| 1 | selected | implementation | true | `assurance:critical-interaction-recovery` | `interaction_assurance` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
-| 2 | complete | implementation | false | `ci:compact-card-dependency-closure` | `ci_correctness` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
-| 3 | complete | implementation | false | `ci:materialize-harvest-outcome` | `ci_correctness` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
-| 4 | complete | implementation | false | `correctness:replay-privacy-recovery` | `replay_privacy_defect` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
-| 5 | complete | implementation | false | `architecture:dedicated-owner-extraction` | `architecture_owner_or_mutation_defect` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
-| 6 | blocked | implementation | false | `architecture:engine-mutation-and-specificity-debt` | `architecture_owner_or_mutation_defect` | 1 | 0 | 0 | 0 | unknown | 0 | 47 |
+| 1 | complete | implementation | false | `ci:compact-card-dependency-closure` | `ci_correctness` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
+| 2 | complete | implementation | false | `ci:materialize-harvest-outcome` | `ci_correctness` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
+| 3 | complete | implementation | false | `correctness:replay-privacy-recovery` | `replay_privacy_defect` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
+| 4 | complete | implementation | false | `architecture:dedicated-owner-extraction` | `architecture_owner_or_mutation_defect` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
+| 5 | blocked | implementation | false | `architecture:engine-mutation-and-specificity-debt` | `architecture_owner_or_mutation_defect` | 1 | 0 | 0 | 0 | unknown | 0 | 47 |
+| 6 | complete | implementation | false | `assurance:critical-interaction-recovery` | `interaction_assurance` | 1 | 0 | 0 | 0 | unknown | 0 | 0 |
 | 7 | blocked | implementation | false | `frontier:continuous_layer:continuous-effect-layers-and-dependencies` | `rules_foundation` | 1 | 0 | 1648 | 3539 | 27.016393 | 0 | 0 |
 | 8 | blocked | implementation | false | `interaction-implementation:residual.replacement.replacement-applicability` | `rules_foundation` | 1 | 0 | unknown | unknown | unknown | 0 | 0 |
 | 9 | blocked | implementation | false | `interaction-implementation:residual.replacement.self-replacement-and-prevention-ordering` | `rules_foundation` | 1 | 0 | unknown | unknown | unknown | 0 | 0 |
@@ -85,7 +85,7 @@ Priority classes: `ci_correctness` → `replay_privacy_defect` → `prohibited_r
 | 49 | blocked | implementation | false | `bundle:permanent-spell-additional-price` | `compiler_harvest` | 1 | 1 | 0 | 0 | 0.0 | 0 | 0 |
 | 50 | blocked | implementation | false | `bundle:public-static-cast-cost-modifiers` | `compiler_harvest` | 1 | 1 | 0 | 0 | 0.0 | 0 | 0 |
 
-Selected reason: Uncovered high-risk interactions remain above the verified stabilization baseline.
+Selected reason: No serious candidate currently meets the generated eligibility policy; retain visible deferred pressure and recompute after the next measured frontier classification.
 
 ## Top blockers
 
