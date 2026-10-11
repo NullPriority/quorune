@@ -42,6 +42,16 @@ def fixed_mill_node_capabilities(
     if MILL_MECHANIC_ID not in mechanics or len(effects) != 1:
         return ()
     effect = effects[0]
+    if set(effect) == {"op", "scope", "count"}:
+        if (
+            effect.get("op") == "mill"
+            and effect.get("scope") == "all_active_players"
+            and type(effect.get("count")) is int
+            and int(effect["count"]) > 0
+            and target_schema is None
+        ):
+            return (MILL_CAPABILITY_ID,)
+        return ()
     if (
         set(effect) != {"op", "player", "count"}
         or effect.get("op") != "mill"

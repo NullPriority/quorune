@@ -172,6 +172,15 @@ def commit_mill(host: MillHost, plan: MillPlan) -> MillResult:
         if object_ids
         else ()
     )
+    return _finish_mill(host, plan, object_ids, moved)
+
+
+def _finish_mill(
+    host: MillHost,
+    plan: MillPlan,
+    object_ids: tuple[str, ...],
+    moved: Sequence[CardInstance],
+) -> MillResult:
     results = tuple(
         MilledCardResult(
             identity=identity,
@@ -211,6 +220,36 @@ def mill_cards(host: MillHost, request: MillRequest) -> MillResult:
     return commit_mill(host, prepare_mill(host, request))
 
 
+def mill_player_batch(host: MillHost, requests: Sequence[MillRequest]) -> tuple[MillResult, ...]:
+    """Validate every player's top snapshot before one simultaneous zone move."""
+    requests = tuple(requests)
+    if any(not isinstance(request, MillRequest) for request in requests):
+        raise GameRuleError("Mill batches require typed requests")
+    if len({request.player for request in requests}) != len(requests):
+        raise GameRuleError("Mill batches require distinct players")
+    if len({(request.actor, request.reason) for request in requests}) > 1:
+        raise GameRuleError("Mill batches require one actor and reason")
+    plans = tuple(prepare_mill(host, request) for request in requests)
+    identities = tuple(_validate_plan(host, plan) for plan in plans)
+    object_ids = tuple(object_id for group in identities for object_id in group)
+    moved = (
+        ZoneTransitionOwner(host).move_cards_simultaneously(
+            [(object_id, "graveyard") for object_id in object_ids],
+            reason=requests[0].reason,
+            log=False,
+        ) if object_ids else ()
+    )
+    results = []
+    offset = 0
+    for plan, group in zip(plans, identities, strict=True):
+        results.append(
+            _finish_mill(host, plan, group, moved[offset:offset + len(group)])
+            if plan.request.count else MillResult(plan.request.player, 0, ())
+        )
+        offset += len(group)
+    return tuple(results)
+
+
 __all__ = [
     "commit_mill",
     "MilledCardResult",
@@ -220,5 +259,6 @@ __all__ = [
     "MillRequest",
     "MillResult",
     "mill_cards",
+    "mill_player_batch",
     "prepare_mill",
 ]

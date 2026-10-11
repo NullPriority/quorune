@@ -2425,28 +2425,111 @@
     },
     {
       "id": "zone.mill.fixed",
-      "version": 2,
-      "official_rules": ["400.7", "701.17", "701.17a", "701.17b", "701.17c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 3,
+      "official_rules": [
+        "400.7",
+        "701.17",
+        "701.17a",
+        "701.17b",
+        "701.17c",
+        "608.2f",
+        "101.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
-        "summary": "Resolve one mandatory nonnegative Mill instruction through an immutable current-library-top plan and the canonical simultaneous zone-transition owner; declared amounts require their separate numeric capability.",
-        "inputs": ["one capability-shaped Mill effect", "active actor and affected player", "nonnegative resolved integer count", "exact current library top identities", "current destination replacements and normalized zone-trigger sources"],
-        "outputs": ["one immutable Mill plan", "zero-count no-op without library mutation or a Mill event", "as-many-as-possible result for a short library", "one simultaneous replacement-aware library-to-graveyard batch", "actual destination and new-incarnation results", "privacy-safe public journal", "exact replay"],
-        "exclusions": ["Mill as a cost or optional action", "unowned variable, multiplied, half-library, or state-derived counts", "each-player, each-opponent, any-number-of-targets, or repeated Mill", "linked cards-milled-this-way consumers under CR 701.17c-d", "graveyard-order-sensitive interactions while CR 404.3 remains blocked", "private face-down or hidden-destination result consumers"]
+        "summary": "Resolve one mandatory nonnegative Mill instruction for one player or all active players through immutable current-library-top plans and one canonical simultaneous zone-transition batch; declared amounts require their separate numeric capability.",
+        "inputs": [
+          "one capability-shaped Mill effect",
+          "active actor and one affected player or an APNAP-ordered active-player batch",
+          "nonnegative resolved integer count",
+          "exact current library top identities",
+          "current destination replacements and normalized zone-trigger sources"
+        ],
+        "outputs": [
+          "one immutable Mill plan per affected player, all validated before mutation",
+          "zero-count no-op without library mutation or a Mill event",
+          "as-many-as-possible result for a short library",
+          "one simultaneous replacement-aware library-to-graveyard batch",
+          "actual destination and new-incarnation results",
+          "privacy-safe public journal",
+          "exact replay"
+        ],
+        "exclusions": [
+          "Mill as a cost or optional action",
+          "unowned variable, multiplied, half-library, or state-derived counts",
+          "each-opponent, any-number-of-targets, or repeated Mill",
+          "linked cards-milled-this-way consumers under CR 701.17c-d",
+          "graveyard-order-sensitive interactions while CR 404.3 remains blocked",
+          "private face-down or hidden-destination result consumers"
+        ]
       },
-      "dependencies": ["trigger.event.normalized_zone_change", "trigger.placement.apnap", "zone.change.destination_replacement"],
-      "implementation_components": ["quorune.milling.MillRequest", "quorune.milling.MillPlan", "quorune.milling.MillResult", "quorune.compiler.mill_templates.fixed_mill_effect_template", "quorune.semantic_runtime.generic.MillHandler", "quorune.semantic_runtime.intents.MillCardsIntent", "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously"],
-      "positive_tests": ["test_fixed_mill_compiles_across_spell_trigger_and_activation", "test_mill_commits_top_first_and_as_many_as_possible", "test_real_zero_mill_and_scry_consume_price_without_library_mutation"],
-      "negative_tests": ["test_dynamic_optional_group_and_linked_mill_remain_residual", "test_stale_plan_and_malformed_intent_fail_before_mutation"],
-      "interaction_tests": ["test_target_mill_revalidates_and_zone_replacement_preserves_actual_result"],
-      "multiplayer_tests": ["test_four_player_target_mill_is_public_privacy_safe_and_replays"],
-      "privacy_tests": ["test_four_player_target_mill_is_public_privacy_safe_and_replays"],
-      "replay_tests": ["test_four_player_target_mill_is_public_privacy_safe_and_replays"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "trigger.event.normalized_zone_change",
+        "trigger.placement.apnap",
+        "zone.change.destination_replacement"
+      ],
+      "implementation_components": [
+        "quorune.milling.MillRequest",
+        "quorune.milling.MillPlan",
+        "quorune.milling.MillResult",
+        "quorune.compiler.mill_templates.fixed_mill_effect_template",
+        "quorune.semantic_runtime.generic.MillHandler",
+        "quorune.semantic_runtime.intents.MillCardsIntent",
+        "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously",
+        "quorune.milling.mill_player_batch",
+        "quorune.semantic_runtime.executor._execute_player_intent"
+      ],
+      "positive_tests": [
+        "test_fixed_mill_compiles_across_spell_trigger_and_activation",
+        "test_mill_commits_top_first_and_as_many_as_possible",
+        "test_real_zero_mill_and_scry_consume_price_without_library_mutation",
+        "test_fixed_all_player_mill_uses_one_simultaneous_recipient_scope",
+        "test_original_bell_mills_all_active_players_in_one_zone_batch",
+        "test_original_chill_mills_available_cards_and_preserves_replacement_destinations"
+      ],
+      "negative_tests": [
+        "test_dynamic_optional_group_and_linked_mill_remain_residual",
+        "test_stale_plan_and_malformed_intent_fail_before_mutation",
+        "test_all_player_mill_scope_shape_rejects_conflicting_or_variable_recipients",
+        "test_all_player_mill_missing_destination_and_trigger_authority_stays_residual",
+        "test_malformed_all_player_mill_and_inactive_batch_fail_atomically"
+      ],
+      "interaction_tests": [
+        "test_target_mill_revalidates_and_zone_replacement_preserves_actual_result",
+        "test_original_bell_mills_all_active_players_in_one_zone_batch",
+        "test_original_chill_mills_available_cards_and_preserves_replacement_destinations"
+      ],
+      "multiplayer_tests": [
+        "test_four_player_target_mill_is_public_privacy_safe_and_replays",
+        "test_original_bell_mills_all_active_players_in_one_zone_batch",
+        "test_original_chill_mills_available_cards_and_preserves_replacement_destinations"
+      ],
+      "privacy_tests": [
+        "test_four_player_target_mill_is_public_privacy_safe_and_replays",
+        "test_original_bell_mills_all_active_players_in_one_zone_batch",
+        "test_original_chill_mills_available_cards_and_preserves_replacement_destinations"
+      ],
+      "replay_tests": [
+        "test_four_player_target_mill_is_public_privacy_safe_and_replays",
+        "test_original_bell_mills_all_active_players_in_one_zone_batch",
+        "test_original_chill_mills_available_cards_and_preserves_replacement_destinations"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Blocking destination replacement, normalized zone events, or APNAP trigger placement prevents the fixed Mill node from receiving trusted closure.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "Focused mutations remove the typed Mill template or bypass current-top revalidation; compiler exactness and authoritative state assertions reject both survivors.",
+      "implementation_mutation_rationale": "test_sequential_player_mill_mutant_is_killed_by_original_bell replaces the batch owner with separate player commits and fails at the explicit simultaneous-commit assertion. Existing destination and trigger-authority omissions remain fail closed.",
       "blockers": [],
       "status": "trusted"
     },

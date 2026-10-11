@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "5f32e91892bd7e230099d9f5fa396953d1717273cd5b94a99155b0ef254775c7",
-  "declaration_source_fingerprint": "9d90e32899b3f3d6ac3b54cbae971860a0c8829651cfcf779dbac7937c90f603",
+  "registry_fingerprint": "82c0f4b5d0a69b2ec88153f39d3e668e569e41638a4df3ac24bed14e904bcdd5",
+  "declaration_source_fingerprint": "c74d7c5f6aaafc4e67261786a9a951aece73b83b44e36549410f4d615ed664ae",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -103198,13 +103198,55 @@
     {
       "capability_id": "zone.mill.fixed",
       "evidence_class": "interaction",
+      "test_id": "tests.test_mill_rules.AllPlayerMillRuntimeTests.test_original_bell_mills_all_active_players_in_one_zone_batch",
+      "official_rule_ids": [
+        "400.7",
+        "701.17",
+        "701.17a",
+        "701.17b",
+        "701.17c",
+        "608.2f",
+        "101.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Ghoulcaller's Bell has actual whole-program admission, controller-correct offered activation and tap payment, rejects foreign commands atomically, mills all four active seats in one canonical zone batch, preserves public result privacy, and round-trips the pending stack plus pre-activation replay."
+    },
+    {
+      "capability_id": "zone.mill.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_mill_rules.AllPlayerMillRuntimeTests.test_original_chill_mills_available_cards_and_preserves_replacement_destinations",
+      "official_rule_ids": [
+        "400.7",
+        "701.17",
+        "701.17a",
+        "701.17b",
+        "701.17c",
+        "608.2f",
+        "101.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Chill of Foreboding is cast and resolves with libraries shorter than five. All available cards move without empty-library loss; a canonical opponent-graveyard replacement redirects only opponents to exile, while the controller mills normally. Exact pre-cast replay preserves both destinations."
+    },
+    {
+      "capability_id": "zone.mill.fixed",
+      "evidence_class": "interaction",
       "test_id": "tests.test_mill_rules.FixedMillRuntimeTests.test_target_mill_revalidates_and_zone_replacement_preserves_actual_result",
       "official_rule_ids": [
         "400.7",
         "701.17",
         "701.17a",
         "701.17b",
-        "701.17c"
+        "701.17c",
+        "608.2f",
+        "101.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -103216,13 +103258,55 @@
     {
       "capability_id": "zone.mill.fixed",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_mill_rules.AllPlayerMillRuntimeTests.test_original_bell_mills_all_active_players_in_one_zone_batch",
+      "official_rule_ids": [
+        "400.7",
+        "701.17",
+        "701.17a",
+        "701.17b",
+        "701.17c",
+        "608.2f",
+        "101.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Ghoulcaller's Bell has actual whole-program admission, controller-correct offered activation and tap payment, rejects foreign commands atomically, mills all four active seats in one canonical zone batch, preserves public result privacy, and round-trips the pending stack plus pre-activation replay."
+    },
+    {
+      "capability_id": "zone.mill.fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_mill_rules.AllPlayerMillRuntimeTests.test_original_chill_mills_available_cards_and_preserves_replacement_destinations",
+      "official_rule_ids": [
+        "400.7",
+        "701.17",
+        "701.17a",
+        "701.17b",
+        "701.17c",
+        "608.2f",
+        "101.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Chill of Foreboding is cast and resolves with libraries shorter than five. All available cards move without empty-library loss; a canonical opponent-graveyard replacement redirects only opponents to exile, while the controller mills normally. Exact pre-cast replay preserves both destinations."
+    },
+    {
+      "capability_id": "zone.mill.fixed",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_mill_rules.FixedMillRuntimeTests.test_four_player_target_mill_is_public_privacy_safe_and_replays",
       "official_rule_ids": [
         "400.7",
         "701.17",
         "701.17a",
         "701.17b",
-        "701.17c"
+        "701.17c",
+        "608.2f",
+        "101.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -103234,13 +103318,55 @@
     {
       "capability_id": "zone.mill.fixed",
       "evidence_class": "mutation",
+      "test_id": "tests.test_mill_rules.AllPlayerMillRuntimeTests.test_sequential_player_mill_mutant_is_killed_by_original_bell",
+      "official_rule_ids": [
+        "400.7",
+        "701.17",
+        "701.17a",
+        "701.17b",
+        "701.17c",
+        "608.2f",
+        "101.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replacing the canonical all-player batch with sequential per-player commits is killed at the explicit simultaneous-commit assertion in the original Bell action witness."
+    },
+    {
+      "capability_id": "zone.mill.fixed",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_mill_rules.FixedMillCompilerTests.test_all_player_mill_missing_destination_and_trigger_authority_stays_residual",
+      "official_rule_ids": [
+        "400.7",
+        "701.17",
+        "701.17a",
+        "701.17b",
+        "701.17c",
+        "608.2f",
+        "101.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Omitting destination-replacement or APNAP trigger authority, or the Mill producer, prevents exact all-player admission."
+    },
+    {
+      "capability_id": "zone.mill.fixed",
+      "evidence_class": "mutation",
       "test_id": "tests.test_mill_rules.FixedMillCompilerTests.test_mill_dependency_and_compiler_mutations_fail_closed",
       "official_rule_ids": [
         "400.7",
         "701.17",
         "701.17a",
         "701.17b",
-        "701.17c"
+        "701.17c",
+        "608.2f",
+        "101.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -103252,13 +103378,75 @@
     {
       "capability_id": "zone.mill.fixed",
       "evidence_class": "negative",
+      "test_id": "tests.test_mill_rules.AllPlayerMillRuntimeTests.test_malformed_all_player_mill_and_inactive_batch_fail_atomically",
+      "official_rule_ids": [
+        "400.7",
+        "701.17",
+        "701.17a",
+        "701.17b",
+        "701.17c",
+        "608.2f",
+        "101.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Malformed all-player effects, duplicate recipients and inactive seats fail before any library mutation. Zero-count all-player Mill preserves state without a Mill event."
+    },
+    {
+      "capability_id": "zone.mill.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_mill_rules.FixedMillCompilerTests.test_all_player_mill_missing_destination_and_trigger_authority_stays_residual",
+      "official_rule_ids": [
+        "400.7",
+        "701.17",
+        "701.17a",
+        "701.17b",
+        "701.17c",
+        "608.2f",
+        "101.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Omitting destination-replacement or APNAP trigger authority, or the Mill producer, prevents exact all-player admission."
+    },
+    {
+      "capability_id": "zone.mill.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_mill_rules.FixedMillCompilerTests.test_all_player_mill_scope_shape_rejects_conflicting_or_variable_recipients",
+      "official_rule_ids": [
+        "400.7",
+        "701.17",
+        "701.17a",
+        "701.17b",
+        "701.17c",
+        "608.2f",
+        "101.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Conflicting player/scope fields, variable recipients, malformed integer counts, unsupported scopes and target schemas cannot receive Mill trust."
+    },
+    {
+      "capability_id": "zone.mill.fixed",
+      "evidence_class": "negative",
       "test_id": "tests.test_mill_rules.FixedMillRuntimeTests.test_stale_plan_and_malformed_intent_fail_before_mutation",
       "official_rule_ids": [
         "400.7",
         "701.17",
         "701.17a",
         "701.17b",
-        "701.17c"
+        "701.17c",
+        "608.2f",
+        "101.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -103276,7 +103464,9 @@
         "701.17",
         "701.17a",
         "701.17b",
-        "701.17c"
+        "701.17c",
+        "608.2f",
+        "101.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -103288,13 +103478,75 @@
     {
       "capability_id": "zone.mill.fixed",
       "evidence_class": "positive",
+      "test_id": "tests.test_mill_rules.AllPlayerMillRuntimeTests.test_original_bell_mills_all_active_players_in_one_zone_batch",
+      "official_rule_ids": [
+        "400.7",
+        "701.17",
+        "701.17a",
+        "701.17b",
+        "701.17c",
+        "608.2f",
+        "101.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Ghoulcaller's Bell has actual whole-program admission, controller-correct offered activation and tap payment, rejects foreign commands atomically, mills all four active seats in one canonical zone batch, preserves public result privacy, and round-trips the pending stack plus pre-activation replay."
+    },
+    {
+      "capability_id": "zone.mill.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_mill_rules.AllPlayerMillRuntimeTests.test_original_chill_mills_available_cards_and_preserves_replacement_destinations",
+      "official_rule_ids": [
+        "400.7",
+        "701.17",
+        "701.17a",
+        "701.17b",
+        "701.17c",
+        "608.2f",
+        "101.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Chill of Foreboding is cast and resolves with libraries shorter than five. All available cards move without empty-library loss; a canonical opponent-graveyard replacement redirects only opponents to exile, while the controller mills normally. Exact pre-cast replay preserves both destinations."
+    },
+    {
+      "capability_id": "zone.mill.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_mill_rules.FixedMillCompilerTests.test_fixed_all_player_mill_uses_one_simultaneous_recipient_scope",
+      "official_rule_ids": [
+        "400.7",
+        "701.17",
+        "701.17a",
+        "701.17b",
+        "701.17c",
+        "608.2f",
+        "101.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Spells, entry triggers and source activations lower one fixed all-active-player Mill scope with no target or implicit controller recipient."
+    },
+    {
+      "capability_id": "zone.mill.fixed",
+      "evidence_class": "positive",
       "test_id": "tests.test_mill_rules.FixedMillCompilerTests.test_fixed_mill_compiles_across_spell_trigger_and_activation",
       "official_rule_ids": [
         "400.7",
         "701.17",
         "701.17a",
         "701.17b",
-        "701.17c"
+        "701.17c",
+        "608.2f",
+        "101.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -103306,13 +103558,35 @@
     {
       "capability_id": "zone.mill.fixed",
       "evidence_class": "privacy",
+      "test_id": "tests.test_mill_rules.AllPlayerMillRuntimeTests.test_original_bell_mills_all_active_players_in_one_zone_batch",
+      "official_rule_ids": [
+        "400.7",
+        "701.17",
+        "701.17a",
+        "701.17b",
+        "701.17c",
+        "608.2f",
+        "101.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Ghoulcaller's Bell has actual whole-program admission, controller-correct offered activation and tap payment, rejects foreign commands atomically, mills all four active seats in one canonical zone batch, preserves public result privacy, and round-trips the pending stack plus pre-activation replay."
+    },
+    {
+      "capability_id": "zone.mill.fixed",
+      "evidence_class": "privacy",
       "test_id": "tests.test_mill_rules.FixedMillRuntimeTests.test_four_player_target_mill_is_public_privacy_safe_and_replays",
       "official_rule_ids": [
         "400.7",
         "701.17",
         "701.17a",
         "701.17b",
-        "701.17c"
+        "701.17c",
+        "608.2f",
+        "101.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -103323,6 +103597,66 @@
     },
     {
       "capability_id": "zone.mill.fixed",
+      "evidence_class": "property",
+      "test_id": "tests.test_mill_rules.FixedMillCompilerTests.test_all_player_mill_scope_shape_rejects_conflicting_or_variable_recipients",
+      "official_rule_ids": [
+        "400.7",
+        "701.17",
+        "701.17a",
+        "701.17b",
+        "701.17c",
+        "608.2f",
+        "101.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Conflicting player/scope fields, variable recipients, malformed integer counts, unsupported scopes and target schemas cannot receive Mill trust."
+    },
+    {
+      "capability_id": "zone.mill.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_mill_rules.AllPlayerMillRuntimeTests.test_original_bell_mills_all_active_players_in_one_zone_batch",
+      "official_rule_ids": [
+        "400.7",
+        "701.17",
+        "701.17a",
+        "701.17b",
+        "701.17c",
+        "608.2f",
+        "101.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Ghoulcaller's Bell has actual whole-program admission, controller-correct offered activation and tap payment, rejects foreign commands atomically, mills all four active seats in one canonical zone batch, preserves public result privacy, and round-trips the pending stack plus pre-activation replay."
+    },
+    {
+      "capability_id": "zone.mill.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_mill_rules.AllPlayerMillRuntimeTests.test_original_chill_mills_available_cards_and_preserves_replacement_destinations",
+      "official_rule_ids": [
+        "400.7",
+        "701.17",
+        "701.17a",
+        "701.17b",
+        "701.17c",
+        "608.2f",
+        "101.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Chill of Foreboding is cast and resolves with libraries shorter than five. All available cards move without empty-library loss; a canonical opponent-graveyard replacement redirects only opponents to exile, while the controller mills normally. Exact pre-cast replay preserves both destinations."
+    },
+    {
+      "capability_id": "zone.mill.fixed",
       "evidence_class": "replay",
       "test_id": "tests.test_mill_rules.FixedMillRuntimeTests.test_four_player_target_mill_is_public_privacy_safe_and_replays",
       "official_rule_ids": [
@@ -103330,7 +103664,9 @@
         "701.17",
         "701.17a",
         "701.17b",
-        "701.17c"
+        "701.17c",
+        "608.2f",
+        "101.4"
       ],
       "supported_profiles": [
         "traditional",
@@ -103338,6 +103674,46 @@
         "commander_review"
       ],
       "applicability_note": "Replay target selection, simultaneous replacement-aware movement, actual public destinations, priority, and final authoritative hash."
+    },
+    {
+      "capability_id": "zone.mill.fixed",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_mill_rules.AllPlayerMillRuntimeTests.test_malformed_all_player_mill_and_inactive_batch_fail_atomically",
+      "official_rule_ids": [
+        "400.7",
+        "701.17",
+        "701.17a",
+        "701.17b",
+        "701.17c",
+        "608.2f",
+        "101.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Malformed all-player effects, duplicate recipients and inactive seats fail before any library mutation. Zero-count all-player Mill preserves state without a Mill event."
+    },
+    {
+      "capability_id": "zone.mill.fixed",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_mill_rules.AllPlayerMillRuntimeTests.test_original_bell_mills_all_active_players_in_one_zone_batch",
+      "official_rule_ids": [
+        "400.7",
+        "701.17",
+        "701.17a",
+        "701.17b",
+        "701.17c",
+        "608.2f",
+        "101.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Ghoulcaller's Bell has actual whole-program admission, controller-correct offered activation and tap payment, rejects foreign commands atomically, mills all four active seats in one canonical zone batch, preserves public result privacy, and round-trips the pending stack plus pre-activation replay."
     },
     {
       "capability_id": "zone.move.fixed_private_hand_choice",
@@ -105574,5 +105950,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "47c5779cd716be1bd4398e398f0079eb5fcad56abb92ab5c06556315706ffbea"
+  "fingerprint": "75775814d2f780fe36819743511a82f6f2a9eabf5a17101dfffc046a2bbdaeb8"
 }

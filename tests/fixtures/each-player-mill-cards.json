@@ -1,0 +1,125 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned original all-player Mill carriers",
+  "cards": [
+    {
+      "oracle_id": "36e1485d-3b8c-4c23-9d12-6937fd216b25",
+      "name": "Ghoulcaller's Bell",
+      "mana_cost": "{1}",
+      "type_line": "Artifact",
+      "oracle_text": "{T}: Each player mills a card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Mill"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2011-09-30",
+      "cmc": 1.0,
+      "card_faces": []
+    },
+    {
+      "oracle_id": "11776f73-f504-4f19-b5b6-2f58279f8b15",
+      "name": "Sibsig Host",
+      "mana_cost": "{4}{B}",
+      "type_line": "Creature \u2014 Zombie",
+      "oracle_text": "When this creature enters, each player mills three cards.",
+      "power": "2",
+      "toughness": "6",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Mill"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2015-01-23",
+      "cmc": 5.0,
+      "card_faces": []
+    },
+    {
+      "oracle_id": "cd1677e4-c356-43cd-9766-5fb8a1e64249",
+      "name": "Chill of Foreboding",
+      "mana_cost": "{2}{U}",
+      "type_line": "Sorcery",
+      "oracle_text": "Each player mills five cards.\nFlashback {7}{U} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flashback",
+        "Mill"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2012-02-03",
+      "cmc": 3.0,
+      "card_faces": []
+    },
+    {
+      "oracle_id": "940e461c-b205-4075-bd1f-a1534c33db6c",
+      "name": "Whetstone",
+      "mana_cost": "{3}",
+      "type_line": "Artifact",
+      "oracle_text": "{3}: Each player mills two cards.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Mill"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1998-10-12",
+      "cmc": 3.0,
+      "card_faces": []
+    },
+    {
+      "oracle_id": "f90df69a-d53f-44b1-833a-5223d2e6c296",
+      "name": "Returned Reveler",
+      "mana_cost": "{1}{B}",
+      "type_line": "Creature \u2014 Zombie Satyr",
+      "oracle_text": "When this creature dies, each player mills three cards.",
+      "power": "1",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Mill"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-05-02",
+      "cmc": 2.0,
+      "card_faces": []
+    }
+  ]
+}

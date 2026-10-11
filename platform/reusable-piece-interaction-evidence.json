@@ -9449,6 +9449,21 @@
       ],
       "interaction_order": 2,
       "assertion": "Original Unearthly Blizzard retains only the surviving target incarnation, whose actual Jump keyword change leaves its rule intact; returned Flash and unselected creatures remain legal blockers, with save/load and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_chill_mills_available_cards_and_preserves_replacement_destinations",
+      "piece_ids": [
+        "capability.zone.mill.fixed",
+        "capability.zone.change.destination_replacement"
+      ],
+      "capability_ids": [
+        "zone.mill.fixed",
+        "zone.change.destination_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Chill of Foreboding mills every available short-library card in one batch; a current opponent-graveyard replacement redirects opponents to exile while the controller mills normally, with no empty-library loss and exact pre-cast replay."
     }
   ]
 }

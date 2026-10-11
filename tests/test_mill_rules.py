@@ -13,6 +13,7 @@ from quorune.carddb import CardDatabase
 from quorune.compiler.program_generation import register_generated_programs
 from quorune.deck import DeckLoader
 from quorune.errors import GameRuleError
+from quorune.engine import TURN_STEPS
 from quorune.milling import MillRequest, commit_mill, mill_cards, prepare_mill
 from quorune.model import CardInstance
 from quorune.oracle_ir import compile_oracle_card, generated_programs
@@ -103,11 +104,34 @@ class FixedMillCompilerTests(unittest.TestCase):
                     )
                 )
 
+    def test_fixed_all_player_mill_uses_one_simultaneous_recipient_scope(self):
+        # CR 701.17a-b mills the available top cards; CR 608.2f keeps this
+        # multi-player instruction simultaneous rather than exposing partial
+        # library moves to event observers between players.
+        base = self.db.lookup("Fixed Target Mill")
+        for text in (
+            "Each player mills three cards.",
+            "When this creature enters, each player mills three cards.",
+            "{T}: Each player mills a card.",
+        ):
+            with self.subTest(text=text):
+                card = replace(base, oracle_text=text,
+                    type_line="Creature — Human" if text.startswith(("When", "{T}")) else "Sorcery")
+                ir = compile_oracle_card(card, capability_registry=self.capabilities,
+                    capability_profile="commander_review")
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                self.assertIsNone(node.target_schema)
+                self.assertEqual("mill", node.effects[0]["op"])
+                self.assertEqual("all_active_players", node.effects[0]["scope"])
+                self.assertNotIn("player", node.effects[0])
+                self.assertIn("zone.mill.fixed", node.capability_dependencies)
+
     def test_dynamic_optional_group_and_linked_mill_remain_residual(self):
         base = self.db.lookup("Fixed Target Mill")
         variants = (
             "Mill X cards.",
-            "Each player mills a card.",
+            "Each player mills X cards.",
             "Target player mills half their library, rounded down.",
             "Target player mills two card.",
             "Mill a card, then draw cards equal to its mana value.",
@@ -126,6 +150,38 @@ class FixedMillCompilerTests(unittest.TestCase):
                 )
                 self.assertNotEqual("exact", ir.status)
                 self.assertTrue(ir.material_residuals)
+
+    def test_all_player_mill_scope_shape_rejects_conflicting_or_variable_recipients(self):
+        from quorune.rules.mill_capability_shapes import fixed_mill_node_capabilities
+
+        valid = {"op":"mill", "scope":"all_active_players", "count":3}
+        self.assertEqual(("zone.mill.fixed",), fixed_mill_node_capabilities(
+            effects=(valid,), target_schema=None, mechanic_ids=("mill",)))
+        for changed in (
+            {"count":True}, {"count":0}, {"count":-1}, {"count":1.5},
+            {"player":"$controller"}, {"scope":"all_players"}, {"optional":True},
+        ):
+            with self.subTest(changed=changed):
+                self.assertEqual((), fixed_mill_node_capabilities(
+                    effects=({**valid, **changed},), target_schema=None, mechanic_ids=("mill",)))
+        self.assertEqual((), fixed_mill_node_capabilities(
+            effects=(valid,), target_schema={"count":1}, mechanic_ids=("mill",)))
+
+    def test_all_player_mill_missing_destination_and_trigger_authority_stays_residual(self):
+        record = replace(self.db.lookup("Fixed Target Mill"),
+                         oracle_text="Each player mills three cards.")
+        for capability in ("zone.change.destination_replacement", "trigger.placement.apnap"):
+            raw = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+            next(row for row in raw["capabilities"] if row["id"] == capability).update(
+                status="blocked", blockers=["all-player Mill authority omission"])
+            with self.subTest(capability=capability):
+                self.assertNotEqual("exact", compile_oracle_card(
+                    record, capability_registry=CapabilityRegistry(raw),
+                    capability_profile="commander_review").status)
+        with patch("quorune.oracle_ir.fixed_mill_effect_template", return_value=None):
+            self.assertNotEqual("exact", compile_oracle_card(
+                record, capability_registry=self.capabilities,
+                capability_profile="commander_review").status)
 
     def test_mill_dependency_and_compiler_mutations_fail_closed(self):
         record = self.db.lookup("Fixed Target Mill")
@@ -792,6 +848,148 @@ class FixedMillRuntimeTests(unittest.TestCase):
             replay = replay_record(record_dir, self.db, verify=True)
         self.assertTrue(replay["ok"], replay)
         self.assertEqual(expected_hash, replay["final_state_hash"])
+
+
+class AllPlayerMillRuntimeTests(unittest.TestCase):
+    """Original offered actions exercise CR 701.17 and 608.2f together."""
+
+    @classmethod
+    def setUpClass(cls):
+        from quorune.deck import DeckDefinition, DeckEntry
+
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "all-player-mill.sqlite3"
+        build_fixture_database([
+            ROOT / "tests/fixtures/bound-effect-program-cards.json",
+            ROOT / "tests/fixtures/mill-cards.json",
+            ROOT / "tests/fixtures/each-player-mill-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("All-player Mill", [
+            DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 10),
+        ], ["Generic Bound Commander"])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    import test_bound_effect_programs as _bound
+    session = _bound.BoundEffectProgramRuntimeTests.session
+    add = _bound.BoundEffectProgramRuntimeTests.add
+    ready = _bound.BoundEffectProgramRuntimeTests.ready
+    checkpoint = _bound.BoundEffectProgramRuntimeTests.checkpoint
+    resolve = _bound.BoundEffectProgramRuntimeTests.resolve
+    replay = _bound.BoundEffectProgramRuntimeTests.replay
+
+    def assert_admission(self, name):
+        from quorune.card_programs import bind_card_program_runtime
+
+        program = compile_best_available_card_program(
+            self.db, self.db.lookup(name), semantic_registry=SemanticRegistry(),
+            capability_registry=self.registry, capability_profile="commander_review")
+        self.assertTrue(bind_card_program_runtime(program, capability_registry=self.registry,
+            profile="commander_review")["strict_capability_ready"])
+
+    def test_malformed_all_player_mill_and_inactive_batch_fail_atomically(self):
+        from quorune.milling import mill_player_batch
+
+        session = self.session(seed=7011710)
+        engine = session.engine
+        before = authoritative_state_hash(session.state)
+        for changed in (
+            {"count":True}, {"count":-1}, {"count":1.5},
+            {"player":"B"}, {"scope":"all_players"}, {"optional":True},
+        ):
+            with self.subTest(changed=changed), self.assertRaises(GameRuleError):
+                engine.apply_effect({"op":"mill", "scope":"all_active_players", "count":1, **changed}, actor="A")
+            self.assertEqual(before, authoritative_state_hash(session.state))
+        for players in (("A","A"), ("A","missing")):
+            with self.subTest(players=players), self.assertRaises(GameRuleError):
+                mill_player_batch(engine, tuple(
+                    MillRequest("A", player, 1, "batch validation") for player in players))
+            self.assertEqual(before, authoritative_state_hash(session.state))
+        for players in (("A","A"), ("A",True)):
+            with self.assertRaises(ValueError):
+                MillCardsIntent("A","A",1,"typed batch",batch_players=players)
+        result = engine.apply_effect({"op":"mill", "scope":"all_active_players", "count":0}, actor="A")
+        self.assertEqual((), result)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+
+    def test_original_bell_mills_all_active_players_in_one_zone_batch(self):
+        self.assert_admission("Ghoulcaller's Bell")
+        session = self.session(seed=7011711)
+        engine = session.engine
+        source = self.add(engine, "Ghoulcaller's Bell")
+        expected = {seat:engine.state.cards[engine.state.players[seat].zones["library"][-1]]
+                    for seat in engine.active_seats}
+        engine.state.phase_index = TURN_STEPS.index(("precombat_main", "main"))
+        action = self.ready(session, source, {})
+        self.checkpoint(session)
+        before = authoritative_state_hash(session.state)
+        rejected = session.act("pilot:B", {"action_id":action["id"]})
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        source = engine.state.cards[source.object_id]
+        expected = {seat:engine.state.cards[card.object_id] for seat,card in expected.items()}
+        accepted = session.act("pilot:A", {"action_id":action["id"]})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertTrue(source.tapped)
+        with tempfile.TemporaryDirectory() as directory:
+            session.save(Path(directory) / "pending")
+            from quorune.session import CommanderSession
+            loaded = CommanderSession.load(self.db, Path(directory) / "pending")
+            self.assertEqual(authoritative_state_hash(session.state), authoritative_state_hash(loaded.state))
+        commits = []
+        from quorune.zone_transitions import ZoneTransitionOwner
+        original = ZoneTransitionOwner.move_cards_simultaneously
+        def observe(owner, changes, **kwargs):
+            if changes and all(owner.state.cards[oid].zone == "library" for oid, destination in changes):
+                commits.append(tuple(changes))
+            return original(owner, changes, **kwargs)
+        with patch("quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously", observe):
+            self.resolve(session)
+        self.assertEqual(1, len(commits), "all-player Mill lost simultaneous commit")
+        self.assertEqual({card.object_id for card in expected.values()}, {oid for oid,destination in commits[0]})
+        self.assertEqual(["graveyard"] * 4, [card.zone for card in expected.values()])
+        for seat in engine.seats:
+            projected = json.dumps(session.packet("pilot:"+seat, full=True), sort_keys=True)
+            for card in expected.values():
+                self.assertNotIn(card.object_id, projected)
+                self.assertIn(card.ref, projected)
+        self.replay(session)
+
+    def test_sequential_player_mill_mutant_is_killed_by_original_bell(self):
+        def sequential(host, requests):
+            return tuple(mill_cards(host, request) for request in requests)
+
+        with patch("quorune.milling.mill_player_batch", sequential):
+            with self.assertRaisesRegex(AssertionError, "all-player Mill lost simultaneous commit"):
+                self.test_original_bell_mills_all_active_players_in_one_zone_batch()
+
+    def test_original_chill_mills_available_cards_and_preserves_replacement_destinations(self):
+        self.assert_admission("Chill of Foreboding")
+        session = self.session(seed=7011712)
+        engine = session.engine
+        source = self.add(engine, "Chill of Foreboding", zone="hand")
+        self.add(engine, "Mill Exile Replacement")
+        expected = {seat:tuple(engine.state.cards[oid] for oid in reversed(engine.state.players[seat].zones["library"]))
+                    for seat in engine.active_seats}
+        self.assertTrue(all(len(cards) < 5 for cards in expected.values()))
+        engine.state.phase_index = TURN_STEPS.index(("precombat_main", "main"))
+        action = self.ready(session, source, {"U":1,"C":2})
+        self.checkpoint(session)
+        accepted = session.act("pilot:A", {"action_id":action["id"]})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        for seat,cards in expected.items():
+            self.assertEqual([], engine.state.players[seat].zones["library"])
+            self.assertTrue(engine.state.players[seat].in_game)
+            self.assertEqual(["graveyard" if seat == "A" else "exile"] * len(cards),
+                             [card.zone for card in cards])
+        self.replay(session)
 
 
 if __name__ == "__main__":
