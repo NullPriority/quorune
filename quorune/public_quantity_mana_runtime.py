@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass, replace
 from typing import Any, Mapping
 
-from .characteristic_fragments import CharacteristicQuantitySpec
+from .characteristic_fragments import CharacteristicQuantitySpec, CharacteristicQuantityScope
 from .dynamic_characteristics import query_characteristic_count
 from .errors import GameRuleError
 from .mana import ManaMode
@@ -57,6 +57,14 @@ def public_quantity_mana_amount(host, seat, source, output, *, source_informatio
         raise GameRuleError(str(exc)) from exc
 
 
+def public_quantity_mana_offer_amount(host, seat, source, ability, output):
+    if ability.source_counter_removal_cost is not None and isinstance(output.amount, CharacteristicQuantitySpec) \
+            and output.amount.scope is CharacteristicQuantityScope.SOURCE_COUNTER:
+        from .rules.activation.counter_costs import preview_source_counter_removal_cost
+        source = preview_source_counter_removal_cost(host, source, ability)
+    return public_quantity_mana_amount(host, seat, source, output)
+
+
 def public_quantity_mana_modes(host, seat, source, ability):
     output = public_quantity_output(ability)
     amount = public_quantity_mana_amount(host, seat, source, output)
@@ -104,5 +112,5 @@ def public_quantity_mana_choice_schema(host, seat, source, ability):
     if output is None or output.selection == 'fixed':
         return None
     return {'mana_output': {'type': 'mana_bundle', 'label': 'Mana to add',
-        'allowed_colors': list(output.colors), 'total': public_quantity_mana_amount(host, seat, source, output),
+        'allowed_colors': list(output.colors), 'total': public_quantity_mana_offer_amount(host, seat, source, ability, output),
         'single_color': output.selection == 'choose_one'}}

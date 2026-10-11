@@ -97,6 +97,10 @@ with allowed color keys, nonnegative integral values, that exact total, and at
 most one positive color when required. A zero total permits an empty object or
 allowed zero entries. The server validates the same allocation contract after
 costs; enumerated mana choices retain their existing option-membership check.
+For a source-counter quantity with a counter-removal price, the advertised
+total uses a read-only preview of the canonical exact payment plan. It commits
+no counters or events; resolution still samples the amount after actual payment.
+Source-sacrifice quantities retain their established predeparture information.
 
 Object reference fields may declare `allowed_cardinalities` as a sorted set of
 permitted selection counts within their minimum and maximum. An optional fixed

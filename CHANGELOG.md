@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Advertise source-counter mana quantities after their exact counter-removal
+  price, using a detached preview of the canonical payment plan.
+
 - Validate dynamic public-quantity mana allocations in the browser and reject
   disallowed color keys consistently at the authoritative command boundary.
 
