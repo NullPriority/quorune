@@ -368,7 +368,10 @@ architecture-derived delta metadata without rebuilding the pinned corpus.
 The automatic `rules-derived` owner rebuilds conformance cases, pinned manifest
 hashes, the mechanic registry, and rules/mechanics coverage from authoritative
 review overlays and mechanic contracts without downloading or reparsing the
-Comprehensive Rules. It normalizes temporary text outputs to LF before
+Comprehensive Rules. Manifest index hashes and counts derive from the actual
+pinned index inputs, including when an older owner output is restored from
+cache. Every index must retain the manifest's source hash and effective date;
+cross-snapshot inputs are rejected. It normalizes temporary text outputs to LF before
 freshness comparison and hashing, so a signed Linux bundle remains current on a
 Windows checkout instead of producing false CRLF-only staleness. The rules
 scheduler and platform status explicitly depend on that owner, so a rules review

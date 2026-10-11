@@ -31,6 +31,9 @@ maintenance: "hand-maintained"
 - Preserve explicit sacrifice provenance for Fading and Vanishing cleanup
   through zone replacements, normalized trigger occurrences, and turn history.
 
+- Derive pinned index manifest hashes and counts from current source-bound
+  inputs so cached rules derivatives cannot restore stale manifest metadata.
+
 - Preserve qualified interaction-evidence test IDs and validate their
   references in the cheap source checkpoint before corpus generation.
 
