@@ -1273,6 +1273,24 @@ def _conditional_self_target(
     return None
 
 
+def _fixed_additive_modifier_body(body: str) -> str:
+    """Discard additive prose only around a complete fixed modifier body."""
+
+    additive = re.fullmatch(
+        r"(?P<subject>.+?) (?:also )?(?P<verb>gets?) "
+        r"(?:an additional )?(?P<bonus>[+-]\d+/[+-]\d+)"
+        r"(?P<tail>(?: and (?:has|have) .+?)?\.?)",
+        body,
+        re.IGNORECASE,
+    )
+    if additive is not None:
+        return (
+            f"{additive['subject']} {additive['verb']} "
+            f"{additive['bonus']}{additive['tail']}"
+        )
+    return body
+
+
 def _conditional_target(
     body: str,
     *,
@@ -1280,7 +1298,9 @@ def _conditional_target(
 ) -> tuple[Mapping[str, Any], Mapping[str, Any], tuple[str, ...]] | None:
     """Compile one fixed characteristic body without its state condition."""
 
-    normalized = _TRAILING_REMINDER.sub("", body.strip()).strip()
+    normalized = _fixed_additive_modifier_body(
+        _TRAILING_REMINDER.sub("", body.strip()).strip()
+    )
     source = _conditional_self_target(normalized, source_name=source_name)
     if source is not None:
         return source

@@ -69,6 +69,83 @@ from scripts.build_test_database import build_fixture_database
 CAPABILITY_ID = "continuous.characteristics.fixed_public_state"
 TEMPLATE_ID = "continuous-fixed-public-state-characteristics-v1"
 QUERY_HANDLER_ID = "ability.static.query-characteristic-modifier.v1"
+
+
+class AdditionalConditionalModifierCompilerTests(unittest.TestCase):
+    """CR 611.3a/613.4c: additional fixed bonuses add and remain live.
+
+    The wording carries no remembered value or reference to an earlier bonus.
+    Only a complete signed fixed modifier behind a represented condition is
+    admitted; increasing a variable or repeating an effect remains residual.
+    """
+
+    def test_additional_and_also_fixed_bonuses_keep_the_complete_condition(self):
+        from types import SimpleNamespace
+        from test_qualified_zone_event_queries import query_record
+
+        registry = load_default_capability_registry()
+        cases = (
+            ("As long as you have no cards in hand, this creature gets an additional +2/+0.", 2, 0),
+            ("This creature gets an additional +1/-1 as long as you have no cards in hand.", 1, -1),
+            ("As long as equipped creature is a Human, it gets an additional +1/+0.", 1, 0),
+            ("Threshold — Enchanted creature gets an additional +2/-2 as long as there are seven or more cards in your graveyard.", 2, -2),
+            ("Creatures you control also get +1/+0 and have trample as long as you control six or more creatures.", 1, 0),
+        )
+        for text, power, toughness in cases:
+            with self.subTest(text=text):
+                ir = compile_oracle_card(query_record(text), capability_registry=registry)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                self.assertEqual(text, node.text)
+                self.assertEqual((0, len(text)), (node.span.start, node.span.end))
+                handler = next(h for h in node.handlers if "modifier" in h)
+                self.assertEqual(power, handler["modifier"]["power"])
+                self.assertEqual(toughness, handler["modifier"]["toughness"])
+                self.assertIn("source_condition", handler)
+                self.assertTrue(bind_card_program_runtime(
+                    compile_card_program(
+                        SimpleNamespace(rulings=lambda _oracle_id: ()), query_record(text),
+                        capability_registry=registry, capability_profile="commander_review",
+                        trust_level="trusted",
+                    ),
+                    capability_registry=registry, profile="commander_review",
+                )["strict_capability_ready"])
+
+    def test_additional_wording_does_not_admit_unrepresented_bonus_or_condition(self):
+        from test_qualified_zone_event_queries import query_record
+
+        registry = load_default_capability_registry()
+        for text in (
+            "As long as you have no cards in hand, this creature gets an additional +X/+X.",
+            "As long as you control a stickered permanent, this creature gets an additional +2/+0.",
+            "As long as you have no cards in hand, this creature gets an additional +2/+0 for each card in your graveyard.",
+            "As long as you have no cards in hand, this creature gets an additional +2/+0. Repeat this effect.",
+        ):
+            with self.subTest(text=text):
+                self.assertNotEqual("exact", compile_oracle_card(
+                    query_record(text), capability_registry=registry,
+                ).status)
+
+    def test_additional_modifier_producer_and_capability_omissions_fail_closed(self):
+        from test_qualified_zone_event_queries import query_record
+
+        text = "As long as you have no cards in hand, this creature gets an additional +2/+0."
+        registry = load_default_capability_registry()
+        with mock.patch(
+            "quorune.compiler.continuous_templates._fixed_additive_modifier_body",
+            side_effect=lambda body: body,
+        ):
+            self.assertNotEqual("exact", compile_oracle_card(
+                query_record(text), capability_registry=registry,
+            ).status)
+        blocked = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
+        for capability in blocked["capabilities"]:
+            if capability["id"] == CAPABILITY_ID:
+                capability["status"] = "blocked"
+                capability["blockers"] = ["focused additive modifier omission"]
+        self.assertNotEqual("exact", compile_oracle_card(
+            query_record(text), capability_registry=CapabilityRegistry(blocked),
+        ).status)
 FIXTURE = (
     ROOT
     / "tests"
@@ -2529,6 +2606,130 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
             session.save(record_dir)
             replay = replay_record(record_dir, self.db, verify=True)
         self.assertTrue(replay["ok"], replay)
+
+
+class AdditionalConditionalModifierRuntimeTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from quorune.deck import DeckDefinition, DeckEntry
+
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "additional-modifiers.sqlite3"
+        build_fixture_database([
+            ROOT / "tests/fixtures/bound-effect-program-cards.json",
+            ROOT / "tests/fixtures/additional-conditional-modifier-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Additional modifiers", [
+            DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 10),
+        ], ["Generic Bound Commander"])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    import test_bound_effect_programs as _bound
+    session = _bound.BoundEffectProgramRuntimeTests.session
+    add = _bound.BoundEffectProgramRuntimeTests.add
+    ready = _bound.BoundEffectProgramRuntimeTests.ready
+    checkpoint = _bound.BoundEffectProgramRuntimeTests.checkpoint
+    resolve = _bound.BoundEffectProgramRuntimeTests.resolve
+    replay = _bound.BoundEffectProgramRuntimeTests.replay
+
+    def clear_initial_hand(self, session):
+        for object_id in tuple(session.state.players["A"].zones["hand"]):
+            session.engine.move_card(object_id, "library", log=False)
+
+    def assert_whole_admission(self, name):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.semantics import SemanticRegistry
+
+        program = compile_best_available_card_program(
+            self.db, self.db.lookup(name), semantic_registry=SemanticRegistry(),
+            capability_registry=self.registry, capability_profile="commander_review",
+        )
+        self.assertTrue(bind_card_program_runtime(
+            program, capability_registry=self.registry, profile="commander_review",
+        )["strict_capability_ready"])
+
+    def test_original_taste_adds_live_bonus_to_foreign_creature_and_private_draw_removes_it(self):
+        """Actual hand-empty timing adds +2/+0 to the existing +2/+0."""
+        session = self.session(341001)
+        engine = session.engine
+        self.clear_initial_hand(session)
+        target = self.add(engine, "Generic Bound Body", seat="B", ref="taste-target")
+        other = self.add(engine, "Generic Bound Body", seat="C", ref="taste-other")
+        aura = self.add(engine, "Taste for Mayhem", zone="hand")
+        draw = self.add(engine, "Divination", zone="hand")
+        self.assert_whole_admission(aura.printed_name)
+        action = self.ready(session, aura, {"R": 1, "U": 3})
+        self.checkpoint(session)
+        before = session.state.to_dict()
+        denied = session.act("pilot:B", {"action_id": action["id"], "targets": [target.ref], "pay": "auto"})
+        self.assertFalse(denied.ok)
+        self.assertEqual(before, session.state.to_dict())
+        accepted = session.act("pilot:A", {"action_id": action["id"], "targets": [target.ref], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.replay(session, load=True)
+        self.resolve(session)
+        self.assertEqual(4, engine._numeric_stat(target.object_id, "power"))
+        self.assertEqual(1, len(session.state.players["A"].zones["hand"]))
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        action = next(row for row in actions if row.get("card") == draw.ref)
+        accepted = session.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(0, len(session.state.players["A"].zones["hand"]))
+        self.assertEqual(6, engine._numeric_stat(target.object_id, "power"))
+        self.assertEqual(2, engine._numeric_stat(other.object_id, "power"))
+        self.resolve(session)
+        self.assertEqual(2, len(session.state.players["A"].zones["hand"]))
+        self.assertEqual(4, engine._numeric_stat(target.object_id, "power"))
+        self.assertEqual("battlefield", session.state.cards[aura.object_id].zone)
+        self.assertEqual(target.object_id, session.state.cards[aura.object_id].attached_to)
+        for seat in "BCD":
+            packet = session.packet("pilot:" + seat, full=True)
+            self.assertIsNone(packet["decision"])
+            public = packet["state"]["players"]["A"]
+            self.assertEqual(2, public["hand_n"])
+            self.assertNotIn("hand", public)
+        self.replay(session, load=True)
+
+    def test_original_jetmir_additional_thresholds_stack_and_recompute_after_real_bounce(self):
+        for count, before_power, after_power, removed in (
+            (6, 4, 3, "trample"),
+            (9, 5, 4, "double strike"),
+        ):
+            with self.subTest(count=count):
+                session = self.session(341010 + count)
+                engine = session.engine
+                self.clear_initial_hand(session)
+                bodies = [self.add(engine, "Generic Bound Body", ref=f"jetmir-body-{i}") for i in range(count - 1)]
+                foreign = self.add(engine, "Generic Bound Body", seat="B", ref="jetmir-foreign")
+                source = self.add(engine, "Jetmir, Nexus of Revels", zone="hand")
+                bounce = self.add(engine, "Unsummon", zone="hand")
+                self.assert_whole_admission(source.printed_name)
+                action = self.ready(session, source, {"R": 1, "G": 1, "W": 1, "U": 2})
+                self.checkpoint(session)
+                accepted = session.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+                self.assertTrue(accepted.ok, accepted.summary)
+                self.resolve(session)
+                self.assertEqual(before_power, engine._numeric_stat(bodies[0].object_id, "power"))
+                self.assertIn(removed, engine._combat_keywords(session.state.cards[bodies[0].object_id]))
+                self.assertEqual(2, engine._numeric_stat(foreign.object_id, "power"))
+                self.assertNotIn(removed, engine._combat_keywords(foreign))
+                actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                action = next(row for row in actions if row.get("card") == bounce.ref)
+                accepted = session.act("pilot:A", {"action_id": action["id"], "targets": [bodies[-1].ref], "pay": "auto"})
+                self.assertTrue(accepted.ok, accepted.summary)
+                self.resolve(session)
+                self.assertEqual("hand", session.state.cards[bodies[-1].object_id].zone)
+                self.assertEqual(after_power, engine._numeric_stat(bodies[0].object_id, "power"))
+                self.assertNotIn(removed, engine._combat_keywords(session.state.cards[bodies[0].object_id]))
+                self.assertIn("vigilance", engine._combat_keywords(session.state.cards[bodies[0].object_id]))
+                self.replay(session, load=True)
 
 
 if __name__ == "__main__":

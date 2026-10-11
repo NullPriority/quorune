@@ -549,8 +549,11 @@ designation with the existing source, attached-object, or fixed-query target
 grammar. Runtime snapshots only authoritative state through the shared query,
 draw, turn-history, player-counter, and designation owners, then sends paired
 ability additions and power/toughness modifiers through the same applicability
-path. Attachment-relative “it” binds to the explicit enchanted or equipped
-object; other source pronouns remain source-bound. Public state may participate
+path. Complete fixed modifier bodies may say “an additional” or “also”; each
+bonus adds independently to the other applicable layer-7c modifiers and retains
+its live condition. These words do not introduce a remembered value, a variable
+bonus, or a repeated effect. Attachment-relative “it” binds to the explicit
+enchanted or equipped object; other source pronouns remain source-bound. Public state may participate
 in layer-5 quantities, but positive ability presence remains excluded from
 counts. Schema-v4 facts add cycle-safe distinct card-type and exact mana-value
 sets from the controller's graveyard; sealed entry, attack, sacrifice, death,

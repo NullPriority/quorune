@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "196f64a873216e667761758900d3fbbfda8b8d7778539c6ab83e43699f98fabb",
-  "declaration_source_fingerprint": "c1cb2b9792fff114ee3f928b935653d31766f5f96fc9c909a44cf2f5c711b315",
+  "registry_fingerprint": "b28a08c8d74a96df2b2b1dc98603bf92b66c4c6609e2be3b351c5c8b733afefe",
+  "declaration_source_fingerprint": "878d69d38d5c61db3c2ab07d3ec54c71da7ce4a2249499d63fd0fa46a4243fc9",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -31256,6 +31256,52 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_jetmir_additional_thresholds_stack_and_recompute_after_real_bounce",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Jetmir's independent fixed bonuses stack at six and nine controlled creatures. An actual Unsummon lowers the count across each threshold, removes only the newly inapplicable bonus and keyword, and preserves earlier vigilance and complete pre-cast replay."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_taste_adds_live_bonus_to_foreign_creature_and_private_draw_removes_it",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Taste for Mayhem is cast on a B-controlled creature by A. Its ordinary +2/+0 and additional +2/+0 stack when A's hand empties during an actual Divination cast, then the private draw removes only the conditional bonus. A foreign creature remains unaffected; unauthorized casting rolls back. Pending save/load and complete pre-aura replay agree, with nonactor projections exposing only hand counts."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_live_public_object_state_and_layer_five_queries_recompute",
       "official_rule_ids": [
         "604.1",
@@ -31440,6 +31486,29 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_taste_adds_live_bonus_to_foreign_creature_and_private_draw_removes_it",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Taste for Mayhem is cast on a B-controlled creature by A. Its ordinary +2/+0 and additional +2/+0 stack when A's hand empties during an actual Divination cast, then the private draw removes only the conditional bonus. A foreign creature remains unaffected; unauthorized casting rolls back. Pending save/load and complete pre-aura replay agree, with nonactor projections exposing only hand counts."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_public_condition_queries_follow_authoritative_history_and_control",
       "official_rule_ids": [
         "604.1",
@@ -31509,6 +31578,29 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierCompilerTests.test_additional_modifier_producer_and_capability_omissions_fail_closed",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Omitting additive-body normalization or the fixed public-state capability kills admission."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "mutation",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_condition_and_target_mutants_change_card_program_fingerprint",
       "official_rule_ids": [
         "604.1",
@@ -31551,6 +31643,29 @@
         "commander_review"
       ],
       "applicability_note": "Force every public-fact quantity to zero and require all fact-gated layer-6 and layer-7c results to disappear."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierCompilerTests.test_additional_wording_does_not_admit_unrepresented_bonus_or_condition",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Variable or multiplied bonuses, unknown conditions and repeated-effect riders remain residual."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -31666,6 +31781,29 @@
         "commander_review"
       ],
       "applicability_note": "A mutation moves final characteristic sealing before complete history; the exact owner timing contract kills it."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierCompilerTests.test_additional_and_also_fixed_bonuses_keep_the_complete_condition",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed additive modifiers preserve the full typed condition, original spans, target domain, keyword dependencies, and whole-program admission."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -31854,6 +31992,29 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_taste_adds_live_bonus_to_foreign_creature_and_private_draw_removes_it",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Taste for Mayhem is cast on a B-controlled creature by A. Its ordinary +2/+0 and additional +2/+0 stack when A's hand empties during an actual Divination cast, then the private draw removes only the conditional bonus. A foreign creature remains unaffected; unauthorized casting rolls back. Pending save/load and complete pre-aura replay agree, with nonactor projections exposing only hand counts."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "privacy",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_hand_count_condition_projects_and_replays_without_hidden_identity",
       "official_rule_ids": [
         "604.1",
@@ -31919,6 +32080,29 @@
         "commander_review"
       ],
       "applicability_note": "Use only public counts and effective graveyard characteristics while keeping every hidden hand identity out of opponent projection."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_taste_adds_live_bonus_to_foreign_creature_and_private_draw_removes_it",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Taste for Mayhem is cast on a B-controlled creature by A. Its ordinary +2/+0 and additional +2/+0 stack when A's hand empties during an actual Divination cast, then the private draw removes only the conditional bonus. A foreign creature remains unaffected; unauthorized casting rolls back. Pending save/load and complete pre-aura replay agree, with nonactor projections exposing only hand counts."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -32011,6 +32195,29 @@
         "commander_review"
       ],
       "applicability_note": "Serialize schema-v3 facts plus new entry and attack history and replay the following multiplayer command to the same hash."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_taste_adds_live_bonus_to_foreign_creature_and_private_draw_removes_it",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Taste for Mayhem is cast on a B-controlled creature by A. Its ordinary +2/+0 and additional +2/+0 stack when A's hand empties during an actual Divination cast, then the private draw removes only the conditional bonus. A foreign creature remains unaffected; unauthorized casting rolls back. Pending save/load and complete pre-aura replay agree, with nonactor projections exposing only hand counts."
     },
     {
       "capability_id": "continuous.characteristics.leveler_bands",
@@ -103642,5 +103849,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "2e738b1192f8e3c14d62c9062d6e3fe9b45cf78c9a748d6780e3209df1770a3b"
+  "fingerprint": "9a8a4d6cc0e47a3e7901e2a2e55839d4b6a66db9293387d2c577a39ebac61a3d"
 }

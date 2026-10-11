@@ -4637,7 +4637,7 @@
     },
     {
       "id": "continuous.characteristics.fixed_public_state",
-      "version": 9,
+      "version": 10,
       "official_rules": [
         "604.1",
         "611.3a",
@@ -4662,7 +4662,7 @@
           "source controller turn, life, public hand, graveyard, current or sealed turn-history, opponent poison, monarch, and starting-life facts",
           "cycle-safe source, attached-object, controller, opponent, public-zone, distinct graveyard type, or distinct graveyard mana-value query through layer 5",
           "source, attached-object, or fixed ObjectQuerySpec target",
-          "fixed represented keyword and power/toughness modifier"
+          "fixed represented keyword and power/toughness modifier, including complete additive an-additional or also wording"
         ],
         "outputs": [
           "one source-bound typed condition snapshot",
@@ -4709,14 +4709,17 @@
         "test_public_fact_conditions_recompute_and_replay",
         "test_public_fact_descriptors_preserve_thresholds_subtypes_and_axes",
         "test_public_fact_thresholds_use_canonical_producers_and_consumers",
-        "test_two_simultaneous_copies_use_post_event_history_characteristics"
+        "test_two_simultaneous_copies_use_post_event_history_characteristics",
+        "test_additional_and_also_fixed_bonuses_keep_the_complete_condition"
       ],
       "negative_tests": [
         "test_unrepresented_conditions_and_bodies_remain_residual",
         "test_public_state_descriptors_fail_closed_without_effects",
         "test_shared_public_query_dependency_fails_closed_across_consumers",
         "test_fixed_public_condition_dependencies_fail_closed",
-        "test_pre_history_characteristic_sealing_mutant_is_killed"
+        "test_pre_history_characteristic_sealing_mutant_is_killed",
+        "test_additional_wording_does_not_admit_unrepresented_bonus_or_condition",
+        "test_additional_modifier_producer_and_capability_omissions_fail_closed"
       ],
       "interaction_tests": [
         "test_live_public_object_state_and_layer_five_queries_recompute",
@@ -4727,7 +4730,9 @@
         "test_subtype_attack_threshold_counts_distinct_event_time_objects",
         "test_history_characteristic_distinguishing_controls",
         "test_replacement_adjusted_history_characteristic_quantity",
-        "test_history_precedes_final_power_and_keyword_sealing"
+        "test_history_precedes_final_power_and_keyword_sealing",
+        "test_original_taste_adds_live_bonus_to_foreign_creature_and_private_draw_removes_it",
+        "test_original_jetmir_additional_thresholds_stack_and_recompute_after_real_bounce"
       ],
       "multiplayer_tests": [
         "test_turn_gated_attachment_and_anthem_compose",
