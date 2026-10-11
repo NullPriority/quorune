@@ -7,6 +7,8 @@ from pathlib import Path
 import tempfile
 import unittest
 import json
+import shutil
+import subprocess
 from unittest.mock import patch
 
 from common import ROOT
@@ -111,6 +113,66 @@ class PublicQuantityManaRuntimeTests(unittest.TestCase):
     checkpoint=witnesses.BoundEffectProgramRuntimeTests.checkpoint
     replay=witnesses.BoundEffectProgramRuntimeTests.replay
     resolve=witnesses.BoundEffectProgramRuntimeTests.resolve
+
+    def browser_errors(self, action, allocation):
+        node = shutil.which('node')
+        self.assertIsNotNone(node, 'The real TypeScript validator requires Node.js')
+        script = """
+            import {validateChoices} from './web/src/choices.ts';
+            let input = '';
+            for await (const chunk of process.stdin) input += chunk;
+            const {form, allocation} = JSON.parse(input);
+            process.stdout.write(JSON.stringify(validateChoices(form, {mana_output: allocation})));
+        """
+        result = subprocess.run([node, '--experimental-strip-types', '--input-type=module', '-e', script],
+            input=json.dumps({'form': action['form'], 'allocation': allocation}),
+            text=True, capture_output=True, cwd=ROOT, check=True)
+        return json.loads(result.stdout)
+
+    def test_projected_lotus_form_accepts_legal_dynamic_allocation_in_real_browser_validator(self):
+        session = self.session(283020)
+        source = self.add(session.engine, 'Lotus Blossom')
+        source.counters['petal'] = 3
+        action = self.ready(session, source, {})
+        action = next(row for row in session.packet('pilot:A', full=True)['decision']['legal_actions']
+            if row['id'] == action['id'])
+        field = next(row for row in action['form']['fields'] if row['name'] == 'mana_output')
+        self.assertTrue(field['required'])
+        self.assertEqual(('mana_modes', 3, True), (field['control'], field['total'], field['single_color']))
+        self.assertNotIn('options', field)
+        allocation = {'U': 3}
+        self.assertEqual([], self.browser_errors(action, allocation))
+        self.checkpoint(session)
+        accepted = session.act('pilot:A', {'action_id': action['id'], 'mana_output': allocation})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual('graveyard', session.state.cards[source.object_id].zone)
+        self.assertEqual(3, session.state.players['A'].mana_pool['U'])
+        self.replay(session, load=True)
+
+    def test_projected_dynamic_allocation_rejects_same_malformed_browser_and_server_values(self):
+        session = self.session(283023)
+        source = self.add(session.engine, 'Generic Public Mixed Mana')
+        for index in range(3):
+            self.add(session.engine, 'Generic Bound Body', ref=f'quantity-{index}')
+        action = self.ready(session, source, {})
+        action = next(row for row in session.packet('pilot:A', full=True)['decision']['legal_actions']
+            if row['id'] == action['id'])
+        self.checkpoint(session)
+        for allocation in (None, 3, '3', [], {}, {'G': '3'}, {'G': True}, {'G': 1.5, 'U': 1.5},
+                {'G': -1, 'U': 4}, {'G': 4}, {'G': 2}, {'R': 3}, {'G': 3, 'R': 0}):
+            with self.subTest(allocation=allocation):
+                self.assertTrue(self.browser_errors(action, allocation))
+                before = authoritative_state_hash(session.state)
+                denied = session.act('pilot:A', {'action_id': action['id'], 'mana_output': allocation})
+                self.assertFalse(denied.ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+        allocation = {'G': 1, 'U': 2}
+        self.assertEqual([], self.browser_errors(action, allocation))
+        accepted = session.act('pilot:A', {'action_id': action['id'], 'mana_output': allocation})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual((1, 2), (session.state.players['A'].mana_pool['G'], session.state.players['A'].mana_pool['U']))
+        self.assertTrue(session.state.cards[source.object_id].tapped)
+        self.replay(session, load=True)
 
     def test_quantity_mana_spell_counts_at_resolution_and_replays(self):
         session=self.session(283004);engine=session.engine

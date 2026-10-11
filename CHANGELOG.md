@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Validate dynamic public-quantity mana allocations in the browser and reject
+  disallowed color keys consistently at the authoritative command boundary.
+
 - Preserve distinct step-player and trigger-controller recipients in mixed
   scheduled draw and life results.
 

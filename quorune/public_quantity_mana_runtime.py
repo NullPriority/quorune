@@ -77,7 +77,7 @@ def select_public_quantity_mana(host, seat, source, ability, response, *, source
     if raw is not None and choice is not None:
         raise GameRuleError('Choose one mana allocation representation')
     if raw is not None:
-        if not isinstance(raw, Mapping) or any(type(key) is not str or key not in 'WUBRGC' or len(key) != 1
+        if not isinstance(raw, Mapping) or any(type(key) is not str or key not in output.colors
             or type(value) is not int or value < 0 for key, value in raw.items()):
             raise GameRuleError('Mana allocation requires canonical nonnegative integers')
         bundle = normalize_mana_bundle(raw)
