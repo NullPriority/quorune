@@ -9296,6 +9296,51 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Ephemerate blinks the attacker before Enlist resolves; the new incarnation receives no old growth and replay remains exact."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_fixed_resolution_mana.FixedResolutionManaRuntimeTests.test_actual_culling_sacrifice_is_paid_but_countered_spell_produces_no_mana",
+      "piece_ids": [
+        "capability.casting.additional_cost.fixed_sacrifice",
+        "capability.mana.production.fixed_resolution"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.fixed_sacrifice",
+        "mana.production.fixed_resolution"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Culling the Weak sacrifices its additional-cost creature before Counterspell; the countered spell produces no mana, with exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_fixed_resolution_mana.FixedResolutionManaRuntimeTests.test_actual_entry_mana_uses_stack_and_survives_source_departure",
+      "piece_ids": [
+        "capability.mana.production.fixed_resolution",
+        "capability.target.revalidate_resolution"
+      ],
+      "capability_ids": [
+        "mana.production.fixed_resolution",
+        "target.revalidate_resolution"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Unsummon returns Burning-Tree Emissary while its mana trigger remains on the stack; that trigger adds its fixed bundle with exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_fixed_resolution_mana.FixedResolutionManaRuntimeTests.test_actual_geosurge_restricted_mana_rejects_instant_and_pays_creature",
+      "piece_ids": [
+        "capability.mana.activated.restricted_fixed_output",
+        "capability.mana.production.fixed_resolution"
+      ],
+      "capability_ids": [
+        "mana.activated.restricted_fixed_output",
+        "mana.production.fixed_resolution"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Geosurge resolution uses the shared canonical restricted-mana provenance and spending predicates to reject Shock and pay for Blitz Automaton, with replay."
     }
   ]
 }

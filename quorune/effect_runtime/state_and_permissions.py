@@ -314,6 +314,7 @@ def _apply_mana(
         "amount",
         "source",
         "retain_until",
+        'spend_restriction',
         "_runtime_source",
     }:
         raise GameRuleError("Semantic mana effect has unknown fields")
@@ -330,6 +331,10 @@ def _apply_mana(
         raise GameRuleError("Invalid semantic mana effect")
     source_ref = str(effect.get("source") or "")
     retain_until = effect.get("retain_until")
+    restriction = effect.get('spend_restriction')
+    from ..mana_restrictions import valid_mana_spend_restriction
+    if restriction is not None and not valid_mana_spend_restriction(restriction):
+        raise GameRuleError('Semantic mana spend restriction is malformed')
     if retain_until not in {None, "end_of_combat"}:
         raise GameRuleError("Semantic mana retention is unsupported")
     host._add_mana_to_pool(
@@ -340,6 +345,7 @@ def _apply_mana(
             and bool(host._mana_source_is_snow(source_ref))
         ),
         retention=retain_until,
+        restriction=restriction,
     )
     host._log(
         actor,

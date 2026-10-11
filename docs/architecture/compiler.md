@@ -9,6 +9,13 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+`compiler/fixed_resolution_mana.py` lowers complete fixed symbol bundles into
+the existing mana effect, one instruction per represented color or colorless
+quantity. A represented spending restriction remains attached to every unit.
+Spell, entry-trigger and loyalty-ability classification retain their normal
+stack timing and separately compiled costs. Unknown conditional replacements,
+color choices, linked effects and spending clauses remain residuals.
+
 `compiler/player_speed_nodes.py` lowers Start Your Engines to a current trusted
 static marker. Max Speed fixed characteristic bodies use the public-state
 condition owner; `compiler/max_speed_nodes.py` independently compiles other

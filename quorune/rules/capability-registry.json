@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 221,
+  "registry_version": 222,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -13890,6 +13890,108 @@
       "dependency_fail_closed_rationale": "Omitting typed Enlist capability or either marker/reflexive component keeps keyword and supported attack cost unavailable.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Omitting the reflexive trigger fails actual accepted Enlist attack and final power.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "mana.production.fixed_resolution",
+      "version": 1,
+      "official_rules": [
+        "106.1",
+        "106.3",
+        "106.4",
+        "106.7",
+        "106.8",
+        "605.1",
+        "605.4",
+        "601.2",
+        "608.2c",
+        "118.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Fixed one-to-ten-symbol mana bundles through ordinary spell, entry-trigger and loyalty-ability timing, including canonical typed spending restrictions.",
+        "inputs": [
+          "complete fixed symbol-bundle grammar",
+          "resolving controller",
+          "independently compiled trigger and additional costs"
+        ],
+        "outputs": [
+          "canonical colored or colorless mana after resolution",
+          "typed spending restriction on every produced unit"
+        ],
+        "exclusions": [
+          "variable or chosen-color output",
+          "conditional self-replacements including Threshold",
+          "unrepresented sibling effects or spending restrictions",
+          "runtime Oracle interpretation"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.compiler.fixed_resolution_mana.fixed_resolution_mana_effect_template",
+        "quorune.rules.fixed_resolution_mana_shapes.fixed_resolution_mana_capabilities",
+        "quorune.effect_runtime.state_and_permissions._apply_mana"
+      ],
+      "positive_tests": [
+        "test_fixed_symbol_bundles_are_closed_separate_outputs",
+        "test_restricted_bundle_allows_each_spell_type_but_no_ability_payment",
+        "test_actual_dark_ritual_uses_stack_and_adds_exact_black_bundle_then_replays",
+        "test_actual_channel_suns_adds_all_five_colors_and_replays",
+        "test_actual_culling_sacrifice_is_paid_but_countered_spell_produces_no_mana",
+        "test_actual_geosurge_restricted_mana_rejects_instant_and_pays_creature",
+        "test_actual_entry_mana_uses_stack_and_survives_source_departure",
+        "test_actual_revolt_entry_checks_departure_history",
+        "test_actual_loyalty_mana_uses_stack_and_counter_cost_then_replays"
+      ],
+      "negative_tests": [
+        "test_dynamic_restricted_and_malformed_mana_remain_closed",
+        "test_restricted_bundle_allows_each_spell_type_but_no_ability_payment",
+        "test_actual_culling_sacrifice_is_paid_but_countered_spell_produces_no_mana",
+        "test_actual_geosurge_restricted_mana_rejects_instant_and_pays_creature",
+        "test_actual_revolt_entry_checks_departure_history"
+      ],
+      "interaction_tests": [
+        "test_actual_dark_ritual_uses_stack_and_adds_exact_black_bundle_then_replays",
+        "test_actual_channel_suns_adds_all_five_colors_and_replays",
+        "test_actual_culling_sacrifice_is_paid_but_countered_spell_produces_no_mana",
+        "test_actual_geosurge_restricted_mana_rejects_instant_and_pays_creature",
+        "test_actual_entry_mana_uses_stack_and_survives_source_departure",
+        "test_actual_revolt_entry_checks_departure_history",
+        "test_actual_loyalty_mana_uses_stack_and_counter_cost_then_replays"
+      ],
+      "multiplayer_tests": [
+        "test_actual_dark_ritual_uses_stack_and_adds_exact_black_bundle_then_replays",
+        "test_actual_entry_mana_uses_stack_and_survives_source_departure"
+      ],
+      "privacy_tests": [
+        "test_actual_entry_mana_uses_stack_and_survives_source_departure"
+      ],
+      "replay_tests": [
+        "test_actual_dark_ritual_uses_stack_and_adds_exact_black_bundle_then_replays",
+        "test_actual_channel_suns_adds_all_five_colors_and_replays",
+        "test_actual_culling_sacrifice_is_paid_but_countered_spell_produces_no_mana",
+        "test_actual_geosurge_restricted_mana_rejects_instant_and_pays_creature",
+        "test_actual_entry_mana_uses_stack_and_survives_source_departure",
+        "test_actual_revolt_entry_checks_departure_history",
+        "test_actual_loyalty_mana_uses_stack_and_counter_cost_then_replays"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Omitting fixed resolution mana capability blocks exact effect admission.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the registered mana effect fails an actual Dark Ritual cast and final pool.",
       "blockers": [],
       "status": "trusted"
     }

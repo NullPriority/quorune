@@ -33351,6 +33351,742 @@
       "applicability_note": "Replay the selected subtype identity, stackless tap cost, controller-scoped mana result, and final state hash exactly."
     },
     {
+      "capability_id": "mana.production.fixed_resolution",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_resolution_mana.FixedResolutionManaRuntimeTests.test_actual_channel_suns_adds_all_five_colors_and_replays",
+      "official_rule_ids": [
+        "106.1",
+        "106.3",
+        "106.4",
+        "106.7",
+        "106.8",
+        "605.1",
+        "605.4",
+        "601.2",
+        "608.2c",
+        "118.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one-to-ten-symbol mana bundles through ordinary spell, entry-trigger and loyalty-ability timing, including canonical typed spending restrictions."
+    },
+    {
+      "capability_id": "mana.production.fixed_resolution",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_resolution_mana.FixedResolutionManaRuntimeTests.test_actual_culling_sacrifice_is_paid_but_countered_spell_produces_no_mana",
+      "official_rule_ids": [
+        "106.1",
+        "106.3",
+        "106.4",
+        "106.7",
+        "106.8",
+        "605.1",
+        "605.4",
+        "601.2",
+        "608.2c",
+        "118.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one-to-ten-symbol mana bundles through ordinary spell, entry-trigger and loyalty-ability timing, including canonical typed spending restrictions."
+    },
+    {
+      "capability_id": "mana.production.fixed_resolution",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_resolution_mana.FixedResolutionManaRuntimeTests.test_actual_dark_ritual_uses_stack_and_adds_exact_black_bundle_then_replays",
+      "official_rule_ids": [
+        "106.1",
+        "106.3",
+        "106.4",
+        "106.7",
+        "106.8",
+        "605.1",
+        "605.4",
+        "601.2",
+        "608.2c",
+        "118.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one-to-ten-symbol mana bundles through ordinary spell, entry-trigger and loyalty-ability timing, including canonical typed spending restrictions."
+    },
+    {
+      "capability_id": "mana.production.fixed_resolution",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_resolution_mana.FixedResolutionManaRuntimeTests.test_actual_entry_mana_uses_stack_and_survives_source_departure",
+      "official_rule_ids": [
+        "106.1",
+        "106.3",
+        "106.4",
+        "106.7",
+        "106.8",
+        "605.1",
+        "605.4",
+        "601.2",
+        "608.2c",
+        "118.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one-to-ten-symbol mana bundles through ordinary spell, entry-trigger and loyalty-ability timing, including canonical typed spending restrictions."
+    },
+    {
+      "capability_id": "mana.production.fixed_resolution",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_resolution_mana.FixedResolutionManaRuntimeTests.test_actual_geosurge_restricted_mana_rejects_instant_and_pays_creature",
+      "official_rule_ids": [
+        "106.1",
+        "106.3",
+        "106.4",
+        "106.7",
+        "106.8",
+        "605.1",
+        "605.4",
+        "601.2",
+        "608.2c",
+        "118.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one-to-ten-symbol mana bundles through ordinary spell, entry-trigger and loyalty-ability timing, including canonical typed spending restrictions."
+    },
+    {
+      "capability_id": "mana.production.fixed_resolution",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_resolution_mana.FixedResolutionManaRuntimeTests.test_actual_loyalty_mana_uses_stack_and_counter_cost_then_replays",
+      "official_rule_ids": [
+        "106.1",
+        "106.3",
+        "106.4",
+        "106.7",
+        "106.8",
+        "605.1",
+        "605.4",
+        "601.2",
+        "608.2c",
+        "118.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one-to-ten-symbol mana bundles through ordinary spell, entry-trigger and loyalty-ability timing, including canonical typed spending restrictions."
+    },
+    {
+      "capability_id": "mana.production.fixed_resolution",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_resolution_mana.FixedResolutionManaRuntimeTests.test_actual_revolt_entry_checks_departure_history",
+      "official_rule_ids": [
+        "106.1",
+        "106.3",
+        "106.4",
+        "106.7",
+        "106.8",
+        "605.1",
+        "605.4",
+        "601.2",
+        "608.2c",
+        "118.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one-to-ten-symbol mana bundles through ordinary spell, entry-trigger and loyalty-ability timing, including canonical typed spending restrictions."
+    },
+    {
+      "capability_id": "mana.production.fixed_resolution",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_resolution_mana.FixedResolutionManaRuntimeTests.test_actual_dark_ritual_uses_stack_and_adds_exact_black_bundle_then_replays",
+      "official_rule_ids": [
+        "106.1",
+        "106.3",
+        "106.4",
+        "106.7",
+        "106.8",
+        "605.1",
+        "605.4",
+        "601.2",
+        "608.2c",
+        "118.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one-to-ten-symbol mana bundles through ordinary spell, entry-trigger and loyalty-ability timing, including canonical typed spending restrictions."
+    },
+    {
+      "capability_id": "mana.production.fixed_resolution",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_resolution_mana.FixedResolutionManaRuntimeTests.test_actual_entry_mana_uses_stack_and_survives_source_departure",
+      "official_rule_ids": [
+        "106.1",
+        "106.3",
+        "106.4",
+        "106.7",
+        "106.8",
+        "605.1",
+        "605.4",
+        "601.2",
+        "608.2c",
+        "118.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one-to-ten-symbol mana bundles through ordinary spell, entry-trigger and loyalty-ability timing, including canonical typed spending restrictions."
+    },
+    {
+      "capability_id": "mana.production.fixed_resolution",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_resolution_mana.FixedResolutionManaRuntimeTests.test_omitting_mana_result_mutant_is_killed_by_actual_ritual",
+      "official_rule_ids": [
+        "106.1",
+        "106.3",
+        "106.4",
+        "106.7",
+        "106.8",
+        "605.1",
+        "605.4",
+        "601.2",
+        "608.2c",
+        "118.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one-to-ten-symbol mana bundles through ordinary spell, entry-trigger and loyalty-ability timing, including canonical typed spending restrictions."
+    },
+    {
+      "capability_id": "mana.production.fixed_resolution",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_resolution_mana.FixedResolutionManaCompilerTests.test_dynamic_restricted_and_malformed_mana_remain_closed",
+      "official_rule_ids": [
+        "106.1",
+        "106.3",
+        "106.4",
+        "106.7",
+        "106.8",
+        "605.1",
+        "605.4",
+        "601.2",
+        "608.2c",
+        "118.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one-to-ten-symbol mana bundles through ordinary spell, entry-trigger and loyalty-ability timing, including canonical typed spending restrictions."
+    },
+    {
+      "capability_id": "mana.production.fixed_resolution",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_resolution_mana.FixedResolutionManaCompilerTests.test_restricted_bundle_allows_each_spell_type_but_no_ability_payment",
+      "official_rule_ids": [
+        "106.1",
+        "106.3",
+        "106.4",
+        "106.7",
+        "106.8",
+        "605.1",
+        "605.4",
+        "601.2",
+        "608.2c",
+        "118.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one-to-ten-symbol mana bundles through ordinary spell, entry-trigger and loyalty-ability timing, including canonical typed spending restrictions."
+    },
+    {
+      "capability_id": "mana.production.fixed_resolution",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_resolution_mana.FixedResolutionManaRuntimeTests.test_actual_culling_sacrifice_is_paid_but_countered_spell_produces_no_mana",
+      "official_rule_ids": [
+        "106.1",
+        "106.3",
+        "106.4",
+        "106.7",
+        "106.8",
+        "605.1",
+        "605.4",
+        "601.2",
+        "608.2c",
+        "118.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one-to-ten-symbol mana bundles through ordinary spell, entry-trigger and loyalty-ability timing, including canonical typed spending restrictions."
+    },
+    {
+      "capability_id": "mana.production.fixed_resolution",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_resolution_mana.FixedResolutionManaRuntimeTests.test_actual_geosurge_restricted_mana_rejects_instant_and_pays_creature",
+      "official_rule_ids": [
+        "106.1",
+        "106.3",
+        "106.4",
+        "106.7",
+        "106.8",
+        "605.1",
+        "605.4",
+        "601.2",
+        "608.2c",
+        "118.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one-to-ten-symbol mana bundles through ordinary spell, entry-trigger and loyalty-ability timing, including canonical typed spending restrictions."
+    },
+    {
+      "capability_id": "mana.production.fixed_resolution",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_resolution_mana.FixedResolutionManaRuntimeTests.test_actual_revolt_entry_checks_departure_history",
+      "official_rule_ids": [
+        "106.1",
+        "106.3",
+        "106.4",
+        "106.7",
+        "106.8",
+        "605.1",
+        "605.4",
+        "601.2",
+        "608.2c",
+        "118.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one-to-ten-symbol mana bundles through ordinary spell, entry-trigger and loyalty-ability timing, including canonical typed spending restrictions."
+    },
+    {
+      "capability_id": "mana.production.fixed_resolution",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_resolution_mana.FixedResolutionManaCompilerTests.test_fixed_symbol_bundles_are_closed_separate_outputs",
+      "official_rule_ids": [
+        "106.1",
+        "106.3",
+        "106.4",
+        "106.7",
+        "106.8",
+        "605.1",
+        "605.4",
+        "601.2",
+        "608.2c",
+        "118.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one-to-ten-symbol mana bundles through ordinary spell, entry-trigger and loyalty-ability timing, including canonical typed spending restrictions."
+    },
+    {
+      "capability_id": "mana.production.fixed_resolution",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_resolution_mana.FixedResolutionManaCompilerTests.test_restricted_bundle_allows_each_spell_type_but_no_ability_payment",
+      "official_rule_ids": [
+        "106.1",
+        "106.3",
+        "106.4",
+        "106.7",
+        "106.8",
+        "605.1",
+        "605.4",
+        "601.2",
+        "608.2c",
+        "118.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one-to-ten-symbol mana bundles through ordinary spell, entry-trigger and loyalty-ability timing, including canonical typed spending restrictions."
+    },
+    {
+      "capability_id": "mana.production.fixed_resolution",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_resolution_mana.FixedResolutionManaRuntimeTests.test_actual_channel_suns_adds_all_five_colors_and_replays",
+      "official_rule_ids": [
+        "106.1",
+        "106.3",
+        "106.4",
+        "106.7",
+        "106.8",
+        "605.1",
+        "605.4",
+        "601.2",
+        "608.2c",
+        "118.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one-to-ten-symbol mana bundles through ordinary spell, entry-trigger and loyalty-ability timing, including canonical typed spending restrictions."
+    },
+    {
+      "capability_id": "mana.production.fixed_resolution",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_resolution_mana.FixedResolutionManaRuntimeTests.test_actual_culling_sacrifice_is_paid_but_countered_spell_produces_no_mana",
+      "official_rule_ids": [
+        "106.1",
+        "106.3",
+        "106.4",
+        "106.7",
+        "106.8",
+        "605.1",
+        "605.4",
+        "601.2",
+        "608.2c",
+        "118.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one-to-ten-symbol mana bundles through ordinary spell, entry-trigger and loyalty-ability timing, including canonical typed spending restrictions."
+    },
+    {
+      "capability_id": "mana.production.fixed_resolution",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_resolution_mana.FixedResolutionManaRuntimeTests.test_actual_dark_ritual_uses_stack_and_adds_exact_black_bundle_then_replays",
+      "official_rule_ids": [
+        "106.1",
+        "106.3",
+        "106.4",
+        "106.7",
+        "106.8",
+        "605.1",
+        "605.4",
+        "601.2",
+        "608.2c",
+        "118.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one-to-ten-symbol mana bundles through ordinary spell, entry-trigger and loyalty-ability timing, including canonical typed spending restrictions."
+    },
+    {
+      "capability_id": "mana.production.fixed_resolution",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_resolution_mana.FixedResolutionManaRuntimeTests.test_actual_entry_mana_uses_stack_and_survives_source_departure",
+      "official_rule_ids": [
+        "106.1",
+        "106.3",
+        "106.4",
+        "106.7",
+        "106.8",
+        "605.1",
+        "605.4",
+        "601.2",
+        "608.2c",
+        "118.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one-to-ten-symbol mana bundles through ordinary spell, entry-trigger and loyalty-ability timing, including canonical typed spending restrictions."
+    },
+    {
+      "capability_id": "mana.production.fixed_resolution",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_resolution_mana.FixedResolutionManaRuntimeTests.test_actual_geosurge_restricted_mana_rejects_instant_and_pays_creature",
+      "official_rule_ids": [
+        "106.1",
+        "106.3",
+        "106.4",
+        "106.7",
+        "106.8",
+        "605.1",
+        "605.4",
+        "601.2",
+        "608.2c",
+        "118.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one-to-ten-symbol mana bundles through ordinary spell, entry-trigger and loyalty-ability timing, including canonical typed spending restrictions."
+    },
+    {
+      "capability_id": "mana.production.fixed_resolution",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_resolution_mana.FixedResolutionManaRuntimeTests.test_actual_loyalty_mana_uses_stack_and_counter_cost_then_replays",
+      "official_rule_ids": [
+        "106.1",
+        "106.3",
+        "106.4",
+        "106.7",
+        "106.8",
+        "605.1",
+        "605.4",
+        "601.2",
+        "608.2c",
+        "118.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one-to-ten-symbol mana bundles through ordinary spell, entry-trigger and loyalty-ability timing, including canonical typed spending restrictions."
+    },
+    {
+      "capability_id": "mana.production.fixed_resolution",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_resolution_mana.FixedResolutionManaRuntimeTests.test_actual_revolt_entry_checks_departure_history",
+      "official_rule_ids": [
+        "106.1",
+        "106.3",
+        "106.4",
+        "106.7",
+        "106.8",
+        "605.1",
+        "605.4",
+        "601.2",
+        "608.2c",
+        "118.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one-to-ten-symbol mana bundles through ordinary spell, entry-trigger and loyalty-ability timing, including canonical typed spending restrictions."
+    },
+    {
+      "capability_id": "mana.production.fixed_resolution",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_resolution_mana.FixedResolutionManaRuntimeTests.test_actual_entry_mana_uses_stack_and_survives_source_departure",
+      "official_rule_ids": [
+        "106.1",
+        "106.3",
+        "106.4",
+        "106.7",
+        "106.8",
+        "605.1",
+        "605.4",
+        "601.2",
+        "608.2c",
+        "118.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one-to-ten-symbol mana bundles through ordinary spell, entry-trigger and loyalty-ability timing, including canonical typed spending restrictions."
+    },
+    {
+      "capability_id": "mana.production.fixed_resolution",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_resolution_mana.FixedResolutionManaRuntimeTests.test_actual_channel_suns_adds_all_five_colors_and_replays",
+      "official_rule_ids": [
+        "106.1",
+        "106.3",
+        "106.4",
+        "106.7",
+        "106.8",
+        "605.1",
+        "605.4",
+        "601.2",
+        "608.2c",
+        "118.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one-to-ten-symbol mana bundles through ordinary spell, entry-trigger and loyalty-ability timing, including canonical typed spending restrictions."
+    },
+    {
+      "capability_id": "mana.production.fixed_resolution",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_resolution_mana.FixedResolutionManaRuntimeTests.test_actual_culling_sacrifice_is_paid_but_countered_spell_produces_no_mana",
+      "official_rule_ids": [
+        "106.1",
+        "106.3",
+        "106.4",
+        "106.7",
+        "106.8",
+        "605.1",
+        "605.4",
+        "601.2",
+        "608.2c",
+        "118.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one-to-ten-symbol mana bundles through ordinary spell, entry-trigger and loyalty-ability timing, including canonical typed spending restrictions."
+    },
+    {
+      "capability_id": "mana.production.fixed_resolution",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_resolution_mana.FixedResolutionManaRuntimeTests.test_actual_dark_ritual_uses_stack_and_adds_exact_black_bundle_then_replays",
+      "official_rule_ids": [
+        "106.1",
+        "106.3",
+        "106.4",
+        "106.7",
+        "106.8",
+        "605.1",
+        "605.4",
+        "601.2",
+        "608.2c",
+        "118.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one-to-ten-symbol mana bundles through ordinary spell, entry-trigger and loyalty-ability timing, including canonical typed spending restrictions."
+    },
+    {
+      "capability_id": "mana.production.fixed_resolution",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_resolution_mana.FixedResolutionManaRuntimeTests.test_actual_entry_mana_uses_stack_and_survives_source_departure",
+      "official_rule_ids": [
+        "106.1",
+        "106.3",
+        "106.4",
+        "106.7",
+        "106.8",
+        "605.1",
+        "605.4",
+        "601.2",
+        "608.2c",
+        "118.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one-to-ten-symbol mana bundles through ordinary spell, entry-trigger and loyalty-ability timing, including canonical typed spending restrictions."
+    },
+    {
+      "capability_id": "mana.production.fixed_resolution",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_resolution_mana.FixedResolutionManaRuntimeTests.test_actual_geosurge_restricted_mana_rejects_instant_and_pays_creature",
+      "official_rule_ids": [
+        "106.1",
+        "106.3",
+        "106.4",
+        "106.7",
+        "106.8",
+        "605.1",
+        "605.4",
+        "601.2",
+        "608.2c",
+        "118.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one-to-ten-symbol mana bundles through ordinary spell, entry-trigger and loyalty-ability timing, including canonical typed spending restrictions."
+    },
+    {
+      "capability_id": "mana.production.fixed_resolution",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_resolution_mana.FixedResolutionManaRuntimeTests.test_actual_loyalty_mana_uses_stack_and_counter_cost_then_replays",
+      "official_rule_ids": [
+        "106.1",
+        "106.3",
+        "106.4",
+        "106.7",
+        "106.8",
+        "605.1",
+        "605.4",
+        "601.2",
+        "608.2c",
+        "118.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one-to-ten-symbol mana bundles through ordinary spell, entry-trigger and loyalty-ability timing, including canonical typed spending restrictions."
+    },
+    {
+      "capability_id": "mana.production.fixed_resolution",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_resolution_mana.FixedResolutionManaRuntimeTests.test_actual_revolt_entry_checks_departure_history",
+      "official_rule_ids": [
+        "106.1",
+        "106.3",
+        "106.4",
+        "106.7",
+        "106.8",
+        "605.1",
+        "605.4",
+        "601.2",
+        "608.2c",
+        "118.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed one-to-ten-symbol mana bundles through ordinary spell, entry-trigger and loyalty-ability timing, including canonical typed spending restrictions."
+    },
+    {
       "capability_id": "mana.production.public_quantity",
       "evidence_class": "interaction",
       "test_id": "tests.test_public_quantity_mana.PublicQuantityManaRuntimeTests.test_counter_price_zero_output_is_read_only_offered_and_paid_once",

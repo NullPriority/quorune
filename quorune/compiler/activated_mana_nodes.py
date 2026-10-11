@@ -352,6 +352,7 @@ _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
     "remove_counters",
     "remove_all_counters",
     "transform",
+    'mana',
     "return_graveyard_card_to_owner_hand",
     "return_graveyard_targets_to_owner_hand",
     "return_permanent_targets_to_owner_hand",
