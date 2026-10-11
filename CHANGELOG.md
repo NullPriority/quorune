@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Reset successive priority passes after a confirmed concession so a wrapped
+  priority window accepts the remaining player's next pass.
+
 - Align legacy compiler consumers with admitted commander, loyalty mana,
   shared-color prevention, Prototype, Split Second and Graft productions.
   Preserve explicit unsupported boundaries and add original-card interaction

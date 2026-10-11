@@ -197,6 +197,13 @@ does not perform turn-based actions: in particular, draw-step entry records an
 explicit skipped draw instead of submitting an inactive affected player to the
 strict draw and replacement owners.
 
+`turn_priority_owner.py` clears the successive-pass round when the priority
+holder confirms a concession. The existing player-departure owner transfers
+priority to the next remaining player. That player receives a fresh usable
+window over the changed game, including when turn order wraps to a player who
+passed before the concession. Unconfirmed and unauthorized concessions remain
+transactional rejections.
+
 ## Casting, activation, and action offers
 
 `rules/action_catalog.py` composes executable offers from the same pure casting
