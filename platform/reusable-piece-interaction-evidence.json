@@ -9206,6 +9206,51 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual graph records two defending pairings; Wall of Vapor prevents its own assigned damage while the second blocker takes damage, including replay of noncanonical block input order."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_actual_gossipmonger_source_and_selected_tap_costs_transform_same_object",
+      "piece_ids": [
+        "capability.activation.selected_tap.fixed",
+        "capability.permanent.transform.face_change"
+      ],
+      "capability_ids": [
+        "activation.selected_tap.fixed",
+        "permanent.transform.face_change"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Gossipmonger pays source tap and another selected creature tap before transforming the same permanent, with source-reuse rollback and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_actual_control_change_keeps_original_activation_controller_and_source_binding",
+      "piece_ids": [
+        "capability.continuous.control.fixed_resolution",
+        "capability.permanent.transform.face_change"
+      ],
+      "capability_ids": [
+        "continuous.control.fixed_resolution",
+        "permanent.transform.face_change"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Word of Seizing changes source controller above an accepted transform activation; original activation controller and source identity remain valid through transform and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_actual_source_blink_before_activation_resolution_does_not_transform_new_object",
+      "piece_ids": [
+        "capability.permanent.transform.face_change",
+        "capability.zone.change.destination_replacement"
+      ],
+      "capability_ids": [
+        "permanent.transform.face_change",
+        "zone.change.destination_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Ephemerate changes the source incarnation before activation resolution; the new front-face object stays untransformed and replay is exact."
     }
   ]
 }

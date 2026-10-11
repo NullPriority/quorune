@@ -1,0 +1,894 @@
+{
+  "cards": [
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}",
+      "name": "Act of Treason",
+      "oracle_id": "9d08af23-9f4a-4097-9abc-3b17475ab744",
+      "oracle_text": "Gain control of target creature until end of turn. Untap that creature. It gains haste until end of turn. (It can attack and {T} this turn.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-01-12",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [
+            "G"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{4}{G}",
+          "name": "Bonded Herdbeast",
+          "oracle_text": "{4}{R/P}: Transform this creature. Activate only as a sorcery. ({R/P} can be paid with either {R} or 2 life.)",
+          "power": "4",
+          "toughness": "5",
+          "type_line": "Creature \u2014 Beast"
+        },
+        {
+          "colors": [
+            "G",
+            "R"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Plated Kilnbeast",
+          "oracle_text": "Menace (This creature can't be blocked except by two or more creatures.)",
+          "power": "7",
+          "toughness": "5",
+          "type_line": "Creature \u2014 Phyrexian Beast"
+        }
+      ],
+      "cmc": 5.0,
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Transform",
+        "Menace"
+      ],
+      "layout": "transform",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{G} // ",
+      "name": "Bonded Herdbeast // Plated Kilnbeast",
+      "oracle_id": "b06067e7-330e-47de-be59-c2874eedba1d",
+      "oracle_text": "Bonded Herdbeast: {4}{R/P}: Transform this creature. Activate only as a sorcery. ({R/P} can be paid with either {R} or 2 life.)\n//\nPlated Kilnbeast: Menace (This creature can't be blocked except by two or more creatures.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-04-21",
+      "toughness": null,
+      "type_line": "Creature \u2014 Beast // Creature \u2014 Phyrexian Beast"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [
+            "B"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{B}",
+          "name": "Chosen of Markov",
+          "oracle_text": "{T}, Tap an untapped Vampire you control: Transform this creature.",
+          "power": "2",
+          "toughness": "2",
+          "type_line": "Creature \u2014 Human"
+        },
+        {
+          "colors": [
+            "B"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Markov's Servant",
+          "oracle_text": "",
+          "power": "4",
+          "toughness": "4",
+          "type_line": "Creature \u2014 Vampire"
+        }
+      ],
+      "cmc": 3.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Transform"
+      ],
+      "layout": "transform",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{B} // ",
+      "name": "Chosen of Markov // Markov's Servant",
+      "oracle_id": "29328bcb-e991-4095-9439-f493c8fa3f82",
+      "oracle_text": "Chosen of Markov: {T}, Tap an untapped Vampire you control: Transform this creature.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2012-02-03",
+      "toughness": null,
+      "type_line": "Creature \u2014 Human // Creature \u2014 Vampire"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Rebound"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Ephemerate",
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "oracle_text": "Exile target creature you control, then return it to the battlefield under its owner's control.\nRebound (If you cast this spell from your hand, exile it as it resolves. At the beginning of your next upkeep, you may cast this card from exile without paying its mana cost.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2019-06-14",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [
+            "G"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{G}",
+          "name": "Kessig Prowler",
+          "oracle_text": "{4}{G}: Transform this creature.",
+          "power": "2",
+          "toughness": "1",
+          "type_line": "Creature \u2014 Werewolf Horror"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Sinuous Predator",
+          "oracle_text": "This creature can't be blocked by more than one creature.",
+          "power": "4",
+          "toughness": "4",
+          "type_line": "Creature \u2014 Eldrazi Werewolf"
+        }
+      ],
+      "cmc": 1.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Transform"
+      ],
+      "layout": "transform",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G} // ",
+      "name": "Kessig Prowler // Sinuous Predator",
+      "oracle_id": "d2aff0ea-5474-4329-ae6a-80ee4908ee8d",
+      "oracle_text": "Kessig Prowler: {4}{G}: Transform this creature.\n//\nSinuous Predator: This creature can't be blocked by more than one creature.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2016-07-22",
+      "toughness": null,
+      "type_line": "Creature \u2014 Werewolf Horror // Creature \u2014 Eldrazi Werewolf"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [
+            "W"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{W}",
+          "name": "Pious Evangel",
+          "oracle_text": "Whenever this creature or another creature you control enters, you gain 1 life.\n{2}, {T}, Sacrifice another permanent: Transform this creature.",
+          "power": "2",
+          "toughness": "2",
+          "type_line": "Creature \u2014 Human Cleric"
+        },
+        {
+          "colors": [
+            "B"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Wayward Disciple",
+          "oracle_text": "Whenever this creature or another creature you control dies, target opponent loses 1 life and you gain 1 life.",
+          "power": "2",
+          "toughness": "4",
+          "type_line": "Creature \u2014 Human Cleric"
+        }
+      ],
+      "cmc": 3.0,
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Transform"
+      ],
+      "layout": "transform",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W} // ",
+      "name": "Pious Evangel // Wayward Disciple",
+      "oracle_id": "e2fc5069-374b-4feb-acd9-976ddf90e504",
+      "oracle_text": "Pious Evangel: Whenever this creature or another creature you control enters, you gain 1 life.\n{2}, {T}, Sacrifice another permanent: Transform this creature.\n//\nWayward Disciple: Whenever this creature or another creature you control dies, target opponent loses 1 life and you gain 1 life.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2016-04-08",
+      "toughness": null,
+      "type_line": "Creature \u2014 Human Cleric // Creature \u2014 Human Cleric"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}",
+          "name": "Thraben Gargoyle",
+          "oracle_text": "Defender\n{6}: Transform this creature.",
+          "power": "2",
+          "toughness": "2",
+          "type_line": "Artifact Creature \u2014 Gargoyle"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Stonewing Antagonizer",
+          "oracle_text": "Flying",
+          "power": "4",
+          "toughness": "2",
+          "type_line": "Artifact Creature \u2014 Gargoyle Horror"
+        }
+      ],
+      "cmc": 1.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Transform",
+        "Defender"
+      ],
+      "layout": "transform",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1} // ",
+      "name": "Thraben Gargoyle // Stonewing Antagonizer",
+      "oracle_id": "9b5cf592-8385-4115-b27a-98f42bdf6329",
+      "oracle_text": "Thraben Gargoyle: Defender\n{6}: Transform this creature.\n//\nStonewing Antagonizer: Flying",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2016-04-08",
+      "toughness": null,
+      "type_line": "Artifact Creature \u2014 Gargoyle // Artifact Creature \u2014 Gargoyle Horror"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [
+            "W"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{W}",
+          "name": "Town Gossipmonger",
+          "oracle_text": "{T}, Tap an untapped creature you control: Transform this creature.",
+          "power": "1",
+          "toughness": "1",
+          "type_line": "Creature \u2014 Human"
+        },
+        {
+          "colors": [
+            "R"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Incited Rabble",
+          "oracle_text": "This creature attacks each combat if able.\n{2}: This creature gets +1/+0 until end of turn.",
+          "power": "2",
+          "toughness": "3",
+          "type_line": "Creature \u2014 Human"
+        }
+      ],
+      "cmc": 1.0,
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Transform"
+      ],
+      "layout": "transform",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W} // ",
+      "name": "Town Gossipmonger // Incited Rabble",
+      "oracle_id": "8a8e225b-14e4-464f-bebe-89b4c9be7fe1",
+      "oracle_text": "Town Gossipmonger: {T}, Tap an untapped creature you control: Transform this creature.\n//\nIncited Rabble: This creature attacks each combat if able.\n{2}: This creature gets +1/+0 until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-01-24",
+      "toughness": null,
+      "type_line": "Creature \u2014 Human // Creature \u2014 Human"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [
+            "G"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{G}",
+          "name": "Ulvenwald Captive",
+          "oracle_text": "Defender\n{T}: Add {G}.\n{5}{G}{G}: Transform this creature.",
+          "power": "1",
+          "toughness": "2",
+          "type_line": "Creature \u2014 Werewolf Horror"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Ulvenwald Abomination",
+          "oracle_text": "{T}: Add {C}{C}.",
+          "power": "4",
+          "toughness": "6",
+          "type_line": "Creature \u2014 Eldrazi Werewolf"
+        }
+      ],
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Transform",
+        "Defender"
+      ],
+      "layout": "transform",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G} // ",
+      "name": "Ulvenwald Captive // Ulvenwald Abomination",
+      "oracle_id": "0272ca81-e727-4f4b-b06e-072d70bb5558",
+      "oracle_text": "Ulvenwald Captive: Defender\n{T}: Add {G}.\n{5}{G}{G}: Transform this creature.\n//\nUlvenwald Abomination: {T}: Add {C}{C}.",
+      "power": null,
+      "produced_mana": [
+        "C",
+        "G"
+      ],
+      "released_at": "2016-07-22",
+      "toughness": null,
+      "type_line": "Creature \u2014 Werewolf Horror // Creature \u2014 Eldrazi Werewolf"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [
+            "G"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{G}{G}",
+          "name": "Ulvenwald Oddity",
+          "oracle_text": "Trample, haste\n{5}{G}{G}: Transform this creature.",
+          "power": "4",
+          "toughness": "4",
+          "type_line": "Creature \u2014 Beast"
+        },
+        {
+          "colors": [
+            "G"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Ulvenwald Behemoth",
+          "oracle_text": "Trample, haste\nOther creatures you control get +1/+1 and have trample and haste.",
+          "power": "8",
+          "toughness": "8",
+          "type_line": "Creature \u2014 Beast Horror"
+        }
+      ],
+      "cmc": 4.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Transform",
+        "Haste",
+        "Trample"
+      ],
+      "layout": "transform",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{G}{G} // ",
+      "name": "Ulvenwald Oddity // Ulvenwald Behemoth",
+      "oracle_id": "90379825-1894-4b79-bf72-445175e97ffb",
+      "oracle_text": "Ulvenwald Oddity: Trample, haste\n{5}{G}{G}: Transform this creature.\n//\nUlvenwald Behemoth: Trample, haste\nOther creatures you control get +1/+1 and have trample and haste.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2021-11-19",
+      "toughness": null,
+      "type_line": "Creature \u2014 Beast // Creature \u2014 Beast Horror"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Split second"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{R}{R}",
+      "name": "Word of Seizing",
+      "oracle_id": "b80d2841-03b0-42d3-ac9b-51e793b1dc24",
+      "oracle_text": "Split second (As long as this spell is on the stack, players can't cast spells or activate abilities that aren't mana abilities.)\nUntap target permanent and gain control of it until end of turn. It gains haste until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2020-11-20",
+      "toughness": null,
+      "type_line": "Instant"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "For more information on double-faced cards, see the Shadows over Innistrad mechanics article (http://magic.wizards.com/en/articles/archive/feature/shadows-over-innistrad-mechanics).",
+      "oracle_id": "0272ca81-e727-4f4b-b06e-072d70bb5558",
+      "published_at": "2016-07-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "Casting the card again due to rebound's delayed triggered ability is optional. If you choose not to cast the card, or if you can't (perhaps because there are no legal targets available), the card will stay exiled. You won't get another chance to cast it on a future turn. If you do cast the card, it's put into its owner's graveyard as normal once it resolves.",
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "published_at": "2019-06-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a spell with rebound that you cast from your hand is countered or doesn't resolve (most likely because its targets have become illegal), none of its effects will happen, including rebound. The spell will be put into its owner's graveyard and you won't get to cast it again on your next turn.",
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "published_at": "2019-06-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a token is exiled this way, it will cease to exist and won't return to the battlefield.",
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "published_at": "2019-06-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once the exiled creature returns, it's considered a new object with no relation to the object that it was. Auras attached to the exiled creature will be put into their owners' graveyards. Equipment attached to the exiled creature will become unattached and remain on the battlefield. Any counters on the exiled creature will cease to exist.",
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "published_at": "2019-06-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can tap any untapped Vampire you control, including one you haven't controlled continuously since the beginning of your most recent turn, to pay the cost of Chosen of Markov's activated ability. You must have controlled Chosen of Markov continuously since the beginning of your most recent turn, however.",
+      "oracle_id": "29328bcb-e991-4095-9439-f493c8fa3f82",
+      "published_at": "2011-01-22",
+      "source": "wotc"
+    },
+    {
+      "comment": "If, during its controller\u2019s declare attackers step, Incited Rabble is tapped or is affected by a spell or ability that says it can\u2019t attack, then it doesn\u2019t attack. If there\u2019s a cost associated with having Incited Rabble attack, its controller isn\u2019t forced to pay that cost, so it doesn\u2019t have to attack in that case either. Note that transforming Town Gossipmonger won\u2019t untap it.",
+      "oracle_id": "8a8e225b-14e4-464f-bebe-89b4c9be7fe1",
+      "published_at": "2025-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "Incited Rabble\u2019s controller still chooses which player, planeswalker, or battle it attacks.",
+      "oracle_id": "8a8e225b-14e4-464f-bebe-89b4c9be7fe1",
+      "published_at": "2025-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can tap any untapped creature you control, including one you haven\u2019t controlled continuously since the beginning of your most recent turn, to pay the cost of Town Gossipmonger\u2019s activated ability. You must have controlled Town Gossipmonger continuously since the beginning of your most recent turn, however.",
+      "oracle_id": "8a8e225b-14e4-464f-bebe-89b4c9be7fe1",
+      "published_at": "2025-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "For more information on double-faced cards, see the Shadows over Innistrad mechanics article (http://magic.wizards.com/en/articles/archive/feature/shadows-over-innistrad-mechanics).",
+      "oracle_id": "9b5cf592-8385-4115-b27a-98f42bdf6329",
+      "published_at": "2016-07-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "Act of Treason can target any creature, even one that's untapped or one you already control.",
+      "oracle_id": "9d08af23-9f4a-4097-9abc-3b17475ab744",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "Gaining control of a creature doesn't cause you to gain control of any Auras or Equipment attached to it.",
+      "oracle_id": "9d08af23-9f4a-4097-9abc-3b17475ab744",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Sinuous Predator gains menace, it can't be blocked by only one creature and it can't be blocked by more than one creature, so it simply can't be blocked.",
+      "oracle_id": "d2aff0ea-5474-4329-ae6a-80ee4908ee8d",
+      "published_at": "2016-07-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Pious Evangel enters the battlefield at the same time as another creature you control, Pious Evangel's ability triggers once for the other creature as well as once for itself.",
+      "oracle_id": "e2fc5069-374b-4feb-acd9-976ddf90e504",
+      "published_at": "2016-04-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Wayward Disciple dies at the same time as another creature you control, Wayward Disciple's ability triggers once for the other creature as well as once for itself.",
+      "oracle_id": "e2fc5069-374b-4feb-acd9-976ddf90e504",
+      "published_at": "2016-04-08",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

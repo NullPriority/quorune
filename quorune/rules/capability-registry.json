@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 219,
+  "registry_version": 220,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -11514,23 +11514,107 @@
     {
       "id": "permanent.transform.face_change",
       "version": 1,
-      "official_rules": ["701.27", "701.27a", "701.27c", "701.27d", "701.27f", "712.9", "712.10", "712.18"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rules": [
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "712.9",
+        "712.10",
+        "712.18"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
-        "summary": "Transform one source-pinned phased-in nonmodal double-faced card permanent while preserving its logical object and rejecting stale triggered instructions.",
-        "inputs": ["one represented double-faced card permanent", "current face and next permanent face", "current logical object", "captured transform count for activated or triggered instructions", "current applicable Daybound or Nightbound component"],
-        "outputs": ["opposite active face", "incremented transform count", "unchanged logical object, counters, damage, controller, attachments, and timestamp", "normalized public transform event", "ordinary trigger batching and exact replay"],
-        "exclusions": ["double-faced tokens, card copies, copied or granted characteristics, face-down or phased-out objects", "modal double-faced cards, melded or merged permanents, Convert, and instant or sorcery destination faces", "Daybound or Nightbound permanents transformed by non-bound instructions", "targeted, mass, optional, delayed, or independently unsupported transform instructions"]
+        "summary": "Transform one source-pinned phased-in nonmodal double-faced card permanent through independently closed printed activation or trigger grammar, preserving its logical object and rejecting stale source incarnations or transform-count instructions.",
+        "inputs": [
+          "one represented double-faced card permanent",
+          "current face and next permanent face",
+          "current logical object",
+          "captured transform count for activated or triggered instructions",
+          "current applicable Daybound or Nightbound component"
+        ],
+        "outputs": [
+          "opposite active face",
+          "incremented transform count",
+          "unchanged logical object, counters, damage, controller, attachments, and timestamp",
+          "normalized public transform event",
+          "ordinary trigger batching and exact replay"
+        ],
+        "exclusions": [
+          "double-faced tokens, card copies, copied or granted characteristics, face-down or phased-out objects",
+          "modal double-faced cards, melded or merged permanents, Convert, and instant or sorcery destination faces",
+          "Daybound or Nightbound permanents transformed by non-bound instructions",
+          "targeted, mass, optional, delayed, or independently unsupported transform instructions"
+        ]
       },
-      "dependencies": ["trigger.event.normalized_public_action", "trigger.placement.apnap"],
-      "implementation_components": ["quorune.permanent_transform.transform_permanent", "quorune.permanent_transform.commit_transform_batch", "quorune.effect_runtime.objects_stack_and_tokens._apply_transform", "quorune.trigger_discovery._semantic_trigger_context", "quorune.semantic_runtime.values.resolve_semantic_value"],
-      "positive_tests": ["test_day_night_entry_untap_and_shared_component_applicability", "test_legacy_transform_intervening_identity_and_transform_count"],
-      "negative_tests": ["test_day_night_and_transform_grammar_exclusions_fail_closed", "test_transform_capability_and_compiler_mutations_fail_closed"],
-      "interaction_tests": ["test_simultaneous_transform_apnap_state_and_replay"],
-      "multiplayer_tests": ["test_simultaneous_transform_apnap_state_and_replay"],
-      "privacy_tests": ["test_simultaneous_transform_apnap_state_and_replay"],
-      "replay_tests": ["test_simultaneous_transform_apnap_state_and_replay"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "trigger.event.normalized_public_action",
+        "trigger.placement.apnap"
+      ],
+      "implementation_components": [
+        "quorune.permanent_transform.transform_permanent",
+        "quorune.permanent_transform.commit_transform_batch",
+        "quorune.effect_runtime.objects_stack_and_tokens._apply_transform",
+        "quorune.trigger_discovery._semantic_trigger_context",
+        "quorune.semantic_runtime.values.resolve_semantic_value",
+        "quorune.compiler.self_transform_templates.fixed_self_transform_effect_template",
+        "quorune.rules.activation.transform_snapshot.activation_transform_context",
+        "quorune.rules.current_face_keywords.current_printed_face_keywords",
+        "quorune.compiler.source_transform_program_closure.is_closed_source_transform_program"
+      ],
+      "positive_tests": [
+        "test_day_night_entry_untap_and_shared_component_applicability",
+        "test_legacy_transform_intervening_identity_and_transform_count",
+        "test_fixed_self_transform_has_same_generic_owner_and_count_snapshot",
+        "test_actual_ulvenwald_transform_preserves_object_and_uses_back_mana_ability",
+        "test_two_actual_gargoyle_activations_transform_only_once_since_stack_placement"
+      ],
+      "negative_tests": [
+        "test_day_night_and_transform_grammar_exclusions_fail_closed",
+        "test_transform_capability_and_compiler_mutations_fail_closed",
+        "test_targeted_and_unrepresented_transform_variants_stay_residual"
+      ],
+      "interaction_tests": [
+        "test_simultaneous_transform_apnap_state_and_replay",
+        "test_actual_ulvenwald_transform_preserves_object_and_uses_back_mana_ability",
+        "test_two_actual_gargoyle_activations_transform_only_once_since_stack_placement",
+        "test_actual_gossipmonger_source_and_selected_tap_costs_transform_same_object",
+        "test_actual_source_blink_before_activation_resolution_does_not_transform_new_object",
+        "test_actual_control_change_keeps_original_activation_controller_and_source_binding",
+        "test_actual_gargoyle_cast_then_transform_uses_offered_front_and_new_flying_face"
+      ],
+      "multiplayer_tests": [
+        "test_simultaneous_transform_apnap_state_and_replay",
+        "test_actual_ulvenwald_transform_preserves_object_and_uses_back_mana_ability",
+        "test_two_actual_gargoyle_activations_transform_only_once_since_stack_placement"
+      ],
+      "privacy_tests": [
+        "test_simultaneous_transform_apnap_state_and_replay",
+        "test_actual_ulvenwald_transform_preserves_object_and_uses_back_mana_ability",
+        "test_two_actual_gargoyle_activations_transform_only_once_since_stack_placement"
+      ],
+      "replay_tests": [
+        "test_simultaneous_transform_apnap_state_and_replay",
+        "test_actual_ulvenwald_transform_preserves_object_and_uses_back_mana_ability",
+        "test_two_actual_gargoyle_activations_transform_only_once_since_stack_placement",
+        "test_actual_gossipmonger_source_and_selected_tap_costs_transform_same_object",
+        "test_actual_source_blink_before_activation_resolution_does_not_transform_new_object",
+        "test_actual_control_change_keeps_original_activation_controller_and_source_binding",
+        "test_actual_gargoyle_cast_then_transform_uses_offered_front_and_new_flying_face"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Blocking normalized public events or APNAP trigger placement prevents the transform capability and each dependent card-form or upkeep trigger from receiving trusted closure.",
       "implementation_mutation_status": "killed",

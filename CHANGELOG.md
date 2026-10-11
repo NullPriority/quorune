@@ -31,6 +31,10 @@ maintenance: "hand-maintained"
 - Preserve explicit sacrifice provenance for Fading and Vanishing cleanup
   through zone replacements, normalized trigger occurrences, and turn history.
 
+- Compile self-transform activations through the existing transform owner with
+  source and transform-count snapshots. Correct selected-face keyword presence
+  so front-face abilities do not persist after transformation.
+
 - Extend scoped prevention with sealed token, combat, attachment, counter and
   color facts, including recipient changes during redirection. Canonicalize
   accepted block pair order so saved command mappings replay deterministically.

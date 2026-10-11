@@ -52,6 +52,7 @@ from .creature_power_damage_templates import (
     fixed_creature_power_damage_effect_template,
 )
 from .damage_templates import activated_source_damage_effect_template
+from .self_transform_templates import fixed_self_transform_effect_template
 from .ir_model import (
     append_residual,
     OracleNode,
@@ -350,6 +351,7 @@ _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
     "place_player_counters",
     "remove_counters",
     "remove_all_counters",
+    "transform",
     "return_graveyard_card_to_owner_hand",
     "return_graveyard_targets_to_owner_hand",
     "return_permanent_targets_to_owner_hand",
@@ -612,6 +614,8 @@ def _compiled_activated_effect(
     card_name: str,
     effect_template: Callable[..., tuple[Any, ...]],
 ) -> tuple[Any, ...]:
+    transform=fixed_self_transform_effect_template(text,card_name=card_name)
+    if transform is not None:return transform
     creature_power = fixed_creature_power_damage_effect_template(
         text,
         card_name=card_name,

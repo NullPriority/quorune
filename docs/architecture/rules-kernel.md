@@ -9,6 +9,15 @@ maintenance: "hand-maintained"
 
 # Rules kernel
 
+Self-transform activations pin the original source incarnation and its
+transform count when placed on the stack. The existing transform owner keeps
+the same permanent, counters, damage, attachments and acquisition history.
+A controller change preserves the original activation controller and source
+binding; a blink creates a new object and invalidates that activation. Current
+fixed keywords on a double-faced spell or permanent come from trusted printed
+programs for its selected face. The parent record's keyword union cannot keep
+front-face Defender on a transformed Flying creature.
+
 Prototype selection changes base mana cost, color, power and toughness while
 casting, on the stack and on the battlefield. It preserves the card's types
 and independently compiled abilities. Both normal and Prototype choices use

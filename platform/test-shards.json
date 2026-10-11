@@ -131,6 +131,7 @@
       "test_suspend_rules"
     ],
     "functional-04": [
+      "test_activated_self_transform",
       "test_attached_counter_placement",
       "test_attached_static_characteristics",
       "test_bestow_rules",

@@ -97,6 +97,13 @@ survives stack-to-battlefield resolution, participates in copiable snapshots,
 and is removed by other zone transitions. Costs and card abilities remain
 independent of the selected size and color.
 
+Printed self-transform activations use the existing `transform` instruction
+and source-pinned transform owner. The activation context captures the current
+transform count, while source-zone-object substitution rechecks incarnation.
+Shared current-face keyword queries consume trusted compiled keyword programs,
+so transforming removes old-face keywords while retaining costs and independent
+new-face abilities.
+
 Fixed Graft uses the existing semantic-choice registry for its optional,
 non-targeted move. Its immutable movement intent pins both incarnations and
 retains the trigger controller. The counter coordinator resolves recipient

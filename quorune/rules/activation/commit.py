@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .transform_snapshot import activation_transform_context
 
 from collections.abc import Mapping, Sequence
 import copy
@@ -607,6 +608,7 @@ def _activation_stack_item(
         visibility=list(host.seats),
         context={
             "source_logical_object_id": source_logical_object_id,
+            **activation_transform_context(host,proposal,source),
             **(
                 {
                     "source_attachment_snapshot": (

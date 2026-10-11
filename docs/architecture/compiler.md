@@ -1301,7 +1301,11 @@ nonmodal double-faced card. The legacy grammar accepts only the two exact
 "beginning of each upkeep" previous-turn spell-count conditions and a bounded
 source-self reference. Both forms use the shared current-ability component
 query, one bounded previous-turn summary, and the logical-object-aware
-transform operation. Other steps or thresholds, arbitrary Transform or
+transform operation. Printed fixed self-transform activations now use that
+same owner. Their ordinary activation costs are independently compiled, and
+the activation stack item pins source incarnation and transform count under
+CR 701.27f. Two queued activations with the same count can transform once;
+blinked sources invalidate the old instruction. Other steps or thresholds, arbitrary Transform or
 Convert instructions, explicit effects that set day or night, transform-into
 effects, copied or granted forms, and independently unsupported siblings
 remain material residuals.

@@ -2,6 +2,7 @@
   "schema_version": 2,
   "fixture_kind": "compact_ci_card_database_inputs",
   "fixtures": [
+    "tests/fixtures/activated-self-transform-cards.json",
     "tests/fixtures/affinity-rules-cards.json",
     "tests/fixtures/aftermath-cards.json",
     "tests/fixtures/aggregated-zone-event-triggers.json",

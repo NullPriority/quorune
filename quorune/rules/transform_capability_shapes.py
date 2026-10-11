@@ -18,7 +18,7 @@ def source_transform_node_capabilities(
 ) -> tuple[str, ...]:
     mechanics = {str(value).casefold() for value in mechanic_ids}
     if (
-        SPELL_HISTORY_TRANSFORM_MECHANIC_ID not in mechanics
+        not {SPELL_HISTORY_TRANSFORM_MECHANIC_ID,'fixed-activated-source-transform'}.intersection(mechanics)
         or target_schema is not None
         or len(effects) != 1
     ):

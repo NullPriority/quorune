@@ -35246,57 +35246,610 @@
     {
       "capability_id": "permanent.transform.face_change",
       "evidence_class": "interaction",
+      "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_actual_control_change_keeps_original_activation_controller_and_source_binding",
+      "official_rule_ids": [
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "712.9",
+        "712.10",
+        "712.18"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed self-transform activation shares source-incarnation and transform-count revalidation, ordinary costs, current selected-face keyword/ability presence and exact replay."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_actual_gargoyle_cast_then_transform_uses_offered_front_and_new_flying_face",
+      "official_rule_ids": [
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "712.9",
+        "712.10",
+        "712.18"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed self-transform activation shares source-incarnation and transform-count revalidation, ordinary costs, current selected-face keyword/ability presence and exact replay."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_actual_gossipmonger_source_and_selected_tap_costs_transform_same_object",
+      "official_rule_ids": [
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "712.9",
+        "712.10",
+        "712.18"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed self-transform activation shares source-incarnation and transform-count revalidation, ordinary costs, current selected-face keyword/ability presence and exact replay."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_actual_source_blink_before_activation_resolution_does_not_transform_new_object",
+      "official_rule_ids": [
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "712.9",
+        "712.10",
+        "712.18"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed self-transform activation shares source-incarnation and transform-count revalidation, ordinary costs, current selected-face keyword/ability presence and exact replay."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_actual_ulvenwald_transform_preserves_object_and_uses_back_mana_ability",
+      "official_rule_ids": [
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "712.9",
+        "712.10",
+        "712.18"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual printed self-transform activation pays ordinary costs, pins source incarnation and transform count, retains the same permanent and follows the opposite current face with exact replay."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_two_actual_gargoyle_activations_transform_only_once_since_stack_placement",
+      "official_rule_ids": [
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "712.9",
+        "712.10",
+        "712.18"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual printed self-transform activation pays ordinary costs, pins source incarnation and transform count, retains the same permanent and follows the opposite current face with exact replay."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "interaction",
       "test_id": "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_simultaneous_transform_apnap_state_and_replay",
-      "official_rule_ids": ["701.27", "701.27a", "701.27c", "701.27d", "701.27f", "712.9", "712.10", "712.18"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "712.9",
+        "712.10",
+        "712.18"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Transform multiple permanents simultaneously, preserve object-local state, and batch resulting triggers through ordinary APNAP ordering."
     },
     {
       "capability_id": "permanent.transform.face_change",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_actual_ulvenwald_transform_preserves_object_and_uses_back_mana_ability",
+      "official_rule_ids": [
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "712.9",
+        "712.10",
+        "712.18"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual printed self-transform activation pays ordinary costs, pins source incarnation and transform count, retains the same permanent and follows the opposite current face with exact replay."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_two_actual_gargoyle_activations_transform_only_once_since_stack_placement",
+      "official_rule_ids": [
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "712.9",
+        "712.10",
+        "712.18"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual printed self-transform activation pays ordinary costs, pins source incarnation and transform count, retains the same permanent and follows the opposite current face with exact replay."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_simultaneous_transform_apnap_state_and_replay",
-      "official_rule_ids": ["701.27", "701.27a", "701.27c", "701.27d", "701.27f", "712.9", "712.10", "712.18"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "712.9",
+        "712.10",
+        "712.18"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Retain deterministic four-player APNAP placement for triggers produced by one simultaneous face-change batch."
     },
     {
       "capability_id": "permanent.transform.face_change",
       "evidence_class": "mutation",
+      "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_omitting_activation_transform_count_mutant_is_killed",
+      "official_rule_ids": [
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "712.9",
+        "712.10",
+        "712.18"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual printed self-transform activation pays ordinary costs, pins source incarnation and transform count, retains the same permanent and follows the opposite current face with exact replay."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_omitting_selected_face_keyword_filter_mutant_is_killed",
+      "official_rule_ids": [
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "712.9",
+        "712.10",
+        "712.18"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed self-transform activation shares source-incarnation and transform-count revalidation, ordinary costs, current selected-face keyword/ability presence and exact replay."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "mutation",
       "test_id": "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_transform_capability_and_compiler_mutations_fail_closed",
-      "official_rule_ids": ["701.27", "701.27a", "701.27c", "701.27d", "701.27f", "712.9", "712.10", "712.18"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "712.9",
+        "712.10",
+        "712.18"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Block the transform owner or remove its typed compiler production and require the legacy trigger to lose trusted admission."
     },
     {
       "capability_id": "permanent.transform.face_change",
       "evidence_class": "negative",
+      "test_id": "tests.test_activated_self_transform.ActivatedTransformCompilerTests.test_targeted_and_unrepresented_transform_variants_stay_residual",
+      "official_rule_ids": [
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "712.9",
+        "712.10",
+        "712.18"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual printed self-transform activation pays ordinary costs, pins source incarnation and transform count, retains the same permanent and follows the opposite current face with exact replay."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "negative",
       "test_id": "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_day_night_and_transform_grammar_exclusions_fail_closed",
-      "official_rule_ids": ["701.27", "701.27a", "701.27c", "701.27d", "701.27f", "712.9", "712.10", "712.18"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "712.9",
+        "712.10",
+        "712.18"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Reject stale, non-DFC, modal, copied, face-down, phased, bound-by-other-instruction, and instant-or-sorcery destination transforms."
     },
     {
       "capability_id": "permanent.transform.face_change",
       "evidence_class": "positive",
+      "test_id": "tests.test_activated_self_transform.ActivatedTransformCompilerTests.test_fixed_self_transform_has_same_generic_owner_and_count_snapshot",
+      "official_rule_ids": [
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "712.9",
+        "712.10",
+        "712.18"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual printed self-transform activation pays ordinary costs, pins source incarnation and transform count, retains the same permanent and follows the opposite current face with exact replay."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "positive",
+      "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_actual_ulvenwald_transform_preserves_object_and_uses_back_mana_ability",
+      "official_rule_ids": [
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "712.9",
+        "712.10",
+        "712.18"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual printed self-transform activation pays ordinary costs, pins source incarnation and transform count, retains the same permanent and follows the opposite current face with exact replay."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "positive",
+      "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_two_actual_gargoyle_activations_transform_only_once_since_stack_placement",
+      "official_rule_ids": [
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "712.9",
+        "712.10",
+        "712.18"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual printed self-transform activation pays ordinary costs, pins source incarnation and transform count, retains the same permanent and follows the opposite current face with exact replay."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "positive",
       "test_id": "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_legacy_transform_intervening_identity_and_transform_count",
-      "official_rule_ids": ["701.27", "701.27a", "701.27c", "701.27d", "701.27f", "712.9", "712.10", "712.18"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "712.9",
+        "712.10",
+        "712.18"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Transform the same logical permanent once and retain its controller, counters, damage, attachments, timestamp, and source identity."
     },
     {
       "capability_id": "permanent.transform.face_change",
       "evidence_class": "privacy",
+      "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_actual_ulvenwald_transform_preserves_object_and_uses_back_mana_ability",
+      "official_rule_ids": [
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "712.9",
+        "712.10",
+        "712.18"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual printed self-transform activation pays ordinary costs, pins source incarnation and transform count, retains the same permanent and follows the opposite current face with exact replay."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_two_actual_gargoyle_activations_transform_only_once_since_stack_placement",
+      "official_rule_ids": [
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "712.9",
+        "712.10",
+        "712.18"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual printed self-transform activation pays ordinary costs, pins source incarnation and transform count, retains the same permanent and follows the opposite current face with exact replay."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "privacy",
       "test_id": "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_simultaneous_transform_apnap_state_and_replay",
-      "official_rule_ids": ["701.27", "701.27a", "701.27c", "701.27d", "701.27f", "712.9", "712.10", "712.18"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "712.9",
+        "712.10",
+        "712.18"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Project the same public face and day/night facts to every player without exposing physical object IDs or private zones."
     },
     {
       "capability_id": "permanent.transform.face_change",
       "evidence_class": "replay",
+      "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_actual_control_change_keeps_original_activation_controller_and_source_binding",
+      "official_rule_ids": [
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "712.9",
+        "712.10",
+        "712.18"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed self-transform activation shares source-incarnation and transform-count revalidation, ordinary costs, current selected-face keyword/ability presence and exact replay."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "replay",
+      "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_actual_gargoyle_cast_then_transform_uses_offered_front_and_new_flying_face",
+      "official_rule_ids": [
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "712.9",
+        "712.10",
+        "712.18"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed self-transform activation shares source-incarnation and transform-count revalidation, ordinary costs, current selected-face keyword/ability presence and exact replay."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "replay",
+      "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_actual_gossipmonger_source_and_selected_tap_costs_transform_same_object",
+      "official_rule_ids": [
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "712.9",
+        "712.10",
+        "712.18"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed self-transform activation shares source-incarnation and transform-count revalidation, ordinary costs, current selected-face keyword/ability presence and exact replay."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "replay",
+      "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_actual_source_blink_before_activation_resolution_does_not_transform_new_object",
+      "official_rule_ids": [
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "712.9",
+        "712.10",
+        "712.18"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed self-transform activation shares source-incarnation and transform-count revalidation, ordinary costs, current selected-face keyword/ability presence and exact replay."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "replay",
+      "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_actual_ulvenwald_transform_preserves_object_and_uses_back_mana_ability",
+      "official_rule_ids": [
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "712.9",
+        "712.10",
+        "712.18"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual printed self-transform activation pays ordinary costs, pins source incarnation and transform count, retains the same permanent and follows the opposite current face with exact replay."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "replay",
+      "test_id": "tests.test_activated_self_transform.ActivatedTransformRuntimeTests.test_two_actual_gargoyle_activations_transform_only_once_since_stack_placement",
+      "official_rule_ids": [
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "712.9",
+        "712.10",
+        "712.18"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual printed self-transform activation pays ordinary costs, pins source incarnation and transform count, retains the same permanent and follows the opposite current face with exact replay."
+    },
+    {
+      "capability_id": "permanent.transform.face_change",
+      "evidence_class": "replay",
       "test_id": "tests.test_spell_history_transformations.SpellHistoryTransformationTests.test_simultaneous_transform_apnap_state_and_replay",
-      "official_rule_ids": ["701.27", "701.27a", "701.27c", "701.27d", "701.27f", "712.9", "712.10", "712.18"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "701.27",
+        "701.27a",
+        "701.27c",
+        "701.27d",
+        "701.27f",
+        "712.9",
+        "712.10",
+        "712.18"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Save, load, and exactly replay the active faces, transform counters, public designation, and resulting trigger order."
     },
     {

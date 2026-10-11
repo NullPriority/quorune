@@ -1446,6 +1446,8 @@ def capability_covered_mechanics(
         covered.add(RESOLUTION_CONDITION_MECHANIC)
     if "continuous.characteristics.changeling" in supplied:
         covered.add("changeling")
+    if 'permanent.transform.face_change' in supplied:
+        covered.update({'fixed-activated-source-transform','cr-701-transform'})
     if supplied.intersection({"target.public.player_or_damageable_permanent", "target.revalidate_resolution"}):
         covered.add("cr-115-targets")
     if "resolution.effect.fixed_homogeneous_target_set" in supplied:
