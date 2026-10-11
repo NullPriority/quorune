@@ -223,5 +223,106 @@ class TurnPriorityDecisionOwnerTests(unittest.TestCase):
         self.assertEqual("B", engine.state.priority_player)
 
 
+class ConcessionPriorityRoundRuntimeTests(unittest.TestCase):
+    """CR 104.3a/117.4/800.4a: concession interrupts successive passes.
+
+    After the priority holder concedes, the next remaining player receives
+    a usable priority window over the changed game. A pass from that player
+    cannot collide with their pass before the concession. Pending records
+    retain the same controller, targets, principal privacy and exact replay.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        from pathlib import Path
+        import tempfile
+        from common import ROOT
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition, DeckEntry
+        from quorune.rules.capabilities import load_default_capability_registry
+        from scripts.build_test_database import build_fixture_database
+
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "concession-priority.sqlite3"
+        build_fixture_database([ROOT / "tests/fixtures/bound-effect-program-cards.json"], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Concession priority", [
+            DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 10),
+        ], ["Generic Bound Commander"])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    import test_bound_effect_programs as _bound
+    session = _bound.BoundEffectProgramRuntimeTests.session
+    add = _bound.BoundEffectProgramRuntimeTests.add
+    ready = _bound.BoundEffectProgramRuntimeTests.ready
+    checkpoint = _bound.BoundEffectProgramRuntimeTests.checkpoint
+    resolve = _bound.BoundEffectProgramRuntimeTests.resolve
+    replay = _bound.BoundEffectProgramRuntimeTests.replay
+
+    def test_actual_last_seat_concession_allows_wrapped_priority_pass_and_replays(self):
+        session = self.session(343001)
+        source = self.add(session.engine, "Generic Bound Draw Loss", zone="hand")
+        action = self.ready(session, source, {"B": 1})
+        self.checkpoint(session)
+        accepted = session.act("pilot:A", {"action_id": action["id"], "targets": ["A"], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        hand_before = len(session.state.players["A"].zones["hand"])
+        for seat in "ABC":
+            self.assertTrue(session.act("pilot:" + seat, {"action_id": "pass"}).ok)
+        before = authoritative_state_hash(session.state)
+        malformed = session.act("pilot:D", {"action_id": "concede"})
+        self.assertFalse(malformed.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        unauthorized = session.act("pilot:B", {"action_id": "concede", "choices": {"confirm_concede": True}})
+        self.assertFalse(unauthorized.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self.replay(session, load=True)
+        conceded = session.act("pilot:D", {"action_id": "concede", "choices": {"confirm_concede": True}})
+        self.assertTrue(conceded.ok, conceded.summary)
+        self.assertFalse(session.state.players["D"].in_game)
+        self.assertEqual("A", session.state.priority_player)
+        self.assertEqual(1, len(session.state.stack))
+        self.assertEqual("A", session.state.stack[-1].controller)
+        self.assertEqual(["A"], session.state.stack[-1].targets)
+        for seat in "BCD":
+            self.assertIsNone(session.packet("pilot:" + seat, full=True)["decision"])
+        self.replay(session, load=True)
+        passed = session.act("pilot:A", {"action_id": "pass"})
+        self.assertTrue(passed.ok, passed.summary)
+        self.assertEqual(1, len(session.state.stack))
+        self.resolve(session)
+        self.assertEqual(38, session.state.players["A"].life)
+        self.assertEqual(hand_before + 2, len(session.state.players["A"].zones["hand"]))
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        for seat in "BC":
+            self.assertEqual(40, session.state.players[seat].life)
+            public = session.packet("pilot:" + seat, full=True)["state"]["players"]["A"]
+            self.assertEqual(hand_before + 2, public["hand_n"])
+            self.assertNotIn("hand", public)
+        self.replay(session, load=True)
+
+    def test_concession_pass_reset_omission_mutant_is_killed(self):
+        from unittest.mock import patch
+        from quorune.turn_priority_owner import TurnPriorityDecisionOwner
+
+        original = TurnPriorityDecisionOwner.complete_priority
+
+        def omit_reset(owner, decision):
+            previous = tuple(owner.state.priority_passes)
+            original(owner, decision)
+            if decision.responses[decision.actors[0]].get("action") == "concede":
+                owner.state.priority_passes = [seat for seat in previous if seat in owner.host.active_seats]
+
+        with patch.object(TurnPriorityDecisionOwner, "complete_priority", new=omit_reset):
+            with self.assertRaisesRegex(StateInvariantError, "duplicate seats"):
+                self.test_actual_last_seat_concession_allows_wrapped_priority_pass_and_replays()
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -252,6 +252,7 @@ class TurnPriorityDecisionOwner:
                 raise GameRuleError(
                     "Concession requires explicit confirmation"
                 )
+            self.state.priority_passes = []
             self.host._eliminate_players([seat], reason="conceded")
         else:
             raise GameRuleError(f"Unsupported priority action {action}")

@@ -46,6 +46,8 @@ maintenance: "hand-maintained"
 - Lower fixed controller and occurrence-bound player discards through the
   existing private APNAP selection owner. Keep trigger control separate from
   the affected player's choice and retain untargeted resolution and replay.
+- Reset successive priority passes after a confirmed concession so a wrapped
+  priority window accepts the remaining player's next pass.
 
 - Align legacy compiler consumers with admitted commander, loyalty mana,
   shared-color prevention, Prototype, Split Second and Graft productions.

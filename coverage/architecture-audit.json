@@ -13843,7 +13843,7 @@
           "visibility": "public"
         }
       ],
-      "logical_lines": 249124,
+      "logical_lines": 249125,
       "methods": {
         "dunder": 633,
         "private": 975,
@@ -14604,8 +14604,8 @@
           "file": "quorune/turn_priority_owner.py",
           "functions_and_methods": 26,
           "language": "python",
-          "logical_lines": 639,
-          "physical_lines": 673
+          "logical_lines": 640,
+          "physical_lines": 674
         },
         {
           "file": "quorune/characteristic_fragments.py",
@@ -20455,7 +20455,7 @@
           "physical_lines": 1697
         }
       ],
-      "physical_lines": 272831,
+      "physical_lines": 272832,
       "python_file_count": 879,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -37351,7 +37351,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "262d635c0fd96fca9a8845ed41617d7d62f4cf03692abe942ef41b50d444d4e4",
+      "fingerprint": "49713ed1380e23d54ca2ef836894f6fe5d28e3bb2369657e589f10f080b1340b",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -38209,14 +38209,14 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 5603,
-      "discovered_total": 8912,
+      "conventional_ast_cases": 5605,
+      "discovered_total": 8914,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 264,
         "fuzz_named": 1,
         "privacy_or_projection_named": 91,
-        "replay_named": 543,
+        "replay_named": 544,
         "server_named": 43
       },
       "reconciles": true,
