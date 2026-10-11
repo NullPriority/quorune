@@ -411,6 +411,32 @@ function AssignmentMap({
       {list(field.rows).map((rawRow) => {
         const row = record(rawRow);
         const key = text(row.value);
+        const maximum = Number(row.maximum ?? 1);
+        if (maximum > 1) {
+          const chosen = Array.isArray(selected[key]) ? list(selected[key]).map(text) : text(selected[key]) ? [text(selected[key])] : [];
+          return (
+            <fieldset key={key} className="choice-field">
+              <legend>{text(row.label) || labelFor(key)}</legend>
+              <p className="choice-help">Choose up to {maximum} attackers.</p>
+              {list(row.options).map((rawOption) => {
+                const option = record(rawOption);
+                const ref = text(option.value);
+                return <label key={ref} className="choice-option">
+                  <input type="checkbox" data-testid={`choice-${text(field.name)}-${testValue(key)}-${testValue(ref)}`}
+                    checked={chosen.includes(ref)} disabled={!chosen.includes(ref) && chosen.length >= maximum}
+                    onChange={(event) => {
+                      const refs = event.target.checked ? [...chosen, ref] : chosen.filter((value) => value !== ref);
+                      const next = { ...selected };
+                      if (refs.length) next[key] = refs;
+                      else delete next[key];
+                      onValue(next);
+                    }} />
+                  <span>{text(option.label) || labelFor(ref)}</span>
+                </label>;
+              })}
+            </fieldset>
+          );
+        }
         return (
           <label key={key}>
             {text(row.label) || labelFor(key)}

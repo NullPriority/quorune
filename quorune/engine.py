@@ -82,6 +82,7 @@ from .crew import (
     pay_crew_cost,
 )
 from .combat_constraints import (
+    selected_options,
     DeclarationConstraintError,
     DeclarationProblem,
     DeclarationRequirement,
@@ -5231,7 +5232,7 @@ class CommanderEngine(
         }
         selected: list[DeclarationCost] = []
         for cost in costs:
-            if declaration.get(cost.variable) != cost.option:
+            if cost.option not in selected_options(declaration.get(cost.variable)):
                 continue
             if cost.payer != payer:
                 raise GameRuleError(
@@ -5427,11 +5428,14 @@ class CommanderEngine(
             defender,
             domains,
         )
+        from .rules.block_capacity import current_block_capacity
         problem = DeclarationProblem(
             domains=domains,
             requirements=tuple(requirements),
             restrictions=tuple(restrictions),
             costed_options=frozenset(cost.selection for cost in costs),
+            capacities={ref:current_block_capacity(self,blockers_by_ref[ref],eligible_attackers=len(options))
+                        for ref,options in domains.items()},
         )
         gaps = tuple(
             (source, line, "restriction")
@@ -5976,51 +5980,8 @@ class CommanderEngine(
     def _complete_blockers(self, decision: Any) -> None:
         defender = decision.actors[0]
         response = decision.responses[defender]
-        assignments = dict(response.get("blocks") or {})  # blocker ref -> attacker ref
-        chosen: list[tuple[CardInstance, CardInstance]] = []
-        canonical: dict[str, str] = {}
-        used_blockers: set[str] = set()
-        for blocker_value, attacker_value in assignments.items():
-            blocker = self._resolve_object(defender, str(blocker_value), zones={"battlefield"}, controlled_only=True)
-            attacker = self._resolve_object(defender, str(attacker_value), zones={"battlefield"})
-            if blocker.object_id in used_blockers:
-                raise GameRuleError("A blocker cannot block more than one attacker without an explicit rule")
-            attack_target = self.state.combat.attackers.get(
-                attacker.object_id
-            )
-            if (
-                attack_target is None
-                or self._defending_player_for_attacker(
-                    attacker.object_id,
-                    attack_target,
-                )
-                != defender
-            ):
-                raise GameRuleError(f"{attacker.ref} is not attacking {defender}")
-            blocker_types, _, _ = self._type_parts(
-                str(
-                    self._effective_card_data(blocker).get("type_line")
-                    or ""
-                )
-            )
-            if (
-                blocker.tapped
-                or blocker.phased_out
-                or "creature" not in blocker_types
-            ):
-                raise GameRuleError(f"{blocker.ref} cannot block")
-            if "battle" in blocker_types:
-                raise GameRuleError(
-                    f"{blocker.ref} cannot block because it is a Battle"
-                )
-            can_block, reason = self._can_block(attacker, blocker)
-            if not can_block:
-                raise GameRuleError(
-                    f"{blocker.ref} cannot block {attacker.ref}: {reason}"
-                )
-            chosen.append((blocker, attacker))
-            canonical[blocker.ref] = attacker.ref
-            used_blockers.add(blocker.object_id)
+        from .rules.block_declaration import validate_block_assignments, committed_block_mapping
+        chosen,canonical = validate_block_assignments(self,defender,response.get('blocks'))
 
         problem, costs, unresolved, _ = self._block_declaration_components(
             defender
@@ -6057,12 +6018,7 @@ class CommanderEngine(
             "combat.block",
             f"{defender} declared {len(used_blockers)} blocker(s).",
             {
-                "blocks": {
-                    self.state.cards[b].ref: self.state.cards[a].ref
-                    for a, blockers in self.state.combat.blockers.items()
-                    for b in blockers
-                    if b in used_blockers
-                },
+                "blocks": committed_block_mapping(self,committed),
                 "costs": [cost.cost_id for cost in selected_costs],
                 "requirements": {
                     key: value

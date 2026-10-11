@@ -321,11 +321,6 @@ class BlockTransitionEvent:
             raise BlockTransitionError(
                 "Block assignments must not contain duplicates"
             )
-        blocker_ids = [value.blocker_object_id for value in assignments]
-        if len(blocker_ids) != len(set(blocker_ids)):
-            raise BlockTransitionError(
-                "Ordinary block transitions require one attacker per blocker"
-            )
         participant_set = set(physical_ids)
         relationship_set = {
             object_id for pair in pairs for object_id in pair

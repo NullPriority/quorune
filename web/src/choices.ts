@@ -381,12 +381,22 @@ function fieldErrors(field: ChoiceField, values: ChoiceValues): string[] {
       errors.push(`${label} requires ${field.minimum} choice(s).`);
     }
   } else if (control === "assignment_map") {
-    const assignments = Object.values(record(value)).map(stringValue);
+    const selected = record(value);
+    for (const rawRow of list(field.rows)) {
+      const row = record(rawRow);
+      const entry = selected[stringValue(row.value)];
+      const refs = entry === undefined ? [] : Array.isArray(entry) ? entry.map(stringValue) : [stringValue(entry)];
+      if (refs.length > Number(row.maximum ?? 1) || new Set(refs).size !== refs.length) {
+        errors.push(`${label} requires distinct attackers within each blocker's capacity.`);
+      }
+      const legal = new Set(list(row.options).map((option) => stringValue(record(option).value)));
+      if (refs.some((ref) => !legal.has(ref))) errors.push(`${label} contains an unavailable attacker.`);
+    }
     for (const [group, rawMinimum] of Object.entries(
       record(field.minimum_group_sizes),
     )) {
       const minimum = Number(rawMinimum);
-      const count = assignments.filter((target) => target === group).length;
+      const count = Object.values(selected).filter((entry) => (Array.isArray(entry) ? entry.map(stringValue) : [stringValue(entry)]).includes(group)).length;
       if (count > 0 && count < minimum) {
         errors.push(
           `${label} requires either no assignments or at least ${minimum} assignments to ${group}.`,

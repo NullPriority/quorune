@@ -17,7 +17,7 @@ from quorune.compiler.direct_target import (
 from quorune.compiler.exile_templates import targeted_exile_effect_template
 from quorune.deck import DeckLoader
 from quorune.errors import GameRuleError
-from quorune.model import StackItem
+from quorune.model import StackItem, CombatState
 from quorune.oracle_ir import compile_oracle_card
 from quorune.rules.capabilities import load_default_capability_registry
 from quorune.semantics import SemanticProgram
@@ -448,6 +448,10 @@ class FixedDirectTargetRuntimeTests(unittest.TestCase):
             engine.move_card(card.object_id, "battlefield", controller="A")
         attacker.attacking = "B"
         blocker.blocking = attacker.object_id
+        engine.state.combat = CombatState(
+            attackers={attacker.object_id:'B'},
+            blockers={attacker.object_id:[blocker.object_id]},
+            attackers_declared=True,blockers_declared=True)
 
         expected = {
             "attacking": {attacker.ref},

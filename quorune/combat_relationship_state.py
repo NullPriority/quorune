@@ -176,10 +176,10 @@ def commit_block_declaration(
         raise CombatRelationshipStateError(
             "Block declaration commit requires typed assignments"
         )
-    blocker_ids = [value.blocker_object_id for value in values]
-    if len(blocker_ids) != len(set(blocker_ids)):
+    pairs = [(value.blocker_object_id,value.attacker_object_id) for value in values]
+    if len(pairs) != len(set(pairs)):
         raise CombatRelationshipStateError(
-            "A blocker cannot be committed more than once"
+            "A blocker-attacker pair cannot be committed more than once"
         )
     committed: list[BlockDeclarationAssignment] = []
     for assignment in values:
@@ -210,7 +210,8 @@ def commit_block_declaration(
                 "A blocker relationship is already committed"
             )
         existing.append(assignment.blocker_object_id)
-        blocker.blocking = assignment.attacker_object_id
+        if blocker.blocking is None:
+            blocker.blocking = assignment.attacker_object_id
         committed.append(assignment)
     return tuple(committed)
 

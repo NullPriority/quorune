@@ -9228,6 +9228,573 @@
       "applicability_note": "Replay the attack declaration and verify both tap outcomes exactly."
     },
     {
+      "capability_id": "combat.block.capacity",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_block_capacity.BlockCapacityRuntimeTests.test_actual_iona_aura_keeps_stats_vigilance_and_current_attached_capacity",
+      "official_rule_ids": [
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "611.3a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current trusted fixed additive or unlimited creature blocking capacity, including existing attachment and controller-query grants. Each pairing retains ordinary evasion, defending-player, costs and maximum-requirement legality."
+    },
+    {
+      "capability_id": "combat.block.capacity",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_block_capacity.BlockCapacityRuntimeTests.test_actual_monarch_condition_changes_capacity_before_declaration_and_not_after",
+      "official_rule_ids": [
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "611.3a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current trusted fixed additive or unlimited creature blocking capacity, including existing attachment and controller-query grants. Each pairing retains ordinary evasion, defending-player, costs and maximum-requirement legality."
+    },
+    {
+      "capability_id": "combat.block.capacity",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_block_capacity.BlockCapacityRuntimeTests.test_actual_query_source_and_tactician_counter_activation_gate_current_capacity",
+      "official_rule_ids": [
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "611.3a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current trusted fixed additive or unlimited creature blocking capacity, including existing attachment and controller-query grants. Each pairing retains ordinary evasion, defending-player, costs and maximum-requirement legality."
+    },
+    {
+      "capability_id": "combat.block.capacity",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_block_capacity.BlockCapacityRuntimeTests.test_actual_trueheart_blocks_two_distinct_attackers_and_replays",
+      "official_rule_ids": [
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "611.3a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current trusted fixed additive or unlimited creature blocking capacity, including existing attachment and controller-query grants. Each pairing retains ordinary evasion, defending-player, costs and maximum-requirement legality."
+    },
+    {
+      "capability_id": "combat.block.capacity",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_block_capacity.BlockCapacityRuntimeTests.test_actual_two_block_combat_damage_divides_once_and_preserves_both_recipients",
+      "official_rule_ids": [
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "611.3a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current trusted fixed additive or unlimited creature blocking capacity, including existing attachment and controller-query grants. Each pairing retains ordinary evasion, defending-player, costs and maximum-requirement legality."
+    },
+    {
+      "capability_id": "combat.block.capacity",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_block_capacity.BlockCapacityRuntimeTests.test_actual_two_echo_equips_accumulate_and_bounce_after_blocks_keeps_all_edges",
+      "official_rule_ids": [
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "611.3a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current trusted fixed additive or unlimited creature blocking capacity, including existing attachment and controller-query grants. Each pairing retains ordinary evasion, defending-player, costs and maximum-requirement legality."
+    },
+    {
+      "capability_id": "combat.block.capacity",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_block_capacity.BlockCapacityRuntimeTests.test_actual_unlimited_palace_guard_blocks_three_but_each_evasion_still_applies",
+      "official_rule_ids": [
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "611.3a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current trusted fixed additive or unlimited creature blocking capacity, including existing attachment and controller-query grants. Each pairing retains ordinary evasion, defending-player, costs and maximum-requirement legality."
+    },
+    {
+      "capability_id": "combat.block.capacity",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_block_capacity.BlockCapacityRuntimeTests.test_actual_trueheart_blocks_two_distinct_attackers_and_replays",
+      "official_rule_ids": [
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "611.3a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current trusted fixed additive or unlimited creature blocking capacity, including existing attachment and controller-query grants. Each pairing retains ordinary evasion, defending-player, costs and maximum-requirement legality."
+    },
+    {
+      "capability_id": "combat.block.capacity",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_block_capacity.BlockCapacityRuntimeTests.test_actual_unlimited_palace_guard_blocks_three_but_each_evasion_still_applies",
+      "official_rule_ids": [
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "611.3a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current trusted fixed additive or unlimited creature blocking capacity, including existing attachment and controller-query grants. Each pairing retains ordinary evasion, defending-player, costs and maximum-requirement legality."
+    },
+    {
+      "capability_id": "combat.block.capacity",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_block_capacity.BlockCapacityRuntimeTests.test_omitting_capacity_mutant_is_killed_by_actual_two_block_command",
+      "official_rule_ids": [
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "611.3a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current trusted fixed additive or unlimited creature blocking capacity, including existing attachment and controller-query grants. Each pairing retains ordinary evasion, defending-player, costs and maximum-requirement legality."
+    },
+    {
+      "capability_id": "combat.block.capacity",
+      "evidence_class": "negative",
+      "test_id": "tests.test_block_capacity.BlockCapacityCompilerTests.test_open_capacity_boolean_and_missing_capability_fail_closed",
+      "official_rule_ids": [
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "611.3a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current trusted fixed additive or unlimited creature blocking capacity, including existing attachment and controller-query grants. Each pairing retains ordinary evasion, defending-player, costs and maximum-requirement legality."
+    },
+    {
+      "capability_id": "combat.block.capacity",
+      "evidence_class": "negative",
+      "test_id": "tests.test_block_capacity.BlockCapacityCompilerTests.test_set_declaration_requirements_restrictions_costs_and_capacity_share_solver",
+      "official_rule_ids": [
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "611.3a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current trusted fixed additive or unlimited creature blocking capacity, including existing attachment and controller-query grants. Each pairing retains ordinary evasion, defending-player, costs and maximum-requirement legality."
+    },
+    {
+      "capability_id": "combat.block.capacity",
+      "evidence_class": "negative",
+      "test_id": "tests.test_block_capacity.BlockCapacityRuntimeTests.test_actual_monarch_condition_false_rejects_second_block_without_mutation",
+      "official_rule_ids": [
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "611.3a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current trusted fixed additive or unlimited creature blocking capacity, including existing attachment and controller-query grants. Each pairing retains ordinary evasion, defending-player, costs and maximum-requirement legality."
+    },
+    {
+      "capability_id": "combat.block.capacity",
+      "evidence_class": "negative",
+      "test_id": "tests.test_block_capacity.BlockCapacityRuntimeTests.test_ordinary_body_cannot_use_multi_block_list_and_wrong_defender_is_atomic",
+      "official_rule_ids": [
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "611.3a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current trusted fixed additive or unlimited creature blocking capacity, including existing attachment and controller-query grants. Each pairing retains ordinary evasion, defending-player, costs and maximum-requirement legality."
+    },
+    {
+      "capability_id": "combat.block.capacity",
+      "evidence_class": "positive",
+      "test_id": "tests.test_block_capacity.BlockCapacityCompilerTests.test_fixed_additional_unlimited_attachment_and_query_grammar_is_closed",
+      "official_rule_ids": [
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "611.3a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current trusted fixed additive or unlimited creature blocking capacity, including existing attachment and controller-query grants. Each pairing retains ordinary evasion, defending-player, costs and maximum-requirement legality."
+    },
+    {
+      "capability_id": "combat.block.capacity",
+      "evidence_class": "positive",
+      "test_id": "tests.test_block_capacity.BlockCapacityRuntimeTests.test_actual_trueheart_blocks_two_distinct_attackers_and_replays",
+      "official_rule_ids": [
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "611.3a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current trusted fixed additive or unlimited creature blocking capacity, including existing attachment and controller-query grants. Each pairing retains ordinary evasion, defending-player, costs and maximum-requirement legality."
+    },
+    {
+      "capability_id": "combat.block.capacity",
+      "evidence_class": "positive",
+      "test_id": "tests.test_block_capacity.BlockCapacityRuntimeTests.test_actual_unlimited_palace_guard_blocks_three_but_each_evasion_still_applies",
+      "official_rule_ids": [
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "611.3a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current trusted fixed additive or unlimited creature blocking capacity, including existing attachment and controller-query grants. Each pairing retains ordinary evasion, defending-player, costs and maximum-requirement legality."
+    },
+    {
+      "capability_id": "combat.block.capacity",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_block_capacity.BlockCapacityRuntimeTests.test_actual_trueheart_blocks_two_distinct_attackers_and_replays",
+      "official_rule_ids": [
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "611.3a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current trusted fixed additive or unlimited creature blocking capacity, including existing attachment and controller-query grants. Each pairing retains ordinary evasion, defending-player, costs and maximum-requirement legality."
+    },
+    {
+      "capability_id": "combat.block.capacity",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_block_capacity.BlockCapacityRuntimeTests.test_actual_unlimited_palace_guard_blocks_three_but_each_evasion_still_applies",
+      "official_rule_ids": [
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "611.3a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current trusted fixed additive or unlimited creature blocking capacity, including existing attachment and controller-query grants. Each pairing retains ordinary evasion, defending-player, costs and maximum-requirement legality."
+    },
+    {
+      "capability_id": "combat.block.capacity",
+      "evidence_class": "replay",
+      "test_id": "tests.test_block_capacity.BlockCapacityRuntimeTests.test_actual_iona_aura_keeps_stats_vigilance_and_current_attached_capacity",
+      "official_rule_ids": [
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "611.3a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current trusted fixed additive or unlimited creature blocking capacity, including existing attachment and controller-query grants. Each pairing retains ordinary evasion, defending-player, costs and maximum-requirement legality."
+    },
+    {
+      "capability_id": "combat.block.capacity",
+      "evidence_class": "replay",
+      "test_id": "tests.test_block_capacity.BlockCapacityRuntimeTests.test_actual_monarch_condition_changes_capacity_before_declaration_and_not_after",
+      "official_rule_ids": [
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "611.3a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current trusted fixed additive or unlimited creature blocking capacity, including existing attachment and controller-query grants. Each pairing retains ordinary evasion, defending-player, costs and maximum-requirement legality."
+    },
+    {
+      "capability_id": "combat.block.capacity",
+      "evidence_class": "replay",
+      "test_id": "tests.test_block_capacity.BlockCapacityRuntimeTests.test_actual_monarch_condition_false_rejects_second_block_without_mutation",
+      "official_rule_ids": [
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "611.3a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current trusted fixed additive or unlimited creature blocking capacity, including existing attachment and controller-query grants. Each pairing retains ordinary evasion, defending-player, costs and maximum-requirement legality."
+    },
+    {
+      "capability_id": "combat.block.capacity",
+      "evidence_class": "replay",
+      "test_id": "tests.test_block_capacity.BlockCapacityRuntimeTests.test_actual_query_source_and_tactician_counter_activation_gate_current_capacity",
+      "official_rule_ids": [
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "611.3a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current trusted fixed additive or unlimited creature blocking capacity, including existing attachment and controller-query grants. Each pairing retains ordinary evasion, defending-player, costs and maximum-requirement legality."
+    },
+    {
+      "capability_id": "combat.block.capacity",
+      "evidence_class": "replay",
+      "test_id": "tests.test_block_capacity.BlockCapacityRuntimeTests.test_actual_trueheart_blocks_two_distinct_attackers_and_replays",
+      "official_rule_ids": [
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "611.3a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current trusted fixed additive or unlimited creature blocking capacity, including existing attachment and controller-query grants. Each pairing retains ordinary evasion, defending-player, costs and maximum-requirement legality."
+    },
+    {
+      "capability_id": "combat.block.capacity",
+      "evidence_class": "replay",
+      "test_id": "tests.test_block_capacity.BlockCapacityRuntimeTests.test_actual_two_block_combat_damage_divides_once_and_preserves_both_recipients",
+      "official_rule_ids": [
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "611.3a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current trusted fixed additive or unlimited creature blocking capacity, including existing attachment and controller-query grants. Each pairing retains ordinary evasion, defending-player, costs and maximum-requirement legality."
+    },
+    {
+      "capability_id": "combat.block.capacity",
+      "evidence_class": "replay",
+      "test_id": "tests.test_block_capacity.BlockCapacityRuntimeTests.test_actual_two_echo_equips_accumulate_and_bounce_after_blocks_keeps_all_edges",
+      "official_rule_ids": [
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "611.3a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current trusted fixed additive or unlimited creature blocking capacity, including existing attachment and controller-query grants. Each pairing retains ordinary evasion, defending-player, costs and maximum-requirement legality."
+    },
+    {
+      "capability_id": "combat.block.capacity",
+      "evidence_class": "replay",
+      "test_id": "tests.test_block_capacity.BlockCapacityRuntimeTests.test_actual_unlimited_palace_guard_blocks_three_but_each_evasion_still_applies",
+      "official_rule_ids": [
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "611.3a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Current trusted fixed additive or unlimited creature blocking capacity, including existing attachment and controller-query grants. Each pairing retains ordinary evasion, defending-player, costs and maximum-requirement legality."
+    },
+    {
       "capability_id": "combat.block.fear",
       "evidence_class": "interaction",
       "test_id": "tests.test_combat_evasion_restrictions.CombatEvasionRestrictionTests.test_all_represented_restrictions_are_cumulative",

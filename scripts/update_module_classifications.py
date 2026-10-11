@@ -71,6 +71,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/umbra_armor_model.py",
         "quorune/toughness_assignment_rule.py",
         "quorune/defender_permission.py",
+        "quorune/block_capacity_model.py",
         "quorune/declaration_rule_effects.py",
         "quorune/continuous_conditions.py",
         "quorune/resolution_conditions.py",

@@ -101,6 +101,7 @@
     "functional-03": [
       "test_aftermath_rules",
       "test_application_protocol",
+      "test_block_capacity",
       "test_counter_placement_replacements",
       "test_damage_replacement_multiplayer",
       "test_declare_blockers_rules",

@@ -473,10 +473,12 @@ def _special_fields(
         ]
     if decision_kind == "combat.blockers" and action_name == "block":
         legal = context.get("legal_blocks") or {}
+        capacities = (context.get('declaration_constraints') or {}).get('capacities') or {}
         rows = [
             {
                 "value": str(ref),
                 "label": str(ref),
+                **({'maximum':capacities[str(ref)]} if capacities.get(str(ref),1)>1 else {}),
                 "options": _options(
                     list(legal.get(str(ref), []))
                     if isinstance(legal, Mapping)

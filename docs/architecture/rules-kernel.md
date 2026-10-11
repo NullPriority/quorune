@@ -9,6 +9,16 @@ maintenance: "hand-maintained"
 
 # Rules kernel
 
+Multiple blocking consumes current typed additive or unlimited capacity at
+declaration. Ordinary single-attacker responses remain valid; extra pairings
+use a distinct attacker list for the blocker. The existing declaration solver
+checks per-pair evasion, defending player, costs and maximum requirements.
+Accepted pairs commit through the canonical combat relationship owner. Later
+loss of the permission does not undo those blocks. The graph owns all pairs;
+the legacy `blocking` field remains one representative blocking identity.
+Trigger occurrences, relative combat targets and damage snapshots consume the
+complete graph, and a blocker assigns its power once across its recipients.
+
 Fixed selected-object tap costs may accompany a source tap symbol. The source
 and selected objects are distinct: the source cannot pay both costs. The source
 tap obeys creature acquisition timing; selected-object taps without a tap

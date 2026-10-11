@@ -24,6 +24,7 @@ from ..ability_fragments import (
 )
 from ..defender_permission import DefenderAttackPermission, DEFENDER_PERMISSION_CAPABILITY, CONDITIONAL_DEFENDER_PERMISSION_HANDLER
 from ..as_unblocked import AsUnblockedAssignmentPermission, AS_UNBLOCKED_CAPABILITY, CONDITIONAL_AS_UNBLOCKED_HANDLER
+from ..block_capacity_model import BlockCapacitySpec, BLOCK_CAPACITY_CAPABILITY
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from .component_registry import exact_fields, nonempty_strings
 from .context import SemanticNodeError
@@ -155,12 +156,12 @@ def _validate_target(
 
 
 def _validate_modifier(
-    value: Any, *, allow_granted_ability: bool = False, allow_defender_permission: bool = False, allow_as_unblocked: bool = False,
+    value: Any, *, allow_granted_ability: bool = False, allow_defender_permission: bool = False, allow_as_unblocked: bool = False, allow_block_capacity: bool = False,
 ) -> tuple[tuple[str, ...], int, int, tuple[Mapping[str, Any], ...]]:
     if not isinstance(value, Mapping):
         raise SemanticNodeError("runtime handler modifier must be an object")
     fields = {"add_abilities", "power", "toughness"}
-    if allow_granted_ability or allow_defender_permission or allow_as_unblocked:
+    if allow_granted_ability or allow_defender_permission or allow_as_unblocked or allow_block_capacity:
         fields.add("add_ability_fragments")
     exact_fields(
         value,
@@ -186,7 +187,7 @@ def _validate_modifier(
         )
     raw_fragments = value.get("add_ability_fragments", [])
     if not isinstance(raw_fragments, list) or (
-        (allow_granted_ability or allow_defender_permission or allow_as_unblocked) and len(raw_fragments) != 1
+        (allow_granted_ability or allow_defender_permission or allow_as_unblocked or allow_block_capacity) and len(raw_fragments) != 1
     ):
         raise SemanticNodeError("Conditional grants require exactly one fragment")
     fragments = []
@@ -195,7 +196,7 @@ def _validate_modifier(
             parsed = ability_fragment_from_dict(raw) if isinstance(raw, Mapping) else None
         except (TypeError, ValueError) as exc:
             raise SemanticNodeError(str(exc)) from exc
-        expected = (AsUnblockedAssignmentPermission,) if allow_as_unblocked else (DefenderAttackPermission,) if allow_defender_permission else (GrantedActivatedAbilitySpec, GrantedTriggeredAbilitySpec)
+        expected = (BlockCapacitySpec,) if allow_block_capacity else (AsUnblockedAssignmentPermission,) if allow_as_unblocked else (DefenderAttackPermission,) if allow_defender_permission else (GrantedActivatedAbilitySpec, GrantedTriggeredAbilitySpec)
         if not isinstance(parsed, expected):
             raise SemanticNodeError("Conditional grants require independently compiled typed abilities")
         fragments.append(dict(raw))
@@ -272,6 +273,7 @@ class FixedPublicStateCharacteristicsHandler:
             descriptor["modifier"], allow_granted_ability=self.schema_version == 2,
             allow_defender_permission=self.schema_version == 3,
             allow_as_unblocked=self.schema_version == 4,
+            allow_block_capacity=self.schema_version == 5,
         )
         return FixedPublicStateCharacteristicsNode(
             source_condition=source_condition,
@@ -395,6 +397,15 @@ class ConditionalDefenderPermissionHandler(FixedPublicStateCharacteristicsHandle
     family: str = 'continuous.defender_permission.public_state'
     rule_references: tuple[str, ...] = ('609.4', '702.3b', '613.1f', '508.1c')
     capability_dependencies: tuple[str, ...] = (DEFENDER_PERMISSION_CAPABILITY, 'continuous.characteristics.fixed_public_state')
+
+
+@dataclass(frozen=True, slots=True)
+class ConditionalBlockCapacityHandler(FixedPublicStateCharacteristicsHandler):
+    handler_id: str = 'continuous.block-capacity.public-state.v1'
+    schema_version: int = 5
+    family: str = 'continuous.block_capacity.public_state'
+    rule_references: tuple[str,...] = ('509.1a','611.3a','613.1f')
+    capability_dependencies: tuple[str,...] = (BLOCK_CAPACITY_CAPABILITY,'continuous.characteristics.fixed_public_state')
 
 
 @dataclass(frozen=True, slots=True)

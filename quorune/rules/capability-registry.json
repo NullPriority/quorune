@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 216,
+  "registry_version": 217,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -13313,6 +13313,109 @@
       "dependency_fail_closed_rationale": "Omitting the Graft movement owner leaves the independent entry component exact while the whole keyword remains blocked.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Omitting the atomic movement fails source and recipient counts after a real cast and entering creature.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "combat.block.capacity",
+      "version": 1,
+      "official_rules": [
+        "509.1a",
+        "509.1b",
+        "509.1c",
+        "509.1g",
+        "509.1h",
+        "510.1d",
+        "611.3a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Current trusted fixed additive or unlimited creature blocking capacity, including existing attachment and controller-query grants. Each pairing retains ordinary evasion, defending-player, costs and maximum-requirement legality.",
+        "inputs": [
+          "current typed blocking capacity fragments",
+          "eligible attacking creatures",
+          "distinct blocker-attacker edges",
+          "existing restrictions requirements and costs"
+        ],
+        "outputs": [
+          "bounded per-blocker assignment lists",
+          "canonical multiple relationships",
+          "ordinary trigger and damage snapshots"
+        ],
+        "exclusions": [
+          "open or variable blocking capacities",
+          "unrepresented sibling abilities",
+          "runtime Oracle interpretation"
+        ]
+      },
+      "dependencies": [
+        "combat.declaration.typed_components"
+      ],
+      "implementation_components": [
+        "quorune.compiler.block_capacity_templates.static_block_capacity_handler",
+        "quorune.semantic_runtime.ability_fragments.BlockCapacityAbilityFragmentHandler",
+        "quorune.rules.block_capacity.current_block_capacity",
+        "quorune.rules.block_declaration.validate_block_assignments",
+        "quorune.combat_constraints.DeclarationProblem",
+        "quorune.combat_relationship_state.commit_block_declaration",
+        "quorune.combat_damage_assignment.build_combat_damage_assignment_proposal",
+        "quorune.semantic_runtime.conditional_continuous.ConditionalBlockCapacityHandler"
+      ],
+      "positive_tests": [
+        "test_fixed_additional_unlimited_attachment_and_query_grammar_is_closed",
+        "test_actual_trueheart_blocks_two_distinct_attackers_and_replays",
+        "test_actual_unlimited_palace_guard_blocks_three_but_each_evasion_still_applies"
+      ],
+      "negative_tests": [
+        "test_open_capacity_boolean_and_missing_capability_fail_closed",
+        "test_set_declaration_requirements_restrictions_costs_and_capacity_share_solver",
+        "test_ordinary_body_cannot_use_multi_block_list_and_wrong_defender_is_atomic",
+        "test_actual_monarch_condition_false_rejects_second_block_without_mutation"
+      ],
+      "interaction_tests": [
+        "test_actual_trueheart_blocks_two_distinct_attackers_and_replays",
+        "test_actual_unlimited_palace_guard_blocks_three_but_each_evasion_still_applies",
+        "test_actual_two_echo_equips_accumulate_and_bounce_after_blocks_keeps_all_edges",
+        "test_actual_two_block_combat_damage_divides_once_and_preserves_both_recipients",
+        "test_actual_query_source_and_tactician_counter_activation_gate_current_capacity",
+        "test_actual_monarch_condition_changes_capacity_before_declaration_and_not_after",
+        "test_actual_iona_aura_keeps_stats_vigilance_and_current_attached_capacity"
+      ],
+      "multiplayer_tests": [
+        "test_actual_trueheart_blocks_two_distinct_attackers_and_replays",
+        "test_actual_unlimited_palace_guard_blocks_three_but_each_evasion_still_applies"
+      ],
+      "privacy_tests": [
+        "test_actual_trueheart_blocks_two_distinct_attackers_and_replays",
+        "test_actual_unlimited_palace_guard_blocks_three_but_each_evasion_still_applies"
+      ],
+      "replay_tests": [
+        "test_actual_trueheart_blocks_two_distinct_attackers_and_replays",
+        "test_actual_unlimited_palace_guard_blocks_three_but_each_evasion_still_applies",
+        "test_actual_two_echo_equips_accumulate_and_bounce_after_blocks_keeps_all_edges",
+        "test_actual_two_block_combat_damage_divides_once_and_preserves_both_recipients",
+        "test_actual_query_source_and_tactician_counter_activation_gate_current_capacity",
+        "test_actual_monarch_condition_changes_capacity_before_declaration_and_not_after",
+        "test_actual_iona_aura_keeps_stats_vigilance_and_current_attached_capacity",
+        "test_actual_monarch_condition_false_rejects_second_block_without_mutation"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Omitting current blocking capacity prevents exact grammar admission and extra command pairings.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the capacity consumer makes the actual two-attacker block command fail.",
       "blockers": [],
       "status": "trusted"
     }

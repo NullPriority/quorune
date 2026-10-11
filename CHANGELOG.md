@@ -31,6 +31,10 @@ maintenance: "hand-maintained"
 - Preserve explicit sacrifice provenance for Fading and Vanishing cleanup
   through zone replacements, normalized trigger occurrences, and turn history.
 
+- Support fixed additional and unlimited blocking capacity through current
+  source, attachment and query grants, with distinct pairings, shared
+  declaration constraints, complete combat damage and client selection.
+
 - Resolve fixed Graft's optional counter movement through one atomic counter
   transaction with source and recipient incarnation checks, replacement-order
   continuation and replay.

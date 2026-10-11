@@ -9071,6 +9071,51 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual source bounce leaves the Graft recipient unchanged when its intervening source-counter condition no longer holds, with exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_block_capacity.BlockCapacityRuntimeTests.test_actual_two_echo_equips_accumulate_and_bounce_after_blocks_keeps_all_edges",
+      "piece_ids": [
+        "capability.combat.block.capacity",
+        "capability.continuous.attached.fixed_characteristics"
+      ],
+      "capability_ids": [
+        "combat.block.capacity",
+        "continuous.attached.fixed_characteristics"
+      ],
+      "interaction_order": 2,
+      "assertion": "Two actual Echo Circlet equip commands grant cumulative capacity; actual Disenchant after accepted multiple blocking removes a grant while preserving all relationships and exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_block_capacity.BlockCapacityRuntimeTests.test_actual_monarch_condition_changes_capacity_before_declaration_and_not_after",
+      "piece_ids": [
+        "capability.combat.block.capacity",
+        "capability.continuous.characteristics.fixed_public_state"
+      ],
+      "capability_ids": [
+        "combat.block.capacity",
+        "continuous.characteristics.fixed_public_state"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Entourage of Trest grants two-block capacity only while its controller is monarch; accepted multi-block action replays and an owner-level later monarch change preserves committed edges."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_block_capacity.BlockCapacityRuntimeTests.test_actual_query_source_and_tactician_counter_activation_gate_current_capacity",
+      "piece_ids": [
+        "capability.combat.block.capacity",
+        "capability.counter.producer.fixed_effect"
+      ],
+      "capability_ids": [
+        "combat.block.capacity",
+        "counter.producer.fixed_effect"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Cenn's Tactician activation puts a counter on its Soldier source and enables the independently compiled query capacity; the activation and current capacity replay."
     }
   ]
 }

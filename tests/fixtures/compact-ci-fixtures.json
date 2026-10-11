@@ -12,6 +12,7 @@
     "tests/fixtures/batched-public-assurance-cards.json",
     "tests/fixtures/batched-support-assurance-cards.json",
     "tests/fixtures/bestow-cards.json",
+    "tests/fixtures/block-capacity-cards.json",
     "tests/fixtures/browser-lifecycle-cards.json",
     "tests/fixtures/browser-modal-choice-cards.json",
     "tests/fixtures/browser-ordered-scry-cards.json",

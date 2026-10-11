@@ -409,9 +409,16 @@ query. Source-controller recipient restrictions stay anchored to the
 originating source after the affected creature receives its characteristics.
 Offer and commit consume the same current fragment snapshot. Nonmana costs,
 chosen or named values, temporary mass effects, crew and transform riders,
-unsupported previous-turn facts, open dynamic counts,
-multiple-block capacity, and combat-damage assignment remain material
+unsupported previous-turn facts and open dynamic counts remain material
 residuals. See [ADR 0099](../adr/0099-typed-public-declaration-conditions.md).
+
+Fixed additional and unlimited blocking permissions lower to typed layer-6
+capacity fragments for source, attachment and closed public-query recipients.
+Fixed public-state conditions use the existing snapshot owner. Printed
+Vigilance and fixed P/T grants in the same sentence remain independent results.
+The shared declaration solver selects distinct attacker sets up to current
+capacity while retaining costs and maximum requirement satisfaction. Open
+quantities and independently unsupported siblings remain residual.
 
 `compiler/defender_permission_templates.py` separately compiles the closed
 permission to attack as though a creature did not have Defender. It preserves
