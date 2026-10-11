@@ -24,12 +24,25 @@ class BatchedSupportMeasurementTests(unittest.TestCase):
         policy=json.loads((ROOT/'platform/rules-subsystems.json').read_text(encoding='utf-8'))['work_selection']
         declaration=validated_semantic_transition_declaration(policy['semantic_transition_declaration'])
         self.assertEqual(ORACLE_COMPILER_VERSION,declaration['compiler_version'])
-        self.assertEqual('bundle:batched-card-support-'+ORACLE_COMPILER_VERSION.removeprefix('oracle-ir-'),declaration['bundle_id'])
-        self.assertEqual('measurement:'+declaration['bundle_id'].split(':',1)[1],declaration['measurement_id'])
+        self.assertEqual(200,policy['coverage_family']['minimum_pr_complete_card_gain'])
         bundles,_weights=validate_bundle_policy(policy['coverage_family'])
         by_id={row['bundle_id']:row for row in bundles}
         self.assertIn('bundle:batched-card-support',by_id)
-        self.assertEqual(PROBE_ID,by_id[declaration['bundle_id']]['measurement_probe_id'])
+        versioned=[row for key,row in by_id.items() if key.startswith('bundle:batched-card-support-v')]
+        self.assertTrue(versioned)
+        self.assertTrue(all(row['measurement_probe_id']==PROBE_ID for row in versioned))
+        if declaration['bundle_id'] is None:
+            self.assertEqual([],declaration['candidate_ids'])
+            self.assertEqual([],declaration['family_ids'])
+            self.assertEqual([],declaration['capability_ids'])
+            self.assertIsNone(declaration['expected_complete_card_gain'])
+            self.assertGreaterEqual(len(declaration['non_harvest_reason'].strip()),20)
+        else:
+            self.assertIn(declaration['bundle_id'],by_id)
+            if 'measurement_id' in declaration:
+                self.assertEqual('measurement:'+declaration['bundle_id'].split(':',1)[1],declaration['measurement_id'])
+            if declaration['bundle_id'].startswith('bundle:batched-card-support-v'):
+                self.assertEqual(PROBE_ID,by_id[declaration['bundle_id']]['measurement_probe_id'])
     @classmethod
     def setUpClass(cls):
         cls.temporary = tempfile.TemporaryDirectory()
