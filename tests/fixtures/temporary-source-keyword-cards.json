@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned temporary source keywords and generic green response/land boundary",
+  "cards": [
+    {
+      "oracle_id": "a56d13b5-a84d-4629-b9ec-4f407ee62596",
+      "name": "Tattermunge Duo",
+      "mana_cost": "{2}{R/G}",
+      "cmc": 3.0,
+      "type_line": "Creature \u2014 Goblin Warrior Shaman",
+      "oracle_text": "Whenever you cast a red spell, this creature gets +1/+1 until end of turn.\nWhenever you cast a green spell, this creature gains forestwalk until end of turn. (It can't be blocked as long as defending player controls a Forest.)",
+      "power": "2",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "R"
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2008-05-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "fixture-source-keyword-green-flash",
+      "name": "Generic Source Keyword Green Flash",
+      "mana_cost": "{G}",
+      "cmc": 1,
+      "type_line": "Creature \u2014 Test",
+      "oracle_text": "Flash",
+      "power": "1",
+      "toughness": "1",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Flash"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "id": "fixture-source-keyword-green-flash"
+    },
+    {
+      "oracle_id": "fixture-source-keyword-nonbasic-forest",
+      "name": "Generic Source Keyword Nonbasic Forest",
+      "mana_cost": "",
+      "cmc": 0,
+      "type_line": "Land \u2014 Forest",
+      "oracle_text": "{T}: Add {G}.",
+      "power": null,
+      "toughness": null,
+      "colors": [],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "id": "fixture-source-keyword-nonbasic-forest"
+    }
+  ]
+}

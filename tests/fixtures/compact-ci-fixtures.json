@@ -116,6 +116,7 @@
     "tests/fixtures/target-announcements.json",
     "tests/fixtures/target-characteristic-sets.json",
     "tests/fixtures/temporary-declaration-restriction-cards.json",
+    "tests/fixtures/temporary-source-keyword-cards.json",
     "tests/fixtures/token-copy-boundary-cards.json",
     "tests/fixtures/token-copy-recipe-cards.json",
     "tests/fixtures/token-entry-boundary-cards.json",

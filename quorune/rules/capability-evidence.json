@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "57ea40f7fdf7fff7812a2d8e4bccbd45879b67c51be6fe1ecc08b6d13c6182ea",
-  "declaration_source_fingerprint": "0945a553aa688e33c0addcfa967e5dc3e06d3ac4bf52e2fe8d8d0ad51ba6898e",
+  "registry_fingerprint": "5da151c1b351c1a88bbc207da23dd0107fb349b16991a65cf328853bae88b162",
+  "declaration_source_fingerprint": "c0583fa6b616ce791c11a96c6e2ace4fc7840017e142c06301377f8402e13f9e",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -22111,6 +22111,26 @@
     {
       "capability_id": "combat.block.landwalk.basic_type",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_source_characteristic_effects.TemporarySourceKeywordRuntimeTests.test_original_duo_temporary_forestwalk_changes_real_block_offers_and_commands",
+      "official_rule_ids": [
+        "509.1b",
+        "702.14",
+        "702.14a",
+        "702.14b",
+        "702.14c",
+        "702.14d",
+        "702.14e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Tattermunge Duo observes an actual green Flash spell cast during combat; its temporary Forestwalk uses the defending player's current nonbasic Forest subtype. Block offers and accepted/rejected commands agree in both controller arrangements, unauthorized and forbidden blocks roll back, and the pre-attack cast/block command sequence survives pending save/load and replays exactly."
+    },
+    {
+      "capability_id": "combat.block.landwalk.basic_type",
+      "evidence_class": "interaction",
       "test_id": "tests.test_landwalk.BasicLandwalkTests.test_landwalk_remains_cumulative_with_shadow_and_flying",
       "official_rule_ids": [
         "509.1b",
@@ -22127,6 +22147,26 @@
         "commander_review"
       ],
       "applicability_note": "Apply matching Basic Landwalk even when the proposed block satisfies independent Shadow or Flying/Reach restrictions."
+    },
+    {
+      "capability_id": "combat.block.landwalk.basic_type",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_source_characteristic_effects.TemporarySourceKeywordRuntimeTests.test_original_duo_temporary_forestwalk_changes_real_block_offers_and_commands",
+      "official_rule_ids": [
+        "509.1b",
+        "702.14",
+        "702.14a",
+        "702.14b",
+        "702.14c",
+        "702.14d",
+        "702.14e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Tattermunge Duo observes an actual green Flash spell cast during combat; its temporary Forestwalk uses the defending player's current nonbasic Forest subtype. Block offers and accepted/rejected commands agree in both controller arrangements, unauthorized and forbidden blocks roll back, and the pre-attack cast/block command sequence survives pending save/load and replays exactly."
     },
     {
       "capability_id": "combat.block.landwalk.basic_type",
@@ -22231,6 +22271,26 @@
     {
       "capability_id": "combat.block.landwalk.basic_type",
       "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_source_characteristic_effects.TemporarySourceKeywordRuntimeTests.test_original_duo_temporary_forestwalk_changes_real_block_offers_and_commands",
+      "official_rule_ids": [
+        "509.1b",
+        "702.14",
+        "702.14a",
+        "702.14b",
+        "702.14c",
+        "702.14d",
+        "702.14e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Tattermunge Duo observes an actual green Flash spell cast during combat; its temporary Forestwalk uses the defending player's current nonbasic Forest subtype. Block offers and accepted/rejected commands agree in both controller arrangements, unauthorized and forbidden blocks roll back, and the pre-attack cast/block command sequence survives pending save/load and replays exactly."
+    },
+    {
+      "capability_id": "combat.block.landwalk.basic_type",
+      "evidence_class": "privacy",
       "test_id": "tests.test_landwalk.BasicLandwalkIntegrationTests.test_offer_and_command_share_current_landwalk_legality_and_rollback",
       "official_rule_ids": [
         "509.1b",
@@ -22271,6 +22331,26 @@
     {
       "capability_id": "combat.block.landwalk.basic_type",
       "evidence_class": "replay",
+      "test_id": "tests.test_fixed_source_characteristic_effects.TemporarySourceKeywordRuntimeTests.test_original_duo_temporary_forestwalk_changes_real_block_offers_and_commands",
+      "official_rule_ids": [
+        "509.1b",
+        "702.14",
+        "702.14a",
+        "702.14b",
+        "702.14c",
+        "702.14d",
+        "702.14e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Tattermunge Duo observes an actual green Flash spell cast during combat; its temporary Forestwalk uses the defending player's current nonbasic Forest subtype. Block offers and accepted/rejected commands agree in both controller arrangements, unauthorized and forbidden blocks roll back, and the pre-attack cast/block command sequence survives pending save/load and replays exactly."
+    },
+    {
+      "capability_id": "combat.block.landwalk.basic_type",
+      "evidence_class": "replay",
       "test_id": "tests.test_landwalk.BasicLandwalkIntegrationTests.test_legal_nonmatching_block_is_seat_scoped_and_replays",
       "official_rule_ids": [
         "509.1b",
@@ -22287,6 +22367,26 @@
         "commander_review"
       ],
       "applicability_note": "Replay the exact accepted four-player block from the capability checkpoint."
+    },
+    {
+      "capability_id": "combat.block.landwalk.basic_type",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_source_characteristic_effects.TemporarySourceKeywordRuntimeTests.test_original_duo_temporary_forestwalk_changes_real_block_offers_and_commands",
+      "official_rule_ids": [
+        "509.1b",
+        "702.14",
+        "702.14a",
+        "702.14b",
+        "702.14c",
+        "702.14d",
+        "702.14e"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Tattermunge Duo observes an actual green Flash spell cast during combat; its temporary Forestwalk uses the defending player's current nonbasic Forest subtype. Block offers and accepted/rejected commands agree in both controller arrangements, unauthorized and forbidden blocks roll back, and the pre-attack cast/block command sequence survives pending save/load and replays exactly."
     },
     {
       "capability_id": "combat.block.landwalk.basic_type",
@@ -36625,6 +36725,30 @@
     {
       "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_source_characteristic_effects.TemporarySourceKeywordRuntimeTests.test_original_duo_temporary_forestwalk_changes_real_block_offers_and_commands",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.5",
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Tattermunge Duo observes an actual green Flash spell cast during combat; its temporary Forestwalk uses the defending player's current nonbasic Forest subtype. Block offers and accepted/rejected commands agree in both controller arrangements, unauthorized and forbidden blocks roll back, and the pre-attack cast/block command sequence survives pending save/load and replays exactly."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "interaction",
       "test_id": "tests.test_public_query_action_registration.PublicQueryActionRegistrationTests.test_source_self_runtime_reference_distinguishes_incarnations",
       "official_rule_ids": [
         "205.1a",
@@ -36693,6 +36817,30 @@
         "commander_review"
       ],
       "applicability_note": "A genuinely trusted four-player land activation pays its ordinary cost and resolves through the shared characteristic owner."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_source_characteristic_effects.TemporarySourceKeywordRuntimeTests.test_original_duo_temporary_forestwalk_changes_real_block_offers_and_commands",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.5",
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Tattermunge Duo observes an actual green Flash spell cast during combat; its temporary Forestwalk uses the defending player's current nonbasic Forest subtype. Block offers and accepted/rejected commands agree in both controller arrangements, unauthorized and forbidden blocks roll back, and the pre-attack cast/block command sequence survives pending save/load and replays exactly."
     },
     {
       "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
@@ -36817,6 +36965,30 @@
     {
       "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
       "evidence_class": "negative",
+      "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicCompilerTests.test_single_source_keyword_keeps_basic_landwalk_dependency_and_exclusions",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.5",
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Missing basic-landwalk authority and unrepresented landwalk predicates fail closed at full compiler admission."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "negative",
       "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicCompilerTests.test_source_characteristic_grammar_keeps_open_forms_residual",
       "official_rule_ids": [
         "205.1a",
@@ -36909,6 +37081,30 @@
         "commander_review"
       ],
       "applicability_note": "Complete fixed animation and base-setting wording preserves exact source spans, explicit retention, ability removal and canonical source, target and set selection across carriers."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicCompilerTests.test_single_source_keyword_keeps_basic_landwalk_dependency_and_exclusions",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.5",
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The source-only single Forestwalk result requires the existing basic-landwalk consumer; blocking that capability removes exact admission, and nonbasic, snow and chosen landwalk remain material."
     },
     {
       "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
@@ -37008,6 +37204,30 @@
     },
     {
       "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_source_characteristic_effects.TemporarySourceKeywordRuntimeTests.test_original_duo_temporary_forestwalk_changes_real_block_offers_and_commands",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.5",
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Tattermunge Duo observes an actual green Flash spell cast during combat; its temporary Forestwalk uses the defending player's current nonbasic Forest subtype. Block offers and accepted/rejected commands agree in both controller arrangements, unauthorized and forbidden blocks roll back, and the pre-attack cast/block command sequence survives pending save/load and replays exactly."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_source_characteristic_effects.AnimationSubtypeActionTests.test_trusted_unspecified_animation_preserves_elf_query_counters_and_replay",
       "official_rule_ids": [
@@ -37081,6 +37301,30 @@
     {
       "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
       "evidence_class": "replay",
+      "test_id": "tests.test_fixed_source_characteristic_effects.TemporarySourceKeywordRuntimeTests.test_original_duo_temporary_forestwalk_changes_real_block_offers_and_commands",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.5",
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Tattermunge Duo observes an actual green Flash spell cast during combat; its temporary Forestwalk uses the defending player's current nonbasic Forest subtype. Block offers and accepted/rejected commands agree in both controller arrangements, unauthorized and forbidden blocks roll back, and the pre-attack cast/block command sequence survives pending save/load and replays exactly."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "replay",
       "test_id": "tests.test_public_query_action_registration.PublicQueryActionRegistrationTests.test_current_trusted_zero_source_quantity_pays_and_replays_without_effect",
       "official_rule_ids": [
         "205.1a",
@@ -37125,6 +37369,30 @@
         "commander_review"
       ],
       "applicability_note": "A returned new source incarnation receives no effect from the old activation; malformed nonboolean retention changes no authoritative state."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_source_characteristic_effects.TemporarySourceKeywordRuntimeTests.test_original_duo_temporary_forestwalk_changes_real_block_offers_and_commands",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.5",
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Tattermunge Duo observes an actual green Flash spell cast during combat; its temporary Forestwalk uses the defending player's current nonbasic Forest subtype. Block offers and accepted/rejected commands agree in both controller arrangements, unauthorized and forbidden blocks roll back, and the pre-attack cast/block command sequence survives pending save/load and replays exactly."
     },
     {
       "capability_id": "continuous.resolution.fixed_target_characteristic_set",
@@ -102314,5 +102582,5 @@
       "applicability_note": "A target that leaves and re-enters is a new incarnation and cannot be moved by the old resolving spell."
     }
   ],
-  "fingerprint": "b4645fb6221d942cbf9d1a0a6da39887ed225d5086392ce13c3530a7f0ba79d0"
+  "fingerprint": "de03624046f862a99f86d3f777856d11ff1cb4b1d32848a5c5dcb88a271e77af"
 }

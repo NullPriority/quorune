@@ -110,6 +110,24 @@ class FixedSourceCharacteristicCompilerTests(unittest.TestCase):
                 self.assertIn(SOURCE_CAPABILITY,node.capability_dependencies)
                 self.assertEqual(text,compiled.faces[0].oracle_text[node.span.start:node.span.end])
 
+    def test_single_source_keyword_keeps_basic_landwalk_dependency_and_exclusions(self):
+        from quorune.rules.capabilities import CapabilityRegistry
+        text = "Whenever you cast a green spell, this creature gains forestwalk until end of turn."
+        compiled = self.compile(text)
+        self.assertEqual("exact", compiled.status, compiled.material_residuals)
+        self.assertIn("combat.block.landwalk.basic_type", compiled.faces[0].nodes[0].capability_dependencies)
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
+        next(row for row in raw["capabilities"] if row["id"] == "combat.block.landwalk.basic_type").update(
+            status="blocked", blockers=["basic landwalk consumer unavailable"])
+        blocked = compile_oracle_card(record(text), capability_registry=CapabilityRegistry(raw), capability_profile="commander_review")
+        self.assertNotEqual("exact", blocked.status)
+        self.assertTrue(blocked.material_residuals)
+        for keyword in ("nonbasic landwalk", "snow forestwalk", "landwalk of the chosen type"):
+            with self.subTest(keyword=keyword):
+                compiled = self.compile("Whenever you cast a green spell, this creature gains " + keyword + " until end of turn.")
+                self.assertNotEqual("exact", compiled.status)
+                self.assertTrue(compiled.material_residuals)
+
     def test_fixed_animation_near_misses_remain_material(self):
         cases=(
             "Target land becomes an X/X creature until end of turn. It's still a land.",
@@ -1429,6 +1447,101 @@ class FixedSourceCharacteristicRuntimeTests(unittest.TestCase):
             defending_players=["A"],
         )
         self.assertTrue(engine._can_block(attacker, target)[0])
+
+
+class TemporarySourceKeywordRuntimeTests(unittest.TestCase):
+    # CR 702.14c and 611.2a: granted Forestwalk changes blocking only when
+    # the defending player controls a Forest; the Basic supertype is irrelevant.
+    @classmethod
+    def setUpClass(cls):
+        from quorune.deck import DeckDefinition, DeckEntry
+        from scripts.build_test_database import build_fixture_database
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "temporary-source-keywords.sqlite3"
+        build_fixture_database([ROOT / "tests/fixtures/bound-effect-program-cards.json",
+            ROOT / "tests/fixtures/temporary-source-keyword-cards.json"], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Temporary source keywords", [DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 99)], ["Generic Bound Commander"])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    import test_bound_effect_programs as _witnesses
+    session = _witnesses.BoundEffectProgramRuntimeTests.session
+    add = _witnesses.BoundEffectProgramRuntimeTests.add
+    checkpoint = _witnesses.BoundEffectProgramRuntimeTests.checkpoint
+    resolve = _witnesses.BoundEffectProgramRuntimeTests.resolve
+    replay = _witnesses.BoundEffectProgramRuntimeTests.replay
+
+    def test_original_duo_temporary_forestwalk_changes_real_block_offers_and_commands(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        for forest_seat in ("A", "B"):
+            with self.subTest(forest_controller=forest_seat):
+                session = self.session(335010 + (forest_seat == "B"))
+                engine = session.engine
+                source = self.add(engine, "Tattermunge Duo")
+                ordinary = self.add(engine, "Generic Bound Body", ref="ordinary-attacker")
+                blocker = self.add(engine, "Generic Bound Body", seat="B")
+                self.add(engine, "Generic Source Keyword Nonbasic Forest", seat=forest_seat)
+                spell = self.add(engine, "Generic Source Keyword Green Flash", zone="hand")
+                program = compile_best_available_card_program(self.db, self.db.lookup(source.printed_name),
+                    semantic_registry=engine.semantics, capability_registry=self.registry, capability_profile="commander_review")
+                binding = bind_card_program_runtime(program, capability_registry=self.registry, profile="commander_review")
+                self.assertTrue(binding["strict_capability_ready"], binding)
+                engine.permissions.invalidate_current()
+                session.state.pending_decision = None
+                session.state.active_player = "A"
+                session.state.started = True
+                session.state.phase = "combat"
+                session.state.step = "declare_attackers"
+                session.state.phase_index = 5
+                session.state.combat = CombatState()
+                session.state.players["A"].mana_pool.update({"G": 1})
+                source.acquired_control_turn_count = -1
+                ordinary.acquired_control_turn_count = -1
+                engine._issue_attackers()
+                self.checkpoint(session)
+                attack = session.act("pilot:A", {"a": "attack", "atk": {source.ref: "B", ordinary.ref: "B"}})
+                self.assertTrue(attack.ok, attack.summary)
+                actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                action = next(action for action in actions if action.get("card") == spell.ref)
+                cast = session.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+                self.assertTrue(cast.ok, cast.summary)
+                self.resolve(session)
+                self.assertIn("Forestwalk", engine._effective_card_data(session.state.cards[source.object_id])["keywords"])
+                self.assertEqual(0, session.state.players["A"].mana_pool.get("G", 0))
+                for _ in range(12):
+                    if session.state.pending_decision.kind == "combat.blockers":
+                        break
+                    self.assertEqual("priority", session.state.pending_decision.kind)
+                    passed = session.act(session.pending_principals()[0], {"action_id": "pass"})
+                    self.assertTrue(passed.ok, passed.summary)
+                self.assertEqual("combat.blockers", session.state.pending_decision.kind)
+                for seat in "ACD":
+                    self.assertIsNone(session.packet("pilot:" + seat, full=True)["decision"])
+                legal = session.packet("pilot:B", full=True)["decision"]["ctx"]["legal_blocks"][blocker.ref]
+                self.assertEqual(forest_seat != "B", source.ref in legal)
+                self.assertIn(ordinary.ref, legal)
+                session = self.replay(session, load=True)
+                before = authoritative_state_hash(session.state)
+                wrong = session.act("pilot:C", {"a": "block", "blk": {blocker.ref: source.ref}})
+                self.assertFalse(wrong.ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+                if forest_seat == "B":
+                    rejected = session.act("pilot:B", {"a": "block", "blk": {blocker.ref: source.ref}})
+                    self.assertFalse(rejected.ok)
+                    self.assertEqual(before, authoritative_state_hash(session.state))
+                    blocks = {}
+                else:
+                    blocks = {blocker.ref: source.ref}
+                accepted = session.act("pilot:B", {"a": "block", "blk": blocks})
+                self.assertTrue(accepted.ok, accepted.summary)
+                self.replay(session, load=True)
 
 
 if __name__ == "__main__":

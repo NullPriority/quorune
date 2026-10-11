@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Align temporary source-keyword scope with the shared basic-landwalk owner
+  and add original-card offer, command, rollback, and replay evidence.
+
 - Normalize numeric and punctuated ability or flavor names before complete
   typed trigger compilation, retaining printed spans and every body condition.
 

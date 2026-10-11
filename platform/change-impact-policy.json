@@ -3199,6 +3199,19 @@
         "test_fixed_token_creation_effects",
         "test_card_program_v2"
       ]
+    },
+    {
+      "id": "temporary-source-keyword-consumer-contract",
+      "patterns": [
+        "quorune/compiler/fixed_target_effect_sequences.py",
+        "tests/fixtures/temporary-source-keyword-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_source_characteristic_effects",
+        "test_fixed_evasion_grants",
+        "test_landwalk",
+        "test_oracle_corpus_examples"
+      ]
     }
   ],
   "symbol_rules": [
