@@ -20,17 +20,30 @@ class TapStateError(ValueError):
     """A requested canonical tap-state transition is malformed."""
 
 
+def prohibit_next_untap(host: Any, object_ref: str, *, actor: str, reason: str,
+                       logical_object_id: str | None = None) -> str:
+    """Retain one next-controller-untap restriction on the original permanent."""
+    card = host._resolve_object(actor, object_ref, zones={'battlefield'})
+    if logical_object_id is not None and card.logical_object_id != logical_object_id:
+        return card.ref
+    card.annotations[NEXT_UNTAP_PROHIBITION_ANNOTATION] = True
+    host._log(actor, 'permanent.next_untap.prohibited', 'Permanent will skip its next controller untap step.',
+              {'object': card.ref, REASON_FIELD: reason}, changed_objects=[card.object_id])
+    return card.ref
+
+
 def consume_next_untap_prohibition(card: Any) -> bool:
     """Expire one object-local prohibition at its next physical untap step."""
 
     annotations = card.annotations
     if not isinstance(annotations, dict):
         raise TapStateError("Permanent annotations must be a mapping")
-    value = annotations.pop(NEXT_UNTAP_PROHIBITION_ANNOTATION, False)
+    value = annotations.get(NEXT_UNTAP_PROHIBITION_ANNOTATION, False)
     if type(value) is not bool:
         raise TapStateError(
             "Next-untap prohibition state must be boolean"
         )
+    annotations.pop(NEXT_UNTAP_PROHIBITION_ANNOTATION, None)
     return value
 
 

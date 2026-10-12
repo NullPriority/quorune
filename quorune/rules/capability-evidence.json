@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "4d84f68ce54f1277457b8747add2c039c6a3cd1605eef0c437d88c94275e0aca",
-  "declaration_source_fingerprint": "a21c66da4287f63caed4c9a23fa96d1bed0f9faaec352d3290df4bfe99001363",
+  "registry_fingerprint": "590f5732d5e4e4c197cd0f7eda33655a3b454f403fde0b4d43057f9c2e9a7cdf",
+  "declaration_source_fingerprint": "773b2ee334366becebc6b0b58200abd1d411eb81ee8c7d180a4d3fbb2dcd16e5",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -100476,6 +100476,294 @@
       "applicability_note": "Original Rubinia optional choice survives save/reload, hides the decision from other pilots, rejects duplicate refs atomically and accepts selection once; simultaneous original untap set and exact pre-action replay. The prior resolved control grant is an owner fixture."
     },
     {
+      "capability_id": "untap.step.prohibit_next_controller",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_bound_effect_programs.BoundEffectProgramRuntimeTests.test_next_untap_spell_uses_target_authority_controller_step_and_replay",
+      "official_rule_ids": [
+        "502.3",
+        "611.2a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed next-controller-untap compiler/intent, actual target command authority and rollback, original incarnation, affected controller next step, stun sequencing, projection and pre-action replay/save-load."
+    },
+    {
+      "capability_id": "untap.step.prohibit_next_controller",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_bound_effect_programs.BoundEffectProgramRuntimeTests.test_original_frost_lynx_entry_uses_opponent_target_next_untap_and_replay",
+      "official_rule_ids": [
+        "502.3",
+        "611.2a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original entry trigger and command target authority, original/changed controller next-step marker, repeated expiry, malformed-input atomicity, save/load and pre-action replay."
+    },
+    {
+      "capability_id": "untap.step.prohibit_next_controller",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_untap_step_rules.UntapStepRuleTests.test_next_untap_marker_follows_current_controller_and_repeated_markers_expire_together",
+      "official_rule_ids": [
+        "502.3",
+        "611.2a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original entry trigger and command target authority, original/changed controller next-step marker, repeated expiry, malformed-input atomicity, save/load and pre-action replay."
+    },
+    {
+      "capability_id": "untap.step.prohibit_next_controller",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_untap_step_rules.UntapStepRuleTests.test_typed_next_untap_producer_pins_incarnation_and_does_not_consume_stun",
+      "official_rule_ids": [
+        "502.3",
+        "611.2a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed next-controller-untap compiler/intent, actual target command authority and rollback, original incarnation, affected controller next step, stun sequencing, projection and pre-action replay/save-load."
+    },
+    {
+      "capability_id": "untap.step.prohibit_next_controller",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_bound_effect_programs.BoundEffectProgramRuntimeTests.test_next_untap_spell_uses_target_authority_controller_step_and_replay",
+      "official_rule_ids": [
+        "502.3",
+        "611.2a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed next-controller-untap compiler/intent, actual target command authority and rollback, original incarnation, affected controller next step, stun sequencing, projection and pre-action replay/save-load."
+    },
+    {
+      "capability_id": "untap.step.prohibit_next_controller",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_bound_effect_programs.BoundEffectProgramRuntimeTests.test_original_frost_lynx_entry_uses_opponent_target_next_untap_and_replay",
+      "official_rule_ids": [
+        "502.3",
+        "611.2a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original entry trigger and command target authority, original/changed controller next-step marker, repeated expiry, malformed-input atomicity, save/load and pre-action replay."
+    },
+    {
+      "capability_id": "untap.step.prohibit_next_controller",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_untap_step_rules.UntapStepRuleTests.test_next_untap_producer_omission_mutant_is_killed",
+      "official_rule_ids": [
+        "502.3",
+        "611.2a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Removing the canonical producer allows untapping at the prohibited next controller step and the semantic expectation kills the omission mutant."
+    },
+    {
+      "capability_id": "untap.step.prohibit_next_controller",
+      "evidence_class": "negative",
+      "test_id": "tests.test_targeted_tap_state_effect_clauses.TargetedTapStateTemplateTests.test_next_controller_untap_clause_has_one_typed_target_and_closed_duration",
+      "official_rule_ids": [
+        "502.3",
+        "611.2a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed next-controller-untap compiler/intent, actual target command authority and rollback, original incarnation, affected controller next step, stun sequencing, projection and pre-action replay/save-load."
+    },
+    {
+      "capability_id": "untap.step.prohibit_next_controller",
+      "evidence_class": "negative",
+      "test_id": "tests.test_targeted_tap_state_effect_clauses.TargetedTapStateTemplateTests.test_next_untap_handler_rejects_malformed_fields_without_mutation_authority",
+      "official_rule_ids": [
+        "502.3",
+        "611.2a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Read-only typed handler rejects malformed references, extra step counts and client-selected controller fields before intent execution."
+    },
+    {
+      "capability_id": "untap.step.prohibit_next_controller",
+      "evidence_class": "negative",
+      "test_id": "tests.test_untap_step_rules.UntapStepRuleTests.test_next_untap_marker_follows_current_controller_and_repeated_markers_expire_together",
+      "official_rule_ids": [
+        "502.3",
+        "611.2a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original entry trigger and command target authority, original/changed controller next-step marker, repeated expiry, malformed-input atomicity, save/load and pre-action replay."
+    },
+    {
+      "capability_id": "untap.step.prohibit_next_controller",
+      "evidence_class": "positive",
+      "test_id": "tests.test_bound_effect_programs.BoundEffectProgramRuntimeTests.test_next_untap_spell_uses_target_authority_controller_step_and_replay",
+      "official_rule_ids": [
+        "502.3",
+        "611.2a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed next-controller-untap compiler/intent, actual target command authority and rollback, original incarnation, affected controller next step, stun sequencing, projection and pre-action replay/save-load."
+    },
+    {
+      "capability_id": "untap.step.prohibit_next_controller",
+      "evidence_class": "positive",
+      "test_id": "tests.test_bound_effect_programs.BoundEffectProgramRuntimeTests.test_original_frost_lynx_entry_uses_opponent_target_next_untap_and_replay",
+      "official_rule_ids": [
+        "502.3",
+        "611.2a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original entry trigger and command target authority, original/changed controller next-step marker, repeated expiry, malformed-input atomicity, save/load and pre-action replay."
+    },
+    {
+      "capability_id": "untap.step.prohibit_next_controller",
+      "evidence_class": "positive",
+      "test_id": "tests.test_targeted_tap_state_effect_clauses.TargetedTapStateTemplateTests.test_next_controller_untap_clause_has_one_typed_target_and_closed_duration",
+      "official_rule_ids": [
+        "502.3",
+        "611.2a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed next-controller-untap compiler/intent, actual target command authority and rollback, original incarnation, affected controller next step, stun sequencing, projection and pre-action replay/save-load."
+    },
+    {
+      "capability_id": "untap.step.prohibit_next_controller",
+      "evidence_class": "positive",
+      "test_id": "tests.test_untap_step_rules.UntapStepRuleTests.test_typed_next_untap_producer_pins_incarnation_and_does_not_consume_stun",
+      "official_rule_ids": [
+        "502.3",
+        "611.2a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed next-controller-untap compiler/intent, actual target command authority and rollback, original incarnation, affected controller next step, stun sequencing, projection and pre-action replay/save-load."
+    },
+    {
+      "capability_id": "untap.step.prohibit_next_controller",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_bound_effect_programs.BoundEffectProgramRuntimeTests.test_next_untap_spell_uses_target_authority_controller_step_and_replay",
+      "official_rule_ids": [
+        "502.3",
+        "611.2a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed next-controller-untap compiler/intent, actual target command authority and rollback, original incarnation, affected controller next step, stun sequencing, projection and pre-action replay/save-load."
+    },
+    {
+      "capability_id": "untap.step.prohibit_next_controller",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_bound_effect_programs.BoundEffectProgramRuntimeTests.test_original_frost_lynx_entry_uses_opponent_target_next_untap_and_replay",
+      "official_rule_ids": [
+        "502.3",
+        "611.2a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original entry trigger and command target authority, original/changed controller next-step marker, repeated expiry, malformed-input atomicity, save/load and pre-action replay."
+    },
+    {
+      "capability_id": "untap.step.prohibit_next_controller",
+      "evidence_class": "replay",
+      "test_id": "tests.test_bound_effect_programs.BoundEffectProgramRuntimeTests.test_next_untap_spell_uses_target_authority_controller_step_and_replay",
+      "official_rule_ids": [
+        "502.3",
+        "611.2a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed next-controller-untap compiler/intent, actual target command authority and rollback, original incarnation, affected controller next step, stun sequencing, projection and pre-action replay/save-load."
+    },
+    {
+      "capability_id": "untap.step.prohibit_next_controller",
+      "evidence_class": "replay",
+      "test_id": "tests.test_bound_effect_programs.BoundEffectProgramRuntimeTests.test_original_frost_lynx_entry_uses_opponent_target_next_untap_and_replay",
+      "official_rule_ids": [
+        "502.3",
+        "611.2a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original entry trigger and command target authority, original/changed controller next-step marker, repeated expiry, malformed-input atomicity, save/load and pre-action replay."
+    },
+    {
       "capability_id": "untap.step.static_participation",
       "evidence_class": "interaction",
       "test_id": "tests.test_typed_untap_step_participation.UntapStepParticipationRuntimeTests.test_static_prohibition_does_not_consume_stun_and_next_step_marker_expires",
@@ -108477,5 +108765,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "1fe4bc73996ca5af505f044ff8c2a105ddb991351b57fbce17b0940043180d85"
+  "fingerprint": "a8714ffbfb48f96d87b4eb8666adccef31140d67b88d96329fc7ebf6a8026197"
 }

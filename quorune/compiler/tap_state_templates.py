@@ -37,6 +37,7 @@ class TapStateAction(str, Enum):
 
     TAP = "tap"
     UNTAP = "untap"
+    PROHIBIT_NEXT_UNTAP = "prohibit_next_untap"
 
 
 @dataclass(frozen=True, slots=True)
@@ -85,6 +86,23 @@ class TargetedTapStateEffectTemplate:
             target_schema=self.target_schema,
             mechanics=self.mechanics,
         )
+
+
+@dataclass(frozen=True, slots=True)
+class TapThenProhibitNextUntapTemplate:
+    target_spec: DirectPermanentTargetSpec
+
+    @property
+    def effects(self):
+        return ({'op': 'tap', 'card': '$target.0'}, {'op': 'prohibit_next_untap', 'card': '$target.0'})
+
+    @property
+    def target_schema(self):
+        return self.target_spec.to_target_schema()
+
+    def compiled(self):
+        return ('tap-target-next-controller-untap-v1', self.effects, self.target_schema,
+                ('tap-and-untap', 'cr-115-targets'))
 
 
 @dataclass(frozen=True, slots=True)
@@ -256,6 +274,7 @@ TapStateEffectTemplate = (
     | SourceTapStateEffectTemplate
     | AttachedTapStateEffectTemplate
     | OptionalTapStateEffectTemplate
+    | TapThenProhibitNextUntapTemplate
 )
 
 
@@ -269,6 +288,18 @@ def targeted_tap_state_effect_template(
     """Recognize one closed single-object tap-state instruction."""
 
     normalized = " ".join(text.strip().split())
+    delayed = re.fullmatch(
+        r"Tap (?P<subject>(?:another )?target [^.]+)\. (?:It|That (?:creature|permanent)) doesn['’]t untap during its controller['’]s next untap step\.?",
+        normalized, re.IGNORECASE)
+    if delayed is not None:
+        target_spec = direct_permanent_target_spec(delayed['subject'])
+        return TapThenProhibitNextUntapTemplate(target_spec) if target_spec is not None else None
+    next_untap = re.fullmatch(
+        r"(?P<subject>(?:another )?target [^.]+) doesn['’]t untap during its controller['’]s next untap step\.?",
+        normalized, re.IGNORECASE)
+    if next_untap is not None:
+        target_spec = direct_permanent_target_spec(next_untap['subject'])
+        return TargetedTapStateEffectTemplate(TapStateAction.PROHIBIT_NEXT_UNTAP, target_spec) if target_spec is not None else None
     optional = re.fullmatch(
         r"you may tap or untap (?P<subject>(?:another )?target [^.]+)\.?",
         normalized,

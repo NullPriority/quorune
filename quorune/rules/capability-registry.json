@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 224,
+  "registry_version": 225,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -15139,6 +15139,94 @@
       "dependency_fail_closed_rationale": "Only a complete ordinary controller or player-target shape receives extra-turn authority; blocking its scheduler capability or removing the exact target schema leaves a material residual.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Omitting the compiler producer and corrupting the recipient, source, target count or instruction fields are rejected by the distinguishing compiler and shape regressions.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "untap.step.prohibit_next_controller",
+      "version": 1,
+      "official_rules": [
+        "502.3",
+        "611.2a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Produce an incarnation-pinned prohibition against untapping during the affected permanent current controllers next physical untap step, using the canonical tap owner and existing step-consumption boundary.",
+        "inputs": [
+          "one closed direct-target instruction",
+          "resolved battlefield permanent",
+          "current target incarnation",
+          "actual physical controller untap step"
+        ],
+        "outputs": [
+          "one object-local prohibition",
+          "expiry at the next represented controller untap step",
+          "no untap or stun consumption during that skipped step"
+        ],
+        "exclusions": [
+          "fixed-player next-untap instructions including exert",
+          "multiple future steps",
+          "skipped-step and unrepresented phasing instruction compositions",
+          "replacement or duration choices"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.compiler.tap_state_templates.TargetedTapStateEffectTemplate",
+        "quorune.rules.tap_state_capability_shapes.targeted_tap_state_node_capabilities",
+        "quorune.semantic_runtime.tap_state_handlers.ProhibitNextUntapHandler",
+        "quorune.semantic_runtime.executor.execute_intent_plan",
+        "quorune.tap_state.prohibit_next_untap",
+        "quorune.tap_state.consume_next_untap_prohibition",
+        "quorune.untap_step_coordination.coordinate_untap_step"
+      ],
+      "positive_tests": [
+        "test_next_controller_untap_clause_has_one_typed_target_and_closed_duration",
+        "test_typed_next_untap_producer_pins_incarnation_and_does_not_consume_stun",
+        "test_next_untap_spell_uses_target_authority_controller_step_and_replay",
+        "test_original_frost_lynx_entry_uses_opponent_target_next_untap_and_replay"
+      ],
+      "negative_tests": [
+        "test_next_controller_untap_clause_has_one_typed_target_and_closed_duration",
+        "test_next_untap_producer_omission_mutant_is_killed",
+        "test_next_untap_marker_follows_current_controller_and_repeated_markers_expire_together",
+        "test_next_untap_handler_rejects_malformed_fields_without_mutation_authority"
+      ],
+      "interaction_tests": [
+        "test_typed_next_untap_producer_pins_incarnation_and_does_not_consume_stun",
+        "test_next_untap_spell_uses_target_authority_controller_step_and_replay",
+        "test_original_frost_lynx_entry_uses_opponent_target_next_untap_and_replay",
+        "test_next_untap_marker_follows_current_controller_and_repeated_markers_expire_together"
+      ],
+      "multiplayer_tests": [
+        "test_next_untap_spell_uses_target_authority_controller_step_and_replay",
+        "test_original_frost_lynx_entry_uses_opponent_target_next_untap_and_replay"
+      ],
+      "privacy_tests": [
+        "test_next_untap_spell_uses_target_authority_controller_step_and_replay",
+        "test_original_frost_lynx_entry_uses_opponent_target_next_untap_and_replay"
+      ],
+      "replay_tests": [
+        "test_next_untap_spell_uses_target_authority_controller_step_and_replay",
+        "test_original_frost_lynx_entry_uses_opponent_target_next_untap_and_replay"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "This closed next-step instruction has no optional capability dependency; targets are independently revalidated.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "test_next_untap_producer_omission_mutant_is_killed proves removal of the canonical prohibition producer allows the next-step untap and is detected.",
       "blockers": [],
       "status": "trusted"
     }

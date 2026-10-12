@@ -55,6 +55,29 @@ def focused_card_database(directory: str) -> CardDatabase:
 
 
 class TargetedTapStateTemplateTests(unittest.TestCase):
+    def test_next_untap_handler_rejects_malformed_fields_without_mutation_authority(self):
+        from quorune.semantic_runtime.tap_state_handlers import ProhibitNextUntapHandler
+        from quorune.semantic_runtime.context import ReadOnlyHandlerContext, SemanticNodeError
+        from quorune.semantic_runtime.intents import ProhibitNextUntapIntent
+        context = ReadOnlyHandlerContext.from_sequences(actor='A', default_reason='typed next-step',
+            seats=('A', 'B'), active_seats=('A', 'B'), apnap_order=('A', 'B'))
+        result = ProhibitNextUntapHandler().lower({'op': 'prohibit_next_untap', 'card': 'P1'}, context)
+        self.assertEqual(ProhibitNextUntapIntent('P1', 'A', 'typed next-step'), result.intents[0])
+        for malformed in ({'op': 'prohibit_next_untap', 'card': 'P1', 'steps': 2},
+                          {'op': 'prohibit_next_untap', 'card': False},
+                          {'op': 'prohibit_next_untap', 'card': 'P1', 'controller': 'B'}):
+            with self.subTest(malformed=malformed), self.assertRaises(SemanticNodeError):
+                ProhibitNextUntapHandler().lower(malformed, context)
+        self.assertFalse(hasattr(context, 'state'))
+
+    def test_next_controller_untap_clause_has_one_typed_target_and_closed_duration(self):
+        parsed = targeted_tap_state_effect_template("Target creature doesn't untap during its controller's next untap step.")
+        self.assertIsNotNone(parsed)
+        self.assertEqual(({'op': 'prohibit_next_untap', 'card': '$target.0'},), parsed.effects)
+        self.assertEqual(['creature'], parsed.target_schema['types_any'])
+        self.assertIsNone(targeted_tap_state_effect_template("Target creature doesn't untap during its controller's next two untap steps."))
+        self.assertIsNone(targeted_tap_state_effect_template("Target creature doesn't untap during your next untap step."))
+
     def test_targeted_tap_state_template_is_immutable_and_copy_isolated(self):
         template = TargetedTapStateEffectTemplate(
             action=TapStateAction.TAP,

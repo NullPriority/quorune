@@ -85,6 +85,22 @@
   ],
   "path_rules": [
     {
+      "id": "next-controller-untap-contract",
+      "patterns": [
+        "quorune/compiler/tap_state_templates.py",
+        "quorune/rules/tap_state_capability_shapes.py",
+        "quorune/semantic_runtime/tap_state_handlers.py",
+        "quorune/tap_state.py"
+      ],
+      "test_modules": [
+        "test_bound_effect_programs",
+        "test_card_program_trust",
+        "test_targeted_tap_state_effect_clauses",
+        "test_typed_untap_step_participation",
+        "test_untap_step_rules"
+      ]
+    },
+    {
       "id": "bare-subtype-reviewed-anthem-contract",
       "patterns": [
         "quorune/card_programs/reviewed_overlay.py"

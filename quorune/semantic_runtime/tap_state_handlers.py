@@ -14,6 +14,7 @@ from .direct_target_fields import validate_direct_target_effect
 from .intents import (
     IntentPlan,
     SetPermanentTappedIntent,
+    ProhibitNextUntapIntent,
     UntapAllCreaturesIntent,
 )
 from .nodes import SetPermanentTappedNode, UntapAllCreaturesNode
@@ -244,9 +245,27 @@ class SetPublicTapStateSetHandler:
         )
 
 
+@dataclass(frozen=True, slots=True)
+class ProhibitNextUntapHandler:
+    handler_id: str = 'generic.prohibit-next-untap.v1'
+    schema_version: int = 1
+    family: str = 'permanent.tap_state'
+    operation: str = 'prohibit_next_untap'
+    rule_references: tuple[str, ...] = ('502.3', '611.2a')
+    capability_dependencies: tuple[str, ...] = ('untap.step.prohibit_next_controller',)
+
+    def lower(self, effect: Mapping[str, Any], context: ReadOnlyHandlerContext) -> IntentPlan:
+        fields = validate_direct_target_effect(effect, context, operation=self.operation,
+            reference_field='card', family_label='Next-untap', allow_replacement_selections=False)
+        return IntentPlan(operation=self.operation, handler_id=self.handler_id, intents=(
+            ProhibitNextUntapIntent(fields.object_ref, context.actor, fields.reason,
+                _source_logical_object_id(fields.object_ref, context)),))
+
+
 TAP_STATE_HANDLERS = (
     TapPermanentHandler(),
     UntapPermanentHandler(),
     UntapAllCreaturesHandler(),
     SetPublicTapStateSetHandler(),
+    ProhibitNextUntapHandler(),
 )

@@ -271,6 +271,30 @@
       "deck_files": [],
       "fixture_files": [],
       "rationale": "The test strictly binds these original-card records through a bounded tuple before executing actual targeting or lifecycle commands."
+    },
+    {
+      "source": "tests/test_bound_effect_programs.py",
+      "symbol": "BoundEffectProgramRuntimeTests.test_next_untap_spell_uses_target_authority_controller_step_and_replay",
+      "card_names": [
+        "Generic Bound Body",
+        "Generic Bound Next Untap"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Strict compiler/binder and real command witness selects the typed next-untap spell and generic creature target."
+    },
+    {
+      "source": "tests/test_bound_effect_programs.py",
+      "symbol": "BoundEffectProgramRuntimeTests.test_original_frost_lynx_entry_uses_opponent_target_next_untap_and_replay",
+      "card_names": [
+        "Frost Lynx",
+        "Generic Bound Body"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Strict original-card registration plus opponent target selection consumes these exact fixture cards."
     }
   ],
   "full_database_only": []

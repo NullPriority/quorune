@@ -311,6 +311,13 @@ The canonical tap owner seals object incarnation, controller, characteristics,
 and attack-declaration cause. Explicit simultaneous instructions and costs
 commit their complete group before discovery; the ordinary APNAP owner places
 the resulting abilities. Untap-step triggers remain held until upkeep priority.
+The next-controller-untap instruction emits a typed prohibition intent through
+the canonical tap-state owner. It pins the resolved incarnation and stores one
+object-local marker consumed at its current controller's next represented
+physical untap step. Repeated markers expire together; the skipped untap does
+not remove a stun counter. Fixed-player timing, Exert, multiple future steps,
+and unsupported phasing or skipped-step compositions remain residual.
+
 No-op changes, entering in a tap state, stun-replaced untaps, and rollback do not
 trigger. A real untap cost is distinct from rollback. Fixed event-controller
 life, damage, and Mill results are nontargeted and retain the occurrence's

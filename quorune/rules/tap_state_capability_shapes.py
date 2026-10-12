@@ -19,6 +19,7 @@ def _operation_capability(value: object) -> str | None:
     return {
         "tap": "permanent.tap.effect",
         "untap": "permanent.untap.effect",
+        "prohibit_next_untap": "untap.step.prohibit_next_controller",
     }.get(value)
 
 
@@ -31,6 +32,12 @@ def targeted_tap_state_node_capabilities(
     """Return ownership only for closed single-object tap-state shapes."""
 
     mechanics = {str(value).casefold() for value in mechanic_ids}
+    if 'tap-and-untap' in mechanics and len(effects) == 2 and target_schema is not None:
+        if (list(effects) != [{'op': 'tap', 'card': '$target.0'}, {'op': 'prohibit_next_untap', 'card': '$target.0'}]
+                or 'cr-115-targets' not in mechanics or not direct_permanent_target_schema_is_closed(target_schema)):
+            return ()
+        return ('permanent.tap.effect', 'untap.step.prohibit_next_controller',
+                *direct_target_predicate_capabilities(target_schema), 'target.revalidate_resolution')
     if "tap-and-untap" not in mechanics or len(effects) != 1:
         return ()
     effect = effects[0]
