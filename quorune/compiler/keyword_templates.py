@@ -39,6 +39,13 @@ def keyword_mechanics(
     material = text.rstrip(".").strip()
     if "typecycling" in known and _TYPECYCLING.fullmatch(material):
         return ("cycling",)
+    cycling_parts = [part.strip() for part in material.split(",")]
+    if (
+        "typecycling" in known
+        and 2 <= len(cycling_parts) <= 4
+        and all(_TYPECYCLING.fullmatch(part) for part in cycling_parts)
+    ):
+        return ("cycling",) * len(cycling_parts)
     if "enchant" in known and re.fullmatch(
         r"enchant\s+.+",
         material,

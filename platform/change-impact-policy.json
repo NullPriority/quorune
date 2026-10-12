@@ -3333,6 +3333,24 @@
         "test_card_program_trust",
         "test_fixed_public_state_characteristics"
       ]
+    },
+    {
+      "id": "paired-typecycling-contract",
+      "patterns": [
+        "quorune/compiler/cycling_nodes.py",
+        "quorune/compiler/keyword_templates.py",
+        "quorune/compiler/multi_keyword_nodes.py",
+        "quorune/compiler/generated_program_identity.py",
+        "quorune/cycling_abilities.py",
+        "tests/fixtures/paired-typecycling-cards.json"
+      ],
+      "test_modules": [
+        "test_typecycling",
+        "test_ordinary_cycling",
+        "test_card_program_trust",
+        "test_oracle_ir",
+        "test_activated_abilities"
+      ]
     }
   ],
   "symbol_rules": [

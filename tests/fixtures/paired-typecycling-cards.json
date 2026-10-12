@@ -1,0 +1,260 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned original paired Typecycling cards",
+  "cards": [
+    {
+      "oracle_id": "40cc8ac6-114f-439d-816d-f65cd52bbbd2",
+      "name": "Jhessian Zombies",
+      "mana_cost": "{4}{U}{B}",
+      "type_line": "Creature \u2014 Zombie",
+      "oracle_text": "Fear (This creature can't be blocked except by artifact creatures and/or black creatures.)\nIslandcycling {2}, swampcycling {2} ({2}, Discard this card: Search your library for an Island or Swamp card, reveal it, put it into your hand, then shuffle.)",
+      "power": "2",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "U"
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "keywords": [
+        "Islandcycling",
+        "Landcycling",
+        "Fear",
+        "Typecycling",
+        "Cycling",
+        "Swampcycling"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2011-09-02",
+      "cmc": 6.0,
+      "card_faces": []
+    },
+    {
+      "oracle_id": "488ca652-653b-4bb3-891c-874efdd418ff",
+      "name": "Pale Recluse",
+      "mana_cost": "{4}{G}{W}",
+      "type_line": "Creature \u2014 Spider",
+      "oracle_text": "Reach (This creature can block creatures with flying.)\nForestcycling {2}, plainscycling {2} ({2}, Discard this card: Search your library for a Forest or Plains card, reveal it, put it into your hand, then shuffle.)",
+      "power": "4",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "W"
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "keywords": [
+        "Reach",
+        "Plainscycling",
+        "Landcycling",
+        "Forestcycling",
+        "Typecycling",
+        "Cycling"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2010-06-18",
+      "cmc": 6.0,
+      "card_faces": []
+    },
+    {
+      "oracle_id": "d0a3b261-3daf-4082-8bc5-e66326a6c382",
+      "name": "Valley Rannet",
+      "mana_cost": "{4}{R}{G}",
+      "type_line": "Creature \u2014 Beast",
+      "oracle_text": "Mountaincycling {2}, forestcycling {2} ({2}, Discard this card: Search your library for a Mountain or Forest card, reveal it, put it into your hand, then shuffle.)",
+      "power": "6",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "R"
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "keywords": [
+        "Mountaincycling",
+        "Landcycling",
+        "Forestcycling",
+        "Typecycling",
+        "Cycling"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2013-11-01",
+      "cmc": 6.0,
+      "card_faces": []
+    },
+    {
+      "oracle_id": "ee6f1ddb-6749-4394-b2b0-4d293376f1af",
+      "name": "Igneous Pouncer",
+      "mana_cost": "{4}{B}{R}",
+      "type_line": "Creature \u2014 Elemental",
+      "oracle_text": "Haste\nSwampcycling {2}, mountaincycling {2} ({2}, Discard this card: Search your library for a Swamp or Mountain card, reveal it, put it into your hand, then shuffle.)",
+      "power": "5",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "R"
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "keywords": [
+        "Mountaincycling",
+        "Landcycling",
+        "Haste",
+        "Typecycling",
+        "Cycling",
+        "Swampcycling"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2011-09-02",
+      "cmc": 6.0,
+      "card_faces": []
+    },
+    {
+      "oracle_id": "ff3fae6e-d8a1-46b3-a6cc-fb4e8800ee68",
+      "name": "Sanctum Plowbeast",
+      "mana_cost": "{4}{W}{U}",
+      "type_line": "Artifact Creature \u2014 Beast",
+      "oracle_text": "Defender\nPlainscycling {2}, islandcycling {2} ({2}, Discard this card: Search your library for a Plains or Island card, reveal it, put it into your hand, then shuffle.)",
+      "power": "3",
+      "toughness": "6",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U",
+        "W"
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "keywords": [
+        "Islandcycling",
+        "Plainscycling",
+        "Landcycling",
+        "Typecycling",
+        "Defender",
+        "Cycling"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2009-04-30",
+      "cmc": 6.0,
+      "card_faces": []
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Island",
+      "oracle_id": "b2c6aa39-2d2a-459c-a555-fb48ba993373",
+      "oracle_text": "({T}: Add {U}.)",
+      "power": null,
+      "produced_mana": [
+        "U"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land \u2014 Island"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Swamp",
+      "oracle_id": "56719f6a-1a6c-4c0a-8d21-18f7d7350b68",
+      "oracle_text": "({T}: Add {B}.)",
+      "power": null,
+      "produced_mana": [
+        "B"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land \u2014 Swamp"
+    }
+  ]
+}

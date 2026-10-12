@@ -19,7 +19,7 @@ from .util import mana_cost_to_vector
 CYCLING_HANDLER_ID = "ability.activated.cycling.v1"
 TYPECYCLING_HANDLER_ID = "ability.activated.typecycling.v1"
 CYCLING_MECHANIC_ID = "cycling"
-_ABILITY_ID = re.compile(r"^ab[1-9][0-9]*$")
+_ABILITY_ID = re.compile(r"^ab[1-9][0-9]*(?::typecycling-instance:[1-4])?$")
 _ORDINARY_COST = r"(?:\{(?:0|[1-9]\d*|[WUBRGC])\})+"
 _ORDINARY_CYCLING = re.compile(
     rf"^Cycling\s+(?P<cost>{_ORDINARY_COST})\.?$",
@@ -95,7 +95,7 @@ def _validate_fixed_mana_fields(
         not isinstance(ability_id, str)
         or _ABILITY_ID.fullmatch(ability_id) is None
     ):
-        raise CyclingAbilityError("Cycling ability ID must be abN")
+        raise CyclingAbilityError("Cycling ability ID requires a line identity and optional typecycling instance")
     if type(line_index) is not int or line_index < 0:
         raise CyclingAbilityError("Cycling ability line_index must be nonnegative")
     if not isinstance(oracle_line, str) or not oracle_line:

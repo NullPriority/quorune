@@ -42,6 +42,9 @@ def generated_ability_id(
     if kind == "spell_ability":
         return f"spell:{face_id}"
     if kind in {"activated_ability", "mana_ability"}:
+        parts = str(node_id or "").split(":")
+        if len(parts) >= 2 and parts[-2] == "typecycling-instance" and parts[-1] in {"1", "2", "3", "4"}:
+            return f"ability:ab{line}:typecycling-instance:{parts[-1]}"
         return f"ability:ab{line}"
     if kind == "triggered_ability":
         base = f"trigger:{face_id}:n{line}"

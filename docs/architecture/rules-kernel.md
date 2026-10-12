@@ -242,7 +242,12 @@ replacing those families' specialized execution owners or capability closure.
 Fixed Typecycling is limited to Basic land, one basic land subtype, artifact
 land, Wizard, and Sliver queries with ordinary fixed mana costs. It shares the
 source-discard activation owner with Cycling and the actor-private restrictive
-search owner with other semantic searches; dual-type, variable, nonmana,
+search owner with other semantic searches. Two through four complete printed
+Typecycling siblings on one Oracle line retain separate source spans, program
+keys, costs, queries, and activation offers. Each descriptor uses its line's
+legacy `abN` identity plus a bounded `:typecycling-instance:N` suffix; ordinary
+single-ability descriptors retain their existing identity and codec. A malformed
+sibling prevents exact admission of the line. Dual-type queries, variable, nonmana,
 granted, and ability-presence queries such as Affinitycycling remain
 fail-closed. Current games cannot use the isolated Game Record v3 compatibility
 parser. Discard-self and exile-self activation costs use the same destination-

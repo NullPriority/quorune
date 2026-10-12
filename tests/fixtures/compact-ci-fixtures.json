@@ -86,6 +86,7 @@
     "tests/fixtures/optional-draw-discard-sequences.json",
     "tests/fixtures/optional-object-action-counters.json",
     "tests/fixtures/ordered-quantity-results.json",
+    "tests/fixtures/paired-typecycling-cards.json",
     "tests/fixtures/partial-copy-targets-cards.json",
     "tests/fixtures/permanent-additional-costs.json",
     "tests/fixtures/player-speed-cards.json",

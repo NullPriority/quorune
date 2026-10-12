@@ -2903,6 +2903,30 @@
     {
       "capability_id": "activation.typecycling.hand",
       "evidence_class": "interaction",
+      "test_id": "tests.test_typecycling.PairedTypecyclingRuntimeTests.test_original_jhessian_offers_distinct_searches_with_private_choices_and_replay",
+      "official_rule_ids": [
+        "601.2h",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.8a",
+        "701.23",
+        "702.29",
+        "702.29c",
+        "702.29d",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Jhessian Zombies receives actual whole-program admission and two independently offered hand-zone activations. Each selection pays fixed mana and source discard, rejects foreign-seat commands atomically, opens only its own Island or Swamp search privately, reveals the chosen result, round-trips the pending search, and replays from before activation."
+    },
+    {
+      "capability_id": "activation.typecycling.hand",
+      "evidence_class": "interaction",
       "test_id": "tests.test_typecycling.TypecyclingRuntimeTests.test_typecycling_discard_replacement_resumes_before_private_search",
       "official_rule_ids": ["601.2h", "602.1", "602.2", "602.2a", "602.2b", "701.8a", "701.23", "702.29", "702.29c", "702.29d", "903.9b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -2915,6 +2939,30 @@
       "official_rule_ids": ["601.2h", "602.1", "602.2", "602.2a", "602.2b", "701.8a", "701.23", "702.29", "702.29c", "702.29d", "903.9b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Search for a real Wizard commander, suspend before the requested hand move, privately apply its owner-selected command-zone replacement, then resume the exact Typecycling resolution."
+    },
+    {
+      "capability_id": "activation.typecycling.hand",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_typecycling.PairedTypecyclingRuntimeTests.test_original_jhessian_offers_distinct_searches_with_private_choices_and_replay",
+      "official_rule_ids": [
+        "601.2h",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.8a",
+        "701.23",
+        "702.29",
+        "702.29c",
+        "702.29d",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Jhessian Zombies receives actual whole-program admission and two independently offered hand-zone activations. Each selection pays fixed mana and source discard, rejects foreign-seat commands atomically, opens only its own Island or Swamp search privately, reveals the chosen result, round-trips the pending search, and replays from before activation."
     },
     {
       "capability_id": "activation.typecycling.hand",
@@ -2934,11 +2982,59 @@
     },
     {
       "capability_id": "activation.typecycling.hand",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_typecycling.TypecyclingModelTests.test_paired_typecycling_open_siblings_and_missing_producer_remain_residual",
+      "official_rule_ids": [
+        "601.2h",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.8a",
+        "701.23",
+        "702.29",
+        "702.29c",
+        "702.29d",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Variable, hybrid, open and excessive same-line siblings, plus omitted leaf compilation, remain residual instead of entering the printed-keyword fallback."
+    },
+    {
+      "capability_id": "activation.typecycling.hand",
       "evidence_class": "negative",
       "test_id": "tests.test_typecycling.TypecyclingCompilerTests.test_typecycling_variants_and_dependencies_fail_closed",
       "official_rule_ids": ["601.2h", "602.1", "602.2", "602.2a", "602.2b", "701.8a", "701.23", "702.29", "702.29c", "702.29d", "903.9b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Keep dual-type, arbitrary-type, ability-presence, variable, hybrid, and nonmana forms residual and block trust when either typed dependency is unavailable."
+    },
+    {
+      "capability_id": "activation.typecycling.hand",
+      "evidence_class": "negative",
+      "test_id": "tests.test_typecycling.TypecyclingModelTests.test_paired_typecycling_open_siblings_and_missing_producer_remain_residual",
+      "official_rule_ids": [
+        "601.2h",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.8a",
+        "701.23",
+        "702.29",
+        "702.29c",
+        "702.29d",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Variable, hybrid, open and excessive same-line siblings, plus omitted leaf compilation, remain residual instead of entering the printed-keyword fallback."
     },
     {
       "capability_id": "activation.typecycling.hand",
@@ -2951,10 +3047,58 @@
     {
       "capability_id": "activation.typecycling.hand",
       "evidence_class": "positive",
+      "test_id": "tests.test_typecycling.PairedTypecyclingRuntimeTests.test_original_jhessian_offers_distinct_searches_with_private_choices_and_replay",
+      "official_rule_ids": [
+        "601.2h",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.8a",
+        "701.23",
+        "702.29",
+        "702.29c",
+        "702.29d",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Jhessian Zombies receives actual whole-program admission and two independently offered hand-zone activations. Each selection pays fixed mana and source discard, rejects foreign-seat commands atomically, opens only its own Island or Swamp search privately, reveals the chosen result, round-trips the pending search, and replays from before activation."
+    },
+    {
+      "capability_id": "activation.typecycling.hand",
+      "evidence_class": "positive",
       "test_id": "tests.test_typecycling.TypecyclingCompilerTests.test_fixed_typecycling_categories_compile_source_spanned_searches",
       "official_rule_ids": ["601.2h", "602.1", "602.2", "602.2a", "602.2b", "701.8a", "701.23", "702.29", "702.29c", "702.29d", "903.9b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Lower every closed fixed Typecycling label to one source-spanned hand activation with exact mana, source-discard, selector, reveal, hand destination, and shuffle facts."
+    },
+    {
+      "capability_id": "activation.typecycling.hand",
+      "evidence_class": "positive",
+      "test_id": "tests.test_typecycling.TypecyclingModelTests.test_paired_printed_typecycling_has_independent_source_spanned_abilities",
+      "official_rule_ids": [
+        "601.2h",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.8a",
+        "701.23",
+        "702.29",
+        "702.29c",
+        "702.29d",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two complete typecycling siblings retain distinct Oracle spans, descriptor activation identities, program keys, and separate fixed search qualities."
     },
     {
       "capability_id": "activation.typecycling.hand",
@@ -2967,10 +3111,82 @@
     {
       "capability_id": "activation.typecycling.hand",
       "evidence_class": "privacy",
+      "test_id": "tests.test_typecycling.PairedTypecyclingRuntimeTests.test_original_jhessian_offers_distinct_searches_with_private_choices_and_replay",
+      "official_rule_ids": [
+        "601.2h",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.8a",
+        "701.23",
+        "702.29",
+        "702.29c",
+        "702.29d",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Jhessian Zombies receives actual whole-program admission and two independently offered hand-zone activations. Each selection pays fixed mana and source discard, rejects foreign-seat commands atomically, opens only its own Island or Swamp search privately, reveals the chosen result, round-trips the pending search, and replays from before activation."
+    },
+    {
+      "capability_id": "activation.typecycling.hand",
+      "evidence_class": "privacy",
       "test_id": "tests.test_typecycling.TypecyclingRuntimeTests.test_typecycling_search_is_private_revealed_and_replays_exactly",
       "official_rule_ids": ["601.2h", "602.1", "602.2", "602.2a", "602.2b", "701.8a", "701.23", "702.29", "702.29c", "702.29d", "903.9b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Hide every library candidate from other pilots, then reveal only the chosen matching result as required by Typecycling."
+    },
+    {
+      "capability_id": "activation.typecycling.hand",
+      "evidence_class": "property",
+      "test_id": "tests.test_typecycling.TypecyclingModelTests.test_paired_printed_typecycling_has_independent_source_spanned_abilities",
+      "official_rule_ids": [
+        "601.2h",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.8a",
+        "701.23",
+        "702.29",
+        "702.29c",
+        "702.29d",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two complete typecycling siblings retain distinct Oracle spans, descriptor activation identities, program keys, and separate fixed search qualities."
+    },
+    {
+      "capability_id": "activation.typecycling.hand",
+      "evidence_class": "replay",
+      "test_id": "tests.test_typecycling.PairedTypecyclingRuntimeTests.test_original_jhessian_offers_distinct_searches_with_private_choices_and_replay",
+      "official_rule_ids": [
+        "601.2h",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.8a",
+        "701.23",
+        "702.29",
+        "702.29c",
+        "702.29d",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Jhessian Zombies receives actual whole-program admission and two independently offered hand-zone activations. Each selection pays fixed mana and source discard, rejects foreign-seat commands atomically, opens only its own Island or Swamp search privately, reveals the chosen result, round-trips the pending search, and replays from before activation."
     },
     {
       "capability_id": "activation.typecycling.hand",
@@ -2987,6 +3203,30 @@
       "official_rule_ids": ["601.2h", "602.1", "602.2", "602.2a", "602.2b", "701.8a", "701.23", "702.29", "702.29c", "702.29d", "903.9b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the private search selection and resumed Commander destination replacement to the same authoritative hash."
+    },
+    {
+      "capability_id": "activation.typecycling.hand",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_typecycling.PairedTypecyclingRuntimeTests.test_original_jhessian_offers_distinct_searches_with_private_choices_and_replay",
+      "official_rule_ids": [
+        "601.2h",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.8a",
+        "701.23",
+        "702.29",
+        "702.29c",
+        "702.29d",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Jhessian Zombies receives actual whole-program admission and two independently offered hand-zone activations. Each selection pays fixed mana and source discard, rejects foreign-seat commands atomically, opens only its own Island or Swamp search privately, reveals the chosen result, round-trips the pending search, and replays from before activation."
     },
     {
       "capability_id": "activation.unearth.fixed_mana",

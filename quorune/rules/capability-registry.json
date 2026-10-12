@@ -360,24 +360,110 @@
     },
     {
       "id": "activation.typecycling.hand",
-      "version": 1,
-      "official_rules": ["601.2h", "602.1", "602.2", "602.2a", "602.2b", "701.8a", "701.23", "702.29", "702.29c", "702.29d", "903.9b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 2,
+      "official_rules": [
+        "601.2h",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.8a",
+        "701.23",
+        "702.29",
+        "702.29c",
+        "702.29d",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
-        "summary": "Activate one source-pinned printed Typecycling ability from its owner's hand by paying a fixed ordinary mana cost and replacement-aware source discard, then resolve one private restrictive library search to the hand, reveal the chosen card, and shuffle exactly once.",
-        "inputs": ["current owner-controlled card in hand", "source-pinned typed Typecycling descriptor", "fixed ordinary mana cost", "one closed Basic land, basic land subtype, artifact land, Wizard, or Sliver query", "current priority and source logical identity"],
-        "outputs": ["one payable hand-zone activation offer", "mana payment and replacement-aware source discard committed before stack placement", "one ordinary activated-ability stack object", "one actor-private fail-to-find library choice", "one revealed matching card requested to hand through the canonical zone owner", "one represented replacement-aware final destination", "one deterministic shuffle"],
-        "exclusions": ["Typecycling costs containing X, hybrid, Phyrexian, snow, or nonmana costs", "dual-type and arbitrary open typecycling queries", "Affinitycycling and other ability-presence queries until one shared ability applicability boundary exists", "granted Typecycling or Cycling", "Cycling triggers, modifiers, and prohibitions", "abilities activated from zones other than hand"]
+        "summary": "Activate a source-pinned printed Typecycling ability, including one of two through four independent same-line siblings, from its owner's hand by paying fixed ordinary mana and replacement-aware source discard, then resolve its own private restrictive library search, reveal the chosen card, and shuffle exactly once.",
+        "inputs": [
+          "current owner-controlled card in hand",
+          "source-pinned typed Typecycling descriptor with independent line/instance identity",
+          "fixed ordinary mana cost",
+          "one closed Basic land, basic land subtype, artifact land, Wizard, or Sliver query",
+          "current priority and source logical identity"
+        ],
+        "outputs": [
+          "one payable hand-zone activation offer",
+          "mana payment and replacement-aware source discard committed before stack placement",
+          "one ordinary activated-ability stack object",
+          "one actor-private fail-to-find library choice",
+          "one revealed matching card requested to hand through the canonical zone owner",
+          "one represented replacement-aware final destination",
+          "one deterministic shuffle"
+        ],
+        "exclusions": [
+          "Typecycling costs containing X, hybrid, Phyrexian, snow, or nonmana costs",
+          "dual-type queries and arbitrary open typecycling queries",
+          "Affinitycycling and other ability-presence queries until one shared ability applicability boundary exists",
+          "granted Typecycling or Cycling",
+          "Cycling triggers, modifiers, and prohibitions",
+          "abilities activated from zones other than hand"
+        ]
       },
-      "dependencies": ["activation.source_zone_change.fixed", "library.search.fixed_type_to_hand"],
-      "implementation_components": ["quorune.cycling_abilities.TypecyclingAbilitySpec", "quorune.compiler.cycling_nodes.typecycling_keyword_node", "quorune.semantic_runtime.cycling_abilities.TypecyclingAbilityHandler", "quorune.compiled_activated_abilities.compiled_activated_abilities", "quorune.rules.activation.query.activated_abilities", "quorune.rules.activation.commit.commit_activation", "quorune.mana_payment_continuations.execute_mana_choice_capable_priority_action", "quorune.selection.searching.HiddenSearchOwnerMixin"],
-      "positive_tests": ["test_fixed_typecycling_categories_compile_source_spanned_searches", "test_typecycling_descriptor_only_activates_from_hand", "test_typecycling_search_is_private_revealed_and_replays_exactly"],
-      "negative_tests": ["test_typecycling_variants_and_dependencies_fail_closed", "test_unpayable_typecycling_is_not_offered_and_is_atomic"],
-      "interaction_tests": ["test_typecycling_search_is_private_revealed_and_replays_exactly", "test_typecycling_discard_replacement_resumes_before_private_search", "test_typecycling_search_destination_replacement_resumes_atomically"],
-      "multiplayer_tests": ["test_typecycling_search_is_private_revealed_and_replays_exactly", "test_typecycling_discard_replacement_resumes_before_private_search"],
-      "privacy_tests": ["test_typecycling_search_is_private_revealed_and_replays_exactly", "test_typecycling_discard_replacement_resumes_before_private_search"],
-      "replay_tests": ["test_typecycling_search_is_private_revealed_and_replays_exactly", "test_typecycling_discard_replacement_resumes_before_private_search", "test_typecycling_search_destination_replacement_resumes_atomically"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "activation.source_zone_change.fixed",
+        "library.search.fixed_type_to_hand"
+      ],
+      "implementation_components": [
+        "quorune.cycling_abilities.TypecyclingAbilitySpec",
+        "quorune.compiler.cycling_nodes.typecycling_keyword_node",
+        "quorune.semantic_runtime.cycling_abilities.TypecyclingAbilityHandler",
+        "quorune.compiled_activated_abilities.compiled_activated_abilities",
+        "quorune.rules.activation.query.activated_abilities",
+        "quorune.rules.activation.commit.commit_activation",
+        "quorune.mana_payment_continuations.execute_mana_choice_capable_priority_action",
+        "quorune.selection.searching.HiddenSearchOwnerMixin",
+        "quorune.compiler.multi_keyword_nodes.multi_keyword_nodes",
+        "quorune.compiler.generated_program_identity.generated_ability_id"
+      ],
+      "positive_tests": [
+        "test_fixed_typecycling_categories_compile_source_spanned_searches",
+        "test_typecycling_descriptor_only_activates_from_hand",
+        "test_typecycling_search_is_private_revealed_and_replays_exactly",
+        "test_paired_printed_typecycling_has_independent_source_spanned_abilities",
+        "test_original_jhessian_offers_distinct_searches_with_private_choices_and_replay"
+      ],
+      "negative_tests": [
+        "test_typecycling_variants_and_dependencies_fail_closed",
+        "test_unpayable_typecycling_is_not_offered_and_is_atomic",
+        "test_paired_typecycling_open_siblings_and_missing_producer_remain_residual"
+      ],
+      "interaction_tests": [
+        "test_typecycling_search_is_private_revealed_and_replays_exactly",
+        "test_typecycling_discard_replacement_resumes_before_private_search",
+        "test_typecycling_search_destination_replacement_resumes_atomically",
+        "test_original_jhessian_offers_distinct_searches_with_private_choices_and_replay"
+      ],
+      "multiplayer_tests": [
+        "test_typecycling_search_is_private_revealed_and_replays_exactly",
+        "test_typecycling_discard_replacement_resumes_before_private_search",
+        "test_original_jhessian_offers_distinct_searches_with_private_choices_and_replay"
+      ],
+      "privacy_tests": [
+        "test_typecycling_search_is_private_revealed_and_replays_exactly",
+        "test_typecycling_discard_replacement_resumes_before_private_search",
+        "test_original_jhessian_offers_distinct_searches_with_private_choices_and_replay"
+      ],
+      "replay_tests": [
+        "test_typecycling_search_is_private_revealed_and_replays_exactly",
+        "test_typecycling_discard_replacement_resumes_before_private_search",
+        "test_typecycling_search_destination_replacement_resumes_atomically",
+        "test_original_jhessian_offers_distinct_searches_with_private_choices_and_replay"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "The focused compiler dependency test blocks either the source-zone payment owner or the private typed search-to-hand owner and proves the Typecycling node remains inexact rather than falling back to reminder text or a generic activation.",
       "implementation_mutation_status": "killed",
