@@ -2,7 +2,7 @@
 title: "Complex card composition benchmark"
 status: "generated"
 authoritative_source: "coverage/complex-card-composition.json"
-verified: "b2c3417d0f502ac022df845ae63704827fbfd848b6f41bdd6312fc7d87b1c102"
+verified: "142bd7acb663feb6974074b62147f98829f644a65953bfd7375c9994f90e3e01"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -47,6 +47,7 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Gossip's Talent | 197 | 31 | 6 | 8 | 2 | 11 | `blocked` |
 | Garruk Relentless // Garruk, the Veil-Cursed | 195 | 25 | 6 | 6 | 15 | 6 | `blocked` |
 | Invasion of Innistrad // Deluge of the Dead | 194 | 23 | 6 | 5 | 9 | 16 | `blocked` |
+| Hunter's Talent | 193 | 30 | 7 | 8 | 2 | 8 | `blocked` |
 | The Legend of Kyoshi // Avatar Kyoshi | 193 | 18 | 7 | 6 | 9 | 14 | `blocked` |
 | Devoted Grafkeeper // Departed Soulkeeper | 192 | 31 | 7 | 6 | 4 | 7 | `blocked` |
 | Kytheon, Hero of Akros // Gideon, Battle-Forged | 192 | 21 | 5 | 5 | 11 | 18 | `blocked` |
@@ -62,5 +63,4 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Befriending the Moths // Imperial Moth | 184 | 22 | 8 | 5 | 6 | 6 | `blocked` |
 | Flamewar, Brash Veteran // Flamewar, Streetwise Operative | 184 | 22 | 6 | 6 | 9 | 15 | `blocked` |
 | Ticket Booth // Tunnel of Hate | 184 | 19 | 5 | 4 | 3 | 32 | `blocked` |
-| Boseiju Reaches Skyward // Branch of Boseiju | 183 | 22 | 7 | 6 | 6 | 6 | `blocked` |
 | Animate Dead | 110 | 13 | 4 | 3 | 2 | 5 | `blocked` |
