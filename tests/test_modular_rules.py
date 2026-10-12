@@ -63,6 +63,11 @@ def focused_card_database(directory: str) -> CardDatabase:
 
 
 class ModularCompilerTests(unittest.TestCase):
+    def test_modular_entry_declares_registered_counter_replacement_dependency(self):
+        ir=compile_oracle_card(replace(self.db.lookup('Arcbound Worker'),oracle_text='Modular 2'),
+            capability_registry=load_default_capability_registry(),capability_profile='commander_review')
+        entry=next(node for node in ir.faces[0].nodes if node.template_id=='modular-fixed-entry-counter-v1')
+        self.assertIn('counter.placement.quantity_replacement',entry.capability_dependencies)
     @classmethod
     def setUpClass(cls):
         cls.temporary = tempfile.TemporaryDirectory()

@@ -25142,6 +25142,35 @@
     {
       "capability_id": "counter.producer.modular",
       "evidence_class": "positive",
+      "test_id": "tests.test_modular_rules.ModularCompilerTests.test_modular_entry_declares_registered_counter_replacement_dependency",
+      "official_rule_ids": [
+        "115.1d",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "400.7",
+        "603.3",
+        "603.3d",
+        "603.6c",
+        "603.10a",
+        "608.2b",
+        "614.12",
+        "614.16",
+        "616.1",
+        "702.43",
+        "702.43a",
+        "702.43b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Modular entry lowering declares the counter quantity-replacement dependency required by its registered self-entry component; existing dependency omissions remain fail closed, and original Arcbound Reclaimer gains strict whole-program runtime closure."
+    },
+    {
+      "capability_id": "counter.producer.modular",
+      "evidence_class": "positive",
       "test_id": "tests.test_modular_rules.ModularCompilerTests.test_modular_model_compiler_and_multiple_instances_are_closed",
       "official_rule_ids": ["115.1d", "122.1", "122.1a", "122.6", "400.7", "603.3", "603.3d", "603.6c", "603.10a", "608.2b", "614.12", "614.16", "616.1", "702.43", "702.43a", "702.43b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],

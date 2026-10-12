@@ -416,6 +416,10 @@ Chosen-color or chosen-type wrappers validate their nested descriptor against
 the existing chosen-characteristic owner before exact lowering. A source-counter
 anthem inside that unrepresented wrapper remains residual.
 
+Modular entry descriptors declare the same quantity-replacement capability
+required by their registered self-entry counter component. Missing replacement
+authority therefore prevents exact keyword admission before runtime binding.
+
 `compiler/fixed_target_effect_sequences.py` also owns one fixed source-
 characteristic result shared by activated and normalized triggered contexts.
 It accepts a fixed power/toughness modifier plus supported keywords, one or

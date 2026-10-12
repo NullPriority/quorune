@@ -4605,24 +4605,101 @@
     },
     {
       "id": "counter.producer.modular",
-      "version": 1,
-      "official_rules": ["115.1d", "122.1", "122.1a", "122.6", "400.7", "603.3", "603.3d", "603.6c", "603.10a", "608.2b", "614.12", "614.16", "616.1", "702.43", "702.43a", "702.43b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 2,
+      "official_rules": [
+        "115.1d",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "400.7",
+        "603.3",
+        "603.3d",
+        "603.6c",
+        "603.10a",
+        "608.2b",
+        "614.12",
+        "614.16",
+        "616.1",
+        "702.43",
+        "702.43a",
+        "702.43b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Compile each positive integral printed Modular instance as one replacement-aware self-entry counter ability and one independent battlefield-to-graveyard trigger that may place its last-known +1/+1 counter count on a targeted artifact creature.",
-        "inputs": ["one printed Modular N instance", "positive integral N", "source physical identity and departing logical incarnation", "complete public last-known counter map", "one legal artifact creature target", "frozen trigger controller"],
-        "outputs": ["replacement-aware +1/+1 entry counters", "one independent departure trigger per Modular instance", "mandatory target selection before priority", "optional replacement-aware LKI-sized counter placement", "exact replay"],
-        "exclusions": ["Modularâ€”Sunburst", "granted or copied Modular outside trusted typed ability propagation", "Oracle-equivalent nonkeyword wording", "trigger-doubling policies beyond ordinary represented trigger placement", "unrepresented target protection or counter replacement families"]
+        "inputs": [
+          "one printed Modular N instance",
+          "positive integral N",
+          "source physical identity and departing logical incarnation",
+          "complete public last-known counter map",
+          "one legal artifact creature target",
+          "frozen trigger controller"
+        ],
+        "outputs": [
+          "replacement-aware +1/+1 entry counters",
+          "one independent departure trigger per Modular instance",
+          "mandatory target selection before priority",
+          "optional replacement-aware LKI-sized counter placement",
+          "exact replay"
+        ],
+        "exclusions": [
+          "Modular\u00e2\u20ac\u201dSunburst",
+          "granted or copied Modular outside trusted typed ability propagation",
+          "Oracle-equivalent nonkeyword wording",
+          "trigger-doubling policies beyond ordinary represented trigger placement",
+          "unrepresented target protection or counter replacement families"
+        ]
       },
-      "dependencies": ["counter.placement.quantity_replacement", "target.permanent.characteristic_predicate", "target.revalidate_resolution", "trigger.event.normalized_zone_change", "trigger.placement.apnap"],
-      "implementation_components": ["quorune.modular.ModularSpec", "quorune.modular.modular_counter_snapshot", "quorune.compiler.keyword_nodes.modular_keyword_nodes", "quorune.semantic_runtime.self_entry_counters.SelfEntryCounterHandler", "quorune.trigger_discovery.dispatch_semantic_event", "quorune.semantic_choices.modular.ModularCounterTransferHandler", "quorune.counter_placement.place_counters_on_refs"],
-      "positive_tests": ["test_modular_model_compiler_and_multiple_instances_are_closed", "test_modular_entry_and_departure_transfer_use_canonical_counter_paths"],
-      "negative_tests": ["test_modular_sunburst_and_malformed_values_fail_closed", "test_modular_target_and_lki_identity_are_strict"],
-      "interaction_tests": ["test_modular_entry_and_departure_transfer_use_canonical_counter_paths", "test_modular_source_departure_control_and_target_revalidation"],
-      "multiplayer_tests": ["test_four_player_modular_choice_is_controller_scoped_public_and_replays"],
-      "privacy_tests": ["test_four_player_modular_choice_is_controller_scoped_public_and_replays"],
-      "replay_tests": ["test_four_player_modular_choice_is_controller_scoped_public_and_replays"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "counter.placement.quantity_replacement",
+        "target.permanent.characteristic_predicate",
+        "target.revalidate_resolution",
+        "trigger.event.normalized_zone_change",
+        "trigger.placement.apnap"
+      ],
+      "implementation_components": [
+        "quorune.modular.ModularSpec",
+        "quorune.modular.modular_counter_snapshot",
+        "quorune.compiler.keyword_nodes.modular_keyword_nodes",
+        "quorune.semantic_runtime.self_entry_counters.SelfEntryCounterHandler",
+        "quorune.trigger_discovery.dispatch_semantic_event",
+        "quorune.semantic_choices.modular.ModularCounterTransferHandler",
+        "quorune.counter_placement.place_counters_on_refs"
+      ],
+      "positive_tests": [
+        "test_modular_model_compiler_and_multiple_instances_are_closed",
+        "test_modular_entry_and_departure_transfer_use_canonical_counter_paths",
+        "test_modular_entry_declares_registered_counter_replacement_dependency"
+      ],
+      "negative_tests": [
+        "test_modular_sunburst_and_malformed_values_fail_closed",
+        "test_modular_target_and_lki_identity_are_strict"
+      ],
+      "interaction_tests": [
+        "test_modular_entry_and_departure_transfer_use_canonical_counter_paths",
+        "test_modular_source_departure_control_and_target_revalidation"
+      ],
+      "multiplayer_tests": [
+        "test_four_player_modular_choice_is_controller_scoped_public_and_replays"
+      ],
+      "privacy_tests": [
+        "test_four_player_modular_choice_is_controller_scoped_public_and_replays"
+      ],
+      "replay_tests": [
+        "test_four_player_modular_choice_is_controller_scoped_public_and_replays"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Modular CardPrograms remain partial whenever entry or result counter replacement, normalized zone triggers, APNAP placement, typed artifact-creature targeting, or resolution target revalidation is unavailable.",
       "implementation_mutation_status": "killed",
