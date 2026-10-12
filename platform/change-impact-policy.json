@@ -3316,6 +3316,23 @@
         "test_game_record_v3",
         "test_fixed_affected_player_discards"
       ]
+    },
+    {
+      "id": "additional-draw-step-contract",
+      "patterns": [
+        "quorune/compiler/draw_templates.py",
+        "quorune/compiler/fixed_counter_trigger_nodes.py",
+        "quorune/compiler/scheduled_player_triggers.py",
+        "tests/fixtures/additional-draw-step-cards.json"
+      ],
+      "test_modules": [
+        "test_draw_result_ordering",
+        "test_scheduled_player_triggers",
+        "test_draw_step_rules",
+        "test_fixed_counter_event_triggers",
+        "test_card_program_trust",
+        "test_fixed_public_state_characteristics"
+      ]
     }
   ],
   "symbol_rules": [

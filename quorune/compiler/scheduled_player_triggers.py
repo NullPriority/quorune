@@ -14,21 +14,25 @@ from .affected_player_discard_templates import (
 
 SCHEDULED_PLAYER_CAPABILITY = 'trigger.event.scheduled_player_result'
 SCHEDULED_PLAYER_MECHANIC = 'scheduled-player-event-result'
-SCHEDULED_PLAYER_VARIANTS = frozenset({'each_player_upkeep','each_opponent_upkeep','enchanted_object_controller_upkeep'})
+SCHEDULED_PLAYER_VARIANTS = frozenset({'each_player_upkeep','each_opponent_upkeep','enchanted_object_controller_upkeep',
+                                     'each_player_draw','each_opponent_draw','each_other_player_draw'})
 
 
 def scheduled_player_binding_spec(text, *, card_name=None):
-    match=re.fullmatch(r"At the beginning of each (?P<who>player|opponent)['’]s upkeep, (?P<body>.+)",text,re.I)
+    match=re.fullmatch(r"At the beginning of each (?P<who>player|opponent|other player)['’]s (?P<step>upkeep|draw step), (?P<body>.+)",text,re.I)
     attached=re.fullmatch(r"At the beginning of the upkeep of enchanted (?P<type>creature|permanent|artifact|enchantment|land)['’]s controller, (?P<body>.+)",text,re.I)
     if match is None and attached is None:return None
-    conditions=[{'field':'step','op':'eq','value':'upkeep'}]
+    step='draw' if match is not None and match['step'].casefold()=='draw step' else 'upkeep'
+    conditions=[{'field':'step','op':'eq','value':step}]
     if attached is not None:
         conditions.append({'field':'source_attachment_controller','op':'eq','value':'$context.player','required_type':attached['type'].casefold()})
         return FixedPublicEventBindingSpec(event='step.begin',variant='enchanted_object_controller_upkeep',body=attached['body'],
             template_id='fixed-counter-step-trigger-v1',mechanic='cr-603-handling-triggered-abilities',condition={'all':conditions},
             capabilities=(SCHEDULED_PLAYER_CAPABILITY,'attachment.reference.current_or_lki'))
-    if match['who'].casefold()=='opponent':conditions.append({'field':'player','op':'ne','value':'$source.controller'})
-    return FixedPublicEventBindingSpec(event='step.begin',variant='each_'+match['who'].casefold()+'_upkeep',body=match['body'],
+    who=match['who'].casefold().replace(' ','_')
+    if who=='other_player' and step!='draw':return None
+    if who in {'opponent','other_player'}:conditions.append({'field':'player','op':'ne','value':'$source.controller'})
+    return FixedPublicEventBindingSpec(event='step.begin',variant='each_'+who+'_'+step,body=match['body'],
         template_id='fixed-counter-step-trigger-v1',mechanic='cr-603-handling-triggered-abilities',
         condition={'all':conditions},capabilities=(SCHEDULED_PLAYER_CAPABILITY,))
 

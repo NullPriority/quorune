@@ -2371,24 +2371,168 @@
     },
     {
       "id": "zone.draw.library_to_hand",
-      "version": 7,
-      "official_rules": ["121.1", "121.2", "121.2a", "121.2b", "121.2c", "121.3", "121.3a", "121.4", "121.5", "121.6", "121.6a", "121.6b", "702.52a", "702.52b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 8,
+      "official_rules": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Lower closed fixed-count spell, trigger, and activated draw producers into the canonical draw boundary; resolve represented draw-count replacements before individual draws; iteratively drain legally large instructions; re-evaluate prohibitions before every draw; and commit each allowed draw through immutable replacement events and canonical draw state.",
-        "inputs": ["strict capability-shaped fixed draw producer", "prospective drawer and chooser", "nonnegative mandatory draw count", "positive optional or cost draw count", "draw reason and visibility", "trusted typed instruction and individual-draw replacements", "live battlefield draw restrictions", "canonical affected-player selections"],
-        "outputs": ["immutable draw instruction and event results", "iterative remaining-draw continuation", "replacement and prohibition journal facts", "drawn object ids and private identity event", "partial mandatory multi-draw result", "optional-draw legality", "draw-cost feasibility", "empty-library draw attempts", "represented Dredge mill and graveyard-to-hand result"],
-        "exclusions": ["shared-team turn ordering", "draw effects with unresolved dynamic counts", "conditional or first-draw count multipliers", "uncompiled draw replacement wording other than represented Dredge and unconditional controller doubling", "effects that move a library card to hand without drawing it", "complete skip-draw and draw-step replacement grammar", "casting-process face-down draws", "no current Oracle producer pays a draw-as-cost through the exposed feasibility boundary"]
+        "inputs": [
+          "strict capability-shaped fixed draw producer, including complete fixed additional-card wording",
+          "prospective drawer and chooser",
+          "nonnegative mandatory draw count",
+          "positive optional or cost draw count",
+          "draw reason and visibility",
+          "trusted typed instruction and individual-draw replacements",
+          "live battlefield draw restrictions",
+          "canonical affected-player selections"
+        ],
+        "outputs": [
+          "immutable draw instruction and event results",
+          "iterative remaining-draw continuation",
+          "replacement and prohibition journal facts",
+          "drawn object ids and private identity event",
+          "partial mandatory multi-draw result",
+          "optional-draw legality",
+          "draw-cost feasibility",
+          "empty-library draw attempts",
+          "represented Dredge mill and graveyard-to-hand result"
+        ],
+        "exclusions": [
+          "shared-team turn ordering",
+          "draw effects with unresolved dynamic counts",
+          "conditional or first-draw count multipliers",
+          "uncompiled draw replacement wording other than represented Dredge and unconditional controller doubling",
+          "effects that move a library card to hand without drawing it",
+          "complete skip-draw and draw-step replacement grammar",
+          "casting-process face-down draws",
+          "no current Oracle producer pays a draw-as-cost through the exposed feasibility boundary"
+        ]
       },
       "dependencies": [],
-      "implementation_components": ["quorune.rules.node_capability_shapes.fixed_draw_node_capabilities", "quorune.compiler.activated_mana_nodes.activated_oracle_node", "quorune.compiler.program_generation.register_generated_programs", "quorune.standard_token_abilities.standard_token_characteristics", "quorune.compiled_activated_abilities.compiled_activated_abilities", "quorune.rules.activation.resolution.builtin_activation_resolution", "quorune.drawing.model.prepare_draw_instruction", "quorune.drawing.model.prepare_draw_event", "quorune.drawing.restrictions.DrawPermission", "quorune.drawing.transaction.commit_prepared_draw", "quorune.drawing.coordinator.begin_draw_sequence", "quorune.drawing.coordinator.begin_draw_batch", "quorune.semantic_runtime.draw_replacements.DrawInstructionMultiplierHandler", "quorune.semantic_runtime.draw_replacements.DredgeReplacementHandler", "quorune.semantic_runtime.draw_restrictions.DrawMaximumHandler", "quorune.semantic_choices.optional_draw.OptionalDrawHandler", "quorune.semantic_choices.conditional_draw.OpponentCastColorDrawHandler"],
-      "positive_tests": ["test_ordinary_draw_commits_zone_history_and_events_once", "test_dredge_mills_top_cards_and_returns_the_pinned_source", "test_draw_handler_lowers_typed_intent_through_read_only_context", "test_mandatory_multi_draw_partially_occurs_under_maximum_one", "test_two_draw_doublers_modify_instruction_before_individual_draws", "test_optional_empty_library_draw_remains_legal_without_a_prohibition", "test_two_thousand_replacement_free_draws_do_not_recurse", "test_two_thousand_prevented_draws_do_not_recurse", "test_ordinary_activated_draw_is_exact_and_source_spanned", "test_compiled_clue_activation_draws_privately_and_replays_exactly"],
-      "negative_tests": ["test_changed_library_or_source_fails_before_draw_mutation", "test_prevented_empty_draw_does_not_mark_empty_library_loss", "test_registered_node_validation_fails_before_mutation", "test_draw_prohibition_is_checked_before_dredge_replacements", "test_max_one_removes_optional_multi_draw_before_task_issue", "test_draw_past_library_records_each_empty_attempt", "test_fixed_draw_shapes_are_strict_and_capability_scoped"],
-      "interaction_tests": ["test_trusted_draw_replacement_finishes_before_priority", "test_draw_prevention_applies_even_to_an_empty_library", "test_semantic_choice_preparation_draw_uses_replacement_coordinator", "test_veil_conditional_draw_pauses_for_dredge_before_permissions", "test_dredge_does_not_consume_maximum_one_draw_allowance", "test_restriction_rechecks_control_phasing_and_source_zone", "test_large_sequence_suspends_and_resumes_from_remaining_count", "test_large_zero_count_batch_is_trampolined", "test_draw_replacement_completes_after_cost_and_before_resolution", "test_target_player_draw_validates_target_resolves_privately_and_replays", "test_any_target_damage_then_draw_revalidates_and_draws_privately", "test_aura_equipment_anthem_temporary_effect_and_draw_compose", "test_furnace_skullbomb_target_predicate_and_draw_compose", "test_compiled_clue_activation_draws_privately_and_replays_exactly", "test_shroud_and_enchantment_cast_draw_compose"],
-      "multiplayer_tests": ["test_draw_each_player_uses_apnap_order_and_exact_engine_path", "test_draw_each_player_pauses_and_resumes_in_apnap_order_for_dredge", "test_four_player_chooser_uses_prospective_drawer_legality", "test_each_player_activation_draws_in_four_player_game"],
-      "privacy_tests": ["test_draw_replacement_choice_is_visible_only_to_affected_seat", "test_optional_draw_choice_is_seat_scoped_and_replays_exactly", "test_resumed_multi_draw_sequence_is_private_and_replays_exactly", "test_draw_replacement_completes_after_cost_and_before_resolution", "test_compiled_clue_activation_draws_privately_and_replays_exactly"],
-      "replay_tests": ["test_first_turn_profile_modifier_and_exact_replay", "test_migrated_semantic_effect_replays_exactly", "test_optional_draw_choice_is_seat_scoped_and_replays_exactly", "test_generic_draw_prohibition_replays_exactly", "test_resumed_multi_draw_sequence_is_private_and_replays_exactly", "test_sacrifice_draw_activation_is_offered_resolves_and_replays", "test_each_player_activation_draws_in_four_player_game", "test_compiled_clue_activation_draws_privately_and_replays_exactly"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "implementation_components": [
+        "quorune.rules.node_capability_shapes.fixed_draw_node_capabilities",
+        "quorune.compiler.activated_mana_nodes.activated_oracle_node",
+        "quorune.compiler.program_generation.register_generated_programs",
+        "quorune.standard_token_abilities.standard_token_characteristics",
+        "quorune.compiled_activated_abilities.compiled_activated_abilities",
+        "quorune.rules.activation.resolution.builtin_activation_resolution",
+        "quorune.drawing.model.prepare_draw_instruction",
+        "quorune.drawing.model.prepare_draw_event",
+        "quorune.drawing.restrictions.DrawPermission",
+        "quorune.drawing.transaction.commit_prepared_draw",
+        "quorune.drawing.coordinator.begin_draw_sequence",
+        "quorune.drawing.coordinator.begin_draw_batch",
+        "quorune.semantic_runtime.draw_replacements.DrawInstructionMultiplierHandler",
+        "quorune.semantic_runtime.draw_replacements.DredgeReplacementHandler",
+        "quorune.semantic_runtime.draw_restrictions.DrawMaximumHandler",
+        "quorune.semantic_choices.optional_draw.OptionalDrawHandler",
+        "quorune.semantic_choices.conditional_draw.OpponentCastColorDrawHandler"
+      ],
+      "positive_tests": [
+        "test_ordinary_draw_commits_zone_history_and_events_once",
+        "test_dredge_mills_top_cards_and_returns_the_pinned_source",
+        "test_draw_handler_lowers_typed_intent_through_read_only_context",
+        "test_mandatory_multi_draw_partially_occurs_under_maximum_one",
+        "test_two_draw_doublers_modify_instruction_before_individual_draws",
+        "test_optional_empty_library_draw_remains_legal_without_a_prohibition",
+        "test_two_thousand_replacement_free_draws_do_not_recurse",
+        "test_two_thousand_prevented_draws_do_not_recurse",
+        "test_ordinary_activated_draw_is_exact_and_source_spanned",
+        "test_compiled_clue_activation_draws_privately_and_replays_exactly",
+        "test_draw_step_schedules_keep_context_and_controller_recipients_distinct",
+        "test_fixed_additional_draw_wording_preserves_one_instruction_count",
+        "test_controller_draw_step_additional_draw_retains_event_and_recipient",
+        "test_original_kami_draws_for_active_opponent_after_ordinary_draw",
+        "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
+        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step"
+      ],
+      "negative_tests": [
+        "test_changed_library_or_source_fails_before_draw_mutation",
+        "test_prevented_empty_draw_does_not_mark_empty_library_loss",
+        "test_registered_node_validation_fails_before_mutation",
+        "test_draw_prohibition_is_checked_before_dredge_replacements",
+        "test_max_one_removes_optional_multi_draw_before_task_issue",
+        "test_draw_past_library_records_each_empty_attempt",
+        "test_fixed_draw_shapes_are_strict_and_capability_scoped",
+        "test_additional_draw_step_missing_authority_stays_residual"
+      ],
+      "interaction_tests": [
+        "test_trusted_draw_replacement_finishes_before_priority",
+        "test_draw_prevention_applies_even_to_an_empty_library",
+        "test_semantic_choice_preparation_draw_uses_replacement_coordinator",
+        "test_veil_conditional_draw_pauses_for_dredge_before_permissions",
+        "test_dredge_does_not_consume_maximum_one_draw_allowance",
+        "test_restriction_rechecks_control_phasing_and_source_zone",
+        "test_large_sequence_suspends_and_resumes_from_remaining_count",
+        "test_large_zero_count_batch_is_trampolined",
+        "test_draw_replacement_completes_after_cost_and_before_resolution",
+        "test_target_player_draw_validates_target_resolves_privately_and_replays",
+        "test_any_target_damage_then_draw_revalidates_and_draws_privately",
+        "test_aura_equipment_anthem_temporary_effect_and_draw_compose",
+        "test_furnace_skullbomb_target_predicate_and_draw_compose",
+        "test_compiled_clue_activation_draws_privately_and_replays_exactly",
+        "test_shroud_and_enchantment_cast_draw_compose",
+        "test_original_kami_draws_for_active_opponent_after_ordinary_draw",
+        "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
+        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step"
+      ],
+      "multiplayer_tests": [
+        "test_draw_each_player_uses_apnap_order_and_exact_engine_path",
+        "test_draw_each_player_pauses_and_resumes_in_apnap_order_for_dredge",
+        "test_four_player_chooser_uses_prospective_drawer_legality",
+        "test_each_player_activation_draws_in_four_player_game",
+        "test_original_kami_draws_for_active_opponent_after_ordinary_draw",
+        "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
+        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step"
+      ],
+      "privacy_tests": [
+        "test_draw_replacement_choice_is_visible_only_to_affected_seat",
+        "test_optional_draw_choice_is_seat_scoped_and_replays_exactly",
+        "test_resumed_multi_draw_sequence_is_private_and_replays_exactly",
+        "test_draw_replacement_completes_after_cost_and_before_resolution",
+        "test_compiled_clue_activation_draws_privately_and_replays_exactly",
+        "test_original_kami_draws_for_active_opponent_after_ordinary_draw"
+      ],
+      "replay_tests": [
+        "test_first_turn_profile_modifier_and_exact_replay",
+        "test_migrated_semantic_effect_replays_exactly",
+        "test_optional_draw_choice_is_seat_scoped_and_replays_exactly",
+        "test_generic_draw_prohibition_replays_exactly",
+        "test_resumed_multi_draw_sequence_is_private_and_replays_exactly",
+        "test_sacrifice_draw_activation_is_offered_resolves_and_replays",
+        "test_each_player_activation_draws_in_four_player_game",
+        "test_compiled_clue_activation_draws_privately_and_replays_exactly",
+        "test_original_kami_draws_for_active_opponent_after_ordinary_draw",
+        "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
+        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "not_applicable",
       "dependency_fail_closed_rationale": "The bounded draw owner uses the shared replacement substrate directly and has no optional capability dependency.",
       "implementation_mutation_status": "killed",
@@ -8855,7 +8999,7 @@
     },
     {
       "id": "trigger.effect.fixed_event",
-      "version": 14,
+      "version": 15,
       "official_rules": [
         "115.1",
         "120.4",
@@ -8878,7 +9022,7 @@
       "applicability": {
         "summary": "Compose one source-spanned closed normalized-event binding with one independently reviewed typed effect body, including immutable spell-cast facts, exact Heroic, Magecraft, Constellation, Battalion, attachment-relative, bounded public attack, discard, sacrifice, fixed same-zone two-event subscriptions, one-or-more damage or zone batching, public zone, damage, draw, block, Cycling, step, face-up, fixed source-self combat-growth occurrences, and closed public-state intervening-if conditions, then use ordinary APNAP placement, current layer-6 ability applicability, target selection, optional-choice, and body-specific resolution owners. Unambiguous source-self result pronouns lower through the same exact fixed stat, damage and optional counter body owners without rebinding newly created objects.",
         "inputs": [
-          "one represented beginning-of-step, typed spell-cast fact, exact ability-word, attachment-relative, public action, public zone, damage, draw, block, Cycling, face-up, fixed same-zone multi-event, or source-self binding",
+          "one represented beginning-of-step, typed spell-cast fact, exact ability-word, attachment-relative, public action, public zone, damage, draw, block, Cycling, face-up, fixed same-zone multi-event, or source-self binding, including controller-only draw-step schedules",
           "one mandatory or optional exact typed effect body",
           "current or last-known battlefield, stack, or Cycling hand source",
           "immutable normalized event facts, per-subscription conditions, and exact one-or-more aggregation when declared",
@@ -8947,7 +9091,13 @@
         "test_fixed_face_down_methods_compile_and_fail_closed",
         "test_source_combat_growth_triggers_compile_exactly_and_fail_closed",
         "test_four_strict_ability_word_bindings_compile_through_shared_owner",
-        "test_exact_self_event_body_keeps_original_span_and_source_reference"
+        "test_exact_self_event_body_keeps_original_span_and_source_reference",
+        "test_draw_step_schedules_keep_context_and_controller_recipients_distinct",
+        "test_fixed_additional_draw_wording_preserves_one_instruction_count",
+        "test_controller_draw_step_additional_draw_retains_event_and_recipient",
+        "test_original_kami_draws_for_active_opponent_after_ordinary_draw",
+        "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
+        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step"
       ],
       "negative_tests": [
         "test_fixed_multi_event_trigger_near_misses_remain_material",
@@ -8964,7 +9114,8 @@
         "test_public_action_event_capability_fails_closed",
         "test_public_event_binding_closure_dependencies_and_parser_mutant_fail_closed",
         "test_adjacent_event_and_body_grammar_remain_material",
-        "test_new_token_or_target_pronoun_is_not_rebound_to_source"
+        "test_new_token_or_target_pronoun_is_not_rebound_to_source",
+        "test_additional_draw_step_missing_authority_stays_residual"
       ],
       "interaction_tests": [
         "test_fixed_multi_event_source_triggers_share_events_and_replay",
@@ -9001,7 +9152,10 @@
         "test_constellation_distinguishes_control_and_includes_source_entry",
         "test_battalion_uses_sealed_three_attacker_transition",
         "test_actual_scorpion_death_deals_damage_and_gains_life_for_trigger_controller",
-        "test_blinked_firstblade_does_not_receive_old_source_trigger_twice"
+        "test_blinked_firstblade_does_not_receive_old_source_trigger_twice",
+        "test_original_kami_draws_for_active_opponent_after_ordinary_draw",
+        "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
+        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step"
       ],
       "multiplayer_tests": [
         "test_fixed_multi_event_departure_uses_lki_and_apnap",
@@ -9020,7 +9174,10 @@
         "test_cycle_entry_schedule_and_block_bindings_execute",
         "test_source_combat_growth_shares_apnap_and_pins_source_incarnation",
         "test_targeted_cast_projection_save_load_and_exact_replay",
-        "test_actual_scorpion_death_deals_damage_and_gains_life_for_trigger_controller"
+        "test_actual_scorpion_death_deals_damage_and_gains_life_for_trigger_controller",
+        "test_original_kami_draws_for_active_opponent_after_ordinary_draw",
+        "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
+        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step"
       ],
       "privacy_tests": [
         "test_fixed_multi_event_source_triggers_share_events_and_replay",
@@ -9034,7 +9191,8 @@
         "test_public_action_occurrences_replay_exactly",
         "test_attachment_attack_binding_uses_current_relation_and_ability",
         "test_source_combat_growth_attack_uses_current_ability_and_replays",
-        "test_targeted_cast_projection_save_load_and_exact_replay"
+        "test_targeted_cast_projection_save_load_and_exact_replay",
+        "test_original_kami_draws_for_active_opponent_after_ordinary_draw"
       ],
       "replay_tests": [
         "test_fixed_multi_event_source_triggers_share_events_and_replay",
@@ -9046,7 +9204,10 @@
         "test_attachment_attack_binding_uses_current_relation_and_ability",
         "test_source_combat_growth_attack_uses_current_ability_and_replays",
         "test_targeted_cast_projection_save_load_and_exact_replay",
-        "test_actual_veteran_tap_issues_optional_counter_and_replays"
+        "test_actual_veteran_tap_issues_optional_counter_and_replays",
+        "test_original_kami_draws_for_active_opponent_after_ordinary_draw",
+        "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
+        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step"
       ],
       "required_evidence": [
         "positive",
@@ -12775,13 +12936,14 @@
     },
     {
       "id": "trigger.event.scheduled_player_result",
-      "version": 3,
+      "version": 4,
       "official_rules": [
         "109.5",
         "503.1",
         "603.3a",
         "603.3b",
-        "608.2c"
+        "608.2c",
+        "504.1"
       ],
       "supported_profiles": [
         "traditional",
@@ -12789,7 +12951,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Bind fixed nontargeted draw/life/mill/damage results to the sealed active player of each-player, each-opponent, or current enchanted-object controller upkeep while preserving the trigger source controller.",
+        "summary": "Bind fixed nontargeted draw/life/mill/damage results to the sealed active player of each-player or each-opponent upkeep and draw-step schedules, each-other-player draw schedules, or current enchanted-object controller upkeep, while preserving the trigger source controller.",
         "inputs": [
           "one source-spanned scheduled trigger",
           "normalized step player and step",
@@ -12821,31 +12983,48 @@
         "test_each_player_and_opponent_results_are_nontargeted_context_bound",
         "test_mixed_scheduled_result_preserves_each_original_recipient",
         "test_mixed_upkeep_resolves_draw_and_locked_controller_life_privately",
-        "test_mixed_upkeep_replays_from_before_triggering_step"
+        "test_mixed_upkeep_replays_from_before_triggering_step",
+        "test_draw_step_schedules_keep_context_and_controller_recipients_distinct",
+        "test_fixed_additional_draw_wording_preserves_one_instruction_count",
+        "test_controller_draw_step_additional_draw_retains_event_and_recipient",
+        "test_original_kami_draws_for_active_opponent_after_ordinary_draw",
+        "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
+        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step"
       ],
       "negative_tests": [
         "test_unknown_bound_results_and_monarch_schedules_remain_residual",
         "test_mixed_scheduled_shape_rejects_malformed_second_player",
-        "test_bound_player_damage_shape_requires_exact_player_and_positive_amount"
+        "test_bound_player_damage_shape_requires_exact_player_and_positive_amount",
+        "test_additional_draw_step_missing_authority_stays_residual"
       ],
       "interaction_tests": [
         "test_actual_seizan_upkeep_affects_active_player_not_source_controller",
         "test_actual_aura_upkeep_uses_recipient_controller_and_keeps_queued_player",
         "test_actual_copper_tablet_deals_damage_to_each_active_upkeep_player",
         "test_mixed_upkeep_resolves_draw_and_locked_controller_life_privately",
-        "test_mixed_upkeep_replays_from_before_triggering_step"
+        "test_mixed_upkeep_replays_from_before_triggering_step",
+        "test_original_kami_draws_for_active_opponent_after_ordinary_draw",
+        "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
+        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step"
       ],
       "multiplayer_tests": [
-        "test_each_opponent_upkeep_filter_excludes_source_controller"
+        "test_each_opponent_upkeep_filter_excludes_source_controller",
+        "test_original_kami_draws_for_active_opponent_after_ordinary_draw",
+        "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
+        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step"
       ],
       "privacy_tests": [
-        "test_actual_seizan_upkeep_affects_active_player_not_source_controller"
+        "test_actual_seizan_upkeep_affects_active_player_not_source_controller",
+        "test_original_kami_draws_for_active_opponent_after_ordinary_draw"
       ],
       "replay_tests": [
         "test_actual_seizan_upkeep_affects_active_player_not_source_controller",
         "test_actual_aura_upkeep_uses_recipient_controller_and_keeps_queued_player",
         "test_mixed_upkeep_resolves_draw_and_locked_controller_life_privately",
-        "test_mixed_upkeep_replays_from_before_triggering_step"
+        "test_mixed_upkeep_replays_from_before_triggering_step",
+        "test_original_kami_draws_for_active_opponent_after_ordinary_draw",
+        "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
+        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step"
       ],
       "required_evidence": [
         "positive",

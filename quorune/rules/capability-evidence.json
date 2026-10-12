@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "82c0f4b5d0a69b2ec88153f39d3e668e569e41638a4df3ac24bed14e904bcdd5",
-  "declaration_source_fingerprint": "c74d7c5f6aaafc4e67261786a9a951aece73b83b44e36549410f4d615ed664ae",
+  "registry_fingerprint": "7523eda5e97aa2eea89fa5505dfd2f229ebf4a989f980885aa7c484cb01bd4a9",
+  "declaration_source_fingerprint": "64985583f23044846eb104c9863c14daba55888b3e6760e89a3569c1a3a1d3fb",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -86008,6 +86008,56 @@
     {
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "interaction",
+      "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_original_howling_mine_rechecks_untapped_condition_at_resolution",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Howling Mine triggers only while untapped and rechecks that public condition at resolution. An actual Icy Manipulator activation taps it while its trigger remains pending, suppressing only the additional draw; normal draw and full response replay remain exact."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_original_kami_draws_for_active_opponent_after_ordinary_draw",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Kami of the Crescent Moon receives actual whole-program admission; natural passes into opponent B's draw step perform the ordinary draw before an A-controlled trigger gives B the additional draw. Other hands and private projection remain unchanged; pending save/load and pre-step replay are exact."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "interaction",
       "test_id": "tests.test_source_pronoun_results.SourcePronounRuntimeTests.test_actual_scorpion_death_deals_damage_and_gains_life_for_trigger_controller",
       "official_rule_ids": [
         "115.1",
@@ -86233,6 +86283,81 @@
     {
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_original_howling_mine_rechecks_untapped_condition_at_resolution",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Howling Mine triggers only while untapped and rechecks that public condition at resolution. An actual Icy Manipulator activation taps it while its trigger remains pending, suppressing only the additional draw; normal draw and full response replay remain exact."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_original_kami_draws_for_active_opponent_after_ordinary_draw",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Kami of the Crescent Moon receives actual whole-program admission; natural passes into opponent B's draw step perform the ordinary draw before an A-controlled trigger gives B the additional draw. Other hands and private projection remain unchanged; pending save/load and pre-step replay are exact."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Overbeing of Myth creates one additional draw trigger on its controller's draw step and none on opponent B's step; ordinary turn draws occur in both cases, with pre-step replay."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_source_pronoun_results.SourcePronounRuntimeTests.test_actual_scorpion_death_deals_damage_and_gains_life_for_trigger_controller",
       "official_rule_ids": [
         "115.1",
@@ -86304,6 +86429,56 @@
         "commander_review"
       ],
       "applicability_note": "Restoring the old label grammar kills the independently expected hyphenated flavor-trigger admission."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_additional_draw_active_player_binding_mutant_is_killed",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Substituting the trigger source controller for the sealed active-player result is killed at the explicit additional-draw recipient assertion."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerCompilerTests.test_additional_draw_step_missing_authority_stays_residual",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Omitting scheduled-player or ordinary draw authority prevents exact additional draw-step admission."
     },
     {
       "capability_id": "trigger.effect.fixed_event",
@@ -86583,6 +86758,31 @@
     {
       "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "negative",
+      "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerCompilerTests.test_additional_draw_step_missing_authority_stays_residual",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Omitting scheduled-player or ordinary draw authority prevents exact additional draw-step admission."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "negative",
       "test_id": "tests.test_source_pronoun_results.SourcePronounCompilerTests.test_new_token_or_target_pronoun_is_not_rebound_to_source",
       "official_rule_ids": [
         "115.1",
@@ -86629,6 +86829,31 @@
         "commander_review"
       ],
       "applicability_note": "Lower exact Heroic, Magecraft, Constellation, and Battalion carriers through the existing typed event-effect or counter body owner."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "positive",
+      "test_id": "tests.test_draw_result_ordering.DrawResultComponentTests.test_controller_draw_step_additional_draw_retains_event_and_recipient",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Controller-only draw-step binding retains both the exact draw step and source-controller event predicates."
     },
     {
       "capability_id": "trigger.effect.fixed_event",
@@ -86829,6 +87054,106 @@
         "commander_review"
       ],
       "applicability_note": "CR 207.2c-d labels with hyphens, punctuation or numeric words preserve complete event, condition, result and original-source fields."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_original_howling_mine_rechecks_untapped_condition_at_resolution",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Howling Mine triggers only while untapped and rechecks that public condition at resolution. An actual Icy Manipulator activation taps it while its trigger remains pending, suppressing only the additional draw; normal draw and full response replay remain exact."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_original_kami_draws_for_active_opponent_after_ordinary_draw",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Kami of the Crescent Moon receives actual whole-program admission; natural passes into opponent B's draw step perform the ordinary draw before an A-controlled trigger gives B the additional draw. Other hands and private projection remain unchanged; pending save/load and pre-step replay are exact."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Overbeing of Myth creates one additional draw trigger on its controller's draw step and none on opponent B's step; ordinary turn draws occur in both cases, with pre-step replay."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerCompilerTests.test_draw_step_schedules_keep_context_and_controller_recipients_distinct",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed controller, each-player and each-other-player draw-step schedules preserve step predicates and original recipient references without targets."
     },
     {
       "capability_id": "trigger.effect.fixed_event",
@@ -87057,6 +87382,31 @@
     },
     {
       "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_original_kami_draws_for_active_opponent_after_ordinary_draw",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Kami of the Crescent Moon receives actual whole-program admission; natural passes into opponent B's draw step perform the ordinary draw before an A-controlled trigger gives B the additional draw. Other hands and private projection remain unchanged; pending save/load and pre-step replay are exact."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
       "evidence_class": "replay",
       "test_id": "tests.test_ability_word_event_triggers.AbilityWordEventTriggerRuntimeTests.test_targeted_cast_projection_save_load_and_exact_replay",
       "official_rule_ids": [
@@ -87229,6 +87579,81 @@
         "commander_review"
       ],
       "applicability_note": "Replay the last-known-controller source-graveyard trigger and ordinary draw result to the identical authoritative hash."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "replay",
+      "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_original_howling_mine_rechecks_untapped_condition_at_resolution",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Howling Mine triggers only while untapped and rechecks that public condition at resolution. An actual Icy Manipulator activation taps it while its trigger remains pending, suppressing only the additional draw; normal draw and full response replay remain exact."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "replay",
+      "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_original_kami_draws_for_active_opponent_after_ordinary_draw",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Kami of the Crescent Moon receives actual whole-program admission; natural passes into opponent B's draw step perform the ordinary draw before an A-controlled trigger gives B the additional draw. Other hands and private projection remain unchanged; pending save/load and pre-step replay are exact."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "replay",
+      "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Overbeing of Myth creates one additional draw trigger on its controller's draw step and none on opponent B's step; ordinary turn draws occur in both cases, with pre-step replay."
     },
     {
       "capability_id": "trigger.effect.fixed_event",
@@ -92470,13 +92895,52 @@
     {
       "capability_id": "trigger.event.scheduled_player_result",
       "evidence_class": "interaction",
+      "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_original_howling_mine_rechecks_untapped_condition_at_resolution",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c",
+        "504.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Howling Mine triggers only while untapped and rechecks that public condition at resolution. An actual Icy Manipulator activation taps it while its trigger remains pending, suppressing only the additional draw; normal draw and full response replay remain exact."
+    },
+    {
+      "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_original_kami_draws_for_active_opponent_after_ordinary_draw",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c",
+        "504.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Kami of the Crescent Moon receives actual whole-program admission; natural passes into opponent B's draw step perform the ordinary draw before an A-controlled trigger gives B the additional draw. Other hands and private projection remain unchanged; pending save/load and pre-step replay are exact."
+    },
+    {
+      "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "interaction",
       "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerRuntimeTests.test_actual_aura_upkeep_uses_recipient_controller_and_keeps_queued_player",
       "official_rule_ids": [
         "109.5",
         "503.1",
         "603.3a",
         "603.3b",
-        "608.2c"
+        "608.2c",
+        "504.1"
       ],
       "supported_profiles": [
         "traditional",
@@ -92494,7 +92958,8 @@
         "503.1",
         "603.3a",
         "603.3b",
-        "608.2c"
+        "608.2c",
+        "504.1"
       ],
       "supported_profiles": [
         "traditional",
@@ -92512,7 +92977,8 @@
         "503.1",
         "603.3a",
         "603.3b",
-        "608.2c"
+        "608.2c",
+        "504.1"
       ],
       "supported_profiles": [
         "traditional",
@@ -92530,7 +92996,8 @@
         "503.1",
         "603.3a",
         "603.3b",
-        "608.2c"
+        "608.2c",
+        "504.1"
       ],
       "supported_profiles": [
         "traditional",
@@ -92542,13 +93009,71 @@
     {
       "capability_id": "trigger.event.scheduled_player_result",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_original_howling_mine_rechecks_untapped_condition_at_resolution",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c",
+        "504.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Howling Mine triggers only while untapped and rechecks that public condition at resolution. An actual Icy Manipulator activation taps it while its trigger remains pending, suppressing only the additional draw; normal draw and full response replay remain exact."
+    },
+    {
+      "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_original_kami_draws_for_active_opponent_after_ordinary_draw",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c",
+        "504.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Kami of the Crescent Moon receives actual whole-program admission; natural passes into opponent B's draw step perform the ordinary draw before an A-controlled trigger gives B the additional draw. Other hands and private projection remain unchanged; pending save/load and pre-step replay are exact."
+    },
+    {
+      "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c",
+        "504.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Overbeing of Myth creates one additional draw trigger on its controller's draw step and none on opponent B's step; ordinary turn draws occur in both cases, with pre-step replay."
+    },
+    {
+      "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerRuntimeTests.test_each_opponent_upkeep_filter_excludes_source_controller",
       "official_rule_ids": [
         "109.5",
         "503.1",
         "603.3a",
         "603.3b",
-        "608.2c"
+        "608.2c",
+        "504.1"
       ],
       "supported_profiles": [
         "traditional",
@@ -92566,7 +93091,8 @@
         "503.1",
         "603.3a",
         "603.3b",
-        "608.2c"
+        "608.2c",
+        "504.1"
       ],
       "supported_profiles": [
         "traditional",
@@ -92578,13 +93104,52 @@
     {
       "capability_id": "trigger.event.scheduled_player_result",
       "evidence_class": "mutation",
+      "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_additional_draw_active_player_binding_mutant_is_killed",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c",
+        "504.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Substituting the trigger source controller for the sealed active-player result is killed at the explicit additional-draw recipient assertion."
+    },
+    {
+      "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerCompilerTests.test_additional_draw_step_missing_authority_stays_residual",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c",
+        "504.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Omitting scheduled-player or ordinary draw authority prevents exact additional draw-step admission."
+    },
+    {
+      "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "mutation",
       "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerRuntimeTests.test_source_controller_substitution_mutant_is_killed_by_seizan",
       "official_rule_ids": [
         "109.5",
         "503.1",
         "603.3a",
         "603.3b",
-        "608.2c"
+        "608.2c",
+        "504.1"
       ],
       "supported_profiles": [
         "traditional",
@@ -92596,13 +93161,33 @@
     {
       "capability_id": "trigger.event.scheduled_player_result",
       "evidence_class": "negative",
+      "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerCompilerTests.test_additional_draw_step_missing_authority_stays_residual",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c",
+        "504.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Omitting scheduled-player or ordinary draw authority prevents exact additional draw-step admission."
+    },
+    {
+      "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "negative",
       "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerCompilerTests.test_bound_player_damage_shape_requires_exact_player_and_positive_amount",
       "official_rule_ids": [
         "109.5",
         "503.1",
         "603.3a",
         "603.3b",
-        "608.2c"
+        "608.2c",
+        "504.1"
       ],
       "supported_profiles": [
         "traditional",
@@ -92620,7 +93205,8 @@
         "503.1",
         "603.3a",
         "603.3b",
-        "608.2c"
+        "608.2c",
+        "504.1"
       ],
       "supported_profiles": [
         "traditional",
@@ -92632,13 +93218,90 @@
     {
       "capability_id": "trigger.event.scheduled_player_result",
       "evidence_class": "positive",
+      "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_original_howling_mine_rechecks_untapped_condition_at_resolution",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c",
+        "504.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Howling Mine triggers only while untapped and rechecks that public condition at resolution. An actual Icy Manipulator activation taps it while its trigger remains pending, suppressing only the additional draw; normal draw and full response replay remain exact."
+    },
+    {
+      "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_original_kami_draws_for_active_opponent_after_ordinary_draw",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c",
+        "504.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Kami of the Crescent Moon receives actual whole-program admission; natural passes into opponent B's draw step perform the ordinary draw before an A-controlled trigger gives B the additional draw. Other hands and private projection remain unchanged; pending save/load and pre-step replay are exact."
+    },
+    {
+      "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c",
+        "504.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Overbeing of Myth creates one additional draw trigger on its controller's draw step and none on opponent B's step; ordinary turn draws occur in both cases, with pre-step replay."
+    },
+    {
+      "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerCompilerTests.test_draw_step_schedules_keep_context_and_controller_recipients_distinct",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c",
+        "504.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed controller, each-player and each-other-player draw-step schedules preserve step predicates and original recipient references without targets."
+    },
+    {
+      "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "positive",
       "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerCompilerTests.test_each_player_and_opponent_results_are_nontargeted_context_bound",
       "official_rule_ids": [
         "109.5",
         "503.1",
         "603.3a",
         "603.3b",
-        "608.2c"
+        "608.2c",
+        "504.1"
       ],
       "supported_profiles": [
         "traditional",
@@ -92656,7 +93319,8 @@
         "503.1",
         "603.3a",
         "603.3b",
-        "608.2c"
+        "608.2c",
+        "504.1"
       ],
       "supported_profiles": [
         "traditional",
@@ -92674,7 +93338,8 @@
         "503.1",
         "603.3a",
         "603.3b",
-        "608.2c"
+        "608.2c",
+        "504.1"
       ],
       "supported_profiles": [
         "traditional",
@@ -92686,13 +93351,33 @@
     {
       "capability_id": "trigger.event.scheduled_player_result",
       "evidence_class": "privacy",
+      "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_original_kami_draws_for_active_opponent_after_ordinary_draw",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c",
+        "504.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Kami of the Crescent Moon receives actual whole-program admission; natural passes into opponent B's draw step perform the ordinary draw before an A-controlled trigger gives B the additional draw. Other hands and private projection remain unchanged; pending save/load and pre-step replay are exact."
+    },
+    {
+      "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "privacy",
       "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerRuntimeTests.test_actual_seizan_upkeep_affects_active_player_not_source_controller",
       "official_rule_ids": [
         "109.5",
         "503.1",
         "603.3a",
         "603.3b",
-        "608.2c"
+        "608.2c",
+        "504.1"
       ],
       "supported_profiles": [
         "traditional",
@@ -92710,7 +93395,8 @@
         "503.1",
         "603.3a",
         "603.3b",
-        "608.2c"
+        "608.2c",
+        "504.1"
       ],
       "supported_profiles": [
         "traditional",
@@ -92722,13 +93408,71 @@
     {
       "capability_id": "trigger.event.scheduled_player_result",
       "evidence_class": "replay",
+      "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_original_howling_mine_rechecks_untapped_condition_at_resolution",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c",
+        "504.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Howling Mine triggers only while untapped and rechecks that public condition at resolution. An actual Icy Manipulator activation taps it while its trigger remains pending, suppressing only the additional draw; normal draw and full response replay remain exact."
+    },
+    {
+      "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "replay",
+      "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_original_kami_draws_for_active_opponent_after_ordinary_draw",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c",
+        "504.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Kami of the Crescent Moon receives actual whole-program admission; natural passes into opponent B's draw step perform the ordinary draw before an A-controlled trigger gives B the additional draw. Other hands and private projection remain unchanged; pending save/load and pre-step replay are exact."
+    },
+    {
+      "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "replay",
+      "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step",
+      "official_rule_ids": [
+        "109.5",
+        "503.1",
+        "603.3a",
+        "603.3b",
+        "608.2c",
+        "504.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Overbeing of Myth creates one additional draw trigger on its controller's draw step and none on opponent B's step; ordinary turn draws occur in both cases, with pre-step replay."
+    },
+    {
+      "capability_id": "trigger.event.scheduled_player_result",
+      "evidence_class": "replay",
       "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerRuntimeTests.test_actual_seizan_upkeep_affects_active_player_not_source_controller",
       "official_rule_ids": [
         "109.5",
         "503.1",
         "603.3a",
         "603.3b",
-        "608.2c"
+        "608.2c",
+        "504.1"
       ],
       "supported_profiles": [
         "traditional",
@@ -92746,7 +93490,8 @@
         "503.1",
         "603.3a",
         "603.3b",
-        "608.2c"
+        "608.2c",
+        "504.1"
       ],
       "supported_profiles": [
         "traditional",
@@ -92764,7 +93509,8 @@
         "503.1",
         "603.3a",
         "603.3b",
-        "608.2c"
+        "608.2c",
+        "504.1"
       ],
       "supported_profiles": [
         "traditional",
@@ -100859,6 +101605,60 @@
     },
     {
       "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_original_howling_mine_rechecks_untapped_condition_at_resolution",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Howling Mine triggers only while untapped and rechecks that public condition at resolution. An actual Icy Manipulator activation taps it while its trigger remains pending, suppressing only the additional draw; normal draw and full response replay remain exact."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_original_kami_draws_for_active_opponent_after_ordinary_draw",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Kami of the Crescent Moon receives actual whole-program admission; natural passes into opponent B's draw step perform the ordinary draw before an A-controlled trigger gives B the additional draw. Other hands and private projection remain unchanged; pending save/load and pre-step replay are exact."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_activated_draw_abilities.ActivatedDrawRuntimeTests.test_each_player_activation_draws_in_four_player_game",
       "official_rule_ids": [
@@ -100910,6 +101710,87 @@
         "commander_review"
       ],
       "applicability_note": "Evaluate optional-draw feasibility against the prospective drawer even when another active player owns the choice."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_original_howling_mine_rechecks_untapped_condition_at_resolution",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Howling Mine triggers only while untapped and rechecks that public condition at resolution. An actual Icy Manipulator activation taps it while its trigger remains pending, suppressing only the additional draw; normal draw and full response replay remain exact."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_original_kami_draws_for_active_opponent_after_ordinary_draw",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Kami of the Crescent Moon receives actual whole-program admission; natural passes into opponent B's draw step perform the ordinary draw before an A-controlled trigger gives B the additional draw. Other hands and private projection remain unchanged; pending save/load and pre-step replay are exact."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Overbeing of Myth creates one additional draw trigger on its controller's draw step and none on opponent B's step; ordinary turn draws occur in both cases, with pre-step replay."
     },
     {
       "capability_id": "zone.draw.library_to_hand",
@@ -101021,6 +101902,60 @@
     },
     {
       "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_additional_draw_active_player_binding_mutant_is_killed",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Substituting the trigger source controller for the sealed active-player result is killed at the explicit additional-draw recipient assertion."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerCompilerTests.test_additional_draw_step_missing_authority_stays_residual",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Omitting scheduled-player or ordinary draw authority prevents exact additional draw-step admission."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
       "evidence_class": "negative",
       "test_id": "tests.test_activated_draw_abilities.ActivatedDrawCompilerTests.test_fixed_draw_shapes_are_strict_and_capability_scoped",
       "official_rule_ids": [
@@ -101072,6 +102007,60 @@
         "commander_review"
       ],
       "applicability_note": "Reject a prohibited individual draw before collecting or offering any replacement for that nonexistent draw event."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "negative",
+      "test_id": "tests.test_draw_result_ordering.DrawResultComponentTests.test_fixed_additional_draw_wording_preserves_one_instruction_count",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed additional-card wording preserves the ordinary draw count; variable, conditional and open quantities remain outside this leaf."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "negative",
+      "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerCompilerTests.test_additional_draw_step_missing_authority_stays_residual",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Omitting scheduled-player or ordinary draw authority prevents exact additional draw-step admission."
     },
     {
       "capability_id": "zone.draw.library_to_hand",
@@ -101211,6 +102200,141 @@
     {
       "capability_id": "zone.draw.library_to_hand",
       "evidence_class": "positive",
+      "test_id": "tests.test_draw_result_ordering.DrawResultComponentTests.test_fixed_additional_draw_wording_preserves_one_instruction_count",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed additional-card wording preserves the ordinary draw count; variable, conditional and open quantities remain outside this leaf."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_original_howling_mine_rechecks_untapped_condition_at_resolution",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Howling Mine triggers only while untapped and rechecks that public condition at resolution. An actual Icy Manipulator activation taps it while its trigger remains pending, suppressing only the additional draw; normal draw and full response replay remain exact."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_original_kami_draws_for_active_opponent_after_ordinary_draw",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Kami of the Crescent Moon receives actual whole-program admission; natural passes into opponent B's draw step perform the ordinary draw before an A-controlled trigger gives B the additional draw. Other hands and private projection remain unchanged; pending save/load and pre-step replay are exact."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Overbeing of Myth creates one additional draw trigger on its controller's draw step and none on opponent B's step; ordinary turn draws occur in both cases, with pre-step replay."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scheduled_player_triggers.ScheduledPlayerTriggerCompilerTests.test_draw_step_schedules_keep_context_and_controller_recipients_distinct",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed controller, each-player and each-other-player draw-step schedules preserve step predicates and original recipient references without targets."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "positive",
       "test_id": "tests.test_semantic_handlers.TypedSemanticHandlerTests.test_draw_handler_lowers_typed_intent_through_read_only_context",
       "official_rule_ids": [
         "121.1",
@@ -101318,6 +102442,33 @@
     },
     {
       "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_original_kami_draws_for_active_opponent_after_ordinary_draw",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Kami of the Crescent Moon receives actual whole-program admission; natural passes into opponent B's draw step perform the ordinary draw before an A-controlled trigger gives B the additional draw. Other hands and private projection remain unchanged; pending save/load and pre-step replay are exact."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
       "evidence_class": "replay",
       "test_id": "tests.test_activated_draw_abilities.ActivatedDrawRuntimeTests.test_sacrifice_draw_activation_is_offered_resolves_and_replays",
       "official_rule_ids": [
@@ -101396,6 +102547,87 @@
         "commander_review"
       ],
       "applicability_note": "Replay a generically compiled battlefield draw restriction and the exact permitted and prohibited individual results."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "replay",
+      "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_original_howling_mine_rechecks_untapped_condition_at_resolution",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Howling Mine triggers only while untapped and rechecks that public condition at resolution. An actual Icy Manipulator activation taps it while its trigger remains pending, suppressing only the additional draw; normal draw and full response replay remain exact."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "replay",
+      "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_original_kami_draws_for_active_opponent_after_ordinary_draw",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Kami of the Crescent Moon receives actual whole-program admission; natural passes into opponent B's draw step perform the ordinary draw before an A-controlled trigger gives B the additional draw. Other hands and private projection remain unchanged; pending save/load and pre-step replay are exact."
+    },
+    {
+      "capability_id": "zone.draw.library_to_hand",
+      "evidence_class": "replay",
+      "test_id": "tests.test_scheduled_player_triggers.AdditionalDrawStepRuntimeTests.test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step",
+      "official_rule_ids": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Overbeing of Myth creates one additional draw trigger on its controller's draw step and none on opponent B's step; ordinary turn draws occur in both cases, with pre-step replay."
     },
     {
       "capability_id": "zone.draw.library_to_hand",
@@ -105950,5 +107182,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "75775814d2f780fe36819743511a82f6f2a9eabf5a17101dfffc046a2bbdaeb8"
+  "fingerprint": "71294923551974e365e276968f1f08d64ec1277ba482bd86654d6de5d3abbec4"
 }

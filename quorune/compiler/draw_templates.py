@@ -58,6 +58,13 @@ def fixed_draw_effect_template(text: str) -> DrawEffectTemplate | None:
     """Lower closed mandatory and optional fixed-count draw instructions."""
 
     normalized = text.strip()
+    normalized = re.sub(
+        r"\b(?P<count>an|one|two|three|four|five|six|seven|eight|nine|ten) additional (?P<noun>cards?)\b",
+        lambda match: ("a" if match["count"].casefold() == "an" else match["count"])
+        + " " + match["noun"],
+        normalized,
+        flags=re.IGNORECASE,
+    )
     if re.fullmatch(
         r"draw a card and reveal it\. if it isn['’]t a land card, "
         r"discard it\.?",

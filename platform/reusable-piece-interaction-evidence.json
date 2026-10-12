@@ -9464,6 +9464,21 @@
       ],
       "interaction_order": 2,
       "assertion": "Original Chill of Foreboding mills every available short-library card in one batch; a current opponent-graveyard replacement redirects opponents to exile while the controller mills normally, with no empty-library loss and exact pre-cast replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
+      "piece_ids": [
+        "capability.trigger.event.scheduled_player_result",
+        "capability.trigger.condition.fixed_public_state"
+      ],
+      "capability_ids": [
+        "trigger.event.scheduled_player_result",
+        "trigger.condition.fixed_public_state"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Howling Mine checks its untapped condition at draw-step occurrence and again after an actual Icy Manipulator response taps it. The normal turn draw remains, the additional draw is suppressed, and pre-response replay preserves the outcome."
     }
   ]
 }

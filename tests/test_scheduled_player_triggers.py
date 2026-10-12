@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 import tempfile
 import unittest
+import json
 from unittest.mock import patch
 
 from common import ROOT
@@ -18,6 +19,32 @@ import test_counter_placement_events as counter_witnesses
 
 
 class ScheduledPlayerTriggerCompilerTests(unittest.TestCase):
+    def test_additional_draw_step_missing_authority_stays_residual(self):
+        from quorune.rules.capabilities import CapabilityRegistry
+
+        record=query_record("At the beginning of each player's draw step, that player draws an additional card.")
+        for capability in ('trigger.event.scheduled_player_result','zone.draw.library_to_hand'):
+            raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+            next(row for row in raw['capabilities'] if row['id']==capability).update(
+                status='blocked',blockers=['draw-step authority omitted'])
+            self.assertNotEqual('exact',compile_oracle_card(record,
+                capability_registry=CapabilityRegistry(raw),capability_profile='commander_review').status)
+
+    def test_draw_step_schedules_keep_context_and_controller_recipients_distinct(self):
+        registry=load_default_capability_registry()
+        for text,step,recipient in (
+            ("At the beginning of each player's draw step, that player draws an additional card.",'draw','$context.player'),
+            ("At the beginning of each other player's draw step, that player draws an additional card.",'draw','$context.player'),
+            ("At the beginning of your draw step, draw two additional cards.",'draw','$controller'),
+        ):
+            with self.subTest(text=text):
+                ir=compile_oracle_card(query_record(text),capability_registry=registry,
+                                       capability_profile='commander_review')
+                self.assertEqual('exact',ir.status,ir.material_residuals)
+                node=ir.faces[0].nodes[0]
+                self.assertEqual(recipient,node.effects[0]['player'])
+                self.assertIn(step,str(node.event_condition))
+
     def test_mixed_scheduled_result_preserves_each_original_recipient(self):
         text = "At the beginning of each opponent's upkeep, that player draws a card and you gain 1 life."
         ir = compile_oracle_card(query_record(text), capability_registry=load_default_capability_registry())
@@ -58,6 +85,143 @@ class ScheduledPlayerTriggerCompilerTests(unittest.TestCase):
                 self.assertEqual((), scheduled_player_node_capabilities(effects=(draw,
                     {'op': 'life', 'player': player, 'delta': 1}), target_schema=None,
                     mechanic_ids=('scheduled-player-event-result',)))
+
+
+class AdditionalDrawStepRuntimeTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary=tempfile.TemporaryDirectory()
+        path=Path(cls.temporary.name)/'additional-draw.sqlite3'
+        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',
+                              ROOT/'tests/fixtures/additional-draw-step-cards.json'],path)
+        cls.db=CardDatabase(path)
+        cls.registry=load_default_capability_registry()
+        cls.deck=DeckDefinition('Additional draw',[DeckEntry('Generic Bound Commander',1,'commander'),
+                                                 DeckEntry('Generic Bound Plains',12)],['Generic Bound Commander'])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    session=witnesses.BoundEffectProgramRuntimeTests.session
+    add=witnesses.BoundEffectProgramRuntimeTests.add
+    checkpoint=witnesses.BoundEffectProgramRuntimeTests.checkpoint
+    replay=witnesses.BoundEffectProgramRuntimeTests.replay
+    resolve=counter_witnesses.CounterPlacementEventRuntimeTests.resolve
+
+    def enter_draw_step(self,session,seat):
+        from quorune.engine import TURN_STEPS
+
+        engine=session.engine
+        engine.permissions.invalidate_current()
+        session.state.pending_decision=None
+        session.state.active_player=seat
+        session.state.started=True
+        session.state.phase='beginning'
+        session.state.step='upkeep'
+        session.state.phase_index=TURN_STEPS.index(('beginning','upkeep'))
+        engine._grant_priority(seat)
+        engine.pump()
+        self.checkpoint(session)
+        for _ in range(16):
+            if session.state.step=='draw':break
+            result=session.act(session.pending_principals()[0],{'action_id':'pass'})
+            self.assertTrue(result.ok,result.summary)
+        self.assertEqual('draw',session.state.step)
+
+    def assert_admission(self,name):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.semantics import SemanticRegistry
+
+        program=compile_best_available_card_program(self.db,self.db.lookup(name),
+            semantic_registry=SemanticRegistry(),capability_registry=self.registry,
+            capability_profile='commander_review')
+        self.assertTrue(bind_card_program_runtime(program,capability_registry=self.registry,
+            profile='commander_review')['strict_capability_ready'])
+
+    def test_original_kami_draws_for_active_opponent_after_ordinary_draw(self):
+        self.assert_admission('Kami of the Crescent Moon')
+        session=self.session(346201)
+        source=self.add(session.engine,'Kami of the Crescent Moon')
+        hands={seat:len(session.state.players[seat].zones['hand']) for seat in 'ABCD'}
+        self.enter_draw_step(session,'B')
+        self.assertEqual(hands['B']+1,len(session.state.players['B'].zones['hand']))
+        trigger=next(item for item in session.state.stack if item.source_object_id==source.object_id)
+        self.assertEqual(('A','B'),(trigger.controller,trigger.context['player']))
+        self.replay(session,load=True)
+        self.resolve(session)
+        self.assertEqual(hands['B']+2,len(session.state.players['B'].zones['hand']),
+                         'additional draw recipient changed')
+        for seat in 'ACD':
+            self.assertEqual(hands[seat],len(session.state.players[seat].zones['hand']))
+        for seat in 'ACD':
+            packet=json.dumps(session.packet('pilot:'+seat,full=True),sort_keys=True)
+            for oid in session.state.players['B'].zones['hand']:
+                self.assertNotIn(oid,packet)
+        self.replay(session)
+
+    def test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step(self):
+        self.assert_admission('Overbeing of Myth')
+        for active in 'AB':
+            with self.subTest(active=active):
+                session=self.session(346210+int(active=='B'))
+                source=self.add(session.engine,'Overbeing of Myth')
+                before=len(session.state.players[active].zones['hand'])
+                self.enter_draw_step(session,active)
+                triggers=[item for item in session.state.stack if item.source_object_id==source.object_id]
+                self.assertEqual(int(active=='A'),len(triggers))
+                self.resolve(session)
+                self.assertEqual(before+1+int(active=='A'),len(session.state.players[active].zones['hand']))
+                self.replay(session)
+
+    def test_original_howling_mine_rechecks_untapped_condition_at_resolution(self):
+        self.assert_admission('Howling Mine')
+        for tapped_at_occurrence,tapped_before_resolution in ((False,False),(True,True),(False,True)):
+            with self.subTest(occurrence=tapped_at_occurrence,resolution=tapped_before_resolution):
+                session=self.session(346202+int(tapped_at_occurrence)+2*int(tapped_before_resolution))
+                source=self.add(session.engine,'Howling Mine')
+                tapper=self.add(session.engine,'Icy Manipulator')
+                source.tapped=tapped_at_occurrence
+                before=len(session.state.players['B'].zones['hand'])
+                self.enter_draw_step(session,'B')
+                triggers=[item for item in session.state.stack if item.source_object_id==source.object_id]
+                self.assertEqual(0 if tapped_at_occurrence else 1,len(triggers))
+                if tapped_before_resolution and not tapped_at_occurrence:
+                    session.state.players['A'].mana_pool.update({'C':1})
+                    session.engine.permissions.invalidate_current()
+                    session.state.pending_decision=None
+                    session.engine._grant_priority('B')
+                    session.engine.pump()
+                    self.checkpoint(session)
+                    for _ in range(5):
+                        if session.state.priority_player=='A':break
+                        accepted=session.act(session.pending_principals()[0],{'action_id':'pass'})
+                        self.assertTrue(accepted.ok,accepted.summary)
+                    actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+                    action=next(row for row in actions if row['id'].startswith('activate:'+tapper.ref+':'))
+                    accepted=session.act('pilot:A',{'action_id':action['id'],'targets':[source.ref],'pay':'auto'})
+                    self.assertTrue(accepted.ok,accepted.summary)
+                    response_id=session.state.stack[-1].stack_id
+                    while any(item.stack_id==response_id for item in session.state.stack):
+                        accepted=session.act(session.pending_principals()[0],{'action_id':'pass'})
+                        self.assertTrue(accepted.ok,accepted.summary)
+                    source=session.engine.state.cards[source.object_id]
+                    self.assertTrue(source.tapped)
+                self.resolve(session)
+                self.assertEqual(before+1+int(not tapped_at_occurrence and not tapped_before_resolution),
+                                 len(session.state.players['B'].zones['hand']))
+                self.replay(session)
+
+    def test_additional_draw_active_player_binding_mutant_is_killed(self):
+        from quorune.semantic_runtime.values import resolve_semantic_value
+
+        def substitute(host,value,item):
+            return item.controller if value=='$context.player' else resolve_semantic_value(host,value,item)
+        with patch('quorune.semantic_runtime.values.resolve_semantic_value',side_effect=substitute):
+            with self.assertRaisesRegex(AssertionError,'additional draw recipient changed'):
+                self.test_original_kami_draws_for_active_opponent_after_ordinary_draw()
 
 
 class ScheduledPlayerTriggerRuntimeTests(unittest.TestCase):

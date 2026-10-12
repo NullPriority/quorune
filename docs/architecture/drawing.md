@@ -48,6 +48,10 @@ when it is printed as an ordinary activated ability. The source-spanned node
 must have a fully compiled activation cost and a strict capability-shaped draw
 payload. The closed activated family also includes the exact “draw and reveal;
 discard it unless it is a land” sentence used by Fa'adiyah Seer and Sindbad.
+Fixed "additional card" wording preserves the stated count as an ordinary draw
+instruction. Draw-step triggers remain separate from the turn-based draw under
+CR 504.1: the active player draws normally before those triggers are placed,
+then each trigger uses its retained recipient and the same draw coordinator.
 The independent fixed-controller sequence owner also composes one positive
 fixed ordinary draw with one fixed controller life change, Scry, or private
 discard of one through four cards in either printed order across spell,

@@ -1,0 +1,143 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned original additional draw-step carriers",
+  "cards": [
+    {
+      "oracle_id": "38cfe4a0-6ead-435b-9f86-928205c0a52c",
+      "name": "Kami of the Crescent Moon",
+      "mana_cost": "{U}{U}",
+      "type_line": "Legendary Creature \u2014 Spirit",
+      "oracle_text": "At the beginning of each player's draw step, that player draws an additional card.",
+      "power": "1",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-11-19",
+      "cmc": 2.0,
+      "card_faces": []
+    },
+    {
+      "oracle_id": "d26b27db-a567-4631-b4b6-7294222fbdd1",
+      "name": "Howling Mine",
+      "mana_cost": "{2}",
+      "type_line": "Artifact",
+      "oracle_text": "At the beginning of each player's draw step, if this artifact is untapped, that player draws an additional card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2016-11-11",
+      "cmc": 2.0,
+      "card_faces": []
+    },
+    {
+      "oracle_id": "5391f601-b778-413f-a31f-9f8b23b40f5c",
+      "name": "Overbeing of Myth",
+      "mana_cost": "{G/U}{G/U}{G/U}{G/U}{G/U}",
+      "type_line": "Creature \u2014 Spirit Avatar",
+      "oracle_text": "Overbeing of Myth's power and toughness are each equal to the number of cards in your hand.\nAt the beginning of your draw step, draw an additional card.",
+      "power": "*",
+      "toughness": "*",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "U"
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2008-07-25",
+      "cmc": 5.0,
+      "card_faces": []
+    },
+    {
+      "oracle_id": "1ed24fc6-b1d5-47f8-a1d1-3243372e0c9f",
+      "name": "Well of Ideas",
+      "mana_cost": "{5}{U}",
+      "type_line": "Enchantment",
+      "oracle_text": "When this enchantment enters, draw two cards.\nAt the beginning of each other player's draw step, that player draws an additional card.\nAt the beginning of your draw step, draw two additional cards.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-08-07",
+      "cmc": 6.0,
+      "card_faces": []
+    },
+    {
+      "oracle_id": "be74a4c1-d569-4203-b28a-3e2ac6a82990",
+      "name": "Dictate of Kruphix",
+      "mana_cost": "{1}{U}{U}",
+      "type_line": "Enchantment",
+      "oracle_text": "Flash (You may cast this spell any time you could cast an instant.)\nAt the beginning of each player's draw step, that player draws an additional card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flash"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "cmc": 3.0,
+      "card_faces": []
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}",
+      "name": "Icy Manipulator",
+      "oracle_id": "3608f1f7-8dc5-4dd1-ae91-c830e1de9529",
+      "oracle_text": "{1}, {T}: Tap target artifact, creature, or land.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-01-13",
+      "toughness": null,
+      "type_line": "Artifact"
+    }
+  ]
+}

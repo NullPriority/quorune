@@ -116,7 +116,7 @@ subjects, and unrepresented complete bodies are not rebound to the source.
 Effects on the source itself carry the existing logical-object reference;
 damage source references retain their ordinary last known source information.
 
-Scheduled each-player and each-opponent upkeep triggers preserve the trigger
+Scheduled each-player and each-opponent upkeep or draw-step triggers preserve the trigger
 source's controller separately from the active player. Fixed nontargeted
 draw, life, mill, and damage results preserve each clause's original subject.
 “That player” and inherited subjects bind to the recorded step player; an
@@ -125,6 +125,11 @@ current enchanted-object controller schedule uses the reciprocal attachment
 and the recipient's controller at discovery. Changing custody later does not
 change the queued result's affected player. Unsupported player roles,
 dynamic quantities, and sibling abilities remain residuals.
+Each-other-player draw schedules exclude the source controller. Controller-only
+draw-step triggers use the existing fixed step predicate. Fixed "additional
+card" wording lowers to an ordinary draw instruction; the turn's ordinary
+draw precedes trigger placement and the extra draw resolves through the stack.
+Existing public intervening conditions are checked at occurrence and resolution.
 
 ```mermaid
 flowchart LR
