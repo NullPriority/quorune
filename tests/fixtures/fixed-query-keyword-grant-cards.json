@@ -493,7 +493,6 @@
       "oracle_id": "342199e0-15b6-4824-83da-25caef2592b3",
       "name": "Hill Giant",
       "mana_cost": "{3}{R}",
-      "cmc": 4.0,
       "type_line": "Creature — Giant",
       "oracle_text": "",
       "power": "3",
@@ -510,6 +509,8 @@
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2007-07-13",
+      "faces": [],
+      "cmc": 4.0,
       "legalities": {
         "alchemy": "not_legal",
         "brawl": "not_legal",

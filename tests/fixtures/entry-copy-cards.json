@@ -244,25 +244,12 @@
       }
     },
     {
-      "oracle_id": "6ad8011d-3471-4369-9d68-b264cc027487",
-      "name": "Sol Ring",
-      "mana_cost": "{1}",
-      "type_line": "Artifact",
-      "oracle_text": "{T}: Add {C}{C}.",
-      "power": null,
-      "toughness": null,
-      "loyalty": null,
-      "defense": null,
-      "colors": [],
-      "color_identity": [],
-      "keywords": [],
-      "produced_mana": [
-        "C"
-      ],
-      "layout": "normal",
-      "released_at": "2026-06-26",
-      "faces": [],
       "cmc": 1.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
       "legalities": {
         "alchemy": "not_legal",
         "brawl": "not_legal",
@@ -285,32 +272,33 @@
         "standard": "not_legal",
         "standardbrawl": "not_legal",
         "timeless": "not_legal",
-        "tlr": "legal",
+        "tlr": "banned",
         "vintage": "restricted"
-      }
+      },
+      "loyalty": null,
+      "mana_cost": "{1}",
+      "name": "Sol Ring",
+      "oracle_id": "6ad8011d-3471-4369-9d68-b264cc027487",
+      "oracle_text": "{T}: Add {C}{C}.",
+      "power": null,
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Artifact"
     },
     {
-      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
-      "name": "Unsummon",
-      "mana_cost": "{U}",
-      "type_line": "Instant",
-      "oracle_text": "Return target creature to its owner's hand.",
-      "power": null,
-      "toughness": null,
-      "loyalty": null,
-      "defense": null,
-      "colors": [
-        "U"
-      ],
+      "cmc": 1.0,
       "color_identity": [
         "U"
       ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
       "keywords": [],
-      "produced_mana": [],
       "layout": "normal",
-      "released_at": "2026-04-24",
-      "faces": [],
-      "cmc": 1.0,
       "legalities": {
         "alchemy": "legal",
         "brawl": "legal",
@@ -335,28 +323,27 @@
         "timeless": "legal",
         "tlr": "legal",
         "vintage": "legal"
-      }
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
     },
     {
-      "oracle_id": "6d9af084-cd5d-4242-b0f0-24a36d0a75d4",
-      "name": "Arcbound Worker",
-      "mana_cost": "{1}",
-      "type_line": "Artifact Creature — Construct",
-      "oracle_text": "Modular 1 (This creature enters with a +1/+1 counter on it. When it dies, you may put its +1/+1 counters on target artifact creature.)",
-      "power": "0",
-      "toughness": "0",
-      "loyalty": null,
-      "defense": null,
-      "colors": [],
+      "cmc": 1.0,
       "color_identity": [],
+      "colors": [],
+      "defense": null,
       "keywords": [
         "Modular"
       ],
-      "produced_mana": [],
       "layout": "normal",
-      "released_at": "2013-06-07",
-      "faces": [],
-      "cmc": 1.0,
       "legalities": {
         "alchemy": "not_legal",
         "brawl": "not_legal",
@@ -381,7 +368,17 @@
         "timeless": "not_legal",
         "tlr": "legal",
         "vintage": "legal"
-      }
+      },
+      "loyalty": null,
+      "mana_cost": "{1}",
+      "name": "Arcbound Worker",
+      "oracle_id": "6d9af084-cd5d-4242-b0f0-24a36d0a75d4",
+      "oracle_text": "Modular 1 (This creature enters with a +1/+1 counter on it. When it dies, you may put its +1/+1 counters on target artifact creature.)",
+      "power": "0",
+      "produced_mana": [],
+      "released_at": "2013-06-07",
+      "toughness": "0",
+      "type_line": "Artifact Creature — Construct"
     },
     {
       "oracle_id": "bb95db4d-5017-4121-bf79-d68476602d8c",
