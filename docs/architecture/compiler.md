@@ -521,6 +521,14 @@ one quoted child on a direct creature through one multi-layer timestamp.
 Static quotes, multiple quotes, longer durations,
 external source references and inexact children remain residual.
 
+Intrinsic entry-copy syntax has separate immutable selection values in
+`entry_copy.py` and `compiler/entry_copy_templates.py`. The values preserve
+nontarget public selection and reuse the existing typed copy exceptions.
+They do not grant CardProgram admission: intrinsic copy replacement ordering,
+copied entry replacements and copied program propagation require their own
+runtime integration. The whole-card compiler keeps these entry-copy forms
+residual until that ownership is bound.
+
 `compiler/conditional_granted_ability_templates.py` wraps one independently
 exact quoted child with the existing closed public-state characteristic
 grammar. It retains fixed coupled keywords and power/toughness modifiers in

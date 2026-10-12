@@ -28,6 +28,56 @@ from quorune.targets import TargetGroup
 from quorune.util import stable_json
 
 
+class EntryCopyContractTests(unittest.TestCase):
+    def test_entry_copy_value_preserves_nontarget_selection_and_typed_exceptions(self):
+        from quorune.compiler.entry_copy_templates import entry_copy_spec
+        from quorune.entry_copy import EntryCopySpec
+        cases = (
+            ('You may have this creature enter as a copy of any creature on the battlefield.', ('creature',), (), None, ()),
+            ('You may have this creature enter as a copy of a creature you control.', ('creature',), (), '$controller', ()),
+            ('You may have this creature enter as a copy of a creature an opponent controls.', ('creature',), (), None, ('$controller',)),
+            ('You may have this creature enter as a copy of any Ally creature on the battlefield.', ('creature',), ('ally',), None, ()),
+            ("You may have this creature enter as a copy of any artifact or creature on the battlefield, except it's an artifact in addition to its other types.", (), (), None, ()),
+        )
+        for text, types, subtypes, controller, excluded in cases:
+            spec = entry_copy_spec(text, source_name='Generic Copier')
+            self.assertIsNotNone(spec, text)
+            self.assertEqual(types, spec.selection.types_all)
+            self.assertEqual(subtypes, spec.selection.subtypes_all)
+            self.assertEqual(controller, spec.selection.controller)
+            self.assertEqual(excluded, spec.selection.excluded_controllers)
+            self.assertFalse(spec.selection.include_phased_out)
+            self.assertEqual(spec, EntryCopySpec.from_dict(spec.to_dict()))
+        spec = entry_copy_spec(cases[-1][0], source_name='Generic Copier')
+        self.assertEqual(('artifact','creature'), spec.selection.types_any)
+        self.assertEqual(('artifact',), spec.exception.add_card_types)
+
+
+    def test_entry_copy_contract_rejects_hidden_targets_open_tails_and_malformed_values(self):
+        from quorune.compiler.entry_copy_templates import entry_copy_spec
+        from quorune.entry_copy import EntryCopySpec
+        text = 'You may have this creature enter as a copy of any creature on the battlefield.'
+        spec = entry_copy_spec(text, source_name='Generic Copier')
+        for changed in (
+            text + ' Then rewrite history.',
+            text.replace('any creature on the battlefield', 'a card in a graveyard'),
+            text.replace('any creature on the battlefield', 'target creature'),
+            text.replace('any creature on the battlefield', 'a creature with an unknown quality'),
+            text.replace('this creature', 'Another creature'),
+            text.replace('.', ', except it has "Rewrite history."'),
+        ):
+            self.assertIsNone(entry_copy_spec(changed, source_name='Generic Copier'), changed)
+        for change in ({'schema_version':True}, {'unknown':True}, {'selection':{**spec.selection.to_dict(),'zones':['hand']}}):
+            with self.assertRaises(ValueError):
+                EntryCopySpec.from_dict({**spec.to_dict(), **change})
+        # Syntax/value recognition supplies no compiler-to-gameplay trust until
+        # the intrinsic replacement, copied entry and ability owners are bound.
+        from test_bound_effect_programs import record
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.capabilities import load_default_capability_registry
+        self.assertNotEqual('exact', compile_oracle_card(record(text, 'Creature — Shapeshifter'), capability_registry=load_default_capability_registry()).status)
+
+
 class CopyObjectLifecycleTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
