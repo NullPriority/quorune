@@ -27,6 +27,25 @@ class SemanticPreflightV2Tests(unittest.TestCase):
     def tearDownClass(cls):
         cls.db.close()
 
+    def test_generated_static_coverage_requires_trusted_matching_source(self):
+        from dataclasses import replace
+        registry = SemanticRegistry()
+        record = self.db.lookup("Stridehangar Automaton")
+        register_generated_programs(self.db, registry, (record,),
+            capability_registry=load_default_capability_registry(), capability_profile="commander_review",
+            promote_exact_runtime_handlers=True)
+        key = f"{record.oracle_id}:static:front:n1"
+        generated = registry.get(key)
+        self.assertIsNotNone(generated)
+        self.assertIn("runtime_static_handler", generated.coverage)
+        self.assertEqual("fully_playable", card_semantic_status(record, registry, db=self.db)["status"])
+        registry.put(replace(generated, trust_level="provisional"))
+        self.assertIn("static_ability", card_semantic_status(record, registry, db=self.db)["unresolved"])
+        registry.put(replace(generated, provenance={**generated.provenance, "source_oracle_hash": "0" * 64}))
+        drifted = card_semantic_status(record, registry, db=self.db)
+        self.assertEqual("unresolved", drifted["status"])
+        self.assertIn("semantic_source_hash_drift", drifted["unresolved"])
+
     def test_preflight_v2_records_exact_sources_and_material_fields(self):
         report = semantic_preflight(self.db, self.zimone)
         self.assertEqual(3, report["schema_version"])
