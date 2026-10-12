@@ -48,7 +48,7 @@ ACTIVATED_ABILITY_DESCRIPTOR_FIELDS = frozenset(
     }
 )
 _OPTIONAL_DESCRIPTOR_FIELDS = frozenset(
-    {"mana_cost_options", "source_counter_removal_cost", "power_up"}
+    {"mana_cost_options", "source_counter_removal_cost", "power_up", "fixed_mana_result"}
 )
 
 _SEQUENCE_FIELDS = (
@@ -122,4 +122,7 @@ def validate_activated_ability_descriptor(value: Any) -> Mapping[str, Any]:
     if "power_up" in value:
         from .power_up_model import PowerUpSpec
         PowerUpSpec.from_dict(value["power_up"])
+    if 'fixed_mana_result' in value:
+        from .fixed_mana_results import FixedManaResultSpec
+        FixedManaResultSpec.from_dict(value['fixed_mana_result'])
     return value

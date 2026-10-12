@@ -1615,6 +1615,16 @@ activation query and object-incarnation usage journal, while casting and
 activation payment share the same canonical mana-spend context. Origin,
 casting-method, color, mana-value, variable, compound-condition, result-rider,
 and delayed-effect restrictions remain source-spanned residuals.
+Fixed mana results use a separate version-two handler while ordinary output
+descriptors retain their version-one serialized identity. One complete fixed
+output may be followed by fixed source damage to the activation controller or
+an original-source restriction through that player's next physical untap step.
+The compiler consumes the entire result clause and emits a closed typed value.
+Unknown tails, targeted or conditional results, and source-sacrifice result
+compositions remain residual. Explicit activation and automatic payment consume
+the same selected mode and result. Damage uses the ordinary replacement and
+prevention transaction; the untap duration uses the player-locked canonical
+tap-state owner without publishing an Exert occurrence.
 The parser must consume the complete printed spending-restriction suffix before
 the fixed-output compiler removes it from the mana instruction. Exact historic
 artifact-, creature-, legendary-, and nonartifact-spell wordings retain their

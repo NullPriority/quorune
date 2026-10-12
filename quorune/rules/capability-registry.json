@@ -16029,6 +16029,109 @@
       "implementation_mutation_rationale": "Omitting the actual attack-cost producer removes the duration and linked result and is detected by the original-card action witness.",
       "blockers": [],
       "status": "trusted"
+    },
+    {
+      "id": "mana.activated.fixed_result",
+      "version": 1,
+      "official_rules": [
+        "605.1a",
+        "605.3b",
+        "608.2c",
+        "120.3a",
+        "701.43a",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "A schema-v2 fixed mana descriptor immediately adds its selected fixed output before one typed controller-damage or next-acting-player-untap result through canonical owners.",
+        "inputs": [
+          "complete fixed output modes",
+          "one closed source result",
+          "current activation controller"
+        ],
+        "outputs": [
+          "stackless fixed mana",
+          "canonical controller damage or player-locked source restriction"
+        ],
+        "exclusions": [
+          "conditional or variable results",
+          "targeted result",
+          "source-sacrifice result compositions",
+          "unknown extra clauses",
+          "unrepresented mana-production replacement or triggered mana composition"
+        ]
+      },
+      "dependencies": [
+        "mana.activated.fixed_output",
+        "untap.step.exert_player",
+        "damage.result.player_life",
+        "damage.replacement.static_quantity",
+        "damage.prevention.static_fixed",
+        "damage.prevention.persistent_amount"
+      ],
+      "implementation_components": [
+        "quorune.fixed_mana_abilities.compile_fixed_activated_mana_ability",
+        "quorune.fixed_mana_results.FixedManaResultSpec",
+        "quorune.semantic_runtime.mana_abilities.FixedActivatedManaAbilityHandler",
+        "quorune.mana_ability_runtime._mana_result_effects",
+        "quorune.mana_mode_effects.apply_mana_mode_effects",
+        "quorune.tap_state.prohibit_next_player_untap",
+        "quorune.semantic_runtime.mana_abilities.FixedManaResultAbilityHandler"
+      ],
+      "positive_tests": [
+        "test_fixed_mana_damage_rider_has_closed_typed_result_after_production",
+        "test_fixed_mana_next_actor_untap_rider_has_closed_typed_result_after_production",
+        "test_original_pain_land_mana_result_uses_damage_authority_rollback_and_replay",
+        "test_original_mogg_mana_result_retains_acting_player_untap_duration_and_replay",
+        "test_original_pain_land_damage_prevention_preserves_mana_and_replays",
+        "test_original_pain_land_auto_payment_applies_result_once_and_replays",
+        "test_original_pain_land_pending_prevention_choice_resumes_once_and_replays"
+      ],
+      "negative_tests": [
+        "test_fixed_mana_result_codecs_reject_unknown_kinds_and_preserve_v1_bytes",
+        "test_fixed_mana_results_reject_unknown_tails_and_missing_result_capability",
+        "test_original_pain_land_colorless_mode_has_no_damage_result_and_replays"
+      ],
+      "interaction_tests": [
+        "test_original_mogg_mana_result_retains_acting_player_untap_duration_and_replay",
+        "test_original_pain_land_damage_prevention_preserves_mana_and_replays",
+        "test_original_pain_land_auto_payment_applies_result_once_and_replays",
+        "test_original_pain_land_colorless_mode_has_no_damage_result_and_replays",
+        "test_original_pain_land_pending_prevention_choice_resumes_once_and_replays"
+      ],
+      "multiplayer_tests": [
+        "test_original_pain_land_mana_result_uses_damage_authority_rollback_and_replay"
+      ],
+      "privacy_tests": [
+        "test_original_pain_land_mana_result_uses_damage_authority_rollback_and_replay"
+      ],
+      "replay_tests": [
+        "test_original_pain_land_mana_result_uses_damage_authority_rollback_and_replay",
+        "test_original_mogg_mana_result_retains_acting_player_untap_duration_and_replay",
+        "test_original_pain_land_damage_prevention_preserves_mana_and_replays",
+        "test_original_pain_land_auto_payment_applies_result_once_and_replays",
+        "test_original_pain_land_colorless_mode_has_no_damage_result_and_replays",
+        "test_original_pain_land_pending_prevention_choice_resumes_once_and_replays"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The explicit result-capability blocker keeps the complete mana-and-result line residual; fixed output and canonical damage/duration dependencies remain independently required.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the typed result from the actual original pain-land mode leaves life unchanged and is detected by the real action witness.",
+      "blockers": [],
+      "status": "trusted"
     }
   ]
 }

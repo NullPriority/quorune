@@ -85,6 +85,30 @@
   ],
   "path_rules": [
     {
+      "id": "fixed-mana-result-contract",
+      "patterns": [
+        "quorune/fixed_mana_results.py",
+        "quorune/fixed_mana_abilities.py",
+        "quorune/semantic_runtime/mana_abilities.py",
+        "quorune/mana_mode_effects.py",
+        "quorune/mana_ability_runtime.py",
+        "tests/fixtures/fixed-mana-result-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_mana_abilities",
+        "test_color_set_mana_abilities",
+        "test_public_quantity_mana",
+        "test_mana_abilities",
+        "test_card_program_trust",
+        "test_untap_step_rules",
+        "test_typed_untap_step_participation",
+        "test_typed_activated_ability_catalog"
+      ],
+      "browser_focuses": [
+        "mana-action"
+      ]
+    },
+    {
       "id": "optional-attack-exert-contract",
       "patterns": [
         "quorune/compiler/exert_nodes.py",

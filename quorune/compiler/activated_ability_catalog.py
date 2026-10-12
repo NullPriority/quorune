@@ -101,7 +101,7 @@ def _specialize_compiled_ability(
     candidates = tuple(
         spec.to_activated_ability()
         for spec in (
-            compile_fixed_activated_mana_ability(ability),
+            compile_fixed_activated_mana_ability(ability,source_name=source_name),
             compile_color_set_activated_mana_ability(ability),
         )
         if spec is not None

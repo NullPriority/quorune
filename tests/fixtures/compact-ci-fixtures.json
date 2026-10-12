@@ -62,6 +62,7 @@
     "tests/fixtures/fixed-evasion-grants.json",
     "tests/fixtures/fixed-extra-turn-cards.json",
     "tests/fixtures/fixed-life-cumulative-upkeep-cards.json",
+    "tests/fixtures/fixed-mana-result-cards.json",
     "tests/fixtures/fixed-next-turn-draw-cards.json",
     "tests/fixtures/fixed-query-keyword-grant-cards.json",
     "tests/fixtures/fixed-resolution-mana-cards.json",
@@ -670,6 +671,96 @@
       "deck_files": [],
       "fixture_files": [],
       "rationale": "Typed Exert layer-six presence, independent linked costs and canonical duration-state validation witnesses consume these exact fixtures."
+    },
+    {
+      "source": "tests/test_fixed_mana_abilities.py",
+      "symbol": "FixedManaResultRuntimeTests.test_original_pain_land_mana_result_uses_damage_authority_rollback_and_replay",
+      "card_names": [
+        "Shivan Reef"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Strict original fixed mana actions and automatic-payment/result interactions consume the canonical fixture subset."
+    },
+    {
+      "source": "tests/test_fixed_mana_abilities.py",
+      "symbol": "FixedManaResultRuntimeTests.test_original_mogg_mana_result_retains_acting_player_untap_duration_and_replay",
+      "card_names": [
+        "Mogg Hollows"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Strict original fixed mana actions and automatic-payment/result interactions consume the canonical fixture subset."
+    },
+    {
+      "source": "tests/test_fixed_mana_abilities.py",
+      "symbol": "FixedManaResultRuntimeTests.test_fixed_mana_result_omission_mutant_is_killed",
+      "card_names": [
+        "Shivan Reef"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Strict original fixed mana actions and automatic-payment/result interactions consume the canonical fixture subset."
+    },
+    {
+      "source": "tests/test_fixed_mana_abilities.py",
+      "symbol": "FixedManaResultRuntimeTests.test_original_pain_land_damage_prevention_preserves_mana_and_replays",
+      "card_names": [
+        "Shivan Reef"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Strict original fixed mana actions and automatic-payment/result interactions consume the canonical fixture subset."
+    },
+    {
+      "source": "tests/test_fixed_mana_abilities.py",
+      "symbol": "FixedManaResultRuntimeTests.test_original_pain_land_auto_payment_applies_result_once_and_replays",
+      "card_names": [
+        "Generic Bound Body",
+        "Generic Bound Next Untap",
+        "Shivan Reef"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Strict original fixed mana actions and automatic-payment/result interactions consume the canonical fixture subset."
+    },
+    {
+      "source": "tests/test_fixed_mana_abilities.py",
+      "symbol": "FixedManaResultRuntimeTests.test_original_pain_land_colorless_mode_has_no_damage_result_and_replays",
+      "card_names": [
+        "Shivan Reef"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Original pain-land first ability contrasts ordinary output with the independent damage-bearing colored mode."
+    },
+    {
+      "source": "tests/test_fixed_mana_abilities.py",
+      "symbol": "FixedManaResultRuntimeTests.test_fixed_mana_untap_result_omission_mutant_is_killed",
+      "card_names": [
+        "Mogg Hollows"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Real fixed mana result omission and pending replacement continuation retain exact-source fixture identity."
+    },
+    {
+      "source": "tests/test_fixed_mana_abilities.py",
+      "symbol": "FixedManaResultRuntimeTests.test_original_pain_land_pending_prevention_choice_resumes_once_and_replays",
+      "card_names": [
+        "Shivan Reef"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Real fixed mana result omission and pending replacement continuation retain exact-source fixture identity."
     }
   ],
   "full_database_only": []

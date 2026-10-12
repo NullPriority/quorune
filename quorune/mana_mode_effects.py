@@ -38,7 +38,12 @@ class SacrificeManaSource:
     effect_index: int
 
 
-ManaModeEffect: TypeAlias = DealDamageToController | PayLife | SacrificeManaSource
+@dataclass(frozen=True, slots=True)
+class SkipActorUntap:
+    effect_index: int
+
+
+ManaModeEffect: TypeAlias = DealDamageToController | PayLife | SacrificeManaSource | SkipActorUntap
 
 
 def _exact_fields(
@@ -84,12 +89,18 @@ def _decode_sacrifice(effect: Mapping[str, Any], index: int) -> ManaModeEffect:
     return SacrificeManaSource(index)
 
 
+def _decode_skip_untap(effect: Mapping[str, Any], index: int) -> ManaModeEffect:
+    _exact_fields(effect,{'op'},message='Next-actor untap mana result requires only its operation')
+    return SkipActorUntap(index)
+
+
 _MODE_EFFECT_DECODERS: Mapping[
     str, Callable[[Mapping[str, Any], int], ManaModeEffect]
 ] = {
     "damage_self": _decode_damage,
     "pay_life": _decode_life_payment,
     "sacrifice_source": _decode_sacrifice,
+    'skip_actor_untap': _decode_skip_untap,
 }
 
 
@@ -242,6 +253,10 @@ def apply_mana_mode_effects(
             )
         elif isinstance(effect, PayLife):
             _apply_life_payment(host, effect, seat=seat)
+        elif isinstance(effect,SkipActorUntap):
+            from .tap_state import prohibit_next_player_untap
+            if source is None:raise GameRuleError('Next-actor untap mana result requires its original source')
+            prohibit_next_player_untap(host,source,actor=seat)
         else:
             _apply_sacrifice(host, seat=seat, source=source)
 

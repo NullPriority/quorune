@@ -36975,6 +36975,506 @@
       "applicability_note": "Replay the exact activation command and typed fixed mana result from the initial checkpoint."
     },
     {
+      "capability_id": "mana.activated.fixed_result",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaResultRuntimeTests.test_original_mogg_mana_result_retains_acting_player_untap_duration_and_replay",
+      "official_rule_ids": [
+        "605.1a",
+        "605.3b",
+        "608.2c",
+        "120.3a",
+        "701.43a",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema-v2 fixed mana descriptor immediately adds its selected fixed output before one typed controller-damage or next-acting-player-untap result through canonical owners."
+    },
+    {
+      "capability_id": "mana.activated.fixed_result",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaResultRuntimeTests.test_original_pain_land_auto_payment_applies_result_once_and_replays",
+      "official_rule_ids": [
+        "605.1a",
+        "605.3b",
+        "608.2c",
+        "120.3a",
+        "701.43a",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema-v2 fixed mana descriptor immediately adds its selected fixed output before one typed controller-damage or next-acting-player-untap result through canonical owners."
+    },
+    {
+      "capability_id": "mana.activated.fixed_result",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaResultRuntimeTests.test_original_pain_land_colorless_mode_has_no_damage_result_and_replays",
+      "official_rule_ids": [
+        "605.1a",
+        "605.3b",
+        "608.2c",
+        "120.3a",
+        "701.43a",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema-v2 fixed mana descriptor immediately adds its selected fixed output before one typed controller-damage or next-acting-player-untap result through canonical owners."
+    },
+    {
+      "capability_id": "mana.activated.fixed_result",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaResultRuntimeTests.test_original_pain_land_damage_prevention_preserves_mana_and_replays",
+      "official_rule_ids": [
+        "605.1a",
+        "605.3b",
+        "608.2c",
+        "120.3a",
+        "701.43a",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema-v2 fixed mana descriptor immediately adds its selected fixed output before one typed controller-damage or next-acting-player-untap result through canonical owners."
+    },
+    {
+      "capability_id": "mana.activated.fixed_result",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaResultRuntimeTests.test_original_pain_land_pending_prevention_choice_resumes_once_and_replays",
+      "official_rule_ids": [
+        "605.1a",
+        "605.3b",
+        "608.2c",
+        "120.3a",
+        "701.43a",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema-v2 fixed mana descriptor immediately adds its selected fixed output before one typed controller-damage or next-acting-player-untap result through canonical owners."
+    },
+    {
+      "capability_id": "mana.activated.fixed_result",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaResultRuntimeTests.test_original_pain_land_mana_result_uses_damage_authority_rollback_and_replay",
+      "official_rule_ids": [
+        "605.1a",
+        "605.3b",
+        "608.2c",
+        "120.3a",
+        "701.43a",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema-v2 fixed mana descriptor immediately adds its selected fixed output before one typed controller-damage or next-acting-player-untap result through canonical owners."
+    },
+    {
+      "capability_id": "mana.activated.fixed_result",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaResultRuntimeTests.test_fixed_mana_result_omission_mutant_is_killed",
+      "official_rule_ids": [
+        "605.1a",
+        "605.3b",
+        "608.2c",
+        "120.3a",
+        "701.43a",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema-v2 fixed mana descriptor immediately adds its selected fixed output before one typed controller-damage or next-acting-player-untap result through canonical owners."
+    },
+    {
+      "capability_id": "mana.activated.fixed_result",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaResultRuntimeTests.test_fixed_mana_untap_result_omission_mutant_is_killed",
+      "official_rule_ids": [
+        "605.1a",
+        "605.3b",
+        "608.2c",
+        "120.3a",
+        "701.43a",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema-v2 fixed mana descriptor immediately adds its selected fixed output before one typed controller-damage or next-acting-player-untap result through canonical owners."
+    },
+    {
+      "capability_id": "mana.activated.fixed_result",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaModelTests.test_fixed_mana_result_codecs_reject_unknown_kinds_and_preserve_v1_bytes",
+      "official_rule_ids": [
+        "605.1a",
+        "605.3b",
+        "608.2c",
+        "120.3a",
+        "701.43a",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema-v2 fixed mana descriptor immediately adds its selected fixed output before one typed controller-damage or next-acting-player-untap result through canonical owners."
+    },
+    {
+      "capability_id": "mana.activated.fixed_result",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaModelTests.test_fixed_mana_results_reject_unknown_tails_and_missing_result_capability",
+      "official_rule_ids": [
+        "605.1a",
+        "605.3b",
+        "608.2c",
+        "120.3a",
+        "701.43a",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema-v2 fixed mana descriptor immediately adds its selected fixed output before one typed controller-damage or next-acting-player-untap result through canonical owners."
+    },
+    {
+      "capability_id": "mana.activated.fixed_result",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaResultRuntimeTests.test_original_pain_land_colorless_mode_has_no_damage_result_and_replays",
+      "official_rule_ids": [
+        "605.1a",
+        "605.3b",
+        "608.2c",
+        "120.3a",
+        "701.43a",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema-v2 fixed mana descriptor immediately adds its selected fixed output before one typed controller-damage or next-acting-player-untap result through canonical owners."
+    },
+    {
+      "capability_id": "mana.activated.fixed_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaModelTests.test_fixed_mana_damage_rider_has_closed_typed_result_after_production",
+      "official_rule_ids": [
+        "605.1a",
+        "605.3b",
+        "608.2c",
+        "120.3a",
+        "701.43a",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema-v2 fixed mana descriptor immediately adds its selected fixed output before one typed controller-damage or next-acting-player-untap result through canonical owners."
+    },
+    {
+      "capability_id": "mana.activated.fixed_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaModelTests.test_fixed_mana_next_actor_untap_rider_has_closed_typed_result_after_production",
+      "official_rule_ids": [
+        "605.1a",
+        "605.3b",
+        "608.2c",
+        "120.3a",
+        "701.43a",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema-v2 fixed mana descriptor immediately adds its selected fixed output before one typed controller-damage or next-acting-player-untap result through canonical owners."
+    },
+    {
+      "capability_id": "mana.activated.fixed_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaResultRuntimeTests.test_original_mogg_mana_result_retains_acting_player_untap_duration_and_replay",
+      "official_rule_ids": [
+        "605.1a",
+        "605.3b",
+        "608.2c",
+        "120.3a",
+        "701.43a",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema-v2 fixed mana descriptor immediately adds its selected fixed output before one typed controller-damage or next-acting-player-untap result through canonical owners."
+    },
+    {
+      "capability_id": "mana.activated.fixed_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaResultRuntimeTests.test_original_pain_land_auto_payment_applies_result_once_and_replays",
+      "official_rule_ids": [
+        "605.1a",
+        "605.3b",
+        "608.2c",
+        "120.3a",
+        "701.43a",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema-v2 fixed mana descriptor immediately adds its selected fixed output before one typed controller-damage or next-acting-player-untap result through canonical owners."
+    },
+    {
+      "capability_id": "mana.activated.fixed_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaResultRuntimeTests.test_original_pain_land_damage_prevention_preserves_mana_and_replays",
+      "official_rule_ids": [
+        "605.1a",
+        "605.3b",
+        "608.2c",
+        "120.3a",
+        "701.43a",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema-v2 fixed mana descriptor immediately adds its selected fixed output before one typed controller-damage or next-acting-player-untap result through canonical owners."
+    },
+    {
+      "capability_id": "mana.activated.fixed_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaResultRuntimeTests.test_original_pain_land_mana_result_uses_damage_authority_rollback_and_replay",
+      "official_rule_ids": [
+        "605.1a",
+        "605.3b",
+        "608.2c",
+        "120.3a",
+        "701.43a",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema-v2 fixed mana descriptor immediately adds its selected fixed output before one typed controller-damage or next-acting-player-untap result through canonical owners."
+    },
+    {
+      "capability_id": "mana.activated.fixed_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaResultRuntimeTests.test_original_pain_land_pending_prevention_choice_resumes_once_and_replays",
+      "official_rule_ids": [
+        "605.1a",
+        "605.3b",
+        "608.2c",
+        "120.3a",
+        "701.43a",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema-v2 fixed mana descriptor immediately adds its selected fixed output before one typed controller-damage or next-acting-player-untap result through canonical owners."
+    },
+    {
+      "capability_id": "mana.activated.fixed_result",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaResultRuntimeTests.test_original_pain_land_mana_result_uses_damage_authority_rollback_and_replay",
+      "official_rule_ids": [
+        "605.1a",
+        "605.3b",
+        "608.2c",
+        "120.3a",
+        "701.43a",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema-v2 fixed mana descriptor immediately adds its selected fixed output before one typed controller-damage or next-acting-player-untap result through canonical owners."
+    },
+    {
+      "capability_id": "mana.activated.fixed_result",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaResultRuntimeTests.test_original_mogg_mana_result_retains_acting_player_untap_duration_and_replay",
+      "official_rule_ids": [
+        "605.1a",
+        "605.3b",
+        "608.2c",
+        "120.3a",
+        "701.43a",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema-v2 fixed mana descriptor immediately adds its selected fixed output before one typed controller-damage or next-acting-player-untap result through canonical owners."
+    },
+    {
+      "capability_id": "mana.activated.fixed_result",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaResultRuntimeTests.test_original_pain_land_auto_payment_applies_result_once_and_replays",
+      "official_rule_ids": [
+        "605.1a",
+        "605.3b",
+        "608.2c",
+        "120.3a",
+        "701.43a",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema-v2 fixed mana descriptor immediately adds its selected fixed output before one typed controller-damage or next-acting-player-untap result through canonical owners."
+    },
+    {
+      "capability_id": "mana.activated.fixed_result",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaResultRuntimeTests.test_original_pain_land_colorless_mode_has_no_damage_result_and_replays",
+      "official_rule_ids": [
+        "605.1a",
+        "605.3b",
+        "608.2c",
+        "120.3a",
+        "701.43a",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema-v2 fixed mana descriptor immediately adds its selected fixed output before one typed controller-damage or next-acting-player-untap result through canonical owners."
+    },
+    {
+      "capability_id": "mana.activated.fixed_result",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaResultRuntimeTests.test_original_pain_land_damage_prevention_preserves_mana_and_replays",
+      "official_rule_ids": [
+        "605.1a",
+        "605.3b",
+        "608.2c",
+        "120.3a",
+        "701.43a",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema-v2 fixed mana descriptor immediately adds its selected fixed output before one typed controller-damage or next-acting-player-untap result through canonical owners."
+    },
+    {
+      "capability_id": "mana.activated.fixed_result",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaResultRuntimeTests.test_original_pain_land_mana_result_uses_damage_authority_rollback_and_replay",
+      "official_rule_ids": [
+        "605.1a",
+        "605.3b",
+        "608.2c",
+        "120.3a",
+        "701.43a",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema-v2 fixed mana descriptor immediately adds its selected fixed output before one typed controller-damage or next-acting-player-untap result through canonical owners."
+    },
+    {
+      "capability_id": "mana.activated.fixed_result",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_mana_abilities.FixedManaResultRuntimeTests.test_original_pain_land_pending_prevention_choice_resumes_once_and_replays",
+      "official_rule_ids": [
+        "605.1a",
+        "605.3b",
+        "608.2c",
+        "120.3a",
+        "701.43a",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A schema-v2 fixed mana descriptor immediately adds its selected fixed output before one typed controller-damage or next-acting-player-untap result through canonical owners."
+    },
+    {
       "capability_id": "mana.activated.restricted_fixed_output",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_mana_abilities.FixedManaModelTests.test_typed_spend_restrictions_match_public_characteristics",

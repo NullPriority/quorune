@@ -76,6 +76,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/prototype_model.py",
         "quorune/enlist_model.py",
         "quorune/exert_model.py",
+        "quorune/fixed_mana_results.py",
         "quorune/declaration_rule_effects.py",
         "quorune/continuous_conditions.py",
         "quorune/resolution_conditions.py",

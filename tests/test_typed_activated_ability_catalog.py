@@ -116,10 +116,8 @@ class TypedActivatedAbilityCatalogTests(unittest.TestCase):
             [{"W": 0, "U": 0, "B": 1, "R": 0, "G": 0, "C": 0}],
             [mode.bundle for mode in ability.fixed_mana_outputs],
         )
-        self.assertEqual(
-            "builtin:mana-result-damage-controller:1",
-            ability.builtin_semantic_key,
-        )
+        self.assertIsNone(ability.builtin_semantic_key)
+        self.assertEqual(('damage_controller',1),(ability.fixed_mana_result.kind,ability.fixed_mana_result.amount))
 
     def test_program_catalog_is_additive_and_strictly_lowered(self):
         card = record("Fixture Stone", "{T}: Add {C}.")

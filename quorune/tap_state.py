@@ -28,18 +28,24 @@ def _exert_players(card: Any) -> list[str]:
 def exert_permanent(host: Any, card: Any, *, actor: str, linked_program: str,
                     trigger_batch: list[Any]) -> None:
     """Pay one CR 701.43 cost and publish its linked result before later costs."""
-    from .exert_model import EXERT_PLAYER_ANNOTATION
     if (card.zone != 'battlefield' or card.phased_out or actor not in host.active_seats
             or type(linked_program) is not str or not linked_program):
         raise TapStateError('Exert requires a present permanent, acting player and linked cost')
-    players = _exert_players(card)
-    card.annotations[EXERT_PLAYER_ANNOTATION] = sorted({*players, actor})
+    prohibit_next_player_untap(host,card,actor=actor)
     context = {'card': card.ref, 'player': actor, 'controller': card.controller,
                'object_id': card.object_id, 'logical_object_id': card.logical_object_id,
                'linked_exert_program': linked_program}
     host._log(actor, 'permanent.exerted', 'Permanent was exerted as an attack cost.',
               context, changed_objects=[card.object_id], changed_players=[actor])
     host._dispatch_semantic_event('permanent.exerted', context, trigger_batch=trigger_batch)
+
+
+def prohibit_next_player_untap(host: Any, card: Any, *, actor: str) -> None:
+    """Retain one original permanent restriction through the acting player's step."""
+    from .exert_model import EXERT_PLAYER_ANNOTATION
+    if card.zone != 'battlefield' or card.phased_out or actor not in host.active_seats:
+        raise TapStateError('Next-player untap restriction requires a present permanent and player')
+    card.annotations[EXERT_PLAYER_ANNOTATION]=sorted({*_exert_players(card),actor})
 
 
 def expire_exert_untap_restrictions(host: Any, active_player: str) -> frozenset[str]:

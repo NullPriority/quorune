@@ -6103,6 +6103,18 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/fixed_mana_results.py",
+      "layer": "domain",
+      "owning_subsystem": "legacy_domain",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/fixed_token_production.py",
       "layer": "domain",
       "owning_subsystem": "token_creation",
@@ -12852,5 +12864,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "4de476950b1b359e793bd021eaf9c972bff6a67b4fd29df8741fdf933d912afc"
+  "fingerprint": "50c0d61dbe09a83a6ad5720a2837089ac7596fd80ce381cd58d6324bd5aaffd0"
 }

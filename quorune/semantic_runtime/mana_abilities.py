@@ -7,6 +7,7 @@ from typing import Any, Mapping
 from ..fixed_mana_abilities import (
     FIXED_MANA_HANDLER_CAPABILITIES,
     FIXED_MANA_HANDLER_ID,
+    FIXED_MANA_RESULT_HANDLER_ID,
     FixedActivatedManaAbilitySpec,
     FixedManaAbilityError,
 )
@@ -40,7 +41,7 @@ class FixedActivatedManaAbilityHandler:
         )
         if descriptor["handler_id"] != self.handler_id:
             raise SemanticNodeError("Fixed activated mana handler ID mismatch")
-        if descriptor["schema_version"] != self.schema_version:
+        if type(descriptor['schema_version']) is not int or descriptor["schema_version"] != self.schema_version:
             raise SemanticNodeError(
                 "Unsupported fixed activated mana handler schema version"
             )
@@ -52,8 +53,11 @@ class FixedActivatedManaAbilityHandler:
         if not isinstance(ability, Mapping):
             raise SemanticNodeError("Fixed activated mana ability must be an object")
         try:
-            return FixedActivatedManaAbilitySpec.from_dict(ability)
-        except FixedManaAbilityError as exc:
+            spec=FixedActivatedManaAbilitySpec.from_dict(ability)
+            if (spec.result is not None) != (descriptor['schema_version']==2):
+                raise FixedManaAbilityError('Fixed mana result requires schema version two')
+            return spec
+        except ValueError as exc:
             raise SemanticNodeError(str(exc)) from exc
 
     def lower(
@@ -71,10 +75,19 @@ class FixedManaAbilityRegistry(
     pass
 
 
+@dataclass(frozen=True,slots=True)
+class FixedManaResultAbilityHandler(FixedActivatedManaAbilityHandler):
+    handler_id: str = FIXED_MANA_RESULT_HANDLER_ID
+    schema_version: int = 2
+    capability_dependencies: tuple[str,...] = (*FIXED_MANA_HANDLER_CAPABILITIES,'mana.activated.fixed_result')
+    rule_references: tuple[str,...] = ('605.1a','605.3b','608.2c','120.3a','502.3')
+
+
 @lru_cache(maxsize=1)
 def default_fixed_mana_ability_registry() -> FixedManaAbilityRegistry:
     registry = FixedManaAbilityRegistry((
         FixedActivatedManaAbilityHandler(),
+        FixedManaResultAbilityHandler(),
         PublicQuantityActivatedManaHandler(),
     ))
     registry.require_registered_capabilities(load_default_capability_registry())

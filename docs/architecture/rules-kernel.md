@@ -16,6 +16,15 @@ sacrifice and loyalty costs commit before resolution; a countered spell adds
 no mana. Typed spending restrictions enter the canonical provenance lots and
 use the same public spell-type predicates for advertised and accepted payment.
 
+Fixed activated mana abilities may add their selected output and then apply one
+typed source result. Damage is dealt to the activation controller through the
+canonical damage transaction, so prevention changes damage while retaining
+mana. A next-player untap result locks the activation controller and original
+permanent, even after a control change. Both explicit activation and automatic
+spell payment apply the result once after mana production. Result-bearing
+activations are irreversible for mana undo and retain ordinary transactional
+rollback, replacement continuations and replay.
+
 Enlist adds an optional tap cost to an accepted attack declaration. Each
 instance may tap one distinct eligible controlled nonattacking creature that
 has haste or has been controlled since the turn began. All choices validate
