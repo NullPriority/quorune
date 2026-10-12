@@ -172,7 +172,7 @@ class DeathReturnWithCounterHandler:
                     EffectEntryCounter(
                         counter_name=spec.entry_counter,
                         amount=1,
-                        placing_player=player,
+                        placing_player=card.owner,
                         source_ref=source_ref,
                         rule_id=spec.rule_id,
                     ),

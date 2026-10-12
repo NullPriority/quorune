@@ -490,6 +490,7 @@ class SemanticChoiceIntentHostMixin:
                 card,
                 intent.destination,
                 destination_controller=intent.new_controller,
+                requested_tapped=tapped is True,
                 effect_entry_counters=intent.effect_entry_counters,
                 transition_kind=intent.transition_kind,
                 selections=replacement_selections,

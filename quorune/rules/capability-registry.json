@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 227,
+  "registry_version": 229,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -238,6 +238,88 @@
     }
   ],
   "capabilities": [
+    {
+      "id": "zone.return.fixed_event_battlefield",
+      "version": 1,
+      "official_rules": [
+        "400.7e",
+        "603.6c",
+        "603.10a",
+        "608.2c",
+        "122.6",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Return the exact public graveyard incarnation retained by one death occurrence to the battlefield under its owner, optionally tapped with one fixed +1/+1 entry counter, through canonical ZoneMoveIntent.",
+        "inputs": [
+          "sealed departed-card ref, owner and zone-change counter",
+          "one death-event child",
+          "fixed tapped and entry-counter instruction"
+        ],
+        "outputs": [
+          "owner-controlled battlefield return",
+          "stale or missing departed card is ignored",
+          "entry counters participate in the existing replacement transaction"
+        ],
+        "exclusions": [
+          "other return controllers",
+          "exile or hand return origins",
+          "unrepresented entry transforms or attachments",
+          "dynamic entry counters",
+          "linked subsequent-return riders"
+        ]
+      },
+      "dependencies": [
+        "zone.change.destination_replacement"
+      ],
+      "implementation_components": [
+        "quorune.event_card_return.event_battlefield_return_intent",
+        "quorune.compiler.event_card_return_templates.event_card_return_template",
+        "quorune.semantic_runtime.effect_handlers.DomainEffectHandler.lower",
+        "quorune.semantic_choices.intent_host.SemanticChoiceIntentHostMixin.move_object_intent"
+      ],
+      "positive_tests": [
+        "test_event_battlefield_return_lowers_owner_incarnation_tap_and_entry_counter",
+        "test_original_death_grants_return_owner_with_entry_counter_or_coupled_stats_and_replay"
+      ],
+      "negative_tests": [
+        "test_event_battlefield_intent_rejects_malformed_identity_and_entry_fields",
+        "test_event_battlefield_dependencies_and_unrepresented_riders_fail_closed",
+        "test_granted_death_return_rejects_new_graveyard_incarnation_and_kills_identity_mutant"
+      ],
+      "interaction_tests": [
+        "test_original_death_grants_return_owner_with_entry_counter_or_coupled_stats_and_replay",
+        "test_granted_death_return_rejects_new_graveyard_incarnation_and_kills_identity_mutant"
+      ],
+      "multiplayer_tests": [
+        "test_original_death_grants_return_owner_with_entry_counter_or_coupled_stats_and_replay"
+      ],
+      "privacy_tests": [
+        "test_original_death_grants_return_owner_with_entry_counter_or_coupled_stats_and_replay"
+      ],
+      "replay_tests": [
+        "test_original_death_grants_return_owner_with_entry_counter_or_coupled_stats_and_replay"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The focused condition, destination replacement and entry-counter dependency mutations keep the entire return program residual.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Removing the expected graveyard incarnation lets the old actual granted death trigger return a later incarnation and is detected.",
+      "blockers": [],
+      "status": "trusted"
+    },
     {
       "id": "condition.creature.fixed_numeric_exists",
       "version": 1,
@@ -4577,24 +4659,96 @@
     },
     {
       "id": "counter.producer.persist",
-      "version": 1,
-      "official_rules": ["122.1", "122.6", "400.7", "603.4", "603.6c", "603.10a", "603.10e", "702.79", "702.79a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 2,
+      "official_rules": [
+        "122.1",
+        "122.6",
+        "400.7",
+        "603.4",
+        "603.6c",
+        "603.10a",
+        "603.10e",
+        "702.79",
+        "702.79a",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Compile each printed Persist instance as an independent intervening-if dies trigger that returns the same graveyard incarnation under its owner with one -1/-1 counter through canonical replacement owners.",
-        "inputs": ["one printed Persist keyword instance", "normalized self creature-dies occurrence", "last-known -1/-1 counter snapshot", "post-move graveyard incarnation", "trigger controller and object owner"],
-        "outputs": ["one trigger per Persist instance", "last-known intervening-if result", "identity-pinned owner-controlled return", "replacement-aware -1/-1 entry counter placed by the trigger controller", "APNAP placement and exact replay"],
-        "exclusions": ["granted or copied Persist outside trusted typed ability fragments", "Oracle-equivalent nonkeyword wording", "objects that did not die as creatures", "tokens after their graveyard state action", "unrepresented replacement families"]
+        "inputs": [
+          "one printed Persist keyword instance",
+          "normalized self creature-dies occurrence",
+          "last-known -1/-1 counter snapshot",
+          "post-move graveyard incarnation",
+          "trigger controller and object owner"
+        ],
+        "outputs": [
+          "one trigger per Persist instance",
+          "last-known intervening-if result",
+          "identity-pinned owner-controlled return",
+          "replacement-aware -1/-1 entry counter placed by the trigger controller",
+          "APNAP placement and exact replay"
+        ],
+        "exclusions": [
+          "granted or copied Persist outside trusted typed ability fragments",
+          "Oracle-equivalent nonkeyword wording",
+          "objects that did not die as creatures",
+          "tokens after their graveyard state action",
+          "unrepresented replacement families"
+        ]
       },
-      "dependencies": ["counter.producer.effect_entry", "trigger.event.normalized_zone_change", "trigger.placement.apnap"],
-      "implementation_components": ["quorune.death_return.DeathReturnSpec", "quorune.compiler.keyword_nodes.death_return_keyword_node", "quorune.trigger_discovery.semantic_event_condition_matches", "quorune.semantic_choices.death_return.DeathReturnWithCounterHandler", "quorune.semantic_runtime.intents.ZoneMoveIntent"],
-      "positive_tests": ["test_printed_persist_and_undying_lower_each_instance_with_exact_spans", "test_persist_returns_under_owner_with_replacement_aware_counter", "test_repeated_persist_instances_trigger_separately_but_only_one_returns"],
-      "negative_tests": ["test_existing_minus_counter_prevents_persist_trigger", "test_stale_or_departed_graveyard_incarnation_does_not_return", "test_unsupported_death_return_wording_remains_material_residual"],
-      "interaction_tests": ["test_control_change_uses_trigger_controller_as_placing_player_and_owner_as_controller", "test_zone_and_counter_replacements_complete_before_return_mutates"],
-      "multiplayer_tests": ["test_four_player_simultaneous_deaths_place_triggers_apnap_and_keep_choices_scoped"],
-      "privacy_tests": ["test_four_player_simultaneous_deaths_place_triggers_apnap_and_keep_choices_scoped"],
-      "replay_tests": ["test_death_return_replacement_continuation_survives_process_restart", "test_death_return_replacement_resume_replays_exactly"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "counter.producer.effect_entry",
+        "trigger.event.normalized_zone_change",
+        "trigger.placement.apnap"
+      ],
+      "implementation_components": [
+        "quorune.death_return.DeathReturnSpec",
+        "quorune.compiler.keyword_nodes.death_return_keyword_node",
+        "quorune.trigger_discovery.semantic_event_condition_matches",
+        "quorune.semantic_choices.death_return.DeathReturnWithCounterHandler",
+        "quorune.semantic_runtime.intents.ZoneMoveIntent"
+      ],
+      "positive_tests": [
+        "test_printed_persist_and_undying_lower_each_instance_with_exact_spans",
+        "test_persist_returns_under_owner_with_replacement_aware_counter",
+        "test_repeated_persist_instances_trigger_separately_but_only_one_returns",
+        "test_original_persist_and_undying_counter_is_placed_by_returned_owner_after_control_change"
+      ],
+      "negative_tests": [
+        "test_existing_minus_counter_prevents_persist_trigger",
+        "test_stale_or_departed_graveyard_incarnation_does_not_return",
+        "test_unsupported_death_return_wording_remains_material_residual"
+      ],
+      "interaction_tests": [
+        "test_control_change_uses_returned_owner_as_counter_placing_player",
+        "test_zone_and_counter_replacements_complete_before_return_mutates",
+        "test_original_persist_and_undying_counter_is_placed_by_returned_owner_after_control_change"
+      ],
+      "multiplayer_tests": [
+        "test_four_player_simultaneous_deaths_place_triggers_apnap_and_keep_choices_scoped",
+        "test_original_persist_and_undying_counter_is_placed_by_returned_owner_after_control_change"
+      ],
+      "privacy_tests": [
+        "test_four_player_simultaneous_deaths_place_triggers_apnap_and_keep_choices_scoped"
+      ],
+      "replay_tests": [
+        "test_death_return_replacement_continuation_survives_process_restart",
+        "test_death_return_replacement_resume_replays_exactly",
+        "test_original_persist_and_undying_counter_is_placed_by_returned_owner_after_control_change"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "The generated Persist trigger cannot become trusted when effect-entry counters, normalized death events, or APNAP trigger placement are blocked.",
       "implementation_mutation_status": "killed",
@@ -4604,24 +4758,95 @@
     },
     {
       "id": "counter.producer.undying",
-      "version": 1,
-      "official_rules": ["122.1", "122.6", "400.7", "603.4", "603.6c", "603.10a", "603.10e", "702.93", "702.93a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 2,
+      "official_rules": [
+        "122.1",
+        "122.6",
+        "400.7",
+        "603.4",
+        "603.6c",
+        "603.10a",
+        "603.10e",
+        "702.93",
+        "702.93a",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Compile each printed Undying instance as an independent intervening-if dies trigger that returns the same graveyard incarnation under its owner with one +1/+1 counter through canonical replacement owners.",
-        "inputs": ["one printed Undying keyword instance", "normalized self creature-dies occurrence", "last-known +1/+1 counter snapshot", "post-move graveyard incarnation", "trigger controller and object owner"],
-        "outputs": ["one trigger per Undying instance", "last-known intervening-if result", "identity-pinned owner-controlled return", "replacement-aware +1/+1 entry counter placed by the trigger controller", "APNAP placement and exact replay"],
-        "exclusions": ["granted or copied Undying outside trusted typed ability fragments", "Oracle-equivalent nonkeyword wording", "objects that did not die as creatures", "tokens after their graveyard state action", "unrepresented replacement families"]
+        "inputs": [
+          "one printed Undying keyword instance",
+          "normalized self creature-dies occurrence",
+          "last-known +1/+1 counter snapshot",
+          "post-move graveyard incarnation",
+          "trigger controller and object owner"
+        ],
+        "outputs": [
+          "one trigger per Undying instance",
+          "last-known intervening-if result",
+          "identity-pinned owner-controlled return",
+          "replacement-aware +1/+1 entry counter placed by the trigger controller",
+          "APNAP placement and exact replay"
+        ],
+        "exclusions": [
+          "granted or copied Undying outside trusted typed ability fragments",
+          "Oracle-equivalent nonkeyword wording",
+          "objects that did not die as creatures",
+          "tokens after their graveyard state action",
+          "unrepresented replacement families"
+        ]
       },
-      "dependencies": ["counter.producer.effect_entry", "trigger.event.normalized_zone_change", "trigger.placement.apnap"],
-      "implementation_components": ["quorune.death_return.DeathReturnSpec", "quorune.compiler.keyword_nodes.death_return_keyword_node", "quorune.trigger_discovery.semantic_event_condition_matches", "quorune.semantic_choices.death_return.DeathReturnWithCounterHandler", "quorune.semantic_runtime.intents.ZoneMoveIntent"],
-      "positive_tests": ["test_printed_persist_and_undying_lower_each_instance_with_exact_spans", "test_undying_returns_with_plus_counter"],
-      "negative_tests": ["test_existing_plus_counter_prevents_undying_trigger", "test_stale_or_departed_graveyard_incarnation_does_not_return", "test_unsupported_death_return_wording_remains_material_residual"],
-      "interaction_tests": ["test_control_change_uses_trigger_controller_as_placing_player_and_owner_as_controller", "test_zone_and_counter_replacements_complete_before_return_mutates"],
-      "multiplayer_tests": ["test_four_player_simultaneous_deaths_place_triggers_apnap_and_keep_choices_scoped"],
-      "privacy_tests": ["test_four_player_simultaneous_deaths_place_triggers_apnap_and_keep_choices_scoped"],
-      "replay_tests": ["test_death_return_replacement_continuation_survives_process_restart", "test_death_return_replacement_resume_replays_exactly"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "counter.producer.effect_entry",
+        "trigger.event.normalized_zone_change",
+        "trigger.placement.apnap"
+      ],
+      "implementation_components": [
+        "quorune.death_return.DeathReturnSpec",
+        "quorune.compiler.keyword_nodes.death_return_keyword_node",
+        "quorune.trigger_discovery.semantic_event_condition_matches",
+        "quorune.semantic_choices.death_return.DeathReturnWithCounterHandler",
+        "quorune.semantic_runtime.intents.ZoneMoveIntent"
+      ],
+      "positive_tests": [
+        "test_printed_persist_and_undying_lower_each_instance_with_exact_spans",
+        "test_undying_returns_with_plus_counter",
+        "test_original_persist_and_undying_counter_is_placed_by_returned_owner_after_control_change"
+      ],
+      "negative_tests": [
+        "test_existing_plus_counter_prevents_undying_trigger",
+        "test_stale_or_departed_graveyard_incarnation_does_not_return",
+        "test_unsupported_death_return_wording_remains_material_residual"
+      ],
+      "interaction_tests": [
+        "test_control_change_uses_returned_owner_as_counter_placing_player",
+        "test_zone_and_counter_replacements_complete_before_return_mutates",
+        "test_original_persist_and_undying_counter_is_placed_by_returned_owner_after_control_change"
+      ],
+      "multiplayer_tests": [
+        "test_four_player_simultaneous_deaths_place_triggers_apnap_and_keep_choices_scoped",
+        "test_original_persist_and_undying_counter_is_placed_by_returned_owner_after_control_change"
+      ],
+      "privacy_tests": [
+        "test_four_player_simultaneous_deaths_place_triggers_apnap_and_keep_choices_scoped"
+      ],
+      "replay_tests": [
+        "test_death_return_replacement_continuation_survives_process_restart",
+        "test_death_return_replacement_resume_replays_exactly",
+        "test_original_persist_and_undying_counter_is_placed_by_returned_owner_after_control_change"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "The generated Undying trigger cannot become trusted when effect-entry counters, normalized death events, or APNAP trigger placement are blocked.",
       "implementation_mutation_status": "killed",

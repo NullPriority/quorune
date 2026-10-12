@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "9d4f697351dc5749750d50eef9aa9d4ba67ee343b58532461ed6b8e9a922737d",
-  "declaration_source_fingerprint": "47fa8dde3397ba253a2a36da41d9d8c05c13161121961fc867cdb9391e590839",
+  "registry_fingerprint": "9e505bc3c42d9d9f422f572981d7a3a718e6e1eadd93ec0e706095c039dc0388",
+  "declaration_source_fingerprint": "5e4e7fc4271fe3029074ae9ce2324e3067075a29e2a42be743252c88ef01f7e9",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -51205,7 +51205,7 @@
     {
       "capability_id": "counter.producer.persist",
       "evidence_class": "interaction",
-      "test_id": "tests.test_persist_undying_rules.PersistUndyingRuntimeTests.test_control_change_uses_trigger_controller_as_placing_player_and_owner_as_controller",
+      "test_id": "tests.test_persist_undying_rules.PersistUndyingRuntimeTests.test_control_change_uses_returned_owner_as_counter_placing_player",
       "official_rule_ids": [
         "122.1",
         "122.6",
@@ -51215,7 +51215,8 @@
         "603.10a",
         "603.10e",
         "702.79",
-        "702.79a"
+        "702.79a",
+        "122.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -51223,6 +51224,29 @@
         "commander_review"
       ],
       "applicability_note": "Use the Persist trigger controller as the counter-placing player while returning the card under its owner after a control change."
+    },
+    {
+      "capability_id": "counter.producer.persist",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantRuntimeTests.test_original_persist_and_undying_counter_is_placed_by_returned_owner_after_control_change",
+      "official_rule_ids": [
+        "122.1",
+        "122.6",
+        "400.7",
+        "603.4",
+        "603.6c",
+        "603.10a",
+        "603.10e",
+        "702.79",
+        "702.79a",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Young Wolf and Putrid Goblin destruction after control change distinguish locked trigger controller, returned owner/controller and CR122.6a counter placing attribution, with pre-action save/load and replay."
     },
     {
       "capability_id": "counter.producer.persist",
@@ -51237,7 +51261,8 @@
         "603.10a",
         "603.10e",
         "702.79",
-        "702.79a"
+        "702.79a",
+        "122.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -51245,6 +51270,29 @@
         "commander_review"
       ],
       "applicability_note": "Place simultaneous Persist and Undying triggers in four-player APNAP order with independent physical source identity."
+    },
+    {
+      "capability_id": "counter.producer.persist",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantRuntimeTests.test_original_persist_and_undying_counter_is_placed_by_returned_owner_after_control_change",
+      "official_rule_ids": [
+        "122.1",
+        "122.6",
+        "400.7",
+        "603.4",
+        "603.6c",
+        "603.10a",
+        "603.10e",
+        "702.79",
+        "702.79a",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Young Wolf and Putrid Goblin destruction after control change distinguish locked trigger controller, returned owner/controller and CR122.6a counter placing attribution, with pre-action save/load and replay."
     },
     {
       "capability_id": "counter.producer.persist",
@@ -51259,7 +51307,8 @@
         "603.10a",
         "603.10e",
         "702.79",
-        "702.79a"
+        "702.79a",
+        "122.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -51281,7 +51330,8 @@
         "603.10a",
         "603.10e",
         "702.79",
-        "702.79a"
+        "702.79a",
+        "122.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -51303,7 +51353,8 @@
         "603.10a",
         "603.10e",
         "702.79",
-        "702.79a"
+        "702.79a",
+        "122.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -51311,6 +51362,29 @@
         "commander_review"
       ],
       "applicability_note": "Resolve Persist by returning the same graveyard incarnation under its owner with a replacement-aware -1/-1 counter."
+    },
+    {
+      "capability_id": "counter.producer.persist",
+      "evidence_class": "positive",
+      "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantRuntimeTests.test_original_persist_and_undying_counter_is_placed_by_returned_owner_after_control_change",
+      "official_rule_ids": [
+        "122.1",
+        "122.6",
+        "400.7",
+        "603.4",
+        "603.6c",
+        "603.10a",
+        "603.10e",
+        "702.79",
+        "702.79a",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Young Wolf and Putrid Goblin destruction after control change distinguish locked trigger controller, returned owner/controller and CR122.6a counter placing attribution, with pre-action save/load and replay."
     },
     {
       "capability_id": "counter.producer.persist",
@@ -51325,7 +51399,8 @@
         "603.10a",
         "603.10e",
         "702.79",
-        "702.79a"
+        "702.79a",
+        "122.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -51347,7 +51422,8 @@
         "603.10a",
         "603.10e",
         "702.79",
-        "702.79a"
+        "702.79a",
+        "122.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -51369,7 +51445,8 @@
         "603.10a",
         "603.10e",
         "702.79",
-        "702.79a"
+        "702.79a",
+        "122.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -51377,6 +51454,29 @@
         "commander_review"
       ],
       "applicability_note": "Replay a suspended Persist replacement choice and identity-pinned return to the identical authoritative hash."
+    },
+    {
+      "capability_id": "counter.producer.persist",
+      "evidence_class": "replay",
+      "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantRuntimeTests.test_original_persist_and_undying_counter_is_placed_by_returned_owner_after_control_change",
+      "official_rule_ids": [
+        "122.1",
+        "122.6",
+        "400.7",
+        "603.4",
+        "603.6c",
+        "603.10a",
+        "603.10e",
+        "702.79",
+        "702.79a",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Young Wolf and Putrid Goblin destruction after control change distinguish locked trigger controller, returned owner/controller and CR122.6a counter placing attribution, with pre-action save/load and replay."
     },
     {
       "capability_id": "counter.producer.proliferate",
@@ -54288,7 +54388,7 @@
     {
       "capability_id": "counter.producer.undying",
       "evidence_class": "interaction",
-      "test_id": "tests.test_persist_undying_rules.PersistUndyingRuntimeTests.test_control_change_uses_trigger_controller_as_placing_player_and_owner_as_controller",
+      "test_id": "tests.test_persist_undying_rules.PersistUndyingRuntimeTests.test_control_change_uses_returned_owner_as_counter_placing_player",
       "official_rule_ids": [
         "122.1",
         "122.6",
@@ -54298,7 +54398,8 @@
         "603.10a",
         "603.10e",
         "702.93",
-        "702.93a"
+        "702.93a",
+        "122.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -54306,6 +54407,29 @@
         "commander_review"
       ],
       "applicability_note": "Use the Undying trigger controller as the counter-placing player while returning the card under its owner after a control change."
+    },
+    {
+      "capability_id": "counter.producer.undying",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantRuntimeTests.test_original_persist_and_undying_counter_is_placed_by_returned_owner_after_control_change",
+      "official_rule_ids": [
+        "122.1",
+        "122.6",
+        "400.7",
+        "603.4",
+        "603.6c",
+        "603.10a",
+        "603.10e",
+        "702.93",
+        "702.93a",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Young Wolf and Putrid Goblin destruction after control change distinguish locked trigger controller, returned owner/controller and CR122.6a counter placing attribution, with pre-action save/load and replay."
     },
     {
       "capability_id": "counter.producer.undying",
@@ -54320,7 +54444,8 @@
         "603.10a",
         "603.10e",
         "702.93",
-        "702.93a"
+        "702.93a",
+        "122.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -54328,6 +54453,29 @@
         "commander_review"
       ],
       "applicability_note": "Place simultaneous Persist and Undying triggers in four-player APNAP order with independent physical source identity."
+    },
+    {
+      "capability_id": "counter.producer.undying",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantRuntimeTests.test_original_persist_and_undying_counter_is_placed_by_returned_owner_after_control_change",
+      "official_rule_ids": [
+        "122.1",
+        "122.6",
+        "400.7",
+        "603.4",
+        "603.6c",
+        "603.10a",
+        "603.10e",
+        "702.93",
+        "702.93a",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Young Wolf and Putrid Goblin destruction after control change distinguish locked trigger controller, returned owner/controller and CR122.6a counter placing attribution, with pre-action save/load and replay."
     },
     {
       "capability_id": "counter.producer.undying",
@@ -54342,7 +54490,8 @@
         "603.10a",
         "603.10e",
         "702.93",
-        "702.93a"
+        "702.93a",
+        "122.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -54364,7 +54513,8 @@
         "603.10a",
         "603.10e",
         "702.93",
-        "702.93a"
+        "702.93a",
+        "122.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -54386,7 +54536,8 @@
         "603.10a",
         "603.10e",
         "702.93",
-        "702.93a"
+        "702.93a",
+        "122.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -54394,6 +54545,29 @@
         "commander_review"
       ],
       "applicability_note": "Resolve Undying by returning the same graveyard incarnation under its owner with a replacement-aware +1/+1 counter."
+    },
+    {
+      "capability_id": "counter.producer.undying",
+      "evidence_class": "positive",
+      "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantRuntimeTests.test_original_persist_and_undying_counter_is_placed_by_returned_owner_after_control_change",
+      "official_rule_ids": [
+        "122.1",
+        "122.6",
+        "400.7",
+        "603.4",
+        "603.6c",
+        "603.10a",
+        "603.10e",
+        "702.93",
+        "702.93a",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Young Wolf and Putrid Goblin destruction after control change distinguish locked trigger controller, returned owner/controller and CR122.6a counter placing attribution, with pre-action save/load and replay."
     },
     {
       "capability_id": "counter.producer.undying",
@@ -54408,7 +54582,8 @@
         "603.10a",
         "603.10e",
         "702.93",
-        "702.93a"
+        "702.93a",
+        "122.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -54430,7 +54605,8 @@
         "603.10a",
         "603.10e",
         "702.93",
-        "702.93a"
+        "702.93a",
+        "122.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -54452,7 +54628,8 @@
         "603.10a",
         "603.10e",
         "702.93",
-        "702.93a"
+        "702.93a",
+        "122.6a"
       ],
       "supported_profiles": [
         "traditional",
@@ -54460,6 +54637,29 @@
         "commander_review"
       ],
       "applicability_note": "Replay a suspended Undying replacement choice and identity-pinned return to the identical authoritative hash."
+    },
+    {
+      "capability_id": "counter.producer.undying",
+      "evidence_class": "replay",
+      "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantRuntimeTests.test_original_persist_and_undying_counter_is_placed_by_returned_owner_after_control_change",
+      "official_rule_ids": [
+        "122.1",
+        "122.6",
+        "400.7",
+        "603.4",
+        "603.6c",
+        "603.10a",
+        "603.10e",
+        "702.93",
+        "702.93a",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Young Wolf and Putrid Goblin destruction after control change distinguish locked trigger controller, returned owner/controller and CR122.6a counter placing attribution, with pre-action save/load and replay."
     },
     {
       "capability_id": "counter.removal.all_effect",
@@ -108675,6 +108875,215 @@
       "applicability_note": "A target that leaves its graveyard or changes incarnation before resolution causes no zone, controller, trigger, or log mutation."
     },
     {
+      "capability_id": "zone.return.fixed_event_battlefield",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantRuntimeTests.test_granted_death_return_rejects_new_graveyard_incarnation_and_kills_identity_mutant",
+      "official_rule_ids": [
+        "400.7e",
+        "603.6c",
+        "603.10a",
+        "608.2c",
+        "122.6",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exact departed graveyard card returns to its owner through canonical movement and entry counter replacement; real Feign Death and Demonic Gifts casts distinguish source controller, owner, stale incarnation, tapped entry, rollback, privacy and pre-cast replay."
+    },
+    {
+      "capability_id": "zone.return.fixed_event_battlefield",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantRuntimeTests.test_original_death_grants_return_owner_with_entry_counter_or_coupled_stats_and_replay",
+      "official_rule_ids": [
+        "400.7e",
+        "603.6c",
+        "603.10a",
+        "608.2c",
+        "122.6",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exact departed graveyard card returns to its owner through canonical movement and entry counter replacement; real Feign Death and Demonic Gifts casts distinguish source controller, owner, stale incarnation, tapped entry, rollback, privacy and pre-cast replay."
+    },
+    {
+      "capability_id": "zone.return.fixed_event_battlefield",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantRuntimeTests.test_original_death_grants_return_owner_with_entry_counter_or_coupled_stats_and_replay",
+      "official_rule_ids": [
+        "400.7e",
+        "603.6c",
+        "603.10a",
+        "608.2c",
+        "122.6",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exact departed graveyard card returns to its owner through canonical movement and entry counter replacement; real Feign Death and Demonic Gifts casts distinguish source controller, owner, stale incarnation, tapped entry, rollback, privacy and pre-cast replay."
+    },
+    {
+      "capability_id": "zone.return.fixed_event_battlefield",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantRuntimeTests.test_granted_death_return_rejects_new_graveyard_incarnation_and_kills_identity_mutant",
+      "official_rule_ids": [
+        "400.7e",
+        "603.6c",
+        "603.10a",
+        "608.2c",
+        "122.6",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exact departed graveyard card returns to its owner through canonical movement and entry counter replacement; real Feign Death and Demonic Gifts casts distinguish source controller, owner, stale incarnation, tapped entry, rollback, privacy and pre-cast replay."
+    },
+    {
+      "capability_id": "zone.return.fixed_event_battlefield",
+      "evidence_class": "negative",
+      "test_id": "tests.test_event_card_return.EventCardReturnCompilerTests.test_event_battlefield_dependencies_and_unrepresented_riders_fail_closed",
+      "official_rule_ids": [
+        "400.7e",
+        "603.6c",
+        "603.10a",
+        "608.2c",
+        "122.6",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exact departed graveyard card returns to its owner through canonical movement and entry counter replacement; real Feign Death and Demonic Gifts casts distinguish source controller, owner, stale incarnation, tapped entry, rollback, privacy and pre-cast replay."
+    },
+    {
+      "capability_id": "zone.return.fixed_event_battlefield",
+      "evidence_class": "negative",
+      "test_id": "tests.test_event_card_return.EventCardReturnCompilerTests.test_event_battlefield_intent_rejects_malformed_identity_and_entry_fields",
+      "official_rule_ids": [
+        "400.7e",
+        "603.6c",
+        "603.10a",
+        "608.2c",
+        "122.6",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exact departed graveyard card returns to its owner through canonical movement and entry counter replacement; real Feign Death and Demonic Gifts casts distinguish source controller, owner, stale incarnation, tapped entry, rollback, privacy and pre-cast replay."
+    },
+    {
+      "capability_id": "zone.return.fixed_event_battlefield",
+      "evidence_class": "negative",
+      "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantRuntimeTests.test_granted_death_return_rejects_new_graveyard_incarnation_and_kills_identity_mutant",
+      "official_rule_ids": [
+        "400.7e",
+        "603.6c",
+        "603.10a",
+        "608.2c",
+        "122.6",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exact departed graveyard card returns to its owner through canonical movement and entry counter replacement; real Feign Death and Demonic Gifts casts distinguish source controller, owner, stale incarnation, tapped entry, rollback, privacy and pre-cast replay."
+    },
+    {
+      "capability_id": "zone.return.fixed_event_battlefield",
+      "evidence_class": "positive",
+      "test_id": "tests.test_event_card_return.EventCardReturnCompilerTests.test_event_battlefield_return_lowers_owner_incarnation_tap_and_entry_counter",
+      "official_rule_ids": [
+        "400.7e",
+        "603.6c",
+        "603.10a",
+        "608.2c",
+        "122.6",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exact departed graveyard card returns to its owner through canonical movement and entry counter replacement; real Feign Death and Demonic Gifts casts distinguish source controller, owner, stale incarnation, tapped entry, rollback, privacy and pre-cast replay."
+    },
+    {
+      "capability_id": "zone.return.fixed_event_battlefield",
+      "evidence_class": "positive",
+      "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantRuntimeTests.test_original_death_grants_return_owner_with_entry_counter_or_coupled_stats_and_replay",
+      "official_rule_ids": [
+        "400.7e",
+        "603.6c",
+        "603.10a",
+        "608.2c",
+        "122.6",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exact departed graveyard card returns to its owner through canonical movement and entry counter replacement; real Feign Death and Demonic Gifts casts distinguish source controller, owner, stale incarnation, tapped entry, rollback, privacy and pre-cast replay."
+    },
+    {
+      "capability_id": "zone.return.fixed_event_battlefield",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantRuntimeTests.test_original_death_grants_return_owner_with_entry_counter_or_coupled_stats_and_replay",
+      "official_rule_ids": [
+        "400.7e",
+        "603.6c",
+        "603.10a",
+        "608.2c",
+        "122.6",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exact departed graveyard card returns to its owner through canonical movement and entry counter replacement; real Feign Death and Demonic Gifts casts distinguish source controller, owner, stale incarnation, tapped entry, rollback, privacy and pre-cast replay."
+    },
+    {
+      "capability_id": "zone.return.fixed_event_battlefield",
+      "evidence_class": "replay",
+      "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantRuntimeTests.test_original_death_grants_return_owner_with_entry_counter_or_coupled_stats_and_replay",
+      "official_rule_ids": [
+        "400.7e",
+        "603.6c",
+        "603.10a",
+        "608.2c",
+        "122.6",
+        "122.6a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Exact departed graveyard card returns to its owner through canonical movement and entry counter replacement; real Feign Death and Demonic Gifts casts distinguish source controller, owner, stale incarnation, tapped entry, rollback, privacy and pre-cast replay."
+    },
+    {
       "capability_id": "zone.return.fixed_event_card",
       "evidence_class": "interaction",
       "test_id": "tests.test_event_card_return.EventCardReturnActionTests.test_actual_spine_targeted_entry_and_sacrifice_queue_one_return_with_replay",
@@ -110027,5 +110436,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "383a9892eb44e4f755a8affa33b08ae9da4c53ed2ff5412f4bdc6dc405ee1a45"
+  "fingerprint": "e60d7b546c9f3c2084b065f0bf3b08aa5fce671b153124124caa456e9fe25617"
 }

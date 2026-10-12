@@ -38,6 +38,18 @@ def fixed_target_reanimation_node_capabilities(
     """Recognize exactly one closed graveyard-to-battlefield target move."""
 
     mechanics = {str(value).casefold() for value in mechanic_ids}
+    if len(effects) == 1 and effects[0].get('schema_version') == 2:
+        from ..event_card_return import (EVENT_BATTLEFIELD_RETURN_MECHANIC,
+            EVENT_BATTLEFIELD_RETURN_CAPABILITY, event_battlefield_return_effect)
+        effect = effects[0]
+        try:
+            expected = event_battlefield_return_effect(tapped=effect['tapped'], entry_counter=effect['entry_counter'])
+        except (ValueError, TypeError, KeyError):
+            return ()
+        if target_schema is not None or EVENT_BATTLEFIELD_RETURN_MECHANIC not in mechanics or dict(effect) != expected:
+            return ()
+        return (EVENT_BATTLEFIELD_RETURN_CAPABILITY, 'zone.change.destination_replacement',
+            *(('counter.producer.effect_entry',) if effect['entry_counter'] else ()))
     if (
         FIXED_TARGET_REANIMATION_MECHANIC not in mechanics
         or "cr-115-targets" not in mechanics

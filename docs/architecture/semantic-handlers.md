@@ -228,6 +228,12 @@ the grant while later activations use the current controller. Later entrants
 and departed recipients do not inherit the earlier effect. A departure event
 uses the canonical predeparture fragment snapshot to publish its already
 triggered ability with the departing recipient as source.
+The event-bound battlefield-return instruction emits the existing typed zone
+move with its exact graveyard incarnation, owner controller, tapped entry and
+optional fixed entry counter. Replacement preparation receives the same
+requested tapped state as commit, so the prepared identity remains valid when
+entry counters and tapped entry occur together. The existing Persist/Undying
+owner follows the same entering-controller counter attribution.
 
 The existing counter-unless-payment choice additionally accepts a closed v2
 controller-payment descriptor. It locks the current target's controller for

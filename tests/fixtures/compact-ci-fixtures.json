@@ -148,6 +148,47 @@
   "dynamic_requirements": [
     {
       "source": "tests/test_typed_grant_carriers.py",
+      "symbol": "TemporaryQuotedGrantRuntimeTests.test_original_death_grants_return_owner_with_entry_counter_or_coupled_stats_and_replay",
+      "card_names": [
+        "Demonic Gifts",
+        "Feign Death",
+        "Generic Bound Body",
+        "Generic Bound Counter Doubler",
+        "Murder"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Strict original-card registration, actual removal and identity/placing-player controls consume these exact fixtures."
+    },
+    {
+      "source": "tests/test_typed_grant_carriers.py",
+      "symbol": "TemporaryQuotedGrantRuntimeTests.test_granted_death_return_rejects_new_graveyard_incarnation_and_kills_identity_mutant",
+      "card_names": [
+        "Demonic Gifts",
+        "Generic Bound Body",
+        "Murder"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Strict original-card registration, actual removal and identity/placing-player controls consume these exact fixtures."
+    },
+    {
+      "source": "tests/test_typed_grant_carriers.py",
+      "symbol": "TemporaryQuotedGrantRuntimeTests.test_original_persist_and_undying_counter_is_placed_by_returned_owner_after_control_change",
+      "card_names": [
+        "Murder",
+        "Putrid Goblin",
+        "Young Wolf"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Strict original-card registration, actual removal and identity/placing-player controls consume these exact fixtures."
+    },
+    {
+      "source": "tests/test_typed_grant_carriers.py",
       "symbol": "TemporaryQuotedGrantRuntimeTests.test_coupled_stat_quote_actual_cast_shared_timestamp_death_and_replay",
       "card_names": [
         "Generic Bound Body",

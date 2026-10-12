@@ -412,6 +412,117 @@ class TemporaryQuotedGrantRuntimeTests(unittest.TestCase):
         self.replay(session, load=True)
 
 
+    def test_original_death_grants_return_owner_with_entry_counter_or_coupled_stats_and_replay(self):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        for name in ('Feign Death', 'Demonic Gifts'):
+            session = self.session(357401 if name == 'Feign Death' else 357402)
+            engine = session.engine
+            spell = self.add(engine, name, zone='hand')
+            removal = self.add(engine, 'Murder', zone='hand')
+            recipient = self.add(engine, 'Generic Bound Body', seat='B', ref='return-recipient')
+            engine.change_control(recipient.object_id, 'C', reason='Independent owner/controller distinction')
+            if name == 'Feign Death':
+                self.add(engine, 'Generic Bound Counter Doubler', seat='B', ref='owner-counter-doubler')
+            action = self.ready(session, spell, {'B': 4, 'C': 1})
+            program = compile_best_available_card_program(self.db, self.db.lookup(name), semantic_registry=engine.semantics, capability_registry=self.registry, capability_profile='commander_review')
+            binding = bind_card_program_runtime(program, capability_registry=self.registry, profile='commander_review')
+            self.assertTrue(binding['strict_capability_ready'], binding['blockers'])
+            self.checkpoint(session)
+            before = authoritative_state_hash(session.state)
+            rejected = session.act('pilot:C', {'action_id': action['id'], 'targets': [recipient.ref], 'pay':'auto'})
+            self.assertFalse(rejected.ok)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+            accepted = session.act('pilot:A', {'action_id':action['id'], 'targets':[recipient.ref], 'pay':'auto'})
+            self.assertTrue(accepted.ok, accepted.summary)
+            self.resolve(session)
+            self.assertEqual(4 if name == 'Demonic Gifts' else 2, engine._numeric_stat(recipient.object_id, 'power'))
+            session = self.replay(session, load=True)
+            engine = session.engine
+            while session.pending_principals()[0] != 'pilot:A':
+                self.assertTrue(session.act(session.pending_principals()[0], {'action_id':'pass'}).ok)
+            action = next(a for a in session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions'] if a.get('card') == removal.ref)
+            old = session.state.cards[recipient.object_id].logical_object_id
+            accepted = session.act('pilot:A', {'action_id':action['id'], 'targets':[recipient.ref], 'pay':'auto'})
+            self.assertTrue(accepted.ok, accepted.summary)
+            self.resolve(session)
+            current = session.state.cards[recipient.object_id]
+            self.assertEqual('battlefield', current.zone)
+            self.assertEqual('B', current.controller)
+            self.assertNotEqual(old, current.logical_object_id)
+            self.assertEqual(name == 'Feign Death', current.tapped)
+            self.assertEqual(2 if name == 'Feign Death' else 0, current.counters.get('+1/+1', 0))
+            if name == 'Feign Death':
+                event = next(e for e in reversed(session.state.events) if e.code == 'counter.add' and e.details.get('object') == current.ref)
+                self.assertEqual('B', event.actor)
+            self.assertFalse(engine._effective_ability_fragments(current))
+            self.assertEqual(4 if name == 'Feign Death' else 2, engine._numeric_stat(current.object_id,'power'))
+            projected = json.dumps(session.packet('pilot:D', full=True)['state'])
+            self.assertNotIn(current.object_id, projected)
+            for seat in 'ABC':
+                for oid in session.state.players[seat].zones['hand']:
+                    self.assertNotIn(session.state.cards[oid].ref, projected)
+            self.replay(session, load=True)
+
+    def test_granted_death_return_rejects_new_graveyard_incarnation_and_kills_identity_mutant(self):
+        from dataclasses import replace
+        from quorune import event_card_return as owner
+        for mutate in (False, True):
+            session = self.session(357403 if not mutate else 357404)
+            engine = session.engine
+            spell = self.add(engine, 'Demonic Gifts', zone='hand')
+            removal = self.add(engine, 'Murder', zone='hand')
+            recipient = self.add(engine, 'Generic Bound Body', seat='B', ref='stale-return-recipient')
+            action = self.ready(session, spell, {'B':4,'C':1})
+            accepted = session.act('pilot:A', {'action_id':action['id'],'targets':[recipient.ref],'pay':'auto'})
+            self.assertTrue(accepted.ok, accepted.summary)
+            self.resolve(session)
+            while session.pending_principals()[0] != 'pilot:A':
+                self.assertTrue(session.act(session.pending_principals()[0], {'action_id':'pass'}).ok)
+            action = next(a for a in session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions'] if a.get('card') == removal.ref)
+            accepted = session.act('pilot:A', {'action_id':action['id'],'targets':[recipient.ref],'pay':'auto'})
+            self.assertTrue(accepted.ok, accepted.summary)
+            for _ in range(8):
+                if session.state.cards[recipient.object_id].zone == 'graveyard':
+                    break
+                self.assertTrue(session.act(session.pending_principals()[0], {'action_id':'pass'}).ok)
+            self.assertEqual('graveyard', session.state.cards[recipient.object_id].zone)
+            self.assertTrue(session.state.stack)
+            engine.move_card(recipient.object_id, 'hand', log=False)
+            engine.move_card(recipient.object_id, 'graveyard', log=False)
+            if mutate:
+                original = owner.event_battlefield_return_intent
+                with mock.patch.object(owner, 'event_battlefield_return_intent', side_effect=lambda *a,**kw: replace(original(*a,**kw), expected_zone_change_counter=None)):
+                    self.resolve(session)
+                with self.assertRaises(AssertionError):
+                    self.assertEqual('graveyard', session.state.cards[recipient.object_id].zone)
+            else:
+                self.resolve(session)
+                self.assertEqual('graveyard', session.state.cards[recipient.object_id].zone)
+
+
+    def test_original_persist_and_undying_counter_is_placed_by_returned_owner_after_control_change(self):
+        # CR 122.6a specifies the entering object's controller when the return
+        # effect does not explicitly name a counter-placing player.
+        for offset, (name, counter) in enumerate((('Young Wolf', '+1/+1'), ('Putrid Goblin', '-1/-1'))):
+            session = self.session(357405 + offset)
+            engine = session.engine
+            source = self.add(engine, name, seat='B', ref='owner-places-undying')
+            engine.change_control(source.object_id, 'C', reason='Independent owner/controller distinction')
+            removal = self.add(engine, 'Murder', zone='hand')
+            action = self.ready(session, removal, {'B':2,'C':1})
+            self.checkpoint(session)
+            accepted = session.act('pilot:A', {'action_id':action['id'],'targets':[source.ref],'pay':'auto'})
+            self.assertTrue(accepted.ok, accepted.summary)
+            self.resolve(session)
+            current = session.state.cards[source.object_id]
+            self.assertEqual('battlefield', current.zone)
+            self.assertEqual('B', current.controller)
+            self.assertEqual(1, current.counters[counter])
+            event = next(event for event in reversed(session.state.events) if event.code == 'counter.add' and event.details.get('object') == current.ref)
+            self.assertEqual('B', event.actor)
+            self.replay(session, load=True)
+
+
 class TypedGrantCarrierTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

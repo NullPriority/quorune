@@ -804,6 +804,13 @@ operation lowers that descriptor to the canonical zone move intent, which
 skips missing or changed graveyard incarnations and returns to the owner's
 hand. Departure attachment facts retain the dead creature when its Aura later
 leaves. Optional, delayed and independently unsupported results remain residual.
+The corresponding fixed battlefield return uses the same retained graveyard
+incarnation and the existing reanimation operation. It returns under the
+departed card's owner, optionally tapped and with one fixed +1/+1 entry
+counter. Entry counters participate in the canonical replacement transaction;
+the entering permanent's controller places them under CR 122.6a. Quoted
+death abilities use the recipient's departure facts. Other controllers,
+dynamic counters, attachment and transformation riders remain residual.
 
 `rules/target_announcements.py` publishes a sealed public occurrence for each
 newly targeted permanent after an authoritative cast, activation, triggered

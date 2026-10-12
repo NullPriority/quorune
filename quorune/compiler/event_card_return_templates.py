@@ -4,7 +4,8 @@ from __future__ import annotations
 
 import re
 
-from ..event_card_return import EVENT_CARD_RETURN_MECHANIC, event_card_return_effect
+from ..event_card_return import (EVENT_CARD_RETURN_MECHANIC, event_card_return_effect,
+    EVENT_BATTLEFIELD_RETURN_MECHANIC, event_battlefield_return_effect)
 from ..rules.source_references import SourceReferenceSpec
 
 
@@ -16,11 +17,13 @@ def self_death_return_binding(material_line: str, *, card_name: str | None = Non
     subject = r"it|this card"
     if card_name:
         subject += "|" + SourceReferenceSpec(card_name).regex_pattern
-    if not re.fullmatch(r"return (?:" + subject + r") to its owner['’]s hand\.?", match['body'], re.I):
+    if not re.fullmatch(r"return (?:" + subject + r") to (?:its owner['’]s hand|the battlefield "
+            r"(?:tapped )?under its owner['’]s control(?: with a \+1/\+1 counter on it)?)\.?", match['body'], re.I):
         return None
+    battlefield = 'the battlefield' in match['body'].casefold()
     return _spec('creature.dies.self', 'source_death_return', match['body'],
         'fixed-counter-source-death-return-v1', 'trigger-event-normalized-zone-change',
-        capabilities=('zone.return.fixed_event_card',))
+        capabilities=('zone.return.fixed_event_battlefield' if battlefield else 'zone.return.fixed_event_card',))
 
 
 def event_card_return_template(binding, body: str, *, card_name: str):
@@ -31,6 +34,14 @@ def event_card_return_template(binding, body: str, *, card_name: str):
     subject = r'it|this card|' + SourceReferenceSpec(card_name).regex_pattern if source_event else r'that card'
     if not source_event and not attached:
         return None
+    battlefield = re.fullmatch(r'return (?:' + subject + r") to the battlefield "
+        r"(?P<tapped>tapped )?under its owner['’]s control"
+        r"(?P<counter> with a \+1/\+1 counter on it)?\.?", body, re.I)
+    if battlefield is not None:
+        return ('fixed-departed-event-battlefield-return-v1',
+            (event_battlefield_return_effect(tapped=battlefield['tapped'] is not None,
+                entry_counter='+1/+1' if battlefield['counter'] else None),), None,
+            (EVENT_BATTLEFIELD_RETURN_MECHANIC,))
     if not re.fullmatch(r'return (?:' + subject + r") to its owner['’]s hand\.?", body, re.I):
         return None
     return ('fixed-departed-event-card-return-v1', (event_card_return_effect(),), None, (EVENT_CARD_RETURN_MECHANIC,))
