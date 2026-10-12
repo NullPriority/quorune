@@ -286,7 +286,8 @@ def fixed_owner_zone_move_node_capabilities(
                 return ()
     return (
         FIXED_OWNER_ZONE_MOVE_CAPABILITY,
-        *(direct_target_predicate_capabilities(target_schema) if targeted and target_schema.get("zones") == ["battlefield"] else ()),
+        *(direct_target_predicate_capabilities(target_schema)
+          if targeted and direct_permanent_target_schema_is_closed(target_schema) else ()),
         *(("target.revalidate_resolution",) if targeted else ()),
         *(("attachment.reference.current_or_lki",) if attached else ()),
     )

@@ -5851,7 +5851,7 @@
     },
     "semantic_transition_declaration": {
       "transition_id": "oracle-ir-v349-batched-trigger-and-effect-closure",
-      "compiler_version": "oracle-ir-v349",
+      "compiler_version": "oracle-ir-v350",
       "bundle_id": "bundle:batched-card-support",
       "candidate_ids": [
         "coverage_family:bundle:batched-card-support"

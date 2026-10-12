@@ -2613,6 +2613,24 @@ class CommanderZoneMoveRuntimeTests(_RuntimeBase):
 
 
 class TargetedOwnerLibraryCompilerTests(unittest.TestCase):
+    def test_legacy_union_owner_move_shapes_do_not_enter_single_predicate_decoder(self):
+        from quorune.rules.public_zone_move_capability_shapes import fixed_owner_zone_move_node_capabilities
+        from quorune.compiler.fixed_owner_zone_move_templates import FIXED_OWNER_ZONE_MOVE_MECHANIC
+
+        schema={'zones':['battlefield'],'categories':['permanent'],'count':1,
+                'characteristic_forms_any':[
+                    {'types_all':['creature'],'subtypes_any':[],'supertypes_any':[]},
+                    {'types_all':[],'subtypes_any':['vehicle'],'supertypes_any':[]}]}
+        capabilities=fixed_owner_zone_move_node_capabilities(
+            effects=({'op':'move','card':'$target.0','destination':'hand'},),
+            target_schema=schema,mechanic_ids=(FIXED_OWNER_ZONE_MOVE_MECHANIC,))
+        self.assertIn('zone.single_owner_move.fixed_destination',capabilities)
+        self.assertIn('target.revalidate_resolution',capabilities)
+        for text in ("Return target creature or Vehicle to its owner's hand.",
+                     "Put target nonland historic permanent into its owner's library fourth from the top."):
+            with self.subTest(text=text):
+                self.assertEqual('exact',self.compile(text).status)
+
     # CR 400.3, 400.7 and 401.2: cards go to their owner's library, the chosen
     # incarnation and full public predicate are revalidated, and top/bottom
     # ordering remains private after the public-origin move.

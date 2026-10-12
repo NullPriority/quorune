@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "3cca606dec55cd0cbe1d6fea480242966f995f71bf444a7333ab0c054f325a0a",
-  "declaration_source_fingerprint": "dc8b3959cc06e19db3a8730cfb03c5531fad713b072e63be7e2cd34b285354eb",
+  "registry_fingerprint": "ccd2ebb64dcc23fa44a34a258e3345742bcc267f6c96fe39339d9f413e54d6ea",
+  "declaration_source_fingerprint": "3475bd290fb8b7965fe5a60d46f3a0509f376eb649f1a2a0e9fa0e86b68d8e0e",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -107556,6 +107556,29 @@
     {
       "capability_id": "zone.single_owner_move.fixed_destination",
       "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryCompilerTests.test_legacy_union_owner_move_shapes_do_not_enter_single_predicate_decoder",
+      "official_rule_ids": [
+        "108.3",
+        "109.2",
+        "400.2",
+        "400.3",
+        "400.4",
+        "400.7",
+        "401.7",
+        "608.2b",
+        "608.2c",
+        "701.24"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing creature-or-Vehicle and historic permanent union shapes keep owner-move and target revalidation authority; shared direct characteristic decoding applies only to schemas it owns. Original printed Bounce Off and Lost to Legend forms compile without corpus exceptions."
+    },
+    {
+      "capability_id": "zone.single_owner_move.fixed_destination",
+      "evidence_class": "negative",
       "test_id": "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryCompilerTests.test_owner_library_scope_and_mutants_remain_fail_closed",
       "official_rule_ids": [
         "108.3",
@@ -107598,6 +107621,29 @@
         "commander_review"
       ],
       "applicability_note": "Lower fixed target, source, enchanted-object, controller-choice, and each-player-choice owner-destination moves across spell, trigger, activated, and modal contexts."
+    },
+    {
+      "capability_id": "zone.single_owner_move.fixed_destination",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryCompilerTests.test_legacy_union_owner_move_shapes_do_not_enter_single_predicate_decoder",
+      "official_rule_ids": [
+        "108.3",
+        "109.2",
+        "400.2",
+        "400.3",
+        "400.4",
+        "400.7",
+        "401.7",
+        "608.2b",
+        "608.2c",
+        "701.24"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing creature-or-Vehicle and historic permanent union shapes keep owner-move and target revalidation authority; shared direct characteristic decoding applies only to schemas it owns. Original printed Bounce Off and Lost to Legend forms compile without corpus exceptions."
     },
     {
       "capability_id": "zone.single_owner_move.fixed_destination",
@@ -107830,5 +107876,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "fa44e8634274b34453df99b36806156a9bad8bfad8c2c4cf0b814ab952adfa9a"
+  "fingerprint": "4a37e3d114e43886d670ae3c5123b4b02c46c04ee09db3974aa8654089c21472"
 }

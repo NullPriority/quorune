@@ -371,6 +371,10 @@ the existing optional and closed-sequence compilers. Heterogeneous roles,
 divided or dynamic quantities, linked results, compound or conditional tails,
 other players' graveyards, non-owner-hand destinations, and unsupported
 characteristic dependencies remain source-spanned residuals.
+Legacy creature-or-Vehicle and historic-permanent target alternatives retain
+their existing typed union authority. Only schemas closed by the shared direct
+permanent predicate decoder request that decoder's characteristic dependencies;
+legacy union fields do not enter its single-predicate vocabulary.
 
 Public quantity conditions reject keyword-qualified existence queries before
 constructing their closed quantity descriptor. An unsupported condition keeps
