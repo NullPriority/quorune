@@ -7,6 +7,8 @@ from typing import Any, Iterable
 from ..carddb import CardRecord
 from ..rules.event_subscriptions import FixedEventSubscriptionSet
 from ..semantics import SemanticProgram
+from ..object_predicate import ObjectQuerySpec
+from ..creature_subtypes import canonical_creature_subtype
 from ..library_search_model import (
     FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID,
     FixedCountedLibrarySearchTemplate,
@@ -219,6 +221,56 @@ def shadowed_reviewed_event_return_keys(
     return shadowed
 
 
+def shadowed_reviewed_subtype_anthem_keys(
+    record: CardRecord, generated_programs: Iterable[SemanticProgram],
+    reviewed_programs: Iterable[SemanticProgram],
+) -> set[str]:
+    """Replace one source-matched legacy anthem with its corrected typed query."""
+    reviewed = tuple(reviewed_programs)
+    shadowed: set[str] = set()
+    for generated in generated_programs:
+        if (generated.oracle_id != record.oracle_id or generated.trust_level != "trusted"
+                or not generated.capability_closure
+                or generated.capability_closure.get("trusted") is not True
+                or len(generated.handlers) != 1):
+            continue
+        handler = generated.handlers[0]
+        if handler.get("handler_id") != "continuous.anthem.fixed-query.v2":
+            continue
+        condition = handler.get("condition", {})
+        if condition.get("exclude_source") is not False:
+            continue
+        query = ObjectQuerySpec.from_dict(condition.get("predicate"))
+        subtypes = query.subtypes_all
+        if (not subtypes or any(canonical_creature_subtype(value) != value for value in subtypes)
+                or query != ObjectQuerySpec(zones=("battlefield",), subtypes_all=subtypes)):
+            continue
+        for old in reviewed:
+            if (old.oracle_id != record.oracle_id or old.trust_level != "trusted"
+                    or str(old.provenance.get("authored_by", "")).startswith("oracle-ir-v")
+                    or len(old.handlers) != 1):
+                continue
+            if any(getattr(old, field) != getattr(generated, field) for field in (
+                "active_zone", "event", "event_condition", "effects", "target_schema",
+                "cost_schema", "destination", "requires_arbiter",
+            )):
+                continue
+            if any(not generated.provenance.get(field)
+                   or generated.provenance[field] != old.provenance.get(field)
+                   for field in ("source_oracle_hash", "source_rulings_hash")):
+                continue
+            expected = {
+                "handler_id": "continuous.anthem.power_toughness.v1", "schema_version": 1,
+                "event": handler.get("event"),
+                "condition": {"target_controller": condition.get("target_controller"),
+                              "target_subtypes_all": list(subtypes)},
+                "modifier": dict(handler.get("modifier", {})),
+            }
+            if dict(old.handlers[0]) == expected:
+                shadowed.add(old.key)
+    return shadowed
+
+
 def shadowed_reviewed_program_keys(
     record: CardRecord,
     generated_programs: Iterable[SemanticProgram],
@@ -231,7 +283,9 @@ def shadowed_reviewed_program_keys(
         record, generated, reviewed,
     ) | shadowed_reviewed_counted_search_keys(
         record, generated, reviewed,
-    ) | shadowed_reviewed_event_return_keys(record, generated, reviewed)
+    ) | shadowed_reviewed_event_return_keys(record, generated, reviewed) | shadowed_reviewed_subtype_anthem_keys(
+        record, generated, reviewed,
+    )
 
 
 __all__ = [

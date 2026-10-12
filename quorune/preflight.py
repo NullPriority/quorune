@@ -580,9 +580,9 @@ def card_semantic_status(
             unresolved.append(f"activated_ability:{ability.ability_id}")
     if (
         _static_lines_needing_program(record)
-        and "static_ability" not in trusted_coverage
-        and "continuous_effect" not in trusted_coverage
-        and "cost_reduction" not in trusted_coverage
+        and not trusted_coverage.intersection({
+            "static_ability", "continuous_effect", "runtime_static_handler", "cost_reduction",
+        })
     ):
         unresolved.append("static_ability")
     unsupported_keywords = sorted(

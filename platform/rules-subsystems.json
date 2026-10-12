@@ -5916,14 +5916,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v354-scoped-capability-validation",
-      "compiler_version": "oracle-ir-v354",
+      "transition_id": "oracle-ir-v356-bare-subtype-anthem-current-owner-correctness",
+      "compiler_version": "oracle-ir-v356",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
       "expected_complete_card_gain": null,
-      "non_harvest_reason": "Reduce repeated read-only capability and evidence validation during synchronous session creation and command replay while retaining fresh validation between invocations; no Oracle grammar or card-support harvest."
+      "non_harvest_reason": "Correct confirmed noncreature Kindred exclusion in bare-subtype public queries and preserve one source-matched generic owner when it replaces a narrower reviewed subtype anthem; retain explicit creature restrictions. No card-support harvest."
     },
 
     "forecast_corrections": [

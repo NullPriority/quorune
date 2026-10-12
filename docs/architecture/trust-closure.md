@@ -35,6 +35,12 @@ explicit compatibility policy. It is never reported as capability-closed.
 Compatibility provenance pins the source hashes, stable card/ability and
 handler/component identities, tests, replay identity, and removal condition.
 
+Preflight recognizes current generated static-handler coverage alongside
+reviewed static coverage only for trusted, source-hash-matched programs.
+Provisional or source-drifted handlers cannot close a static remainder.
+Compatibility classification retains its separate intrinsic and format-layer
+blockers; a generated handler label alone does not establish strict readiness.
+
 ## Closure layers
 
 The intrinsic layer is derived from the card's costs, targets, effects, event

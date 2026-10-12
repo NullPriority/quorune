@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 223,
+  "registry_version": 224,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -4898,14 +4898,16 @@
     },
     {
       "id": "continuous.ability.fixed_query_keyword_grant",
-      "version": 10,
+      "version": 11,
       "official_rules": [
         "604.1",
         "611.3a",
         "611.3b",
         "611.3c",
         "613.1f",
-        "613.6"
+        "613.6",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -4913,7 +4915,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Grant one or more selected ordinary keywords, including five fixed basic landwalk variants and Horsemanship, in layer 6 to a live source-controller, source-opponent, or global battlefield set selected by the shared closed public ObjectQuerySpec, optionally coupled to fixed layer-7c power/toughness or exact declaration fragments over that identical query. Global canonical creature-subtype plurals accept optional All and Other; one shared query preserves every controller and source exclusion.",
+        "summary": "Grant one or more selected ordinary keywords, including five fixed basic landwalk variants and Horsemanship, in layer 6 to a live source-controller, source-opponent, or global battlefield set selected by the shared closed public ObjectQuerySpec, optionally coupled to fixed layer-7c power/toughness or exact declaration fragments over that identical query. Global canonical creature-subtype plurals accept optional All and Other; one shared query preserves every controller and source exclusion. Bare canonical creature-subtype queries include noncreature Kindred permanents; explicit creature descriptions retain their creature constraint.",
         "inputs": [
           "active phased-in battlefield source",
           "source-controller, source-opponent, or global target relation",
@@ -4967,7 +4969,10 @@
         "test_fixed_basic_landwalk_and_horsemanship_grants_declare_exact_consumers",
         "test_decorative_static_labels_preserve_descriptor_and_original_source_span",
         "test_werewolf_plural_union_is_typed_and_deduplicates_recipient_query",
-        "test_global_other_plural_uses_canonical_subtype_without_controller_filter"
+        "test_global_other_plural_uses_canonical_subtype_without_controller_filter",
+        "test_bare_subtype_public_queries_do_not_invent_creature_type",
+        "test_bare_subtype_keyword_grant_keeps_kindred_permanents_in_scope",
+        "test_extended_bare_subtype_queries_preserve_kindred_and_explicit_creature_distinction"
       ],
       "negative_tests": [
         "test_open_or_unsupported_queries_remain_material_residuals",
@@ -4998,7 +5003,9 @@
         "test_actual_sun_quan_cast_grants_self_and_rejects_flying_reach_as_horsemanship",
         "test_actual_turn_to_frog_removes_source_grant_until_expiration_and_replays",
         "test_actual_cryptothrall_cast_grants_current_other_artifacts_and_replays",
-        "test_actual_atlantis_cast_grants_foreign_merfolk_and_source_exclusion_with_replay"
+        "test_actual_atlantis_cast_grants_foreign_merfolk_and_source_exclusion_with_replay",
+        "test_original_scion_shroud_rejects_kindred_target_and_accepts_foreign_control",
+        "test_original_scion_kindred_scope_tracks_control_phasing_departure_and_reentry"
       ],
       "multiplayer_tests": [
         "test_live_queries_track_global_control_subtype_phase_and_zone_changes",
@@ -5006,11 +5013,14 @@
         "test_projection_and_replay_preserve_grants_without_private_identities",
         "test_actual_elvish_champion_cast_affects_other_controllers_and_current_landwalk_blocks",
         "test_actual_cryptothrall_cast_grants_current_other_artifacts_and_replays",
-        "test_actual_atlantis_cast_grants_foreign_merfolk_and_source_exclusion_with_replay"
+        "test_actual_atlantis_cast_grants_foreign_merfolk_and_source_exclusion_with_replay",
+        "test_original_scion_shroud_rejects_kindred_target_and_accepts_foreign_control",
+        "test_original_scion_kindred_scope_tracks_control_phasing_departure_and_reentry"
       ],
       "privacy_tests": [
         "test_projection_and_replay_preserve_grants_without_private_identities",
-        "test_actual_elvish_champion_cast_affects_other_controllers_and_current_landwalk_blocks"
+        "test_actual_elvish_champion_cast_affects_other_controllers_and_current_landwalk_blocks",
+        "test_original_scion_shroud_rejects_kindred_target_and_accepts_foreign_control"
       ],
       "replay_tests": [
         "test_counter_multicolor_and_token_queries_use_live_public_state_and_replay",
@@ -5020,7 +5030,9 @@
         "test_actual_sun_quan_cast_grants_self_and_rejects_flying_reach_as_horsemanship",
         "test_actual_turn_to_frog_removes_source_grant_until_expiration_and_replays",
         "test_actual_cryptothrall_cast_grants_current_other_artifacts_and_replays",
-        "test_actual_atlantis_cast_grants_foreign_merfolk_and_source_exclusion_with_replay"
+        "test_actual_atlantis_cast_grants_foreign_merfolk_and_source_exclusion_with_replay",
+        "test_original_scion_shroud_rejects_kindred_target_and_accepts_foreign_control",
+        "test_original_scion_kindred_scope_tracks_control_phasing_departure_and_reentry"
       ],
       "required_evidence": [
         "positive",
@@ -5741,14 +5753,16 @@
     },
     {
       "id": "continuous.power_toughness.fixed_anthem",
-      "version": 8,
+      "version": 9,
       "official_rules": [
         "604.1",
         "611.3a",
         "611.3b",
         "611.3c",
         "613.1g",
-        "613.4c"
+        "613.4c",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -5756,7 +5770,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Apply a reviewed battlefield static ability that gives a live source-controller, source-opponent, or global typed creature set a fixed power/toughness modifier or fixed coefficients per named source counter in layer 7c while the source remains applicable. One shared query preserves controller and source exclusion.",
+        "summary": "Apply a reviewed battlefield static ability that gives a live source-controller, source-opponent, or global typed creature set a fixed power/toughness modifier or fixed coefficients per named source counter in layer 7c while the source remains applicable. One shared query preserves controller and source exclusion. Bare canonical creature-subtype sets include Kindred permanents without defining absent power or toughness; explicit creature descriptions retain their type constraint.",
         "inputs": [
           "active phased-in source object",
           "source-controller, source-opponent, or global relation",
@@ -5801,7 +5815,9 @@
         "test_werewolf_plural_union_is_typed_and_deduplicates_recipient_query",
         "test_global_other_plural_uses_canonical_subtype_without_controller_filter",
         "test_source_counter_group_anthems_preserve_live_public_query_and_named_counter",
-        "test_original_boon_live_counter_bonus_tracks_proliferate_late_entry_and_departure"
+        "test_original_boon_live_counter_bonus_tracks_proliferate_late_entry_and_departure",
+        "test_bare_subtype_combined_grant_preserves_undefined_noncreature_stats",
+        "test_bare_subtype_union_modifier_keeps_kindred_and_rejects_unknown_subtypes"
       ],
       "negative_tests": [
         "test_anthem_component_rejects_malformed_descriptors",

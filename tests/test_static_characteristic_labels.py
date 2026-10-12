@@ -61,7 +61,7 @@ class StaticCharacteristicLabelCompilerTests(unittest.TestCase):
         relation,query,other=fixed_characteristic_battlefield_query_subject('Other Wolves and Werewolves you control')
         self.assertEqual('source_controller',relation);self.assertTrue(other)
         self.assertEqual(('werewolf','wolf'),query.subtypes_any)
-        self.assertEqual(('creature',),query.types_all)
+        self.assertEqual((),query.types_all)
         self.assertIsNone(fixed_characteristic_battlefield_query_subject('Other Wolves and Boguses you control'))
 
     def test_original_werewolf_union_with_unrepresented_sibling_rejects_whole_card_admission(self):

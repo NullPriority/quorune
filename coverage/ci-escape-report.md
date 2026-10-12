@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "d65a0a69ed61c485f0262f7b7d08df61a16ab90145dda5d1b701f05bd1b4bf0d"
+verified: "b9f349219775de7712bb98540167b162cb379ca156d382e38a3c6e22098ec0ec"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -15,8 +15,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 - Observation window: 2026-08-25T03:52:06Z through 2026-08-25T20:56:41Z
 - Observed population: tracked recent pull requests (n=4)
-- Escapes: 85
-- Deterministic escapes: 78
+- Escapes: 87
+- Deterministic escapes: 80
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: null
@@ -114,6 +114,8 @@ This report classifies observed deterministic failures that escaped the local qu
 | `ci-20261011-498-promoted-consumers` | [38125267611](https://github.com/NullPriority/quorune/actions/runs/38125267611) | `missing_affected_test` | `added` | Update each affected promoted integration expectation, preserve leaf rejection, and use a constructed nearest unsupported boundary. Add monotonic composition-source impact edges for every observed consumer. The exact promoted-consumer tests and actual original-card control replay pass; compiler and runtime behavior are unchanged. |
 | `ci-20261011-498-aftermath-fixture` | [38125267611](https://github.com/NullPriority/quorune/actions/runs/38125267611) | `missing_affected_test` | `added` | Build one temporary database from the owned Aftermath fixture and retain original Oracle-ID selection and assertions. Add the Aftermath source/fixture consumer impact edge. Focused tests and canonical compact-fixture dependency validation pass; no environment-specific full database is required. |
 | `ci-20261011-498-interaction-witnesses` | [38125267611](https://github.com/NullPriority/quorune/actions/runs/38125267611) | `missing_affected_test` | `added` | Add actual Aura/grant and Shroud/sacrifice-redirection runtime witnesses with strict compiler admission, rollback, privacy and replay, plus whole-program fail-closed witnesses for both fixed-mana/replacement residual pairs using five original carriers. Register their exact qualified IDs and add consumer impact edges. Preserve scheduler debt prioritization and runtime-composition evidence requirements; canonical generation owns the refreshed interaction counts. |
+| `ci-20261012-504-bare-subtype-reviewed-overlap` | [38260770476](https://github.com/NullPriority/quorune/actions/runs/38260770476) | `missing_affected_test` | `added` | Use the shared reviewed-overlay owner to replace only a trusted source/rulings-matched legacy subtype anthem with the corrected generic instruction. Preserve modifiers, controllers, source exclusions, distinct generated siblings, original gameplay multiplicity and replay assertions. Update stale bare-subtype table expectations and add the canonical affected-consumer edge. Advance compiler identity and regenerate the semantic bundle; do not reuse the superseded census. |
+| `ci-20261012-504-generated-static-preflight-consumer` | [38273011041](https://github.com/NullPriority/quorune/actions/runs/38273011041) | `missing_affected_test` | `added` | Recognize existing generated static coverage only within the current trusted, source-hash-matched program set. Preserve unsupported remainder checks, provisional and source-drift rejection, reference deck compatibility assertions and strict capability-only blockers. Current impact edges already select the complete consumer set; add this precise witness to retain the boundary. Compiler semantics and identity remain unchanged. |
 
 ## Measurement limitations
 

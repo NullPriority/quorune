@@ -11,6 +11,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Preserve noncreature Kindred permanents in bare-subtype public queries,
+  including static keyword and modifier grants. Explicit creature descriptions
+  retain their type restriction, and shroud offers and command validation agree.
+
 - Compile each-player life loss through the existing simultaneous life owner,
   preserving controller inclusion, departed-seat exclusion, shared global
   quantities, prices, and complete resolution before state-based actions.

@@ -32,6 +32,20 @@ failing its declared predicate stops participating according to the family
 contract. Discovery must be deterministic and may not expose facts outside the
 requesting principal's authorized projection.
 
+Live subtype queries preserve noncreature Kindred recipients when the source
+uses a bare creature subtype. An explicit creature noun retains that type
+restriction. Keyword grants and fixed modifiers share the query, while a
+modifier leaves an undefined noncreature power or toughness undefined.
+Records carrying earlier runtime-trust identities remain descriptor-readable;
+the existing provenance check determines whether their execution is compatible.
+
+Current program assembly replaces a narrower reviewed subtype anthem when a
+trusted corrected generic descriptor owns the same source-pinned instruction.
+Oracle and ruling hashes, controller scope, event, costs, targets, effects and
+modifier must match. Source exclusions and distinct generated abilities remain
+separate. Both CardProgram assembly and live registration use the same reviewed
+overlay boundary; archived payloads retain their recorded descriptors.
+
 ## Descriptor and registry contract
 
 `continuous.characteristics.fixed-public-setting.v1` applies one constant

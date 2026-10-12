@@ -407,6 +407,7 @@ def _public_query_characteristic_fields(
         re.IGNORECASE,
     )
     if relative_subtypes is not None:
+        fields["types_all"] = ("creature",)
         subtype_material: str | None = relative_subtypes.group("terms")
         relation_override = (
             "source_controller"
@@ -465,13 +466,14 @@ def _public_query_characteristic_fields(
                     )
                 if subtype_match is None:
                     return None
+                if re.search(r"\bcreatures?$", text, re.IGNORECASE):
+                    fields["types_all"] = ("creature",)
                 subtype_material = subtype_match.group("terms")
     if subtype_material is not None:
         subtypes = _canonical_subtype_terms(subtype_material)
         if subtypes is None:
             return None
         values, union = subtypes
-        fields["types_all"] = ("creature",)
         fields["subtypes_any" if union else "subtypes_all"] = values
     return fields, relation_override
 
@@ -580,7 +582,6 @@ def _controlled_battlefield_query(
             return None
         exclude_source = bool(match.group("other"))
         fields.update(
-            types_all=("creature",),
             subtypes_all=(subtype,),
             token=True,
         )
@@ -638,7 +639,6 @@ def _controlled_subtype_battlefield_query(
             subtype = canonical_creature_subtype_surface(plural)
             fields = {
                 "zones": ("battlefield",),
-                "types_all": ("creature",),
             }
     else:
         return None
@@ -687,7 +687,7 @@ def _global_battlefield_query(
         subtype = canonical_creature_subtype_surface(match.group("plural"))
         if subtype is None:
             return None
-        fields.update(types_all=("creature",), subtypes_all=(subtype,))
+        fields.update(subtypes_all=(subtype,))
     else:
         return None
     return "any", ObjectQuerySpec(**fields), bool(match.group("other"))
@@ -792,7 +792,10 @@ def fixed_power_toughness_battlefield_query(
 
     del oracle_line
     parsed = fixed_characteristic_battlefield_query_subject(subject)
-    if parsed is None or "creature" not in parsed[1].types_all:
+    if parsed is None or not (
+        "creature" in parsed[1].types_all
+        or (not parsed[1].types_all and (parsed[1].subtypes_all or parsed[1].subtypes_any))
+    ):
         return None
     return parsed
 

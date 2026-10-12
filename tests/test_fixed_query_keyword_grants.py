@@ -189,6 +189,39 @@ def _permanent(
 
 
 class FixedQueryKeywordGrantCompilerTests(unittest.TestCase):
+    def test_bare_subtype_public_queries_do_not_invent_creature_type(self):
+        for subject in ("Other Faeries you control", "Other Faeries", "Faerie tokens you control"):
+            with self.subTest(subject=subject):
+                parsed = fixed_characteristic_battlefield_query_subject(subject)
+                self.assertIsNotNone(parsed)
+                self.assertEqual((), parsed[1].types_all)
+                self.assertEqual(("faerie",), parsed[1].subtypes_all)
+        explicit = fixed_characteristic_battlefield_query_subject("Other Faerie creatures you control")
+        self.assertEqual(("creature",), explicit[1].types_all)
+
+    def test_bare_subtype_keyword_grant_keeps_kindred_permanents_in_scope(self):
+        bare = fixed_query_keyword_grant_handler("Other Faeries you control have shroud.")
+        explicit = fixed_query_keyword_grant_handler("Other Faerie creatures you control have shroud.")
+        self.assertIsNotNone(bare)
+        self.assertIsNotNone(explicit)
+        self.assertEqual([], bare[1]["condition"]["predicate"]["types_all"])
+        self.assertEqual(["faerie"], bare[1]["condition"]["predicate"]["subtypes_all"])
+        self.assertEqual(["creature"], explicit[1]["condition"]["predicate"]["types_all"])
+
+    def test_extended_bare_subtype_queries_preserve_kindred_and_explicit_creature_distinction(self):
+        for subject in ("Faeries or Merfolk you control", "Legendary Faeries you control"):
+            with self.subTest(subject=subject):
+                parsed = fixed_characteristic_battlefield_query_subject(subject)
+                self.assertIsNotNone(parsed)
+                self.assertEqual((), parsed[1].types_all)
+        for subject in ("Faerie or Merfolk creatures you control", "creature you control that's a Faerie or Merfolk"):
+            with self.subTest(subject=subject):
+                parsed = fixed_characteristic_battlefield_query_subject(subject)
+                self.assertIsNotNone(parsed)
+                self.assertEqual(("creature",), parsed[1].types_all)
+        outlaw = fixed_characteristic_battlefield_query_subject("Outlaws you control")
+        self.assertEqual(("creature",), outlaw[1].types_all)
+
     def test_source_counter_group_anthems_preserve_live_public_query_and_named_counter(self):
         from quorune.compiler.continuous_templates import fixed_power_toughness_anthem_handler
 
@@ -365,7 +398,7 @@ class FixedQueryKeywordGrantCompilerTests(unittest.TestCase):
                 "any",
                 False,
                 {
-                    "types_all": ["creature"],
+                    "types_all": [],
                     "subtypes_all": ["sliver"],
                 },
                 ["Trample"],
@@ -563,7 +596,7 @@ class FixedQueryKeywordGrantCompilerTests(unittest.TestCase):
                 HANDLER_ID,
                 "source_controller",
                 False,
-                {"subtypes_all": ["zombie"], "token": True},
+                {"types_all": [], "subtypes_all": ["zombie"], "token": True},
                 {"add_abilities": ["Hexproof", "Menace"]},
             ),
             (
@@ -655,7 +688,7 @@ class FixedQueryKeywordGrantCompilerTests(unittest.TestCase):
                 self.assertEqual(exclude_source, condition["exclude_source"])
                 self.assertEqual(modifier, descriptor["modifier"])
                 self.assertEqual(
-                    ["creature"], condition["predicate"]["types_all"]
+                    predicate_fields.get("types_all", ["creature"]), condition["predicate"]["types_all"]
                 )
                 for field, value in predicate_fields.items():
                     self.assertEqual(value, condition["predicate"][field])
@@ -667,6 +700,7 @@ class FixedQueryKeywordGrantCompilerTests(unittest.TestCase):
                 "source_controller",
                 True,
                 {
+                    "types_all": [],
                     "subtypes_any": [
                         "demon",
                         "devil",
@@ -750,6 +784,7 @@ class FixedQueryKeywordGrantCompilerTests(unittest.TestCase):
                 "source_controller",
                 False,
                 {
+                    "types_all": [],
                     "subtypes_all": ["human"],
                     "supertypes_all": ["legendary"],
                 },
@@ -779,7 +814,7 @@ class FixedQueryKeywordGrantCompilerTests(unittest.TestCase):
                 actual_relation, predicate, exclude_source = parsed
                 self.assertEqual(relation, actual_relation)
                 self.assertEqual(excluded, exclude_source)
-                self.assertEqual(("creature",), predicate.types_all[-1:])
+                self.assertEqual(tuple(expected.get("types_all", ["creature"])), predicate.types_all[-1:])
                 serialized = predicate.to_dict()
                 for field, value in expected.items():
                     self.assertEqual(value, serialized[field])
@@ -797,7 +832,10 @@ class FixedQueryKeywordGrantCompilerTests(unittest.TestCase):
                 temporary = fixed_public_characteristic_set_effect_template(
                     f"{subject} get +1/+1 until end of turn."
                 )
-                self.assertIsNotNone(temporary)
+                if expected.get("types_all") == []:
+                    self.assertIsNone(temporary)
+                else:
+                    self.assertIsNotNone(temporary)
 
         ability_qualified = fixed_characteristic_battlefield_query_subject(
             "Other creatures you control with flying"
@@ -1106,6 +1144,115 @@ class FixedQueryKeywordGrantRuntimeTests(unittest.TestCase):
         keep_all(session)
         session.engine.permissions.invalidate_current()
         return session
+
+    def test_original_scion_shroud_rejects_kindred_target_and_accepts_foreign_control(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests as actions
+
+        session = self.session(355001)
+        engine = session.engine
+        registry = load_default_capability_registry()
+        records = tuple(self.db.lookup(name) for name in (
+            "Scion of Oona", "Bitterblossom", "Willow Faerie", "Naturalize"))
+        for record in records:
+            program = compile_best_available_card_program(self.db, record,
+                semantic_registry=engine.semantics, capability_registry=registry,
+                capability_profile="commander_review")
+            self.assertTrue(bind_card_program_runtime(program, capability_registry=registry,
+                profile="commander_review")["strict_capability_ready"], record.name)
+        register_generated_programs(self.db, engine.semantics, records, trust_level="provisional",
+            capability_registry=registry, capability_profile="commander_review",
+            promote_exact_runtime_handlers=True, promote_exact_trigger_programs=True,
+            promote_exact_effect_programs=True, promote_exact_capability_declarations=True)
+        actions.add(self, engine, "Scion of Oona", ref="bare-subtype-source")
+        creature = actions.add(self, engine, "Willow Faerie", ref="bare-subtype-creature-control")
+        own = actions.add(self, engine, "Bitterblossom", ref="bare-subtype-own")
+        foreign = actions.add(self, engine, "Bitterblossom", seat="B", ref="bare-subtype-foreign")
+        spell = actions.add(self, engine, "Naturalize", zone="hand", ref="bare-subtype-removal")
+        offered = actions.ready(self, session, spell, {"G": 1, "C": 1})
+        self.assertIn("shroud", engine._combat_keywords(creature), "Scion's admitted grant must be active")
+        self.assertNotIn(own.ref, offered["target_schema"]["legal_refs"])
+        self.assertIn(foreign.ref, offered["target_schema"]["legal_refs"])
+        actions.checkpoint(self, session)
+        before = session.state.to_dict()
+        rejected = session.act("pilot:A", {"action_id": offered["id"], "targets": [own.ref], "pay": "auto"})
+        self.assertFalse(rejected.ok, "Scion's shroud must protect a noncreature Kindred Faerie")
+        self.assertEqual(before, session.state.to_dict())
+        accepted = session.act("pilot:A", {"action_id": offered["id"], "targets": [foreign.ref], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        actions.resolve(self, session)
+        self.assertEqual("battlefield", engine.state.cards[own.object_id].zone)
+        self.assertEqual("graveyard", engine.state.cards[foreign.object_id].zone)
+        actions.replay(self, session, load=True)
+
+    def test_original_scion_kindred_scope_tracks_control_phasing_departure_and_reentry(self):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests as actions
+
+        session = self.session(355002)
+        engine = session.engine
+        registry = load_default_capability_registry()
+        records = tuple(self.db.lookup(name) for name in (
+            "Scion of Oona", "Bitterblossom", "Control Magic", "Unsummon"))
+        for record in records:
+            program = compile_best_available_card_program(self.db, record, semantic_registry=engine.semantics,
+                capability_registry=registry, capability_profile="commander_review")
+            self.assertTrue(bind_card_program_runtime(program, capability_registry=registry,
+                profile="commander_review")["strict_capability_ready"], record.name)
+        register_generated_programs(self.db, engine.semantics, records, trust_level="provisional",
+            capability_registry=registry, capability_profile="commander_review",
+            promote_exact_runtime_handlers=True, promote_exact_trigger_programs=True,
+            promote_exact_effect_programs=True, promote_exact_capability_declarations=True)
+        source = actions.add(self, engine, "Scion of Oona", ref="kindred-lifecycle-source")
+        own = actions.add(self, engine, "Bitterblossom", ref="kindred-lifecycle-own")
+        foreign = actions.add(self, engine, "Bitterblossom", seat="B", ref="kindred-lifecycle-foreign")
+        aura = actions.add(self, engine, "Control Magic", seat="B", zone="hand", ref="kindred-lifecycle-control")
+        bounce = actions.add(self, engine, "Unsummon", zone="hand", ref="kindred-lifecycle-bounce")
+        actions.ready(self, session, bounce, {"U": 3, "C": 2})
+        engine.state.players["B"].mana_pool.update(U=2, C=2)
+        self.assertIn("shroud", engine._combat_keywords(own))
+        self.assertNotIn("shroud", engine._combat_keywords(source))
+        source.phased_out = True
+        self.assertNotIn("shroud", engine._combat_keywords(own))
+        source.phased_out = False
+        self.assertIn("shroud", engine._combat_keywords(own))
+        engine.permissions.invalidate_current()
+        engine.state.pending_decision = None
+        engine.state.active_player = "B"
+        engine.state.priority_passes = []
+        engine._grant_priority("B")
+        engine.pump()
+        actions.checkpoint(self, session)
+
+        def cast(card, seat, targets=()):
+            for _ in range(8):
+                if session.state.priority_player == seat:
+                    break
+                passed = session.act(session.pending_principals()[0], {"action_id": "pass"})
+                self.assertTrue(passed.ok, passed.summary)
+            offered = session.packet("pilot:" + seat, full=True)["decision"]["legal_actions"]
+            self.assertTrue(any(row["id"] == "cast:" + card.ref for row in offered))
+            accepted = session.act("pilot:" + seat, {"action_id": "cast:" + card.ref,
+                "targets": list(targets), "pay": "auto"})
+            self.assertTrue(accepted.ok, accepted.summary)
+            actions.resolve(self, session)
+
+        cast(aura, "B", (source.ref,))
+        self.assertEqual("B", engine.state.cards[source.object_id].controller)
+        self.assertNotIn("shroud", engine._combat_keywords(engine.state.cards[own.object_id]))
+        self.assertIn("shroud", engine._combat_keywords(engine.state.cards[foreign.object_id]))
+        old_identity = engine.state.cards[source.object_id].logical_object_id
+        cast(bounce, "A", (source.ref,))
+        self.assertEqual("hand", engine.state.cards[source.object_id].zone)
+        self.assertNotIn("shroud", engine._combat_keywords(engine.state.cards[foreign.object_id]))
+        cast(engine.state.cards[source.object_id], "A")
+        returned = engine.state.cards[source.object_id]
+        self.assertNotEqual(old_identity, returned.logical_object_id)
+        self.assertIn("shroud", engine._combat_keywords(engine.state.cards[own.object_id]))
+        self.assertNotIn("shroud", engine._combat_keywords(engine.state.cards[foreign.object_id]))
+        actions.replay(self, session, load=True)
 
     def add_sources(self, engine) -> dict[str, CardInstance]:
         records = tuple(self.db.lookup(name) for name in SOURCE_NAMES)

@@ -1311,6 +1311,57 @@
         "test_player_target_protection.PlayerProtectionRuntimeTests.test_shroud_source_sacrifice_redirects_then_restores_targetability_and_replays"
       ],
       "resolution": "Add actual Aura/grant and Shroud/sacrifice-redirection runtime witnesses with strict compiler admission, rollback, privacy and replay, plus whole-program fail-closed witnesses for both fixed-mana/replacement residual pairs using five original carriers. Register their exact qualified IDs and add consumer impact edges. Preserve scheduler debt prioritization and runtime-composition evidence requirements; canonical generation owns the refreshed interaction counts."
+    },
+    {
+      "run_id": 38260770476,
+      "head_sha": "658ef19c26accfb36e05bca488224a463db0b9d8",
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "impact_edge_status": "added",
+      "id": "ci-20261012-504-bare-subtype-reviewed-overlap",
+      "summary": "Corrected generic subtype anthem predicates diverged from a narrower reviewed compatibility descriptor, exposing duplicate current execution in both assembly paths and stale Creature-only query expectations.",
+      "failed_surfaces": [
+        "PR / Python / functional-02",
+        "PR / Python / functional-03",
+        "PR / Python / functional-04",
+        "PR / Python / functional-05",
+        "PR / Python / functional-09",
+        "PR / Python / functional-12",
+        "PR / Windows / functional-02",
+        "PR / Windows / functional-03",
+        "PR / Windows / functional-04",
+        "PR / Windows / functional-05",
+        "PR / Windows / functional-09",
+        "PR / Windows / functional-12"
+      ],
+      "regressions": [
+        "test_card_program_trust.CardProgramTrustTests.test_corrected_bare_subtype_anthem_supersedes_only_matching_reviewed_source",
+        "test_exact_mishra_closure.ExactMishraClosureTests.test_stridehangar_adds_thopter_and_applies_anthem",
+        "test_continuous_effect_components.ContinuousEffectComponentTests.test_multiple_anthem_components_stack_and_respect_control",
+        "test_oracle_ir.OracleIRTests.test_newly_exact_nodes_deduplicate_against_reviewed_programs"
+      ],
+      "resolution": "Use the shared reviewed-overlay owner to replace only a trusted source/rulings-matched legacy subtype anthem with the corrected generic instruction. Preserve modifiers, controllers, source exclusions, distinct generated siblings, original gameplay multiplicity and replay assertions. Update stale bare-subtype table expectations and add the canonical affected-consumer edge. Advance compiler identity and regenerate the semantic bundle; do not reuse the superseded census."
+    },
+    {
+      "run_id": 38273011041,
+      "head_sha": "519ce03fa6a96c8fe5cf265c588acd3854ba4b5e",
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "impact_edge_status": "added",
+      "id": "ci-20261012-504-generated-static-preflight-consumer",
+      "summary": "The corrected generic static program replaced its reviewed owner, but preflight did not recognize the existing runtime_static_handler coverage category and marked Stridehangar partial.",
+      "failed_surfaces": [
+        "PR / Python / functional-10",
+        "PR / Python / functional-12",
+        "PR / Windows / functional-10",
+        "PR / Windows / functional-12"
+      ],
+      "regressions": [
+        "test_preflight_v080.SemanticPreflightV2Tests.test_generated_static_coverage_requires_trusted_matching_source",
+        "test_commander_match_readiness.CommanderMatchReadinessTests.test_reference_decks_are_legal_and_reviewed_compatible_only",
+        "test_exact_mishra_closure.ExactMishraClosureTests.test_promoted_mishra_cards_preflight_fully"
+      ],
+      "resolution": "Recognize existing generated static coverage only within the current trusted, source-hash-matched program set. Preserve unsupported remainder checks, provisional and source-drift rejection, reference deck compatibility assertions and strict capability-only blockers. Current impact edges already select the complete consumer set; add this precise witness to retain the boundary. Compiler semantics and identity remain unchanged."
     }
   ],
   "recent_pull_requests": [
