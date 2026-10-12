@@ -39,6 +39,13 @@ modifier leaves an undefined noncreature power or toughness undefined.
 Records carrying earlier runtime-trust identities remain descriptor-readable;
 the existing provenance check determines whether their execution is compatible.
 
+Current program assembly replaces a narrower reviewed subtype anthem when a
+trusted corrected generic descriptor owns the same source-pinned instruction.
+Oracle and ruling hashes, controller scope, event, costs, targets, effects and
+modifier must match. Source exclusions and distinct generated abilities remain
+separate. Both CardProgram assembly and live registration use the same reviewed
+overlay boundary; archived payloads retain their recorded descriptors.
+
 ## Descriptor and registry contract
 
 `continuous.characteristics.fixed-public-setting.v1` applies one constant

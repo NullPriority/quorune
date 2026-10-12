@@ -1311,6 +1311,36 @@
         "test_player_target_protection.PlayerProtectionRuntimeTests.test_shroud_source_sacrifice_redirects_then_restores_targetability_and_replays"
       ],
       "resolution": "Add actual Aura/grant and Shroud/sacrifice-redirection runtime witnesses with strict compiler admission, rollback, privacy and replay, plus whole-program fail-closed witnesses for both fixed-mana/replacement residual pairs using five original carriers. Register their exact qualified IDs and add consumer impact edges. Preserve scheduler debt prioritization and runtime-composition evidence requirements; canonical generation owns the refreshed interaction counts."
+    },
+    {
+      "run_id": 38260770476,
+      "head_sha": "658ef19c26accfb36e05bca488224a463db0b9d8",
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "impact_edge_status": "added",
+      "id": "ci-20261012-504-bare-subtype-reviewed-overlap",
+      "summary": "Corrected generic subtype anthem predicates diverged from a narrower reviewed compatibility descriptor, exposing duplicate current execution in both assembly paths and stale Creature-only query expectations.",
+      "failed_surfaces": [
+        "PR / Python / functional-02",
+        "PR / Python / functional-03",
+        "PR / Python / functional-04",
+        "PR / Python / functional-05",
+        "PR / Python / functional-09",
+        "PR / Python / functional-12",
+        "PR / Windows / functional-02",
+        "PR / Windows / functional-03",
+        "PR / Windows / functional-04",
+        "PR / Windows / functional-05",
+        "PR / Windows / functional-09",
+        "PR / Windows / functional-12"
+      ],
+      "regressions": [
+        "test_card_program_trust.CardProgramTrustTests.test_corrected_bare_subtype_anthem_supersedes_only_matching_reviewed_source",
+        "test_exact_mishra_closure.ExactMishraClosureTests.test_stridehangar_adds_thopter_and_applies_anthem",
+        "test_continuous_effect_components.ContinuousEffectComponentTests.test_multiple_anthem_components_stack_and_respect_control",
+        "test_oracle_ir.OracleIRTests.test_newly_exact_nodes_deduplicate_against_reviewed_programs"
+      ],
+      "resolution": "Use the shared reviewed-overlay owner to replace only a trusted source/rulings-matched legacy subtype anthem with the corrected generic instruction. Preserve modifiers, controllers, source exclusions, distinct generated siblings, original gameplay multiplicity and replay assertions. Update stale bare-subtype table expectations and add the canonical affected-consumer edge. Advance compiler identity and regenerate the semantic bundle; do not reuse the superseded census."
     }
   ],
   "recent_pull_requests": [

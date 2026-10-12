@@ -398,7 +398,7 @@ class FixedQueryKeywordGrantCompilerTests(unittest.TestCase):
                 "any",
                 False,
                 {
-                    "types_all": ["creature"],
+                    "types_all": [],
                     "subtypes_all": ["sliver"],
                 },
                 ["Trample"],
@@ -596,7 +596,7 @@ class FixedQueryKeywordGrantCompilerTests(unittest.TestCase):
                 HANDLER_ID,
                 "source_controller",
                 False,
-                {"subtypes_all": ["zombie"], "token": True},
+                {"types_all": [], "subtypes_all": ["zombie"], "token": True},
                 {"add_abilities": ["Hexproof", "Menace"]},
             ),
             (
@@ -688,7 +688,7 @@ class FixedQueryKeywordGrantCompilerTests(unittest.TestCase):
                 self.assertEqual(exclude_source, condition["exclude_source"])
                 self.assertEqual(modifier, descriptor["modifier"])
                 self.assertEqual(
-                    ["creature"], condition["predicate"]["types_all"]
+                    predicate_fields.get("types_all", ["creature"]), condition["predicate"]["types_all"]
                 )
                 for field, value in predicate_fields.items():
                     self.assertEqual(value, condition["predicate"][field])
@@ -700,6 +700,7 @@ class FixedQueryKeywordGrantCompilerTests(unittest.TestCase):
                 "source_controller",
                 True,
                 {
+                    "types_all": [],
                     "subtypes_any": [
                         "demon",
                         "devil",
@@ -783,6 +784,7 @@ class FixedQueryKeywordGrantCompilerTests(unittest.TestCase):
                 "source_controller",
                 False,
                 {
+                    "types_all": [],
                     "subtypes_all": ["human"],
                     "supertypes_all": ["legendary"],
                 },
@@ -812,7 +814,7 @@ class FixedQueryKeywordGrantCompilerTests(unittest.TestCase):
                 actual_relation, predicate, exclude_source = parsed
                 self.assertEqual(relation, actual_relation)
                 self.assertEqual(excluded, exclude_source)
-                self.assertEqual(("creature",), predicate.types_all[-1:])
+                self.assertEqual(tuple(expected.get("types_all", ["creature"])), predicate.types_all[-1:])
                 serialized = predicate.to_dict()
                 for field, value in expected.items():
                     self.assertEqual(value, serialized[field])
@@ -830,7 +832,10 @@ class FixedQueryKeywordGrantCompilerTests(unittest.TestCase):
                 temporary = fixed_public_characteristic_set_effect_template(
                     f"{subject} get +1/+1 until end of turn."
                 )
-                self.assertIsNotNone(temporary)
+                if expected.get("types_all") == []:
+                    self.assertIsNone(temporary)
+                else:
+                    self.assertIsNotNone(temporary)
 
         ability_qualified = fixed_characteristic_battlefield_query_subject(
             "Other creatures you control with flying"

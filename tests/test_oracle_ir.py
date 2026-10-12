@@ -642,13 +642,14 @@ class OracleIRTests(unittest.TestCase):
             capability_profile="commander_review",
             promote_exact_runtime_handlers=True,
         )
-        self.assertEqual(0, generation["programs_generated"])
-        self.assertEqual(2, generation["programs_skipped_existing"])
-        self.assertIsNone(
+        self.assertEqual(1, generation["programs_generated"])
+        self.assertEqual(1, generation["programs_skipped_existing"])
+        self.assertIsNotNone(
             reviewed_registry.get(
                 f"{record.oracle_id}:static:front:n1"
             )
         )
+        self.assertIsNone(reviewed_registry.get(f"{record.oracle_id}:static:thopter-anthem"))
         self.assertIsNone(
             reviewed_registry.get(
                 f"{record.oracle_id}:static:front:n2"

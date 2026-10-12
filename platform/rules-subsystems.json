@@ -5917,13 +5917,13 @@
     },
     "semantic_transition_declaration": {
       "transition_id": "oracle-ir-v355-bare-subtype-public-query-correctness",
-      "compiler_version": "oracle-ir-v355",
+      "compiler_version": "oracle-ir-v356",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
       "expected_complete_card_gain": null,
-      "non_harvest_reason": "Correct confirmed noncreature Kindred exclusion in already admitted bare-subtype public queries and static keyword/modifier consumers; preserve explicit creature restrictions. No card-support harvest."
+      "non_harvest_reason": "Correct confirmed noncreature Kindred exclusion in bare-subtype public queries and preserve one source-matched generic owner when it replaces a narrower reviewed subtype anthem; retain explicit creature restrictions. No card-support harvest."
     },
 
     "forecast_corrections": [

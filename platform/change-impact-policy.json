@@ -85,6 +85,22 @@
   ],
   "path_rules": [
     {
+      "id": "bare-subtype-reviewed-anthem-contract",
+      "patterns": [
+        "quorune/card_programs/reviewed_overlay.py"
+      ],
+      "test_modules": [
+        "test_attached_static_characteristics",
+        "test_card_program_trust",
+        "test_continuous_effect_components",
+        "test_exact_mishra_closure",
+        "test_fixed_query_keyword_grants",
+        "test_global_plural_characteristic_sets",
+        "test_oracle_ir",
+        "test_static_characteristic_labels"
+      ]
+    },
+    {
       "id": "cohort-compilation-snapshot-contract",
       "patterns": [
         "scripts/cohort_compilation.py"

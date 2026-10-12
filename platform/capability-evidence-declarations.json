@@ -19483,6 +19483,27 @@
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
       "evidence_class": "interaction",
+      "test_id": "tests.test_card_program_trust.CardProgramTrustTests.test_corrected_bare_subtype_anthem_supersedes_only_matching_reviewed_source",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replace only the trusted source/rulings-matched legacy subtype anthem with one corrected generic owner; different modifiers, controller relations, exclusions, source identities, provisional programs and distinct generated siblings remain separate."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "interaction",
       "test_id": "tests.test_continuous_effect_components.ContinuousEffectComponentTests.test_layer_four_subtype_change_enables_layer_seven_anthem",
       "official_rule_ids": [
         "604.1",
@@ -19861,6 +19882,27 @@
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
       "evidence_class": "negative",
+      "test_id": "tests.test_card_program_trust.CardProgramTrustTests.test_corrected_bare_subtype_anthem_supersedes_only_matching_reviewed_source",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replace only the trusted source/rulings-matched legacy subtype anthem with one corrected generic owner; different modifiers, controller relations, exclusions, source identities, provisional programs and distinct generated siblings remain separate."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "negative",
       "test_id": "tests.test_continuous_effect_components.ContinuousEffectComponentTests.test_anthem_component_rejects_malformed_descriptors",
       "official_rule_ids": [
         "604.1",
@@ -20004,6 +20046,27 @@
         "commander_review"
       ],
       "applicability_note": "Original global canonical subtype plural grants use one current set across layer-six keywords and fixed stats, all controllers and source exclusion; actual block legality, private commands and replay preserve authority."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "positive",
+      "test_id": "tests.test_card_program_trust.CardProgramTrustTests.test_corrected_bare_subtype_anthem_supersedes_only_matching_reviewed_source",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replace only the trusted source/rulings-matched legacy subtype anthem with one corrected generic owner; different modifiers, controller relations, exclusions, source identities, provisional programs and distinct generated siblings remain separate."
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "registry_fingerprint": "4d84f68ce54f1277457b8747add2c039c6a3cd1605eef0c437d88c94275e0aca",
-  "declaration_source_fingerprint": "a71a75e71f343e8c281aba06a5e23a1ef5111796e5a68ca214d4750a3f9550b6",
+  "declaration_source_fingerprint": "a21c66da4287f63caed4c9a23fa96d1bed0f9faaec352d3290df4bfe99001363",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -35718,6 +35718,27 @@
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
       "evidence_class": "interaction",
+      "test_id": "tests.test_card_program_trust.CardProgramTrustTests.test_corrected_bare_subtype_anthem_supersedes_only_matching_reviewed_source",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replace only the trusted source/rulings-matched legacy subtype anthem with one corrected generic owner; different modifiers, controller relations, exclusions, source identities, provisional programs and distinct generated siblings remain separate."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "interaction",
       "test_id": "tests.test_continuous_effect_components.ContinuousEffectComponentTests.test_layer_four_subtype_change_enables_layer_seven_anthem",
       "official_rule_ids": [
         "604.1",
@@ -36096,6 +36117,27 @@
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
       "evidence_class": "negative",
+      "test_id": "tests.test_card_program_trust.CardProgramTrustTests.test_corrected_bare_subtype_anthem_supersedes_only_matching_reviewed_source",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replace only the trusted source/rulings-matched legacy subtype anthem with one corrected generic owner; different modifiers, controller relations, exclusions, source identities, provisional programs and distinct generated siblings remain separate."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "negative",
       "test_id": "tests.test_continuous_effect_components.ContinuousEffectComponentTests.test_anthem_component_rejects_malformed_descriptors",
       "official_rule_ids": [
         "604.1",
@@ -36239,6 +36281,27 @@
         "commander_review"
       ],
       "applicability_note": "Original global canonical subtype plural grants use one current set across layer-six keywords and fixed stats, all controllers and source exclusion; actual block legality, private commands and replay preserve authority."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "positive",
+      "test_id": "tests.test_card_program_trust.CardProgramTrustTests.test_corrected_bare_subtype_anthem_supersedes_only_matching_reviewed_source",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Replace only the trusted source/rulings-matched legacy subtype anthem with one corrected generic owner; different modifiers, controller relations, exclusions, source identities, provisional programs and distinct generated siblings remain separate."
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
@@ -108414,5 +108477,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "76a95ed4cef7109fa2a3699b61c9717791e24e9e43da4e0dc41c136b3051551d"
+  "fingerprint": "1fe4bc73996ca5af505f044ff8c2a105ddb991351b57fbce17b0940043180d85"
 }

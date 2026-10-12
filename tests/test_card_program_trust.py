@@ -46,6 +46,41 @@ def _bolt() -> CardRecord:
 
 
 class CardProgramTrustTests(unittest.TestCase):
+    def test_corrected_bare_subtype_anthem_supersedes_only_matching_reviewed_source(self):
+        from dataclasses import replace
+        from quorune.oracle_ir import generated_programs
+        from quorune.card_programs.reviewed_overlay import shadowed_reviewed_program_keys
+
+        record = self.db.lookup("Stridehangar Automaton")
+        generated = tuple(generated_programs(self.db, record, trust_level="trusted",
+            capability_registry=self.capabilities, capability_profile="commander_review"))
+        reviewed = SemanticRegistry().programs_for_oracle(record.oracle_id)
+        old = next(program for program in reviewed if any(
+            handler.get("handler_id") == "continuous.anthem.power_toughness.v1"
+            for handler in program.handlers))
+        self.assertEqual({old.key}, shadowed_reviewed_program_keys(record, generated, reviewed))
+        self.assertEqual(set(), shadowed_reviewed_program_keys(record, generated, (
+            replace(old, provenance={**old.provenance, "source_oracle_hash": "0" * 64}),)))
+        changed = copy.deepcopy(old.handlers)
+        changed[0]["modifier"]["power"] = 2
+        self.assertEqual(set(), shadowed_reviewed_program_keys(record, generated, (
+            replace(old, handlers=changed),)))
+        current = next(program for program in generated if any(
+            handler.get("handler_id") == "continuous.anthem.fixed-query.v2"
+            for handler in program.handlers))
+        changed_controller = copy.deepcopy(current.handlers)
+        changed_controller[0]["condition"]["target_controller"] = "any"
+        self.assertEqual(set(), shadowed_reviewed_program_keys(record, (
+            replace(current, handlers=changed_controller),), reviewed))
+        excluded = copy.deepcopy(current.handlers)
+        excluded[0]["condition"]["exclude_source"] = True
+        self.assertEqual(set(), shadowed_reviewed_program_keys(record, (
+            replace(current, handlers=excluded),), reviewed))
+        self.assertEqual(set(), shadowed_reviewed_program_keys(record, generated, (
+            replace(old, provenance={**old.provenance, "authored_by": current.provenance["authored_by"]}),)))
+        provisional = tuple(replace(program, trust_level="provisional") for program in generated)
+        self.assertEqual(set(), shadowed_reviewed_program_keys(record, provisional, reviewed))
+
     @classmethod
     def setUpClass(cls):
         cls.db = CardDatabase(DB_PATH)
