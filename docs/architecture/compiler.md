@@ -1005,6 +1005,12 @@ default battlefield active zone with the represented origin and records the
 destination, tapped state, source form, and complete-card policy. Only the
 battlefield result requires the shared complete-card admission certificate;
 the hand-return forms may remain independently executable on partial cards.
+An exact activation restriction may follow these instructions when its complete
+timing, per-turn limit, and conditions already match the typed activation
+descriptor. The compiler strips that suffix only for result recognition and
+retains the original descriptor, so controller-upkeep and sorcery timing share
+the ordinary offer and command legality owner. Missing or conflicting timing
+metadata prevents this lowering.
 Qualified source-self, targeted, mass, optional, conditional, multiple-object,
 copied, granted, and text-changed movement stays source-spanned and residual.
 

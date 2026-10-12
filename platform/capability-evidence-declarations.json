@@ -57093,6 +57093,26 @@
     {
       "capability_id": "zone.self_move.activated",
       "evidence_class": "interaction",
+      "test_id": "tests.test_self_zone_move_rules.RestrictedSelfReturnRuntimeTests.test_original_restricted_returns_offer_only_typed_timing_and_replay",
+      "official_rule_ids": [
+        "400.2",
+        "400.3",
+        "400.7",
+        "602.1",
+        "602.2",
+        "608.2c",
+        "701.23"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Eternal Dragon and Summoned Dromedary have whole-program admission and offered source graveyard returns only during controller upkeep or legal sorcery timing respectively. Opponent-turn and wrong-step offers are absent; foreign-seat commands reject atomically; actual payment and resolved return, pending save/load and pre-activation replay are exact."
+    },
+    {
+      "capability_id": "zone.self_move.activated",
+      "evidence_class": "interaction",
       "test_id": "tests.test_self_zone_move_rules.SelfZoneMoveRuntimeTests.test_tapped_reanimation_and_aura_return_use_zone_owners",
       "official_rule_ids": ["400.2", "400.3", "400.7", "602.1", "602.2", "608.2c", "701.23"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -57105,6 +57125,26 @@
       "official_rule_ids": ["400.2", "400.3", "400.7", "602.1", "602.2", "608.2c", "701.23"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Execute Tymaret's target-revalidated damage activation and its later source-self graveyard return from the same complete source-pinned CardProgram without cross-binding either ability."
+    },
+    {
+      "capability_id": "zone.self_move.activated",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_self_zone_move_rules.RestrictedSelfReturnRuntimeTests.test_original_restricted_returns_offer_only_typed_timing_and_replay",
+      "official_rule_ids": [
+        "400.2",
+        "400.3",
+        "400.7",
+        "602.1",
+        "602.2",
+        "608.2c",
+        "701.23"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Eternal Dragon and Summoned Dromedary have whole-program admission and offered source graveyard returns only during controller upkeep or legal sorcery timing respectively. Opponent-turn and wrong-step offers are absent; foreign-seat commands reject atomically; actual payment and resolved return, pending save/load and pre-activation replay are exact."
     },
     {
       "capability_id": "zone.self_move.activated",
@@ -57125,10 +57165,50 @@
     {
       "capability_id": "zone.self_move.activated",
       "evidence_class": "negative",
+      "test_id": "tests.test_self_zone_move_rules.RestrictedSelfReturnRuntimeTests.test_original_restricted_returns_offer_only_typed_timing_and_replay",
+      "official_rule_ids": [
+        "400.2",
+        "400.3",
+        "400.7",
+        "602.1",
+        "602.2",
+        "608.2c",
+        "701.23"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Eternal Dragon and Summoned Dromedary have whole-program admission and offered source graveyard returns only during controller upkeep or legal sorcery timing respectively. Opponent-turn and wrong-step offers are absent; foreign-seat commands reject atomically; actual payment and resolved return, pending save/load and pre-activation replay are exact."
+    },
+    {
+      "capability_id": "zone.self_move.activated",
+      "evidence_class": "negative",
       "test_id": "tests.test_self_zone_move_rules.SelfZoneMoveCompilerTests.test_unsupported_self_zone_move_shapes_remain_residual",
       "official_rule_ids": ["400.2", "400.3", "400.7", "602.1", "602.2", "608.2c", "701.23"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Keep changed source or graveyard ownership, broader source nouns, and multi-object forms source-spanned and nonexecutable."
+    },
+    {
+      "capability_id": "zone.self_move.activated",
+      "evidence_class": "negative",
+      "test_id": "tests.test_self_zone_move_rules.SelfZoneMoveModelTests.test_restricted_source_return_preserves_existing_typed_timing",
+      "official_rule_ids": [
+        "400.2",
+        "400.3",
+        "400.7",
+        "602.1",
+        "602.2",
+        "608.2c",
+        "701.23"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An exact controller-upkeep or sorcery restriction lowers only when the existing typed ability retains matching timing, activation limit and conditions. Missing typed upkeep conditions reject lowering; the original effect text remains in the descriptor."
     },
     {
       "capability_id": "zone.self_move.activated",
@@ -57141,10 +57221,50 @@
     {
       "capability_id": "zone.self_move.activated",
       "evidence_class": "positive",
+      "test_id": "tests.test_self_zone_move_rules.RestrictedSelfReturnRuntimeTests.test_original_restricted_returns_offer_only_typed_timing_and_replay",
+      "official_rule_ids": [
+        "400.2",
+        "400.3",
+        "400.7",
+        "602.1",
+        "602.2",
+        "608.2c",
+        "701.23"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Eternal Dragon and Summoned Dromedary have whole-program admission and offered source graveyard returns only during controller upkeep or legal sorcery timing respectively. Opponent-turn and wrong-step offers are absent; foreign-seat commands reject atomically; actual payment and resolved return, pending save/load and pre-activation replay are exact."
+    },
+    {
+      "capability_id": "zone.self_move.activated",
+      "evidence_class": "positive",
       "test_id": "tests.test_self_zone_move_rules.SelfZoneMoveCompilerTests.test_supported_self_zone_moves_compile_source_spanned_programs",
       "official_rule_ids": ["400.2", "400.3", "400.7", "602.1", "602.2", "608.2c", "701.23"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Lower all four exact source-self forms to typed zone, destination, tapped-state, source-form, admission-policy, and runtime-handler descriptors."
+    },
+    {
+      "capability_id": "zone.self_move.activated",
+      "evidence_class": "positive",
+      "test_id": "tests.test_self_zone_move_rules.SelfZoneMoveModelTests.test_restricted_source_return_preserves_existing_typed_timing",
+      "official_rule_ids": [
+        "400.2",
+        "400.3",
+        "400.7",
+        "602.1",
+        "602.2",
+        "608.2c",
+        "701.23"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An exact controller-upkeep or sorcery restriction lowers only when the existing typed ability retains matching timing, activation limit and conditions. Missing typed upkeep conditions reject lowering; the original effect text remains in the descriptor."
     },
     {
       "capability_id": "zone.self_move.activated",
@@ -57172,6 +57292,46 @@
     },
     {
       "capability_id": "zone.self_move.activated",
+      "evidence_class": "property",
+      "test_id": "tests.test_self_zone_move_rules.SelfZoneMoveModelTests.test_restricted_source_return_preserves_existing_typed_timing",
+      "official_rule_ids": [
+        "400.2",
+        "400.3",
+        "400.7",
+        "602.1",
+        "602.2",
+        "608.2c",
+        "701.23"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "An exact controller-upkeep or sorcery restriction lowers only when the existing typed ability retains matching timing, activation limit and conditions. Missing typed upkeep conditions reject lowering; the original effect text remains in the descriptor."
+    },
+    {
+      "capability_id": "zone.self_move.activated",
+      "evidence_class": "replay",
+      "test_id": "tests.test_self_zone_move_rules.RestrictedSelfReturnRuntimeTests.test_original_restricted_returns_offer_only_typed_timing_and_replay",
+      "official_rule_ids": [
+        "400.2",
+        "400.3",
+        "400.7",
+        "602.1",
+        "602.2",
+        "608.2c",
+        "701.23"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Eternal Dragon and Summoned Dromedary have whole-program admission and offered source graveyard returns only during controller upkeep or legal sorcery timing respectively. Opponent-turn and wrong-step offers are absent; foreign-seat commands reject atomically; actual payment and resolved return, pending save/load and pre-activation replay are exact."
+    },
+    {
+      "capability_id": "zone.self_move.activated",
       "evidence_class": "replay",
       "test_id": "tests.test_self_zone_move_rules.SelfZoneMoveRuntimeTests.test_graveyard_to_hand_is_owner_scoped_private_and_replays",
       "official_rule_ids": ["400.2", "400.3", "400.7", "602.1", "602.2", "608.2c", "701.23"],
@@ -57185,6 +57345,26 @@
       "official_rule_ids": ["400.2", "400.3", "400.7", "602.1", "602.2", "608.2c", "701.23"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the activation, source incarnation, canonical battlefield entry, untapped state, and final authoritative hash."
+    },
+    {
+      "capability_id": "zone.self_move.activated",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_self_zone_move_rules.RestrictedSelfReturnRuntimeTests.test_original_restricted_returns_offer_only_typed_timing_and_replay",
+      "official_rule_ids": [
+        "400.2",
+        "400.3",
+        "400.7",
+        "602.1",
+        "602.2",
+        "608.2c",
+        "701.23"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Eternal Dragon and Summoned Dromedary have whole-program admission and offered source graveyard returns only during controller upkeep or legal sorcery timing respectively. Opponent-turn and wrong-step offers are absent; foreign-seat commands reject atomically; actual payment and resolved return, pending save/load and pre-activation replay are exact."
     },
     {
       "capability_id": "zone.single_owner_move.fixed_destination",

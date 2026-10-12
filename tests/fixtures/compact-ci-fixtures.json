@@ -108,6 +108,7 @@
     "tests/fixtures/read-ahead-saga-cards.json",
     "tests/fixtures/repeatable-object-action-triggers.json",
     "tests/fixtures/resolution-public-condition-cards.json",
+    "tests/fixtures/restricted-self-return-cards.json",
     "tests/fixtures/scalar-effect-amount-cards.json",
     "tests/fixtures/scheduled-player-triggers.json",
     "tests/fixtures/scoped-damage-prevention-cards.json",

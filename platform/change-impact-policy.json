@@ -3351,6 +3351,19 @@
         "test_oracle_ir",
         "test_activated_abilities"
       ]
+    },
+    {
+      "id": "restricted-self-return-contract",
+      "patterns": [
+        "quorune/self_zone_move.py",
+        "tests/fixtures/restricted-self-return-cards.json"
+      ],
+      "test_modules": [
+        "test_self_zone_move_rules",
+        "test_activation_conditions",
+        "test_card_program_trust",
+        "test_activated_abilities"
+      ]
     }
   ],
   "symbol_rules": [

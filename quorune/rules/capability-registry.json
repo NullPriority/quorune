@@ -11944,24 +11944,103 @@
     },
     {
       "id": "zone.self_move.activated",
-      "version": 2,
-      "official_rules": ["400.2", "400.3", "400.7", "602.1", "602.2", "608.2c", "701.23"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 3,
+      "official_rules": [
+        "400.2",
+        "400.3",
+        "400.7",
+        "602.1",
+        "602.2",
+        "608.2c",
+        "701.23"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Resolve one source-self activated zone movement from graveyard to owner hand, graveyard to battlefield tapped or untapped, or a battlefield Aura to owner hand through canonical identity and zone owners.",
-        "inputs": ["one source-spanned colon-form activated ability", "same physical card and logical source incarnation", "supported origin, destination, tapped state, and source form", "represented activation costs", "current replacement and trigger state"],
-        "outputs": ["one server-authored source-zone activation", "ordinary ability stack object", "resolution-time source identity revalidation", "replacement-aware canonical zone move", "public or private destination projection", "normalized zone events and exact replay"],
-        "exclusions": ["targeted, mass, optional, delayed, transformed, or controller-relative movement", "multiple objects or destinations", "unsupported source-form predicates", "unrepresented activated costs or activation conditions", "battlefield materialization when the complete CardProgram remains residual", "copied, granted, or text-changed abilities outside current typed discovery"]
+        "inputs": [
+          "one source-spanned colon-form activated ability",
+          "same physical card and logical source incarnation",
+          "supported origin, destination, tapped state, and source form",
+          "represented activation costs",
+          "current replacement and trigger state",
+          "complete activation restriction suffix matching retained typed timing, limit and conditions"
+        ],
+        "outputs": [
+          "one server-authored source-zone activation",
+          "ordinary ability stack object",
+          "resolution-time source identity revalidation",
+          "replacement-aware canonical zone move",
+          "public or private destination projection",
+          "normalized zone events and exact replay"
+        ],
+        "exclusions": [
+          "targeted, mass, optional, delayed, transformed, or controller-relative movement",
+          "multiple objects or destinations",
+          "unsupported source-form predicates",
+          "unrepresented activated costs or activation conditions",
+          "battlefield materialization when the complete CardProgram remains residual",
+          "copied, granted, or text-changed abilities outside current typed discovery"
+        ]
       },
-      "dependencies": ["trigger.event.normalized_zone_change", "trigger.placement.apnap", "zone.change.destination_replacement"],
-      "implementation_components": ["quorune.self_zone_move.SelfZoneMoveSpec", "quorune.compiler.activated_mana_nodes.activated_oracle_node", "quorune.semantic_runtime.self_zone_move.SelfZoneMoveAbilityHandler", "quorune.semantic_runtime.self_zone_move.SelfZoneMoveEffectHandler", "quorune.compiled_activated_abilities.compiled_activated_abilities", "quorune.rules.activation.proposal.build_activation_offer", "quorune.rules.activation.commit.commit_activation", "quorune.self_zone_move.resolve_self_zone_move", "quorune.zone_transitions.ZoneTransitionOwner"],
-      "positive_tests": ["test_supported_self_zone_moves_compile_source_spanned_programs", "test_graveyard_to_hand_is_owner_scoped_private_and_replays", "test_tapped_reanimation_and_aura_return_use_zone_owners", "test_source_self_reanimation_preserves_untapped_result"],
-      "negative_tests": ["test_unsupported_self_zone_move_shapes_remain_residual", "test_partial_reanimation_and_stale_sources_fail_closed"],
-      "interaction_tests": ["test_tapped_reanimation_and_aura_return_use_zone_owners", "test_partial_reanimation_and_stale_sources_fail_closed", "test_target_revalidation_and_self_return_coexist_on_one_card"],
-      "multiplayer_tests": ["test_graveyard_to_hand_is_owner_scoped_private_and_replays"],
-      "privacy_tests": ["test_graveyard_to_hand_is_owner_scoped_private_and_replays"],
-      "replay_tests": ["test_graveyard_to_hand_is_owner_scoped_private_and_replays", "test_source_self_reanimation_preserves_untapped_result"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "trigger.event.normalized_zone_change",
+        "trigger.placement.apnap",
+        "zone.change.destination_replacement"
+      ],
+      "implementation_components": [
+        "quorune.self_zone_move.SelfZoneMoveSpec",
+        "quorune.compiler.activated_mana_nodes.activated_oracle_node",
+        "quorune.semantic_runtime.self_zone_move.SelfZoneMoveAbilityHandler",
+        "quorune.semantic_runtime.self_zone_move.SelfZoneMoveEffectHandler",
+        "quorune.compiled_activated_abilities.compiled_activated_abilities",
+        "quorune.rules.activation.proposal.build_activation_offer",
+        "quorune.rules.activation.commit.commit_activation",
+        "quorune.self_zone_move.resolve_self_zone_move",
+        "quorune.zone_transitions.ZoneTransitionOwner"
+      ],
+      "positive_tests": [
+        "test_supported_self_zone_moves_compile_source_spanned_programs",
+        "test_graveyard_to_hand_is_owner_scoped_private_and_replays",
+        "test_tapped_reanimation_and_aura_return_use_zone_owners",
+        "test_source_self_reanimation_preserves_untapped_result",
+        "test_restricted_source_return_preserves_existing_typed_timing",
+        "test_original_restricted_returns_offer_only_typed_timing_and_replay"
+      ],
+      "negative_tests": [
+        "test_unsupported_self_zone_move_shapes_remain_residual",
+        "test_partial_reanimation_and_stale_sources_fail_closed",
+        "test_restricted_source_return_preserves_existing_typed_timing"
+      ],
+      "interaction_tests": [
+        "test_tapped_reanimation_and_aura_return_use_zone_owners",
+        "test_partial_reanimation_and_stale_sources_fail_closed",
+        "test_target_revalidation_and_self_return_coexist_on_one_card",
+        "test_original_restricted_returns_offer_only_typed_timing_and_replay"
+      ],
+      "multiplayer_tests": [
+        "test_graveyard_to_hand_is_owner_scoped_private_and_replays",
+        "test_original_restricted_returns_offer_only_typed_timing_and_replay"
+      ],
+      "privacy_tests": [
+        "test_graveyard_to_hand_is_owner_scoped_private_and_replays"
+      ],
+      "replay_tests": [
+        "test_graveyard_to_hand_is_owner_scoped_private_and_replays",
+        "test_source_self_reanimation_preserves_untapped_result",
+        "test_original_restricted_returns_offer_only_typed_timing_and_replay"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Blocking destination replacement, normalized zone events, or APNAP trigger placement prevents the self-zone-move node from receiving trusted closure.",
       "implementation_mutation_status": "killed",
