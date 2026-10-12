@@ -568,6 +568,14 @@ The shared declaration solver selects distinct attacker sets up to current
 capacity while retaining costs and maximum requirement satisfaction. Open
 quantities and independently unsupported siblings remain residual.
 
+The shared direct-permanent predicate accepts the pinned artifact, enchantment,
+and land subtype vocabulary in bare targets. "Target Equipment," "target
+Aura," and "target Mountain" require that subtype on a current permanent;
+they do not add a creature-type requirement. Existing controller, source
+exclusion, target selection and resolution-incarnation checks remain shared.
+Unknown subtypes and unsupported qualifiers still fail closed, and this
+vocabulary does not imply that every effect or quoted ability using it closes.
+
 Fixed scheduled triggers distinguish the controller's first/precombat main
 phase from second/postcombat main phase with both phase and step predicates.
 They consume the existing normalized boundary event and ordinary APNAP trigger

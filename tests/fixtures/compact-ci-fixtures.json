@@ -90,6 +90,7 @@
     "tests/fixtures/main-phase-trigger-cards.json",
     "tests/fixtures/mayhem-cards.json",
     "tests/fixtures/new-support-residual-boundaries.json",
+    "tests/fixtures/noncreature-subtype-targets.json",
     "tests/fixtures/optional-draw-discard-sequences.json",
     "tests/fixtures/optional-object-action-counters.json",
     "tests/fixtures/ordered-quantity-results.json",
@@ -943,6 +944,72 @@
       "deck_files": [],
       "fixture_files": [],
       "rationale": "Actual main-phase schedule transitions and private/replay consequences require these strict original fixtures."
+    },
+    {
+      "source": "tests/test_fixed_direct_target_predicates.py",
+      "symbol": "NoncreatureSubtypeTargetRuntimeTests.test_original_acid_web_spider_targets_only_current_equipment_then_optional_destruction_and_replay",
+      "card_names": [
+        "Acid Web Spider",
+        "Manriki-Gusari",
+        "Sol Ring"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Actual original noncreature subtype targets and adjacent cost/identity/replay interactions consume these exact fixtures."
+    },
+    {
+      "source": "tests/test_fixed_direct_target_predicates.py",
+      "symbol": "NoncreatureSubtypeTargetRuntimeTests.test_original_exonerator_aura_target_sacrifices_source_and_replays",
+      "card_names": [
+        "Grizzly Bears",
+        "Haazda Exonerator",
+        "Holy Strength",
+        "Manriki-Gusari"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Actual original noncreature subtype targets and adjacent cost/identity/replay interactions consume these exact fixtures."
+    },
+    {
+      "source": "tests/test_fixed_direct_target_predicates.py",
+      "symbol": "NoncreatureSubtypeTargetRuntimeTests.test_original_flash_flood_mountain_target_preserves_modal_predicate_and_replay",
+      "card_names": [
+        "Flash Flood",
+        "Forest",
+        "Mountain"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Actual original noncreature subtype targets and adjacent cost/identity/replay interactions consume these exact fixtures."
+    },
+    {
+      "source": "tests/test_fixed_direct_target_predicates.py",
+      "symbol": "NoncreatureSubtypeTargetRuntimeTests.test_original_spider_selected_equipment_departure_invalidates_trigger_target",
+      "card_names": [
+        "Acid Web Spider",
+        "Disperse",
+        "Manriki-Gusari"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Actual original noncreature subtype targets and adjacent cost/identity/replay interactions consume these exact fixtures."
+    },
+    {
+      "source": "tests/test_fixed_direct_target_predicates.py",
+      "symbol": "NoncreatureSubtypeTargetRuntimeTests.test_noncreature_subtype_vocabulary_omission_mutant_is_killed",
+      "card_names": [
+        "Acid Web Spider",
+        "Manriki-Gusari",
+        "Sol Ring"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Actual original noncreature subtype targets and adjacent cost/identity/replay interactions consume these exact fixtures."
     }
   ],
   "full_database_only": []

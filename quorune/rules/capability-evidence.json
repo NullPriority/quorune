@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "904b1941427988ac14f8d8ec6f7c9c062329f5f66529f663bd9a3eecd18d9965",
-  "declaration_source_fingerprint": "6d20bc88aa4cd69070bb54cb125eb5fea05d405b17ec52465d78a0aca21f9b3d",
+  "registry_fingerprint": "9972c1591b5d4bf047e630612c990c4a0b6fd1b8fc20b2b3e4b5816d8b02e5ec",
+  "declaration_source_fingerprint": "e9fa4774e05d69d6c9b0885c6dffa23728ee74237ed096382d045eeaeae42e3c",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -84133,7 +84133,9 @@
         "608.2b",
         "613.1d",
         "613.1f",
-        "702.9"
+        "702.9",
+        "205.3h",
+        "205.3i"
       ],
       "supported_profiles": [
         "traditional",
@@ -84158,7 +84160,9 @@
         "608.2b",
         "613.1d",
         "613.1f",
-        "702.9"
+        "702.9",
+        "205.3h",
+        "205.3i"
       ],
       "supported_profiles": [
         "traditional",
@@ -84183,7 +84187,9 @@
         "608.2b",
         "613.1d",
         "613.1f",
-        "702.9"
+        "702.9",
+        "205.3h",
+        "205.3i"
       ],
       "supported_profiles": [
         "traditional",
@@ -84208,7 +84214,9 @@
         "608.2b",
         "613.1d",
         "613.1f",
-        "702.9"
+        "702.9",
+        "205.3h",
+        "205.3i"
       ],
       "supported_profiles": [
         "traditional",
@@ -84216,6 +84224,114 @@
         "commander_review"
       ],
       "applicability_note": "Use the final current effective color and subtype characteristic snapshot for offer, command validation, and resolution revalidation after copy-derived color and type-layer subtype changes."
+    },
+    {
+      "capability_id": "target.permanent.characteristic_predicate",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_direct_target_predicates.NoncreatureSubtypeTargetRuntimeTests.test_original_acid_web_spider_targets_only_current_equipment_then_optional_destruction_and_replay",
+      "official_rule_ids": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9",
+        "205.3h",
+        "205.3i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A pinned noncreature subtype is a permanent target predicate; actual original offers, choices, costs and resolution preserve current subtype and incarnation, while unknown vocabulary remains residual."
+    },
+    {
+      "capability_id": "target.permanent.characteristic_predicate",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_direct_target_predicates.NoncreatureSubtypeTargetRuntimeTests.test_original_exonerator_aura_target_sacrifices_source_and_replays",
+      "official_rule_ids": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9",
+        "205.3h",
+        "205.3i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A pinned noncreature subtype is a permanent target predicate; actual original offers, choices, costs and resolution preserve current subtype and incarnation, while unknown vocabulary remains residual."
+    },
+    {
+      "capability_id": "target.permanent.characteristic_predicate",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_direct_target_predicates.NoncreatureSubtypeTargetRuntimeTests.test_original_flash_flood_mountain_target_preserves_modal_predicate_and_replay",
+      "official_rule_ids": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9",
+        "205.3h",
+        "205.3i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A pinned noncreature subtype is a permanent target predicate; actual original offers, choices, costs and resolution preserve current subtype and incarnation, while unknown vocabulary remains residual."
+    },
+    {
+      "capability_id": "target.permanent.characteristic_predicate",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_direct_target_predicates.NoncreatureSubtypeTargetRuntimeTests.test_original_spider_selected_equipment_departure_invalidates_trigger_target",
+      "official_rule_ids": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9",
+        "205.3h",
+        "205.3i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A pinned noncreature subtype is a permanent target predicate; actual original offers, choices, costs and resolution preserve current subtype and incarnation, while unknown vocabulary remains residual."
     },
     {
       "capability_id": "target.permanent.characteristic_predicate",
@@ -84233,7 +84349,9 @@
         "608.2b",
         "613.1d",
         "613.1f",
-        "702.9"
+        "702.9",
+        "205.3h",
+        "205.3i"
       ],
       "supported_profiles": [
         "traditional",
@@ -84258,7 +84376,9 @@
         "608.2b",
         "613.1d",
         "613.1f",
-        "702.9"
+        "702.9",
+        "205.3h",
+        "205.3i"
       ],
       "supported_profiles": [
         "traditional",
@@ -84283,7 +84403,9 @@
         "608.2b",
         "613.1d",
         "613.1f",
-        "702.9"
+        "702.9",
+        "205.3h",
+        "205.3i"
       ],
       "supported_profiles": [
         "traditional",
@@ -84308,7 +84430,9 @@
         "608.2b",
         "613.1d",
         "613.1f",
-        "702.9"
+        "702.9",
+        "205.3h",
+        "205.3i"
       ],
       "supported_profiles": [
         "traditional",
@@ -84333,7 +84457,9 @@
         "608.2b",
         "613.1d",
         "613.1f",
-        "702.9"
+        "702.9",
+        "205.3h",
+        "205.3i"
       ],
       "supported_profiles": [
         "traditional",
@@ -84358,7 +84484,9 @@
         "608.2b",
         "613.1d",
         "613.1f",
-        "702.9"
+        "702.9",
+        "205.3h",
+        "205.3i"
       ],
       "supported_profiles": [
         "traditional",
@@ -84383,7 +84511,9 @@
         "608.2b",
         "613.1d",
         "613.1f",
-        "702.9"
+        "702.9",
+        "205.3h",
+        "205.3i"
       ],
       "supported_profiles": [
         "traditional",
@@ -84408,7 +84538,9 @@
         "608.2b",
         "613.1d",
         "613.1f",
-        "702.9"
+        "702.9",
+        "205.3h",
+        "205.3i"
       ],
       "supported_profiles": [
         "traditional",
@@ -84416,6 +84548,60 @@
         "commander_review"
       ],
       "applicability_note": "Offer only the acting seat's legal controlled permanent in a four-player target-selection decision."
+    },
+    {
+      "capability_id": "target.permanent.characteristic_predicate",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_direct_target_predicates.NoncreatureSubtypeTargetRuntimeTests.test_original_acid_web_spider_targets_only_current_equipment_then_optional_destruction_and_replay",
+      "official_rule_ids": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9",
+        "205.3h",
+        "205.3i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A pinned noncreature subtype is a permanent target predicate; actual original offers, choices, costs and resolution preserve current subtype and incarnation, while unknown vocabulary remains residual."
+    },
+    {
+      "capability_id": "target.permanent.characteristic_predicate",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_direct_target_predicates.NoncreatureSubtypeTargetRuntimeTests.test_original_exonerator_aura_target_sacrifices_source_and_replays",
+      "official_rule_ids": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9",
+        "205.3h",
+        "205.3i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A pinned noncreature subtype is a permanent target predicate; actual original offers, choices, costs and resolution preserve current subtype and incarnation, while unknown vocabulary remains residual."
     },
     {
       "capability_id": "target.permanent.characteristic_predicate",
@@ -84433,7 +84619,9 @@
         "608.2b",
         "613.1d",
         "613.1f",
-        "702.9"
+        "702.9",
+        "205.3h",
+        "205.3i"
       ],
       "supported_profiles": [
         "traditional",
@@ -84458,7 +84646,9 @@
         "608.2b",
         "613.1d",
         "613.1f",
-        "702.9"
+        "702.9",
+        "205.3h",
+        "205.3i"
       ],
       "supported_profiles": [
         "traditional",
@@ -84483,7 +84673,9 @@
         "608.2b",
         "613.1d",
         "613.1f",
-        "702.9"
+        "702.9",
+        "205.3h",
+        "205.3i"
       ],
       "supported_profiles": [
         "traditional",
@@ -84508,7 +84700,9 @@
         "608.2b",
         "613.1d",
         "613.1f",
-        "702.9"
+        "702.9",
+        "205.3h",
+        "205.3i"
       ],
       "supported_profiles": [
         "traditional",
@@ -84516,6 +84710,33 @@
         "commander_review"
       ],
       "applicability_note": "Kill removal of the shared closed characteristic parser from destruction, exile, and tap-state lowering."
+    },
+    {
+      "capability_id": "target.permanent.characteristic_predicate",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_direct_target_predicates.NoncreatureSubtypeTargetRuntimeTests.test_noncreature_subtype_vocabulary_omission_mutant_is_killed",
+      "official_rule_ids": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9",
+        "205.3h",
+        "205.3i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A pinned noncreature subtype is a permanent target predicate; actual original offers, choices, costs and resolution preserve current subtype and incarnation, while unknown vocabulary remains residual."
     },
     {
       "capability_id": "target.permanent.characteristic_predicate",
@@ -84533,7 +84754,9 @@
         "608.2b",
         "613.1d",
         "613.1f",
-        "702.9"
+        "702.9",
+        "205.3h",
+        "205.3i"
       ],
       "supported_profiles": [
         "traditional",
@@ -84558,7 +84781,9 @@
         "608.2b",
         "613.1d",
         "613.1f",
-        "702.9"
+        "702.9",
+        "205.3h",
+        "205.3i"
       ],
       "supported_profiles": [
         "traditional",
@@ -84566,6 +84791,33 @@
         "commander_review"
       ],
       "applicability_note": "Keep unrepresented qualities residual and reject unknown, noncanonical, or ill-typed target descriptors."
+    },
+    {
+      "capability_id": "target.permanent.characteristic_predicate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_direct_target_predicates.FixedDirectTargetCompilerTests.test_pinned_noncreature_subtype_targets_preserve_bare_domain",
+      "official_rule_ids": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9",
+        "205.3h",
+        "205.3i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A pinned noncreature subtype is a permanent target predicate; actual original offers, choices, costs and resolution preserve current subtype and incarnation, while unknown vocabulary remains residual."
     },
     {
       "capability_id": "target.permanent.characteristic_predicate",
@@ -84583,7 +84835,9 @@
         "608.2b",
         "613.1d",
         "613.1f",
-        "702.9"
+        "702.9",
+        "205.3h",
+        "205.3i"
       ],
       "supported_profiles": [
         "traditional",
@@ -84591,6 +84845,60 @@
         "commander_review"
       ],
       "applicability_note": "Reject scoped disjunctions, unsupported combat and attachment history, unnamed counters, relational identity, and family-specific layer-6 ability-presence checks."
+    },
+    {
+      "capability_id": "target.permanent.characteristic_predicate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_direct_target_predicates.NoncreatureSubtypeTargetRuntimeTests.test_original_acid_web_spider_targets_only_current_equipment_then_optional_destruction_and_replay",
+      "official_rule_ids": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9",
+        "205.3h",
+        "205.3i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A pinned noncreature subtype is a permanent target predicate; actual original offers, choices, costs and resolution preserve current subtype and incarnation, while unknown vocabulary remains residual."
+    },
+    {
+      "capability_id": "target.permanent.characteristic_predicate",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_direct_target_predicates.NoncreatureSubtypeTargetRuntimeTests.test_original_spider_selected_equipment_departure_invalidates_trigger_target",
+      "official_rule_ids": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9",
+        "205.3h",
+        "205.3i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A pinned noncreature subtype is a permanent target predicate; actual original offers, choices, costs and resolution preserve current subtype and incarnation, while unknown vocabulary remains residual."
     },
     {
       "capability_id": "target.permanent.characteristic_predicate",
@@ -84608,7 +84916,9 @@
         "608.2b",
         "613.1d",
         "613.1f",
-        "702.9"
+        "702.9",
+        "205.3h",
+        "205.3i"
       ],
       "supported_profiles": [
         "traditional",
@@ -84633,7 +84943,9 @@
         "608.2b",
         "613.1d",
         "613.1f",
-        "702.9"
+        "702.9",
+        "205.3h",
+        "205.3i"
       ],
       "supported_profiles": [
         "traditional",
@@ -84658,7 +84970,9 @@
         "608.2b",
         "613.1d",
         "613.1f",
-        "702.9"
+        "702.9",
+        "205.3h",
+        "205.3i"
       ],
       "supported_profiles": [
         "traditional",
@@ -84683,7 +84997,9 @@
         "608.2b",
         "613.1d",
         "613.1f",
-        "702.9"
+        "702.9",
+        "205.3h",
+        "205.3i"
       ],
       "supported_profiles": [
         "traditional",
@@ -84708,7 +85024,9 @@
         "608.2b",
         "613.1d",
         "613.1f",
-        "702.9"
+        "702.9",
+        "205.3h",
+        "205.3i"
       ],
       "supported_profiles": [
         "traditional",
@@ -84733,7 +85051,9 @@
         "608.2b",
         "613.1d",
         "613.1f",
-        "702.9"
+        "702.9",
+        "205.3h",
+        "205.3i"
       ],
       "supported_profiles": [
         "traditional",
@@ -84758,7 +85078,9 @@
         "608.2b",
         "613.1d",
         "613.1f",
-        "702.9"
+        "702.9",
+        "205.3h",
+        "205.3i"
       ],
       "supported_profiles": [
         "traditional",
@@ -84783,7 +85105,9 @@
         "608.2b",
         "613.1d",
         "613.1f",
-        "702.9"
+        "702.9",
+        "205.3h",
+        "205.3i"
       ],
       "supported_profiles": [
         "traditional",
@@ -84791,6 +85115,33 @@
         "commander_review"
       ],
       "applicability_note": "Lower represented color, damageable-type, absent-keyword, combatant-subtype, and source-relative blocking recipients through the shared direct-target descriptor."
+    },
+    {
+      "capability_id": "target.permanent.characteristic_predicate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_direct_target_predicates.FixedDirectTargetCompilerTests.test_pinned_noncreature_subtype_targets_preserve_bare_domain",
+      "official_rule_ids": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9",
+        "205.3h",
+        "205.3i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A pinned noncreature subtype is a permanent target predicate; actual original offers, choices, costs and resolution preserve current subtype and incarnation, while unknown vocabulary remains residual."
     },
     {
       "capability_id": "target.permanent.characteristic_predicate",
@@ -84808,7 +85159,9 @@
         "608.2b",
         "613.1d",
         "613.1f",
-        "702.9"
+        "702.9",
+        "205.3h",
+        "205.3i"
       ],
       "supported_profiles": [
         "traditional",
@@ -84833,7 +85186,9 @@
         "608.2b",
         "613.1d",
         "613.1f",
-        "702.9"
+        "702.9",
+        "205.3h",
+        "205.3i"
       ],
       "supported_profiles": [
         "traditional",
@@ -84841,6 +85196,87 @@
         "commander_review"
       ],
       "applicability_note": "Compile the same characteristic grammar through spell and activated destruction, exile, tap, and untap owners without card-identity dispatch."
+    },
+    {
+      "capability_id": "target.permanent.characteristic_predicate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_direct_target_predicates.NoncreatureSubtypeTargetRuntimeTests.test_original_acid_web_spider_targets_only_current_equipment_then_optional_destruction_and_replay",
+      "official_rule_ids": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9",
+        "205.3h",
+        "205.3i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A pinned noncreature subtype is a permanent target predicate; actual original offers, choices, costs and resolution preserve current subtype and incarnation, while unknown vocabulary remains residual."
+    },
+    {
+      "capability_id": "target.permanent.characteristic_predicate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_direct_target_predicates.NoncreatureSubtypeTargetRuntimeTests.test_original_exonerator_aura_target_sacrifices_source_and_replays",
+      "official_rule_ids": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9",
+        "205.3h",
+        "205.3i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A pinned noncreature subtype is a permanent target predicate; actual original offers, choices, costs and resolution preserve current subtype and incarnation, while unknown vocabulary remains residual."
+    },
+    {
+      "capability_id": "target.permanent.characteristic_predicate",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_direct_target_predicates.NoncreatureSubtypeTargetRuntimeTests.test_original_flash_flood_mountain_target_preserves_modal_predicate_and_replay",
+      "official_rule_ids": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9",
+        "205.3h",
+        "205.3i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A pinned noncreature subtype is a permanent target predicate; actual original offers, choices, costs and resolution preserve current subtype and incarnation, while unknown vocabulary remains residual."
     },
     {
       "capability_id": "target.permanent.characteristic_predicate",
@@ -84858,7 +85294,9 @@
         "608.2b",
         "613.1d",
         "613.1f",
-        "702.9"
+        "702.9",
+        "205.3h",
+        "205.3i"
       ],
       "supported_profiles": [
         "traditional",
@@ -84883,7 +85321,9 @@
         "608.2b",
         "613.1d",
         "613.1f",
-        "702.9"
+        "702.9",
+        "205.3h",
+        "205.3i"
       ],
       "supported_profiles": [
         "traditional",
@@ -84908,7 +85348,9 @@
         "608.2b",
         "613.1d",
         "613.1f",
-        "702.9"
+        "702.9",
+        "205.3h",
+        "205.3i"
       ],
       "supported_profiles": [
         "traditional",
@@ -84933,7 +85375,9 @@
         "608.2b",
         "613.1d",
         "613.1f",
-        "702.9"
+        "702.9",
+        "205.3h",
+        "205.3i"
       ],
       "supported_profiles": [
         "traditional",
@@ -84958,7 +85402,9 @@
         "608.2b",
         "613.1d",
         "613.1f",
-        "702.9"
+        "702.9",
+        "205.3h",
+        "205.3i"
       ],
       "supported_profiles": [
         "traditional",
@@ -84966,6 +85412,33 @@
         "commander_review"
       ],
       "applicability_note": "Project the seat-scoped legal target set without another seat's pending decision or hidden hand identities."
+    },
+    {
+      "capability_id": "target.permanent.characteristic_predicate",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_direct_target_predicates.NoncreatureSubtypeTargetRuntimeTests.test_original_acid_web_spider_targets_only_current_equipment_then_optional_destruction_and_replay",
+      "official_rule_ids": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9",
+        "205.3h",
+        "205.3i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A pinned noncreature subtype is a permanent target predicate; actual original offers, choices, costs and resolution preserve current subtype and incarnation, while unknown vocabulary remains residual."
     },
     {
       "capability_id": "target.permanent.characteristic_predicate",
@@ -84983,7 +85456,9 @@
         "608.2b",
         "613.1d",
         "613.1f",
-        "702.9"
+        "702.9",
+        "205.3h",
+        "205.3i"
       ],
       "supported_profiles": [
         "traditional",
@@ -85008,7 +85483,9 @@
         "608.2b",
         "613.1d",
         "613.1f",
-        "702.9"
+        "702.9",
+        "205.3h",
+        "205.3i"
       ],
       "supported_profiles": [
         "traditional",
@@ -85033,7 +85510,9 @@
         "608.2b",
         "613.1d",
         "613.1f",
-        "702.9"
+        "702.9",
+        "205.3h",
+        "205.3i"
       ],
       "supported_profiles": [
         "traditional",
@@ -85041,6 +85520,114 @@
         "commander_review"
       ],
       "applicability_note": "Replay the accepted typed target and fixed counter placement to the same authoritative state hash."
+    },
+    {
+      "capability_id": "target.permanent.characteristic_predicate",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_direct_target_predicates.NoncreatureSubtypeTargetRuntimeTests.test_original_acid_web_spider_targets_only_current_equipment_then_optional_destruction_and_replay",
+      "official_rule_ids": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9",
+        "205.3h",
+        "205.3i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A pinned noncreature subtype is a permanent target predicate; actual original offers, choices, costs and resolution preserve current subtype and incarnation, while unknown vocabulary remains residual."
+    },
+    {
+      "capability_id": "target.permanent.characteristic_predicate",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_direct_target_predicates.NoncreatureSubtypeTargetRuntimeTests.test_original_exonerator_aura_target_sacrifices_source_and_replays",
+      "official_rule_ids": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9",
+        "205.3h",
+        "205.3i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A pinned noncreature subtype is a permanent target predicate; actual original offers, choices, costs and resolution preserve current subtype and incarnation, while unknown vocabulary remains residual."
+    },
+    {
+      "capability_id": "target.permanent.characteristic_predicate",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_direct_target_predicates.NoncreatureSubtypeTargetRuntimeTests.test_original_flash_flood_mountain_target_preserves_modal_predicate_and_replay",
+      "official_rule_ids": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9",
+        "205.3h",
+        "205.3i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A pinned noncreature subtype is a permanent target predicate; actual original offers, choices, costs and resolution preserve current subtype and incarnation, while unknown vocabulary remains residual."
+    },
+    {
+      "capability_id": "target.permanent.characteristic_predicate",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_direct_target_predicates.NoncreatureSubtypeTargetRuntimeTests.test_original_spider_selected_equipment_departure_invalidates_trigger_target",
+      "official_rule_ids": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9",
+        "205.3h",
+        "205.3i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A pinned noncreature subtype is a permanent target predicate; actual original offers, choices, costs and resolution preserve current subtype and incarnation, while unknown vocabulary remains residual."
     },
     {
       "capability_id": "target.permanent.characteristic_predicate",
@@ -85058,7 +85645,9 @@
         "608.2b",
         "613.1d",
         "613.1f",
-        "702.9"
+        "702.9",
+        "205.3h",
+        "205.3i"
       ],
       "supported_profiles": [
         "traditional",
@@ -85083,7 +85672,9 @@
         "608.2b",
         "613.1d",
         "613.1f",
-        "702.9"
+        "702.9",
+        "205.3h",
+        "205.3i"
       ],
       "supported_profiles": [
         "traditional",
@@ -85108,7 +85699,9 @@
         "608.2b",
         "613.1d",
         "613.1f",
-        "702.9"
+        "702.9",
+        "205.3h",
+        "205.3i"
       ],
       "supported_profiles": [
         "traditional",
@@ -114249,5 +114842,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "db844dfe172d49beda051c411f009607dc22f01107caa2c6dd49adfc1496cef2"
+  "fingerprint": "312d45a39515f27fb4fe060c3ac67a8b692251ce10328080a12a398580095ab2"
 }

@@ -10404,23 +10404,146 @@
     {
       "id": "target.permanent.characteristic_predicate",
       "version": 7,
-      "official_rules": ["105.2", "115.1", "115.2", "115.6", "202.3", "205.3", "205.3g", "205.3m", "608.2b", "613.1d", "613.1f", "702.9"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rules": [
+        "105.2",
+        "115.1",
+        "115.2",
+        "115.6",
+        "202.3",
+        "205.3",
+        "205.3g",
+        "205.3m",
+        "608.2b",
+        "613.1d",
+        "613.1f",
+        "702.9",
+        "205.3h",
+        "205.3i"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Compile one closed direct-permanent target predicate and enforce its current effective types, subtypes, supertypes, colors, color cardinality, present or absent keywords, power, toughness, token status, fixed mana-value bound, controller relation, source exclusion, and represented combat relation identically at offer, command-validation, and resolution time.",
-        "inputs": ["one public battlefield permanent", "canonical effective card types, subtypes, supertypes, colors, mana value, power, and toughness", "canonical effective keyword set", "current token status", "acting controller", "stable source identity", "one immutable typed direct-target descriptor"],
-        "outputs": ["deterministic public legal-target set", "submitted-command verdict", "resolution-time CR 608.2b revalidation", "exact replay"],
-        "exclusions": ["hidden-zone targets", "arbitrary Oracle-text predicates", "modified, attachment-state, nontoken, name, variable, greatest, source-relative, or owner predicates", "numeric predicates over noncreatures, scoped disjunctions, variable values, and comparisons other than fixed at-least or at-most power, toughness, either value, or their total", "combined mana-value and public-state predicates", "chosen, relative, or variable colors", "scoped disjunctions whose qualifiers do not apply to every alternative", "dynamic or relative type and subtype predicates outside the represented current effective characteristic boundary", "generic unnamed counter presence", "ability-presence predicates outside the shared layer-6 ability applicability query", "noncreature subtypes other than Forest, Gate, and Vehicle", "target-changing effects"]
+        "inputs": [
+          "one public battlefield permanent",
+          "canonical effective card types, subtypes, supertypes, colors, mana value, power, and toughness",
+          "canonical effective keyword set",
+          "current token status",
+          "acting controller",
+          "stable source identity",
+          "one immutable typed direct-target descriptor",
+          "pinned artifact, enchantment and land subtypes without an invented creature requirement"
+        ],
+        "outputs": [
+          "deterministic public legal-target set",
+          "submitted-command verdict",
+          "resolution-time CR 608.2b revalidation",
+          "exact replay"
+        ],
+        "exclusions": [
+          "hidden-zone targets",
+          "arbitrary Oracle-text predicates",
+          "modified, attachment-state, nontoken, name, variable, greatest, source-relative, or owner predicates",
+          "numeric predicates over noncreatures, scoped disjunctions, variable values, and comparisons other than fixed at-least or at-most power, toughness, either value, or their total",
+          "combined mana-value and public-state predicates",
+          "chosen, relative, or variable colors",
+          "scoped disjunctions whose qualifiers do not apply to every alternative",
+          "dynamic or relative type and subtype predicates outside the represented current effective characteristic boundary",
+          "generic unnamed counter presence",
+          "ability-presence predicates outside the shared layer-6 ability applicability query",
+          "noncreature subtypes other than Forest, Gate, and Vehicle",
+          "target-changing effects"
+        ]
       },
-      "dependencies": ["target.revalidate_resolution"],
-      "implementation_components": ["quorune.compiler.direct_target.DirectPermanentTargetSpec", "quorune.compiler.direct_target.direct_permanent_target_spec", "quorune.compiler.fixed_target_effect_sequences.fixed_target_characteristics_effect_template", "quorune.target_numeric.TargetNumericCharacteristicSpec", "quorune.targets.TargetGroup", "quorune.target_characteristics.TargetCharacteristicSnapshot", "quorune.object_query.exact_numeric_characteristic", "quorune.engine.CommanderEngine._target_row_matches"],
-      "positive_tests": ["test_closed_direct_target_grammar_compiles_typed_predicates", "test_compound_target_sequence_harvests_enchantment_creature", "test_public_state_direct_targets_compile_typed_predicates", "test_fixed_mana_value_targets_compile_across_effect_contexts", "test_fixed_power_toughness_targets_compile_across_effect_contexts", "test_shared_characteristic_grammar_covers_the_bounded_shapes", "test_shared_grammar_compiles_across_effect_owners_and_contexts", "test_public_damage_predicates_share_the_direct_target_owner", "test_qualified_standalone_targets_share_direct_target_contract", "test_qualified_target_characteristics_compile_across_contexts"],
-      "negative_tests": ["test_unsupported_and_malformed_direct_target_predicates_fail_closed", "test_mana_value_target_model_roundtrips_and_rejects_competing_bounds", "test_numeric_target_model_roundtrips_and_rejects_open_forms", "test_scoped_dynamic_and_ability_presence_predicates_fail_closed", "test_open_qualified_target_variants_remain_material_residuals"],
-      "interaction_tests": ["test_current_effective_characteristics_govern_offer_command_and_resolution", "test_public_state_targets_share_offer_command_and_resolution_revalidation", "test_furnace_skullbomb_target_predicate_and_draw_compose", "test_ruins_of_oran_rief_composes_tapped_entry_with_characteristic_target", "test_current_copy_derived_mana_value_governs_offer_command_and_resolution", "test_current_effective_color_count_governs_offer_command_and_resolution", "test_current_power_toughness_governs_offer_command_and_resolution", "test_qualified_target_effect_applies_and_replays_with_source_exclusion", "test_qualified_target_revalidates_current_characteristics", "test_trusted_qualified_activation_uses_real_action_path_and_replays"],
-      "multiplayer_tests": ["test_four_player_target_predicate_privacy_rollback_and_replay", "test_qualified_target_effect_applies_and_replays_with_source_exclusion", "test_trusted_qualified_activation_uses_real_action_path_and_replays"],
-      "privacy_tests": ["test_four_player_target_predicate_privacy_rollback_and_replay", "test_qualified_target_effect_applies_and_replays_with_source_exclusion", "test_trusted_qualified_activation_uses_real_action_path_and_replays"],
-      "replay_tests": ["test_four_player_target_predicate_privacy_rollback_and_replay", "test_current_power_toughness_governs_offer_command_and_resolution", "test_qualified_target_effect_applies_and_replays_with_source_exclusion", "test_trusted_qualified_activation_uses_real_action_path_and_replays"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "target.revalidate_resolution"
+      ],
+      "implementation_components": [
+        "quorune.compiler.direct_target.DirectPermanentTargetSpec",
+        "quorune.compiler.direct_target.direct_permanent_target_spec",
+        "quorune.compiler.fixed_target_effect_sequences.fixed_target_characteristics_effect_template",
+        "quorune.target_numeric.TargetNumericCharacteristicSpec",
+        "quorune.targets.TargetGroup",
+        "quorune.target_characteristics.TargetCharacteristicSnapshot",
+        "quorune.object_query.exact_numeric_characteristic",
+        "quorune.engine.CommanderEngine._target_row_matches"
+      ],
+      "positive_tests": [
+        "test_closed_direct_target_grammar_compiles_typed_predicates",
+        "test_compound_target_sequence_harvests_enchantment_creature",
+        "test_public_state_direct_targets_compile_typed_predicates",
+        "test_fixed_mana_value_targets_compile_across_effect_contexts",
+        "test_fixed_power_toughness_targets_compile_across_effect_contexts",
+        "test_shared_characteristic_grammar_covers_the_bounded_shapes",
+        "test_shared_grammar_compiles_across_effect_owners_and_contexts",
+        "test_public_damage_predicates_share_the_direct_target_owner",
+        "test_qualified_standalone_targets_share_direct_target_contract",
+        "test_qualified_target_characteristics_compile_across_contexts",
+        "test_pinned_noncreature_subtype_targets_preserve_bare_domain",
+        "test_original_acid_web_spider_targets_only_current_equipment_then_optional_destruction_and_replay",
+        "test_original_exonerator_aura_target_sacrifices_source_and_replays",
+        "test_original_flash_flood_mountain_target_preserves_modal_predicate_and_replay"
+      ],
+      "negative_tests": [
+        "test_unsupported_and_malformed_direct_target_predicates_fail_closed",
+        "test_mana_value_target_model_roundtrips_and_rejects_competing_bounds",
+        "test_numeric_target_model_roundtrips_and_rejects_open_forms",
+        "test_scoped_dynamic_and_ability_presence_predicates_fail_closed",
+        "test_open_qualified_target_variants_remain_material_residuals",
+        "test_pinned_noncreature_subtype_targets_preserve_bare_domain",
+        "test_original_acid_web_spider_targets_only_current_equipment_then_optional_destruction_and_replay",
+        "test_original_spider_selected_equipment_departure_invalidates_trigger_target"
+      ],
+      "interaction_tests": [
+        "test_current_effective_characteristics_govern_offer_command_and_resolution",
+        "test_public_state_targets_share_offer_command_and_resolution_revalidation",
+        "test_furnace_skullbomb_target_predicate_and_draw_compose",
+        "test_ruins_of_oran_rief_composes_tapped_entry_with_characteristic_target",
+        "test_current_copy_derived_mana_value_governs_offer_command_and_resolution",
+        "test_current_effective_color_count_governs_offer_command_and_resolution",
+        "test_current_power_toughness_governs_offer_command_and_resolution",
+        "test_qualified_target_effect_applies_and_replays_with_source_exclusion",
+        "test_qualified_target_revalidates_current_characteristics",
+        "test_trusted_qualified_activation_uses_real_action_path_and_replays",
+        "test_original_acid_web_spider_targets_only_current_equipment_then_optional_destruction_and_replay",
+        "test_original_exonerator_aura_target_sacrifices_source_and_replays",
+        "test_original_flash_flood_mountain_target_preserves_modal_predicate_and_replay",
+        "test_original_spider_selected_equipment_departure_invalidates_trigger_target"
+      ],
+      "multiplayer_tests": [
+        "test_four_player_target_predicate_privacy_rollback_and_replay",
+        "test_qualified_target_effect_applies_and_replays_with_source_exclusion",
+        "test_trusted_qualified_activation_uses_real_action_path_and_replays",
+        "test_original_acid_web_spider_targets_only_current_equipment_then_optional_destruction_and_replay",
+        "test_original_exonerator_aura_target_sacrifices_source_and_replays"
+      ],
+      "privacy_tests": [
+        "test_four_player_target_predicate_privacy_rollback_and_replay",
+        "test_qualified_target_effect_applies_and_replays_with_source_exclusion",
+        "test_trusted_qualified_activation_uses_real_action_path_and_replays",
+        "test_original_acid_web_spider_targets_only_current_equipment_then_optional_destruction_and_replay"
+      ],
+      "replay_tests": [
+        "test_four_player_target_predicate_privacy_rollback_and_replay",
+        "test_current_power_toughness_governs_offer_command_and_resolution",
+        "test_qualified_target_effect_applies_and_replays_with_source_exclusion",
+        "test_trusted_qualified_activation_uses_real_action_path_and_replays",
+        "test_original_acid_web_spider_targets_only_current_equipment_then_optional_destruction_and_replay",
+        "test_original_exonerator_aura_target_sacrifices_source_and_replays",
+        "test_original_flash_flood_mountain_target_preserves_modal_predicate_and_replay",
+        "test_original_spider_selected_equipment_departure_invalidates_trigger_target"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Compiler capability closure demotes direct fixed-counter target programs when canonical resolution-time target revalidation is unavailable.",
       "implementation_mutation_status": "killed",
