@@ -127,6 +127,33 @@ class TemporaryQuotedGrantCompilerTests(unittest.TestCase):
             with self.assertRaises(AssertionError):
                 self.test_temporary_quoted_death_trigger_is_a_recipient_child()
 
+    def test_fixed_stats_and_quoted_trigger_keep_one_recipient_timestamp(self):
+        from test_bound_effect_programs import record
+        ir = compile_oracle_card(record('Until end of turn, target creature gets +2/+0 and gains "When this creature dies, draw a card."', 'Instant'), capability_registry=load_default_capability_registry())
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        outer = next(n for n in ir.faces[0].nodes if n.kind == 'spell_ability')
+        self.assertEqual(9, outer.effects[0]['schema_version'])
+        self.assertEqual((2, 0), (outer.effects[0]['power'], outer.effects[0]['toughness']))
+        self.assertEqual('$target.0', outer.effects[0]['card'])
+        self.assertEqual('granted_triggered', outer.effects[0]['ability_fragments'][0]['kind'])
+
+    def test_coupled_stat_quote_rejects_boolean_stats_unknown_fields_and_omission(self):
+        from test_bound_effect_programs import record
+        from quorune.rules.temporary_ability_grant import temporary_quoted_grant_node_capabilities
+        from quorune.effect_runtime.temporary_ability_bundle import apply_temporary_ability_bundle
+        from quorune.errors import GameRuleError
+        from quorune.compiler import temporary_quoted_ability_nodes as owner
+        ir = compile_oracle_card(record('Until end of turn, target creature gets +2/+0 and gains "When this creature dies, draw a card."', 'Instant'), capability_registry=load_default_capability_registry())
+        outer = next(n for n in ir.faces[0].nodes if n.kind == 'spell_ability')
+        for change in ({'power': True}, {'unknown': True}):
+            altered = {**outer.effects[0], **change}
+            self.assertEqual((), temporary_quoted_grant_node_capabilities(effects=(altered,), target_schema=outer.target_schema, mechanic_ids=outer.mechanics))
+            with self.assertRaises(GameRuleError):
+                apply_temporary_ability_bundle(object(), altered, actor='A', reason='Malformed coupled grant')
+        with mock.patch.object(owner, 'temporary_quoted_ability_nodes', return_value=None):
+            with self.assertRaises(AssertionError):
+                self.test_fixed_stats_and_quoted_trigger_keep_one_recipient_timestamp()
+
     def test_temporary_quoted_compiler_omission_mutant_is_killed(self):
         from quorune.compiler import temporary_quoted_ability_nodes as owner
         with mock.patch.object(owner, 'temporary_quoted_ability_nodes', return_value=None):
@@ -287,6 +314,49 @@ class TemporaryQuotedGrantRuntimeTests(unittest.TestCase):
         accepted = session.act('pilot:A', {'action_id': action['id'], 'targets': [recipient.ref], 'pay': 'auto'})
         self.assertTrue(accepted.ok, accepted.summary)
         self.resolve(session)
+        session = self.replay(session, load=True)
+        engine = session.engine
+        while session.pending_principals()[0] != 'pilot:A':
+            self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
+        action = next(a for a in session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions'] if a.get('card') == removal.ref)
+        before_draw = len(session.state.players['B'].zones['hand'])
+        before = authoritative_state_hash(session.state)
+        rejected = session.act('pilot:C', {'action_id': action['id'], 'targets': [recipient.ref], 'pay': 'auto'})
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act('pilot:A', {'action_id': action['id'], 'targets': [recipient.ref], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        self.assertEqual('graveyard', session.state.cards[recipient.object_id].zone)
+        self.assertEqual(before_draw + 1, len(session.state.players['B'].zones['hand']))
+        projected = json.dumps(session.packet('pilot:D', full=True)['state'])
+        for oid in session.state.players['B'].zones['hand']:
+            self.assertNotIn(session.state.cards[oid].ref, projected)
+        self.replay(session, load=True)
+        # Departure and reentry remove the original grant, so a second death
+        # of the new incarnation cannot publish another granted draw.
+        current = session.state.cards[recipient.object_id]
+        engine.move_card(current.object_id, 'battlefield', controller='B', log=False)
+        after = len(session.state.players['B'].zones['hand'])
+        engine.apply_effect({'op': 'destroy', 'card': current.ref, 'reason': 'New-incarnation negative control'}, actor='A')
+        self.resolve(session)
+        self.assertEqual(after, len(session.state.players['B'].zones['hand']))
+
+
+    def test_coupled_stat_quote_actual_cast_shared_timestamp_death_and_replay(self):
+        session = self.session(357106)
+        engine = session.engine
+        spell = self.add(engine, 'Generic Coupled Death Draw', zone='hand')
+        removal = self.add(engine, 'Murder', zone='hand')
+        recipient = self.add(engine, 'Generic Bound Body', seat='B', ref='granted-death-recipient')
+        action = self.ready(session, spell, {'U': 1, 'B': 2, 'C': 1})
+        self.checkpoint(session)
+        accepted = session.act('pilot:A', {'action_id': action['id'], 'targets': [recipient.ref], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        self.assertEqual(4, engine._numeric_stat(recipient.object_id, 'power'))
+        self.assertEqual(2, len(session.state.continuous_effects))
+        self.assertEqual(1, len({effect.timestamp for effect in session.state.continuous_effects}))
         session = self.replay(session, load=True)
         engine = session.engine
         while session.pending_principals()[0] != 'pilot:A':

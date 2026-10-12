@@ -516,7 +516,9 @@ and its controller as the activating player or trigger controller. Death
 triggers use the existing predeparture fragment snapshot. Set recipients are selected at
 resolution and retain their original incarnations. The existing version-seven
 single-recipient bundle remains unchanged; version eight carries the fixed
-public query. Static quotes, multiple quotes, longer durations,
+public query. Version nine couples fixed signed power/toughness changes and
+one quoted child on a direct creature through one multi-layer timestamp.
+Static quotes, multiple quotes, longer durations,
 external source references and inexact children remain residual.
 
 `compiler/conditional_granted_ability_templates.py` wraps one independently

@@ -147,6 +147,19 @@
   ],
   "dynamic_requirements": [
     {
+      "source": "tests/test_typed_grant_carriers.py",
+      "symbol": "TemporaryQuotedGrantRuntimeTests.test_coupled_stat_quote_actual_cast_shared_timestamp_death_and_replay",
+      "card_names": [
+        "Generic Bound Body",
+        "Generic Coupled Death Draw",
+        "Murder"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Coupled typed result executes actual cast and recipient death through registered generic fixtures."
+    },
+    {
       "source": "tests/test_resolution_public_conditions.py",
       "symbol": "ResolutionPublicConditionRuntimeTests.test_qualified_pair_actual_entry_and_death_draw_only_for_source_controller",
       "card_names": [

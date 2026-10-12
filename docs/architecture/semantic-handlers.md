@@ -220,7 +220,9 @@ Explicit temporary quoted activations and triggers use the same ability-bundle
 owner.
 Version seven carries one revalidated creature; version eight snapshots a
 closed public battlefield query through the canonical resolution selector.
-Both add typed fragments at layer six, pin recipient incarnations, require a
+Version nine couples one child fragment to fixed signed stats through the
+canonical multi-layer transaction and its shared timestamp. These forms
+add typed fragments at layer six, pin recipient incarnations, require a
 trusted child program and expire at cleanup. Recipient control changes retain
 the grant while later activations use the current controller. Later entrants
 and departed recipients do not inherit the earlier effect. A departure event

@@ -18,6 +18,30 @@ def printed_backup_source_context(source,program):
 
 def apply_temporary_ability_bundle(host,effect,*,actor,reason):
     instruction={k:v for k,v in effect.items() if k!='_runtime_source'}
+    if instruction.get('schema_version') == 9:
+        from ..continuous_effect_state import ResolutionContinuousComponent, create_resolution_continuous_effect_components
+        if (set(instruction) != {'op', 'schema_version', 'card', 'power', 'toughness', 'ability_fragments'}
+                or type(instruction['power']) is not int or type(instruction['toughness']) is not int):
+            raise GameRuleError('Coupled temporary ability fields are malformed')
+        try:
+            _, fragments = decode_temporary_ability_grant({'op': instruction['op'], 'schema_version': 7,
+                'card': instruction['card'] or 'stale-recipient', 'keywords': [],
+                'ability_fragments': instruction['ability_fragments'], 'exclude_source': False, 'printed_only': False})
+        except (TypeError, ValueError, KeyError) as exc:
+            raise GameRuleError(str(exc)) from exc
+        if len(fragments) != 1 or fragments[0]['kind'] not in {'granted_activated', 'granted_triggered'}:
+            raise GameRuleError('Coupled temporary ability requires one independently compiled child')
+        if instruction['card'] is None:
+            return []
+        card = host._resolve_object(actor, instruction['card'], zones={'battlefield'})
+        _verify_child_programs(host, fragments)
+        components = (ResolutionContinuousComponent(Layer.ABILITY, '6',
+            tuple(ContinuousOperation('add_ability_fragment', f) for f in fragments)),
+            ResolutionContinuousComponent(Layer.POWER_TOUGHNESS, '7c',
+                (ContinuousOperation('modify_power_toughness', [instruction['power'], instruction['toughness']]),)))
+        create_resolution_continuous_effect_components(host, source=resolution_effect_source(host, effect),
+            targets=(card,), components=components)
+        return [card.ref]
     if instruction.get('schema_version') == 8:
         from ..continuous_effect_state import matching_battlefield_objects
         from ..rules.resolution_characteristic_shapes import fixed_resolution_characteristic_set_is_closed

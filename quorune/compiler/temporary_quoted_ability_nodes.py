@@ -27,6 +27,9 @@ def temporary_quoted_ability_nodes(*, record, face_id, node_id, line, material_l
         return None
     subject = match['prefix'] or match['suffix']
     quoted = match['prefix_body'] or match['suffix_body']
+    stats = re.fullmatch(r'(?P<subject>.+?) gets? (?P<p>[+-][0-9]+)/(?P<t>[+-][0-9]+) and', subject, re.I)
+    if stats is not None:
+        subject = stats['subject']
     if re.search(r'\b(?:enchanted|equipped|this Aura|this Equipment)\b', quoted, re.I):
         return None
     if source_name and source_name.casefold() in quoted.casefold():
@@ -73,6 +76,12 @@ def temporary_quoted_ability_nodes(*, record, face_id, node_id, line, material_l
         'exclude_source': False, 'printed_only': False}
     if query is not None:
         effect = {'op': effect['op'], 'schema_version': 8, 'predicate': query.to_dict(),
+            'ability_fragments': effect['ability_fragments']}
+    if stats is not None:
+        if target is None:
+            return None
+        effect = {'op': effect['op'], 'schema_version': 9, 'card': '$target.0',
+            'power': int(stats['p']), 'toughness': int(stats['t']),
             'ability_fragments': effect['ability_fragments']}
     from ..rules.capabilities import capability_dependencies_for_node
     mechanics = (TEMPORARY_QUOTED_GRANT_MECHANIC, 'cr-611-continuous-effects',

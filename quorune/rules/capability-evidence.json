@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "009a196c594861538896c49f41c5866ea0a0b1c4c3111cca2ec0d657da0bf1da",
-  "declaration_source_fingerprint": "8267db7e46fd94bf8ddeb6ea6fd7a9cfe4d9fb7eff470ed347ccf7cd31638150",
+  "registry_fingerprint": "9d4f697351dc5749750d50eef9aa9d4ba67ee343b58532461ed6b8e9a922737d",
+  "declaration_source_fingerprint": "47fa8dde3397ba253a2a36da41d9d8c05c13161121961fc867cdb9391e590839",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -29847,6 +29847,24 @@
     {
       "capability_id": "continuous.ability.temporary_quoted_grant",
       "evidence_class": "interaction",
+      "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantRuntimeTests.test_coupled_stat_quote_actual_cast_shared_timestamp_death_and_replay",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "113.7",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed signed stats and one independently compiled quoted child share recipient identity, EOT duration and one canonical multi-layer timestamp; actual cast/death, rollback, privacy, replay and malformed/omission controls."
+    },
+    {
+      "capability_id": "continuous.ability.temporary_quoted_grant",
+      "evidence_class": "interaction",
       "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantRuntimeTests.test_original_banishing_knack_recipient_blink_and_ability_removal_controls",
       "official_rule_ids": [
         "611.2a",
@@ -29937,6 +29955,24 @@
     {
       "capability_id": "continuous.ability.temporary_quoted_grant",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantRuntimeTests.test_coupled_stat_quote_actual_cast_shared_timestamp_death_and_replay",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "113.7",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed signed stats and one independently compiled quoted child share recipient identity, EOT duration and one canonical multi-layer timestamp; actual cast/death, rollback, privacy, replay and malformed/omission controls."
+    },
+    {
+      "capability_id": "continuous.ability.temporary_quoted_grant",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantRuntimeTests.test_original_divergent_growth_locks_lands_and_uses_current_recipient_controller",
       "official_rule_ids": [
         "611.2a",
@@ -29991,6 +30027,24 @@
     {
       "capability_id": "continuous.ability.temporary_quoted_grant",
       "evidence_class": "mutation",
+      "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantCompilerTests.test_coupled_stat_quote_rejects_boolean_stats_unknown_fields_and_omission",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "113.7",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed signed stats and one independently compiled quoted child share recipient identity, EOT duration and one canonical multi-layer timestamp; actual cast/death, rollback, privacy, replay and malformed/omission controls."
+    },
+    {
+      "capability_id": "continuous.ability.temporary_quoted_grant",
+      "evidence_class": "mutation",
       "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantCompilerTests.test_temporary_quoted_compiler_omission_mutant_is_killed",
       "official_rule_ids": [
         "611.2a",
@@ -30041,6 +30095,24 @@
         "commander_review"
       ],
       "applicability_note": "Temporary quoted triggered grants use the canonical predeparture fragment snapshot, recipient-source trigger, private controller consequence, source incarnation and pre-cast replay; unknown bodies remain residual."
+    },
+    {
+      "capability_id": "continuous.ability.temporary_quoted_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantCompilerTests.test_coupled_stat_quote_rejects_boolean_stats_unknown_fields_and_omission",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "113.7",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed signed stats and one independently compiled quoted child share recipient identity, EOT duration and one canonical multi-layer timestamp; actual cast/death, rollback, privacy, replay and malformed/omission controls."
     },
     {
       "capability_id": "continuous.ability.temporary_quoted_grant",
@@ -30135,6 +30207,24 @@
     {
       "capability_id": "continuous.ability.temporary_quoted_grant",
       "evidence_class": "negative",
+      "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantRuntimeTests.test_coupled_stat_quote_actual_cast_shared_timestamp_death_and_replay",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "113.7",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed signed stats and one independently compiled quoted child share recipient identity, EOT duration and one canonical multi-layer timestamp; actual cast/death, rollback, privacy, replay and malformed/omission controls."
+    },
+    {
+      "capability_id": "continuous.ability.temporary_quoted_grant",
+      "evidence_class": "negative",
       "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantRuntimeTests.test_temporary_death_grant_uses_departing_recipient_controller_private_draw_and_replay",
       "official_rule_ids": [
         "611.2a",
@@ -30149,6 +30239,24 @@
         "commander_review"
       ],
       "applicability_note": "Temporary quoted triggered grants use the canonical predeparture fragment snapshot, recipient-source trigger, private controller consequence, source incarnation and pre-cast replay; unknown bodies remain residual."
+    },
+    {
+      "capability_id": "continuous.ability.temporary_quoted_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantCompilerTests.test_fixed_stats_and_quoted_trigger_keep_one_recipient_timestamp",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "113.7",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed signed stats and one independently compiled quoted child share recipient identity, EOT duration and one canonical multi-layer timestamp; actual cast/death, rollback, privacy, replay and malformed/omission controls."
     },
     {
       "capability_id": "continuous.ability.temporary_quoted_grant",
@@ -30203,6 +30311,24 @@
         "commander_review"
       ],
       "applicability_note": "Fixed-duration typed quoted grant uses the independent child, original recipient incarnation and canonical layer-six owner; covers set locking, authority, late entrants, ability removal, replay and malformed boundaries."
+    },
+    {
+      "capability_id": "continuous.ability.temporary_quoted_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantRuntimeTests.test_coupled_stat_quote_actual_cast_shared_timestamp_death_and_replay",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "113.7",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed signed stats and one independently compiled quoted child share recipient identity, EOT duration and one canonical multi-layer timestamp; actual cast/death, rollback, privacy, replay and malformed/omission controls."
     },
     {
       "capability_id": "continuous.ability.temporary_quoted_grant",
@@ -30279,6 +30405,24 @@
     {
       "capability_id": "continuous.ability.temporary_quoted_grant",
       "evidence_class": "privacy",
+      "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantRuntimeTests.test_coupled_stat_quote_actual_cast_shared_timestamp_death_and_replay",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "113.7",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed signed stats and one independently compiled quoted child share recipient identity, EOT duration and one canonical multi-layer timestamp; actual cast/death, rollback, privacy, replay and malformed/omission controls."
+    },
+    {
+      "capability_id": "continuous.ability.temporary_quoted_grant",
+      "evidence_class": "privacy",
       "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantRuntimeTests.test_original_retraction_helix_grants_recipient_activation_authority_and_replay",
       "official_rule_ids": [
         "611.2a",
@@ -30311,6 +30455,24 @@
         "commander_review"
       ],
       "applicability_note": "Temporary quoted triggered grants use the canonical predeparture fragment snapshot, recipient-source trigger, private controller consequence, source incarnation and pre-cast replay; unknown bodies remain residual."
+    },
+    {
+      "capability_id": "continuous.ability.temporary_quoted_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantRuntimeTests.test_coupled_stat_quote_actual_cast_shared_timestamp_death_and_replay",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "113.7",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed signed stats and one independently compiled quoted child share recipient identity, EOT duration and one canonical multi-layer timestamp; actual cast/death, rollback, privacy, replay and malformed/omission controls."
     },
     {
       "capability_id": "continuous.ability.temporary_quoted_grant",
@@ -109865,5 +110027,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "ff7cdce9996d5a09f294e704fabf82e3d60e72ec4a673c99abc5164d736a4768"
+  "fingerprint": "383a9892eb44e4f755a8affa33b08ae9da4c53ed2ff5412f4bdc6dc405ee1a45"
 }

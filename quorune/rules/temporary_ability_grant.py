@@ -19,6 +19,12 @@ def temporary_quoted_grant_node_capabilities(*, effects, target_schema, mechanic
     if TEMPORARY_QUOTED_GRANT_MECHANIC not in mechanic_ids or len(effects) != 1:
         return ()
     grant = effects[0]
+    if grant.get('schema_version') == 9:
+        if (set(grant) != {'op', 'schema_version', 'card', 'power', 'toughness', 'ability_fragments'}
+                or type(grant['power']) is not int or type(grant['toughness']) is not int):
+            return ()
+        grant = {'op': grant['op'], 'schema_version': 7, 'card': grant['card'], 'keywords': [],
+            'ability_fragments': grant['ability_fragments'], 'exclude_source': False, 'printed_only': False}
     if grant.get('schema_version') == 8:
         from ..object_predicate import ObjectQuerySpec
         from ..compiler.fixed_resolution_characteristic_queries import fixed_resolution_characteristic_query_is_closed
