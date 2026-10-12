@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .entry_copy import copiable_oracle_id
 
 import copy
 from dataclasses import dataclass, replace
@@ -481,7 +482,7 @@ def _token_replacement_effects(
     effects = []
     for source in sources:
         programs = host.semantics.runtime_handler_programs_for_oracle(
-            source.oracle_id,
+            copiable_oracle_id(source),
             active_zone="battlefield",
             event="token.create",
         )

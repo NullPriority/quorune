@@ -12,6 +12,7 @@ def _custom_object_characteristics(card: CardInstance) -> Mapping[str, Any]:
     return dict(
         card.annotations.get("object_characteristics")
         or card.annotations.get("token_characteristics")
+        or card.annotations.get("copy_overrides")
         or {}
     )
 
@@ -29,6 +30,10 @@ def separate_custom_display_text(
         or card.annotations.get("copy_overrides")
         or {}
     )
+    from .entry_copy import COPIABLE_ORACLE_FIELD, COPIABLE_FACE_FIELD
+    for field in (COPIABLE_ORACLE_FIELD, COPIABLE_FACE_FIELD):
+        if field in custom:
+            result[field] = custom[field]
     if "display_text" in custom:
         result["display_oracle_text"] = str(
             result.get("oracle_text") or ""

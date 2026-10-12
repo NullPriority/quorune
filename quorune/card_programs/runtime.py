@@ -1,4 +1,5 @@
 from __future__ import annotations
+from ..entry_copy import copiable_oracle_id
 
 from dataclasses import dataclass, field
 from typing import Any, TYPE_CHECKING, Callable, Mapping, Protocol, Sequence
@@ -489,7 +490,7 @@ def _applicable_static_programs(
     compatibility_programs = {
         program.key: program
         for program in semantics.runtime_handler_programs_for_oracle(
-            source.oracle_id,
+            copiable_oracle_id(source),
             active_zone="battlefield",
             event="characteristics.evaluate",
         )
@@ -561,7 +562,7 @@ def _continuous_programs_for_source(
             ()
             if copied_components
             else semantics.runtime_handler_programs_for_oracle(
-                source.oracle_id,
+                copiable_oracle_id(source),
                 active_zone="battlefield",
                 event="characteristics.evaluate",
             )

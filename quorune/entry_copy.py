@@ -2,12 +2,70 @@ from __future__ import annotations
 
 """Immutable intrinsic entry-copy values beside the canonical copy model."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any, Mapping
 
 from .creature_subtypes import canonical_creature_subtype
 from .object_predicate import ObjectQuerySpec
 from .token_copy_recipes import TokenCopyExceptionSpec
+
+ENTRY_COPY_HANDLER = 'replacement.zone.entry-copy.v1'
+ENTRY_COPY_CAPABILITY = 'zone.entry.fixed_copy'
+COPIABLE_ORACLE_FIELD = '_copiable_oracle_id'
+COPIABLE_FACE_FIELD = '_copiable_face_id'
+
+
+def copiable_oracle_id(card: Any, characteristics: Mapping[str, Any] | None = None) -> str:
+    """Resolve copied program provenance while retaining physical card identity."""
+    values = characteristics
+    if values is None:
+        values = (getattr(card, 'annotations', {}) or {}).get('copy_overrides')
+    if isinstance(values, Mapping) and COPIABLE_ORACLE_FIELD in values:
+        value = values[COPIABLE_ORACLE_FIELD]
+        if type(value) is not str or not value:
+            raise ValueError('Copiable program provenance must be one retained identity')
+        return value
+    return card.oracle_id
+
+
+def copied_entry_preview(card: Any, prepared: Any):
+    values = prepared.event.payload.get('entry_copy')
+    if values is None:
+        return None
+    if not isinstance(values, Mapping) or COPIABLE_ORACLE_FIELD not in values:
+        raise ValueError('Prepared copy entry requires retained copiable values')
+    return replace(card, annotations={**card.annotations, 'copy_overrides':dict(values)},
+        active_face=values.get(COPIABLE_FACE_FIELD))
+
+
+def serialize_prepared_copy_entry(prepared):
+    from dataclasses import fields
+    from .replacement.immutable import thaw_value
+    result = {field.name: getattr(prepared, field.name) for field in fields(prepared)}
+    result['transition_kind'] = prepared.transition_kind.value
+    result['event'] = prepared.event.to_dict()
+    for field in ('effects', 'counter_events', 'keyword_grants', 'journal'):
+        result[field] = [value.to_dict() for value in getattr(prepared, field)]
+    return thaw_value(result)
+
+
+def restore_prepared_copy_entry(value, *, revision):
+    from .semantic_runtime.zone_replacement_model import PreparedZoneChange
+    from .replacement_effects import ReplaceableEvent, ReplacementEffect, ReplacementSelection
+    from .entry_keyword_grants import EntryKeywordGrant
+    from .zone_trigger_events import ZoneTransitionKind
+    from dataclasses import fields
+    if not isinstance(value, Mapping) or set(value) != {field.name for field in fields(PreparedZoneChange)}:
+        raise ValueError('Retained copied entry has a closed identity')
+    data = dict(value)
+    data['state_revision'] = revision  # Choices advance revision without moving this object.
+    data['transition_kind'] = ZoneTransitionKind(data['transition_kind'])
+    data['event'] = ReplaceableEvent.from_dict(data['event'])
+    data['effects'] = tuple(ReplacementEffect.from_dict(x) for x in data['effects'])
+    data['counter_events'] = tuple(ReplaceableEvent.from_dict(x) for x in data['counter_events'])
+    data['keyword_grants'] = tuple(EntryKeywordGrant(**x) for x in data['keyword_grants'])
+    data['journal'] = tuple(ReplacementSelection.from_dict(x) for x in data['journal'])
+    return PreparedZoneChange(**data)
 
 
 @dataclass(frozen=True, slots=True)

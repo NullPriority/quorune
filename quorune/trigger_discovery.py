@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .entry_copy import copiable_oracle_id
 
 import copy
 import hashlib
@@ -926,7 +927,7 @@ def _event_programs_for_source(
         else [
             program
             for program in host.semantics.programs_for_oracle(
-                source.oracle_id,
+                copiable_oracle_id(source, characteristics),
                 active_zone=active_zone,
             )
             if not program.provenance.get("granted_only")

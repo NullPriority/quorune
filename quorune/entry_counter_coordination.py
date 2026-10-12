@@ -128,6 +128,8 @@ def prepare_resolving_entry_replacement(
             isinstance(lifecycle, Mapping)
             and lifecycle.get("kind") == "sneak"
         )
+        from .entry_copy import restore_prepared_copy_entry
+        retained = item.context.get('copied_aura_prepared_entry')
         prepared = prepare_zone_change_replacement(
             host,
             entry_card,
@@ -139,7 +141,9 @@ def prepare_resolving_entry_replacement(
             ),
             mana_colors_spent=item.mana_colors_spent,
             requested_tapped=requested_tapped,
-            selections=tuple(selections),
+            selections=() if retained is not None else tuple(selections),
+            prepared=(restore_prepared_copy_entry(retained, revision=host.state.revision)
+                if retained is not None else None),
             error_type=error_type,
         )
     except ReplacementChoiceRequired as required:
@@ -157,6 +161,11 @@ def prepare_resolving_entry_replacement(
             None,
             suspended=True,
         )
+    from .copied_aura_entry import prepare_copied_aura_entry_choice
+    if prepare_copied_aura_entry_choice(host, item=item, card=entry_card, prepared=prepared,
+            destination=destination, note=note, instruction_pointer=instruction_pointer,
+            selections=selections, error_type=error_type):
+        return ResolvingEntryPreparation(entry_destination, None, suspended=True)
     return ResolvingEntryPreparation(entry_destination, prepared)
 
 

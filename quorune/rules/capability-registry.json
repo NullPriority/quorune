@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 229,
+  "registry_version": 230,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -238,6 +238,111 @@
     }
   ],
   "capabilities": [
+    {
+      "id": "zone.entry.fixed_copy",
+      "version": 1,
+      "official_rules": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Capture optional intrinsic copy-entry selection as a typed canonical replacement over current public permanent choices, preserving copiable values, exceptions, physical card identity and copied entry/program ownership.",
+        "inputs": [
+          "one complete intrinsic copy entry descriptor",
+          "prospective controller",
+          "current public matching permanents",
+          "typed copiable values and retained source program provenance"
+        ],
+        "outputs": [
+          "copy replacement before ordinary entry replacements",
+          "original physical card identity with copied characteristics",
+          "copied typed programs and entry instructions",
+          "decline retains original entry"
+        ],
+        "exclusions": [
+          "unrepresented recursive copy-entry replacement",
+          "unknown quoted exceptions",
+          "hidden-zone copy references",
+          "unsupported copied program or entry compositions"
+        ]
+      },
+      "dependencies": [
+        "zone.change.destination_replacement"
+      ],
+      "implementation_components": [
+        "quorune.compiler.entry_copy_templates.entry_copy_node",
+        "quorune.semantic_runtime.entry_copy.EntryCopyHandler",
+        "quorune.semantic_runtime.entry_copy.entry_copy_replacement_effects",
+        "quorune.entry_results.commit_prepared_entry_results",
+        "quorune.entry_copy.copiable_oracle_id",
+        "quorune.copied_aura_entry.prepare_copied_aura_entry_choice",
+        "quorune.entry_copy.restore_prepared_copy_entry"
+      ],
+      "positive_tests": [
+        "test_intrinsic_copy_entry_has_an_independent_source_spanned_replacement_owner",
+        "test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
+        "test_original_clone_copied_entry_counter_runs_after_copy_and_replays",
+        "test_original_metamorph_reanimation_copies_artifact_activation_and_retains_identity",
+        "test_original_mirrormade_copy_aura_keeps_intrinsic_attachment_choice_before_entry",
+        "test_original_clone_copied_undying_uses_departure_snapshot_and_new_incarnation"
+      ],
+      "negative_tests": [
+        "test_entry_copy_contract_rejects_hidden_targets_open_tails_and_malformed_values",
+        "test_registered_entry_copy_handler_rejects_open_fields_and_has_no_mutation_context",
+        "test_original_clone_decline_is_legal_and_face_down_copy_has_only_public_copiable_values",
+        "test_original_mirror_image_offer_filters_control_and_clone_blink_resets_copy_values"
+      ],
+      "interaction_tests": [
+        "test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
+        "test_original_clone_copied_entry_counter_runs_after_copy_and_replays",
+        "test_original_metamorph_reanimation_copies_artifact_activation_and_retains_identity",
+        "test_original_clone_decline_is_legal_and_face_down_copy_has_only_public_copiable_values",
+        "test_original_mirror_image_offer_filters_control_and_clone_blink_resets_copy_values",
+        "test_original_mirrormade_copy_aura_keeps_intrinsic_attachment_choice_before_entry",
+        "test_original_clone_copied_undying_uses_departure_snapshot_and_new_incarnation"
+      ],
+      "multiplayer_tests": [
+        "test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
+        "test_original_mirrormade_copy_aura_keeps_intrinsic_attachment_choice_before_entry"
+      ],
+      "privacy_tests": [
+        "test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay"
+      ],
+      "replay_tests": [
+        "test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
+        "test_original_clone_copied_entry_counter_runs_after_copy_and_replays",
+        "test_original_metamorph_reanimation_copies_artifact_activation_and_retains_identity",
+        "test_original_clone_decline_is_legal_and_face_down_copy_has_only_public_copiable_values",
+        "test_original_mirror_image_offer_filters_control_and_clone_blink_resets_copy_values",
+        "test_original_mirrormade_copy_aura_keeps_intrinsic_attachment_choice_before_entry",
+        "test_original_clone_copied_undying_uses_departure_snapshot_and_new_incarnation"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The current registry mutation keeps the exact copy-entry descriptor residual when its precise capability is unavailable.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "The producer omission removes the actual original Clone replacement and is detected by the pre-cast real action witness.",
+      "blockers": [],
+      "status": "trusted"
+    },
     {
       "id": "zone.return.fixed_event_battlefield",
       "version": 1,

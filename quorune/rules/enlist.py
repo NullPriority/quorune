@@ -1,4 +1,5 @@
 from __future__ import annotations
+from ..entry_copy import copiable_oracle_id
 
 """Enlist attack cost and reflexive trigger using canonical tap and scalar owners."""
 
@@ -43,7 +44,7 @@ def prepare_enlist_costs(host,seat,chosen,raw):
     for source_ref,refs in sorted(raw.items()):
         source=attackers.get(source_ref)
         if source is None:raise GameRuleError('Only a declared attacker may enlist')
-        if not any(p.provenance.get('template_id')=='printed-enlist-reflexive-growth-v1' and host.semantic_program_is_current_trusted(p) and program_matches_face(host.card_record(source),p,source) for p in host.semantics.programs_for_oracle(source.oracle_id)):
+        if not any(p.provenance.get('template_id')=='printed-enlist-reflexive-growth-v1' and host.semantic_program_is_current_trusted(p) and program_matches_face(host.card_record(source),p,source) for p in host.semantics.programs_for_oracle(copiable_oracle_id(source))):
             raise GameRuleError('Enlist requires its current trusted reflexive program')
         refs=tuple(refs) if isinstance(refs,(list,tuple)) else (refs,)
         if not refs or len(refs)>enlist_count(host,source):raise GameRuleError('Enlist selection exceeds current printed instance count')
@@ -64,7 +65,7 @@ def enlist_trigger_items(host,plans):
     result=[]
     ordinals={}
     for ordinal,(source,card,_plan,seat,identity) in enumerate(plans):
-        programs=sorted([p for p in host.semantics.programs_for_oracle(source.oracle_id) if p.provenance.get('template_id')=='printed-enlist-reflexive-growth-v1' and host.semantic_program_is_current_trusted(p) and program_matches_face(host.card_record(source),p,source)],key=lambda p:p.key)
+        programs=sorted([p for p in host.semantics.programs_for_oracle(copiable_oracle_id(source)) if p.provenance.get('template_id')=='printed-enlist-reflexive-growth-v1' and host.semantic_program_is_current_trusted(p) and program_matches_face(host.card_record(source),p,source)],key=lambda p:p.key)
         if not programs:raise GameRuleError('Enlist requires its current trusted reflexive program')
         data=host._effective_card_data(card);power=exact_numeric_characteristic(card,data,'power');toughness=exact_numeric_characteristic(card,data,'toughness');ref=host._next_ref('S')
         snapshot={'ref':card.ref,'object_id':card.object_id,'logical_object_id':card.logical_object_id,'zone':'battlefield','power':power,'toughness':toughness,'mana_value':data.get('mana_value',0)}

@@ -40,6 +40,13 @@ def closed_static_or_replacement_node(
 ) -> OracleNode | None:
     """Dispatch closed nontriggered static and replacement line owners."""
 
+    from .entry_copy_templates import entry_copy_node
+    copied_entry = entry_copy_node(node_id=node_id, line=line, material_line=material_line,
+        span=span, source_name=source_name, capability_registry=capability_registry,
+        capability_profile=capability_profile, residuals=residuals)
+    if copied_entry is not None:
+        return copied_entry
+
     if re.fullmatch(
         r".+? can't (?:attack or block|attack|block|be blocked) this turn\.?",
         material_line, re.I,

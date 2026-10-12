@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .entry_copy import copiable_oracle_id
 
 """Read-only layer-two composition for current static Aura control."""
 
@@ -16,8 +17,8 @@ def static_attachment_control_effects(host: Any) -> tuple[ContinuousEffect,...]:
     from .card_programs.runtime import _annotated_static_component_keys
 
     def source_components(source):
-        candidates=(*host.semantics.programs_for_oracle(source.oracle_id),
-            *host.semantics.runtime_handler_programs_for_oracle(source.oracle_id,active_zone='battlefield',event='characteristics.evaluate'),
+        candidates=(*host.semantics.programs_for_oracle(copiable_oracle_id(source)),
+            *host.semantics.runtime_handler_programs_for_oracle(copiable_oracle_id(source),active_zone='battlefield',event='characteristics.evaluate'),
             *(host.semantics.get(key) for key in _annotated_static_component_keys(source)))
         if not any(handler.get('handler_id')==ATTACHED_CONTROL_HANDLER_ID for program in candidates if program is not None for handler in program.handlers):
             return ()

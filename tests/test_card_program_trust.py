@@ -333,6 +333,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "replacement.zone.destination",
                 "replacement.zone.entry_state",
                 "replacement.zone.entry_designation",
+                "replacement.zone.entry_copy",
                 "replacement.zone.conditional-self-entry-counter",
                 "replacement.zone.dynamic-self-entry-counter",
                 "replacement.zone.read-ahead-entry-choice",

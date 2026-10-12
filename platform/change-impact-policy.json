@@ -1909,6 +1909,31 @@
       ]
     },
     {
+      "id": "intrinsic-entry-copy-contract",
+      "patterns": [
+        "quorune/entry_copy.py",
+        "quorune/compiler/entry_copy_templates.py",
+        "quorune/semantic_runtime/entry_copy.py",
+        "quorune/copied_aura_entry.py",
+        "quorune/entry_results.py",
+        "quorune/card_program_faces.py",
+        "quorune/carddb_characteristics.py",
+        "quorune/record_trust.py",
+        "quorune/stack_resolution.py",
+        "tests/fixtures/entry-copy-cards.json"
+      ],
+      "test_modules": [
+        "test_copy_objects",
+        "test_aura_targeting_entry",
+        "test_entry_designations",
+        "test_copied_self_entry_counters",
+        "test_persist_undying_rules",
+        "test_fixed_token_creation_effects",
+        "test_card_program_trust",
+        "test_game_record_v3"
+      ]
+    },
+    {
       "id": "event-battlefield-return-contract",
       "patterns": [
         "quorune/event_card_return.py",

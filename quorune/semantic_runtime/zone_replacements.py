@@ -61,6 +61,7 @@ from .conditional_entry_counters import ConditionalSelfEntryCounterHandler
 from .sunburst import SunburstEntryCounterHandler
 from .entry_choices import ReadAheadEntryChoiceHandler, RiotEntryChoiceHandler
 from .entry_designations import EntryDesignationHandler
+from .entry_copy import EntryCopyHandler, entry_copy_replacement_effects
 from .kicker import FixedKickedEntryHandler
 from .madness import MadnessDiscardReplacementHandler
 from ..read_ahead import READ_AHEAD_ENTRY_HANDLER_ID
@@ -434,6 +435,7 @@ def default_zone_change_replacement_registry(
             EntryStateReplacementHandler(),
             FixedEntryConditionReplacementHandler(),
             EntryDesignationHandler(),
+            EntryCopyHandler(),
             ReadAheadEntryChoiceHandler(),
             RiotEntryChoiceHandler(),
             FixedKickedEntryHandler(),
@@ -999,6 +1001,7 @@ def _zone_change_snapshot_effects(
                 *intrinsic_effects,
                 *generated_effects,
                 *self_entry_effects,
+                *(effect for subject in subjects for effect in entry_copy_replacement_effects(host, subject)),
                 *subject_effects,
                 *commander_effects,
             ),

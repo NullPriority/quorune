@@ -41,6 +41,7 @@ def _custom_activated_abilities(
     characteristics = dict(
         card.annotations.get("object_characteristics")
         or card.annotations.get("token_characteristics")
+        or card.annotations.get("copy_overrides")
         or {}
     )
     if "activated_abilities" not in characteristics:

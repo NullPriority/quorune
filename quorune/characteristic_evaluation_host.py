@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .entry_copy import copiable_oracle_id
 
 import copy
 from functools import partial
@@ -303,9 +304,9 @@ class CharacteristicEvaluationHostMixin:
                     )
                 )
                 ability_presence_programs = (
-                    *self.semantics.programs_for_oracle(source.oracle_id),
+                    *self.semantics.programs_for_oracle(copiable_oracle_id(source)),
                     *self.semantics.runtime_handler_programs_for_oracle(
-                        source.oracle_id,
+                        copiable_oracle_id(source),
                         active_zone="battlefield",
                         event="characteristics.evaluate",
                     ),

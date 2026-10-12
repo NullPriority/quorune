@@ -20,6 +20,9 @@ def selected_face_id(
         elif prospective_name == str(getattr(record, "name", "")):
             return "front"
     active_face = str(getattr(card, "active_face", None) or "")
+    copied_face = (getattr(card, 'annotations', {}) or {}).get('copy_overrides', {}).get('_copiable_face_id')
+    if copied_face:
+        active_face = copied_face
     if active_face:
         return active_face
     faces = getattr(record, "faces", ())

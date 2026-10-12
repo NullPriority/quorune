@@ -521,13 +521,19 @@ one quoted child on a direct creature through one multi-layer timestamp.
 Static quotes, multiple quotes, longer durations,
 external source references and inexact children remain residual.
 
-Intrinsic entry-copy syntax has separate immutable selection values in
-`entry_copy.py` and `compiler/entry_copy_templates.py`. The values preserve
-nontarget public selection and reuse the existing typed copy exceptions.
-They do not grant CardProgram admission: intrinsic copy replacement ordering,
-copied entry replacements and copied program propagation require their own
-runtime integration. The whole-card compiler keeps these entry-copy forms
-residual until that ownership is bound.
+Intrinsic entry-copy syntax lowers immutable selection and exception values
+through `compiler/entry_copy_templates.py` and the registered
+`semantic_runtime/entry_copy.py` replacement owner. Its nontarget choice
+captures current public copiable values, applies the existing typed copy
+exceptions and runs at the enters-copy replacement priority. Copied intrinsic
+entry producers activate only after that choice. The canonical entry owner
+retains physical Oracle identity while copied program provenance selects the
+copied static, activated and triggered descriptors. Source departure preserves
+the snapshot; zone departure clears the copy. A copied Aura uses the existing
+attachment choice before entry, with a retained replacement result through
+save/load and replay. Unknown quoted exceptions, hidden-zone references,
+recursive intrinsic copy choices and unsupported copied programs remain
+outside the represented composition.
 
 `compiler/conditional_granted_ability_templates.py` wraps one independently
 exact quoted child with the existing closed public-state characteristic

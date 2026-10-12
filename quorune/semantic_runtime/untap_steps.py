@@ -1,4 +1,5 @@
 from __future__ import annotations
+from ..entry_copy import copiable_oracle_id
 
 """CardProgram runtime components for CR 502 participation."""
 
@@ -351,7 +352,7 @@ def collect_untap_step_participations(
         ):
             continue
         programs = host.semantics.runtime_handler_programs_for_oracle(
-            source.oracle_id,
+            copiable_oracle_id(source),
             active_zone="battlefield",
             event="untap.step",
         )

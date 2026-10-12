@@ -146,7 +146,19 @@ counter destinations, or other
 unsupported grammar and interactions are materially reachable.
 The fixed public-zone-move handlers are a separate broad grammar over the same
 owners: one handler revalidates a public graveyard-card target, while the set
-handler emits one typed simultaneous intent. Schema-v2 public set descriptors
+handler emits one typed simultaneous intent.
+
+Intrinsic copy entry shares the canonical replacement and zone owners. An
+enters-copy replacement captures layer-one values and activates the selected
+source's typed intrinsic entry producers. Commit retains the physical card's
+Oracle identity and carries separate copied program provenance into effective
+characteristics, static owners, activation catalogs and event discovery.
+Departure LKI retains that provenance for already-triggered abilities; the
+new zone incarnation discards the old copy. Copied Aura attachment uses the
+existing affected-controller choice before entry. Its retained replacement
+result preserves the chosen values while the later attachment choice resumes.
+
+Schema-v2 public set descriptors
 also carry the exact prospective battlefield controller and tapped policy for
 closed graveyard-entry groups; the canonical zone owner evaluates entry
 replacement facts before committing one timestamped batch. Fixed owner-

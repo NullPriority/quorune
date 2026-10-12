@@ -47,6 +47,7 @@
     "tests/fixtures/each-player-mill-cards.json",
     "tests/fixtures/echo-rules-cards.json",
     "tests/fixtures/enlist-cards.json",
+    "tests/fixtures/entry-copy-cards.json",
     "tests/fixtures/entry-designation-cards.json",
     "tests/fixtures/event-card-return.json",
     "tests/fixtures/explore-cards.json",
@@ -146,6 +147,95 @@
     "tests/fixtures/whole-hand-discard-cards.json"
   ],
   "dynamic_requirements": [
+    {
+      "source": "tests/test_copy_objects.py",
+      "symbol": "EntryCopyRuntimeTests.test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
+      "card_names": [
+        "Clone",
+        "Elvish Visionary"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Strict original-card copy-entry actions and typed interaction witnesses consume these exact fixtures."
+    },
+    {
+      "source": "tests/test_copy_objects.py",
+      "symbol": "EntryCopyRuntimeTests.test_original_clone_copied_entry_counter_runs_after_copy_and_replays",
+      "card_names": [
+        "Arcbound Worker",
+        "Clone",
+        "Generic Bound Counter Doubler"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Strict original-card copy-entry actions and typed interaction witnesses consume these exact fixtures."
+    },
+    {
+      "source": "tests/test_copy_objects.py",
+      "symbol": "EntryCopyRuntimeTests.test_original_metamorph_reanimation_copies_artifact_activation_and_retains_identity",
+      "card_names": [
+        "Phyrexian Metamorph",
+        "Sol Ring",
+        "Zombify"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Strict original-card copy-entry actions and typed interaction witnesses consume these exact fixtures."
+    },
+    {
+      "source": "tests/test_copy_objects.py",
+      "symbol": "EntryCopyRuntimeTests.test_original_clone_decline_is_legal_and_face_down_copy_has_only_public_copiable_values",
+      "card_names": [
+        "Clone",
+        "Elvish Visionary"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Strict original-card copy-entry actions and typed interaction witnesses consume these exact fixtures."
+    },
+    {
+      "source": "tests/test_copy_objects.py",
+      "symbol": "EntryCopyRuntimeTests.test_original_mirror_image_offer_filters_control_and_clone_blink_resets_copy_values",
+      "card_names": [
+        "Elvish Visionary",
+        "Hill Giant",
+        "Mirror Image"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Strict original-card copy-entry actions and typed interaction witnesses consume these exact fixtures."
+    },
+    {
+      "source": "tests/test_copy_objects.py",
+      "symbol": "EntryCopyRuntimeTests.test_original_mirrormade_copy_aura_keeps_intrinsic_attachment_choice_before_entry",
+      "card_names": [
+        "Generic Bound Body",
+        "Holy Strength",
+        "Mirrormade"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Strict original-card copy-entry actions and typed interaction witnesses consume these exact fixtures."
+    },
+    {
+      "source": "tests/test_copy_objects.py",
+      "symbol": "EntryCopyRuntimeTests.test_original_clone_copied_undying_uses_departure_snapshot_and_new_incarnation",
+      "card_names": [
+        "Clone",
+        "Murder",
+        "Young Wolf"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Strict original-card copy-entry actions and typed interaction witnesses consume these exact fixtures."
+    },
     {
       "source": "tests/test_typed_grant_carriers.py",
       "symbol": "TemporaryQuotedGrantRuntimeTests.test_original_death_grants_return_owner_with_entry_counter_or_coupled_stats_and_replay",

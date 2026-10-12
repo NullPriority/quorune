@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Protocol, Sequence
+from typing import Any, Mapping, Protocol, Sequence
 
 from .counter_placement import commit_counter_events_from_resolution
 from .entry_designations import EntryDesignationKind, validate_designation
@@ -54,6 +54,14 @@ def commit_prepared_entry_results(
     error_type: type[Exception],
 ) -> None:
     """Commit typed nested-counter and layer-6 results after one entry."""
+
+    copy_values = prepared.event.payload.get('entry_copy')
+    if copy_values is not None:
+        from .entry_copy import COPIABLE_ORACLE_FIELD
+        from .replacement.immutable import thaw_value
+        if not isinstance(copy_values, Mapping) or COPIABLE_ORACLE_FIELD not in copy_values:
+            raise error_type('Prepared entry copy values are malformed')
+        card.annotations['copy_overrides'] = thaw_value(copy_values)
 
     commit_counter_events_from_resolution(
         host,

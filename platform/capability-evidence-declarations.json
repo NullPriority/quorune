@@ -58487,6 +58487,594 @@
       "applicability_note": "Replay the public reveal and exact-object conditional discard with the same final state."
     },
     {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Clone actual cast, intrinsic copy choice, retained physical identity, copiable-only values, copied ETB controller, authorized replacement principal, privacy and pre-cast replay use one canonical entry/copy transaction."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_copied_entry_counter_runs_after_copy_and_replays",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical copy-entry captures only copiable values and binds copied program provenance, intrinsic counters, Aura attachment, current-controller activation and departure LKI while preserving physical Oracle identity and exact replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_copied_undying_uses_departure_snapshot_and_new_incarnation",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical copy-entry captures only copiable values and binds copied program provenance, intrinsic counters, Aura attachment, current-controller activation and departure LKI while preserving physical Oracle identity and exact replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_decline_is_legal_and_face_down_copy_has_only_public_copiable_values",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical copy-entry captures only copiable values and binds copied program provenance, intrinsic counters, Aura attachment, current-controller activation and departure LKI while preserving physical Oracle identity and exact replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_metamorph_reanimation_copies_artifact_activation_and_retains_identity",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical copy-entry captures only copiable values and binds copied program provenance, intrinsic counters, Aura attachment, current-controller activation and departure LKI while preserving physical Oracle identity and exact replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_mirror_image_offer_filters_control_and_clone_blink_resets_copy_values",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical copy-entry captures only copiable values and binds copied program provenance, intrinsic counters, Aura attachment, current-controller activation and departure LKI while preserving physical Oracle identity and exact replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_mirrormade_copy_aura_keeps_intrinsic_attachment_choice_before_entry",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical copy-entry captures only copiable values and binds copied program provenance, intrinsic counters, Aura attachment, current-controller activation and departure LKI while preserving physical Oracle identity and exact replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Clone actual cast, intrinsic copy choice, retained physical identity, copiable-only values, copied ETB controller, authorized replacement principal, privacy and pre-cast replay use one canonical entry/copy transaction."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_mirrormade_copy_aura_keeps_intrinsic_attachment_choice_before_entry",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical copy-entry captures only copiable values and binds copied program provenance, intrinsic counters, Aura attachment, current-controller activation and departure LKI while preserving physical Oracle identity and exact replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_intrinsic_copy_producer_omission_mutant_is_killed",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Clone actual cast, intrinsic copy choice, retained physical identity, copiable-only values, copied ETB controller, authorized replacement principal, privacy and pre-cast replay use one canonical entry/copy transaction."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "negative",
+      "test_id": "tests.test_copy_objects.EntryCopyContractTests.test_entry_copy_contract_rejects_hidden_targets_open_tails_and_malformed_values",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Clone actual cast, intrinsic copy choice, retained physical identity, copiable-only values, copied ETB controller, authorized replacement principal, privacy and pre-cast replay use one canonical entry/copy transaction."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "negative",
+      "test_id": "tests.test_copy_objects.EntryCopyContractTests.test_registered_entry_copy_handler_rejects_open_fields_and_has_no_mutation_context",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical copy-entry captures only copiable values and binds copied program provenance, intrinsic counters, Aura attachment, current-controller activation and departure LKI while preserving physical Oracle identity and exact replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "negative",
+      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_decline_is_legal_and_face_down_copy_has_only_public_copiable_values",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical copy-entry captures only copiable values and binds copied program provenance, intrinsic counters, Aura attachment, current-controller activation and departure LKI while preserving physical Oracle identity and exact replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "negative",
+      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_mirror_image_offer_filters_control_and_clone_blink_resets_copy_values",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical copy-entry captures only copiable values and binds copied program provenance, intrinsic counters, Aura attachment, current-controller activation and departure LKI while preserving physical Oracle identity and exact replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_copy_objects.EntryCopyContractTests.test_intrinsic_copy_entry_has_an_independent_source_spanned_replacement_owner",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Clone actual cast, intrinsic copy choice, retained physical identity, copiable-only values, copied ETB controller, authorized replacement principal, privacy and pre-cast replay use one canonical entry/copy transaction."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Clone actual cast, intrinsic copy choice, retained physical identity, copiable-only values, copied ETB controller, authorized replacement principal, privacy and pre-cast replay use one canonical entry/copy transaction."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_copied_entry_counter_runs_after_copy_and_replays",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical copy-entry captures only copiable values and binds copied program provenance, intrinsic counters, Aura attachment, current-controller activation and departure LKI while preserving physical Oracle identity and exact replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_copied_undying_uses_departure_snapshot_and_new_incarnation",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical copy-entry captures only copiable values and binds copied program provenance, intrinsic counters, Aura attachment, current-controller activation and departure LKI while preserving physical Oracle identity and exact replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_metamorph_reanimation_copies_artifact_activation_and_retains_identity",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical copy-entry captures only copiable values and binds copied program provenance, intrinsic counters, Aura attachment, current-controller activation and departure LKI while preserving physical Oracle identity and exact replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "positive",
+      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_mirrormade_copy_aura_keeps_intrinsic_attachment_choice_before_entry",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical copy-entry captures only copiable values and binds copied program provenance, intrinsic counters, Aura attachment, current-controller activation and departure LKI while preserving physical Oracle identity and exact replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Clone actual cast, intrinsic copy choice, retained physical identity, copiable-only values, copied ETB controller, authorized replacement principal, privacy and pre-cast replay use one canonical entry/copy transaction."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "replay",
+      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_choice_copies_printed_values_and_etb_for_copier_with_replay",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Clone actual cast, intrinsic copy choice, retained physical identity, copiable-only values, copied ETB controller, authorized replacement principal, privacy and pre-cast replay use one canonical entry/copy transaction."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "replay",
+      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_copied_entry_counter_runs_after_copy_and_replays",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical copy-entry captures only copiable values and binds copied program provenance, intrinsic counters, Aura attachment, current-controller activation and departure LKI while preserving physical Oracle identity and exact replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "replay",
+      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_copied_undying_uses_departure_snapshot_and_new_incarnation",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical copy-entry captures only copiable values and binds copied program provenance, intrinsic counters, Aura attachment, current-controller activation and departure LKI while preserving physical Oracle identity and exact replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "replay",
+      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_clone_decline_is_legal_and_face_down_copy_has_only_public_copiable_values",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical copy-entry captures only copiable values and binds copied program provenance, intrinsic counters, Aura attachment, current-controller activation and departure LKI while preserving physical Oracle identity and exact replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "replay",
+      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_metamorph_reanimation_copies_artifact_activation_and_retains_identity",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical copy-entry captures only copiable values and binds copied program provenance, intrinsic counters, Aura attachment, current-controller activation and departure LKI while preserving physical Oracle identity and exact replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "replay",
+      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_mirror_image_offer_filters_control_and_clone_blink_resets_copy_values",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical copy-entry captures only copiable values and binds copied program provenance, intrinsic counters, Aura attachment, current-controller activation and departure LKI while preserving physical Oracle identity and exact replay."
+    },
+    {
+      "capability_id": "zone.entry.fixed_copy",
+      "evidence_class": "replay",
+      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_mirrormade_copy_aura_keeps_intrinsic_attachment_choice_before_entry",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "707.2",
+        "707.2a",
+        "707.2b",
+        "707.5",
+        "707.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Canonical copy-entry captures only copiable values and binds copied program provenance, intrinsic counters, Aura attachment, current-controller activation and departure LKI while preserving physical Oracle identity and exact replay."
+    },
+    {
       "capability_id": "zone.entry.public_designation",
       "evidence_class": "interaction",
       "test_id": "tests.test_entry_designations.EntryDesignationTests.test_chosen_characteristics_bind_public_value_to_existing_query_owner",

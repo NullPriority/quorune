@@ -1,4 +1,5 @@
 from __future__ import annotations
+from ..entry_copy import copiable_oracle_id
 
 from dataclasses import dataclass
 from functools import lru_cache
@@ -207,7 +208,7 @@ def collect_draw_restrictions(
         ):
             continue
         programs = host.semantics.runtime_handler_programs_for_oracle(
-            source.oracle_id,
+            copiable_oracle_id(source),
             active_zone="battlefield",
             event="draw.permission",
         )

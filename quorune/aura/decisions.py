@@ -321,6 +321,10 @@ def complete_aura_entry_choice(
     )
     response = decision.responses[seat]
     selected = response.get("aura_target", response.get("target"))
+    from ..copied_aura_entry import complete_copied_aura_entry_choice
+    if complete_copied_aura_entry_choice(host, item=item, restored=restored, source=source,
+            spec=spec, selected=selected, error_type=error_type):
+        return
     if (
         not isinstance(selected, str)
         or selected not in restored.advertised_targets

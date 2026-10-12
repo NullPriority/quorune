@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import replace
 import re
 
-from ..entry_copy import EntryCopySpec
+from ..entry_copy import EntryCopySpec, ENTRY_COPY_HANDLER, ENTRY_COPY_CAPABILITY
 from ..object_predicate import ObjectQuerySpec
 from ..rules.source_references import SourceReferenceSpec, source_self_permanent_type
 from .public_state_queries import fixed_characteristic_battlefield_query_subject
@@ -48,3 +48,19 @@ def entry_copy_spec(text: str, *, source_name: str) -> EntryCopySpec | None:
         return EntryCopySpec(query, exception)
     except ValueError:
         return None
+
+
+def entry_copy_node(*, node_id, line, material_line, span, source_name,
+        capability_registry, capability_profile, residuals):
+    from .static_runtime_nodes import runtime_handler_node
+    from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+    spec = entry_copy_spec(material_line, source_name=source_name)
+    if spec is None:
+        return None
+    return runtime_handler_node(node_id=node_id, line=line, span=span,
+        compiled=('intrinsic-entry-copy-v1', {'handler_id': ENTRY_COPY_HANDLER,
+            'schema_version': 1, 'event': 'zone.change', 'copy': spec.to_dict()}, ENTRY_COPY_CAPABILITY),
+        kind='replacement_effect', event='zone.change', active_zone='all',
+        runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+        dependency_reason='Intrinsic copy entry requires the canonical copy/replacement owner.',
+        capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals)

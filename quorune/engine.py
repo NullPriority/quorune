@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .entry_copy import copiable_oracle_id
 from .rules.enlist import enlist_offer_rows,prepare_enlist_costs,commit_enlist_costs,enlist_trigger_items
 
 import copy
@@ -929,11 +930,11 @@ class CommanderEngine(
 
     def card_record(self, value: str | CardInstance) -> CardRecord | None:
         card = value if isinstance(value, CardInstance) else self.state.cards[value]
-        if card.oracle_id.startswith(
+        if copiable_oracle_id(card).startswith(
             ("custom-token:", "custom-copy:", "custom-emblem:")
         ):
             return None
-        return self.card_db.by_oracle_id(card.oracle_id)
+        return self.card_db.by_oracle_id(copiable_oracle_id(card))
 
     def display_name(self, object_id: str) -> str:
         return str(self._effective_card_data(object_id).get("name") or self.state.cards[object_id].printed_name)

@@ -13,7 +13,7 @@ from .semantic_runtime import (
     runtime_component_registry_fingerprint,
 )
 from .semantics import SemanticRegistry
-from .stack_resolution import trusted_generic_empty_resolution
+from .stack_resolution import trusted_generic_empty_resolution, physical_stack_record
 
 
 def verified_replay_inputs(
@@ -110,7 +110,7 @@ def implicit_semantic_execution_provenance(
             continue
         if item.kind != "spell" or not item.card_object_id:
             continue
-        record = engine.card_record(item.card_object_id)
+        record = physical_stack_record(engine, item)
         if record is None:
             continue
         face=next((f for f in record.faces if f.get('name')==item.chosen_face),None) if record.faces else None

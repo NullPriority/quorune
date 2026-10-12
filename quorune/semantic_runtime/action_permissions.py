@@ -1,4 +1,5 @@
 from __future__ import annotations
+from ..entry_copy import copiable_oracle_id
 
 """Typed controller-wide permissions discovered from active CardPrograms."""
 
@@ -453,7 +454,7 @@ def controller_action_permissions(
         if record is None:
             continue
         programs = host.semantics.runtime_handler_programs_for_oracle(
-            source.oracle_id,
+            copiable_oracle_id(source),
             active_zone="battlefield",
             event=ACTION_PERMISSION_EVENT,
         )

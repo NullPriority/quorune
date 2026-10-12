@@ -351,6 +351,12 @@ class ZoneTransitionOwner:
             error_type=GameRuleError,
         )
         destination = replacement.destination
+        from .entry_copy import copied_entry_preview
+        copied = copied_entry_preview(card, replacement)
+        if copied is not None:
+            entry_characteristics = dict(replacement.event.payload['entry_copy'])
+            destination_type_line = str(entry_characteristics['type_line'])
+            aura_enchant_spec = self.host._compiled_enchant_spec(copied)
         prospective_protector = prospective_battle_entry_protector(
             destination=destination,
             entry_characteristics=entry_characteristics,
@@ -365,7 +371,7 @@ class ZoneTransitionOwner:
         )
         aura_move = preflight_aura_zone_move(
             self.host,
-            card,
+            copied or card,
             destination=destination,
             requested_destination=requested_destination,
             destination_type_line=destination_type_line,
