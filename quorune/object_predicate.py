@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 from typing import Any, Iterable, Mapping
 
 from .counter_names import CounterStateError, normalized_counter_name
+from .target_numeric import TargetNumericCharacteristicSpec
 
 
 class ObjectQueryError(ValueError):
@@ -43,6 +44,7 @@ _NEGATIVE_KEYWORD_QUERY_FIELDS = _RELATIONAL_QUERY_FIELDS | {
     "keywords_none",
 }
 _DESIGNATION_QUERY_FIELDS = _NEGATIVE_KEYWORD_QUERY_FIELDS | {"commander"}
+_NUMERIC_QUERY_FIELDS = _DESIGNATION_QUERY_FIELDS | {"numeric_characteristic"}
 _LEGACY_PERMANENT_STATE_FIELDS = frozenset(
     {
         "entered_this_turn",
@@ -321,6 +323,7 @@ class ObjectQuerySpec:
     known_to_actor: bool | None = None
     exclude_ref: str | None = None
     state_predicate: PermanentStatePredicateSpec | None = None
+    numeric_characteristic: TargetNumericCharacteristicSpec | None = None
     _serialization_version: int = field(
         default=2,
         repr=False,
@@ -424,7 +427,13 @@ class ObjectQuerySpec:
             or self.colorless is not None
             or self.state_predicate is not None
         )
-        if self.commander is not None:
+        if self.numeric_characteristic is not None:
+            if not isinstance(self.numeric_characteristic, TargetNumericCharacteristicSpec):
+                raise ObjectQueryError("Numeric characteristic predicates must be typed")
+            if self.zones != ("battlefield",) or "creature" not in self.types_all:
+                raise ObjectQueryError("Numeric characteristic queries require battlefield creatures")
+            object.__setattr__(self, "_serialization_version", 7)
+        elif self.commander is not None:
             object.__setattr__(self, "_serialization_version", 6)
         elif self.keywords_none and self._serialization_version in {1, 2, 3, 4}:
             object.__setattr__(self, "_serialization_version", 5)
@@ -432,11 +441,11 @@ class ObjectQuerySpec:
             object.__setattr__(self, "_serialization_version", 4)
         elif extended and self._serialization_version == 2:
             object.__setattr__(self, "_serialization_version", 3)
-        if type(self._serialization_version) is not int or self._serialization_version not in {1, 2, 3, 4, 5, 6}:
+        if type(self._serialization_version) is not int or self._serialization_version not in {1, 2, 3, 4, 5, 6, 7}:
             raise ObjectQueryError(
                 "Object query serialization version is unsupported"
             )
-        if extended and self._serialization_version not in {3, 4, 5, 6}:
+        if extended and self._serialization_version not in {3, 4, 5, 6, 7}:
             raise ObjectQueryError(
                 "Extended object predicates require serialization version 3"
             )
@@ -475,7 +484,7 @@ class ObjectQuerySpec:
                     ),
                 }
             )
-        elif self._serialization_version in {4, 5, 6}:
+        elif self._serialization_version in {4, 5, 6, 7}:
             value.update(
                 {
                     "subtypes_any": list(self.subtypes_any),
@@ -492,10 +501,13 @@ class ObjectQuerySpec:
                     "minimum_color_count": self.minimum_color_count,
                 }
             )
-            if self._serialization_version in {5, 6}:
+            if self._serialization_version in {5, 6, 7}:
                 value["keywords_none"] = list(self.keywords_none)
-            if self._serialization_version == 6:
+            if self._serialization_version in {6, 7}:
                 value["commander"] = self.commander
+            if self._serialization_version == 7:
+                value["numeric_characteristic"] = (
+                    self.numeric_characteristic.to_dict() if self.numeric_characteristic is not None else None)
         return value
 
     def to_dict(self) -> dict[str, Any]:
@@ -518,6 +530,7 @@ class ObjectQuerySpec:
             _RELATIONAL_QUERY_FIELDS,
             _NEGATIVE_KEYWORD_QUERY_FIELDS,
             _DESIGNATION_QUERY_FIELDS,
+            _NUMERIC_QUERY_FIELDS,
         }:
             expected = (
                 _DESIGNATION_QUERY_FIELDS
@@ -545,6 +558,11 @@ class ObjectQuerySpec:
             raise ObjectQueryError(
                 "Object query fields: " + "; ".join(details)
             )
+        raw_numeric = value.get("numeric_characteristic")
+        try:
+            numeric = TargetNumericCharacteristicSpec.from_mapping(raw_numeric) if raw_numeric is not None else None
+        except (TypeError, ValueError) as error:
+            raise ObjectQueryError(str(error)) from error
         raw_state = value.get("state_predicate")
         state_predicate = (
             PermanentStatePredicateSpec.from_dict(raw_state)
@@ -576,8 +594,11 @@ class ObjectQuerySpec:
             known_to_actor=value["known_to_actor"],
             exclude_ref=value["exclude_ref"],
             state_predicate=state_predicate,
+            numeric_characteristic=numeric,
             _serialization_version=(
-                6
+                7
+                if actual == _NUMERIC_QUERY_FIELDS
+                else 6
                 if actual == _DESIGNATION_QUERY_FIELDS
                 else 5
                 if actual == _NEGATIVE_KEYWORD_QUERY_FIELDS

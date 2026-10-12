@@ -394,7 +394,11 @@ resolution owner to all creatures, creatures opponents or one target player
 control, current attacking or blocking creatures, and source-excluding attacking
 creatures. Both grammars feed one closed query validator. Resolution evaluates
 only cycle-safe current type, subtype, color, supertype, token, controller, and
-public combat-state facts, then locks the matching logical objects. The runtime
+public combat-state facts, then locks the matching logical objects. Bare
+subtype resolution sets include noncreature Kindred members. A fixed power or
+toughness bound on a creature recipient reads exact current effective stats
+at resolution before membership is locked; unknown values do not match.
+The runtime
 sends ability additions through shared layer 6 and power/toughness changes
 through layer 7c over that same locked set. The source leaving or changing
 controller does not end the effect, later entrants do not join it, returned

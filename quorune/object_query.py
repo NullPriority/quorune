@@ -219,6 +219,8 @@ def object_matches_query(
             or row.known_to_actor is spec.known_to_actor
         )
         and (spec.exclude_ref is None or row.ref != spec.exclude_ref)
+        and (spec.numeric_characteristic is None or spec.numeric_characteristic.permits(
+            power=row.effective_power, toughness=row.effective_toughness))
         and (
             spec.state_predicate is None
             or permanent_state_predicate_matches(

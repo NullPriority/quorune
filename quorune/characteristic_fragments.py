@@ -173,6 +173,7 @@ class CharacteristicQuantitySpec:
             or query.known_to_actor is not None
             or query.keywords_all
             or query.keywords_none
+            or query.numeric_characteristic is not None
             or query.include_phased_out
         ):
             raise CharacteristicFragmentError(

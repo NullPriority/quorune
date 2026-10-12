@@ -80,11 +80,11 @@ _CONTROLLED_SUBJECT = re.compile(
 )
 _CONTROLLED_SUBTYPE_CREATURES = re.compile(
     r"^(?P<other>Other )?(?P<subtype>[A-Z][A-Za-z'-]*(?: [A-Z][A-Za-z'-]*)?) "
-    r"creatures you control$"
-)
+    r"creatures you control$",
+    flags=re.IGNORECASE)
 _CONTROLLED_PLURAL_SUBJECT = re.compile(
-    r"^(?P<other>Other )?(?P<plural>[A-Z][A-Za-z'-]*) you control$"
-)
+    r"^(?P<other>Other )?(?P<plural>[A-Z][A-Za-z'-]*) you control$",
+    flags=re.IGNORECASE)
 _GLOBAL_SUBJECT = re.compile(
     r"^(?P<other>Other )?(?:All )?"
     r"(?:(?P<quality>Black|Blue|Green|Red|White) )?"
@@ -94,11 +94,11 @@ _GLOBAL_SUBJECT = re.compile(
 )
 _GLOBAL_SUBTYPE_CREATURES = re.compile(
     r"^(?P<other>Other )?(?:All )?"
-    r"(?P<subtype>[A-Z][A-Za-z'-]*(?: [A-Z][A-Za-z'-]*)?) creatures$"
-)
+    r"(?P<subtype>[A-Z][A-Za-z'-]*(?: [A-Z][A-Za-z'-]*)?) creatures$",
+    flags=re.IGNORECASE)
 _GLOBAL_PLURAL_SUBJECT = re.compile(
-    r"^(?P<other>Other )?(?:All )?(?P<plural>[A-Z][A-Za-z'-]*)$"
-)
+    r"^(?P<other>Other )?(?:All )?(?P<plural>[A-Z][A-Za-z'-]*)$",
+    flags=re.IGNORECASE)
 _TRAILING_REMINDER = re.compile(r"\s+\([^()]*\)\.?$")
 _COLOR_SYMBOLS = {
     "black": "B",
