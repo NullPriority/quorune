@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "7ca9849ce6d2cf2f2fb4c21fbbdd4c2771a75cc7ed73688b6d091bcef4660794",
-  "declaration_source_fingerprint": "4e03ac1f174b139b1e7a6aea2110a0cf0bdace2f64120cb8e9e71c99b9d46ba9",
+  "registry_fingerprint": "4d84f68ce54f1277457b8747add2c039c6a3cd1605eef0c437d88c94275e0aca",
+  "declaration_source_fingerprint": "a71a75e71f343e8c281aba06a5e23a1ef5111796e5a68ca214d4750a3f9550b6",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -28534,7 +28534,9 @@
         "611.3b",
         "611.3c",
         "613.1f",
-        "613.6"
+        "613.6",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -28553,7 +28555,9 @@
         "611.3b",
         "611.3c",
         "613.1f",
-        "613.6"
+        "613.6",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -28572,7 +28576,9 @@
         "611.3b",
         "611.3c",
         "613.1f",
-        "613.6"
+        "613.6",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -28591,7 +28597,9 @@
         "611.3b",
         "611.3c",
         "613.1f",
-        "613.6"
+        "613.6",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -28610,7 +28618,9 @@
         "611.3b",
         "611.3c",
         "613.1f",
-        "613.6"
+        "613.6",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -28629,7 +28639,9 @@
         "611.3b",
         "611.3c",
         "613.1f",
-        "613.6"
+        "613.6",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -28648,7 +28660,9 @@
         "611.3b",
         "611.3c",
         "613.1f",
-        "613.6"
+        "613.6",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -28667,7 +28681,9 @@
         "611.3b",
         "611.3c",
         "613.1f",
-        "613.6"
+        "613.6",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -28679,6 +28695,48 @@
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_original_scion_kindred_scope_tracks_control_phasing_departure_and_reentry",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Use actual control, bounce and recast actions to move the live Kindred grant between controllers and incarnations; preserve phasing and source exclusion with exact replay."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_original_scion_shroud_rejects_kindred_target_and_accepts_foreign_control",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Strictly admit original Scion, Bitterblossom and Naturalize; exclude protected Kindred targets from the projected form, reject without mutation, resolve the foreign-control target, and replay/save-load."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_subtype_union_recomputes_after_layer_four_and_excludes_source",
       "official_rule_ids": [
         "604.1",
@@ -28686,7 +28744,9 @@
         "611.3b",
         "611.3c",
         "613.1f",
-        "613.6"
+        "613.6",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -28705,7 +28765,9 @@
         "611.3b",
         "611.3c",
         "613.1f",
-        "613.6"
+        "613.6",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -28724,7 +28786,9 @@
         "611.3b",
         "611.3c",
         "613.1f",
-        "613.6"
+        "613.6",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -28743,7 +28807,9 @@
         "611.3b",
         "611.3c",
         "613.1f",
-        "613.6"
+        "613.6",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -28762,7 +28828,9 @@
         "611.3b",
         "611.3c",
         "613.1f",
-        "613.6"
+        "613.6",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -28774,6 +28842,48 @@
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_original_scion_kindred_scope_tracks_control_phasing_departure_and_reentry",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Use actual control, bounce and recast actions to move the live Kindred grant between controllers and incarnations; preserve phasing and source exclusion with exact replay."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_original_scion_shroud_rejects_kindred_target_and_accepts_foreign_control",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Strictly admit original Scion, Bitterblossom and Naturalize; exclude protected Kindred targets from the projected form, reject without mutation, resolve the foreign-control target, and replay/save-load."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_global_plural_characteristic_sets.GlobalPluralCharacteristicRuntimeTests.test_actual_atlantis_cast_grants_foreign_merfolk_and_source_exclusion_with_replay",
       "official_rule_ids": [
         "604.1",
@@ -28781,7 +28891,9 @@
         "611.3b",
         "611.3c",
         "613.1f",
-        "613.6"
+        "613.6",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -28800,7 +28912,9 @@
         "611.3b",
         "611.3c",
         "613.1f",
-        "613.6"
+        "613.6",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -28819,7 +28933,9 @@
         "611.3b",
         "611.3c",
         "613.1f",
-        "613.6"
+        "613.6",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -28838,7 +28954,9 @@
         "611.3b",
         "611.3c",
         "613.1f",
-        "613.6"
+        "613.6",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -28857,7 +28975,9 @@
         "611.3b",
         "611.3c",
         "613.1f",
-        "613.6"
+        "613.6",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -28876,7 +28996,9 @@
         "611.3b",
         "611.3c",
         "613.1f",
-        "613.6"
+        "613.6",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -28895,7 +29017,9 @@
         "611.3b",
         "611.3c",
         "613.1f",
-        "613.6"
+        "613.6",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -28914,7 +29038,9 @@
         "611.3b",
         "611.3c",
         "613.1f",
-        "613.6"
+        "613.6",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -28933,7 +29059,9 @@
         "611.3b",
         "611.3c",
         "613.1f",
-        "613.6"
+        "613.6",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -28952,7 +29080,9 @@
         "611.3b",
         "611.3c",
         "613.1f",
-        "613.6"
+        "613.6",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -28971,7 +29101,9 @@
         "611.3b",
         "611.3c",
         "613.1f",
-        "613.6"
+        "613.6",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -28990,7 +29122,9 @@
         "611.3b",
         "611.3c",
         "613.1f",
-        "613.6"
+        "613.6",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -29009,7 +29143,9 @@
         "611.3b",
         "611.3c",
         "613.1f",
-        "613.6"
+        "613.6",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -29028,7 +29164,9 @@
         "611.3b",
         "611.3c",
         "613.1f",
-        "613.6"
+        "613.6",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -29047,7 +29185,9 @@
         "611.3b",
         "611.3c",
         "613.1f",
-        "613.6"
+        "613.6",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -29059,6 +29199,48 @@
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_bare_subtype_keyword_grant_keeps_kindred_permanents_in_scope",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Preserve bare subtype permanent scope including Kindred while explicit creature descriptions and the defined Outlaw set retain their constraints."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_bare_subtype_public_queries_do_not_invent_creature_type",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Preserve bare subtype permanent scope including Kindred while explicit creature descriptions and the defined Outlaw set retain their constraints."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_closed_query_grammar_compiles_exact_with_consumer_capabilities",
       "official_rule_ids": [
         "604.1",
@@ -29066,7 +29248,9 @@
         "611.3b",
         "611.3c",
         "613.1f",
-        "613.6"
+        "613.6",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -29078,6 +29262,27 @@
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_extended_bare_subtype_queries_preserve_kindred_and_explicit_creature_distinction",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Preserve bare subtype permanent scope including Kindred while explicit creature descriptions and the defined Outlaw set retain their constraints."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_fixed_battlefield_query_extensions_share_one_canonical_condition",
       "official_rule_ids": [
         "604.1",
@@ -29085,7 +29290,9 @@
         "611.3b",
         "611.3c",
         "613.1f",
-        "613.6"
+        "613.6",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -29104,7 +29311,9 @@
         "611.3b",
         "611.3c",
         "613.1f",
-        "613.6"
+        "613.6",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -29123,7 +29332,9 @@
         "611.3b",
         "611.3c",
         "613.1f",
-        "613.6"
+        "613.6",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -29142,7 +29353,9 @@
         "611.3b",
         "611.3c",
         "613.1f",
-        "613.6"
+        "613.6",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -29161,7 +29374,9 @@
         "611.3b",
         "611.3c",
         "613.1f",
-        "613.6"
+        "613.6",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -29173,6 +29388,27 @@
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_original_scion_shroud_rejects_kindred_target_and_accepts_foreign_control",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Strictly admit original Scion, Bitterblossom and Naturalize; exclude protected Kindred targets from the projected form, reject without mutation, resolve the foreign-control target, and replay/save-load."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "privacy",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_projection_and_replay_preserve_grants_without_private_identities",
       "official_rule_ids": [
         "604.1",
@@ -29180,7 +29416,9 @@
         "611.3b",
         "611.3c",
         "613.1f",
-        "613.6"
+        "613.6",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -29199,7 +29437,9 @@
         "611.3b",
         "611.3c",
         "613.1f",
-        "613.6"
+        "613.6",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -29218,7 +29458,9 @@
         "611.3b",
         "611.3c",
         "613.1f",
-        "613.6"
+        "613.6",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -29230,6 +29472,48 @@
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "replay",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_original_scion_kindred_scope_tracks_control_phasing_departure_and_reentry",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Use actual control, bounce and recast actions to move the live Kindred grant between controllers and incarnations; preserve phasing and source exclusion with exact replay."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_original_scion_shroud_rejects_kindred_target_and_accepts_foreign_control",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Strictly admit original Scion, Bitterblossom and Naturalize; exclude protected Kindred targets from the projected form, reject without mutation, resolve the foreign-control target, and replay/save-load."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "replay",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_projection_and_replay_preserve_grants_without_private_identities",
       "official_rule_ids": [
         "604.1",
@@ -29237,7 +29521,9 @@
         "611.3b",
         "611.3c",
         "613.1f",
-        "613.6"
+        "613.6",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -29256,7 +29542,9 @@
         "611.3b",
         "611.3c",
         "613.1f",
-        "613.6"
+        "613.6",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -29275,7 +29563,9 @@
         "611.3b",
         "611.3c",
         "613.1f",
-        "613.6"
+        "613.6",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -35414,7 +35704,9 @@
         "611.3b",
         "611.3c",
         "613.1g",
-        "613.4c"
+        "613.4c",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -35433,7 +35725,9 @@
         "611.3b",
         "611.3c",
         "613.1g",
-        "613.4c"
+        "613.4c",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -35452,7 +35746,9 @@
         "611.3b",
         "611.3c",
         "613.1g",
-        "613.4c"
+        "613.4c",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -35471,7 +35767,9 @@
         "611.3b",
         "611.3c",
         "613.1g",
-        "613.4c"
+        "613.4c",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -35490,7 +35788,9 @@
         "611.3b",
         "611.3c",
         "613.1g",
-        "613.4c"
+        "613.4c",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -35509,7 +35809,9 @@
         "611.3b",
         "611.3c",
         "613.1g",
-        "613.4c"
+        "613.4c",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -35528,7 +35830,9 @@
         "611.3b",
         "611.3c",
         "613.1g",
-        "613.4c"
+        "613.4c",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -35547,7 +35851,9 @@
         "611.3b",
         "611.3c",
         "613.1g",
-        "613.4c"
+        "613.4c",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -35566,7 +35872,9 @@
         "611.3b",
         "611.3c",
         "613.1g",
-        "613.4c"
+        "613.4c",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -35578,6 +35886,27 @@
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
       "evidence_class": "interaction",
+      "test_id": "tests.test_global_plural_characteristic_sets.GlobalPluralCharacteristicCompilerTests.test_bare_subtype_combined_grant_preserves_undefined_noncreature_stats",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Grant Islandwalk to a Kindred Merfolk without creating power or toughness on a noncreature."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "interaction",
       "test_id": "tests.test_global_plural_characteristic_sets.GlobalPluralCharacteristicRuntimeTests.test_actual_atlantis_layer_grant_changes_block_offers_and_acceptance",
       "official_rule_ids": [
         "604.1",
@@ -35585,7 +35914,9 @@
         "611.3b",
         "611.3c",
         "613.1g",
-        "613.4c"
+        "613.4c",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -35604,7 +35935,9 @@
         "611.3b",
         "611.3c",
         "613.1g",
-        "613.4c"
+        "613.4c",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -35623,7 +35956,9 @@
         "611.3b",
         "611.3c",
         "613.1g",
-        "613.4c"
+        "613.4c",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -35642,7 +35977,9 @@
         "611.3b",
         "611.3c",
         "613.1g",
-        "613.4c"
+        "613.4c",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -35661,7 +35998,9 @@
         "611.3b",
         "611.3c",
         "613.1g",
-        "613.4c"
+        "613.4c",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -35680,7 +36019,9 @@
         "611.3b",
         "611.3c",
         "613.1g",
-        "613.4c"
+        "613.4c",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -35699,7 +36040,9 @@
         "611.3b",
         "611.3c",
         "613.1g",
-        "613.4c"
+        "613.4c",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -35718,7 +36061,9 @@
         "611.3b",
         "611.3c",
         "613.1g",
-        "613.4c"
+        "613.4c",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -35737,7 +36082,9 @@
         "611.3b",
         "611.3c",
         "613.1g",
-        "613.4c"
+        "613.4c",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -35756,7 +36103,9 @@
         "611.3b",
         "611.3c",
         "613.1g",
-        "613.4c"
+        "613.4c",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -35775,7 +36124,9 @@
         "611.3b",
         "611.3c",
         "613.1g",
-        "613.4c"
+        "613.4c",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -35794,7 +36145,9 @@
         "611.3b",
         "611.3c",
         "613.1g",
-        "613.4c"
+        "613.4c",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -35813,7 +36166,9 @@
         "611.3b",
         "611.3c",
         "613.1g",
-        "613.4c"
+        "613.4c",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -35832,7 +36187,9 @@
         "611.3b",
         "611.3c",
         "613.1g",
-        "613.4c"
+        "613.4c",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -35844,6 +36201,27 @@
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
       "evidence_class": "negative",
+      "test_id": "tests.test_global_plural_characteristic_sets.GlobalPluralCharacteristicCompilerTests.test_bare_subtype_union_modifier_keeps_kindred_and_rejects_unknown_subtypes",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Preserve the canonical bare subtype union and reject an unknown subtype descriptor."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "negative",
       "test_id": "tests.test_global_plural_characteristic_sets.GlobalPluralCharacteristicCompilerTests.test_unknown_nouns_and_class_level_context_remain_residual",
       "official_rule_ids": [
         "604.1",
@@ -35851,7 +36229,9 @@
         "611.3b",
         "611.3c",
         "613.1g",
-        "613.4c"
+        "613.4c",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -35870,7 +36250,9 @@
         "611.3b",
         "611.3c",
         "613.1g",
-        "613.4c"
+        "613.4c",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -35889,7 +36271,9 @@
         "611.3b",
         "611.3c",
         "613.1g",
-        "613.4c"
+        "613.4c",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -35908,7 +36292,9 @@
         "611.3b",
         "611.3c",
         "613.1g",
-        "613.4c"
+        "613.4c",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -35927,7 +36313,9 @@
         "611.3b",
         "611.3c",
         "613.1g",
-        "613.4c"
+        "613.4c",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -35946,7 +36334,9 @@
         "611.3b",
         "611.3c",
         "613.1g",
-        "613.4c"
+        "613.4c",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -35965,7 +36355,9 @@
         "611.3b",
         "611.3c",
         "613.1g",
-        "613.4c"
+        "613.4c",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -35984,7 +36376,9 @@
         "611.3b",
         "611.3c",
         "613.1g",
-        "613.4c"
+        "613.4c",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -36003,7 +36397,9 @@
         "611.3b",
         "611.3c",
         "613.1g",
-        "613.4c"
+        "613.4c",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -36015,6 +36411,48 @@
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
       "evidence_class": "positive",
+      "test_id": "tests.test_global_plural_characteristic_sets.GlobalPluralCharacteristicCompilerTests.test_bare_subtype_combined_grant_preserves_undefined_noncreature_stats",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Grant Islandwalk to a Kindred Merfolk without creating power or toughness on a noncreature."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "positive",
+      "test_id": "tests.test_global_plural_characteristic_sets.GlobalPluralCharacteristicCompilerTests.test_bare_subtype_union_modifier_keeps_kindred_and_rejects_unknown_subtypes",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Preserve the canonical bare subtype union and reject an unknown subtype descriptor."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "positive",
       "test_id": "tests.test_global_plural_characteristic_sets.GlobalPluralCharacteristicCompilerTests.test_global_other_plural_uses_canonical_subtype_without_controller_filter",
       "official_rule_ids": [
         "604.1",
@@ -36022,7 +36460,9 @@
         "611.3b",
         "611.3c",
         "613.1g",
-        "613.4c"
+        "613.4c",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -36041,7 +36481,9 @@
         "611.3b",
         "611.3c",
         "613.1g",
-        "613.4c"
+        "613.4c",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -36060,7 +36502,9 @@
         "611.3b",
         "611.3c",
         "613.1g",
-        "613.4c"
+        "613.4c",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -36079,7 +36523,9 @@
         "611.3b",
         "611.3c",
         "613.1g",
-        "613.4c"
+        "613.4c",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -36098,7 +36544,9 @@
         "611.3b",
         "611.3c",
         "613.1g",
-        "613.4c"
+        "613.4c",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -36117,7 +36565,9 @@
         "611.3b",
         "611.3c",
         "613.1g",
-        "613.4c"
+        "613.4c",
+        "109.2",
+        "205.3m"
       ],
       "supported_profiles": [
         "traditional",
@@ -107964,5 +108414,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "85de996bb2c34116e65db33a1826201459c1e07d0d6445c51cf4b2c6983f38b1"
+  "fingerprint": "76a95ed4cef7109fa2a3699b61c9717791e24e9e43da4e0dc41c136b3051551d"
 }

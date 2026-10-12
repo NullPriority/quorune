@@ -33,6 +33,20 @@ class GlobalPluralCharacteristicCompilerTests(unittest.TestCase):
         self.assertIsNone(result.characteristics['toughness'])
         self.assertIn('Islandwalk', result.characteristics['abilities'])
 
+    def test_bare_subtype_union_modifier_keeps_kindred_and_rejects_unknown_subtypes(self):
+        from copy import deepcopy
+        from quorune.semantic_runtime import SemanticNodeError
+        ir = compile_oracle_card(query_record('Faeries or Merfolk you control get +1/+1 and have shroud.'),
+            capability_registry=load_default_capability_registry())
+        self.assertEqual('exact', ir.status)
+        handler = ir.faces[0].nodes[0].handlers[0]
+        self.assertEqual([], handler['condition']['predicate']['types_all'])
+        self.assertEqual({'faerie', 'merfolk'}, set(handler['condition']['predicate']['subtypes_any']))
+        malformed = deepcopy(handler)
+        malformed['condition']['predicate']['subtypes_any'] = ['not-a-real-subtype']
+        with self.assertRaises(SemanticNodeError):
+            default_continuous_effect_component_registry().validate(malformed)
+
     def test_global_other_plural_uses_canonical_subtype_without_controller_filter(self):
         for subject,subtype in (('Other Merfolk','merfolk'),('Other Goblins','goblin'),('Elves','elf')):
             text=subject+' get +1/+1 and have forestwalk.'

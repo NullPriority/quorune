@@ -456,12 +456,12 @@ class FixedQueryPowerToughnessAnthemHandler:
             )
         if not (
             "creature" in predicate.types_all
-            or (not predicate.types_all and predicate.subtypes_all
+            or (not predicate.types_all and (predicate.subtypes_all or predicate.subtypes_any)
                 and all(canonical_creature_subtype(value) == value
-                        for value in predicate.subtypes_all))
+                        for value in (*predicate.subtypes_all, *predicate.subtypes_any)))
         ):
             raise SemanticNodeError(
-                "fixed query anthem requires creature permanents"
+                "fixed query anthem requires creatures or a canonical creature-subtype set"
             )
         modifier = descriptor["modifier"]
         if not isinstance(modifier, Mapping):

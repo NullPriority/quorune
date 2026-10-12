@@ -243,6 +243,34 @@
         "tests/fixtures/new-support-residual-boundaries.json"
       ],
       "rationale": "The exact bounded original-card dictionary exercises whole-program rejection of residual regeneration, targeting and separate-damage siblings."
+    },
+    {
+      "source": "tests/test_fixed_query_keyword_grants.py",
+      "symbol": "FixedQueryKeywordGrantRuntimeTests.test_original_scion_shroud_rejects_kindred_target_and_accepts_foreign_control",
+      "card_names": [
+        "Bitterblossom",
+        "Naturalize",
+        "Scion of Oona",
+        "Willow Faerie"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "The test strictly binds these original-card records through a bounded tuple before executing actual targeting or lifecycle commands."
+    },
+    {
+      "source": "tests/test_fixed_query_keyword_grants.py",
+      "symbol": "FixedQueryKeywordGrantRuntimeTests.test_original_scion_kindred_scope_tracks_control_phasing_departure_and_reentry",
+      "card_names": [
+        "Bitterblossom",
+        "Control Magic",
+        "Scion of Oona",
+        "Unsummon"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "The test strictly binds these original-card records through a bounded tuple before executing actual targeting or lifecycle commands."
     }
   ],
   "full_database_only": []

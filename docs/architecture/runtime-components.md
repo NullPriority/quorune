@@ -32,6 +32,13 @@ failing its declared predicate stops participating according to the family
 contract. Discovery must be deterministic and may not expose facts outside the
 requesting principal's authorized projection.
 
+Live subtype queries preserve noncreature Kindred recipients when the source
+uses a bare creature subtype. An explicit creature noun retains that type
+restriction. Keyword grants and fixed modifiers share the query, while a
+modifier leaves an undefined noncreature power or toughness undefined.
+Records carrying earlier runtime-trust identities remain descriptor-readable;
+the existing provenance check determines whether their execution is compatible.
+
 ## Descriptor and registry contract
 
 `continuous.characteristics.fixed-public-setting.v1` applies one constant

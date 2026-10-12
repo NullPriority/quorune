@@ -562,7 +562,8 @@
         "quorune/rules/control_capability_shapes.py",
         "quorune/semantic_runtime/control_handlers.py",
         "quorune/semantic_runtime/control_intents.py",
-        "tests/fixtures/fixed-control-effects.json"
+        "tests/fixtures/fixed-control-effects.json",
+        "quorune/compiler/public_state_queries.py"
       ],
       "test_modules": [
         "test_card_program_trust",
