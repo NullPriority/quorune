@@ -525,6 +525,16 @@ def compile_keyword_or_attached_grant_nodes(
     granted_effect, granted_trigger_effect = grant_effect_templates(
         True, ("creature",), None
     )
+    from .temporary_quoted_ability_nodes import temporary_quoted_ability_nodes
+    temporary = temporary_quoted_ability_nodes(record=record, face_id=face_id,
+        node_id=node_id, line=line, material_line=material_line, span=span,
+        source_name=source_name, printed_card_types=printed_card_types,
+        trusted_mechanics=trusted_mechanics, capability_registry=capability_registry,
+        capability_profile=capability_profile, residuals=residuals, compile_inner=compile_inner,
+        effect_template=granted_effect, trigger_effect_template=granted_trigger_effect,
+        material_line_for=material_line_for)
+    if temporary is not None:
+        return temporary
     quoted = conditional_quoted_ability_text(material_line, source_name=source_name)
     if quoted is not None and not _EXTERNAL_ATTACHMENT_REFERENCE.search(quoted):
         conditional = _compile_granted_ability_pair(

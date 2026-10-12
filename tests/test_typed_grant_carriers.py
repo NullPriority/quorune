@@ -32,6 +32,234 @@ CAPABILITY = "continuous.ability.fixed_public_state_grant"
 FIXTURE = ROOT / "tests/fixtures/typed-grant-carrier-cards.json"
 
 
+class TemporaryQuotedGrantCompilerTests(unittest.TestCase):
+    def test_temporary_quoted_activation_retains_independent_child_and_duration(self):
+        # CR 611.2a/c, 613.1f and 113.7: the recipient gains the stated
+        # ability until cleanup; that recipient is the later ability source.
+        from test_bound_effect_programs import record
+        text = "Until end of turn, target creature gains \"{T}: Return target nonland permanent to its owner's hand.\""
+        ir = compile_oracle_card(record(text, 'Instant'), capability_registry=load_default_capability_registry(), capability_profile='commander_review')
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        outer = next(n for n in ir.faces[0].nodes if n.kind == 'spell_ability')
+        child = next(n for n in ir.faces[0].nodes if n.kind == 'granted_activated_ability')
+        self.assertEqual('bounce', child.effects[0]['op'])
+        self.assertEqual('$target.0', outer.effects[0]['card'])
+        self.assertFalse(outer.effects[0]['printed_only'])
+        self.assertFalse(outer.effects[0]['exclude_source'])
+        self.assertEqual('granted_activated', outer.effects[0]['ability_fragments'][0]['kind'])
+
+
+    def test_temporary_quote_rejects_open_child_and_duration_and_shape(self):
+        from test_bound_effect_programs import record
+        from quorune.rules.temporary_ability_grant import temporary_quoted_grant_node_capabilities
+        registry = load_default_capability_registry()
+        for text in (
+            'Target creature gains "{T}: Rewrite history." until end of turn.',
+            'Target creature gains "{T}: Draw a card." until your next turn.',
+            'Target creature gains "When this creature dies, draw a card." until end of turn.',
+            'Target creature gains "{T}: Draw a card."',
+        ):
+            self.assertNotEqual('exact', compile_oracle_card(record(text, 'Instant'), capability_registry=registry).status)
+        ir = compile_oracle_card(record('Target creature gains "{T}: Draw a card." until end of turn.', 'Instant'), capability_registry=registry)
+        outer = next(n for n in ir.faces[0].nodes if n.kind == 'spell_ability')
+        for change in ({'printed_only': True}, {'unknown': True}, {'card': '$target.1'}, {'exclude_source': True}):
+            effect = {**outer.effects[0], **change}
+            self.assertEqual((), temporary_quoted_grant_node_capabilities(effects=(effect,), target_schema=outer.target_schema, mechanic_ids=outer.mechanics))
+
+    def test_temporary_quote_child_dependency_and_material_sibling_fail_closed(self):
+        from test_bound_effect_programs import record
+        text = "Until end of turn, target creature gains \"{T}: Return target nonland permanent to its owner's hand.\""
+        registry = load_default_capability_registry()
+        raw = json.loads((ROOT / 'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        row = next(c for c in raw['capabilities'] if c['id'] == 'permanent.return.owner_hand')
+        row.update(status='blocked', blockers=['Independent quoted-child boundary mutation'])
+        altered = CapabilityRegistry(raw)
+        altered.mark_evidence_verified(registry.evidence_fingerprint)
+        self.assertNotEqual('exact', compile_oracle_card(record(text, 'Instant'), capability_registry=altered).status)
+        self.assertNotEqual('exact', compile_oracle_card(record(text + '\nRewrite history.', 'Instant'), capability_registry=registry).status)
+
+    def test_temporary_quoted_set_locks_one_public_query_and_child(self):
+        from test_bound_effect_programs import record
+        text = 'Until end of turn, lands you control gain "{T}: Add one mana of any color."'
+        ir = compile_oracle_card(record(text, 'Instant'), capability_registry=load_default_capability_registry())
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        outer = next(n for n in ir.faces[0].nodes if n.kind == 'spell_ability')
+        self.assertIsNone(outer.target_schema)
+        self.assertEqual(8, outer.effects[0]['schema_version'])
+        self.assertEqual('$controller', outer.effects[0]['predicate']['controller'])
+        self.assertEqual(['land'], outer.effects[0]['predicate']['types_all'])
+        self.assertEqual('granted_activated', outer.effects[0]['ability_fragments'][0]['kind'])
+
+    def test_temporary_quoted_query_rejects_open_fields_hidden_zones_and_omission(self):
+        from test_bound_effect_programs import record
+        from quorune.rules.temporary_ability_grant import temporary_quoted_grant_node_capabilities
+        from quorune.compiler import temporary_quoted_ability_nodes as owner
+        text = 'Until end of turn, lands you control gain "{T}: Add one mana of any color."'
+        registry = load_default_capability_registry()
+        ir = compile_oracle_card(record(text, 'Instant'), capability_registry=registry)
+        outer = next(n for n in ir.faces[0].nodes if n.kind == 'spell_ability')
+        for change in ({'unknown': True}, {'schema_version': True}, {'predicate': {**outer.effects[0]['predicate'], 'zones': ['hand']}}):
+            self.assertEqual((), temporary_quoted_grant_node_capabilities(effects=({**outer.effects[0], **change},), target_schema=None, mechanic_ids=outer.mechanics))
+        from quorune.effect_runtime.temporary_ability_bundle import apply_temporary_ability_bundle
+        from quorune.errors import GameRuleError
+        for change in ({'unknown': True}, {'predicate': {**outer.effects[0]['predicate'], 'zones': ['hand']}}):
+            with self.assertRaises(GameRuleError):
+                apply_temporary_ability_bundle(object(), {**outer.effects[0], **change}, actor='A', reason='Malformed query boundary')
+        for subject in ('Cards in your hand', 'Lands with an unknown quality you control', 'Creatures target player controls'):
+            self.assertNotEqual('exact', compile_oracle_card(record(text.replace('lands you control', subject), 'Instant'), capability_registry=registry).status)
+        with mock.patch.object(owner, 'temporary_quoted_ability_nodes', return_value=None):
+            with self.assertRaises(AssertionError):
+                self.test_temporary_quoted_set_locks_one_public_query_and_child()
+
+    def test_temporary_quoted_compiler_omission_mutant_is_killed(self):
+        from quorune.compiler import temporary_quoted_ability_nodes as owner
+        with mock.patch.object(owner, 'temporary_quoted_ability_nodes', return_value=None):
+            with self.assertRaises(AssertionError):
+                self.test_temporary_quoted_activation_retains_independent_child_and_duration()
+
+
+class TemporaryQuotedGrantRuntimeTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from quorune.deck import DeckDefinition, DeckEntry
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / 'temporary-grant.sqlite3'
+        build_fixture_database([ROOT / 'tests/fixtures/bound-effect-program-cards.json'], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition('Temporary grant', [DeckEntry('Generic Bound Commander', 1, 'commander'), DeckEntry('Generic Bound Plains', 30)], ['Generic Bound Commander'])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    from test_bound_effect_programs import BoundEffectProgramRuntimeTests as _witnesses
+    session = _witnesses.session
+    add = _witnesses.add
+    ready = _witnesses.ready
+    checkpoint = _witnesses.checkpoint
+    resolve = _witnesses.resolve
+    replay = _witnesses.replay
+
+    def test_original_retraction_helix_grants_recipient_activation_authority_and_replay(self):
+        from quorune.continuous_effect_state import expire_end_of_turn_continuous_effects
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        session = self.session(357101)
+        engine = session.engine
+        spell = self.add(engine, 'Retraction Helix', zone='hand')
+        recipient = self.add(engine, 'Generic Bound Body', seat='B', ref='helix-recipient')
+        recipient.acquired_control_turn_count = -1
+        victim = self.add(engine, 'Generic Bound Body', seat='C', ref='helix-victim')
+        program = compile_best_available_card_program(self.db, self.db.lookup('Retraction Helix'), semantic_registry=engine.semantics, capability_registry=self.registry, capability_profile='commander_review')
+        binding = bind_card_program_runtime(program, capability_registry=self.registry, profile='commander_review')
+        self.assertTrue(binding['strict_capability_ready'], binding['blockers'])
+        action = self.ready(session, spell, {'U': 1})
+        self.checkpoint(session)
+        before = authoritative_state_hash(session.state)
+        rejected = session.act('pilot:B', {'action_id': action['id'], 'targets': [recipient.ref], 'pay': 'auto'})
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act('pilot:A', {'action_id': action['id'], 'targets': [recipient.ref], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        session = self.replay(session, load=True)
+        engine = session.engine
+        for _ in range(8):
+            if session.pending_principals()[0] == 'pilot:B':
+                break
+            self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
+        actions = session.packet('pilot:B', full=True)['decision']['ctx']['legal']['actions']
+        activation = next(a for a in actions if a['id'].startswith('activate:' + recipient.ref + ':'))
+        self.assertIn(victim.ref, activation['target_schema']['legal_refs'])
+        before = authoritative_state_hash(session.state)
+        rejected = session.act('pilot:A', {'action_id': activation['id'], 'targets': [victim.ref], 'pay': 'auto'})
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act('pilot:B', {'action_id': activation['id'], 'targets': [victim.ref], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertTrue(session.state.cards[recipient.object_id].tapped)
+        self.resolve(session)
+        self.assertEqual('hand', session.state.cards[victim.object_id].zone)
+        projected = json.dumps(session.packet('pilot:D', full=True)['state'])
+        self.assertNotIn(victim.object_id, projected)
+        self.assertIn(victim.ref, projected)  # The bounced public object remains known.
+        self.assertNotIn('hand', session.packet('pilot:D', full=True)['state']['players']['C'])
+        for oid in session.state.players['C'].zones['hand']:
+            if oid != victim.object_id:
+                self.assertNotIn(session.state.cards[oid].ref, projected)
+        self.replay(session, load=True)
+        expire_end_of_turn_continuous_effects(session.state)
+        self.assertFalse(engine._effective_ability_fragments(session.state.cards[recipient.object_id]))
+
+
+    def test_original_banishing_knack_recipient_blink_and_ability_removal_controls(self):
+        from quorune.continuous_effect_model import ContinuousOperation, Layer
+        from quorune.continuous_effect_state import create_resolution_continuous_effect, resolution_effect_source
+        session = self.session(357102)
+        engine = session.engine
+        spell = self.add(engine, 'Banishing Knack', zone='hand')
+        recipient = self.add(engine, 'Generic Bound Body', ref='knack-recipient')
+        recipient.acquired_control_turn_count = -1
+        action = self.ready(session, spell, {'U': 1})
+        self.checkpoint(session)
+        accepted = session.act('pilot:A', {'action_id': action['id'], 'targets': [recipient.ref], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        session = self.replay(session, load=True)
+        engine = session.engine
+        current = session.state.cards[recipient.object_id]
+        self.assertTrue(engine._effective_ability_fragments(current))
+        # A later layer-six removal suppresses the gained activation; restoring
+        # that independent effect exposes the still-live earlier grant.
+        previous = len(session.state.continuous_effects)
+        create_resolution_continuous_effect(engine, source=resolution_effect_source(engine, {}),
+            targets=(current,), layer=Layer.ABILITY, sublayer='6',
+            operations=(ContinuousOperation('remove_all_abilities'),))
+        self.assertFalse(engine._effective_ability_fragments(current))
+        del session.state.continuous_effects[previous:]
+        self.assertTrue(engine._effective_ability_fragments(current))
+        old = current.logical_object_id
+        engine.move_card(current.object_id, 'hand', log=False)
+        engine.move_card(current.object_id, 'battlefield', controller='A', log=False)
+        self.assertNotEqual(old, current.logical_object_id)
+        self.assertFalse(engine._effective_ability_fragments(current))
+
+
+    def test_original_divergent_growth_locks_lands_and_uses_current_recipient_controller(self):
+        from quorune.continuous_effect_state import expire_end_of_turn_continuous_effects
+        session = self.session(357103)
+        engine = session.engine
+        spell = self.add(engine, 'Divergent Growth', zone='hand')
+        land = self.add(engine, 'Generic Bound Plains', ref='growth-land')
+        foreign = self.add(engine, 'Generic Bound Plains', seat='C', ref='foreign-growth-land')
+        action = self.ready(session, spell, {'G': 1})
+        self.checkpoint(session)
+        accepted = session.act('pilot:A', {'action_id': action['id'], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        session = self.replay(session, load=True)
+        engine = session.engine
+        self.assertTrue(engine._effective_ability_fragments(session.state.cards[land.object_id]))
+        self.assertFalse(engine._effective_ability_fragments(session.state.cards[foreign.object_id]))
+        late = self.add(engine, 'Generic Bound Plains', ref='late-growth-land')
+        self.assertFalse(engine._effective_ability_fragments(late))
+        engine.change_control(land.object_id, 'B', reason='Independent controller boundary')
+        for _ in range(8):
+            if session.pending_principals()[0] == 'pilot:B':
+                break
+            self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
+        actions = session.packet('pilot:B', full=True)['decision']['ctx']['legal']['actions']
+        activation = next(a for a in actions if a['id'].startswith('activate:' + land.ref + ':ability:granted:'))
+        amount = session.state.players['B'].mana_pool.get('U', 0)
+        accepted = session.act('pilot:B', {'action_id': activation['id'], 'mana_choice': 'U', 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(amount + 1, session.state.players['B'].mana_pool.get('U', 0))
+        self.assertTrue(session.state.cards[land.object_id].tapped)
+        expire_end_of_turn_continuous_effects(session.state)
+        self.assertFalse(engine._effective_ability_fragments(session.state.cards[land.object_id]))
+
+
 class TypedGrantCarrierTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

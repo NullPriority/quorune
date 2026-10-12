@@ -216,6 +216,14 @@ survives source departure, and binds donated abilities to their recipient.
 Counter replacements may suspend before the following grant, preserving the
 cursor through save/load. Target incarnation revalidation remains shared.
 
+Explicit temporary quoted activations use the same ability-bundle owner.
+Version seven carries one revalidated creature; version eight snapshots a
+closed public battlefield query through the canonical resolution selector.
+Both add typed fragments at layer six, pin recipient incarnations, require a
+trusted child program and expire at cleanup. Recipient control changes retain
+the grant while later activations use the current controller. Later entrants
+and departed recipients do not inherit the earlier effect.
+
 The existing counter-unless-payment choice additionally accepts a closed v2
 controller-payment descriptor. It locks the current target's controller for
 the private choice, validates the complete mana vector and current target at

@@ -6,6 +6,7 @@ from ..continuous_effect_model import ContinuousOperation,Layer
 from ..continuous_effect_state import create_resolution_continuous_effect,resolution_effect_source
 from ..errors import GameRuleError
 from ..rules.temporary_ability_grant import decode_temporary_ability_grant,BACKUP_CONTEXT,BACKUP_COVERAGE
+from ..object_predicate import ObjectQuerySpec
 
 
 def printed_backup_source_context(source,program):
@@ -17,6 +18,29 @@ def printed_backup_source_context(source,program):
 
 def apply_temporary_ability_bundle(host,effect,*,actor,reason):
     instruction={k:v for k,v in effect.items() if k!='_runtime_source'}
+    if instruction.get('schema_version') == 8:
+        from ..continuous_effect_state import matching_battlefield_objects
+        from ..rules.resolution_characteristic_shapes import fixed_resolution_characteristic_set_is_closed
+        if set(instruction) != {'op', 'schema_version', 'predicate', 'ability_fragments'}:
+            raise GameRuleError('Temporary ability query fields are malformed')
+        try:
+            query = ObjectQuerySpec.from_dict(instruction['predicate'])
+            if not fixed_resolution_characteristic_set_is_closed(query):
+                raise ValueError('Temporary ability query is unsupported')
+            _, fragments = decode_temporary_ability_grant({
+                'op': instruction['op'], 'schema_version': 7, 'card': 'query-recipient', 'keywords': [],
+                'ability_fragments': instruction['ability_fragments'], 'exclude_source': False, 'printed_only': False})
+        except (TypeError, ValueError, KeyError) as exc:
+            raise GameRuleError(str(exc)) from exc
+        if len(fragments) != 1 or fragments[0]['kind'] != 'granted_activated':
+            raise GameRuleError('Temporary query grant requires one activated ability')
+        targets = matching_battlefield_objects(host, query)
+        _verify_child_programs(host, fragments)
+        if targets:
+            create_resolution_continuous_effect(host, source=resolution_effect_source(host, effect),
+                targets=targets, layer=Layer.ABILITY, sublayer='6',
+                operations=tuple(ContinuousOperation('add_ability_fragment', f) for f in fragments))
+        return [card.ref for card in targets]
     stale=instruction.get('card') is None
     if stale:instruction['card']='stale-resolved-reference'
     try:
@@ -30,12 +54,17 @@ def apply_temporary_ability_bundle(host,effect,*,actor,reason):
             item=next((i for i in host.state.stack if i.ref==source.stack_ref),None)
             if item is None or type(item.context.get(BACKUP_CONTEXT)) is not bool:raise GameRuleError('Printed ability grant requires its locked source origin')
             if not item.context[BACKUP_CONTEXT]:return []
-        for fragment in fragments:
-            if fragment['kind'] in {'granted_activated','granted_triggered'}:
-                program=host.semantics.get(fragment['value']['semantic_key'])
-                if program is None or not host.semantic_program_is_current_trusted(program):raise GameRuleError('Temporary donated ability requires a trusted child program')
+        _verify_child_programs(host, fragments)
         operations=tuple([*(ContinuousOperation('add_ability',k) for k in keywords),*(ContinuousOperation('add_ability_fragment',value) for value in fragments)])
         if operations:create_resolution_continuous_effect(host,source=source,targets=(card,),layer=Layer.ABILITY,sublayer='6',operations=operations)
     except (TypeError,ValueError,KeyError) as exc:raise GameRuleError(str(exc)) from exc
     host._log(actor,'permanent.abilities','Temporary ability bundle resolved.',{'object':card.ref,'reason':reason},importance=1,changed_objects=[card.object_id])
     return [card.ref]
+
+
+def _verify_child_programs(host, fragments):
+    for fragment in fragments:
+        if fragment['kind'] in {'granted_activated', 'granted_triggered'}:
+            program = host.semantics.get(fragment['value']['semantic_key'])
+            if program is None or not host.semantic_program_is_current_trusted(program):
+                raise GameRuleError('Temporary donated ability requires a trusted child program')

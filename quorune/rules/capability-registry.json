@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 225,
+  "registry_version": 226,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -238,6 +238,93 @@
     }
   ],
   "capabilities": [
+    {
+      "id": "continuous.ability.temporary_quoted_grant",
+      "version": 1,
+      "official_rules": [
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "113.7",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Grant one independently compiled quoted activated or fixed-output mana ability to one revalidated creature or a closed public battlefield set until end of turn through the canonical continuous ability bundle owner.",
+        "inputs": [
+          "one direct creature target or one closed public battlefield query",
+          "one exact quoted activated ability",
+          "current recipient incarnations"
+        ],
+        "outputs": [
+          "locked layer-six ability fragment",
+          "recipient-source activation",
+          "cleanup expiry"
+        ],
+        "exclusions": [
+          "triggered grants",
+          "static grants",
+          "multiple quoted abilities",
+          "implicit outer-card references",
+          "longer or absent duration",
+          "hidden-zone or unrepresented public recipient predicates"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.compiler.temporary_quoted_ability_nodes.temporary_quoted_ability_nodes",
+        "quorune.rules.temporary_ability_grant.temporary_quoted_grant_node_capabilities",
+        "quorune.effect_runtime.temporary_ability_bundle.apply_temporary_ability_bundle",
+        "quorune.compiler.resolution_characteristic_program_closure.is_closed_resolution_characteristic_program"
+      ],
+      "positive_tests": [
+        "test_temporary_quoted_activation_retains_independent_child_and_duration",
+        "test_original_retraction_helix_grants_recipient_activation_authority_and_replay",
+        "test_temporary_quoted_set_locks_one_public_query_and_child",
+        "test_original_divergent_growth_locks_lands_and_uses_current_recipient_controller"
+      ],
+      "negative_tests": [
+        "test_temporary_quote_rejects_open_child_and_duration_and_shape",
+        "test_temporary_quoted_compiler_omission_mutant_is_killed",
+        "test_temporary_quote_child_dependency_and_material_sibling_fail_closed",
+        "test_temporary_quoted_query_rejects_open_fields_hidden_zones_and_omission"
+      ],
+      "interaction_tests": [
+        "test_original_retraction_helix_grants_recipient_activation_authority_and_replay",
+        "test_original_banishing_knack_recipient_blink_and_ability_removal_controls",
+        "test_original_divergent_growth_locks_lands_and_uses_current_recipient_controller"
+      ],
+      "multiplayer_tests": [
+        "test_original_retraction_helix_grants_recipient_activation_authority_and_replay",
+        "test_original_divergent_growth_locks_lands_and_uses_current_recipient_controller"
+      ],
+      "privacy_tests": [
+        "test_original_retraction_helix_grants_recipient_activation_authority_and_replay"
+      ],
+      "replay_tests": [
+        "test_original_retraction_helix_grants_recipient_activation_authority_and_replay",
+        "test_original_banishing_knack_recipient_blink_and_ability_removal_controls",
+        "test_original_divergent_growth_locks_lands_and_uses_current_recipient_controller"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "No optional dependency; the carrier requires independently trusted child and direct-target owners.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "The focused omission mutant removes this compiler carrier and is detected by the exact source-bound compiler witness.",
+      "blockers": [],
+      "status": "trusted"
+    },
     {
       "id": "ability.umbra_armor.fragment",
       "version": 1,

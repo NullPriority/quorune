@@ -5,7 +5,7 @@ from __future__ import annotations
 
 def apply_versioned_characteristic_effect(host,effect,*,actor,reason):
     version=effect.get('schema_version')
-    if version==7:
+    if version in {7, 8}:
         from .temporary_ability_bundle import apply_temporary_ability_bundle
         return True,apply_temporary_ability_bundle(host,effect,actor=actor,reason=reason)
     if version==6:

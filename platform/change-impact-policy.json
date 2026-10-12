@@ -1909,6 +1909,24 @@
       ]
     },
     {
+      "id": "temporary-quoted-ability-contract",
+      "patterns": [
+        "quorune/compiler/temporary_quoted_ability_nodes.py",
+        "quorune/compiler/resolution_characteristic_program_closure.py",
+        "quorune/rules/temporary_ability_grant.py",
+        "quorune/effect_runtime/temporary_ability_bundle.py",
+        "quorune/effect_runtime/characteristic_version_dispatch.py"
+      ],
+      "test_modules": [
+        "test_typed_grant_carriers",
+        "test_backup_rules",
+        "test_fixed_query_keyword_grants",
+        "test_fixed_query_quoted_ability_grants",
+        "test_card_program_trust",
+        "test_bound_effect_programs"
+      ]
+    },
+    {
       "id": "printed-backup-ability-contract",
       "patterns": [
         "quorune/compiler/backup_nodes.py",

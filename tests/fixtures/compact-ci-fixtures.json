@@ -147,6 +147,42 @@
   ],
   "dynamic_requirements": [
     {
+      "source": "tests/test_typed_grant_carriers.py",
+      "symbol": "TemporaryQuotedGrantRuntimeTests.test_original_retraction_helix_grants_recipient_activation_authority_and_replay",
+      "card_names": [
+        "Generic Bound Body",
+        "Retraction Helix"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Original-card strict registration and actual cast/recipient activation consume these fixed fixture records."
+    },
+    {
+      "source": "tests/test_typed_grant_carriers.py",
+      "symbol": "TemporaryQuotedGrantRuntimeTests.test_original_banishing_knack_recipient_blink_and_ability_removal_controls",
+      "card_names": [
+        "Banishing Knack",
+        "Generic Bound Body"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Original-card strict registration and actual cast/recipient activation consume these fixed fixture records."
+    },
+    {
+      "source": "tests/test_typed_grant_carriers.py",
+      "symbol": "TemporaryQuotedGrantRuntimeTests.test_original_divergent_growth_locks_lands_and_uses_current_recipient_controller",
+      "card_names": [
+        "Divergent Growth",
+        "Generic Bound Plains"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Original-card strict registration and actual cast/recipient activation consume these fixed fixture records."
+    },
+    {
       "source": "tests/test_high_risk_interaction_assurance.py",
       "symbol": "HighRiskInteractionAssuranceTests.test_named_source_promotions_keep_replacement_and_prevention_siblings_fail_closed",
       "card_names": [],
