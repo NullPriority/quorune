@@ -580,7 +580,6 @@ def _controlled_battlefield_query(
             return None
         exclude_source = bool(match.group("other"))
         fields.update(
-            types_all=("creature",),
             subtypes_all=(subtype,),
             token=True,
         )
@@ -638,7 +637,6 @@ def _controlled_subtype_battlefield_query(
             subtype = canonical_creature_subtype_surface(plural)
             fields = {
                 "zones": ("battlefield",),
-                "types_all": ("creature",),
             }
     else:
         return None
@@ -687,7 +685,7 @@ def _global_battlefield_query(
         subtype = canonical_creature_subtype_surface(match.group("plural"))
         if subtype is None:
             return None
-        fields.update(types_all=("creature",), subtypes_all=(subtype,))
+        fields.update(subtypes_all=(subtype,))
     else:
         return None
     return "any", ObjectQuerySpec(**fields), bool(match.group("other"))
@@ -792,7 +790,10 @@ def fixed_power_toughness_battlefield_query(
 
     del oracle_line
     parsed = fixed_characteristic_battlefield_query_subject(subject)
-    if parsed is None or "creature" not in parsed[1].types_all:
+    if parsed is None or not (
+        "creature" in parsed[1].types_all
+        or (not parsed[1].types_all and parsed[1].subtypes_all)
+    ):
         return None
     return parsed
 

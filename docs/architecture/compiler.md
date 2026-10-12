@@ -403,6 +403,13 @@ opponent-only targets, attachment-relative, chosen, counter-qualified, tapped,
 modified, keyword-qualified, dynamic, conditional, quoted, Protection,
 type-changing, and variable-duration forms remain source-spanned residuals.
 
+Shared live battlefield queries preserve the distinction between a bare
+creature subtype and an explicit creature noun. Bare subtype sets, including
+subtype-qualified tokens, include noncreature Kindred permanents of that
+subtype. Explicit creature sets retain their creature type constraint.
+Static keyword and fixed modifier consumers use that same predicate; a
+modifier does not define power or toughness for a noncreature permanent.
+
 `compiler/source_counter_anthems.py` extends the existing live static anthem
 owner with fixed signed power/toughness coefficients per named counter on the
 source. The creature recipient query remains independently closed and live;

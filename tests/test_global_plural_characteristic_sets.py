@@ -7,6 +7,8 @@ from common import ROOT
 from quorune.carddb import CardDatabase
 from quorune.deck import DeckDefinition,DeckEntry
 from quorune.oracle_ir import compile_oracle_card
+from quorune.continuous_effects import CharacteristicState, evaluate_continuous_effects
+from quorune.semantic_runtime import ContinuousEffectSourceContext, default_continuous_effect_component_registry
 from quorune.rules.capabilities import load_default_capability_registry
 from scripts.build_test_database import build_fixture_database
 from test_qualified_zone_event_queries import query_record
@@ -15,6 +17,22 @@ import test_fixed_evasion_grants as evasion
 
 
 class GlobalPluralCharacteristicCompilerTests(unittest.TestCase):
+    def test_bare_subtype_combined_grant_preserves_undefined_noncreature_stats(self):
+        ir = compile_oracle_card(query_record('Other Merfolk get +1/+1 and have islandwalk.'),
+            capability_registry=load_default_capability_registry())
+        self.assertEqual('exact', ir.status)
+        effects = default_continuous_effect_component_registry().lower(ir.faces[0].nodes[0].handlers[0],
+            ContinuousEffectSourceContext(source_object_id='source', source_ref='source-ref',
+                source_controller='A', source_timestamp=1, component_id='source:a1'))
+        state = CharacteristicState(name='Kindred Merfolk', controller='A',
+            card_types={'Kindred', 'Enchantment'}, subtypes={'Merfolk'}, power=None, toughness=None)
+        result = evaluate_continuous_effects(state, effects, context={'object_id': 'recipient',
+            'logical_object_id': 'recipient@0', 'ref': 'recipient-ref', 'zone': 'battlefield',
+            'owner': 'A', 'controller': 'A'})
+        self.assertIsNone(result.characteristics['power'])
+        self.assertIsNone(result.characteristics['toughness'])
+        self.assertIn('Islandwalk', result.characteristics['abilities'])
+
     def test_global_other_plural_uses_canonical_subtype_without_controller_filter(self):
         for subject,subtype in (('Other Merfolk','merfolk'),('Other Goblins','goblin'),('Elves','elf')):
             text=subject+' get +1/+1 and have forestwalk.'
