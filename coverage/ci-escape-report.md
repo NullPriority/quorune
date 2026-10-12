@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "a6f292f92713ced35b74772702fb64a3366eac46180aa4bf807b47b8b0769905"
+verified: "b9f349219775de7712bb98540167b162cb379ca156d382e38a3c6e22098ec0ec"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -15,8 +15,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 - Observation window: 2026-08-25T03:52:06Z through 2026-08-25T20:56:41Z
 - Observed population: tracked recent pull requests (n=4)
-- Escapes: 86
-- Deterministic escapes: 79
+- Escapes: 87
+- Deterministic escapes: 80
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: null
@@ -115,6 +115,7 @@ This report classifies observed deterministic failures that escaped the local qu
 | `ci-20261011-498-aftermath-fixture` | [38125267611](https://github.com/NullPriority/quorune/actions/runs/38125267611) | `missing_affected_test` | `added` | Build one temporary database from the owned Aftermath fixture and retain original Oracle-ID selection and assertions. Add the Aftermath source/fixture consumer impact edge. Focused tests and canonical compact-fixture dependency validation pass; no environment-specific full database is required. |
 | `ci-20261011-498-interaction-witnesses` | [38125267611](https://github.com/NullPriority/quorune/actions/runs/38125267611) | `missing_affected_test` | `added` | Add actual Aura/grant and Shroud/sacrifice-redirection runtime witnesses with strict compiler admission, rollback, privacy and replay, plus whole-program fail-closed witnesses for both fixed-mana/replacement residual pairs using five original carriers. Register their exact qualified IDs and add consumer impact edges. Preserve scheduler debt prioritization and runtime-composition evidence requirements; canonical generation owns the refreshed interaction counts. |
 | `ci-20261012-504-bare-subtype-reviewed-overlap` | [38260770476](https://github.com/NullPriority/quorune/actions/runs/38260770476) | `missing_affected_test` | `added` | Use the shared reviewed-overlay owner to replace only a trusted source/rulings-matched legacy subtype anthem with the corrected generic instruction. Preserve modifiers, controllers, source exclusions, distinct generated siblings, original gameplay multiplicity and replay assertions. Update stale bare-subtype table expectations and add the canonical affected-consumer edge. Advance compiler identity and regenerate the semantic bundle; do not reuse the superseded census. |
+| `ci-20261012-504-generated-static-preflight-consumer` | [38273011041](https://github.com/NullPriority/quorune/actions/runs/38273011041) | `missing_affected_test` | `added` | Recognize existing generated static coverage only within the current trusted, source-hash-matched program set. Preserve unsupported remainder checks, provisional and source-drift rejection, reference deck compatibility assertions and strict capability-only blockers. Current impact edges already select the complete consumer set; add this precise witness to retain the boundary. Compiler semantics and identity remain unchanged. |
 
 ## Measurement limitations
 
