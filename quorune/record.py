@@ -19,10 +19,12 @@ from .record_trust import (
     implicit_semantic_execution_provenance,
     rebase_command_semantics_provenance,
     runtime_trust_provenance,
+    verified_replay_inputs,
     validate_manifest_runtime_provenance,
     validate_programs_used_provenance,
 )
 from .semantics import SemanticRegistry
+from .rules.evidence import _capability_validation_snapshot
 from .util import stable_json
 from .version import __version__
 
@@ -950,6 +952,7 @@ def load_record_state(directory: str | Path) -> GameState:
     return state
 
 
+@_capability_validation_snapshot()
 def replay_record(
     directory: str | Path,
     card_db: CardDatabase,
@@ -958,17 +961,10 @@ def replay_record(
     verify: bool = True,
 ) -> dict[str, Any]:
     directory = Path(directory)
-    manifest = json.loads((directory / "manifest.json").read_text(encoding="utf-8"))
-    if int(manifest.get("schema_version", 0)) != RECORD_SCHEMA_VERSION:
-        raise ValueError("Replay requires a Game Record v3 directory")
-    semantics = SemanticRegistry(semantics_path or directory / "semantics.json")
-    if manifest.get("engine_version") != ENGINE_VERSION:
-        raise ValueError(
-            f"Engine version mismatch: record={manifest.get('engine_version')} runtime={ENGINE_VERSION}"
-        )
-    if manifest.get("semantics_fingerprint") != semantics_fingerprint(semantics):
-        raise ValueError("Semantic registry fingerprint does not match the record")
-    validate_manifest_runtime_provenance(manifest, semantics)
+    manifest, semantics = verified_replay_inputs(
+        directory, semantics_path=semantics_path, record_schema=RECORD_SCHEMA_VERSION,
+        engine_version=ENGINE_VERSION, fingerprint_semantics=semantics_fingerprint,
+    )
     initial = read_initial_checkpoint(directory / "initial-checkpoint.json.gz")
     mode = str(manifest.get("replay", {}).get("mode") or "command_replay")
     if mode == "legacy_snapshot":

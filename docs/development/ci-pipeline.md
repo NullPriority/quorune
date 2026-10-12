@@ -50,6 +50,11 @@ Capability-evidence validation similarly takes one defensive registry snapshot
 per invocation rather than serializing the same capability for each declaration.
 Every declaration, required evidence class, supported profile, registry identity,
 and evidence fingerprint is still checked.
+Session creation and full command replay reuse that validated snapshot within
+one synchronous invocation. Separate calls re-read the authoritative inputs;
+the context is cleared on exceptions as well as success. This removes repeated
+invariant verification from replay-heavy checks while retaining per-command
+provenance comparisons and exact final state hashes.
 
 The corpus owner compiles one local IR and CardProgram per full-corpus record,
 then feeds its full and Commander coverage views through their canonical

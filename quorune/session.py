@@ -20,6 +20,7 @@ from .profiles import (
 )
 from .rules.action_explanations import projected_action_explanations
 from .rules.capabilities import load_default_capability_registry
+from .rules.evidence import _capability_validation_snapshot
 from .semantic_runtime.action_permissions import (
     land_play_permission_options,
     library_top_visibility,
@@ -115,6 +116,7 @@ class CommanderSession:
     pause_reason: dict[str, Any] | None = None
 
     @classmethod
+    @_capability_validation_snapshot()
     def create(
         cls,
         card_db: CardDatabase,

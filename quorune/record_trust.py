@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import copy
+import json
+from pathlib import Path
 from typing import Any, Callable, Iterable, Mapping
 
 from .card_programs import semantic_program_execution_provenance
@@ -12,6 +14,25 @@ from .semantic_runtime import (
 )
 from .semantics import SemanticRegistry
 from .stack_resolution import trusted_generic_empty_resolution
+
+
+def verified_replay_inputs(
+    directory: Path, *, semantics_path: str | Path | None, record_schema: int,
+    engine_version: str, fingerprint_semantics: Callable[[SemanticRegistry], str],
+) -> tuple[dict[str, Any], SemanticRegistry]:
+    """Validate one record's immutable manifest and semantic trust inputs."""
+    manifest = json.loads((directory / "manifest.json").read_text(encoding="utf-8"))
+    if int(manifest.get("schema_version", 0)) != record_schema:
+        raise ValueError("Replay requires a Game Record v3 directory")
+    semantics = SemanticRegistry(semantics_path or directory / "semantics.json")
+    if manifest.get("engine_version") != engine_version:
+        raise ValueError(
+            f"Engine version mismatch: record={manifest.get('engine_version')} runtime={engine_version}"
+        )
+    if manifest.get("semantics_fingerprint") != fingerprint_semantics(semantics):
+        raise ValueError("Semantic registry fingerprint does not match the record")
+    validate_manifest_runtime_provenance(manifest, semantics)
+    return manifest, semantics
 
 
 def resolved_semantic_execution_provenance_rows(
