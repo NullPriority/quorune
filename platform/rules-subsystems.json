@@ -5916,7 +5916,7 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v355-bare-subtype-public-query-correctness",
+      "transition_id": "oracle-ir-v356-bare-subtype-anthem-current-owner-correctness",
       "compiler_version": "oracle-ir-v356",
       "bundle_id": null,
       "candidate_ids": [],
