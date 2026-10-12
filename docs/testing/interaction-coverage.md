@@ -83,3 +83,9 @@ declining the private payment removes the protection source and restores legal
 targeting. Fixed resolution mana beside unrepresented replacement siblings
 uses original complete-card admission witnesses; those combinations remain
 rejected even when the mana prefix is exact.
+
+Conditional land entry also composes with targeted owner-library results through
+original-card land plays. The entry threshold determines whether an untapped-entry
+trigger exists; the chosen graveyard incarnation is then revalidated independently
+after a response moves it. Residual regeneration, targeting, and multiple-damage
+siblings retain separate whole-program admission rejection witnesses.

@@ -9494,6 +9494,77 @@
       ],
       "interaction_order": 2,
       "assertion": "Original Boon of the Spirit Realm receives its first Constellation counter, then actual Contentious Plan Proliferate increases the live creature bonus; a later creature joins and source destruction removes the bonus, with pending load and pre-cast replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_original_regeneration_and_source_move_residual_siblings_reject_whole_runtime_admission",
+      "piece_ids": [
+        "capability.permanent.regeneration.fixed_effect",
+        "residual.replacement.regeneration"
+      ],
+      "capability_ids": [
+        "permanent.regeneration.fixed_effect"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Orcish Healer preserves an unresolved regeneration-prohibition sibling next to recognized qualified regeneration effects. Complete canonical runtime binding rejects the unresolved whole card."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_original_regeneration_and_source_move_residual_siblings_reject_whole_runtime_admission",
+      "piece_ids": [
+        "capability.permanent.regeneration.self_activation",
+        "residual.replacement.regeneration"
+      ],
+      "capability_ids": [
+        "permanent.regeneration.self_activation"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Orcish Healer preserves the same unsupported regeneration-prohibition sibling next to recognized regeneration activation ownership. Whole-program binding rejects the composition rather than granting complete gameplay trust."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_original_regeneration_and_source_move_residual_siblings_reject_whole_runtime_admission",
+      "piece_ids": [
+        "capability.zone.self_move.activated",
+        "residual.target_or_choice.target-predicate"
+      ],
+      "capability_ids": [
+        "zone.self_move.activated"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Grim Reminder preserves an unsupported name/turn-history targeting result beside its recognized controller-upkeep self return. Whole-program admission rejects the residual card; this does not claim its independently executable return prefix makes the whole card supported."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_original_regeneration_and_source_move_residual_siblings_reject_whole_runtime_admission",
+      "piece_ids": [
+        "capability.zone.single_owner_move.fixed_destination",
+        "residual.target_or_choice.multiple-damage-recipients"
+      ],
+      "capability_ids": [
+        "zone.single_owner_move.fixed_destination"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Shadow Guildmage retains unsupported separate damage recipients beside its exact owner-library move. Canonical whole-program binding rejects the unresolved complete card."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_fixed_entry_conditions.ConditionalEntryLibraryTargetRuntimeTests.test_original_conditional_lands_trigger_only_untapped_and_revalidate_library_targets",
+      "piece_ids": [
+        "capability.target.revalidate_resolution",
+        "capability.zone.entry.tapped_state.fixed_condition"
+      ],
+      "capability_ids": [
+        "target.revalidate_resolution",
+        "zone.entry.tapped_state.fixed_condition"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Mystic Sanctuary enters tapped with only two other Islands and produces no target trigger, then enters untapped with three and returns its chosen instant to the library top. Original Witchs Cottage similarly returns a creature. Actual Cremate exiles the chosen graveyard card before the pending land trigger resolves, so target revalidation prevents the move. Natural land-play commands, pending load, private library projection and pre-play replay preserve every branch."
     }
   ]
 }

@@ -143,7 +143,7 @@ class ModularCompilerTests(unittest.TestCase):
                 and node.effects[0]["op"]
                 == "offer_modular_counter_transfer"
                 and node.capability_dependencies
-                == ("counter.producer.modular",)
+                == ("counter.placement.quantity_replacement", "counter.producer.modular")
                 for node in departure
             )
         )

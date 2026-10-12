@@ -203,6 +203,7 @@ class StormCompilerTests(unittest.TestCase):
                 "Empty the Warrens",
                 "Flusterstorm",
                 "Grapeshot",
+                "Ground Rift",
                 "Haze of Rage",
                 "Hindering Touch",
                 "Hunting Pack",

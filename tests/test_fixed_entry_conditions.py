@@ -681,5 +681,97 @@ class FixedEntryConditionRuntimeTests(unittest.TestCase):
         self.assertFalse(land.tapped)
 
 
+class ConditionalEntryLibraryTargetRuntimeTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from quorune.deck import DeckDefinition,DeckEntry
+
+        cls.temporary=tempfile.TemporaryDirectory()
+        path=Path(cls.temporary.name)/'entry-library-targets.sqlite3'
+        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',
+                              ROOT/'tests/fixtures/conditional-entry-library-targets.json'],path)
+        cls.db=CardDatabase(path)
+        cls.registry=load_default_capability_registry()
+        cls.deck=DeckDefinition('Entry library targets',[DeckEntry('Generic Bound Commander',1,'commander'),
+                               DeckEntry('Generic Bound Plains',12)],['Generic Bound Commander'])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    import test_bound_effect_programs as _bound
+    session=_bound.BoundEffectProgramRuntimeTests.session
+    add=_bound.BoundEffectProgramRuntimeTests.add
+    ready=_bound.BoundEffectProgramRuntimeTests.ready
+    checkpoint=_bound.BoundEffectProgramRuntimeTests.checkpoint
+    replay=_bound.BoundEffectProgramRuntimeTests.replay
+    import test_counter_placement_events as _counter
+    resolve=_counter.CounterPlacementEventRuntimeTests.resolve
+
+    def test_original_conditional_lands_trigger_only_untapped_and_revalidate_library_targets(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.engine import TURN_STEPS
+        from quorune.semantics import SemanticRegistry
+
+        for name,basic,target_name,count,invalidate in (
+            ('Mystic Sanctuary','Island','Jump',2,False),
+            ('Mystic Sanctuary','Island','Jump',3,False),
+            ("Witch's Cottage",'Swamp','Grizzly Bears',3,False),
+            ('Mystic Sanctuary','Island','Jump',3,True),
+        ):
+            with self.subTest(name=name,count=count,invalidate=invalidate):
+                session=self.session(355100+count+10*int(invalidate)+20*int(basic=='Swamp'))
+                engine=session.engine
+                source=self.add(engine,name,zone='hand')
+                target=self.add(engine,target_name,zone='graveyard')
+                response=self.add(engine,'Cremate',zone='hand') if invalidate else None
+                for i in range(count):self.add(engine,basic,ref='condition-basic-'+str(i))
+                program=compile_best_available_card_program(self.db,self.db.lookup(name),
+                    semantic_registry=SemanticRegistry(),capability_registry=self.registry,
+                    capability_profile='commander_review')
+                self.assertTrue(bind_card_program_runtime(program,capability_registry=self.registry,
+                    profile='commander_review')['strict_capability_ready'])
+                session.state.phase_index=TURN_STEPS.index(('precombat_main','main'))
+                action=self.ready(session,source,{'U':3,'B':1,'C':2})
+                self.checkpoint(session)
+                accepted=session.act('pilot:A',{'action_id':action['id']})
+                self.assertTrue(accepted.ok,accepted.summary)
+                self.assertEqual(count<3,source.tapped)
+                # Target choice is made on trigger placement, before priority.
+                for _ in range(8):
+                    d=session.state.pending_decision
+                    if d is None or d.kind=='priority':break
+                    packet=session.packet(session.pending_principals()[0],full=True)['decision']
+                    accepted=session.act(session.pending_principals()[0],{'action_id':'choose','targets':[target.ref]})
+                    self.assertTrue(accepted.ok,(accepted.summary,packet))
+                triggers=[item for item in session.state.stack if item.source_object_id==source.object_id]
+                self.assertEqual(int(count>=3),len(triggers))
+                if count<3:
+                    self.assertEqual('graveyard',target.zone)
+                    self.replay(session)
+                    continue
+                self.replay(session,load=True)
+                if invalidate:
+                    actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+                    action=next(row for row in actions if row.get('card')==response.ref)
+                    accepted=session.act('pilot:A',{'action_id':action['id'],'targets':[target.ref],'pay':'auto'})
+                    self.assertTrue(accepted.ok,accepted.summary)
+                    response_id=session.state.stack[-1].stack_id
+                    while any(item.stack_id==response_id for item in session.state.stack):
+                        accepted=session.act(session.pending_principals()[0],{'action_id':'pass'})
+                        self.assertTrue(accepted.ok,accepted.summary)
+                    self.assertEqual('exile',target.zone)
+                self.resolve(session)
+                self.assertEqual('exile' if invalidate else 'library',target.zone)
+                if not invalidate:
+                    self.assertEqual(target.object_id,session.state.players['A'].zones['library'][-1])
+                for seat in 'BCD':
+                    projected=session.packet('pilot:'+seat,full=True)['state']
+                    self.assertNotIn('lib',projected['players']['A'])
+                self.replay(session)
+
+
 if __name__ == "__main__":
     unittest.main()

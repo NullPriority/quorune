@@ -127,7 +127,7 @@ class ActivatedTemporaryDeclarationRestrictionTemplateTests(unittest.TestCase):
             "Target creature can't block this creature this turn.",
             "Target creature can't be blocked except by Walls this turn.",
             "Target creature can't block this turn and you gain 1 life.",
-            "Up to one target creature can't block this turn.",
+            "Up to X target creatures can't block this turn.",
             "Another target creature can't block this creature this turn.",
             "Target creature can't block next turn.",
             "Target creature can block this turn.",
@@ -1090,6 +1090,7 @@ class GroupDeclarationCompilerTests(unittest.TestCase):
 
         registry = load_default_capability_registry()
         for text, maximum, optional in (
+            ("Up to one target creature can't block this turn.", 1, True),
             ("Two target creatures can't block this turn.", 2, False),
             ("Up to three target creatures can't be blocked this turn.", 3, True),
         ):

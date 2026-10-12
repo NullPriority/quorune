@@ -1154,11 +1154,12 @@ class ContinuousEffectModelTests(unittest.TestCase):
                 self.assertEqual("exact", ir.status)
                 node = ir.faces[0].nodes[0]
                 self.assertEqual(
-                    "grant_keyword_until_end_of_turn",
+                    "apply_source_characteristics_until_end_of_turn",
                     node.effects[0]["op"],
                 )
+                self.assertEqual([keyword.title()],node.effects[0]['keywords'])
                 self.assertIn(
-                    "continuous.resolution.fixed_characteristics_until_end_of_turn",
+                    "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
                     node.capability_dependencies,
                 )
 

@@ -30,6 +30,7 @@
     "tests/fixtures/commander-characteristic-grants.json",
     "tests/fixtures/complex-activation-mana-cards.json",
     "tests/fixtures/composition-assurance-cards.json",
+    "tests/fixtures/conditional-entry-library-targets.json",
     "tests/fixtures/copied-self-entry-counter-cards.json",
     "tests/fixtures/counted-activation-costs.json",
     "tests/fixtures/counted-library-search-cards.json",
@@ -83,6 +84,7 @@
     "tests/fixtures/library-search-qualifier-cards.json",
     "tests/fixtures/limited-event-triggers.json",
     "tests/fixtures/mayhem-cards.json",
+    "tests/fixtures/new-support-residual-boundaries.json",
     "tests/fixtures/optional-draw-discard-sequences.json",
     "tests/fixtures/optional-object-action-counters.json",
     "tests/fixtures/ordered-quantity-results.json",
@@ -226,6 +228,21 @@
       "deck_files": [],
       "fixture_files": [],
       "rationale": "The helper accepts explicit replacement-source witness names; this module calls it only for Dauthi Voidwalker."
+    },
+    {
+      "source": "tests/test_high_risk_interaction_assurance.py",
+      "symbol": "HighRiskInteractionAssuranceTests.test_original_regeneration_and_source_move_residual_siblings_reject_whole_runtime_admission",
+      "card_names": [
+        "Grim Reminder",
+        "Orcish Healer",
+        "Shadow Guildmage"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/new-support-residual-boundaries.json"
+      ],
+      "rationale": "The exact bounded original-card dictionary exercises whole-program rejection of residual regeneration, targeting and separate-damage siblings."
     }
   ],
   "full_database_only": []

@@ -127,7 +127,7 @@ class BoundEffectProgramCompilerTests(unittest.TestCase):
         text = "Target player draws two cards and loses 2 life."
         self.assertEqual("exact", self.compile(text).status)
         for dependency in (CAPABILITY, "zone.draw.library_to_hand", "target.revalidate_resolution"):
-            raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text())
+            raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
             row = next(r for r in raw["capabilities"] if r["id"] == dependency)
             row.update(status="blocked", blockers=["bound-program dependency mutation"])
             registry = CapabilityRegistry(raw)
