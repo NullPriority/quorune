@@ -85,6 +85,21 @@
   ],
   "path_rules": [
     {
+      "id": "cohort-compilation-snapshot-contract",
+      "patterns": [
+        "scripts/cohort_compilation.py"
+      ],
+      "test_modules": [
+        "test_batched_support_measurement",
+        "test_counted_library_searches",
+        "test_rules_scheduler",
+        "test_typed_grant_carriers"
+      ],
+      "checks": [
+        "generated-finalization"
+      ]
+    },
+    {
       "id": "stack-controller-payment-contract",
       "patterns": [
         "quorune/rules/stack_controller_payment_cost.py",

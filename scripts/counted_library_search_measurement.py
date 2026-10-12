@@ -7,7 +7,7 @@ from typing import Any, Mapping
 from quorune.card_programs import bind_card_program_runtime
 from quorune.card_programs.adapters import compile_best_available_card_program
 from quorune.library_search_model import FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID
-from quorune.oracle_ir import compile_oracle_card
+from scripts.cohort_compilation import compile_cohort_card as compile_oracle_card
 from quorune.rules.capabilities import load_default_capability_registry
 from quorune.semantics import SemanticRegistry
 

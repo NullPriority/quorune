@@ -145,7 +145,10 @@ from quorune.oracle_ir import (
     _reviewed_effect_template,
     _source_self_zone_trigger_match,
     _without_parenthetical_reminder,
-    compile_oracle_card,
+)
+from scripts.cohort_compilation import (
+    cohort_compilation_snapshot,
+    compile_cohort_card as compile_oracle_card,
 )
 from quorune.public_zone_moves import FIXED_OWNER_ZONE_MOVE_CAPABILITY
 from quorune.public_alternative_costs import (
@@ -10650,6 +10653,7 @@ def _typed_query_self_characteristic_measurement(
     }
 
 
+@cohort_compilation_snapshot()
 def build_work_selection_cohort_measurements(
     *,
     frontier: Mapping[str, Any],
