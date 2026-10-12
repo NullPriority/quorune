@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import json
 from dataclasses import replace
 from pathlib import Path
 import tempfile
@@ -39,6 +40,22 @@ from quorune.semantics import SemanticProgram, SemanticRegistry
 
 
 class FixedDamageEffectTemplateTests(unittest.TestCase):
+    def test_nontarget_damage_to_you_binds_resolving_controller_and_preserves_damage(self):
+        value=fixed_damage_effect_template('This creature deals 2 damage to you.',card_name='Constructed source')
+        self.assertIsNotNone(value)
+        self.assertIsNone(value.target_schema)
+        self.assertEqual({'op':'damage','source':'$source','target':'$controller','amount':2},dict(value.effects[0]))
+        self.assertNotIn('cr-115-targets',value.mechanics)
+        required=capability_dependencies_for_node(effects=value.effects,target_schema=None,mechanic_ids=value.mechanics)
+        self.assertIn('damage.result.player_life',required)
+
+    def test_controller_damage_has_no_arbitrary_recipient_or_zero_amount_shape(self):
+        for tail in ('you if you attacked this turn.','you. Draw a card.','its controller.'):
+            self.assertIsNone(fixed_damage_effect_template('This creature deals 2 damage to '+tail,card_name='Constructed source'))
+        effect={'op':'damage','source':'$source','target':'$controller','amount':2}
+        for wrong in ({**effect,'amount':0},{**effect,'amount':True},{**effect,'target':'$owner'},{**effect,'extra':True}):
+            self.assertFalse(damage_capability_shapes.fixed_damage_node_capabilities(effects=(wrong,),target_schema=None,mechanic_ids=('cr-120-damage',)))
+
     def test_typed_template_is_immutable_canonical_and_copy_isolated(self):
         template = FixedDamageEffectTemplate(
             amount=3,
@@ -1451,3 +1468,73 @@ class FixedDamageEffectRuntimeTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ControllerDamageRuntimeTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from common import ROOT
+        from scripts.build_test_database import build_fixture_database
+        from quorune.deck import DeckDefinition,DeckEntry
+        cls.temporary=tempfile.TemporaryDirectory();path=Path(cls.temporary.name)/'controller-damage.sqlite3'
+        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/controller-damage-cards.json'],path)
+        cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
+        cls.deck=DeckDefinition('Controller damage',[DeckEntry('Generic Bound Commander',1,'commander'),DeckEntry('Generic Bound Plains',30)],['Generic Bound Commander'])
+    @classmethod
+    def tearDownClass(cls):cls.db.close();cls.temporary.cleanup()
+    from test_bound_effect_programs import BoundEffectProgramRuntimeTests as _Witnesses
+    session=_Witnesses.session
+    add=_Witnesses.add
+    checkpoint=_Witnesses.checkpoint
+    replay=_Witnesses.replay
+    ready=_Witnesses.ready
+    resolve=_Witnesses.resolve
+
+    def test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays(self):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+        s=self.session(361001);e=s.engine;source=self.add(e,'Lava Hounds',zone='hand')
+        p=compile_best_available_card_program(self.db,self.db.lookup('Lava Hounds'),semantic_registry=e.semantics,capability_registry=self.registry,capability_profile='commander_review')
+        self.assertTrue(bind_card_program_runtime(p,capability_registry=self.registry,profile='commander_review')['strict_capability_ready'])
+        action=self.ready(s,source,{'R':2,'C':2});self.checkpoint(s)
+        life={seat:e.state.players[seat].life for seat in 'ABCD'}
+        accepted=s.act('pilot:A',{'action_id':action['id'],'pay':'auto'});self.assertTrue(accepted.ok,accepted.summary)
+        for _ in range(16):
+            if e.state.cards[source.object_id].zone=='battlefield':break
+            accepted=s.act(s.pending_principals()[0],{'action_id':'pass'});self.assertTrue(accepted.ok,accepted.summary)
+        self.assertEqual('battlefield',e.state.cards[source.object_id].zone);self.assertEqual(1,len(e.state.stack))
+        self.replay(s,load=True);e.change_control(source.object_id,'B',reason='locked damage trigger controller');self.checkpoint(s)
+        self.resolve(s);self.assertEqual(life['A']-4,e.state.players['A'].life)
+        for seat in 'BCD':self.assertEqual(life[seat],e.state.players[seat].life)
+        projection=json.dumps(s.projector._snapshot('pilot:D'),sort_keys=True)
+        for seat in 'ABC':
+            for oid in e.state.players[seat].zones['hand']:self.assertNotIn(e.state.cards[oid].ref,projection)
+        self.replay(s,load=True)
+
+    def test_original_city_of_brass_tap_trigger_is_separate_from_immediate_mana_and_replays(self):
+        s=self.session(361002);e=s.engine;source=self.add(e,'City of Brass')
+        self.ready(s,source,{});actions=s.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        action=next(row for row in actions if row.get('source')==source.ref);self.checkpoint(s);life=e.state.players['A'].life
+        accepted=s.act('pilot:A',{'action_id':action['id'],'mana_output':{'U':1}});self.assertTrue(accepted.ok,accepted.summary)
+        self.assertEqual(1,e.state.players['A'].mana_pool['U']);self.assertEqual(life,e.state.players['A'].life)
+        self.assertTrue(e.state.cards[source.object_id].tapped);self.assertEqual(1,len(e.state.stack))
+        self.resolve(s);self.assertEqual(life-1,e.state.players['A'].life);self.replay(s,load=True)
+
+    def test_original_aftershock_target_destruction_and_controller_damage_resolve_in_order(self):
+        s=self.session(361003);e=s.engine;source=self.add(e,'Aftershock',zone='hand');target=self.add(e,'Generic Bound Body',seat='B')
+        action=self.ready(s,source,{'R':2,'C':2});self.checkpoint(s);life=e.state.players['A'].life
+        accepted=s.act('pilot:A',{'action_id':action['id'],'targets':[target.ref],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(s)
+        self.assertEqual('graveyard',e.state.cards[target.object_id].zone);self.assertEqual(life-3,e.state.players['A'].life)
+        self.assertEqual('graveyard',e.state.cards[source.object_id].zone);self.replay(s,load=True)
+
+    def test_controller_damage_lowering_omission_mutant_is_killed(self):
+        from quorune.compiler.damage_templates import FixedDamageEffectTemplate,FixedDamageRecipient
+        original=FixedDamageEffectTemplate.effects.fget
+        def mutated(value):
+            if value.recipient is FixedDamageRecipient.CONTROLLER:
+                return ({'op':'damage','source':'$source','target':'$controller','amount':0},)
+            return original(value)
+        with patch.object(FixedDamageEffectTemplate,'effects',property(mutated)):
+            with self.assertRaises(AssertionError):
+                self.test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays()

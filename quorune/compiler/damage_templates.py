@@ -69,9 +69,11 @@ class FixedDamageRecipient(str, Enum):
     PLAYER_OR_PLANESWALKER = "player_or_planeswalker"
     OPPONENT_OR_PLANESWALKER = "opponent_or_planeswalker"
     EACH_OPPONENT = "each_opponent"
+    CONTROLLER = 'controller'
 
 
 _FIXED_DAMAGE_RECIPIENTS: tuple[tuple[str, FixedDamageRecipient], ...] = (
+    ('you',FixedDamageRecipient.CONTROLLER),
     ("target creature or planeswalker", FixedDamageRecipient.CREATURE_OR_PLANESWALKER),
     ("target player or planeswalker", FixedDamageRecipient.PLAYER_OR_PLANESWALKER),
     ("target opponent or planeswalker", FixedDamageRecipient.OPPONENT_OR_PLANESWALKER),
@@ -148,7 +150,7 @@ class FixedDamageEffectTemplate:
             {
                 "op": "damage",
                 "source": "$source",
-                "target": "$target.0",
+                "target": '$controller' if self.recipient is FixedDamageRecipient.CONTROLLER else "$target.0",
                 "amount": self.amount,
             },
         )
@@ -157,7 +159,7 @@ class FixedDamageEffectTemplate:
     def target_schema(self) -> Mapping[str, Any] | None:
         if self.target_spec is not None:
             return self.target_spec.to_target_schema()
-        if self.recipient is FixedDamageRecipient.EACH_OPPONENT:
+        if self.recipient in {FixedDamageRecipient.EACH_OPPONENT,FixedDamageRecipient.CONTROLLER}:
             return None
         if self.recipient is FixedDamageRecipient.ANY_TARGET:
             return {
@@ -204,7 +206,7 @@ class FixedDamageEffectTemplate:
 
     @property
     def mechanics(self) -> tuple[str, ...]:
-        if self.recipient is FixedDamageRecipient.EACH_OPPONENT:
+        if self.recipient in {FixedDamageRecipient.EACH_OPPONENT,FixedDamageRecipient.CONTROLLER}:
             return ("cr-120-damage",)
         return ("cr-120-damage", "cr-115-targets")
 

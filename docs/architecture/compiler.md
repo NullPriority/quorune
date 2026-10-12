@@ -1626,6 +1626,14 @@ activation query and object-incarnation usage journal, while casting and
 activation payment share the same canonical mana-spend context. Origin,
 casting-method, color, mana-value, variable, compound-condition, result-rider,
 and delayed-effect restrictions remain source-spanned residuals.
+A complete fixed source "deals damage to you" clause lowers to ordinary
+nontarget damage bound to the resolving controller. It retains the original
+source attribution, requires the existing positive-amount and player-damage
+capabilities, and does not declare a target or acquire a target-selection
+window. Ordered spell bodies, source entry/upkeep results, and independent tap
+triggers reuse the same leaf. Unknown recipient references and condition tails
+remain residual.
+
 Fixed mana results use a separate version-two handler while ordinary output
 descriptors retain their version-one serialized identity. One complete fixed
 output may be followed by fixed source damage to the activation controller or

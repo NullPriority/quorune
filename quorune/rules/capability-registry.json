@@ -10547,23 +10547,74 @@
     {
       "id": "damage.amount.positive",
       "version": 1,
-      "official_rules": ["120.1", "120.2"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rules": [
+        "120.1",
+        "120.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Accept a positive integer damage amount and suppress zero while rejecting negative damage.",
-        "inputs": ["integer assigned damage amount"],
-        "outputs": ["positive represented damage amount", "suppressed zero"],
-        "exclusions": ["variable amount evaluation", "replacement and prevention ordering"]
+        "inputs": [
+          "integer assigned damage amount",
+          "closed nontarget source damage to the resolving controller"
+        ],
+        "outputs": [
+          "positive represented damage amount",
+          "suppressed zero"
+        ],
+        "exclusions": [
+          "variable amount evaluation",
+          "replacement and prevention ordering"
+        ]
       },
       "dependencies": [],
-      "implementation_components": ["quorune.damage.DamageEvent", "CommanderEngine represented damage paths"],
-      "positive_tests": ["test_damage_results_do_not_destroy_before_state_actions"],
-      "negative_tests": ["test_zero_damage_creates_no_results_or_damage_event", "test_negative_damage_fails_closed"],
-      "interaction_tests": ["test_only_damage_not_life_loss_or_prevented_damage_unlocks_attack", "test_keyword_damage_composes_with_exact_counter_replacement_and_residuals"],
-      "multiplayer_tests": [],
-      "privacy_tests": [],
-      "replay_tests": ["test_battle_damage_and_state_action_replay_exactly"],
-      "required_evidence": ["positive", "negative", "interaction", "replay"],
+      "implementation_components": [
+        "quorune.damage.DamageEvent",
+        "CommanderEngine represented damage paths",
+        "quorune.compiler.damage_templates.fixed_damage_effect_template",
+        "quorune.rules.damage_capability_shapes.fixed_damage_node_capabilities"
+      ],
+      "positive_tests": [
+        "test_damage_results_do_not_destroy_before_state_actions",
+        "test_nontarget_damage_to_you_binds_resolving_controller_and_preserves_damage",
+        "test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
+        "test_original_city_of_brass_tap_trigger_is_separate_from_immediate_mana_and_replays",
+        "test_original_aftershock_target_destruction_and_controller_damage_resolve_in_order"
+      ],
+      "negative_tests": [
+        "test_zero_damage_creates_no_results_or_damage_event",
+        "test_negative_damage_fails_closed",
+        "test_controller_damage_has_no_arbitrary_recipient_or_zero_amount_shape"
+      ],
+      "interaction_tests": [
+        "test_only_damage_not_life_loss_or_prevented_damage_unlocks_attack",
+        "test_keyword_damage_composes_with_exact_counter_replacement_and_residuals",
+        "test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
+        "test_original_city_of_brass_tap_trigger_is_separate_from_immediate_mana_and_replays",
+        "test_original_aftershock_target_destruction_and_controller_damage_resolve_in_order"
+      ],
+      "multiplayer_tests": [
+        "test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays"
+      ],
+      "privacy_tests": [
+        "test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays"
+      ],
+      "replay_tests": [
+        "test_battle_damage_and_state_action_replay_exactly",
+        "test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
+        "test_original_city_of_brass_tap_trigger_is_separate_from_immediate_mana_and_replays",
+        "test_original_aftershock_target_destruction_and_controller_damage_resolve_in_order"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "replay"
+      ],
       "dependency_fail_closed_status": "not_applicable",
       "dependency_fail_closed_rationale": "This capability has no capability dependencies.",
       "implementation_mutation_status": "killed",
@@ -10628,23 +10679,79 @@
     {
       "id": "damage.result.player_life",
       "version": 1,
-      "official_rules": ["120.3a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rules": [
+        "120.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Apply represented positive damage to a player as that much life loss.",
-        "inputs": ["positive represented damage", "active player recipient"],
-        "outputs": ["player life reduction", "public damage history"],
-        "exclusions": ["infect", "damage replacement", "damage prevention", "commander combat attribution"]
+        "inputs": [
+          "positive represented damage",
+          "active player recipient",
+          "closed nontarget source damage to the resolving controller"
+        ],
+        "outputs": [
+          "player life reduction",
+          "public damage history"
+        ],
+        "exclusions": [
+          "infect",
+          "damage replacement",
+          "damage prevention",
+          "commander combat attribution"
+        ]
       },
-      "dependencies": ["damage.amount.positive"],
-      "implementation_components": ["quorune.damage_results.materialize_damage_results", "quorune.life_state.plan_life_changes", "quorune.life_state.apply_life_changes"],
-      "positive_tests": ["test_sunscorched_desert_prompts_for_target_and_deals_damage"],
-      "negative_tests": ["test_only_damage_not_life_loss_or_prevented_damage_unlocks_attack"],
-      "interaction_tests": ["test_lifelink_counts_only_damage_not_prevented_by_protection"],
-      "multiplayer_tests": ["test_reckless_fireweaver_damages_each_opponent"],
-      "privacy_tests": [],
-      "replay_tests": ["test_battle_damage_and_state_action_replay_exactly"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "replay"],
+      "dependencies": [
+        "damage.amount.positive"
+      ],
+      "implementation_components": [
+        "quorune.damage_results.materialize_damage_results",
+        "quorune.life_state.plan_life_changes",
+        "quorune.life_state.apply_life_changes",
+        "quorune.compiler.damage_templates.fixed_damage_effect_template",
+        "quorune.rules.damage_capability_shapes.fixed_damage_node_capabilities"
+      ],
+      "positive_tests": [
+        "test_sunscorched_desert_prompts_for_target_and_deals_damage",
+        "test_nontarget_damage_to_you_binds_resolving_controller_and_preserves_damage",
+        "test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
+        "test_original_city_of_brass_tap_trigger_is_separate_from_immediate_mana_and_replays",
+        "test_original_aftershock_target_destruction_and_controller_damage_resolve_in_order"
+      ],
+      "negative_tests": [
+        "test_only_damage_not_life_loss_or_prevented_damage_unlocks_attack",
+        "test_controller_damage_has_no_arbitrary_recipient_or_zero_amount_shape"
+      ],
+      "interaction_tests": [
+        "test_lifelink_counts_only_damage_not_prevented_by_protection",
+        "test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
+        "test_original_city_of_brass_tap_trigger_is_separate_from_immediate_mana_and_replays",
+        "test_original_aftershock_target_destruction_and_controller_damage_resolve_in_order"
+      ],
+      "multiplayer_tests": [
+        "test_reckless_fireweaver_damages_each_opponent",
+        "test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays"
+      ],
+      "privacy_tests": [
+        "test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays"
+      ],
+      "replay_tests": [
+        "test_battle_damage_and_state_action_replay_exactly",
+        "test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
+        "test_original_city_of_brass_tap_trigger_is_separate_from_immediate_mana_and_replays",
+        "test_original_aftershock_target_destruction_and_controller_damage_resolve_in_order"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "",
       "implementation_mutation_status": "killed",

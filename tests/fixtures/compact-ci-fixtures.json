@@ -31,6 +31,7 @@
     "tests/fixtures/complex-activation-mana-cards.json",
     "tests/fixtures/composition-assurance-cards.json",
     "tests/fixtures/conditional-entry-library-targets.json",
+    "tests/fixtures/controller-damage-cards.json",
     "tests/fixtures/copied-self-entry-counter-cards.json",
     "tests/fixtures/counted-activation-costs.json",
     "tests/fixtures/counted-library-search-cards.json",
@@ -852,6 +853,51 @@
       "deck_files": [],
       "fixture_files": [],
       "rationale": "Original reveal-entry and malformed retained hand identity controls use these exact cards."
+    },
+    {
+      "source": "tests/test_fixed_damage_effect_clauses.py",
+      "symbol": "ControllerDamageRuntimeTests.test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
+      "card_names": [
+        "Lava Hounds"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Actual original source damage-to-controller carriers and their strict replay witnesses use this exact compact fixture subset."
+    },
+    {
+      "source": "tests/test_fixed_damage_effect_clauses.py",
+      "symbol": "ControllerDamageRuntimeTests.test_original_city_of_brass_tap_trigger_is_separate_from_immediate_mana_and_replays",
+      "card_names": [
+        "City of Brass"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Actual original source damage-to-controller carriers and their strict replay witnesses use this exact compact fixture subset."
+    },
+    {
+      "source": "tests/test_fixed_damage_effect_clauses.py",
+      "symbol": "ControllerDamageRuntimeTests.test_original_aftershock_target_destruction_and_controller_damage_resolve_in_order",
+      "card_names": [
+        "Aftershock",
+        "Generic Bound Body"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Actual original source damage-to-controller carriers and their strict replay witnesses use this exact compact fixture subset."
+    },
+    {
+      "source": "tests/test_fixed_damage_effect_clauses.py",
+      "symbol": "ControllerDamageRuntimeTests.test_controller_damage_lowering_omission_mutant_is_killed",
+      "card_names": [
+        "Lava Hounds"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Actual original source damage-to-controller carriers and their strict replay witnesses use this exact compact fixture subset."
     }
   ],
   "full_database_only": []

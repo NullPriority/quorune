@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "c91dd20529b725c9cfd426af2dbcb4b6def1f70cb26954251fb67c375f5c8b30",
-  "declaration_source_fingerprint": "36dc80fd684030e84ff17c84822e161f74e55af7f800d67d3d1eb71ac053955e",
+  "registry_fingerprint": "2ce226265cea6a28acf45b552e2ddccdb5c2318f6d62ff584e317c583be69772",
+  "declaration_source_fingerprint": "e9406bba9c2c13927993eaf444c270fafbe7c636110398b6f79190509adc3539",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -55944,6 +55944,51 @@
     {
       "capability_id": "damage.amount.positive",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_damage_effect_clauses.ControllerDamageRuntimeTests.test_original_aftershock_target_destruction_and_controller_damage_resolve_in_order",
+      "official_rule_ids": [
+        "120.1",
+        "120.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A complete source damage-to-you clause binds the resolving controller without targeting; ordinary damage ownership, printed order and replay remain authoritative."
+    },
+    {
+      "capability_id": "damage.amount.positive",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_damage_effect_clauses.ControllerDamageRuntimeTests.test_original_city_of_brass_tap_trigger_is_separate_from_immediate_mana_and_replays",
+      "official_rule_ids": [
+        "120.1",
+        "120.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A complete source damage-to-you clause binds the resolving controller without targeting; ordinary damage ownership, printed order and replay remain authoritative."
+    },
+    {
+      "capability_id": "damage.amount.positive",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_damage_effect_clauses.ControllerDamageRuntimeTests.test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
+      "official_rule_ids": [
+        "120.1",
+        "120.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A complete source damage-to-you clause binds the resolving controller without targeting; ordinary damage ownership, printed order and replay remain authoritative."
+    },
+    {
+      "capability_id": "damage.amount.positive",
+      "evidence_class": "interaction",
       "test_id": "tests.test_keyword_counter_composition.KeywordCounterCompositionTests.test_keyword_damage_composes_with_exact_counter_replacement_and_residuals",
       "official_rule_ids": [
         "120.1",
@@ -55973,6 +56018,21 @@
     },
     {
       "capability_id": "damage.amount.positive",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_damage_effect_clauses.ControllerDamageRuntimeTests.test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
+      "official_rule_ids": [
+        "120.1",
+        "120.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A complete source damage-to-you clause binds the resolving controller without targeting; ordinary damage ownership, printed order and replay remain authoritative."
+    },
+    {
+      "capability_id": "damage.amount.positive",
       "evidence_class": "mutation",
       "test_id": "tests.test_capability_implementation_mutations.CapabilityImplementationMutationTests.test_damage_amount_guard_mutant_is_killed",
       "official_rule_ids": [
@@ -55985,6 +56045,36 @@
         "commander_review"
       ],
       "applicability_note": "Accept a positive integer damage amount and suppress zero while rejecting negative damage."
+    },
+    {
+      "capability_id": "damage.amount.positive",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_damage_effect_clauses.ControllerDamageRuntimeTests.test_controller_damage_lowering_omission_mutant_is_killed",
+      "official_rule_ids": [
+        "120.1",
+        "120.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A complete source damage-to-you clause binds the resolving controller without targeting; ordinary damage ownership, printed order and replay remain authoritative."
+    },
+    {
+      "capability_id": "damage.amount.positive",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_damage_effect_clauses.FixedDamageEffectTemplateTests.test_controller_damage_has_no_arbitrary_recipient_or_zero_amount_shape",
+      "official_rule_ids": [
+        "120.1",
+        "120.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A complete source damage-to-you clause binds the resolving controller without targeting; ordinary damage ownership, printed order and replay remain authoritative."
     },
     {
       "capability_id": "damage.amount.positive",
@@ -56019,6 +56109,66 @@
     {
       "capability_id": "damage.amount.positive",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_damage_effect_clauses.ControllerDamageRuntimeTests.test_original_aftershock_target_destruction_and_controller_damage_resolve_in_order",
+      "official_rule_ids": [
+        "120.1",
+        "120.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A complete source damage-to-you clause binds the resolving controller without targeting; ordinary damage ownership, printed order and replay remain authoritative."
+    },
+    {
+      "capability_id": "damage.amount.positive",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_damage_effect_clauses.ControllerDamageRuntimeTests.test_original_city_of_brass_tap_trigger_is_separate_from_immediate_mana_and_replays",
+      "official_rule_ids": [
+        "120.1",
+        "120.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A complete source damage-to-you clause binds the resolving controller without targeting; ordinary damage ownership, printed order and replay remain authoritative."
+    },
+    {
+      "capability_id": "damage.amount.positive",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_damage_effect_clauses.ControllerDamageRuntimeTests.test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
+      "official_rule_ids": [
+        "120.1",
+        "120.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A complete source damage-to-you clause binds the resolving controller without targeting; ordinary damage ownership, printed order and replay remain authoritative."
+    },
+    {
+      "capability_id": "damage.amount.positive",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_damage_effect_clauses.FixedDamageEffectTemplateTests.test_nontarget_damage_to_you_binds_resolving_controller_and_preserves_damage",
+      "official_rule_ids": [
+        "120.1",
+        "120.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A complete source damage-to-you clause binds the resolving controller without targeting; ordinary damage ownership, printed order and replay remain authoritative."
+    },
+    {
+      "capability_id": "damage.amount.positive",
+      "evidence_class": "positive",
       "test_id": "tests.test_state_based_actions.StateBasedActionEngineTests.test_damage_results_do_not_destroy_before_state_actions",
       "official_rule_ids": [
         "120.1",
@@ -56030,6 +56180,66 @@
         "commander_review"
       ],
       "applicability_note": "Accept a positive integer damage amount and suppress zero while rejecting negative damage."
+    },
+    {
+      "capability_id": "damage.amount.positive",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_damage_effect_clauses.ControllerDamageRuntimeTests.test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
+      "official_rule_ids": [
+        "120.1",
+        "120.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A complete source damage-to-you clause binds the resolving controller without targeting; ordinary damage ownership, printed order and replay remain authoritative."
+    },
+    {
+      "capability_id": "damage.amount.positive",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_damage_effect_clauses.ControllerDamageRuntimeTests.test_original_aftershock_target_destruction_and_controller_damage_resolve_in_order",
+      "official_rule_ids": [
+        "120.1",
+        "120.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A complete source damage-to-you clause binds the resolving controller without targeting; ordinary damage ownership, printed order and replay remain authoritative."
+    },
+    {
+      "capability_id": "damage.amount.positive",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_damage_effect_clauses.ControllerDamageRuntimeTests.test_original_city_of_brass_tap_trigger_is_separate_from_immediate_mana_and_replays",
+      "official_rule_ids": [
+        "120.1",
+        "120.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A complete source damage-to-you clause binds the resolving controller without targeting; ordinary damage ownership, printed order and replay remain authoritative."
+    },
+    {
+      "capability_id": "damage.amount.positive",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_damage_effect_clauses.ControllerDamageRuntimeTests.test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
+      "official_rule_ids": [
+        "120.1",
+        "120.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A complete source damage-to-you clause binds the resolving controller without targeting; ordinary damage ownership, printed order and replay remain authoritative."
     },
     {
       "capability_id": "damage.amount.positive",
@@ -61035,6 +61245,48 @@
     },
     {
       "capability_id": "damage.result.player_life",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_damage_effect_clauses.ControllerDamageRuntimeTests.test_original_aftershock_target_destruction_and_controller_damage_resolve_in_order",
+      "official_rule_ids": [
+        "120.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A complete source damage-to-you clause binds the resolving controller without targeting; ordinary damage ownership, printed order and replay remain authoritative."
+    },
+    {
+      "capability_id": "damage.result.player_life",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_damage_effect_clauses.ControllerDamageRuntimeTests.test_original_city_of_brass_tap_trigger_is_separate_from_immediate_mana_and_replays",
+      "official_rule_ids": [
+        "120.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A complete source damage-to-you clause binds the resolving controller without targeting; ordinary damage ownership, printed order and replay remain authoritative."
+    },
+    {
+      "capability_id": "damage.result.player_life",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_damage_effect_clauses.ControllerDamageRuntimeTests.test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
+      "official_rule_ids": [
+        "120.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A complete source damage-to-you clause binds the resolving controller without targeting; ordinary damage ownership, printed order and replay remain authoritative."
+    },
+    {
+      "capability_id": "damage.result.player_life",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_exact_deck_triggers.ExactDeckTriggerFamilyTests.test_reckless_fireweaver_damages_each_opponent",
       "official_rule_ids": [
@@ -61049,6 +61301,20 @@
     },
     {
       "capability_id": "damage.result.player_life",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_damage_effect_clauses.ControllerDamageRuntimeTests.test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
+      "official_rule_ids": [
+        "120.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A complete source damage-to-you clause binds the resolving controller without targeting; ordinary damage ownership, printed order and replay remain authoritative."
+    },
+    {
+      "capability_id": "damage.result.player_life",
       "evidence_class": "mutation",
       "test_id": "tests.test_capability_implementation_mutations.CapabilityImplementationMutationTests.test_damage_result_dispatch_mutant_is_killed",
       "official_rule_ids": [
@@ -61060,6 +61326,34 @@
         "commander_review"
       ],
       "applicability_note": "Apply represented positive damage to a player as that much life loss."
+    },
+    {
+      "capability_id": "damage.result.player_life",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_damage_effect_clauses.ControllerDamageRuntimeTests.test_controller_damage_lowering_omission_mutant_is_killed",
+      "official_rule_ids": [
+        "120.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A complete source damage-to-you clause binds the resolving controller without targeting; ordinary damage ownership, printed order and replay remain authoritative."
+    },
+    {
+      "capability_id": "damage.result.player_life",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_damage_effect_clauses.FixedDamageEffectTemplateTests.test_controller_damage_has_no_arbitrary_recipient_or_zero_amount_shape",
+      "official_rule_ids": [
+        "120.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A complete source damage-to-you clause binds the resolving controller without targeting; ordinary damage ownership, printed order and replay remain authoritative."
     },
     {
       "capability_id": "damage.result.player_life",
@@ -61088,6 +61382,118 @@
         "commander_review"
       ],
       "applicability_note": "Apply represented positive damage to a player as that much life loss."
+    },
+    {
+      "capability_id": "damage.result.player_life",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_damage_effect_clauses.ControllerDamageRuntimeTests.test_original_aftershock_target_destruction_and_controller_damage_resolve_in_order",
+      "official_rule_ids": [
+        "120.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A complete source damage-to-you clause binds the resolving controller without targeting; ordinary damage ownership, printed order and replay remain authoritative."
+    },
+    {
+      "capability_id": "damage.result.player_life",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_damage_effect_clauses.ControllerDamageRuntimeTests.test_original_city_of_brass_tap_trigger_is_separate_from_immediate_mana_and_replays",
+      "official_rule_ids": [
+        "120.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A complete source damage-to-you clause binds the resolving controller without targeting; ordinary damage ownership, printed order and replay remain authoritative."
+    },
+    {
+      "capability_id": "damage.result.player_life",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_damage_effect_clauses.ControllerDamageRuntimeTests.test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
+      "official_rule_ids": [
+        "120.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A complete source damage-to-you clause binds the resolving controller without targeting; ordinary damage ownership, printed order and replay remain authoritative."
+    },
+    {
+      "capability_id": "damage.result.player_life",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_damage_effect_clauses.FixedDamageEffectTemplateTests.test_nontarget_damage_to_you_binds_resolving_controller_and_preserves_damage",
+      "official_rule_ids": [
+        "120.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A complete source damage-to-you clause binds the resolving controller without targeting; ordinary damage ownership, printed order and replay remain authoritative."
+    },
+    {
+      "capability_id": "damage.result.player_life",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_damage_effect_clauses.ControllerDamageRuntimeTests.test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
+      "official_rule_ids": [
+        "120.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A complete source damage-to-you clause binds the resolving controller without targeting; ordinary damage ownership, printed order and replay remain authoritative."
+    },
+    {
+      "capability_id": "damage.result.player_life",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_damage_effect_clauses.ControllerDamageRuntimeTests.test_original_aftershock_target_destruction_and_controller_damage_resolve_in_order",
+      "official_rule_ids": [
+        "120.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A complete source damage-to-you clause binds the resolving controller without targeting; ordinary damage ownership, printed order and replay remain authoritative."
+    },
+    {
+      "capability_id": "damage.result.player_life",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_damage_effect_clauses.ControllerDamageRuntimeTests.test_original_city_of_brass_tap_trigger_is_separate_from_immediate_mana_and_replays",
+      "official_rule_ids": [
+        "120.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A complete source damage-to-you clause binds the resolving controller without targeting; ordinary damage ownership, printed order and replay remain authoritative."
+    },
+    {
+      "capability_id": "damage.result.player_life",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_damage_effect_clauses.ControllerDamageRuntimeTests.test_original_lava_hounds_entry_damage_keeps_locked_trigger_controller_and_replays",
+      "official_rule_ids": [
+        "120.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A complete source damage-to-you clause binds the resolving controller without targeting; ordinary damage ownership, printed order and replay remain authoritative."
     },
     {
       "capability_id": "damage.result.player_life",
@@ -113096,5 +113502,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "ef175b81fb43b72b841aba208e1565523cb9cf35ccc9e2ccd850326470e7e885"
+  "fingerprint": "0b9e2e2b15afc679f7623e0fb3dffd4babf9a8c8bfc43b2cfece4eaad0be87e3"
 }

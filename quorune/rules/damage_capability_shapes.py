@@ -223,6 +223,10 @@ def fixed_damage_node_capabilities(
     )
     if fixed_set is not None:
         return fixed_set
+    if (target_schema is None and set(effect)=={'op','source','target','amount'}
+            and effect.get('op')=='damage' and effect.get('source')=='$source'
+            and effect.get('target')=='$controller' and _positive_int(effect.get('amount'))):
+        return ('damage.amount.positive','damage.result.player_life')
     if (
         target_schema is None
         and set(effect) == {"op", "source", "amount"}
