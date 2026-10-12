@@ -135,6 +135,11 @@ draw-step triggers use the existing fixed step predicate. Fixed "additional
 card" wording lowers to an ordinary draw instruction; the turn's ordinary
 draw precedes trigger placement and the extra draw resolves through the stack.
 Existing public intervening conditions are checked at occurrence and resolution.
+The multi-event compiler also composes an explicit source-entry prefix with
+one independently exact distinct same-zone event prefix. Each subscription
+retains its own source, controller and characteristic predicates; one shared
+result remains one ability. Nested subscriptions, repeated normalized events,
+mixed active zones, and unrepresented prefixes remain residual.
 
 ```mermaid
 flowchart LR

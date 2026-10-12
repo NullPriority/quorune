@@ -73,6 +73,36 @@ class ResolutionPublicConditionCompilerTests(unittest.TestCase):
             fixed_public_state_condition_matches(state, ResolutionConditionBinding(controller='A'), condition, public_object_resolver=lambda _: row, quantity_resolver=None, require_available=True)
         self.assertFalse(fixed_public_state_condition_matches(state, ResolutionConditionBinding(controller='A'), condition, public_object_resolver=lambda _: replace(row,effective_power=8,phased_out=True), quantity_resolver=None, require_available=True))
 
+    def test_independent_dual_event_subscription_keeps_each_condition(self):
+        from test_bound_effect_programs import record
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.event_subscriptions import FixedEventSubscriptionSet
+        text = 'When this enchantment enters and whenever you cast a spell with mana value 5 or greater, draw a card.'
+        ir = compile_oracle_card(record(text, 'Enchantment'), capability_registry=load_default_capability_registry())
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        node = next(n for n in ir.faces[0].nodes if n.kind == 'triggered_ability')
+        subscriptions = FixedEventSubscriptionSet.from_condition(node.event_condition)
+        self.assertEqual({'permanent.enter','spell.cast'}, {r.event for r in subscriptions.subscriptions})
+        self.assertEqual(2, len(subscriptions.subscriptions))
+        self.assertIn('fixed_multi_event_subscription', node.runtime_coverage)
+        self.assertIn('trigger.subscription.fixed_multi_event', node.capability_dependencies)
+
+    def test_independent_dual_event_rejects_nested_or_unrepresented_prefixes_and_mutant(self):
+        from test_bound_effect_programs import record
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.compiler import fixed_public_multi_event_bindings as owner
+        registry = load_default_capability_registry()
+        for text in (
+            'When this enchantment enters and whenever a player rewrites history, draw a card.',
+            'When this enchantment enters and whenever you cast a spell and whenever you gain life, draw a card.',
+            'When this creature enters and whenever another creature enters, draw a card.',
+            'When you cycle this card and when this creature dies, draw a card.',
+        ):
+            self.assertNotEqual('exact', compile_oracle_card(record(text, 'Creature — Human'), capability_registry=registry).status)
+        with patch.object(owner, 'fixed_public_multi_event_binding_spec', return_value=None):
+            with self.assertRaises(AssertionError):
+                self.test_independent_dual_event_subscription_keeps_each_condition()
+
     def test_bare_subtype_condition_retains_permanent_not_creature_domain(self):
         # CR 109.2: a bare subtype denotes battlefield permanents, including Kindred.
         from quorune.compiler.public_state_queries import fixed_public_state_condition
@@ -298,6 +328,47 @@ class ResolutionPublicConditionRuntimeTests(unittest.TestCase):
             self.resolve(session)
         with self.assertRaises(AssertionError):
             self.assertEqual(before, len(session.state.players['A'].zones['hand']))
+
+    def test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay(self):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+        session = self.session(357301)
+        engine = session.engine
+        source = self.add(engine, 'Up the Beanstalk', zone='hand')
+        small = self.add(engine, 'Hill Giant', zone='hand', ref='small-spell')
+        large = self.add(engine, 'Craw Wurm', zone='hand', ref='large-spell')
+        foreign = self.add(engine, "Jace's Ingenuity", seat='B', zone='hand', ref='foreign-large-spell')
+        program = compile_best_available_card_program(self.db, self.db.lookup('Up the Beanstalk'), semantic_registry=engine.semantics, capability_registry=self.registry, capability_profile='commander_review')
+        self.assertTrue(bind_card_program_runtime(program, capability_registry=self.registry, profile='commander_review')['strict_capability_ready'])
+        action = self.ready(session, source, {'G': 5, 'R': 1, 'C': 12})
+        session.state.players['B'].mana_pool.update({'U': 2, 'C': 3})
+        self.checkpoint(session)
+        before = len(session.state.players['A'].zones['hand'])
+        accepted = session.act('pilot:A', {'action_id': action['id'], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        self.assertEqual(before, len(session.state.players['A'].zones['hand']))
+        for card, expected_draw in ((small, 0), (large, 1)):
+            while session.pending_principals()[0] != 'pilot:A':
+                self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
+            action = next(a for a in session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions'] if a.get('card') == card.ref)
+            before = len(session.state.players['A'].zones['hand'])
+            accepted = session.act('pilot:A', {'action_id': action['id'], 'pay': 'auto'})
+            self.assertTrue(accepted.ok, accepted.summary)
+            self.resolve(session)
+            self.assertEqual(before - 1 + expected_draw, len(session.state.players['A'].zones['hand']))
+        while session.pending_principals()[0] != 'pilot:B':
+            self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
+        action = next(a for a in session.packet('pilot:B', full=True)['decision']['ctx']['legal']['actions'] if a.get('card') == foreign.ref)
+        before = len(session.state.players['A'].zones['hand'])
+        accepted = session.act('pilot:B', {'action_id': action['id'], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        self.assertEqual(before, len(session.state.players['A'].zones['hand']))
+        projected = json.dumps(session.packet('pilot:D', full=True)['state'])
+        for oid in session.state.players['A'].zones['hand']:
+            self.assertNotIn(session.state.cards[oid].ref, projected)
+        self.replay(session, load=True)
 
     def test_trusted_prefix_changes_condition_before_private_result_and_replay(self):
         session = self.session(4821001)

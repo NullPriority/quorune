@@ -9390,23 +9390,92 @@
     {
       "id": "trigger.subscription.fixed_multi_event",
       "version": 1,
-      "official_rules": ["603.2", "603.3", "603.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rules": [
+        "603.2",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Bind one source-spanned triggered ability to two fixed normalized events in the same active zone, preserving an independent typed condition for each subscription and one shared effect body.",
-        "inputs": ["one exact two-event source clause", "two represented normalized event identities", "one battlefield active zone", "one closed predicate per event", "one independently exact noncounter effect body"],
-        "outputs": ["one CardProgram ability", "two typed trigger subscriptions", "one occurrence per matching committed event", "current layer-6 ability applicability", "ordinary APNAP placement", "exact replay"],
-        "exclusions": ["cross-zone subscriptions", "commander-relative subjects without sealed designation facts", "Room and other unavailable event producers", "linked or chosen subjects", "more than two events", "intervening-if, reflexive, delayed, first-time, and once-per-turn grammar", "counter-placement bodies retained by the fixed counter trigger capability"]
+        "inputs": [
+          "one exact two-event source clause",
+          "two represented normalized event identities",
+          "one battlefield active zone",
+          "one closed predicate per event",
+          "one independently exact noncounter effect body",
+          "one explicit source-entry prefix conjoined with one independently closed distinct same-zone event prefix"
+        ],
+        "outputs": [
+          "one CardProgram ability",
+          "two typed trigger subscriptions",
+          "one occurrence per matching committed event",
+          "current layer-6 ability applicability",
+          "ordinary APNAP placement",
+          "exact replay"
+        ],
+        "exclusions": [
+          "cross-zone subscriptions",
+          "commander-relative subjects without sealed designation facts",
+          "Room and other unavailable event producers",
+          "linked or chosen subjects",
+          "more than two events",
+          "intervening-if, reflexive, delayed, first-time, and once-per-turn grammar",
+          "counter-placement bodies retained by the fixed counter trigger capability"
+        ]
       },
       "dependencies": [],
-      "implementation_components": ["quorune.rules.event_subscriptions.FixedEventSubscription", "quorune.rules.event_subscriptions.FixedEventSubscriptionSet", "quorune.compiler.fixed_public_multi_event_bindings.fixed_public_multi_event_binding_spec", "quorune.compiler.fixed_counter_trigger_nodes.fixed_typed_event_effect_trigger_node", "quorune.trigger_discovery.semantic_event_matches", "quorune.card_programs.model.ability_to_card_dict"],
-      "positive_tests": ["test_fixed_multi_event_trigger_contract_matrix", "test_fixed_multi_event_source_triggers_share_events_and_replay", "test_fixed_multi_event_departure_uses_lki_and_apnap"],
-      "negative_tests": ["test_fixed_multi_event_trigger_near_misses_remain_material", "test_fixed_multi_event_subscription_model_rejects_malformed", "test_fixed_multi_event_dependency_and_parser_mutant_fail_closed"],
-      "interaction_tests": ["test_fixed_multi_event_source_triggers_share_events_and_replay", "test_fixed_multi_event_departure_uses_lki_and_apnap"],
-      "multiplayer_tests": ["test_fixed_multi_event_departure_uses_lki_and_apnap"],
-      "privacy_tests": ["test_fixed_multi_event_source_triggers_share_events_and_replay"],
-      "replay_tests": ["test_fixed_multi_event_source_triggers_share_events_and_replay"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "implementation_components": [
+        "quorune.rules.event_subscriptions.FixedEventSubscription",
+        "quorune.rules.event_subscriptions.FixedEventSubscriptionSet",
+        "quorune.compiler.fixed_public_multi_event_bindings.fixed_public_multi_event_binding_spec",
+        "quorune.compiler.fixed_counter_trigger_nodes.fixed_typed_event_effect_trigger_node",
+        "quorune.trigger_discovery.semantic_event_matches",
+        "quorune.card_programs.model.ability_to_card_dict"
+      ],
+      "positive_tests": [
+        "test_fixed_multi_event_trigger_contract_matrix",
+        "test_fixed_multi_event_source_triggers_share_events_and_replay",
+        "test_fixed_multi_event_departure_uses_lki_and_apnap",
+        "test_independent_dual_event_subscription_keeps_each_condition",
+        "test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay"
+      ],
+      "negative_tests": [
+        "test_fixed_multi_event_trigger_near_misses_remain_material",
+        "test_fixed_multi_event_subscription_model_rejects_malformed",
+        "test_fixed_multi_event_dependency_and_parser_mutant_fail_closed",
+        "test_independent_dual_event_rejects_nested_or_unrepresented_prefixes_and_mutant",
+        "test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay"
+      ],
+      "interaction_tests": [
+        "test_fixed_multi_event_source_triggers_share_events_and_replay",
+        "test_fixed_multi_event_departure_uses_lki_and_apnap",
+        "test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay"
+      ],
+      "multiplayer_tests": [
+        "test_fixed_multi_event_departure_uses_lki_and_apnap",
+        "test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay"
+      ],
+      "privacy_tests": [
+        "test_fixed_multi_event_source_triggers_share_events_and_replay",
+        "test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay"
+      ],
+      "replay_tests": [
+        "test_fixed_multi_event_source_triggers_share_events_and_replay",
+        "test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "not_applicable",
       "dependency_fail_closed_rationale": "The subscription descriptor only selects among already committed normalized events; each consuming program separately declares its event-producer, placement, current-ability, target, and effect dependencies.",
       "implementation_mutation_status": "killed",

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "b4d94538138a213badf9e59a36b245d94ae35caa82cbfa478b7282eb09996234",
-  "declaration_source_fingerprint": "517ed09e24d931cd0d9f1ea839f07ef1cbab965ec85d9dd51e7b316a9bfd8cdf",
+  "registry_fingerprint": "33661b4ff89996d057d8d137188395c1048e23942796b10f2f79bed8e351468d",
+  "declaration_source_fingerprint": "d7aa513ef18bfc5923c1f551b7aea32a65ad4f2417ae89c51f404783a834e964",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -100267,6 +100267,22 @@
     },
     {
       "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two distinct typed subscriptions share one source-zone and result while preserving source entry, controller and mana-value predicates; actual casts, foreign/small controls, privacy, replay and compiler omission evidence."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_fixed_multi_event_departure_uses_lki_and_apnap",
       "official_rule_ids": [
@@ -100280,6 +100296,22 @@
         "commander_review"
       ],
       "applicability_note": "Place simultaneous source-entry subscriptions for active and nonactive controllers through ordinary four-player APNAP ordering."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two distinct typed subscriptions share one source-zone and result while preserving source entry, controller and mana-value predicates; actual casts, foreign/small controls, privacy, replay and compiler omission evidence."
     },
     {
       "capability_id": "trigger.subscription.fixed_multi_event",
@@ -100299,6 +100331,22 @@
     },
     {
       "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionCompilerTests.test_independent_dual_event_rejects_nested_or_unrepresented_prefixes_and_mutant",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two distinct typed subscriptions share one source-zone and result while preserving source entry, controller and mana-value predicates; actual casts, foreign/small controls, privacy, replay and compiler omission evidence."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_fixed_multi_event_dependency_and_parser_mutant_fail_closed",
       "official_rule_ids": [
@@ -100312,6 +100360,38 @@
         "commander_review"
       ],
       "applicability_note": "Retain a material residual when the typed multi-event capability or its shared parser is unavailable."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "negative",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionCompilerTests.test_independent_dual_event_rejects_nested_or_unrepresented_prefixes_and_mutant",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two distinct typed subscriptions share one source-zone and result while preserving source entry, controller and mana-value predicates; actual casts, foreign/small controls, privacy, replay and compiler omission evidence."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "negative",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two distinct typed subscriptions share one source-zone and result while preserving source entry, controller and mana-value predicates; actual casts, foreign/small controls, privacy, replay and compiler omission evidence."
     },
     {
       "capability_id": "trigger.subscription.fixed_multi_event",
@@ -100363,6 +100443,38 @@
     },
     {
       "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "positive",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionCompilerTests.test_independent_dual_event_subscription_keeps_each_condition",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two distinct typed subscriptions share one source-zone and result while preserving source entry, controller and mana-value predicates; actual casts, foreign/small controls, privacy, replay and compiler omission evidence."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "positive",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two distinct typed subscriptions share one source-zone and result while preserving source entry, controller and mana-value predicates; actual casts, foreign/small controls, privacy, replay and compiler omission evidence."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_fixed_multi_event_source_triggers_share_events_and_replay",
       "official_rule_ids": [
@@ -100376,6 +100488,22 @@
         "commander_review"
       ],
       "applicability_note": "Project public entry and attack trigger facts to every seat without exposing source physical or logical identities."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two distinct typed subscriptions share one source-zone and result while preserving source entry, controller and mana-value predicates; actual casts, foreign/small controls, privacy, replay and compiler omission evidence."
     },
     {
       "capability_id": "trigger.subscription.fixed_multi_event",
@@ -100424,6 +100552,22 @@
         "commander_review"
       ],
       "applicability_note": "Replay the second subscribed event and shared body from a pre-attack checkpoint to the identical authoritative hash."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "replay",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two distinct typed subscriptions share one source-zone and result while preserving source entry, controller and mana-value predicates; actual casts, foreign/small controls, privacy, replay and compiler omission evidence."
     },
     {
       "capability_id": "trigger.upkeep.previous_turn_transform",
@@ -109593,5 +109737,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "c25172aded908e31c77a8710412692e28964b9cdb4a492ac05b2b940095448af"
+  "fingerprint": "e0e5629e4b89b3bfae19b7cd4a5d7e4fad0b2d21652980b060b4347eafd1220b"
 }

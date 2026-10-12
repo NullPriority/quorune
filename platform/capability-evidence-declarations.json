@@ -53716,11 +53716,43 @@
     },
     {
       "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two distinct typed subscriptions share one source-zone and result while preserving source entry, controller and mana-value predicates; actual casts, foreign/small controls, privacy, replay and compiler omission evidence."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_fixed_multi_event_departure_uses_lki_and_apnap",
       "official_rule_ids": ["603.2", "603.3", "603.6"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Place simultaneous source-entry subscriptions for active and nonactive controllers through ordinary four-player APNAP ordering."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two distinct typed subscriptions share one source-zone and result while preserving source entry, controller and mana-value predicates; actual casts, foreign/small controls, privacy, replay and compiler omission evidence."
     },
     {
       "capability_id": "trigger.subscription.fixed_multi_event",
@@ -53732,11 +53764,59 @@
     },
     {
       "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionCompilerTests.test_independent_dual_event_rejects_nested_or_unrepresented_prefixes_and_mutant",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two distinct typed subscriptions share one source-zone and result while preserving source entry, controller and mana-value predicates; actual casts, foreign/small controls, privacy, replay and compiler omission evidence."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_fixed_multi_event_dependency_and_parser_mutant_fail_closed",
       "official_rule_ids": ["603.2", "603.3", "603.6"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Retain a material residual when the typed multi-event capability or its shared parser is unavailable."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "negative",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionCompilerTests.test_independent_dual_event_rejects_nested_or_unrepresented_prefixes_and_mutant",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two distinct typed subscriptions share one source-zone and result while preserving source entry, controller and mana-value predicates; actual casts, foreign/small controls, privacy, replay and compiler omission evidence."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "negative",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two distinct typed subscriptions share one source-zone and result while preserving source entry, controller and mana-value predicates; actual casts, foreign/small controls, privacy, replay and compiler omission evidence."
     },
     {
       "capability_id": "trigger.subscription.fixed_multi_event",
@@ -53750,11 +53830,59 @@
     {"capability_id":"trigger.subscription.fixed_multi_event","evidence_class":"positive","test_id":"tests.test_fixed_counter_event_triggers.FlavorNamedTriggerRuntimeTests.test_original_squirrel_flavor_entry_creates_one_token_and_replays","official_rule_ids":["603.2","603.3","603.6"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Squirrel Girl's accepted cast and entry produces one controlled green 1/1 Squirrel token through its labeled multi-event ability, with exact replay from before the action."},
     {
       "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "positive",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionCompilerTests.test_independent_dual_event_subscription_keeps_each_condition",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two distinct typed subscriptions share one source-zone and result while preserving source entry, controller and mana-value predicates; actual casts, foreign/small controls, privacy, replay and compiler omission evidence."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "positive",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two distinct typed subscriptions share one source-zone and result while preserving source entry, controller and mana-value predicates; actual casts, foreign/small controls, privacy, replay and compiler omission evidence."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_fixed_multi_event_source_triggers_share_events_and_replay",
       "official_rule_ids": ["603.2", "603.3", "603.6"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Project public entry and attack trigger facts to every seat without exposing source physical or logical identities."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two distinct typed subscriptions share one source-zone and result while preserving source entry, controller and mana-value predicates; actual casts, foreign/small controls, privacy, replay and compiler omission evidence."
     },
     {"capability_id":"trigger.subscription.fixed_multi_event","evidence_class":"replay","test_id":"tests.test_fixed_counter_event_triggers.FlavorNamedTriggerRuntimeTests.test_original_squirrel_flavor_attack_creates_one_token_and_replays","official_rule_ids":["603.2","603.3","603.6"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Squirrel Girl's accepted attack produces one controlled green 1/1 Squirrel token through its labeled multi-event ability, with exact replay from before the action."},
     {"capability_id":"trigger.subscription.fixed_multi_event","evidence_class":"replay","test_id":"tests.test_fixed_counter_event_triggers.FlavorNamedTriggerRuntimeTests.test_original_squirrel_flavor_entry_creates_one_token_and_replays","official_rule_ids":["603.2","603.3","603.6"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Squirrel Girl's accepted cast and entry produces one controlled green 1/1 Squirrel token through its labeled multi-event ability, with exact replay from before the action."},
@@ -53765,6 +53893,22 @@
       "official_rule_ids": ["603.2", "603.3", "603.6"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the second subscribed event and shared body from a pre-attack checkpoint to the identical authoritative hash."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "replay",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two distinct typed subscriptions share one source-zone and result while preserving source entry, controller and mana-value predicates; actual casts, foreign/small controls, privacy, replay and compiler omission evidence."
     },
     {
       "capability_id": "trigger.upkeep.previous_turn_transform",

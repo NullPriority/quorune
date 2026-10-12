@@ -148,6 +148,20 @@
   "dynamic_requirements": [
     {
       "source": "tests/test_resolution_public_conditions.py",
+      "symbol": "ResolutionPublicConditionRuntimeTests.test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay",
+      "card_names": [
+        "Craw Wurm",
+        "Hill Giant",
+        "Jace's Ingenuity",
+        "Up the Beanstalk"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Real dual-event source and positive/negative cast witnesses consume these exact fixture cards."
+    },
+    {
+      "source": "tests/test_resolution_public_conditions.py",
       "symbol": "ResolutionPublicConditionRuntimeTests.test_original_numeric_entry_condition_uses_current_power_at_both_trigger_boundaries",
       "card_names": [
         "Beastbond Outcaster",

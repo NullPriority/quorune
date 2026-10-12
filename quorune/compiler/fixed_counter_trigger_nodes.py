@@ -192,6 +192,7 @@ PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
 )
 MULTI_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
     {
+        "independent_dual_event",
         "source_enters_or_attacks",
         "source_enters_or_dies",
         "source_attacks_or_blocks",

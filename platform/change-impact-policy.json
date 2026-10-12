@@ -1909,6 +1909,20 @@
       ]
     },
     {
+      "id": "independent-dual-event-contract",
+      "patterns": [
+        "quorune/compiler/fixed_public_multi_event_bindings.py",
+        "quorune/compiler/fixed_counter_trigger_nodes.py"
+      ],
+      "test_modules": [
+        "test_fixed_counter_event_triggers",
+        "test_resolution_public_conditions",
+        "test_card_program_v2",
+        "test_exact_deck_triggers",
+        "test_card_program_trust"
+      ]
+    },
+    {
       "id": "fixed-numeric-condition-contract",
       "patterns": [
         "quorune/continuous_conditions.py",
