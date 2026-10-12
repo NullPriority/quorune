@@ -468,17 +468,20 @@
       "positive_tests": [
         "test_fixed_numeric_existence_condition_has_explicit_timing_and_closed_value",
         "test_original_numeric_entry_condition_uses_current_power_at_both_trigger_boundaries",
-        "test_numeric_resolution_uses_current_stats_and_condition_omission_mutant_is_killed"
+        "test_numeric_resolution_uses_current_stats_and_condition_omission_mutant_is_killed",
+        "test_kicked_full_program_survives_numeric_condition_dependency_consumer"
       ],
       "negative_tests": [
         "test_fixed_numeric_existence_condition_has_explicit_timing_and_closed_value",
         "test_numeric_existence_schema_rejects_malformed_values_and_kills_comparison_mutant",
         "test_original_numeric_entry_condition_uses_current_power_at_both_trigger_boundaries",
-        "test_numeric_existence_unavailable_stats_fail_closed_and_phased_objects_do_not_count"
+        "test_numeric_existence_unavailable_stats_fail_closed_and_phased_objects_do_not_count",
+        "test_kicked_full_program_survives_numeric_condition_dependency_consumer"
       ],
       "interaction_tests": [
         "test_original_numeric_entry_condition_uses_current_power_at_both_trigger_boundaries",
-        "test_numeric_resolution_uses_current_stats_and_condition_omission_mutant_is_killed"
+        "test_numeric_resolution_uses_current_stats_and_condition_omission_mutant_is_killed",
+        "test_kicked_full_program_survives_numeric_condition_dependency_consumer"
       ],
       "multiplayer_tests": [
         "test_original_numeric_entry_condition_uses_current_power_at_both_trigger_boundaries"
@@ -12955,17 +12958,20 @@
       ],
       "positive_tests": [
         "test_kicked_result_is_separate_from_mandatory_prefix",
-        "test_real_roil_normal_and_kicked_cast_keep_prefix_and_optional_result_scope"
+        "test_real_roil_normal_and_kicked_cast_keep_prefix_and_optional_result_scope",
+        "test_kicked_full_program_survives_numeric_condition_dependency_consumer"
       ],
       "negative_tests": [
         "test_cast_condition_rejects_self_replacement_open_targets_and_unknown_fields",
         "test_runtime_cast_fact_accepts_only_sealed_boolean_and_locked_controller",
         "test_illegal_roil_target_skips_kicked_draw_even_though_fact_is_paid",
-        "test_missing_cast_fact_is_rejected_before_conditional_result"
+        "test_missing_cast_fact_is_rejected_before_conditional_result",
+        "test_kicked_full_program_survives_numeric_condition_dependency_consumer"
       ],
       "interaction_tests": [
         "test_real_roil_normal_and_kicked_cast_keep_prefix_and_optional_result_scope",
-        "test_real_espionage_private_discard_after_prefix_pending_load_and_replay"
+        "test_real_espionage_private_discard_after_prefix_pending_load_and_replay",
+        "test_kicked_full_program_survives_numeric_condition_dependency_consumer"
       ],
       "multiplayer_tests": [
         "test_real_espionage_private_discard_after_prefix_pending_load_and_replay"

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "07eafef1922abd8262b88cbe3bfe7b580eb3abb3e16cb4530cba0f67f225ef07",
-  "declaration_source_fingerprint": "bf72c019611e87349d684c5aa6062cefc82d551a3e19c5969e5eb3e4f4f3de9a",
+  "registry_fingerprint": "003d7a23e8b3a91fe58b8226714ded1b5c1140db4ba0f5edba758b39317fb2d2",
+  "declaration_source_fingerprint": "42b5d37c86fae61901873c7d4c7ba68974b86343d84621d2b27cd49e878c62d3",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -28355,6 +28355,24 @@
     {
       "capability_id": "condition.creature.fixed_numeric_exists",
       "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_spell_conditions.KickedSpellConditionTests.test_kicked_full_program_survives_numeric_condition_dependency_consumer",
+      "official_rule_ids": [
+        "603.4",
+        "608.2a",
+        "608.2c",
+        "613.1g",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full compiler dependency selection distinguishes the sealed kicked-cast condition from the enum-valued current creature numeric condition without assuming common kind representation."
+    },
+    {
+      "capability_id": "condition.creature.fixed_numeric_exists",
+      "evidence_class": "interaction",
       "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_numeric_resolution_uses_current_stats_and_condition_omission_mutant_is_killed",
       "official_rule_ids": [
         "603.4",
@@ -28445,6 +28463,24 @@
     {
       "capability_id": "condition.creature.fixed_numeric_exists",
       "evidence_class": "negative",
+      "test_id": "tests.test_kicked_spell_conditions.KickedSpellConditionTests.test_kicked_full_program_survives_numeric_condition_dependency_consumer",
+      "official_rule_ids": [
+        "603.4",
+        "608.2a",
+        "608.2c",
+        "613.1g",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full compiler dependency selection distinguishes the sealed kicked-cast condition from the enum-valued current creature numeric condition without assuming common kind representation."
+    },
+    {
+      "capability_id": "condition.creature.fixed_numeric_exists",
+      "evidence_class": "negative",
       "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionCompilerTests.test_fixed_numeric_existence_condition_has_explicit_timing_and_closed_value",
       "official_rule_ids": [
         "603.4",
@@ -28513,6 +28549,24 @@
         "commander_review"
       ],
       "applicability_note": "One fixed creature numeric existence condition reads complete effective power at trigger occurrence and resolution; counters, buffs, removal response, opponent boundaries, privacy and replay are distinguished from unsupported static timing."
+    },
+    {
+      "capability_id": "condition.creature.fixed_numeric_exists",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_spell_conditions.KickedSpellConditionTests.test_kicked_full_program_survives_numeric_condition_dependency_consumer",
+      "official_rule_ids": [
+        "603.4",
+        "608.2a",
+        "608.2c",
+        "613.1g",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full compiler dependency selection distinguishes the sealed kicked-cast condition from the enum-valued current creature numeric condition without assuming common kind representation."
     },
     {
       "capability_id": "condition.creature.fixed_numeric_exists",
@@ -78780,6 +78834,26 @@
     },
     {
       "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_spell_conditions.KickedSpellConditionTests.test_kicked_full_program_survives_numeric_condition_dependency_consumer",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full compiler dependency selection distinguishes the sealed kicked-cast condition from the enum-valued current creature numeric condition without assuming common kind representation."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_kicked_spell_conditions.KickedSpellActionTests.test_real_espionage_private_discard_after_prefix_pending_load_and_replay",
       "official_rule_ids": [
@@ -78901,6 +78975,26 @@
     {
       "capability_id": "resolution.effect.fixed_cast_fact",
       "evidence_class": "negative",
+      "test_id": "tests.test_kicked_spell_conditions.KickedSpellConditionTests.test_kicked_full_program_survives_numeric_condition_dependency_consumer",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full compiler dependency selection distinguishes the sealed kicked-cast condition from the enum-valued current creature numeric condition without assuming common kind representation."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "negative",
       "test_id": "tests.test_kicked_spell_conditions.KickedSpellConditionTests.test_runtime_cast_fact_accepts_only_sealed_boolean_and_locked_controller",
       "official_rule_ids": [
         "608.2b",
@@ -78937,6 +79031,26 @@
         "commander_review"
       ],
       "applicability_note": "Recorded kicked choice controls only its fixed additional result after the independent prefix; actual cast targets, private choices, rollback and replay preserve that branch scope."
+    },
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_spell_conditions.KickedSpellConditionTests.test_kicked_full_program_survives_numeric_condition_dependency_consumer",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full compiler dependency selection distinguishes the sealed kicked-cast condition from the enum-valued current creature numeric condition without assuming common kind representation."
     },
     {
       "capability_id": "resolution.effect.fixed_cast_fact",
@@ -115381,5 +115495,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "987f0d6c70d3dad974af98fea21598868ce039f6a73c4d118733a37dfcb50e71"
+  "fingerprint": "469753ad76def3e61805bab23572e74c123bc998278135a3147353fdf6c5392d"
 }

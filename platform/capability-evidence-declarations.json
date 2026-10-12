@@ -15066,6 +15066,24 @@
     {
       "capability_id": "condition.creature.fixed_numeric_exists",
       "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_spell_conditions.KickedSpellConditionTests.test_kicked_full_program_survives_numeric_condition_dependency_consumer",
+      "official_rule_ids": [
+        "603.4",
+        "608.2a",
+        "608.2c",
+        "613.1g",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full compiler dependency selection distinguishes the sealed kicked-cast condition from the enum-valued current creature numeric condition without assuming common kind representation."
+    },
+    {
+      "capability_id": "condition.creature.fixed_numeric_exists",
+      "evidence_class": "interaction",
       "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_numeric_resolution_uses_current_stats_and_condition_omission_mutant_is_killed",
       "official_rule_ids": [
         "603.4",
@@ -15156,6 +15174,24 @@
     {
       "capability_id": "condition.creature.fixed_numeric_exists",
       "evidence_class": "negative",
+      "test_id": "tests.test_kicked_spell_conditions.KickedSpellConditionTests.test_kicked_full_program_survives_numeric_condition_dependency_consumer",
+      "official_rule_ids": [
+        "603.4",
+        "608.2a",
+        "608.2c",
+        "613.1g",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full compiler dependency selection distinguishes the sealed kicked-cast condition from the enum-valued current creature numeric condition without assuming common kind representation."
+    },
+    {
+      "capability_id": "condition.creature.fixed_numeric_exists",
+      "evidence_class": "negative",
       "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionCompilerTests.test_fixed_numeric_existence_condition_has_explicit_timing_and_closed_value",
       "official_rule_ids": [
         "603.4",
@@ -15224,6 +15260,24 @@
         "commander_review"
       ],
       "applicability_note": "One fixed creature numeric existence condition reads complete effective power at trigger occurrence and resolution; counters, buffs, removal response, opponent boundaries, privacy and replay are distinguished from unsupported static timing."
+    },
+    {
+      "capability_id": "condition.creature.fixed_numeric_exists",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_spell_conditions.KickedSpellConditionTests.test_kicked_full_program_survives_numeric_condition_dependency_consumer",
+      "official_rule_ids": [
+        "603.4",
+        "608.2a",
+        "608.2c",
+        "613.1g",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full compiler dependency selection distinguishes the sealed kicked-cast condition from the enum-valued current creature numeric condition without assuming common kind representation."
     },
     {
       "capability_id": "condition.creature.fixed_numeric_exists",
@@ -44363,14 +44417,74 @@
     {"capability_id": "resolution.effect.fixed_cast_fact", "evidence_class": "interaction", "test_id": "tests.test_kicked_spell_conditions.KickedSpellActionTests.test_copy_retains_kicked_fact_without_repaying_cost_owner", "official_rule_ids": ["608.2b", "608.2c", "702.33a", "702.33d", "702.33e", "702.33f", "707.10"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Actual registered commands preserve independently specified result quantity, recorded cast choice, departed object identity and canonical continuation outcomes with exact replay."},
     {"capability_id": "resolution.effect.fixed_cast_fact", "evidence_class": "interaction", "test_id": "tests.test_kicked_spell_conditions.KickedSpellActionTests.test_real_espionage_private_discard_after_prefix_pending_load_and_replay", "official_rule_ids": ["608.2b", "608.2c", "702.33a", "702.33d", "702.33e", "702.33f", "707.10"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Recorded kicked choice controls only its fixed additional result after the independent prefix; actual cast targets, private choices, rollback and replay preserve that branch scope."},
     {"capability_id": "resolution.effect.fixed_cast_fact", "evidence_class": "interaction", "test_id": "tests.test_kicked_spell_conditions.KickedSpellActionTests.test_real_roil_normal_and_kicked_cast_keep_prefix_and_optional_result_scope", "official_rule_ids": ["608.2b", "608.2c", "702.33a", "702.33d", "702.33e", "702.33f", "707.10"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Recorded kicked choice controls only its fixed additional result after the independent prefix; actual cast targets, private choices, rollback and replay preserve that branch scope."},
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_kicked_spell_conditions.KickedSpellConditionTests.test_kicked_full_program_survives_numeric_condition_dependency_consumer",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full compiler dependency selection distinguishes the sealed kicked-cast condition from the enum-valued current creature numeric condition without assuming common kind representation."
+    },
     {"capability_id": "resolution.effect.fixed_cast_fact", "evidence_class": "multiplayer", "test_id": "tests.test_kicked_spell_conditions.KickedSpellActionTests.test_real_espionage_private_discard_after_prefix_pending_load_and_replay", "official_rule_ids": ["608.2b", "608.2c", "702.33a", "702.33d", "702.33e", "702.33f", "707.10"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Recorded kicked choice controls only its fixed additional result after the independent prefix; actual cast targets, private choices, rollback and replay preserve that branch scope."},
     {"capability_id": "resolution.effect.fixed_cast_fact", "evidence_class": "mutation", "test_id": "tests.test_kicked_spell_conditions.KickedSpellActionTests.test_unconditional_cast_result_mutant_is_killed_by_actual_unpaid_cast", "official_rule_ids": ["608.2b", "608.2c", "702.33a", "702.33d", "702.33e", "702.33f", "707.10"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Actual registered commands preserve independently specified result quantity, recorded cast choice, departed object identity and canonical continuation outcomes with exact replay."},
     {"capability_id": "resolution.effect.fixed_cast_fact", "evidence_class": "mutation", "test_id": "tests.test_kicked_spell_conditions.KickedSpellConditionTests.test_kicked_cast_fact_dependency_mutants_fail_closed", "official_rule_ids": ["608.2b", "608.2c", "702.33a", "702.33d", "702.33e", "702.33f", "707.10"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Recorded kicked choice controls only its fixed additional result after the independent prefix; actual cast targets, private choices, rollback and replay preserve that branch scope."},
     {"capability_id": "resolution.effect.fixed_cast_fact", "evidence_class": "negative", "test_id": "tests.test_kicked_spell_conditions.KickedSpellActionTests.test_illegal_roil_target_skips_kicked_draw_even_though_fact_is_paid", "official_rule_ids": ["608.2b", "608.2c", "702.33a", "702.33d", "702.33e", "702.33f", "707.10"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Recorded kicked choice controls only its fixed additional result after the independent prefix; actual cast targets, private choices, rollback and replay preserve that branch scope."},
     {"capability_id": "resolution.effect.fixed_cast_fact", "evidence_class": "negative", "test_id": "tests.test_kicked_spell_conditions.KickedSpellActionTests.test_missing_cast_fact_is_rejected_before_conditional_result", "official_rule_ids": ["608.2b", "608.2c", "702.33a", "702.33d", "702.33e", "702.33f", "707.10"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Recorded kicked choice controls only its fixed additional result after the independent prefix; actual cast targets, private choices, rollback and replay preserve that branch scope."},
     {"capability_id": "resolution.effect.fixed_cast_fact", "evidence_class": "negative", "test_id": "tests.test_kicked_spell_conditions.KickedSpellConditionTests.test_cast_condition_rejects_self_replacement_open_targets_and_unknown_fields", "official_rule_ids": ["608.2b", "608.2c", "702.33a", "702.33d", "702.33e", "702.33f", "707.10"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Recorded kicked choice controls only its fixed additional result after the independent prefix; actual cast targets, private choices, rollback and replay preserve that branch scope."},
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "negative",
+      "test_id": "tests.test_kicked_spell_conditions.KickedSpellConditionTests.test_kicked_full_program_survives_numeric_condition_dependency_consumer",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full compiler dependency selection distinguishes the sealed kicked-cast condition from the enum-valued current creature numeric condition without assuming common kind representation."
+    },
     {"capability_id": "resolution.effect.fixed_cast_fact", "evidence_class": "negative", "test_id": "tests.test_kicked_spell_conditions.KickedSpellConditionTests.test_runtime_cast_fact_accepts_only_sealed_boolean_and_locked_controller", "official_rule_ids": ["608.2b", "608.2c", "702.33a", "702.33d", "702.33e", "702.33f", "707.10"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Recorded kicked choice controls only its fixed additional result after the independent prefix; actual cast targets, private choices, rollback and replay preserve that branch scope."},
     {"capability_id": "resolution.effect.fixed_cast_fact", "evidence_class": "positive", "test_id": "tests.test_kicked_spell_conditions.KickedSpellActionTests.test_real_roil_normal_and_kicked_cast_keep_prefix_and_optional_result_scope", "official_rule_ids": ["608.2b", "608.2c", "702.33a", "702.33d", "702.33e", "702.33f", "707.10"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Recorded kicked choice controls only its fixed additional result after the independent prefix; actual cast targets, private choices, rollback and replay preserve that branch scope."},
+    {
+      "capability_id": "resolution.effect.fixed_cast_fact",
+      "evidence_class": "positive",
+      "test_id": "tests.test_kicked_spell_conditions.KickedSpellConditionTests.test_kicked_full_program_survives_numeric_condition_dependency_consumer",
+      "official_rule_ids": [
+        "608.2b",
+        "608.2c",
+        "702.33a",
+        "702.33d",
+        "702.33e",
+        "702.33f",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Full compiler dependency selection distinguishes the sealed kicked-cast condition from the enum-valued current creature numeric condition without assuming common kind representation."
+    },
     {"capability_id": "resolution.effect.fixed_cast_fact", "evidence_class": "positive", "test_id": "tests.test_kicked_spell_conditions.KickedSpellConditionTests.test_kicked_result_is_separate_from_mandatory_prefix", "official_rule_ids": ["608.2b", "608.2c", "702.33a", "702.33d", "702.33e", "702.33f", "707.10"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Recorded kicked choice controls only its fixed additional result after the independent prefix; actual cast targets, private choices, rollback and replay preserve that branch scope."},
     {"capability_id": "resolution.effect.fixed_cast_fact", "evidence_class": "privacy", "test_id": "tests.test_kicked_spell_conditions.KickedSpellActionTests.test_real_espionage_private_discard_after_prefix_pending_load_and_replay", "official_rule_ids": ["608.2b", "608.2c", "702.33a", "702.33d", "702.33e", "702.33f", "707.10"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Recorded kicked choice controls only its fixed additional result after the independent prefix; actual cast targets, private choices, rollback and replay preserve that branch scope."},
     {"capability_id": "resolution.effect.fixed_cast_fact", "evidence_class": "replay", "test_id": "tests.test_kicked_spell_conditions.KickedSpellActionTests.test_real_espionage_private_discard_after_prefix_pending_load_and_replay", "official_rule_ids": ["608.2b", "608.2c", "702.33a", "702.33d", "702.33e", "702.33f", "707.10"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Recorded kicked choice controls only its fixed additional result after the independent prefix; actual cast targets, private choices, rollback and replay preserve that branch scope."},
