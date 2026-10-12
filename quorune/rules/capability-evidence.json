@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "544ce3025c39cac058405df9cc13ae915d28f084bf02ac1552fac74c92ff36ee",
-  "declaration_source_fingerprint": "659e493906a16ebb38e2a05a840fadb9fd7f6134edbeb65e9b4c173c95ca44ec",
+  "registry_fingerprint": "c90b4cd87804073d6c32737f360604b751d77afd94ff5ced408cb13447f2f6bf",
+  "declaration_source_fingerprint": "f017fa97551472ba2d643471ea5db4986cdd445ff583ca70975810fe2ec9f003",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -29630,6 +29630,42 @@
     },
     {
       "capability_id": "continuous.ability.temporary_quoted_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantRuntimeTests.test_original_verdant_rebirth_returns_granted_recipient_after_real_death_and_replays",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "113.7",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Temporary quoted triggered grants use the canonical predeparture fragment snapshot, recipient-source trigger, private controller consequence, source incarnation and pre-cast replay; unknown bodies remain residual."
+    },
+    {
+      "capability_id": "continuous.ability.temporary_quoted_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantRuntimeTests.test_temporary_death_grant_uses_departing_recipient_controller_private_draw_and_replay",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "113.7",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Temporary quoted triggered grants use the canonical predeparture fragment snapshot, recipient-source trigger, private controller consequence, source incarnation and pre-cast replay; unknown bodies remain residual."
+    },
+    {
+      "capability_id": "continuous.ability.temporary_quoted_grant",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantRuntimeTests.test_original_divergent_growth_locks_lands_and_uses_current_recipient_controller",
       "official_rule_ids": [
@@ -29666,6 +29702,24 @@
     },
     {
       "capability_id": "continuous.ability.temporary_quoted_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantRuntimeTests.test_temporary_death_grant_uses_departing_recipient_controller_private_draw_and_replay",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "113.7",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Temporary quoted triggered grants use the canonical predeparture fragment snapshot, recipient-source trigger, private controller consequence, source incarnation and pre-cast replay; unknown bodies remain residual."
+    },
+    {
+      "capability_id": "continuous.ability.temporary_quoted_grant",
       "evidence_class": "mutation",
       "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantCompilerTests.test_temporary_quoted_compiler_omission_mutant_is_killed",
       "official_rule_ids": [
@@ -29699,6 +29753,24 @@
         "commander_review"
       ],
       "applicability_note": "Fixed-duration typed quoted grant uses the independent child, original recipient incarnation and canonical layer-six owner; covers set locking, authority, late entrants, ability removal, replay and malformed boundaries."
+    },
+    {
+      "capability_id": "continuous.ability.temporary_quoted_grant",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantCompilerTests.test_temporary_trigger_child_omission_mutant_is_killed",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "113.7",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Temporary quoted triggered grants use the canonical predeparture fragment snapshot, recipient-source trigger, private controller consequence, source incarnation and pre-cast replay; unknown bodies remain residual."
     },
     {
       "capability_id": "continuous.ability.temporary_quoted_grant",
@@ -29774,6 +29846,42 @@
     },
     {
       "capability_id": "continuous.ability.temporary_quoted_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantCompilerTests.test_temporary_trigger_child_omission_mutant_is_killed",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "113.7",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Temporary quoted triggered grants use the canonical predeparture fragment snapshot, recipient-source trigger, private controller consequence, source incarnation and pre-cast replay; unknown bodies remain residual."
+    },
+    {
+      "capability_id": "continuous.ability.temporary_quoted_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantRuntimeTests.test_temporary_death_grant_uses_departing_recipient_controller_private_draw_and_replay",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "113.7",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Temporary quoted triggered grants use the canonical predeparture fragment snapshot, recipient-source trigger, private controller consequence, source incarnation and pre-cast replay; unknown bodies remain residual."
+    },
+    {
+      "capability_id": "continuous.ability.temporary_quoted_grant",
       "evidence_class": "positive",
       "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantCompilerTests.test_temporary_quoted_activation_retains_independent_child_and_duration",
       "official_rule_ids": [
@@ -29789,6 +29897,24 @@
         "commander_review"
       ],
       "applicability_note": "One explicit typed quoted activation grant, original creature incarnation, recipient authority, fixed cleanup expiry, rollback, private projection and pre-cast replay."
+    },
+    {
+      "capability_id": "continuous.ability.temporary_quoted_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantCompilerTests.test_temporary_quoted_death_trigger_is_a_recipient_child",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "113.7",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Temporary quoted triggered grants use the canonical predeparture fragment snapshot, recipient-source trigger, private controller consequence, source incarnation and pre-cast replay; unknown bodies remain residual."
     },
     {
       "capability_id": "continuous.ability.temporary_quoted_grant",
@@ -29846,6 +29972,42 @@
     },
     {
       "capability_id": "continuous.ability.temporary_quoted_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantRuntimeTests.test_original_verdant_rebirth_returns_granted_recipient_after_real_death_and_replays",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "113.7",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Temporary quoted triggered grants use the canonical predeparture fragment snapshot, recipient-source trigger, private controller consequence, source incarnation and pre-cast replay; unknown bodies remain residual."
+    },
+    {
+      "capability_id": "continuous.ability.temporary_quoted_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantRuntimeTests.test_temporary_death_grant_uses_departing_recipient_controller_private_draw_and_replay",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "113.7",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Temporary quoted triggered grants use the canonical predeparture fragment snapshot, recipient-source trigger, private controller consequence, source incarnation and pre-cast replay; unknown bodies remain residual."
+    },
+    {
+      "capability_id": "continuous.ability.temporary_quoted_grant",
       "evidence_class": "privacy",
       "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantRuntimeTests.test_original_retraction_helix_grants_recipient_activation_authority_and_replay",
       "official_rule_ids": [
@@ -29861,6 +30023,24 @@
         "commander_review"
       ],
       "applicability_note": "One explicit typed quoted activation grant, original creature incarnation, recipient authority, fixed cleanup expiry, rollback, private projection and pre-cast replay."
+    },
+    {
+      "capability_id": "continuous.ability.temporary_quoted_grant",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantRuntimeTests.test_temporary_death_grant_uses_departing_recipient_controller_private_draw_and_replay",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "113.7",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Temporary quoted triggered grants use the canonical predeparture fragment snapshot, recipient-source trigger, private controller consequence, source incarnation and pre-cast replay; unknown bodies remain residual."
     },
     {
       "capability_id": "continuous.ability.temporary_quoted_grant",
@@ -29915,6 +30095,42 @@
         "commander_review"
       ],
       "applicability_note": "One explicit typed quoted activation grant, original creature incarnation, recipient authority, fixed cleanup expiry, rollback, private projection and pre-cast replay."
+    },
+    {
+      "capability_id": "continuous.ability.temporary_quoted_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantRuntimeTests.test_original_verdant_rebirth_returns_granted_recipient_after_real_death_and_replays",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "113.7",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Temporary quoted triggered grants use the canonical predeparture fragment snapshot, recipient-source trigger, private controller consequence, source incarnation and pre-cast replay; unknown bodies remain residual."
+    },
+    {
+      "capability_id": "continuous.ability.temporary_quoted_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantRuntimeTests.test_temporary_death_grant_uses_departing_recipient_controller_private_draw_and_replay",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1f",
+        "113.7",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Temporary quoted triggered grants use the canonical predeparture fragment snapshot, recipient-source trigger, private controller consequence, source incarnation and pre-cast replay; unknown bodies remain residual."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -109107,5 +109323,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "1378f5180793e740107218a027f16ad7f369c6e0306bf89e22328c00e7222770"
+  "fingerprint": "999d08d6d763795a20707130ad8730c2b4a2e8dec25d1278aeabdea56d7dee56"
 }

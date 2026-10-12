@@ -18,7 +18,7 @@ from .fixed_resolution_characteristic_queries import fixed_resolution_characteri
 def temporary_quoted_ability_nodes(*, record, face_id, node_id, line, material_line,
         span, source_name, printed_card_types, trusted_mechanics, capability_registry,
         capability_profile, residuals, compile_inner, effect_template,
-        trigger_effect_template, material_line_for):
+        trigger_effect_template, trigger_node, material_line_for):
     match = re.fullmatch(
         r'(?:Until end of turn, (?P<prefix>[^".]+?) gains? '
         r'"(?P<prefix_body>[^"\n]+)"|(?P<suffix>[^".]+?) gains? '
@@ -55,14 +55,18 @@ def temporary_quoted_ability_nodes(*, record, face_id, node_id, line, material_l
         capability_registry=capability_registry, capability_profile=capability_profile,
         residuals=inner_residuals, effect_template=effect_template,
         trigger_effect_template=trigger_effect_template)
+    if inner is None and not inner_residuals:
+        inner = trigger_node(node_id=node_id + ':granted', line=quoted,
+            material_line=material_line_for(quoted), span=span, card_name='Granted creature',
+            trusted_mechanics=trusted_mechanics, capability_registry=capability_registry,
+            capability_profile=capability_profile, residuals=inner_residuals,
+            effect_template=trigger_effect_template)
     if inner is None or not inner.exact or inner_residuals:
         return None
     plan = attached_granted_ability_plan(node=inner, quoted_text=quoted,
         oracle_id=record.oracle_id, face_id=face_id, source_line=span.line,
         card_name='Granted creature', keywords=())
-    # Departure-trigger grants need an independently proven granted-source LKI
-    # boundary. Keep this carrier to activated and mana abilities for now.
-    if plan is None or plan.node_kind not in {'granted_activated_ability', 'granted_mana_ability'}:
+    if plan is None or plan.node_kind not in {'granted_activated_ability', 'granted_mana_ability', 'granted_triggered_ability'}:
         return None
     effect = {'op': 'apply_source_characteristics_until_end_of_turn', 'schema_version': 7,
         'card': '$target.0', 'keywords': [], 'ability_fragments': [dict(plan.fragment)],

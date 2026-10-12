@@ -532,7 +532,7 @@ def compile_keyword_or_attached_grant_nodes(
         trusted_mechanics=trusted_mechanics, capability_registry=capability_registry,
         capability_profile=capability_profile, residuals=residuals, compile_inner=compile_inner,
         effect_template=granted_effect, trigger_effect_template=granted_trigger_effect,
-        material_line_for=material_line_for)
+        trigger_node=trigger_node, material_line_for=material_line_for)
     if temporary is not None:
         return temporary
     quoted = conditional_quoted_ability_text(material_line, source_name=source_name)

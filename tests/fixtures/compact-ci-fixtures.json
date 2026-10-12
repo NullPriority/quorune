@@ -148,6 +148,32 @@
   "dynamic_requirements": [
     {
       "source": "tests/test_typed_grant_carriers.py",
+      "symbol": "TemporaryQuotedGrantRuntimeTests.test_temporary_death_grant_uses_departing_recipient_controller_private_draw_and_replay",
+      "card_names": [
+        "Generic Bound Body",
+        "Generic Temporary Death Draw",
+        "Murder"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Strict compiler/registration and actual cast/death command witnesses consume these exact fixtures."
+    },
+    {
+      "source": "tests/test_typed_grant_carriers.py",
+      "symbol": "TemporaryQuotedGrantRuntimeTests.test_original_verdant_rebirth_returns_granted_recipient_after_real_death_and_replays",
+      "card_names": [
+        "Generic Bound Body",
+        "Murder",
+        "Verdant Rebirth"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Strict compiler/registration and actual cast/death command witnesses consume these exact fixtures."
+    },
+    {
+      "source": "tests/test_typed_grant_carriers.py",
       "symbol": "TemporaryQuotedGrantRuntimeTests.test_original_retraction_helix_grants_recipient_activation_authority_and_replay",
       "card_names": [
         "Generic Bound Body",

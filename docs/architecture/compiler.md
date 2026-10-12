@@ -502,12 +502,13 @@ material residuals. Granted fixed source-counter removal costs also remain
 residual until the granted-ability fragment schema can carry that typed cost.
 
 `compiler/temporary_quoted_ability_nodes.py` lowers one explicit quoted
-activation on a direct creature target or closed public battlefield set until
+activated or triggered ability on a direct creature target or closed public battlefield set until
 end of turn. The independently compiled child uses the recipient as its source
-and its controller as the activating player. Set recipients are selected at
+and its controller as the activating player or trigger controller. Death
+triggers use the existing predeparture fragment snapshot. Set recipients are selected at
 resolution and retain their original incarnations. The existing version-seven
 single-recipient bundle remains unchanged; version eight carries the fixed
-public query. Triggered or static quotes, multiple quotes, longer durations,
+public query. Static quotes, multiple quotes, longer durations,
 external source references and inexact children remain residual.
 
 `compiler/conditional_granted_ability_templates.py` wraps one independently

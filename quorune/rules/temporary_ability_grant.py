@@ -39,7 +39,7 @@ def temporary_quoted_grant_node_capabilities(*, effects, target_schema, mechanic
     except (TypeError, ValueError, KeyError):
         return ()
     if (grant['card'] != '$target.0' or grant['printed_only'] or grant['exclude_source']
-            or keywords or len(fragments) != 1 or fragments[0]['kind'] != 'granted_activated'):
+            or keywords or len(fragments) != 1 or fragments[0]['kind'] not in {'granted_activated', 'granted_triggered'}):
         return ()
     return (TEMPORARY_QUOTED_GRANT_CAPABILITY, 'target.revalidate_resolution',
         *direct_target_predicate_capabilities(target_schema))
@@ -52,7 +52,7 @@ def _temporary_query_grant_capabilities(grant, query):
             'ability_fragments': grant['ability_fragments'], 'exclude_source': False, 'printed_only': False})
     except (TypeError, ValueError, KeyError):
         return ()
-    if len(fragments) != 1 or fragments[0]['kind'] != 'granted_activated':
+    if len(fragments) != 1 or fragments[0]['kind'] not in {'granted_activated', 'granted_triggered'}:
         return ()
     return (TEMPORARY_QUOTED_GRANT_CAPABILITY,
         *(['state_query.permanent.public_state_predicate'] if query.state_predicate is not None else []))

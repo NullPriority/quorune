@@ -56,7 +56,7 @@ class TemporaryQuotedGrantCompilerTests(unittest.TestCase):
         for text in (
             'Target creature gains "{T}: Rewrite history." until end of turn.',
             'Target creature gains "{T}: Draw a card." until your next turn.',
-            'Target creature gains "When this creature dies, draw a card." until end of turn.',
+            'Target creature gains "When a player rewrites history, draw a card." until end of turn.',
             'Target creature gains "{T}: Draw a card."',
         ):
             self.assertNotEqual('exact', compile_oracle_card(record(text, 'Instant'), capability_registry=registry).status)
@@ -110,6 +110,22 @@ class TemporaryQuotedGrantCompilerTests(unittest.TestCase):
         with mock.patch.object(owner, 'temporary_quoted_ability_nodes', return_value=None):
             with self.assertRaises(AssertionError):
                 self.test_temporary_quoted_set_locks_one_public_query_and_child()
+
+    def test_temporary_quoted_death_trigger_is_a_recipient_child(self):
+        from test_bound_effect_programs import record
+        text = 'Until end of turn, target creature gains "When this creature dies, draw a card."'
+        ir = compile_oracle_card(record(text, 'Instant'), capability_registry=load_default_capability_registry())
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        outer = next(n for n in ir.faces[0].nodes if n.kind == 'spell_ability')
+        child = next(n for n in ir.faces[0].nodes if n.kind == 'granted_triggered_ability')
+        self.assertIn(child.event, {'creature.dies.self', 'creature.dies'})
+        self.assertEqual('granted_triggered', outer.effects[0]['ability_fragments'][0]['kind'])
+
+    def test_temporary_trigger_child_omission_mutant_is_killed(self):
+        from quorune.compiler import temporary_quoted_ability_nodes as owner
+        with mock.patch.object(owner, 'temporary_quoted_ability_nodes', return_value=None):
+            with self.assertRaises(AssertionError):
+                self.test_temporary_quoted_death_trigger_is_a_recipient_child()
 
     def test_temporary_quoted_compiler_omission_mutant_is_killed(self):
         from quorune.compiler import temporary_quoted_ability_nodes as owner
@@ -258,6 +274,72 @@ class TemporaryQuotedGrantRuntimeTests(unittest.TestCase):
         self.assertTrue(session.state.cards[land.object_id].tapped)
         expire_end_of_turn_continuous_effects(session.state)
         self.assertFalse(engine._effective_ability_fragments(session.state.cards[land.object_id]))
+
+
+    def test_temporary_death_grant_uses_departing_recipient_controller_private_draw_and_replay(self):
+        session = self.session(357104)
+        engine = session.engine
+        spell = self.add(engine, 'Generic Temporary Death Draw', zone='hand')
+        removal = self.add(engine, 'Murder', zone='hand')
+        recipient = self.add(engine, 'Generic Bound Body', seat='B', ref='granted-death-recipient')
+        action = self.ready(session, spell, {'U': 1, 'B': 2, 'C': 1})
+        self.checkpoint(session)
+        accepted = session.act('pilot:A', {'action_id': action['id'], 'targets': [recipient.ref], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        session = self.replay(session, load=True)
+        engine = session.engine
+        while session.pending_principals()[0] != 'pilot:A':
+            self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
+        action = next(a for a in session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions'] if a.get('card') == removal.ref)
+        before_draw = len(session.state.players['B'].zones['hand'])
+        before = authoritative_state_hash(session.state)
+        rejected = session.act('pilot:C', {'action_id': action['id'], 'targets': [recipient.ref], 'pay': 'auto'})
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act('pilot:A', {'action_id': action['id'], 'targets': [recipient.ref], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        self.assertEqual('graveyard', session.state.cards[recipient.object_id].zone)
+        self.assertEqual(before_draw + 1, len(session.state.players['B'].zones['hand']))
+        projected = json.dumps(session.packet('pilot:D', full=True)['state'])
+        for oid in session.state.players['B'].zones['hand']:
+            self.assertNotIn(session.state.cards[oid].ref, projected)
+        self.replay(session, load=True)
+        # Departure and reentry remove the original grant, so a second death
+        # of the new incarnation cannot publish another granted draw.
+        current = session.state.cards[recipient.object_id]
+        engine.move_card(current.object_id, 'battlefield', controller='B', log=False)
+        after = len(session.state.players['B'].zones['hand'])
+        engine.apply_effect({'op': 'destroy', 'card': current.ref, 'reason': 'New-incarnation negative control'}, actor='A')
+        self.resolve(session)
+        self.assertEqual(after, len(session.state.players['B'].zones['hand']))
+
+
+    def test_original_verdant_rebirth_returns_granted_recipient_after_real_death_and_replays(self):
+        session = self.session(357105)
+        engine = session.engine
+        spell = self.add(engine, 'Verdant Rebirth', zone='hand')
+        removal = self.add(engine, 'Murder', zone='hand')
+        recipient = self.add(engine, 'Generic Bound Body', seat='B', ref='rebirth-recipient')
+        action = self.ready(session, spell, {'G': 1, 'B': 2, 'C': 2})
+        self.checkpoint(session)
+        a_hand = len(session.state.players['A'].zones['hand'])
+        accepted = session.act('pilot:A', {'action_id': action['id'], 'targets': [recipient.ref], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        self.assertEqual(a_hand, len(session.state.players['A'].zones['hand']))
+        session = self.replay(session, load=True)
+        while session.pending_principals()[0] != 'pilot:A':
+            self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
+        action = next(a for a in session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions'] if a.get('card') == removal.ref)
+        accepted = session.act('pilot:A', {'action_id': action['id'], 'targets': [recipient.ref], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        self.assertEqual('hand', session.state.cards[recipient.object_id].zone)
+        self.assertIn(recipient.object_id, session.state.players['B'].zones['hand'])
+        self.assertEqual('graveyard', session.state.cards[spell.object_id].zone)
+        self.replay(session, load=True)
 
 
 class TypedGrantCarrierTests(unittest.TestCase):

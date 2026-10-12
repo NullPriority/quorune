@@ -254,10 +254,10 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Grant one independently compiled quoted activated or fixed-output mana ability to one revalidated creature or a closed public battlefield set until end of turn through the canonical continuous ability bundle owner.",
+        "summary": "Grant one independently compiled quoted activated, fixed-output mana or triggered ability to one revalidated creature or a closed public battlefield set until end of turn through the canonical continuous ability bundle owner.",
         "inputs": [
           "one direct creature target or one closed public battlefield query",
-          "one exact quoted activated ability",
+          "one exact quoted activated or triggered ability",
           "current recipient incarnations"
         ],
         "outputs": [
@@ -266,7 +266,6 @@
           "cleanup expiry"
         ],
         "exclusions": [
-          "triggered grants",
           "static grants",
           "multiple quoted abilities",
           "implicit outer-card references",
@@ -279,36 +278,48 @@
         "quorune.compiler.temporary_quoted_ability_nodes.temporary_quoted_ability_nodes",
         "quorune.rules.temporary_ability_grant.temporary_quoted_grant_node_capabilities",
         "quorune.effect_runtime.temporary_ability_bundle.apply_temporary_ability_bundle",
-        "quorune.compiler.resolution_characteristic_program_closure.is_closed_resolution_characteristic_program"
+        "quorune.compiler.resolution_characteristic_program_closure.is_closed_resolution_characteristic_program",
+        "quorune.trigger_discovery._event_programs_for_source"
       ],
       "positive_tests": [
         "test_temporary_quoted_activation_retains_independent_child_and_duration",
         "test_original_retraction_helix_grants_recipient_activation_authority_and_replay",
         "test_temporary_quoted_set_locks_one_public_query_and_child",
-        "test_original_divergent_growth_locks_lands_and_uses_current_recipient_controller"
+        "test_original_divergent_growth_locks_lands_and_uses_current_recipient_controller",
+        "test_temporary_quoted_death_trigger_is_a_recipient_child",
+        "test_temporary_death_grant_uses_departing_recipient_controller_private_draw_and_replay",
+        "test_original_verdant_rebirth_returns_granted_recipient_after_real_death_and_replays"
       ],
       "negative_tests": [
         "test_temporary_quote_rejects_open_child_and_duration_and_shape",
         "test_temporary_quoted_compiler_omission_mutant_is_killed",
         "test_temporary_quote_child_dependency_and_material_sibling_fail_closed",
-        "test_temporary_quoted_query_rejects_open_fields_hidden_zones_and_omission"
+        "test_temporary_quoted_query_rejects_open_fields_hidden_zones_and_omission",
+        "test_temporary_trigger_child_omission_mutant_is_killed",
+        "test_temporary_death_grant_uses_departing_recipient_controller_private_draw_and_replay"
       ],
       "interaction_tests": [
         "test_original_retraction_helix_grants_recipient_activation_authority_and_replay",
         "test_original_banishing_knack_recipient_blink_and_ability_removal_controls",
-        "test_original_divergent_growth_locks_lands_and_uses_current_recipient_controller"
+        "test_original_divergent_growth_locks_lands_and_uses_current_recipient_controller",
+        "test_temporary_death_grant_uses_departing_recipient_controller_private_draw_and_replay",
+        "test_original_verdant_rebirth_returns_granted_recipient_after_real_death_and_replays"
       ],
       "multiplayer_tests": [
         "test_original_retraction_helix_grants_recipient_activation_authority_and_replay",
-        "test_original_divergent_growth_locks_lands_and_uses_current_recipient_controller"
+        "test_original_divergent_growth_locks_lands_and_uses_current_recipient_controller",
+        "test_temporary_death_grant_uses_departing_recipient_controller_private_draw_and_replay"
       ],
       "privacy_tests": [
-        "test_original_retraction_helix_grants_recipient_activation_authority_and_replay"
+        "test_original_retraction_helix_grants_recipient_activation_authority_and_replay",
+        "test_temporary_death_grant_uses_departing_recipient_controller_private_draw_and_replay"
       ],
       "replay_tests": [
         "test_original_retraction_helix_grants_recipient_activation_authority_and_replay",
         "test_original_banishing_knack_recipient_blink_and_ability_removal_controls",
-        "test_original_divergent_growth_locks_lands_and_uses_current_recipient_controller"
+        "test_original_divergent_growth_locks_lands_and_uses_current_recipient_controller",
+        "test_temporary_death_grant_uses_departing_recipient_controller_private_draw_and_replay",
+        "test_original_verdant_rebirth_returns_granted_recipient_after_real_death_and_replays"
       ],
       "required_evidence": [
         "positive",

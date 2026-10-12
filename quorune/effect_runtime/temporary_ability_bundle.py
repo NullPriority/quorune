@@ -32,8 +32,8 @@ def apply_temporary_ability_bundle(host,effect,*,actor,reason):
                 'ability_fragments': instruction['ability_fragments'], 'exclude_source': False, 'printed_only': False})
         except (TypeError, ValueError, KeyError) as exc:
             raise GameRuleError(str(exc)) from exc
-        if len(fragments) != 1 or fragments[0]['kind'] != 'granted_activated':
-            raise GameRuleError('Temporary query grant requires one activated ability')
+        if len(fragments) != 1 or fragments[0]['kind'] not in {'granted_activated', 'granted_triggered'}:
+            raise GameRuleError('Temporary query grant requires one activated or triggered ability')
         targets = matching_battlefield_objects(host, query)
         _verify_child_programs(host, fragments)
         if targets:
