@@ -15,6 +15,10 @@ from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 
 FIXED_AFFECTED_PLAYER_DISCARD_MECHANIC = "fixed-affected-player-discard"
 FIXED_AFFECTED_PLAYER_DISCARD_CAPABILITY = "choice.affected_player.fixed_discard"
+FIXED_CONTROLLER_DISCARD_MECHANIC = "fixed-controller-card-discard"
+FIXED_CONTROLLER_DISCARD_CAPABILITY = "choice.affected_player.fixed_controller_discard"
+FIXED_CONTEXT_PLAYER_DISCARD_MECHANIC = "fixed-context-player-discard"
+FIXED_CONTEXT_PLAYER_DISCARD_CAPABILITY = "trigger.result.fixed_context_player_discard"
 _HAND_MECHANIC = "cr-402-hand"
 _TARGETS_MECHANIC = "cr-115-targets"
 _INSTRUCTION = re.compile(
@@ -185,6 +189,44 @@ def fixed_controller_discard_effect_template(
         subject=AffectedPlayerDiscardSubject.CONTROLLER,
         count=count,
     )
+
+
+def standalone_controller_discard_effect_template(text: str):
+    """Expose the closed controller leaf through its own producer contract."""
+    template = fixed_controller_discard_effect_template(text)
+    if template is None:
+        return None
+    identity, effects, schema, mechanics = template.compiled()
+    return identity, effects, schema, (*mechanics, FIXED_CONTROLLER_DISCARD_MECHANIC)
+
+
+def damage_player_discard_result(binding, body: str):
+    """Bind an untargeted discard to a normalized damaged-player occurrence."""
+    if binding.event.value not in {"damage.dealt", "damage.dealt.self"}:
+        return None
+
+    def guarantees_player(condition):
+        if not isinstance(condition, Mapping):
+            return False
+        if condition == {"field": "target_kind", "op": "eq", "value": "player"}:
+            return True
+        children = condition.get("all", ())
+        return isinstance(children, (list, tuple)) and any(guarantees_player(child) for child in children)
+
+    if not guarantees_player(binding.event_condition):
+        return None
+    match = re.fullmatch(r"(?:that player|they) discards? (?P<body>.+)", body, re.I)
+    if match is None:
+        return None
+    template = fixed_controller_discard_effect_template("Discard " + match["body"])
+    if template is None or template.count > 3:
+        return None
+    effect = deepcopy(dict(template.effects[0]))
+    effect["players"] = ["$context.target"]
+    return (
+        "fixed-damage-player-discard-result-v1", (effect,), None,
+        (*template.mechanics, FIXED_CONTEXT_PLAYER_DISCARD_MECHANIC),
+    ), False
 
 
 __all__ = [

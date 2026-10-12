@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Iterable
+import re
 
 from ..rules.capabilities import CapabilityRegistry
 from .declaration_nodes import (
@@ -38,6 +39,12 @@ def closed_static_or_replacement_node(
     residuals: list[OracleResidual],
 ) -> OracleNode | None:
     """Dispatch closed nontriggered static and replacement line owners."""
+
+    if re.fullmatch(
+        r".+? can't (?:attack or block|attack|block|be blocked) this turn\.?",
+        material_line, re.I,
+    ):
+        return None
 
     casting_price = permanent_additional_cost_node(
         node_id=node_id, line=line, material_line=material_line, span=span,

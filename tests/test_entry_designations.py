@@ -58,6 +58,9 @@ def composition_record(identity, name, type_line, text, keywords=()):
 
 
 class EntryDesignationTests(unittest.TestCase):
+    def test_chosen_counter_scaling_remains_residual_without_registered_body_composition(self):
+        text='Creatures you control of the chosen type get +1/+1 for each charge counter on this artifact.'
+        self.assertIsNone(chosen_characteristics_handler(text))
     @classmethod
     def setUpClass(cls):
         cls.temporary = tempfile.TemporaryDirectory()

@@ -1,0 +1,155 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned original restricted source-zone return carriers",
+  "cards": [
+    {
+      "oracle_id": "04d8615c-3883-4251-9790-1d8a4a40e142",
+      "name": "Eternal Dragon",
+      "mana_cost": "{5}{W}{W}",
+      "type_line": "Creature \u2014 Dragon Spirit",
+      "oracle_text": "Flying\n{3}{W}{W}: Return this card from your graveyard to your hand. Activate only during your upkeep.\nPlainscycling {2} ({2}, Discard this card: Search your library for a Plains card, reveal it, put it into your hand, then shuffle.)",
+      "power": "5",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Flying",
+        "Plainscycling",
+        "Landcycling",
+        "Typecycling",
+        "Cycling"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-07-23",
+      "cmc": 7.0,
+      "card_faces": []
+    },
+    {
+      "oracle_id": "697b14c6-fe6a-4880-9cf2-b6602a52ca0b",
+      "name": "Summoned Dromedary",
+      "mana_cost": "{3}{W}",
+      "type_line": "Creature \u2014 Spirit Camel",
+      "oracle_text": "Vigilance\n{1}{W}: Return this card from your graveyard to your hand. Activate only as a sorcery.",
+      "power": "4",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Vigilance"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-04-24",
+      "cmc": 4.0,
+      "card_faces": []
+    },
+    {
+      "oracle_id": "3089bdd7-87e6-4d0e-ad98-c32e6f861c30",
+      "name": "Hammer of Bogardan",
+      "mana_cost": "{1}{R}{R}",
+      "type_line": "Sorcery",
+      "oracle_text": "Hammer of Bogardan deals 3 damage to any target.\n{2}{R}{R}{R}: Return this card from your graveyard to your hand. Activate only during your upkeep.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2003-07-28",
+      "cmc": 3.0,
+      "card_faces": []
+    },
+    {
+      "oracle_id": "4da2425d-2118-4116-855d-2ef80693a7b7",
+      "name": "Undead Gladiator",
+      "mana_cost": "{1}{B}{B}",
+      "type_line": "Creature \u2014 Zombie Barbarian",
+      "oracle_text": "{1}{B}, Discard a card: Return this card from your graveyard to your hand. Activate only during your upkeep.\nCycling {1}{B} ({1}{B}, Discard this card: Draw a card.)",
+      "power": "3",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Cycling"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-01-13",
+      "cmc": 3.0,
+      "card_faces": []
+    },
+    {
+      "oracle_id": "6732a587-e3cc-4c30-9267-f8949dd8724a",
+      "name": "Necrosavant",
+      "mana_cost": "{3}{B}{B}{B}",
+      "type_line": "Creature \u2014 Zombie Giant",
+      "oracle_text": "{3}{B}{B}, Sacrifice a creature: Return this card from your graveyard to the battlefield. Activate only during your upkeep.",
+      "power": "5",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-01-13",
+      "cmc": 6.0,
+      "card_faces": []
+    },
+    {
+      "oracle_id": "6c4a0e3d-c63c-4acf-8386-b51f1ec37463",
+      "name": "Grafted Butcher",
+      "mana_cost": "{1}{B}",
+      "type_line": "Creature \u2014 Phyrexian Samurai",
+      "oracle_text": "When this creature enters, Phyrexians you control gain menace until end of turn.\nOther Phyrexians you control get +1/+1.\n{3}{B}, Sacrifice an artifact or creature: Return this card from your graveyard to the battlefield. Activate only as a sorcery.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-04-21",
+      "cmc": 2.0,
+      "card_faces": []
+    }
+  ]
+}

@@ -3,6 +3,11 @@ from __future__ import annotations
 """Resolution effects that grant typed combat declaration restrictions."""
 
 from typing import Any, Mapping
+from dataclasses import replace
+from ..affected_permanents import AffectedPermanentSetSpec, PermanentControllerRelation
+from ..declaration_rule_effects import declaration_group_query_is_closed
+from ..continuous_effect_state import create_resolution_declaration_rule_effect, ContinuousEffectStateError
+from ..continuous_effect_model import ContinuousEffectError
 
 from ..continuous_effect_state import resolution_effect_source
 from ..effect_contracts import effect_family_contract
@@ -10,6 +15,7 @@ from ..errors import GameRuleError
 from ..rules.temporary_declaration_restrictions import (
     commit_temporary_declaration_restriction,
     TemporaryDeclarationRestrictionError,
+    temporary_declaration_restriction,
 )
 
 
@@ -23,15 +29,52 @@ def _apply_grant_declaration_restriction_until_end_of_turn(
     actor: str,
     operation: str,
     reason: str,
-) -> str:
+) -> str | list[str]:
     del operation
-    allowed = {"op", "card", "restriction", "reason", "_runtime_source"}
+    allowed = {"op", "card", "cards", "set", "restriction", "reason", "_runtime_source"}
     unknown = set(effect) - allowed
     if unknown:
         raise GameRuleError(
             "Temporary declaration restriction has unknown fields: "
             + ", ".join(sorted(unknown))
         )
+    if sum(key in effect for key in ("card", "cards", "set")) != 1:
+        raise GameRuleError("Declaration rule requires exactly one recipient mode")
+    if "cards" in effect or "set" in effect:
+        query = None
+        try:
+            if "cards" in effect:
+                refs = effect["cards"]
+                if not isinstance(refs, list) or len(refs) > 6 or any(type(ref) is not str or not ref for ref in refs) or len(set(refs)) != len(refs):
+                    raise GameRuleError("Declaration target group is malformed")
+                cards = tuple(host._resolve_object(actor, ref, zones={"battlefield"}) for ref in refs)
+                if any(card.phased_out for card in cards):
+                    raise GameRuleError("Declaration target group includes phased-out objects")
+            else:
+                spec = AffectedPermanentSetSpec.from_dict(effect["set"])
+                if not declaration_group_query_is_closed(spec.query) or spec.exclude_source or spec.controller_relation not in {
+                    PermanentControllerRelation.ANY, PermanentControllerRelation.ACTOR, PermanentControllerRelation.OPPONENTS,
+                }:
+                    raise GameRuleError("Live declaration recipient set is unsupported")
+                query = spec.query
+                if spec.controller_relation is PermanentControllerRelation.ACTOR:
+                    query = replace(query, controller=actor)
+                elif spec.controller_relation is PermanentControllerRelation.OPPONENTS:
+                    query = replace(query, excluded_controllers=(actor,))
+                cards = ()
+                refs = []
+            rule = create_resolution_declaration_rule_effect(
+                host, source=resolution_effect_source(host, effect, fallback_card=cards[0] if cards else None),
+                targets=cards, restriction=temporary_declaration_restriction(str(effect.get("restriction") or "")), live_query=query,
+            )
+        except (TypeError, ValueError, ContinuousEffectError, ContinuousEffectStateError) as exc:
+            raise GameRuleError(str(exc)) from exc
+        if rule is not None:
+            host._log(actor, "combat.declaration_restriction", reason,
+                {"objects": refs, "live_query": query.to_dict() if query is not None else None,
+                 "restriction": effect["restriction"], "continuous_effect": rule.effect_id},
+                importance=1, changed_objects=[card.object_id for card in cards])
+        return refs
     card = host._resolve_object(
         actor,
         str(effect.get("card") or ""),

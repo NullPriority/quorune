@@ -169,11 +169,32 @@ def reviewed_fixed_optional_mana_payment_trigger_template(
     return optional_payment.compiled() if optional_payment is not None else compiled
 
 
+def binding_aware_optional_mana_payment_template(
+    text: str,
+    *,
+    compile_result: Callable[[str], tuple[CompiledEffectTemplate, bool]],
+) -> tuple[CompiledEffectTemplate, bool] | None:
+    """Keep the trigger's reference binding inside the existing payment owner."""
+    requires_current_ability = False
+
+    def compile_body(body: str) -> CompiledEffectTemplate:
+        nonlocal requires_current_ability
+        compiled, requires_current = compile_result(body)
+        requires_current_ability = requires_current
+        return compiled
+
+    payment = fixed_optional_mana_payment_template(text, compile_effect=compile_body)
+    if payment is None:
+        return None
+    return payment.compiled(), requires_current_ability
+
+
 __all__ = [
     "FIXED_OPTIONAL_MANA_PAYMENT_CAPABILITY",
     "FIXED_OPTIONAL_MANA_PAYMENT_MECHANIC",
     "OPTIONAL_MANA_PAYMENT_OPERATION",
     "FixedOptionalManaPaymentTemplate",
     "fixed_optional_mana_payment_template",
+    "binding_aware_optional_mana_payment_template",
     "reviewed_fixed_optional_mana_payment_trigger_template",
 ]

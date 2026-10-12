@@ -335,6 +335,7 @@ _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
     "exile_permanent_targets",
     "exile_public_graveyard_card",
     "exile_public_graveyard_targets",
+    "extra_turn",
     "explore",
     "grant_keyword_until_end_of_turn",
     "grant_declaration_restriction_until_end_of_turn",
@@ -416,6 +417,7 @@ def _activated_effect_dependency_gate(
                 "fixed-counter-controller-effect-sequence",
                 "fixed-resolution-control",
                 "fixed-effect-clause-sequence",
+                "fixed-extra-turn-after-current",
                 "fixed-resolution-public-condition",
                 "closed-effect-program", "fixed-target-hand-inspection", "temporary-target-interaction", "linked-exile-return",
             }.intersection(mechanics)

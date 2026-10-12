@@ -58,7 +58,7 @@ class RepeatableObjectActionCompilerTests(unittest.TestCase):
         text='Whenever you sacrifice another permanent, put a +1/+1 counter on this creature.'
         record=query_record(text)
         registry=load_default_capability_registry()
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
         for capability in ('trigger.event.normalized_zone_change','counter.producer.fixed_event_trigger'):
             value=json.loads(json.dumps(raw))
             next(c for c in value['capabilities'] if c['id']==capability).update(

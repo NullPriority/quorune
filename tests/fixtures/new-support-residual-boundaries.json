@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned original residual sibling admission carriers",
+  "cards": [
+    {
+      "oracle_id": "9b7a0c9d-1045-4fc0-b5e3-18616106da08",
+      "name": "Orcish Healer",
+      "mana_cost": "{R}{R}",
+      "type_line": "Creature \u2014 Orc Cleric",
+      "oracle_text": "{R}{R}, {T}: Target creature can't be regenerated this turn.\n{B}{B}{R}, {T}: Regenerate target black or green creature.\n{R}{G}{G}, {T}: Regenerate target black or green creature.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "R"
+      ],
+      "keywords": [
+        "Regenerate"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1995-06-03",
+      "cmc": 2.0,
+      "card_faces": []
+    },
+    {
+      "oracle_id": "12684e95-2652-4c3c-b2c7-021b62344d77",
+      "name": "Grim Reminder",
+      "mana_cost": "{2}{B}",
+      "type_line": "Instant",
+      "oracle_text": "Search your library for a nonland card and reveal it. Each opponent who cast a spell this turn with the same name as that card loses 6 life. Then shuffle.\n{B}{B}: Return this card from your graveyard to your hand. Activate only during your upkeep.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2003-10-02",
+      "cmc": 3.0,
+      "card_faces": []
+    },
+    {
+      "oracle_id": "cdda63d7-e3ea-455c-b7d4-c6cfdda2703c",
+      "name": "Shadow Guildmage",
+      "mana_cost": "{B}",
+      "type_line": "Creature \u2014 Human Wizard",
+      "oracle_text": "{U}, {T}: Put target creature you control on top of its owner's library.\n{R}, {T}: This creature deals 1 damage to any target and 1 damage to you.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B",
+        "R",
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2006-10-06",
+      "cmc": 1.0,
+      "card_faces": []
+    }
+  ]
+}

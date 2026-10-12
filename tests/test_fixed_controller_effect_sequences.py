@@ -432,7 +432,7 @@ class FixedControllerEffectSequenceCompilerTests(unittest.TestCase):
         for text in (
             "Draw cards equal to the number of different powers among creatures you control. Scry 1.",
             "Scry 1, then you may draw a card.",
-            "Draw a card. Each player loses 1 life.",
+            "Draw a card. Each player loses X life.",
             "Draw a card unless an opponent pays {1}.",
             "Draw two cards, then discard a card at random.",
             "Draw two cards, then discard each opponent's hand.",
@@ -449,6 +449,17 @@ class FixedControllerEffectSequenceCompilerTests(unittest.TestCase):
                 )
                 self.assertNotEqual("exact", ir.status)
                 self.assertTrue(ir.material_residuals)
+
+    def test_draw_then_all_player_loss_keeps_controller_and_global_recipients(self):
+        text="Draw a card. Each player loses 1 life."
+        self.assertIsNone(fixed_controller_effect_sequence_template(text))
+        ir=compile_oracle_card(self.fixture(text),capability_registry=self.capabilities,
+                               capability_profile="commander_review")
+        self.assertEqual("exact",ir.status,ir.material_residuals)
+        effects=ir.faces[0].nodes[0].effects
+        self.assertEqual("$controller",effects[0]["player"])
+        self.assertEqual("all_active_players",effects[1]["scope"])
+        self.assertEqual(1,effects[1]["amount"])
 
     def test_sequence_compiler_and_shape_mutants_are_killed(self):
         records = (

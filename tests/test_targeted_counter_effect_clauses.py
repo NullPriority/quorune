@@ -4,6 +4,8 @@ from dataclasses import replace
 from pathlib import Path
 import tempfile
 import unittest
+import json
+from unittest.mock import patch
 
 from common import ROOT, keep_all
 from quorune.carddb import CardDatabase, CardRecord
@@ -686,7 +688,7 @@ class TargetedCounterTemplateTests(unittest.TestCase):
             "You may counter target spell.",
             "Counter another target spell.",
             "Counter target spell unless its controller pays {2}.",
-            "Counter target spell with mana value 2 or less.",
+            "Counter target spell with mana value X or less.",
             "Counter all other spells.",
             "Counter target spell. Exile it instead of putting it into its owner's graveyard.",
         ):
@@ -800,7 +802,7 @@ class TargetedCounterCompilerTests(unittest.TestCase):
         for text in (
             "Counter up to one target spell.",
             "Counter target spell unless its controller discards a card.",
-            "Counter target spell with mana value 2 or less.",
+            "Counter target spell with mana value X or less.",
             "Counter all spells.",
             "Counter target spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard.",
         ):
@@ -946,6 +948,157 @@ class TargetedCounterCompilerTests(unittest.TestCase):
             ["stack.counter.prohibition.intrinsic"],
             programs[0].capability_dependencies,
         )
+
+
+class FixedManaValueCounterCompilerTests(unittest.TestCase):
+    # CR 202.3e and 608.2b: mana-value filters apply to the current stack
+    # object, including announced X, and the same predicate is revalidated.
+    @classmethod
+    def setUpClass(cls):
+        cls.registry = load_default_capability_registry()
+
+    def compile(self, text, *, type_line="Instant"):
+        return compile_oracle_card(StackControllerPaymentCompilerTests.record(text, type_line=type_line),
+            capability_registry=self.registry, capability_profile="commander_review")
+
+    def test_fixed_mana_value_counter_targets_keep_equal_lower_and_upper_bounds(self):
+        for text, field, value in (
+            ("Counter target spell with mana value 4 or greater.", "mana_value_min", 4),
+            ("Counter target spell with mana value 1 or less.", "mana_value_max", 1),
+            ("Counter target spell with mana value 2.", "mana_value", 2),
+            ("Counter target creature spell with mana value 3 or less.", "mana_value_max", 3),
+        ):
+            with self.subTest(text=text):
+                ir = self.compile(text)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                self.assertEqual(value, node.target_schema[field])
+                self.assertEqual(["spell"], node.target_schema["categories"])
+                self.assertEqual(({"op": "counter_stack_target", "stack": "$target.0"},), node.effects)
+                self.assertIn("stack.counter.effect", node.capability_dependencies)
+                self.assertIn("target.revalidate_resolution", node.capability_dependencies)
+
+    def test_fixed_stack_mana_value_shapes_costs_and_mutants_fail_closed(self):
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.rules.node_capability_shapes import fixed_stack_counter_target_schema_is_closed
+        text = "Counter target spell with mana value 4 or greater."
+        node = self.compile(text).faces[0].nodes[0]
+        for field, value in (("mana_value_min", True), ("mana_value_min", -1),
+                             ("mana_value_min", 1.5), ("mana_value_max", 5), ("count", True)):
+            with self.subTest(field=field, value=value):
+                self.assertFalse(fixed_stack_counter_target_schema_is_closed({**node.target_schema, field: value}))
+        for text in ("Counter target spell with mana value X or less.",
+                     "Counter target activated ability with mana value 2.",
+                     "Counter target spell with mana value 2, then draw that many cards."):
+            self.assertNotEqual("exact", self.compile(text).status)
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
+        next(row for row in raw["capabilities"] if row["id"] == "stack.counter.effect").update(
+            status="blocked", blockers=["stack counter authority unavailable"])
+        blocked = compile_oracle_card(StackControllerPaymentCompilerTests.record("Counter target spell with mana value 4 or greater."),
+            capability_registry=CapabilityRegistry(raw), capability_profile="commander_review")
+        self.assertNotEqual("exact", blocked.status)
+        from quorune.compiler import resolution_effect_templates
+        compilers = tuple(compiler for compiler in resolution_effect_templates._DIRECT_RESOLUTION_EFFECT_COMPILERS
+            if compiler is not resolution_effect_templates.targeted_counter_effect_template)
+        with patch.object(resolution_effect_templates, "_DIRECT_RESOLUTION_EFFECT_COMPILERS", compilers):
+            mutant = self.compile("Counter target spell with mana value 4 or greater.")
+        self.assertNotEqual("exact", mutant.status)
+        paid = self.compile("Counter target creature spell with mana value 3 or less unless its controller pays {2}.")
+        self.assertEqual("exact", paid.status, paid.material_residuals)
+        self.assertEqual(3, paid.faces[0].nodes[0].target_schema["mana_value_max"])
+
+
+class FixedManaValueCounterRuntimeTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from quorune.deck import DeckDefinition, DeckEntry
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "fixed-stack-mana-value.sqlite3"
+        build_fixture_database([ROOT / "tests/fixtures/bound-effect-program-cards.json",
+            ROOT / "tests/fixtures/fixed-stack-mana-value-cards.json"], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Fixed stack mana value", [DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 99)], ["Generic Bound Commander"])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    import test_bound_effect_programs as _witnesses
+    session = _witnesses.BoundEffectProgramRuntimeTests.session
+    add = _witnesses.BoundEffectProgramRuntimeTests.add
+    ready = _witnesses.BoundEffectProgramRuntimeTests.ready
+    checkpoint = _witnesses.BoundEffectProgramRuntimeTests.checkpoint
+    resolve = _witnesses.BoundEffectProgramRuntimeTests.resolve
+    replay = _witnesses.BoundEffectProgramRuntimeTests.replay
+
+    def test_stack_target_projection_preserves_cost_semantics_for_spell_copies(self):
+        from types import SimpleNamespace
+        from quorune.model import CardInstance, StackItem
+        from quorune.selection.targeting import TargetSelectionOwnerMixin
+        from quorune.targets import TargetGroup
+        from quorune.characteristic_evaluation import type_parts
+        group = TargetGroup.from_mapping({"zones": ["stack"], "categories": ["spell"], "count": 1})
+        for cost, x, expected in (("{X}{X}{U}", 3, 7), ("{2/U}{U/P}", 0, 3), ("", 0, 0)):
+            for kind in ("spell", "spell_copy"):
+                with self.subTest(cost=cost, kind=kind):
+                    card = CardInstance(object_id="projection-cost-card", ref="projection-cost-card", oracle_id="projection-cost",
+                        printed_name="Projection Cost", owner="A", controller="A", zone="stack")
+                    item = StackItem(stack_id="projection-stack", ref="projection-stack", kind=kind, controller="A",
+                        label="Projection Cost", card_object_id=card.object_id, x_value=x)
+                    data = {"mana_cost": cost, "cmc": 1, "type_line": "Instant", "colors": ["U"], "keywords": []}
+                    host = SimpleNamespace(state=SimpleNamespace(stack=[item], cards={card.object_id: card}),
+                        active_seats=[], _effective_card_data=lambda card: data, _type_parts=type_parts)
+                    rows = TargetSelectionOwnerMixin._target_candidate_rows(host, "A", group)
+                    self.assertEqual(expected, rows[0]["mana_value"])
+
+    def test_original_stroke_uses_announced_x_in_real_response_offers_and_replays(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.record import authoritative_state_hash
+        for x in (0, 3):
+            with self.subTest(x=x):
+                session = self.session(340010 + x)
+                spell = self.add(session.engine, "Generic Fixed Stack X Draw", zone="hand")
+                counter = self.add(session.engine, "Disdainful Stroke", seat="B", zone="hand")
+                for card in (spell, counter):
+                    program = compile_best_available_card_program(self.db, self.db.lookup(card.printed_name),
+                        semantic_registry=session.engine.semantics, capability_registry=self.registry, capability_profile="commander_review")
+                    self.assertTrue(bind_card_program_runtime(program, capability_registry=self.registry, profile="commander_review")["strict_capability_ready"])
+                session.state.players["B"].mana_pool.update({"U": 2})
+                hand_before = len(session.state.players["A"].zones["hand"])
+                action = self.ready(session, spell, {"G": x + 1})
+                self.checkpoint(session)
+                cast = session.act("pilot:A", {"action_id": action["id"], "x": x, "pay": "auto"})
+                self.assertTrue(cast.ok, cast.summary)
+                target_ref = session.state.stack[-1].ref
+                self.assertTrue(session.act("pilot:A", {"action_id": "pass"}).ok)
+                actions = session.packet("pilot:B", full=True)["decision"]["ctx"]["legal"]["actions"]
+                offered = next((action for action in actions if action.get("card") == counter.ref), None)
+                if x == 3:
+                    self.assertIsNotNone(offered)
+                    self.assertIn(target_ref, offered["target_schema"]["legal_refs"])
+                    before = authoritative_state_hash(session.state)
+                    denied = session.act("pilot:A", {"action_id": offered["id"], "targets": [target_ref], "pay": "auto"})
+                    self.assertFalse(denied.ok)
+                    self.assertEqual(before, authoritative_state_hash(session.state))
+                    responded = session.act("pilot:B", {"action_id": offered["id"], "targets": [target_ref], "pay": "auto"})
+                    self.assertTrue(responded.ok, responded.summary)
+                else:
+                    self.assertIsNone(offered)
+                    before = authoritative_state_hash(session.state)
+                    denied = session.act("pilot:B", {"action_id": "cast:" + counter.ref, "targets": [target_ref], "pay": "auto"})
+                    self.assertFalse(denied.ok)
+                    self.assertEqual(before, authoritative_state_hash(session.state))
+                session = self.replay(session, load=True)
+                self.resolve(session)
+                self.assertEqual(hand_before - (1 if x == 3 else 0), len(session.state.players["A"].zones["hand"]))
+                self.assertEqual("graveyard", session.state.cards[spell.object_id].zone)
+                self.assertEqual("graveyard" if x == 3 else "hand", session.state.cards[counter.object_id].zone)
+                self.assertEqual(0 if x == 3 else 2, session.state.players["B"].mana_pool.get("U", 0))
+                self.replay(session, load=True)
 
 
 if __name__ == "__main__":

@@ -189,6 +189,62 @@ def _permanent(
 
 
 class FixedQueryKeywordGrantCompilerTests(unittest.TestCase):
+    def test_source_counter_group_anthems_preserve_live_public_query_and_named_counter(self):
+        from quorune.compiler.continuous_templates import fixed_power_toughness_anthem_handler
+
+        # CR 611.3 and 613.4c: a static bonus re-evaluates the source's
+        # current counter count and the current creature recipient set.
+        for text,counter in (
+            ('Creatures you control get +1/+1 for each unity counter on this enchantment.','unity'),
+            ('Bird creatures get +1/+1 for each feather counter on this enchantment.','feather'),
+            ('Other Humans you control get +1/+1 for each hunt counter on this creature.','hunt'),
+        ):
+            with self.subTest(text=text):
+                compiled=fixed_power_toughness_anthem_handler(text)
+                self.assertIsNotNone(compiled)
+                self.assertEqual(counter,compiled[1]['modifier']['source_counter'])
+        for text in ('Each creature you control gets +1/+1 for each +1/+1 counter on it.',
+                     'Creatures you control get +1/+1 for each counter on this creature.',
+                     'Creatures you control get +1/+1 for each unity counter on target enchantment.'):
+            self.assertIsNone(fixed_power_toughness_anthem_handler(text))
+
+    def test_source_counter_anthem_descriptor_keeps_legacy_shape_and_rejects_malformed_scaling(self):
+        from quorune.compiler.continuous_templates import fixed_power_toughness_anthem_handler
+        from quorune.semantic_runtime.continuous_components import FixedQueryPowerToughnessAnthemHandler
+        from quorune.semantic_runtime.context import SemanticNodeError
+
+        handler=FixedQueryPowerToughnessAnthemHandler()
+        old=fixed_power_toughness_anthem_handler('Creatures you control get +1/+1.')[1]
+        self.assertIsNone(handler.validate(old).source_counter)
+        live=fixed_power_toughness_anthem_handler(
+            'Creatures you control get +1/+1 for each unity counter on this enchantment.')[1]
+        handler=FixedQueryPowerToughnessAnthemHandler(
+            handler_id='continuous.anthem.source-counter-query.v3',schema_version=3)
+        self.assertEqual('unity',handler.validate(live).source_counter)
+        for value in (True,1,None,'Unity',''):
+            malformed=copy.deepcopy(live)
+            malformed['modifier']['source_counter']=value
+            with self.assertRaises(SemanticNodeError):handler.validate(malformed)
+        malformed=copy.deepcopy(live)
+        malformed['schema_version']=True
+        with self.assertRaises(SemanticNodeError):handler.validate(malformed)
+
+    def test_source_counter_anthem_missing_authority_and_producer_remain_residual(self):
+        from common import ROOT
+        from quorune.rules.capabilities import CapabilityRegistry
+        from test_qualified_zone_event_queries import query_record
+        from quorune.oracle_ir import compile_oracle_card
+
+        record=query_record('Creatures you control get +1/+1 for each unity counter on this enchantment.')
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        next(row for row in raw['capabilities'] if row['id']=='continuous.power_toughness.fixed_anthem').update(
+            status='blocked',blockers=['source-counter anthem authority omitted'])
+        self.assertNotEqual('exact',compile_oracle_card(record,capability_registry=CapabilityRegistry(raw),
+            capability_profile='commander_review').status)
+        with mock.patch('quorune.compiler.source_counter_anthems.query_characteristic_quantity',return_value=None):
+            self.assertNotEqual('exact',compile_oracle_card(record,capability_registry=self.capabilities,
+                capability_profile='commander_review').status)
+
     def setUp(self):
         self.capabilities = load_default_capability_registry()
 
@@ -2001,6 +2057,106 @@ class FixedQueryKeywordGrantRuntimeTests(unittest.TestCase):
             session.save(record_dir)
             replay = replay_record(record_dir, self.db, verify=True)
         self.assertTrue(replay["ok"], replay)
+
+
+class SourceCounterAnthemRuntimeTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from common import ROOT
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition,DeckEntry
+        from scripts.build_test_database import build_fixture_database
+
+        cls.temporary=tempfile.TemporaryDirectory()
+        path=Path(cls.temporary.name)/'source-counter-anthems.sqlite3'
+        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',
+                              ROOT/'tests/fixtures/source-counter-anthem-cards.json'],path)
+        cls.db=CardDatabase(path)
+        cls.registry=load_default_capability_registry()
+        cls.deck=DeckDefinition('Source-counter anthem',[DeckEntry('Generic Bound Commander',1,'commander'),
+                               DeckEntry('Generic Bound Plains',18)],['Generic Bound Commander'])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    import test_bound_effect_programs as _bound
+    session=_bound.BoundEffectProgramRuntimeTests.session
+    add=_bound.BoundEffectProgramRuntimeTests.add
+    ready=_bound.BoundEffectProgramRuntimeTests.ready
+    checkpoint=_bound.BoundEffectProgramRuntimeTests.checkpoint
+    replay=_bound.BoundEffectProgramRuntimeTests.replay
+    resolve=_bound.BoundEffectProgramRuntimeTests.resolve
+
+    def test_source_counter_scaling_omission_mutant_is_killed_by_original_boon(self):
+        from dataclasses import replace
+        from quorune.semantic_runtime.continuous_components import FixedQueryPowerToughnessAnthemHandler
+
+        original=FixedQueryPowerToughnessAnthemHandler.validate
+        def omit(handler,descriptor):
+            return replace(original(handler,descriptor),source_counter=None)
+        with mock.patch.object(FixedQueryPowerToughnessAnthemHandler,'validate',omit):
+            with self.assertRaisesRegex(AssertionError,'source counter scaling omitted'):
+                self.test_original_boon_live_counter_bonus_tracks_proliferate_late_entry_and_departure()
+
+    def test_original_boon_live_counter_bonus_tracks_proliferate_late_entry_and_departure(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.engine import TURN_STEPS
+        from quorune.semantics import SemanticRegistry
+
+        session=self.session(349101)
+        engine=session.engine
+        source=self.add(engine,'Boon of the Spirit Realm',zone='hand')
+        body=self.add(engine,'Generic Bound Body')
+        foreign=self.add(engine,'Generic Bound Body',seat='B',ref='foreign-counter-anthem-body')
+        proliferate=self.add(engine,'Contentious Plan',zone='hand')
+        later=self.add(engine,'Grizzly Bears',zone='hand')
+        removal=self.add(engine,'Disenchant',zone='hand')
+        for name in (source.printed_name,proliferate.printed_name,later.printed_name,removal.printed_name):
+            program=compile_best_available_card_program(self.db,self.db.lookup(name),
+                semantic_registry=SemanticRegistry(),capability_registry=self.registry,
+                capability_profile='commander_review')
+            self.assertTrue(bind_card_program_runtime(program,capability_registry=self.registry,
+                profile='commander_review')['strict_capability_ready'])
+        base=engine._numeric_stat(body.object_id,'power')
+        foreign_base=engine._numeric_stat(foreign.object_id,'power')
+        session.state.phase_index=TURN_STEPS.index(('precombat_main','main'))
+        action=self.ready(session,source,{'W':5,'U':1,'G':1,'C':6})
+        self.checkpoint(session)
+        accepted=session.act('pilot:A',{'action_id':action['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.resolve(session)
+        self.assertEqual(1,source.counters.get('blessing',0))
+        self.assertEqual(base+1,engine._numeric_stat(body.object_id,'power'),'source counter scaling omitted')
+        self.assertEqual(foreign_base,engine._numeric_stat(foreign.object_id,'power'))
+        def cast(card,targets=()):
+            actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+            offered=next(row for row in actions if row.get('card')==card.ref)
+            result=session.act('pilot:A',{'action_id':offered['id'],'targets':list(targets),'pay':'auto'})
+            self.assertTrue(result.ok,result.summary)
+        cast(proliferate)
+        for _ in range(16):
+            decision=session.state.pending_decision
+            if decision is not None and decision.kind!='priority':break
+            result=session.act(session.pending_principals()[0],{'action_id':'pass'})
+            self.assertTrue(result.ok,result.summary)
+        self.replay(session,load=True)
+        accepted=session.act('pilot:A',{'action_id':'choose','objects':[source.ref]})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.resolve(session)
+        self.assertEqual(2,source.counters.get('blessing',0))
+        self.assertEqual(base+2,engine._numeric_stat(body.object_id,'power'),'source counter scaling omitted')
+        cast(later)
+        self.resolve(session)
+        self.assertEqual(4,engine._numeric_stat(later.object_id,'power'))
+        cast(removal,[source.ref])
+        self.resolve(session)
+        self.assertEqual('graveyard',source.zone)
+        self.assertEqual(base,engine._numeric_stat(body.object_id,'power'))
+        self.assertEqual(2,engine._numeric_stat(later.object_id,'power'))
+        self.replay(session)
 
 
 if __name__ == "__main__":

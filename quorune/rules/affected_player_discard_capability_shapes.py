@@ -8,6 +8,10 @@ from ..compiler.affected_player_discard_templates import (
     FIXED_AFFECTED_PLAYER_DISCARD_CAPABILITY,
     FIXED_AFFECTED_PLAYER_DISCARD_MECHANIC,
     fixed_affected_player_discard_predicate_is_closed,
+    FIXED_CONTROLLER_DISCARD_MECHANIC,
+    FIXED_CONTROLLER_DISCARD_CAPABILITY,
+    FIXED_CONTEXT_PLAYER_DISCARD_MECHANIC,
+    FIXED_CONTEXT_PLAYER_DISCARD_CAPABILITY,
 )
 
 
@@ -91,9 +95,61 @@ def fixed_affected_player_discard_node_capabilities(
         return ()
     elif controller and effect.get("players") != ["$controller"]:
         return ()
-    elif not controller and effect.get("players") not in {"all", "opponents"}:
+    elif not controller and effect.get("players") not in ("all", "opponents"):
         return ()
     return tuple(sorted(dependencies))
 
 
-__all__ = ["fixed_affected_player_discard_node_capabilities"]
+def fixed_controller_discard_node_capabilities(*, effects, target_schema, mechanic_ids):
+    if FIXED_CONTROLLER_DISCARD_MECHANIC not in set(mechanic_ids) or len(effects) != 1:
+        return ()
+    effect = effects[0]
+    if effect.get("players") != ["$controller"] or type(effect.get("count")) is not int:
+        return ()
+    required = fixed_affected_player_discard_node_capabilities(
+        effects=effects, target_schema=target_schema,
+        mechanic_ids=mechanic_ids, allow_controller=True,
+    )
+    return tuple(sorted({*required, FIXED_CONTROLLER_DISCARD_CAPABILITY})) if required else ()
+
+
+def fixed_context_player_discard_node_capabilities(*, effects, target_schema, mechanic_ids):
+    if FIXED_CONTEXT_PLAYER_DISCARD_MECHANIC not in set(mechanic_ids) or len(effects) != 1 or target_schema is not None:
+        return ()
+    effect = effects[0]
+    if effect.get("players") not in (["$context.player"], ["$context.target"]) or type(effect.get("count")) is not int or effect.get("count") not in {1, 2, 3}:
+        return ()
+    restored = {**effect, "players": ["$controller"]}
+    required = fixed_affected_player_discard_node_capabilities(
+        effects=(restored,), target_schema=None,
+        mechanic_ids=mechanic_ids, allow_controller=True,
+    )
+    return tuple(sorted({*required, FIXED_CONTEXT_PLAYER_DISCARD_CAPABILITY})) if required else ()
+
+
+def is_closed_fixed_bound_discard_program(program):
+    """Admit only a closed producer whose occurrence defines its player slot."""
+    arguments = dict(effects=program.effects, target_schema=program.target_schema,
+        mechanic_ids=program.coverage)
+    required = fixed_controller_discard_node_capabilities(**arguments)
+    if required:
+        return set(required).issubset(program.capability_dependencies)
+    required = fixed_context_player_discard_node_capabilities(**arguments)
+    if not required or not set(required).issubset(program.capability_dependencies):
+        return False
+
+    def guarantees(condition, field, value):
+        if not isinstance(condition, Mapping):
+            return False
+        if condition == {"field": field, "op": "eq", "value": value}:
+            return True
+        children = condition.get("all", ())
+        return isinstance(children, (list, tuple)) and any(guarantees(child, field, value) for child in children)
+
+    players = program.effects[0]["players"]
+    if players == ["$context.target"]:
+        return program.event in {"damage.dealt", "damage.dealt.self"} and guarantees(program.event_condition, "target_kind", "player")
+    return program.event == "step.begin" and guarantees(program.event_condition, "step", "upkeep")
+
+
+__all__ = ["fixed_affected_player_discard_node_capabilities", "fixed_controller_discard_node_capabilities", "fixed_context_player_discard_node_capabilities", "is_closed_fixed_bound_discard_program"]

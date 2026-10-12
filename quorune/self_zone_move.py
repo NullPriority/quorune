@@ -4,8 +4,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass, replace
 from typing import Any, Mapping, Protocol
+import re
 
 from .abilities import ActivatedAbility
+from .activation_condition_model import activation_restriction_spec
 from .card_programs.admission import REQUIRES_COMPLETE_CARD_PROGRAM_FIELD
 from .replacement.immutable import FrozenMap, freeze_value
 
@@ -111,6 +113,16 @@ def compile_self_zone_move(
     ability: ActivatedAbility,
 ) -> SelfZoneMoveSpec | None:
     effect = " ".join(ability.effect_text.split())
+    restricted = re.fullmatch(r"(?P<effect>.+?\.) Activate only (?P<restriction>.+)\.", effect)
+    if restricted is not None:
+        restriction = activation_restriction_spec(restricted['restriction'])
+        if restriction is None or (
+            ability.sorcery_speed is not restriction.sorcery_speed
+            or ability.activation_limit is not restriction.activation_limit
+            or ability.activation_conditions != restriction.conditions
+        ):
+            return None
+        effect = restricted['effect']
     result: tuple[str, str, bool, str] | None = None
     if effect == "Return this card from your graveyard to your hand.":
         result = ("graveyard", "hand", False, "card")

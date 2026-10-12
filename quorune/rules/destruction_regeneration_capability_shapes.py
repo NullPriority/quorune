@@ -76,6 +76,7 @@ def self_regeneration_node_capabilities(
         value
         for value in mechanics
         if value.startswith("trigger-") or value.startswith("cr-603-")
+        or value == "fixed-typed-event-effect-trigger"
     }
     effect_mechanics = mechanics - contextual_mechanics
     if len(effects) != 1:

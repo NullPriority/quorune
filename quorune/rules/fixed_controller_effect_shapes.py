@@ -66,7 +66,14 @@ def fixed_life_node_capabilities(
         )
     elif operation == "lose_life":
         player = effect.get("player")
-        valid = (
+        all_players = (
+            set(effect) == {"op", "scope", "amount"}
+            and effect.get("scope") == "all_active_players"
+            and _positive_int(effect.get("amount"))
+            and "cr-101-the-magic-golden-rules" in mechanics
+            and target_schema is None
+        )
+        valid = all_players or (
             set(effect) == {"op", "player", "amount"}
             and player in {"$controller", "$target.0"}
             and _positive_int(effect.get("amount"))
@@ -76,7 +83,7 @@ def fixed_life_node_capabilities(
             )
         )
         expected_schema = (
-            None if player == "$controller" else actual_schema
+            None if all_players or player == "$controller" else actual_schema
         )
     elif operation == "lose_life_each_opponent":
         valid = (

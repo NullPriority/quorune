@@ -147,8 +147,7 @@ def fixed_regeneration_effect_template(
         return self_template
 
     target_match = re.fullmatch(
-        r"regenerate (?P<subject>target (?:artifact creature|artifact|"
-        r"creature|permanent))\.",
+        r"regenerate (?P<subject>target .+)\.",
         normalized,
         re.IGNORECASE,
     )

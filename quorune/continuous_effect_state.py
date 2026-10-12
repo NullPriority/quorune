@@ -19,7 +19,7 @@ from .as_unblocked_rule import AsUnblockedAssignmentRule
 from .toughness_assignment_rule import ResolvedToughnessAssignmentRule
 from .declaration_fragments import DeclarationRestrictionTemplate
 from .object_predicate import ObjectQuerySpec
-from .object_query import object_matches_query, object_query_result
+from .object_query import ObjectQueryResult, object_matches_query, object_query_result
 
 
 class ContinuousEffectStateError(ValueError):
@@ -414,8 +414,9 @@ def create_resolution_declaration_rule_effect(
     duration: ContinuousEffectDuration = (
         ContinuousEffectDuration.UNTIL_END_OF_TURN
     ),
+    live_query: ObjectQuerySpec | None = None,
 ) -> ResolutionDeclarationRuleEffect | None:
-    """Commit one typed declaration rule for a locked affected-object set."""
+    """Commit a declaration rule with locked recipients or one live query."""
 
     journal = host.state.continuous_effects
     if journal is None:
@@ -427,7 +428,7 @@ def create_resolution_declaration_rule_effect(
         )
         for card in targets
     )
-    if not identities:
+    if not identities and live_query is None:
         return None
     effect = ResolutionDeclarationRuleEffect(
         effect_id=host._next_ref("DR"),
@@ -436,6 +437,7 @@ def create_resolution_declaration_rule_effect(
         restriction=restriction,
         duration=duration,
         locked_objects=identities,
+        live_query=live_query,
     )
     committed = commit_continuous_effect(host.state, effect)
     if not isinstance(committed, ResolutionDeclarationRuleEffect):
@@ -466,8 +468,10 @@ def active_resolution_effects(
 def active_resolution_declaration_rule_effects(
     state: Any,
     card: Any,
+    *,
+    query_row: ObjectQueryResult | None = None,
 ) -> tuple[ResolutionDeclarationRuleEffect, ...]:
-    """Return declaration rules locked to this battlefield incarnation."""
+    """Return rules matching this incarnation or its current public query row."""
 
     journal = state.continuous_effects
     if not journal:
@@ -480,7 +484,12 @@ def active_resolution_declaration_rule_effects(
         effect
         for effect in journal
         if isinstance(effect, ResolutionDeclarationRuleEffect)
-        and identity in effect.locked_objects
+        and (
+            identity in effect.locked_objects
+            or effect.live_query is not None
+            and query_row is not None
+            and object_matches_query(query_row, effect.live_query)
+        )
     )
 
 

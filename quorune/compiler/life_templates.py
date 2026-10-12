@@ -197,7 +197,7 @@ def fixed_life_effect_template(
             },
         )
     match = re.fullmatch(
-        rf"each opponent loses (?P<count>{FIXED_COUNT_PATTERN}) life\.?",
+        rf"each (?P<relation>opponent|player) loses (?P<count>{FIXED_COUNT_PATTERN}) life\.?",
         normalized,
         re.IGNORECASE,
     )
@@ -205,10 +205,12 @@ def fixed_life_effect_template(
         count = fixed_number(match.group("count"))
         if count <= 0:
             return None
+        all_players = match.group("relation").casefold() == "player"
         return FixedLifeEffectTemplate(
-            template_id="lose-life-each-opponent-v1",
+            template_id="lose-life-each-player-v1" if all_players else "lose-life-each-opponent-v1",
             effect={
-                "op": "lose_life_each_opponent",
+                "op": "lose_life" if all_players else "lose_life_each_opponent",
+                **({"scope": "all_active_players"} if all_players else {}),
                 "amount": count,
             },
             mechanic_ids=(

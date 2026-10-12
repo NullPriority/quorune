@@ -615,7 +615,14 @@ def _execute_player_intent(
             ),
         )
         return intent.player, result.exiled_refs
-    from ..milling import MillRequest, mill_cards
+    from ..milling import MillRequest, mill_cards, mill_player_batch
+
+    if intent.batch_players:
+        results = mill_player_batch(sink, tuple(
+            MillRequest(actor=intent.actor, player=player, count=intent.count, reason=intent.reason)
+            for player in intent.batch_players
+        ))
+        return intent.actor, tuple(ref for result in results for ref in result.refs)
 
     result = mill_cards(
         sink,

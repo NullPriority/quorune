@@ -2760,6 +2760,7 @@ class RulesSchedulerTests(unittest.TestCase):
         ability = {"face_id": "front"}
         for record, source in (
             (spell, spell.oracle_text),
+            (spell, "Regenerate target Elf."),
             (aura, aura.oracle_text),
             (creature, creature.oracle_text),
             (
@@ -2781,7 +2782,7 @@ class RulesSchedulerTests(unittest.TestCase):
                     )
                 )
         for source in (
-            "Regenerate target Elf.",
+            "Regenerate target creature with power X or less.",
             "Regenerate two target creatures.",
             "Destroy target creature. It can't be regenerated if it attacked.",
             "Destroy target creature. Draw a card for each creature destroyed this way.",
@@ -2844,6 +2845,7 @@ class RulesSchedulerTests(unittest.TestCase):
             "Whenever you cast a white spell, draw a card.",
             "Whenever a player casts a Spirit or Arcane spell, you gain 1 life.",
             "Whenever an opponent casts a colorless or multicolored spell, scry 1.",
+            "Whenever you cast a Spirit or Arcane spell, regenerate target creature.",
             (
                 "Whenever you cast a Spirit or Arcane spell, you may return "
                 "Characteristic trigger source to its owner's hand."
@@ -2864,7 +2866,7 @@ class RulesSchedulerTests(unittest.TestCase):
             "Whenever you cast a Spirit spell, perform an unsupported action.",
             (
                 "Whenever you cast a Spirit or Arcane spell, regenerate "
-                "target creature."
+                "target creature with power X or less."
             ),
             (
                 "Whenever you cast a Spirit or Arcane spell, you may return "

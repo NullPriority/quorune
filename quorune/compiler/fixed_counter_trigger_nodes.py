@@ -251,7 +251,7 @@ _ONE_OR_MORE_PUBLIC_EVENT_VARIANTS = frozenset(
 )
 _SCHEDULED_TRIGGER = re.compile(
     r"^At the beginning of "
-    r"(?P<schedule>your upkeep|each upkeep|your end step|each end step|"
+    r"(?P<schedule>your upkeep|each upkeep|your draw step|your end step|each end step|"
     r"the end step|combat on your turn|each combat), (?P<body>.+)$",
     re.IGNORECASE,
 )
@@ -828,6 +828,7 @@ class FixedCounterTriggerBinding:
         step, controller_only = {
             "your upkeep": ("upkeep", True),
             "each upkeep": ("upkeep", False),
+            "your draw step": ("draw", True),
             "your end step": ("end_step", True),
             "each end step": ("end_step", False),
             "the end step": ("end_step", False),
@@ -1246,7 +1247,7 @@ def fixed_counter_event_trigger_node(
     ):
         return None
     optional_match = re.fullmatch(
-        r"you may (?P<body>.+)",
+        r"you may (?P<body>(?!pay\b).+)",
         binding.body,
         re.IGNORECASE,
     )

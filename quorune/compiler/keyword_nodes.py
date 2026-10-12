@@ -1076,10 +1076,8 @@ def modular_keyword_nodes(
             ),
         )
 
-    gate = keyword_dependency_gate(
-        material_line=material_line,
-        mechanics=mechanics,
-        trusted_mechanics=trusted_mechanics,
+    gate = explicit_capabilities_gate(
+        ("counter.producer.modular", "counter.placement.quantity_replacement"),
         capability_registry=capability_registry,
         capability_profile=capability_profile,
     )

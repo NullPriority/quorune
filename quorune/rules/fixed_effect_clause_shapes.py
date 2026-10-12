@@ -1,5 +1,6 @@
 from __future__ import annotations
 from .control_capability_shapes import fixed_control_node_capabilities
+from .extra_turn_shapes import fixed_extra_turn_node_capabilities
 
 """Capability closure for generic two-clause effect sequences."""
 
@@ -105,6 +106,7 @@ FIXED_EFFECT_CLAUSE_SEQUENCE_CAPABILITY = (
 )
 
 _COMPONENT_RESOLVERS = (
+    fixed_extra_turn_node_capabilities,
     whole_hand_discard_node_capabilities,
     fixed_control_node_capabilities,
     fixed_attachment_action_node_capabilities,
@@ -172,6 +174,13 @@ def _contains_target_reference(value: Any) -> bool:
             or value.startswith("$target.")
         )
     if isinstance(value, Mapping):
+        if value.get('op') == 'create_token' and isinstance(value.get('copy_spec'), Mapping):
+            from ..token_copy_recipes import TokenCopyRecipeSpec
+            try:
+                if TokenCopyRecipeSpec.from_dict(value['copy_spec']).origin == 'target':
+                    return True
+            except (TypeError, ValueError):
+                pass
         return any(_contains_target_reference(child) for child in value.values())
     if isinstance(value, (list, tuple)):
         return any(_contains_target_reference(child) for child in value)

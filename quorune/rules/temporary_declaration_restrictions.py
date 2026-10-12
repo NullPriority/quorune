@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Typed resolution-created combat declaration rules."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any, Literal, Protocol
 
 from ..ability_fragments import (
@@ -21,6 +21,7 @@ from ..continuous_effect_state import (
 )
 from ..declaration_fragments import DeclarationRestrictionTemplate
 from ..declaration_rule_effects import ResolutionDeclarationRuleEffect
+from ..object_query import ObjectQueryResult
 
 
 TemporaryDeclarationRestrictionKind = Literal[
@@ -50,6 +51,10 @@ class TemporaryDeclarationRestrictionHost(Protocol):
     def _next_ref(self, prefix: str) -> str: ...
 
     def _next_zone_timestamp(self) -> int: ...
+
+    def _public_object_query_result(self, card: Any) -> ObjectQueryResult: ...
+
+    def _combat_keywords(self, card: Any) -> frozenset[str]: ...
 
     def _effective_ability_fragments(
         self,
@@ -147,6 +152,10 @@ def current_declaration_restrictions(
     """Compose live static restrictions with resolution-created rules."""
 
     result: list[CurrentDeclarationRestriction] = []
+    live_rules = any(
+        isinstance(effect, ResolutionDeclarationRuleEffect) and effect.live_query is not None
+        for effect in host.state.continuous_effects or ()
+    )
     for source in sorted(
         host.state.cards.values(), key=lambda value: value.ref
     ):
@@ -171,6 +180,13 @@ def current_declaration_restrictions(
             active_resolution_declaration_rule_effects(
                 host.state,
                 source,
+                query_row=(
+                    replace(
+                        host._public_object_query_result(source),
+                        keywords=tuple(sorted(host._combat_keywords(source))),
+                    )
+                    if live_rules else None
+                ),
             ),
             key=lambda effect: (effect.timestamp, effect.effect_id),
         )

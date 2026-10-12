@@ -75,14 +75,26 @@ class TargetedCounterEffectTemplate:
     """Closed lowering for one mandatory direct stack counter instruction."""
 
     target: CounterTarget
+    mana_value_predicate: tuple[str, int] | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.target, CounterTarget):
             raise ValueError("Counter target domain is unsupported")
+        if self.mana_value_predicate is not None:
+            if type(self.mana_value_predicate) is not tuple or len(self.mana_value_predicate) != 2:
+                raise ValueError("Fixed stack mana-value predicate must be an immutable field/value pair")
+            field, value = self.mana_value_predicate
+            if (field not in {"mana_value", "mana_value_min", "mana_value_max"}
+                    or type(value) is not int or value < 0
+                    or "ability" in self.target.value):
+                raise ValueError("Fixed stack mana value requires one spell target and nonnegative integer bound")
 
     @property
     def template_id(self) -> str:
         slug = direct_target_slug(self.target.value)
+        if self.mana_value_predicate is not None:
+            field, value = self.mana_value_predicate
+            slug += f"-{field.replace('_', '-')}-{value}"
         return f"counter-target-{slug}-v2"
 
     @property
@@ -120,7 +132,11 @@ class TargetedCounterEffectTemplate:
             options["predicate"] = "activated_ability"
         elif self.target is CounterTarget.TRIGGERED_ABILITY:
             options["predicate"] = "triggered_ability"
-        return stack_target_schema(categories=categories, **options)
+        schema = dict(stack_target_schema(categories=categories, **options))
+        if self.mana_value_predicate is not None:
+            field, value = self.mana_value_predicate
+            schema[field] = value
+        return schema
 
     @property
     def mechanics(self) -> tuple[str, ...]:
@@ -145,6 +161,14 @@ class TargetedCounterEffectTemplate:
 def targeted_counter_effect_template(
     text: str,
 ) -> TargetedCounterEffectTemplate | None:
+    normalized = text.strip()
+    quantity = re.search(r" with mana value (?P<value>[0-9]+)(?P<comparison> or less| or greater)?\.?$", normalized, re.I)
+    numeric = None
+    if quantity is not None:
+        comparison = (quantity["comparison"] or "").casefold()
+        field = "mana_value_max" if comparison == " or less" else "mana_value_min" if comparison == " or greater" else "mana_value"
+        numeric = (field, int(quantity["value"]))
+        normalized = normalized[:quantity.start()] + "."
     match = re.fullmatch(
         r"counter target (?P<target>spell|noncreature spell|creature spell|"
         r"creature or planeswalker spell|instant or sorcery spell|"
@@ -155,13 +179,15 @@ def targeted_counter_effect_template(
         r"activated ability|triggered ability|"
         r"activated or triggered ability|"
         r"spell, activated ability, or triggered ability)\.?",
-        text.strip(),
+        normalized,
         re.IGNORECASE,
     )
     if match is None:
         return None
+    if numeric is not None and "ability" in match["target"].casefold():
+        return None
     return TargetedCounterEffectTemplate(
-        CounterTarget(match.group("target").casefold())
+        CounterTarget(match.group("target").casefold()), mana_value_predicate=numeric,
     )
 
 
@@ -188,7 +214,7 @@ class TargetedControllerPaymentTemplate:
 
     def compiled(self):
         return (
-            f"counter-controller-payment-{direct_target_slug(self.counter.target.value)}-v2",
+            f"counter-controller-payment-{self.counter.template_id.removeprefix('counter-target-').removesuffix('-v2')}-v2",
             ({"op": "counter_unless_pay", "schema_version": 2,
               "stack": "$target.0", "player": "$target.current_controller.0",
               "cost": self.payment.to_dict()},),

@@ -2,6 +2,7 @@ from __future__ import annotations
 from .counter_resolution_effect_templates import counter_resolution_effect_template
 from .public_quantity_mana_effects import public_quantity_mana_effect_template
 from .fixed_resolution_mana import fixed_resolution_mana_effect_template
+from .extra_turn_templates import fixed_extra_turn_effect_template
 from .whole_hand_discard_templates import whole_hand_discard_effect_template, whole_hand_discard_draw_sequence_template, whole_hand_discard_public_draw_sequence
 from .hand_entry_templates import fixed_draw_then_hand_entry_template
 from .defender_permission_templates import temporary_defender_permission_template
@@ -14,6 +15,7 @@ from ..attachment_references import AttachmentReferenceKind
 from .affected_player_discard_templates import (
     fixed_affected_player_discard_effect_template,
 )
+from . import affected_player_discard_templates as _discard
 from .affected_player_sacrifice_templates import (
     fixed_affected_player_sacrifice_effect_template,
 )
@@ -115,6 +117,8 @@ def _source_context_resolution_template(
     text: str, *, card_name: str, source_is_permanent: bool | None,
     source_card_types: Sequence[str],
 ) -> CompiledEffectTemplate | None:
+    extra_turn = fixed_extra_turn_effect_template(text)
+    if extra_turn is not None:return extra_turn
     toughness=temporary_toughness_assignment_template(text)
     if toughness is not None:return toughness
     as_unblocked=temporary_as_unblocked_template(text,source_name=card_name,source_is_permanent=source_is_permanent,source_card_types=source_card_types)
@@ -197,6 +201,8 @@ def typed_resolution_effect_template(
     )
     if affected_player_sacrifice is not None:
         return affected_player_sacrifice.compiled()
+    if (controller_discard := _discard.standalone_controller_discard_effect_template(text)) is not None:
+        return controller_discard
     affected_player_discard = fixed_affected_player_discard_effect_template(
         text
     )

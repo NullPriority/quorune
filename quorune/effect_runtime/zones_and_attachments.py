@@ -723,6 +723,20 @@ def _apply_mill(
     reason: str,
 ) -> Any:
     del operation
+    if "scope" in effect:
+        from ..milling import mill_player_batch
+        if (
+            set(effect) - {"op", "scope", "count", "reason", "_runtime_source"}
+            or effect.get("scope") != "all_active_players"
+            or type(effect.get("count")) is not int
+            or effect["count"] < 0
+        ):
+            raise GameRuleError("All-player Mill instruction is malformed")
+        results = mill_player_batch(host, tuple(
+            MillRequest(actor=actor, player=seat, count=effect["count"], reason=reason)
+            for seat in host.apnap_order()
+        ))
+        return [ref for result in results for ref in result.refs]
     count = max(0, int(effect.get("count", 1)))
     if not count:
         return []

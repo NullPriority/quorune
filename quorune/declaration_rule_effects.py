@@ -13,11 +13,28 @@ from .continuous_effect_model import (
 )
 from .declaration_fragments import DeclarationRestrictionTemplate
 from .replacement.immutable import immutable_fingerprint
+from .object_predicate import ObjectQuerySpec
 from .as_unblocked_rule import AS_UNBLOCKED_RULE_KIND,AsUnblockedAssignmentRule
 from .toughness_assignment_rule import TOUGHNESS_RULE_KIND,ResolvedToughnessAssignmentRule
 
 
 RESOLUTION_DECLARATION_RULE_EFFECT_KIND = "resolution_declaration_rule"
+
+
+def declaration_group_query_is_closed(query: ObjectQuerySpec, *, resolved: bool = False) -> bool:
+    """Keep live game-rule recipients on current public creature predicates."""
+    return bool(
+        isinstance(query, ObjectQuerySpec)
+        and query.zones == ("battlefield",)
+        and "creature" in query.types_all
+        and query.owner is None
+        and (resolved or query.controller is None and not query.excluded_controllers)
+        and (query.controller is None or not query.controller.startswith("$"))
+        and all(not controller.startswith("$") for controller in query.excluded_controllers)
+        and not query.include_phased_out
+        and query.known_to_actor is None
+        and query.exclude_ref is None
+    )
 
 
 @dataclass(frozen=True, slots=True)
@@ -27,7 +44,8 @@ class ResolutionDeclarationRuleEffect:
     The affected object supplies the source-relative anchor used by the
     declaration solver, but the rule is not an ability or characteristic of
     that object.  Physical and logical identity keep the rule on the exact
-    battlefield incarnation selected when it resolved.
+    battlefield incarnation selected when it resolved. A live group query
+    instead tests current public membership, including later entrants.
     """
 
     effect_id: str
@@ -38,6 +56,7 @@ class ResolutionDeclarationRuleEffect:
     duration: ContinuousEffectDuration = (
         ContinuousEffectDuration.UNTIL_END_OF_TURN
     )
+    live_query: ObjectQuerySpec | None = None
 
     def __post_init__(self) -> None:
         for name, value in (
@@ -83,7 +102,7 @@ class ResolutionDeclarationRuleEffect:
                 "Declaration-rule locked identities must be unique typed values"
             ) from exc
         if (
-            not locked
+            (not locked and self.live_query is None)
             or len(set(locked)) != len(locked)
             or not all(
                 isinstance(identity, ContinuousObjectIdentity)
@@ -94,9 +113,13 @@ class ResolutionDeclarationRuleEffect:
                 "Declaration-rule locked identities must be unique typed values"
             )
         object.__setattr__(self, "locked_objects", locked)
+        if self.live_query is not None and (
+            locked or not declaration_group_query_is_closed(self.live_query, resolved=True)
+        ):
+            raise ContinuousEffectError("Live declaration rules require one public creature query and no locked objects")
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        value = {
             "effect_kind": RESOLUTION_DECLARATION_RULE_EFFECT_KIND,
             "effect_id": self.effect_id,
             "source_id": self.source_id,
@@ -107,6 +130,9 @@ class ResolutionDeclarationRuleEffect:
                 identity.to_dict() for identity in self.locked_objects
             ],
         }
+        if self.live_query is not None:
+            value.update(schema_version=2, live_query=self.live_query.to_dict())
+        return value
 
     @classmethod
     def from_dict(
@@ -122,7 +148,8 @@ class ResolutionDeclarationRuleEffect:
             "duration",
             "locked_objects",
         }
-        if not isinstance(value, Mapping) or set(value) != expected:
+        live = isinstance(value, Mapping) and set(value) == expected | {"schema_version", "live_query"}
+        if not isinstance(value, Mapping) or (set(value) != expected and not live):
             raise ContinuousEffectError(
                 "Declaration-rule effect fields are missing or unknown"
             )
@@ -130,6 +157,8 @@ class ResolutionDeclarationRuleEffect:
             raise ContinuousEffectError(
                 "Declaration-rule effect kind is unsupported"
             )
+        if live and (type(value["schema_version"]) is not int or value["schema_version"] != 2 or not isinstance(value["live_query"], Mapping)):
+            raise ContinuousEffectError("Live declaration-rule schema version and query are malformed")
         if not isinstance(value["restriction"], Mapping) or not isinstance(
             value["locked_objects"], list
         ):
@@ -149,6 +178,7 @@ class ResolutionDeclarationRuleEffect:
                     ContinuousObjectIdentity.from_dict(identity)
                     for identity in value["locked_objects"]
                 ),
+                live_query=ObjectQuerySpec.from_dict(value["live_query"]) if live else None,
             )
         except (TypeError, ValueError) as exc:
             if isinstance(exc, ContinuousEffectError):

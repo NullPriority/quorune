@@ -244,7 +244,7 @@ class SupportCounterPlacementCompilerTests(unittest.TestCase):
             ("Support X.", "Sorcery"),
             ("Support 0.", "Sorcery"),
             ("Support 2 twice.", "Sorcery"),
-            ("At the beginning of combat on your turn, you may pay {3}{W}. If you do, support 2.", "Creature"),
+            ("At the beginning of combat on your turn, you may pay {X}{W}. If you do, support 2.", "Creature"),
         )
         for text, type_line in cases:
             with self.subTest(text=text):
@@ -257,6 +257,19 @@ class SupportCounterPlacementCompilerTests(unittest.TestCase):
                 ir = self.compile(text, type_line=type_line)
                 self.assertNotEqual("exact", ir.status)
                 self.assertTrue(ir.material_residuals)
+
+    def test_fixed_paid_support_keeps_payment_and_target_exclusion(self):
+        text="At the beginning of combat on your turn, you may pay {3}{W}. If you do, support 2."
+        ir=self.compile(text,type_line="Creature")
+        self.assertEqual("exact",ir.status,ir.material_residuals)
+        node=ir.faces[0].nodes[0]
+        self.assertEqual("offer_optional_mana_payment",node.effects[0]["op"])
+        self.assertEqual(3,node.effects[0]["cost"]["GENERIC"])
+        self.assertEqual(1,node.effects[0]["cost"]["W"])
+        self.assertEqual("place_counters_on_targets",node.effects[0]["effects"][0]["op"])
+        self.assertTrue(node.target_schema["source_exclusion"])
+        self.assertIn("effect.choice.optional_fixed_mana_payment",node.capability_dependencies)
+        self.assertIn("counter.producer.support",node.capability_dependencies)
 
     def test_support_source_context_uses_exact_card_types(self):
         for type_line in (

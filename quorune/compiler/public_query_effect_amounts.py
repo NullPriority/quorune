@@ -49,13 +49,13 @@ _TRAILING_REMINDER = re.compile(
 )
 _LIFE_PATTERNS = (
     re.compile(
-        r"^(?P<subject>(?:you|target player|target opponent|each opponent) )?"
+        r"^(?P<subject>(?:you|target player|target opponent|each opponent|each player) )?"
         r"(?P<verb>gain|gains|lose|loses) life equal to "
         r"(?P<quantity>.+?)\.?$",
         re.IGNORECASE,
     ),
     re.compile(
-        r"^(?P<subject>(?:you|target player|target opponent|each opponent) )?"
+        r"^(?P<subject>(?:you|target player|target opponent|each opponent|each player) )?"
         r"(?P<verb>gain|gains|lose|loses) "
         r"(?P<coefficient>[1-9]\d*|one|two|three|four|five) life for each "
         r"(?P<quantity>.+?)\.?$",

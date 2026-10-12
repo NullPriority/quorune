@@ -41,14 +41,14 @@ _DRAW_REVEAL_LINKED_DRAW = re.compile(
     re.IGNORECASE,
 )
 _TRIGGER_ABILITY_WORD = re.compile(
-    r"^[A-Za-z][A-Za-z ']+\s+[—-]\s+"
+    r"^[A-Za-z][A-Za-z0-9 '’!?-]+\s+[—-]\s+"
     r"(?P<body>(?:when|whenever|at the beginning of)\b.+)$",
     re.IGNORECASE,
 )
 
 
 def trigger_ability_word_material_line(material_line: str) -> str:
-    """Remove only a leading ability word that carries a triggered ability."""
+    """Remove one leading ability/flavor label before a triggered body."""
 
     match = _TRIGGER_ABILITY_WORD.fullmatch(material_line)
     return match.group("body") if match is not None else material_line
@@ -58,6 +58,13 @@ def fixed_draw_effect_template(text: str) -> DrawEffectTemplate | None:
     """Lower closed mandatory and optional fixed-count draw instructions."""
 
     normalized = text.strip()
+    normalized = re.sub(
+        r"\b(?P<count>an|one|two|three|four|five|six|seven|eight|nine|ten) additional (?P<noun>cards?)\b",
+        lambda match: ("a" if match["count"].casefold() == "an" else match["count"])
+        + " " + match["noun"],
+        normalized,
+        flags=re.IGNORECASE,
+    )
     if re.fullmatch(
         r"draw a card and reveal it\. if it isn['’]t a land card, "
         r"discard it\.?",

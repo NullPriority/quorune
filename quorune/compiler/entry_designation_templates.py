@@ -149,7 +149,7 @@ def chosen_characteristics_handler(text: str):
     body_capabilities = (
         (capabilities,) if isinstance(capabilities, str) else capabilities
     )
-    return (
+    result = (
         "fixed-chosen-designation-characteristics-v1",
         {
             "handler_id": CHOSEN_CHARACTERISTICS_HANDLER_ID,
@@ -162,3 +162,9 @@ def chosen_characteristics_handler(text: str):
         },
         tuple(dict.fromkeys((CHOSEN_CHARACTERISTICS_CAPABILITY, *body_capabilities))),
     )
+    from ..semantic_runtime.chosen_characteristics import ChosenCharacteristicsHandler
+    try:
+        ChosenCharacteristicsHandler().validate(result[1])
+    except (TypeError, ValueError):
+        return None
+    return result

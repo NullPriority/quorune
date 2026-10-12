@@ -65,6 +65,36 @@ def typecycling_record(text: str) -> CardRecord:
 
 
 class TypecyclingModelTests(unittest.TestCase):
+    def test_paired_printed_typecycling_has_independent_source_spanned_abilities(self):
+        # CR 702.29: each typecycling ability has its own cost and search
+        # quality, even when Oracle prints two abilities on the same line.
+        record=typecycling_record('Islandcycling {2}, swampcycling {2}')
+        ir=compile_oracle_card(record,capability_registry=load_default_capability_registry(),
+                               capability_profile='commander_review')
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        nodes=ir.faces[0].nodes
+        self.assertEqual(2,len(nodes))
+        self.assertEqual(2,len({node.node_id for node in nodes}))
+        specs=cycling_specs_from_descriptors([handler for node in nodes for handler in node.handlers])
+        self.assertEqual(2,len({spec.ability_id for spec in specs}))
+        self.assertEqual(['Islandcycling {2}','swampcycling {2}'],
+                         [record.oracle_text[node.span.start:node.span.end] for node in nodes])
+        self.assertEqual([['island'],['swamp']],
+                         [node.effects[0]['selector']['subtypes_any'] for node in nodes])
+
+    def test_paired_typecycling_open_siblings_and_missing_producer_remain_residual(self):
+        registry=load_default_capability_registry()
+        for text in ('Islandcycling {2}, swampcycling {X}',
+                     'Islandcycling {2}, swampcycling {U/B}',
+                     'Islandcycling {2}, draw a card',
+                     'Islandcycling {2}, swampcycling {2}, forestcycling {2}, plainscycling {2}, mountaincycling {2}'):
+            self.assertNotEqual('exact',compile_oracle_card(typecycling_record(text),
+                capability_registry=registry,capability_profile='commander_review').status)
+        with mock.patch('quorune.compiler.cycling_nodes.compile_typecycling_ability',return_value=None):
+            self.assertNotEqual('exact',compile_oracle_card(
+                typecycling_record('Islandcycling {2}, swampcycling {2}'),
+                capability_registry=registry,capability_profile='commander_review').status)
+
     def test_typecycling_descriptor_is_strict_immutable_and_round_trips(self):
         spec = compile_typecycling_ability(
             material_line="Basic landcycling {1}",
@@ -648,6 +678,88 @@ class TypecyclingRuntimeTests(unittest.TestCase):
                 self.assertEqual(
                     before, authoritative_state_hash(session.engine.state)
                 )
+
+
+class PairedTypecyclingRuntimeTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from common import ROOT
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition,DeckEntry
+        from scripts.build_test_database import build_fixture_database
+
+        cls.temporary=tempfile.TemporaryDirectory()
+        path=Path(cls.temporary.name)/'paired-typecycling.sqlite3'
+        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',
+                              ROOT/'tests/fixtures/paired-typecycling-cards.json'],path)
+        cls.db=CardDatabase(path)
+        cls.registry=load_default_capability_registry()
+        cls.deck=DeckDefinition('Paired Typecycling',[DeckEntry('Generic Bound Commander',1,'commander'),
+                               DeckEntry('Generic Bound Plains',10)],['Generic Bound Commander'])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    import test_bound_effect_programs as _bound
+    session=_bound.BoundEffectProgramRuntimeTests.session
+    add=_bound.BoundEffectProgramRuntimeTests.add
+    ready=_bound.BoundEffectProgramRuntimeTests.ready
+    checkpoint=_bound.BoundEffectProgramRuntimeTests.checkpoint
+    replay=_bound.BoundEffectProgramRuntimeTests.replay
+
+    def test_original_jhessian_offers_distinct_searches_with_private_choices_and_replay(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.engine import TURN_STEPS
+
+        program=compile_best_available_card_program(self.db,self.db.lookup('Jhessian Zombies'),
+            semantic_registry=SemanticRegistry(),capability_registry=self.registry,
+            capability_profile='commander_review')
+        self.assertTrue(bind_card_program_runtime(program,capability_registry=self.registry,
+            profile='commander_review')['strict_capability_ready'])
+        for label in ('Island','Swamp'):
+            with self.subTest(label=label):
+                session=self.session(347100+int(label=='Swamp'))
+                engine=session.engine
+                source=self.add(engine,'Jhessian Zombies',zone='hand')
+                cards={name:self.add(engine,name,zone='library',ref='private-search-'+name.casefold()+'-347')
+                       for name in ('Island','Swamp')}
+                session.state.phase_index=TURN_STEPS.index(('precombat_main','main'))
+                self.ready(session,source,{'C':2})
+                actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+                offers=[row for row in actions if row['id'].startswith('activate:'+source.ref+':')]
+                self.assertEqual(2,len(offers),'paired Typecycling lost independent offers')
+                self.assertEqual(2,len({row['id'] for row in offers}))
+                instance='1' if label=='Island' else '2'
+                chosen=next(row for row in offers if row['id'].endswith(':typecycling-instance:'+instance))
+                self.checkpoint(session)
+                before=authoritative_state_hash(session.state)
+                rejected=session.act('pilot:B',{'action_id':chosen['id']})
+                self.assertFalse(rejected.ok)
+                self.assertEqual(before,authoritative_state_hash(session.state))
+                source=engine.state.cards[source.object_id]
+                cards={name:engine.state.cards[card.object_id] for name,card in cards.items()}
+                accepted=session.act('pilot:A',{'action_id':chosen['id'],'pay':'auto'})
+                self.assertTrue(accepted.ok,accepted.summary)
+                self.assertEqual('graveyard',source.zone)
+                TypecyclingRuntimeTests.resolve_until(session,lambda:
+                    'search_cards' in ((session.packet('pilot:A',full=True).get('decision') or {}).get('ctx') or {}))
+                packet=session.packet('pilot:A',full=True)
+                candidates=packet['decision']['ctx']['search_cards']
+                self.assertEqual({cards[label].ref},{row['id'] for row in candidates})
+                self.assertNotIn(cards['Swamp' if label=='Island' else 'Island'].ref,
+                                 {row['id'] for row in candidates})
+                for seat in 'BCD':
+                    projected=json.dumps(session.packet('pilot:'+seat,full=True),sort_keys=True)
+                    self.assertNotIn('search_cards',projected)
+                    self.assertNotIn(cards[label].ref,projected)
+                self.replay(session,load=True)
+                accepted=session.act('pilot:A',{'action_id':'choose','search_card':cards[label].ref})
+                self.assertTrue(accepted.ok,accepted.summary)
+                self.assertEqual('hand',cards[label].zone)
+                self.replay(session)
 
 
 if __name__ == "__main__":

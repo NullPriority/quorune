@@ -160,6 +160,37 @@ class DrawResultModelTests(unittest.TestCase):
 
 
 class DrawResultComponentTests(unittest.TestCase):
+    def test_fixed_additional_draw_wording_preserves_one_instruction_count(self):
+        # CR 504.1 owns the ordinary draw-step card. An additional-card
+        # trigger resolves a separate CR 121 draw instruction on the stack.
+        for text, count in (
+            ("Draw an additional card.", 1),
+            ("You draw two additional cards.", 2),
+            ("Target player draws an additional card.", 1),
+            ("You may draw an additional card.", 1),
+        ):
+            with self.subTest(text=text):
+                template = fixed_draw_effect_template(text)
+                self.assertIsNotNone(template)
+                self.assertEqual(count, template[1][0]["count"])
+        for text in ("Draw X additional cards.", "Draw an additional card if you attacked.",
+                     "Draw an additional card for each creature you control.",
+                     "You may draw any number of additional cards."):
+            with self.subTest(text=text):
+                self.assertIsNone(fixed_draw_effect_template(text))
+
+    def test_controller_draw_step_additional_draw_retains_event_and_recipient(self):
+        from quorune.compiler.fixed_counter_trigger_nodes import fixed_counter_trigger_binding
+
+        binding = fixed_counter_trigger_binding(
+            "At the beginning of your draw step, draw an additional card.",
+            card_name="Draw-step witness")
+        self.assertIsNotNone(binding)
+        self.assertIn({"field":"step", "op":"eq", "value":"draw"},
+                      binding._base_event_condition["all"])
+        self.assertIn({"field":"player", "op":"eq", "value":"$source.controller"},
+                      binding._base_event_condition["all"])
+
     def test_draw_result_handler_binds_controller_and_typed_operation(self):
         descriptor = {
             "handler_id": DRAW_RESULT_MULTIPLIER_HANDLER_ID,

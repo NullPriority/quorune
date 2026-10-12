@@ -83,7 +83,7 @@ class DrawHandler:
 @dataclass(frozen=True, slots=True)
 class MillHandler:
     handler_id: str = "generic.mill.v1"
-    schema_version: int = 1
+    schema_version: int = 2
     family: str = "zone.mill"
     operation: str = "mill"
     rule_references: tuple[str, ...] = (
@@ -92,6 +92,8 @@ class MillHandler:
         "701.17a",
         "701.17b",
         "701.17c",
+        "608.2f",
+        "101.4",
     )
     capability_dependencies: tuple[str, ...] = ("zone.mill.fixed",)
 
@@ -100,8 +102,12 @@ class MillHandler:
         effect: Mapping[str, Any],
         context: ReadOnlyHandlerContext,
     ) -> IntentPlan:
-        if set(effect) - {"op", "player", "count", "reason"}:
+        if set(effect) - {"op", "player", "scope", "count", "reason"}:
             raise SemanticNodeError("Mill effects have a closed schema")
+        if "scope" in effect and (
+            effect["scope"] != "all_active_players" or "player" in effect
+        ):
+            raise SemanticNodeError("Mill recipient scope is malformed")
         count = _count(effect)
         player = context.query.require_active_seat(
             str(effect.get("player") or context.actor)
@@ -115,6 +121,7 @@ class MillHandler:
                     player=player,
                     count=count,
                     reason=_reason(effect, context),
+                    batch_players=context.query.apnap_order if "scope" in effect else (),
                 ),
             ),
         )

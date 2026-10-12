@@ -70,6 +70,7 @@
       "test_fixed_counter_player_cast_triggers",
       "test_fixed_counter_zone_triggers",
       "test_fixed_entry_return_triggers",
+      "test_fixed_extra_turns",
       "test_fixed_keyword_entry_counters",
       "test_fixed_keyword_event_effects",
       "test_fixed_source_combat_growth_triggers",

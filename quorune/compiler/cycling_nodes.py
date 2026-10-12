@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Any
+from dataclasses import replace
 
 from ..cycling_abilities import (
     CYCLING_MECHANIC_ID,
@@ -40,6 +41,11 @@ def typecycling_keyword_node(
     )
     if spec is None:
         return None
+    if ":typecycling-instance:" in node_id:
+        instance = node_id.rsplit(":typecycling-instance:", 1)[1]
+        if instance not in {"1", "2", "3", "4"}:
+            return None
+        spec = replace(spec, ability_id=spec.ability_id + ":typecycling-instance:" + instance)
     gate = explicit_capability_gate(
         TYPECYCLING_CAPABILITY_ID,
         capability_registry=capability_registry,

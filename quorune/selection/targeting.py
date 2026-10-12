@@ -296,6 +296,11 @@ class TargetSelectionOwnerMixin:
                 stack_source_types, _, _ = self._type_parts(
                     str(source_data.get("type_line") or "")
                 )
+                characteristics = _target_characteristic_row_values(data, card=card)
+                if item.kind in {"spell", "spell_copy"}:
+                    from .exile_cast import mana_value_of_cost
+                    characteristics["mana_value"] = mana_value_of_cost(
+                        str(data.get("mana_cost") or ""), x_value=int(item.x_value or 0))
                 rows.append(
                     {
                         "ref": item.ref,
@@ -307,7 +312,7 @@ class TargetSelectionOwnerMixin:
                         ),
                         "controller": item.controller,
                         "owner": card.owner if card else item.controller,
-                        **_target_characteristic_row_values(data, card=card),
+                        **characteristics,
                         "card": card,
                         "stack_item": item,
                         "stack_source_types": stack_source_types,

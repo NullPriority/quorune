@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 222,
+  "registry_version": 223,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -360,24 +360,110 @@
     },
     {
       "id": "activation.typecycling.hand",
-      "version": 1,
-      "official_rules": ["601.2h", "602.1", "602.2", "602.2a", "602.2b", "701.8a", "701.23", "702.29", "702.29c", "702.29d", "903.9b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 2,
+      "official_rules": [
+        "601.2h",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.8a",
+        "701.23",
+        "702.29",
+        "702.29c",
+        "702.29d",
+        "903.9b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
-        "summary": "Activate one source-pinned printed Typecycling ability from its owner's hand by paying a fixed ordinary mana cost and replacement-aware source discard, then resolve one private restrictive library search to the hand, reveal the chosen card, and shuffle exactly once.",
-        "inputs": ["current owner-controlled card in hand", "source-pinned typed Typecycling descriptor", "fixed ordinary mana cost", "one closed Basic land, basic land subtype, artifact land, Wizard, or Sliver query", "current priority and source logical identity"],
-        "outputs": ["one payable hand-zone activation offer", "mana payment and replacement-aware source discard committed before stack placement", "one ordinary activated-ability stack object", "one actor-private fail-to-find library choice", "one revealed matching card requested to hand through the canonical zone owner", "one represented replacement-aware final destination", "one deterministic shuffle"],
-        "exclusions": ["Typecycling costs containing X, hybrid, Phyrexian, snow, or nonmana costs", "dual-type and arbitrary open typecycling queries", "Affinitycycling and other ability-presence queries until one shared ability applicability boundary exists", "granted Typecycling or Cycling", "Cycling triggers, modifiers, and prohibitions", "abilities activated from zones other than hand"]
+        "summary": "Activate a source-pinned printed Typecycling ability, including one of two through four independent same-line siblings, from its owner's hand by paying fixed ordinary mana and replacement-aware source discard, then resolve its own private restrictive library search, reveal the chosen card, and shuffle exactly once.",
+        "inputs": [
+          "current owner-controlled card in hand",
+          "source-pinned typed Typecycling descriptor with independent line/instance identity",
+          "fixed ordinary mana cost",
+          "one closed Basic land, basic land subtype, artifact land, Wizard, or Sliver query",
+          "current priority and source logical identity"
+        ],
+        "outputs": [
+          "one payable hand-zone activation offer",
+          "mana payment and replacement-aware source discard committed before stack placement",
+          "one ordinary activated-ability stack object",
+          "one actor-private fail-to-find library choice",
+          "one revealed matching card requested to hand through the canonical zone owner",
+          "one represented replacement-aware final destination",
+          "one deterministic shuffle"
+        ],
+        "exclusions": [
+          "Typecycling costs containing X, hybrid, Phyrexian, snow, or nonmana costs",
+          "dual-type queries and arbitrary open typecycling queries",
+          "Affinitycycling and other ability-presence queries until one shared ability applicability boundary exists",
+          "granted Typecycling or Cycling",
+          "Cycling triggers, modifiers, and prohibitions",
+          "abilities activated from zones other than hand"
+        ]
       },
-      "dependencies": ["activation.source_zone_change.fixed", "library.search.fixed_type_to_hand"],
-      "implementation_components": ["quorune.cycling_abilities.TypecyclingAbilitySpec", "quorune.compiler.cycling_nodes.typecycling_keyword_node", "quorune.semantic_runtime.cycling_abilities.TypecyclingAbilityHandler", "quorune.compiled_activated_abilities.compiled_activated_abilities", "quorune.rules.activation.query.activated_abilities", "quorune.rules.activation.commit.commit_activation", "quorune.mana_payment_continuations.execute_mana_choice_capable_priority_action", "quorune.selection.searching.HiddenSearchOwnerMixin"],
-      "positive_tests": ["test_fixed_typecycling_categories_compile_source_spanned_searches", "test_typecycling_descriptor_only_activates_from_hand", "test_typecycling_search_is_private_revealed_and_replays_exactly"],
-      "negative_tests": ["test_typecycling_variants_and_dependencies_fail_closed", "test_unpayable_typecycling_is_not_offered_and_is_atomic"],
-      "interaction_tests": ["test_typecycling_search_is_private_revealed_and_replays_exactly", "test_typecycling_discard_replacement_resumes_before_private_search", "test_typecycling_search_destination_replacement_resumes_atomically"],
-      "multiplayer_tests": ["test_typecycling_search_is_private_revealed_and_replays_exactly", "test_typecycling_discard_replacement_resumes_before_private_search"],
-      "privacy_tests": ["test_typecycling_search_is_private_revealed_and_replays_exactly", "test_typecycling_discard_replacement_resumes_before_private_search"],
-      "replay_tests": ["test_typecycling_search_is_private_revealed_and_replays_exactly", "test_typecycling_discard_replacement_resumes_before_private_search", "test_typecycling_search_destination_replacement_resumes_atomically"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "activation.source_zone_change.fixed",
+        "library.search.fixed_type_to_hand"
+      ],
+      "implementation_components": [
+        "quorune.cycling_abilities.TypecyclingAbilitySpec",
+        "quorune.compiler.cycling_nodes.typecycling_keyword_node",
+        "quorune.semantic_runtime.cycling_abilities.TypecyclingAbilityHandler",
+        "quorune.compiled_activated_abilities.compiled_activated_abilities",
+        "quorune.rules.activation.query.activated_abilities",
+        "quorune.rules.activation.commit.commit_activation",
+        "quorune.mana_payment_continuations.execute_mana_choice_capable_priority_action",
+        "quorune.selection.searching.HiddenSearchOwnerMixin",
+        "quorune.compiler.multi_keyword_nodes.multi_keyword_nodes",
+        "quorune.compiler.generated_program_identity.generated_ability_id"
+      ],
+      "positive_tests": [
+        "test_fixed_typecycling_categories_compile_source_spanned_searches",
+        "test_typecycling_descriptor_only_activates_from_hand",
+        "test_typecycling_search_is_private_revealed_and_replays_exactly",
+        "test_paired_printed_typecycling_has_independent_source_spanned_abilities",
+        "test_original_jhessian_offers_distinct_searches_with_private_choices_and_replay"
+      ],
+      "negative_tests": [
+        "test_typecycling_variants_and_dependencies_fail_closed",
+        "test_unpayable_typecycling_is_not_offered_and_is_atomic",
+        "test_paired_typecycling_open_siblings_and_missing_producer_remain_residual"
+      ],
+      "interaction_tests": [
+        "test_typecycling_search_is_private_revealed_and_replays_exactly",
+        "test_typecycling_discard_replacement_resumes_before_private_search",
+        "test_typecycling_search_destination_replacement_resumes_atomically",
+        "test_original_jhessian_offers_distinct_searches_with_private_choices_and_replay"
+      ],
+      "multiplayer_tests": [
+        "test_typecycling_search_is_private_revealed_and_replays_exactly",
+        "test_typecycling_discard_replacement_resumes_before_private_search",
+        "test_original_jhessian_offers_distinct_searches_with_private_choices_and_replay"
+      ],
+      "privacy_tests": [
+        "test_typecycling_search_is_private_revealed_and_replays_exactly",
+        "test_typecycling_discard_replacement_resumes_before_private_search",
+        "test_original_jhessian_offers_distinct_searches_with_private_choices_and_replay"
+      ],
+      "replay_tests": [
+        "test_typecycling_search_is_private_revealed_and_replays_exactly",
+        "test_typecycling_discard_replacement_resumes_before_private_search",
+        "test_typecycling_search_destination_replacement_resumes_atomically",
+        "test_original_jhessian_offers_distinct_searches_with_private_choices_and_replay"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "The focused compiler dependency test blocks either the source-zone payment owner or the private typed search-to-hand owner and proves the Typecycling node remains inexact rather than falling back to reminder text or a generic activation.",
       "implementation_mutation_status": "killed",
@@ -2251,14 +2337,26 @@
     },
     {
       "id": "life.change.effect",
-      "version": 3,
-      "official_rules": ["101.3", "115.1", "119.1", "119.2", "119.3", "119.4", "119.9", "608.2b"],
+      "version": 4,
+      "official_rules": [
+        "101.3",
+        "101.4",
+        "115.1",
+        "119.1",
+        "119.2",
+        "119.3",
+        "119.4",
+        "119.9",
+        "608.2b",
+        "608.2c",
+        "704.4"
+      ],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
-        "summary": "Compile and commit represented fixed controller, direct-player, target-opponent, each-opponent, and drain life instructions through one replacement-capable typed life-change batch before mutating player life totals.",
+        "summary": "Compile and commit represented fixed controller, direct-player, target-opponent, each-opponent, all-active-player, and drain life instructions through one replacement-capable typed life-change batch before mutating player life totals.",
         "inputs": ["resolved active or selected player relation", "fixed integral life delta", "source/controller facts", "closed semantic-intent identity", "ordered replacement selections"],
         "outputs": ["validated life-state plan", "private replacement continuation", "replacement journal", "canonical resolved gain or loss", "authoritative life mutation"],
-        "exclusions": ["paying life costs", "setting or exchanging life totals", "dynamic life amounts", "target-player drains that may affect the controller", "each-player loss", "life-gain prevention not represented by a trusted component"]
+        "exclusions": ["paying life costs", "setting or exchanging life totals", "unrepresented dynamic or player-relative quantities", "target-player drains that may affect the controller", "life-gain prevention not represented by a trusted component"]
       },
       "dependencies": [],
       "implementation_components": ["quorune.compiler.life_templates.fixed_life_effect_template", "quorune.rules.fixed_controller_effect_shapes.fixed_life_node_capabilities", "quorune.effect_runtime.life_effects._commit", "quorune.semantic_choices.intent_host.SemanticChoiceIntentHostMixin.apply_life_change_intent", "quorune.semantic_choices.counter_coordination.continue_semantic_completion", "quorune.semantic_choices.intent_replacement.semantic_intent_identity", "quorune.replacement.replay.ReplacementContinuation", "quorune.life_change.prepare_life_change_batch", "quorune.life_change.commit_life_change_batch", "quorune.life_state.plan_life_changes", "quorune.life_state.apply_life_changes"],
@@ -2359,24 +2457,168 @@
     },
     {
       "id": "zone.draw.library_to_hand",
-      "version": 7,
-      "official_rules": ["121.1", "121.2", "121.2a", "121.2b", "121.2c", "121.3", "121.3a", "121.4", "121.5", "121.6", "121.6a", "121.6b", "702.52a", "702.52b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 8,
+      "official_rules": [
+        "121.1",
+        "121.2",
+        "121.2a",
+        "121.2b",
+        "121.2c",
+        "121.3",
+        "121.3a",
+        "121.4",
+        "121.5",
+        "121.6",
+        "121.6a",
+        "121.6b",
+        "702.52a",
+        "702.52b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Lower closed fixed-count spell, trigger, and activated draw producers into the canonical draw boundary; resolve represented draw-count replacements before individual draws; iteratively drain legally large instructions; re-evaluate prohibitions before every draw; and commit each allowed draw through immutable replacement events and canonical draw state.",
-        "inputs": ["strict capability-shaped fixed draw producer", "prospective drawer and chooser", "nonnegative mandatory draw count", "positive optional or cost draw count", "draw reason and visibility", "trusted typed instruction and individual-draw replacements", "live battlefield draw restrictions", "canonical affected-player selections"],
-        "outputs": ["immutable draw instruction and event results", "iterative remaining-draw continuation", "replacement and prohibition journal facts", "drawn object ids and private identity event", "partial mandatory multi-draw result", "optional-draw legality", "draw-cost feasibility", "empty-library draw attempts", "represented Dredge mill and graveyard-to-hand result"],
-        "exclusions": ["shared-team turn ordering", "draw effects with unresolved dynamic counts", "conditional or first-draw count multipliers", "uncompiled draw replacement wording other than represented Dredge and unconditional controller doubling", "effects that move a library card to hand without drawing it", "complete skip-draw and draw-step replacement grammar", "casting-process face-down draws", "no current Oracle producer pays a draw-as-cost through the exposed feasibility boundary"]
+        "inputs": [
+          "strict capability-shaped fixed draw producer, including complete fixed additional-card wording",
+          "prospective drawer and chooser",
+          "nonnegative mandatory draw count",
+          "positive optional or cost draw count",
+          "draw reason and visibility",
+          "trusted typed instruction and individual-draw replacements",
+          "live battlefield draw restrictions",
+          "canonical affected-player selections"
+        ],
+        "outputs": [
+          "immutable draw instruction and event results",
+          "iterative remaining-draw continuation",
+          "replacement and prohibition journal facts",
+          "drawn object ids and private identity event",
+          "partial mandatory multi-draw result",
+          "optional-draw legality",
+          "draw-cost feasibility",
+          "empty-library draw attempts",
+          "represented Dredge mill and graveyard-to-hand result"
+        ],
+        "exclusions": [
+          "shared-team turn ordering",
+          "draw effects with unresolved dynamic counts",
+          "conditional or first-draw count multipliers",
+          "uncompiled draw replacement wording other than represented Dredge and unconditional controller doubling",
+          "effects that move a library card to hand without drawing it",
+          "complete skip-draw and draw-step replacement grammar",
+          "casting-process face-down draws",
+          "no current Oracle producer pays a draw-as-cost through the exposed feasibility boundary"
+        ]
       },
       "dependencies": [],
-      "implementation_components": ["quorune.rules.node_capability_shapes.fixed_draw_node_capabilities", "quorune.compiler.activated_mana_nodes.activated_oracle_node", "quorune.compiler.program_generation.register_generated_programs", "quorune.standard_token_abilities.standard_token_characteristics", "quorune.compiled_activated_abilities.compiled_activated_abilities", "quorune.rules.activation.resolution.builtin_activation_resolution", "quorune.drawing.model.prepare_draw_instruction", "quorune.drawing.model.prepare_draw_event", "quorune.drawing.restrictions.DrawPermission", "quorune.drawing.transaction.commit_prepared_draw", "quorune.drawing.coordinator.begin_draw_sequence", "quorune.drawing.coordinator.begin_draw_batch", "quorune.semantic_runtime.draw_replacements.DrawInstructionMultiplierHandler", "quorune.semantic_runtime.draw_replacements.DredgeReplacementHandler", "quorune.semantic_runtime.draw_restrictions.DrawMaximumHandler", "quorune.semantic_choices.optional_draw.OptionalDrawHandler", "quorune.semantic_choices.conditional_draw.OpponentCastColorDrawHandler"],
-      "positive_tests": ["test_ordinary_draw_commits_zone_history_and_events_once", "test_dredge_mills_top_cards_and_returns_the_pinned_source", "test_draw_handler_lowers_typed_intent_through_read_only_context", "test_mandatory_multi_draw_partially_occurs_under_maximum_one", "test_two_draw_doublers_modify_instruction_before_individual_draws", "test_optional_empty_library_draw_remains_legal_without_a_prohibition", "test_two_thousand_replacement_free_draws_do_not_recurse", "test_two_thousand_prevented_draws_do_not_recurse", "test_ordinary_activated_draw_is_exact_and_source_spanned", "test_compiled_clue_activation_draws_privately_and_replays_exactly"],
-      "negative_tests": ["test_changed_library_or_source_fails_before_draw_mutation", "test_prevented_empty_draw_does_not_mark_empty_library_loss", "test_registered_node_validation_fails_before_mutation", "test_draw_prohibition_is_checked_before_dredge_replacements", "test_max_one_removes_optional_multi_draw_before_task_issue", "test_draw_past_library_records_each_empty_attempt", "test_fixed_draw_shapes_are_strict_and_capability_scoped"],
-      "interaction_tests": ["test_trusted_draw_replacement_finishes_before_priority", "test_draw_prevention_applies_even_to_an_empty_library", "test_semantic_choice_preparation_draw_uses_replacement_coordinator", "test_veil_conditional_draw_pauses_for_dredge_before_permissions", "test_dredge_does_not_consume_maximum_one_draw_allowance", "test_restriction_rechecks_control_phasing_and_source_zone", "test_large_sequence_suspends_and_resumes_from_remaining_count", "test_large_zero_count_batch_is_trampolined", "test_draw_replacement_completes_after_cost_and_before_resolution", "test_target_player_draw_validates_target_resolves_privately_and_replays", "test_any_target_damage_then_draw_revalidates_and_draws_privately", "test_aura_equipment_anthem_temporary_effect_and_draw_compose", "test_furnace_skullbomb_target_predicate_and_draw_compose", "test_compiled_clue_activation_draws_privately_and_replays_exactly", "test_shroud_and_enchantment_cast_draw_compose"],
-      "multiplayer_tests": ["test_draw_each_player_uses_apnap_order_and_exact_engine_path", "test_draw_each_player_pauses_and_resumes_in_apnap_order_for_dredge", "test_four_player_chooser_uses_prospective_drawer_legality", "test_each_player_activation_draws_in_four_player_game"],
-      "privacy_tests": ["test_draw_replacement_choice_is_visible_only_to_affected_seat", "test_optional_draw_choice_is_seat_scoped_and_replays_exactly", "test_resumed_multi_draw_sequence_is_private_and_replays_exactly", "test_draw_replacement_completes_after_cost_and_before_resolution", "test_compiled_clue_activation_draws_privately_and_replays_exactly"],
-      "replay_tests": ["test_first_turn_profile_modifier_and_exact_replay", "test_migrated_semantic_effect_replays_exactly", "test_optional_draw_choice_is_seat_scoped_and_replays_exactly", "test_generic_draw_prohibition_replays_exactly", "test_resumed_multi_draw_sequence_is_private_and_replays_exactly", "test_sacrifice_draw_activation_is_offered_resolves_and_replays", "test_each_player_activation_draws_in_four_player_game", "test_compiled_clue_activation_draws_privately_and_replays_exactly"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "implementation_components": [
+        "quorune.rules.node_capability_shapes.fixed_draw_node_capabilities",
+        "quorune.compiler.activated_mana_nodes.activated_oracle_node",
+        "quorune.compiler.program_generation.register_generated_programs",
+        "quorune.standard_token_abilities.standard_token_characteristics",
+        "quorune.compiled_activated_abilities.compiled_activated_abilities",
+        "quorune.rules.activation.resolution.builtin_activation_resolution",
+        "quorune.drawing.model.prepare_draw_instruction",
+        "quorune.drawing.model.prepare_draw_event",
+        "quorune.drawing.restrictions.DrawPermission",
+        "quorune.drawing.transaction.commit_prepared_draw",
+        "quorune.drawing.coordinator.begin_draw_sequence",
+        "quorune.drawing.coordinator.begin_draw_batch",
+        "quorune.semantic_runtime.draw_replacements.DrawInstructionMultiplierHandler",
+        "quorune.semantic_runtime.draw_replacements.DredgeReplacementHandler",
+        "quorune.semantic_runtime.draw_restrictions.DrawMaximumHandler",
+        "quorune.semantic_choices.optional_draw.OptionalDrawHandler",
+        "quorune.semantic_choices.conditional_draw.OpponentCastColorDrawHandler"
+      ],
+      "positive_tests": [
+        "test_ordinary_draw_commits_zone_history_and_events_once",
+        "test_dredge_mills_top_cards_and_returns_the_pinned_source",
+        "test_draw_handler_lowers_typed_intent_through_read_only_context",
+        "test_mandatory_multi_draw_partially_occurs_under_maximum_one",
+        "test_two_draw_doublers_modify_instruction_before_individual_draws",
+        "test_optional_empty_library_draw_remains_legal_without_a_prohibition",
+        "test_two_thousand_replacement_free_draws_do_not_recurse",
+        "test_two_thousand_prevented_draws_do_not_recurse",
+        "test_ordinary_activated_draw_is_exact_and_source_spanned",
+        "test_compiled_clue_activation_draws_privately_and_replays_exactly",
+        "test_draw_step_schedules_keep_context_and_controller_recipients_distinct",
+        "test_fixed_additional_draw_wording_preserves_one_instruction_count",
+        "test_controller_draw_step_additional_draw_retains_event_and_recipient",
+        "test_original_kami_draws_for_active_opponent_after_ordinary_draw",
+        "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
+        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step"
+      ],
+      "negative_tests": [
+        "test_changed_library_or_source_fails_before_draw_mutation",
+        "test_prevented_empty_draw_does_not_mark_empty_library_loss",
+        "test_registered_node_validation_fails_before_mutation",
+        "test_draw_prohibition_is_checked_before_dredge_replacements",
+        "test_max_one_removes_optional_multi_draw_before_task_issue",
+        "test_draw_past_library_records_each_empty_attempt",
+        "test_fixed_draw_shapes_are_strict_and_capability_scoped",
+        "test_additional_draw_step_missing_authority_stays_residual"
+      ],
+      "interaction_tests": [
+        "test_trusted_draw_replacement_finishes_before_priority",
+        "test_draw_prevention_applies_even_to_an_empty_library",
+        "test_semantic_choice_preparation_draw_uses_replacement_coordinator",
+        "test_veil_conditional_draw_pauses_for_dredge_before_permissions",
+        "test_dredge_does_not_consume_maximum_one_draw_allowance",
+        "test_restriction_rechecks_control_phasing_and_source_zone",
+        "test_large_sequence_suspends_and_resumes_from_remaining_count",
+        "test_large_zero_count_batch_is_trampolined",
+        "test_draw_replacement_completes_after_cost_and_before_resolution",
+        "test_target_player_draw_validates_target_resolves_privately_and_replays",
+        "test_any_target_damage_then_draw_revalidates_and_draws_privately",
+        "test_aura_equipment_anthem_temporary_effect_and_draw_compose",
+        "test_furnace_skullbomb_target_predicate_and_draw_compose",
+        "test_compiled_clue_activation_draws_privately_and_replays_exactly",
+        "test_shroud_and_enchantment_cast_draw_compose",
+        "test_original_kami_draws_for_active_opponent_after_ordinary_draw",
+        "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
+        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step"
+      ],
+      "multiplayer_tests": [
+        "test_draw_each_player_uses_apnap_order_and_exact_engine_path",
+        "test_draw_each_player_pauses_and_resumes_in_apnap_order_for_dredge",
+        "test_four_player_chooser_uses_prospective_drawer_legality",
+        "test_each_player_activation_draws_in_four_player_game",
+        "test_original_kami_draws_for_active_opponent_after_ordinary_draw",
+        "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
+        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step"
+      ],
+      "privacy_tests": [
+        "test_draw_replacement_choice_is_visible_only_to_affected_seat",
+        "test_optional_draw_choice_is_seat_scoped_and_replays_exactly",
+        "test_resumed_multi_draw_sequence_is_private_and_replays_exactly",
+        "test_draw_replacement_completes_after_cost_and_before_resolution",
+        "test_compiled_clue_activation_draws_privately_and_replays_exactly",
+        "test_original_kami_draws_for_active_opponent_after_ordinary_draw"
+      ],
+      "replay_tests": [
+        "test_first_turn_profile_modifier_and_exact_replay",
+        "test_migrated_semantic_effect_replays_exactly",
+        "test_optional_draw_choice_is_seat_scoped_and_replays_exactly",
+        "test_generic_draw_prohibition_replays_exactly",
+        "test_resumed_multi_draw_sequence_is_private_and_replays_exactly",
+        "test_sacrifice_draw_activation_is_offered_resolves_and_replays",
+        "test_each_player_activation_draws_in_four_player_game",
+        "test_compiled_clue_activation_draws_privately_and_replays_exactly",
+        "test_original_kami_draws_for_active_opponent_after_ordinary_draw",
+        "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
+        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "not_applicable",
       "dependency_fail_closed_rationale": "The bounded draw owner uses the shared replacement substrate directly and has no optional capability dependency.",
       "implementation_mutation_status": "killed",
@@ -2413,28 +2655,111 @@
     },
     {
       "id": "zone.mill.fixed",
-      "version": 2,
-      "official_rules": ["400.7", "701.17", "701.17a", "701.17b", "701.17c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 3,
+      "official_rules": [
+        "400.7",
+        "701.17",
+        "701.17a",
+        "701.17b",
+        "701.17c",
+        "608.2f",
+        "101.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
-        "summary": "Resolve one mandatory nonnegative Mill instruction through an immutable current-library-top plan and the canonical simultaneous zone-transition owner; declared amounts require their separate numeric capability.",
-        "inputs": ["one capability-shaped Mill effect", "active actor and affected player", "nonnegative resolved integer count", "exact current library top identities", "current destination replacements and normalized zone-trigger sources"],
-        "outputs": ["one immutable Mill plan", "zero-count no-op without library mutation or a Mill event", "as-many-as-possible result for a short library", "one simultaneous replacement-aware library-to-graveyard batch", "actual destination and new-incarnation results", "privacy-safe public journal", "exact replay"],
-        "exclusions": ["Mill as a cost or optional action", "unowned variable, multiplied, half-library, or state-derived counts", "each-player, each-opponent, any-number-of-targets, or repeated Mill", "linked cards-milled-this-way consumers under CR 701.17c-d", "graveyard-order-sensitive interactions while CR 404.3 remains blocked", "private face-down or hidden-destination result consumers"]
+        "summary": "Resolve one mandatory nonnegative Mill instruction for one player or all active players through immutable current-library-top plans and one canonical simultaneous zone-transition batch; declared amounts require their separate numeric capability.",
+        "inputs": [
+          "one capability-shaped Mill effect",
+          "active actor and one affected player or an APNAP-ordered active-player batch",
+          "nonnegative resolved integer count",
+          "exact current library top identities",
+          "current destination replacements and normalized zone-trigger sources"
+        ],
+        "outputs": [
+          "one immutable Mill plan per affected player, all validated before mutation",
+          "zero-count no-op without library mutation or a Mill event",
+          "as-many-as-possible result for a short library",
+          "one simultaneous replacement-aware library-to-graveyard batch",
+          "actual destination and new-incarnation results",
+          "privacy-safe public journal",
+          "exact replay"
+        ],
+        "exclusions": [
+          "Mill as a cost or optional action",
+          "unowned variable, multiplied, half-library, or state-derived counts",
+          "each-opponent, any-number-of-targets, or repeated Mill",
+          "linked cards-milled-this-way consumers under CR 701.17c-d",
+          "graveyard-order-sensitive interactions while CR 404.3 remains blocked",
+          "private face-down or hidden-destination result consumers"
+        ]
       },
-      "dependencies": ["trigger.event.normalized_zone_change", "trigger.placement.apnap", "zone.change.destination_replacement"],
-      "implementation_components": ["quorune.milling.MillRequest", "quorune.milling.MillPlan", "quorune.milling.MillResult", "quorune.compiler.mill_templates.fixed_mill_effect_template", "quorune.semantic_runtime.generic.MillHandler", "quorune.semantic_runtime.intents.MillCardsIntent", "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously"],
-      "positive_tests": ["test_fixed_mill_compiles_across_spell_trigger_and_activation", "test_mill_commits_top_first_and_as_many_as_possible", "test_real_zero_mill_and_scry_consume_price_without_library_mutation"],
-      "negative_tests": ["test_dynamic_optional_group_and_linked_mill_remain_residual", "test_stale_plan_and_malformed_intent_fail_before_mutation"],
-      "interaction_tests": ["test_target_mill_revalidates_and_zone_replacement_preserves_actual_result"],
-      "multiplayer_tests": ["test_four_player_target_mill_is_public_privacy_safe_and_replays"],
-      "privacy_tests": ["test_four_player_target_mill_is_public_privacy_safe_and_replays"],
-      "replay_tests": ["test_four_player_target_mill_is_public_privacy_safe_and_replays"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "trigger.event.normalized_zone_change",
+        "trigger.placement.apnap",
+        "zone.change.destination_replacement"
+      ],
+      "implementation_components": [
+        "quorune.milling.MillRequest",
+        "quorune.milling.MillPlan",
+        "quorune.milling.MillResult",
+        "quorune.compiler.mill_templates.fixed_mill_effect_template",
+        "quorune.semantic_runtime.generic.MillHandler",
+        "quorune.semantic_runtime.intents.MillCardsIntent",
+        "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously",
+        "quorune.milling.mill_player_batch",
+        "quorune.semantic_runtime.executor._execute_player_intent"
+      ],
+      "positive_tests": [
+        "test_fixed_mill_compiles_across_spell_trigger_and_activation",
+        "test_mill_commits_top_first_and_as_many_as_possible",
+        "test_real_zero_mill_and_scry_consume_price_without_library_mutation",
+        "test_fixed_all_player_mill_uses_one_simultaneous_recipient_scope",
+        "test_original_bell_mills_all_active_players_in_one_zone_batch",
+        "test_original_chill_mills_available_cards_and_preserves_replacement_destinations"
+      ],
+      "negative_tests": [
+        "test_dynamic_optional_group_and_linked_mill_remain_residual",
+        "test_stale_plan_and_malformed_intent_fail_before_mutation",
+        "test_all_player_mill_scope_shape_rejects_conflicting_or_variable_recipients",
+        "test_all_player_mill_missing_destination_and_trigger_authority_stays_residual",
+        "test_malformed_all_player_mill_and_inactive_batch_fail_atomically"
+      ],
+      "interaction_tests": [
+        "test_target_mill_revalidates_and_zone_replacement_preserves_actual_result",
+        "test_original_bell_mills_all_active_players_in_one_zone_batch",
+        "test_original_chill_mills_available_cards_and_preserves_replacement_destinations"
+      ],
+      "multiplayer_tests": [
+        "test_four_player_target_mill_is_public_privacy_safe_and_replays",
+        "test_original_bell_mills_all_active_players_in_one_zone_batch",
+        "test_original_chill_mills_available_cards_and_preserves_replacement_destinations"
+      ],
+      "privacy_tests": [
+        "test_four_player_target_mill_is_public_privacy_safe_and_replays",
+        "test_original_bell_mills_all_active_players_in_one_zone_batch",
+        "test_original_chill_mills_available_cards_and_preserves_replacement_destinations"
+      ],
+      "replay_tests": [
+        "test_four_player_target_mill_is_public_privacy_safe_and_replays",
+        "test_original_bell_mills_all_active_players_in_one_zone_batch",
+        "test_original_chill_mills_available_cards_and_preserves_replacement_destinations"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Blocking destination replacement, normalized zone events, or APNAP trigger placement prevents the fixed Mill node from receiving trusted closure.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "Focused mutations remove the typed Mill template or bypass current-top revalidation; compiler exactness and authoritative state assertions reject both survivors.",
+      "implementation_mutation_rationale": "test_sequential_player_mill_mutant_is_killed_by_original_bell replaces the batch owner with separate player commits and fails at the explicit simultaneous-commit assertion. Existing destination and trigger-authority omissions remain fail closed.",
       "blockers": [],
       "status": "trusted"
     },
@@ -4017,7 +4342,7 @@
         "summary": "Compile and resolve each ordinary printed Sunburst instance as a mandatory affected-object entry-counter replacement whose quantity is the number of distinct colors of mana spent to cast the resolving spell.",
         "inputs": ["one source-spanned printed Sunburst keyword instance", "printed face creature or noncreature card type", "same physical card resolving from the stack", "immutable distinct WUBRG cast-payment provenance", "prospective battlefield controller", "complete represented zone and counter replacement set"],
         "outputs": ["one independent entry replacement per Sunburst instance", "printed creatures receive +1/+1 counters and other permanents receive charge counters", "replacement-aware counter placement by the destination controller", "canonical replacement ordering and journal", "exact replay"],
-        "exclusions": ["objects entering from a zone other than the stack", "spell copies and other objects that were not cast", "casts with no colored mana spent", "granted, copied, removed, or face-down Sunburst outside trusted typed ability propagation", "Modular—Sunburst variable linkage", "unrepresented zone or counter replacement families"]
+        "exclusions": ["objects entering from a zone other than the stack", "spell copies and other objects that were not cast", "casts with no colored mana spent", "granted, copied, removed, or face-down Sunburst outside trusted typed ability propagation", "Modularâ€”Sunburst variable linkage", "unrepresented zone or counter replacement families"]
       },
       "dependencies": ["counter.placement.quantity_replacement"],
       "implementation_components": ["quorune.model.StackItem", "quorune.rules.casting.commit._create_spell_item", "quorune.semantic_runtime.sunburst.SunburstSpec", "quorune.compiler.keyword_nodes.sunburst_keyword_node", "quorune.entry_counter_coordination.prepare_resolving_entry_replacement", "quorune.semantic_runtime.sunburst.SunburstEntryCounterHandler", "quorune.semantic_runtime.zone_replacements.capture_zone_change_replacement_snapshot"],
@@ -4280,24 +4605,101 @@
     },
     {
       "id": "counter.producer.modular",
-      "version": 1,
-      "official_rules": ["115.1d", "122.1", "122.1a", "122.6", "400.7", "603.3", "603.3d", "603.6c", "603.10a", "608.2b", "614.12", "614.16", "616.1", "702.43", "702.43a", "702.43b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 2,
+      "official_rules": [
+        "115.1d",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "400.7",
+        "603.3",
+        "603.3d",
+        "603.6c",
+        "603.10a",
+        "608.2b",
+        "614.12",
+        "614.16",
+        "616.1",
+        "702.43",
+        "702.43a",
+        "702.43b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Compile each positive integral printed Modular instance as one replacement-aware self-entry counter ability and one independent battlefield-to-graveyard trigger that may place its last-known +1/+1 counter count on a targeted artifact creature.",
-        "inputs": ["one printed Modular N instance", "positive integral N", "source physical identity and departing logical incarnation", "complete public last-known counter map", "one legal artifact creature target", "frozen trigger controller"],
-        "outputs": ["replacement-aware +1/+1 entry counters", "one independent departure trigger per Modular instance", "mandatory target selection before priority", "optional replacement-aware LKI-sized counter placement", "exact replay"],
-        "exclusions": ["Modular—Sunburst", "granted or copied Modular outside trusted typed ability propagation", "Oracle-equivalent nonkeyword wording", "trigger-doubling policies beyond ordinary represented trigger placement", "unrepresented target protection or counter replacement families"]
+        "inputs": [
+          "one printed Modular N instance",
+          "positive integral N",
+          "source physical identity and departing logical incarnation",
+          "complete public last-known counter map",
+          "one legal artifact creature target",
+          "frozen trigger controller"
+        ],
+        "outputs": [
+          "replacement-aware +1/+1 entry counters",
+          "one independent departure trigger per Modular instance",
+          "mandatory target selection before priority",
+          "optional replacement-aware LKI-sized counter placement",
+          "exact replay"
+        ],
+        "exclusions": [
+          "Modular\u00e2\u20ac\u201dSunburst",
+          "granted or copied Modular outside trusted typed ability propagation",
+          "Oracle-equivalent nonkeyword wording",
+          "trigger-doubling policies beyond ordinary represented trigger placement",
+          "unrepresented target protection or counter replacement families"
+        ]
       },
-      "dependencies": ["counter.placement.quantity_replacement", "target.permanent.characteristic_predicate", "target.revalidate_resolution", "trigger.event.normalized_zone_change", "trigger.placement.apnap"],
-      "implementation_components": ["quorune.modular.ModularSpec", "quorune.modular.modular_counter_snapshot", "quorune.compiler.keyword_nodes.modular_keyword_nodes", "quorune.semantic_runtime.self_entry_counters.SelfEntryCounterHandler", "quorune.trigger_discovery.dispatch_semantic_event", "quorune.semantic_choices.modular.ModularCounterTransferHandler", "quorune.counter_placement.place_counters_on_refs"],
-      "positive_tests": ["test_modular_model_compiler_and_multiple_instances_are_closed", "test_modular_entry_and_departure_transfer_use_canonical_counter_paths"],
-      "negative_tests": ["test_modular_sunburst_and_malformed_values_fail_closed", "test_modular_target_and_lki_identity_are_strict"],
-      "interaction_tests": ["test_modular_entry_and_departure_transfer_use_canonical_counter_paths", "test_modular_source_departure_control_and_target_revalidation"],
-      "multiplayer_tests": ["test_four_player_modular_choice_is_controller_scoped_public_and_replays"],
-      "privacy_tests": ["test_four_player_modular_choice_is_controller_scoped_public_and_replays"],
-      "replay_tests": ["test_four_player_modular_choice_is_controller_scoped_public_and_replays"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "counter.placement.quantity_replacement",
+        "target.permanent.characteristic_predicate",
+        "target.revalidate_resolution",
+        "trigger.event.normalized_zone_change",
+        "trigger.placement.apnap"
+      ],
+      "implementation_components": [
+        "quorune.modular.ModularSpec",
+        "quorune.modular.modular_counter_snapshot",
+        "quorune.compiler.keyword_nodes.modular_keyword_nodes",
+        "quorune.semantic_runtime.self_entry_counters.SelfEntryCounterHandler",
+        "quorune.trigger_discovery.dispatch_semantic_event",
+        "quorune.semantic_choices.modular.ModularCounterTransferHandler",
+        "quorune.counter_placement.place_counters_on_refs"
+      ],
+      "positive_tests": [
+        "test_modular_model_compiler_and_multiple_instances_are_closed",
+        "test_modular_entry_and_departure_transfer_use_canonical_counter_paths",
+        "test_modular_entry_declares_registered_counter_replacement_dependency"
+      ],
+      "negative_tests": [
+        "test_modular_sunburst_and_malformed_values_fail_closed",
+        "test_modular_target_and_lki_identity_are_strict"
+      ],
+      "interaction_tests": [
+        "test_modular_entry_and_departure_transfer_use_canonical_counter_paths",
+        "test_modular_source_departure_control_and_target_revalidation"
+      ],
+      "multiplayer_tests": [
+        "test_four_player_modular_choice_is_controller_scoped_public_and_replays"
+      ],
+      "privacy_tests": [
+        "test_four_player_modular_choice_is_controller_scoped_public_and_replays"
+      ],
+      "replay_tests": [
+        "test_four_player_modular_choice_is_controller_scoped_public_and_replays"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Modular CardPrograms remain partial whenever entry or result counter replacement, normalized zone triggers, APNAP placement, typed artifact-creature targeting, or resolution target revalidation is unavailable.",
       "implementation_mutation_status": "killed",
@@ -4637,7 +5039,7 @@
     },
     {
       "id": "continuous.characteristics.fixed_public_state",
-      "version": 9,
+      "version": 10,
       "official_rules": [
         "604.1",
         "611.3a",
@@ -4662,7 +5064,7 @@
           "source controller turn, life, public hand, graveyard, current or sealed turn-history, opponent poison, monarch, and starting-life facts",
           "cycle-safe source, attached-object, controller, opponent, public-zone, distinct graveyard type, or distinct graveyard mana-value query through layer 5",
           "source, attached-object, or fixed ObjectQuerySpec target",
-          "fixed represented keyword and power/toughness modifier"
+          "fixed represented keyword and power/toughness modifier, including complete additive an-additional or also wording"
         ],
         "outputs": [
           "one source-bound typed condition snapshot",
@@ -4709,14 +5111,17 @@
         "test_public_fact_conditions_recompute_and_replay",
         "test_public_fact_descriptors_preserve_thresholds_subtypes_and_axes",
         "test_public_fact_thresholds_use_canonical_producers_and_consumers",
-        "test_two_simultaneous_copies_use_post_event_history_characteristics"
+        "test_two_simultaneous_copies_use_post_event_history_characteristics",
+        "test_additional_and_also_fixed_bonuses_keep_the_complete_condition"
       ],
       "negative_tests": [
         "test_unrepresented_conditions_and_bodies_remain_residual",
         "test_public_state_descriptors_fail_closed_without_effects",
         "test_shared_public_query_dependency_fails_closed_across_consumers",
         "test_fixed_public_condition_dependencies_fail_closed",
-        "test_pre_history_characteristic_sealing_mutant_is_killed"
+        "test_pre_history_characteristic_sealing_mutant_is_killed",
+        "test_additional_wording_does_not_admit_unrepresented_bonus_or_condition",
+        "test_additional_modifier_producer_and_capability_omissions_fail_closed"
       ],
       "interaction_tests": [
         "test_live_public_object_state_and_layer_five_queries_recompute",
@@ -4727,7 +5132,9 @@
         "test_subtype_attack_threshold_counts_distinct_event_time_objects",
         "test_history_characteristic_distinguishing_controls",
         "test_replacement_adjusted_history_characteristic_quantity",
-        "test_history_precedes_final_power_and_keyword_sealing"
+        "test_history_precedes_final_power_and_keyword_sealing",
+        "test_original_taste_adds_live_bonus_to_foreign_creature_and_private_draw_removes_it",
+        "test_original_jetmir_additional_thresholds_stack_and_recompute_after_real_bounce"
       ],
       "multiplayer_tests": [
         "test_turn_gated_attachment_and_anthem_compose",
@@ -5334,7 +5741,7 @@
     },
     {
       "id": "continuous.power_toughness.fixed_anthem",
-      "version": 7,
+      "version": 8,
       "official_rules": [
         "604.1",
         "611.3a",
@@ -5349,14 +5756,14 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Apply a reviewed battlefield static ability that gives a live source-controller, source-opponent, or global typed creature set a fixed power/toughness modifier in layer 7c while the source remains applicable. Global canonical creature-subtype plurals accept optional All and Other; one shared query preserves every controller and source exclusion.",
+        "summary": "Apply a reviewed battlefield static ability that gives a live source-controller, source-opponent, or global typed creature set a fixed power/toughness modifier or fixed coefficients per named source counter in layer 7c while the source remains applicable. One shared query preserves controller and source exclusion.",
         "inputs": [
           "active phased-in source object",
           "source-controller, source-opponent, or global relation",
           "source timestamp",
           "shared typed creature predicate after earlier layers and, when required, layer-6 ability changes",
           "optional source exclusion",
-          "fixed power/toughness modifier"
+          "fixed power/toughness modifier or coefficients multiplied by the current named source counter count"
         ],
         "outputs": [
           "typed layer-7c continuous effect",
@@ -5381,7 +5788,8 @@
         "quorune.semantic_runtime.continuous_components.FixedPowerToughnessAnthemHandler",
         "quorune.semantic_runtime.continuous_components.FixedQueryPowerToughnessAnthemHandler",
         "quorune.card_programs.runtime.collect_card_program_continuous_effects",
-        "quorune.continuous_effects.evaluate_continuous_effects"
+        "quorune.continuous_effects.evaluate_continuous_effects",
+        "quorune.compiler.source_counter_anthems.source_counter_anthem_handler"
       ],
       "positive_tests": [
         "test_registered_anthem_component_replaces_name_dispatch",
@@ -5391,14 +5799,19 @@
         "test_shared_public_set_query_fans_into_layers_and_resolution",
         "test_decorative_static_labels_preserve_descriptor_and_original_source_span",
         "test_werewolf_plural_union_is_typed_and_deduplicates_recipient_query",
-        "test_global_other_plural_uses_canonical_subtype_without_controller_filter"
+        "test_global_other_plural_uses_canonical_subtype_without_controller_filter",
+        "test_source_counter_group_anthems_preserve_live_public_query_and_named_counter",
+        "test_original_boon_live_counter_bonus_tracks_proliferate_late_entry_and_departure"
       ],
       "negative_tests": [
         "test_anthem_component_rejects_malformed_descriptors",
         "test_shared_public_query_dependency_fails_closed_across_consumers",
         "test_semantic_markers_and_unrepresented_labeled_body_stay_residual",
         "test_static_label_dispatch_omission_mutant_is_killed",
-        "test_unknown_nouns_and_class_level_context_remain_residual"
+        "test_unknown_nouns_and_class_level_context_remain_residual",
+        "test_source_counter_group_anthems_preserve_live_public_query_and_named_counter",
+        "test_source_counter_anthem_descriptor_keeps_legacy_shape_and_rejects_malformed_scaling",
+        "test_source_counter_anthem_missing_authority_and_producer_remain_residual"
       ],
       "interaction_tests": [
         "test_multiple_anthem_components_stack_and_respect_control",
@@ -5409,18 +5822,21 @@
         "test_live_public_object_state_and_layer_five_queries_recompute",
         "test_subtype_union_recomputes_after_layer_four_and_excludes_source",
         "test_ability_presence_query_uses_shared_layer_six_dependency_order",
-        "test_actual_atlantis_cast_grants_foreign_merfolk_and_source_exclusion_with_replay"
+        "test_actual_atlantis_cast_grants_foreign_merfolk_and_source_exclusion_with_replay",
+        "test_original_boon_live_counter_bonus_tracks_proliferate_late_entry_and_departure"
       ],
       "multiplayer_tests": [
         "test_static_anthem_is_controller_scoped_in_four_player_evaluation",
         "test_live_fixed_queries_track_relations_source_identity_and_phasing",
-        "test_actual_atlantis_cast_grants_foreign_merfolk_and_source_exclusion_with_replay"
+        "test_actual_atlantis_cast_grants_foreign_merfolk_and_source_exclusion_with_replay",
+        "test_original_boon_live_counter_bonus_tracks_proliferate_late_entry_and_departure"
       ],
       "privacy_tests": [],
       "replay_tests": [
         "test_anthem_component_replays_exactly",
         "test_live_public_object_state_and_layer_five_queries_recompute",
-        "test_actual_atlantis_cast_grants_foreign_merfolk_and_source_exclusion_with_replay"
+        "test_actual_atlantis_cast_grants_foreign_merfolk_and_source_exclusion_with_replay",
+        "test_original_boon_live_counter_bonus_tracks_proliferate_late_entry_and_departure"
       ],
       "required_evidence": [
         "positive",
@@ -5432,7 +5848,7 @@
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Blocking the shared public-query capability prevents fixed-query anthem nodes from becoming exact.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "test_fixed_anthem_applicability_mutant_is_killed removes the typed live-set lowering and the fixed modifier assertion rejects the survivor.",
+      "implementation_mutation_rationale": "test_source_counter_scaling_omission_mutant_is_killed_by_original_boon removes only the validated source-counter multiplier and fails after actual Proliferate increases the original source from one to two counters.",
       "blockers": [],
       "status": "trusted"
     },
@@ -5546,14 +5962,14 @@
     },
     {
       "id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
-      "version": 4,
+      "version": 5,
       "official_rules": ["205.1a", "205.1b", "208.5", "611.2a", "611.2c", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
         "summary": "Create one fixed source, qualified target or public-set characteristic effect whose type retention, creature subtypes, colors, ability removal, supported keywords and base power/toughness share one timestamp across represented layers until cleanup, preserving historical source v1 execution.",
-        "inputs": ["typed resolving source physical and logical identity", "one current battlefield source, qualified direct target or closed public affected set", "fixed card types and creature subtypes with explicit retention", "fixed WUBRG color set or colorless result", "strict all-ability removal and supported keyword set", "fixed base or modified power/toughness", "until-end-of-turn duration"],
+        "inputs": ["typed resolving source physical and logical identity", "one current battlefield source, qualified direct target or closed public affected set", "fixed card types and creature subtypes with explicit retention", "fixed WUBRG color set or colorless result", "strict all-ability removal and supported keyword set including five basic-landwalk variants", "fixed base or modified power/toughness", "until-end-of-turn duration"],
         "outputs": ["atomic immutable continuous-effect component set", "one shared timestamp across layers 4, 5, 6, 7b, and 7c", "shared effective-ability applicability", "cycle-safe dynamic characteristic counts after earlier layers", "cleanup expiration", "no effect on a returned source incarnation"],
-        "exclusions": ["unvalidated dynamic values", "choice-dependent characteristics", "copy, text, control, protection, landwalk, Banding, and unsupported keyword effects", "declaration riders", "attachment-relative and indefinite effects", "ability-qualified public sets and same-layer dependency interactions"]
+        "exclusions": ["unvalidated dynamic values", "choice-dependent characteristics", "copy, text, control, protection, qualified landwalk, Banding, and unsupported keyword effects", "declaration riders", "attachment-relative and indefinite effects", "ability-qualified public sets and same-layer dependency interactions"]
       },
       "dependencies": ["continuous.resolution.fixed_characteristics_until_end_of_turn"],
       "implementation_components": ["quorune.compiler.fixed_target_effect_sequences.FixedSourceCharacteristicsTemplate", "quorune.compiler.fixed_target_effect_sequences.fixed_source_characteristics_effect_template", "quorune.rules.node_capability_shapes.fixed_source_characteristics_node_capabilities", "quorune.continuous_effect_state.ResolutionContinuousComponent", "quorune.continuous_effect_state.create_resolution_continuous_effect_components", "quorune.effect_runtime.objects_stack_and_tokens._apply_source_characteristics_until_end_of_turn", "quorune.keyword_abilities.FIXED_CHARACTERISTIC_KEYWORDS", "quorune.continuous_effects.evaluate_continuous_effects"],
@@ -5573,28 +5989,112 @@
     },
     {
       "id": "continuous.resolution.declaration_rules_until_end_of_turn",
-      "version": 2,
-      "official_rules": ["508.1c", "509.1b", "611.2c", "514.2"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 5,
+      "official_rules": [
+        "508.1c",
+        "509.1b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
-        "summary": "Create one typed resolution-created combat declaration rule for a locked target or source battlefield incarnation and expire it in cleanup without turning the rule into an ability or characteristic.",
-        "inputs": ["typed resolving stack/source identity", "one revalidated target creature or current source creature", "locked physical and logical object identity", "one object-anchored typed declaration prohibition", "until-end-of-turn duration"],
-        "outputs": ["immutable replay-pinned declaration-rule journal entry", "composition with current effective static declaration abilities", "survival through ability removal and source departure", "cleanup expiration", "no effect on a returned logical object"],
-        "exclusions": ["ability or characteristic grants", "two-object source-relative rules", "source-relative controller restrictions", "dynamic predicates", "open declaration grammar", "durations other than until end of turn"]
+        "summary": "Create one typed resolution-created combat declaration rule for locked target/source incarnations or a live public creature group and expire it in cleanup without turning the rule into an ability or characteristic.",
+        "inputs": [
+          "typed resolving stack/source identity",
+          "one revalidated shared qualified permanent target, one through six creature targets, or the current source creature",
+          "locked physical and logical identities or one live public creature query",
+          "any, resolving-controller, or resolving-controller-opponent group relation",
+          "one object-anchored typed declaration prohibition",
+          "until-end-of-turn duration"
+        ],
+        "outputs": [
+          "immutable replay-pinned declaration-rule journal entry",
+          "composition with current effective static declaration abilities",
+          "locked targets survive later characteristic changes but not incarnation changes",
+          "live groups persist when empty and include matching later entrants using current public characteristics",
+          "survival through ability removal and source departure",
+          "cleanup expiration"
+        ],
+        "exclusions": [
+          "ability or characteristic grants",
+          "two-object source-relative rules",
+          "ambiguous other-group antecedents",
+          "variable or more-than-six target cardinalities",
+          "unsupported hidden or source-relative predicates",
+          "open declaration grammar",
+          "durations other than until end of turn"
+        ]
       },
       "dependencies": [],
-      "implementation_components": ["quorune.declaration_rule_effects.ResolutionDeclarationRuleEffect", "quorune.continuous_effect_state.create_resolution_declaration_rule_effect", "quorune.continuous_effect_state.active_resolution_declaration_rule_effects", "quorune.continuous_effect_state.expire_end_of_turn_continuous_effects", "quorune.rules.temporary_declaration_restrictions.commit_temporary_declaration_restriction", "quorune.rules.temporary_declaration_restrictions.current_declaration_restrictions", "quorune.effect_runtime.declaration_effects._apply_grant_declaration_restriction_until_end_of_turn"],
-      "positive_tests": ["test_closed_activated_temporary_declaration_restrictions_compile", "test_source_and_creature_subtype_subjects_compile_closed_shapes", "test_spell_triggered_source_and_subtype_contexts_share_owner", "test_compiled_source_activation_locks_rule_to_source_incarnation", "test_all_four_restrictions_change_declaration_behavior_and_expire"],
-      "negative_tests": ["test_open_temporary_declaration_restriction_grammar_stays_residual", "test_illegal_target_at_resolution_commits_no_declaration_rule", "test_malformed_temporary_restriction_rolls_back_without_effect"],
-      "interaction_tests": ["test_resolved_rule_survives_ability_removal_while_static_rule_does_not", "test_source_departure_preserves_rule_but_target_reentry_does_not", "test_all_four_restrictions_change_declaration_behavior_and_expire"],
-      "multiplayer_tests": ["test_four_player_projection_exposes_only_public_declaration_facts"],
-      "privacy_tests": ["test_four_player_projection_exposes_only_public_declaration_facts"],
-      "replay_tests": ["test_resolved_rule_survives_ability_removal_while_static_rule_does_not", "test_cleanup_expiration_is_exactly_replayable"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "implementation_components": [
+        "quorune.declaration_rule_effects.ResolutionDeclarationRuleEffect",
+        "quorune.continuous_effect_state.create_resolution_declaration_rule_effect",
+        "quorune.continuous_effect_state.active_resolution_declaration_rule_effects",
+        "quorune.continuous_effect_state.expire_end_of_turn_continuous_effects",
+        "quorune.rules.temporary_declaration_restrictions.commit_temporary_declaration_restriction",
+        "quorune.rules.temporary_declaration_restrictions.current_declaration_restrictions",
+        "quorune.effect_runtime.declaration_effects._apply_grant_declaration_restriction_until_end_of_turn"
+      ],
+      "positive_tests": [
+        "test_closed_activated_temporary_declaration_restrictions_compile",
+        "test_source_and_creature_subtype_subjects_compile_closed_shapes",
+        "test_spell_triggered_source_and_subtype_contexts_share_owner",
+        "test_compiled_source_activation_locks_rule_to_source_incarnation",
+        "test_all_four_restrictions_change_declaration_behavior_and_expire",
+        "test_bounded_target_groups_keep_target_count_and_one_rule_instruction",
+        "test_public_group_rules_preserve_live_controller_and_keyword_predicates",
+        "test_original_falter_live_empty_group_includes_later_entrants_and_rechecks_flying",
+        "test_original_blizzard_revalidates_each_target_and_retains_only_resolved_incarnations",
+        "test_static_this_turn_history_conditions_keep_their_declaration_owner"
+      ],
+      "negative_tests": [
+        "test_open_temporary_declaration_restriction_grammar_stays_residual",
+        "test_illegal_target_at_resolution_commits_no_declaration_rule",
+        "test_malformed_temporary_restriction_rolls_back_without_effect",
+        "test_ambiguous_groups_unbounded_targets_and_other_durations_remain_residual",
+        "test_group_rule_missing_authority_and_query_producer_remain_residual",
+        "test_group_rule_codecs_keep_legacy_fields_and_reject_malformed_live_queries",
+        "test_malformed_group_recipients_roll_back_before_journal_mutation"
+      ],
+      "interaction_tests": [
+        "test_resolved_rule_survives_ability_removal_while_static_rule_does_not",
+        "test_source_departure_preserves_rule_but_target_reentry_does_not",
+        "test_all_four_restrictions_change_declaration_behavior_and_expire",
+        "test_original_falter_live_empty_group_includes_later_entrants_and_rechecks_flying",
+        "test_original_blizzard_revalidates_each_target_and_retains_only_resolved_incarnations"
+      ],
+      "multiplayer_tests": [
+        "test_four_player_projection_exposes_only_public_declaration_facts",
+        "test_original_falter_live_empty_group_includes_later_entrants_and_rechecks_flying",
+        "test_original_blizzard_revalidates_each_target_and_retains_only_resolved_incarnations"
+      ],
+      "privacy_tests": [
+        "test_four_player_projection_exposes_only_public_declaration_facts",
+        "test_original_falter_live_empty_group_includes_later_entrants_and_rechecks_flying",
+        "test_original_blizzard_revalidates_each_target_and_retains_only_resolved_incarnations"
+      ],
+      "replay_tests": [
+        "test_resolved_rule_survives_ability_removal_while_static_rule_does_not",
+        "test_cleanup_expiration_is_exactly_replayable",
+        "test_original_falter_live_empty_group_includes_later_entrants_and_rechecks_flying",
+        "test_original_blizzard_revalidates_each_target_and_retains_only_resolved_incarnations"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "not_applicable",
-      "dependency_fail_closed_rationale": "The closed public declaration rule has no optional capability dependency; unsupported grammar and durations remain compiler residuals.",
+      "dependency_fail_closed_rationale": "Fixed group target predicates require the existing target revalidation authority. Live groups use the existing public query and combat declaration owners; unsupported recipient modes and durations remain residual. Exact authority and producer omissions are exercised by the group compiler regression.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "test_resolved_rule_survives_ability_removal_while_static_rule_does_not rejects either suppressing the journaled rule or incorrectly routing it through layer-6 ability evaluation.",
+      "implementation_mutation_rationale": "test_live_query_omission_mutant_is_killed_by_original_falter suppresses only live-query membership and fails at the expected block-prohibition assertion after original Turn to Frog removes Flying from the attackers. Existing single-target evidence also rejects dropping the journaled rule or treating it as an ability.",
       "blockers": [],
       "status": "trusted"
     },
@@ -7023,14 +7523,14 @@
     },
     {
       "id": "permanent.regeneration.fixed_effect",
-      "version": 1,
+      "version": 2,
       "official_rules": ["506.4", "701.19", "701.19a", "701.19c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
         "summary": "Compile and execute one exact fixed direct-target, attached-creature, or named-source regeneration instruction by creating an identity-pinned public shield on the resolved phased-in battlefield permanent.",
-        "inputs": ["exact supported fixed regeneration instruction", "revalidated direct permanent target or current/LKI attachment reference or named source", "phased-in battlefield incarnation", "represented effect or damage state-based destruction"],
+        "inputs": ["exact supported fixed regeneration instruction", "revalidated shared direct permanent target including subtype, color, controller and named-counter predicates or current/LKI attachment reference or named source", "phased-in battlefield incarnation", "represented effect or damage state-based destruction"],
         "outputs": ["one public regeneration shield on the resolved permanent", "one replaced destruction event", "tapped permanent with no marked or Deathtouch damage", "canonical removal from combat", "exact command replay"],
-        "exclusions": ["static regeneration abilities", "variable, repeated, optional, conditional, subtype-qualified, color-qualified, controller-qualified, or multiple-target regeneration", "affected-player ordering between regeneration and shield-counter replacements", "sacrifice, exile, zero-toughness, and other non-destruction zone changes", "unrepresented attachment, target, destruction, or continuous-effect semantics"]
+        "exclusions": ["static regeneration abilities", "variable, repeated, optional, conditional, unrepresented-predicate, or multiple-target regeneration", "affected-player ordering between regeneration and shield-counter replacements", "sacrifice, exile, zero-toughness, and other non-destruction zone changes", "unrepresented attachment, target, destruction, or continuous-effect semantics"]
       },
       "dependencies": ["permanent.destroy.effect", "permanent.destroy.state_based_damage"],
       "implementation_components": ["quorune.compiler.regeneration_templates.FixedRegenerationEffectTemplate", "quorune.rules.node_capability_shapes.self_regeneration_node_capabilities", "quorune.semantic_runtime.regeneration_handlers.CreateRegenerationShieldHandler", "quorune.regeneration.create_regeneration_shield", "quorune.regeneration.apply_regeneration_replacement", "quorune.destruction.prepare_destructions", "quorune.destruction.commit_destruction_plan", "quorune.tap_state.set_permanent_tapped", "quorune.damage_results.clear_permanent_damage"],
@@ -7239,24 +7739,101 @@
     },
     {
       "id": "zone.single_owner_move.fixed_destination",
-      "version": 1,
-      "official_rules": ["108.3", "109.2", "400.2", "400.3", "400.4", "400.7", "401.7", "608.2b", "608.2c", "701.24"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 3,
+      "official_rules": [
+        "108.3",
+        "109.2",
+        "400.2",
+        "400.3",
+        "400.4",
+        "400.7",
+        "401.7",
+        "608.2b",
+        "608.2c",
+        "701.24"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Compile and execute one fixed targeted, source, attachment-referenced, controller-selected, or each-player-selected public object move toward its owner's hand, graveyard, or fixed library position through existing target, choice, attachment-reference, and replacement-aware zone owners.",
-        "inputs": ["one source-spanned fixed owner-destination zone-move clause", "one closed public target, source incarnation, current-or-LKI enchanted creature, or public return choice", "physical and logical object identity", "fixed top, bottom, second, third, or fourth library position or whole-library shuffle", "represented destination-replacement selections"],
-        "outputs": ["sound public target or APNAP choice", "resolution-time target and incarnation revalidation", "owner-indexed destination", "new logical object identity", "replacement-aware final destination", "private library or hand projection", "exact replay"],
-        "exclusions": ["spell-or-permanent heterogeneous targets", "mass moves other than the exact each-player one-creature return", "alternative-cost returns", "historic predicates other than nonland historic permanent", "random, optional, modal, conditional, delayed, linked-result, variable-count, and arbitrary-position moves", "controller rather than owner destinations", "unrepresented attachment relations and destination replacements"]
+        "inputs": [
+          "one source-spanned fixed owner-destination zone-move clause",
+          "one shared qualified permanent or owned graveyard-card target, source incarnation, current-or-LKI enchanted creature, or public return choice",
+          "physical and logical object identity",
+          "fixed top, bottom, second, third, or fourth library position or whole-library shuffle",
+          "represented destination-replacement selections"
+        ],
+        "outputs": [
+          "sound public target or APNAP choice",
+          "resolution-time target and incarnation revalidation",
+          "owner-indexed destination",
+          "new logical object identity",
+          "replacement-aware final destination",
+          "private library or hand projection",
+          "exact replay"
+        ],
+        "exclusions": [
+          "spell-or-permanent heterogeneous targets",
+          "mass moves other than the exact each-player one-creature return",
+          "alternative-cost returns",
+          "historic predicates other than nonland historic permanent",
+          "random, optional, modal, conditional, delayed, linked-result, variable-count, and arbitrary-position moves",
+          "controller rather than owner destinations",
+          "unrepresented attachment relations and destination replacements"
+        ]
       },
-      "dependencies": ["variant.commander.zone_return", "zone.change.destination_replacement"],
-      "implementation_components": ["quorune.compiler.fixed_owner_zone_move_templates.FixedOwnerZoneMoveTemplate", "quorune.compiler.fixed_owner_zone_move_templates.fixed_owner_zone_move_effect_template", "quorune.rules.public_zone_move_capability_shapes.fixed_owner_zone_move_node_capabilities", "quorune.selection.targeting.TargetSelectionOwnerMixin", "quorune.attachment_references.resolve_source_attachment", "quorune.semantic_choices.apnap_commit.ApnapObjectCommitHandler", "quorune.effect_runtime.zones_and_attachments._apply_bounce_or_destroy_or_discard_or_exile_or_move_or_sacrifice", "quorune.effect_runtime.zones_and_attachments._apply_shuffle_into_library", "quorune.zone_transitions.ZoneTransitionOwner.move_card"],
-      "positive_tests": ["test_fixed_owner_zone_moves_compile_across_contexts", "test_fixed_owner_library_positions_target_revalidation_and_replay", "test_fixed_owner_source_attachment_and_choice_lifecycle"],
-      "negative_tests": ["test_fixed_owner_zone_move_shapes_and_boundaries", "test_fixed_owner_library_positions_target_revalidation_and_replay"],
-      "interaction_tests": ["test_fixed_owner_source_attachment_and_choice_lifecycle", "test_fixed_owner_zone_move_commander_replacement_and_projection"],
-      "multiplayer_tests": ["test_fixed_owner_source_attachment_and_choice_lifecycle", "test_fixed_owner_zone_move_commander_replacement_and_projection"],
-      "privacy_tests": ["test_fixed_owner_zone_move_commander_replacement_and_projection"],
-      "replay_tests": ["test_fixed_owner_library_positions_target_revalidation_and_replay", "test_fixed_owner_source_attachment_and_choice_lifecycle"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "variant.commander.zone_return",
+        "zone.change.destination_replacement"
+      ],
+      "implementation_components": [
+        "quorune.compiler.fixed_owner_zone_move_templates.FixedOwnerZoneMoveTemplate",
+        "quorune.compiler.fixed_owner_zone_move_templates.fixed_owner_zone_move_effect_template",
+        "quorune.rules.public_zone_move_capability_shapes.fixed_owner_zone_move_node_capabilities",
+        "quorune.selection.targeting.TargetSelectionOwnerMixin",
+        "quorune.attachment_references.resolve_source_attachment",
+        "quorune.semantic_choices.apnap_commit.ApnapObjectCommitHandler",
+        "quorune.effect_runtime.zones_and_attachments._apply_bounce_or_destroy_or_discard_or_exile_or_move_or_sacrifice",
+        "quorune.effect_runtime.zones_and_attachments._apply_shuffle_into_library",
+        "quorune.zone_transitions.ZoneTransitionOwner.move_card"
+      ],
+      "positive_tests": [
+        "test_fixed_owner_zone_moves_compile_across_contexts",
+        "test_fixed_owner_library_positions_target_revalidation_and_replay",
+        "test_fixed_owner_source_attachment_and_choice_lifecycle",
+        "test_legacy_union_owner_move_shapes_do_not_enter_single_predicate_decoder"
+      ],
+      "negative_tests": [
+        "test_fixed_owner_zone_move_shapes_and_boundaries",
+        "test_fixed_owner_library_positions_target_revalidation_and_replay",
+        "test_legacy_union_owner_move_shapes_do_not_enter_single_predicate_decoder"
+      ],
+      "interaction_tests": [
+        "test_fixed_owner_source_attachment_and_choice_lifecycle",
+        "test_fixed_owner_zone_move_commander_replacement_and_projection"
+      ],
+      "multiplayer_tests": [
+        "test_fixed_owner_source_attachment_and_choice_lifecycle",
+        "test_fixed_owner_zone_move_commander_replacement_and_projection"
+      ],
+      "privacy_tests": [
+        "test_fixed_owner_zone_move_commander_replacement_and_projection"
+      ],
+      "replay_tests": [
+        "test_fixed_owner_library_positions_target_revalidation_and_replay",
+        "test_fixed_owner_source_attachment_and_choice_lifecycle"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Blocking the canonical destination-replacement owner prevents every fixed owner-zone move from receiving trusted closure; target and attachment forms additionally require their existing typed owners.",
       "implementation_mutation_status": "killed",
@@ -7995,12 +8572,12 @@
     },
     {
       "id": "stack.counter.effect",
-      "version": 2,
+      "version": 3,
       "official_rules": ["115.1", "115.5", "603.10e", "608.2b", "701.6", "701.6a", "701.6b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
         "summary": "Compile and execute one mandatory direct-target instruction that counters a currently legal spell, activated ability, or triggered ability through a typed stack-counter owner after exact target revalidation.",
-        "inputs": ["closed typed direct-target counter clause", "current public stack object", "canonical spell or ability characteristics", "source-exclusion identity", "trusted counter-prohibition declaration"],
+        "inputs": ["closed typed direct-target counter clause", "current public stack object", "canonical spell or ability characteristics, with one optional fixed spell mana-value bound", "source-exclusion identity", "trusted counter-prohibition declaration"],
         "outputs": ["removed stack object", "replacement-aware countered spell movement toward its owner's graveyard", "normalized pre-counter spell event", "conditional post-move card-graveyard event", "counter failure journal for represented prohibitions", "public deterministic event"],
         "exclusions": ["counter unless a player pays or performs another action", "conditional, optional, modal, mass, multi-target, or linked-result counter clauses", "intrinsic alternate countered-spell destinations other than a represented zone replacement", "countering by a game rule as compiler grammar", "countered ability or spell-copy look-back trigger grammar", "conditional, source-qualified, name-qualified, target-qualified, or variable-mana-value stack predicates"]
       },
@@ -8672,7 +9249,7 @@
     },
     {
       "id": "trigger.effect.fixed_event",
-      "version": 14,
+      "version": 15,
       "official_rules": [
         "115.1",
         "120.4",
@@ -8695,7 +9272,7 @@
       "applicability": {
         "summary": "Compose one source-spanned closed normalized-event binding with one independently reviewed typed effect body, including immutable spell-cast facts, exact Heroic, Magecraft, Constellation, Battalion, attachment-relative, bounded public attack, discard, sacrifice, fixed same-zone two-event subscriptions, one-or-more damage or zone batching, public zone, damage, draw, block, Cycling, step, face-up, fixed source-self combat-growth occurrences, and closed public-state intervening-if conditions, then use ordinary APNAP placement, current layer-6 ability applicability, target selection, optional-choice, and body-specific resolution owners. Unambiguous source-self result pronouns lower through the same exact fixed stat, damage and optional counter body owners without rebinding newly created objects.",
         "inputs": [
-          "one represented beginning-of-step, typed spell-cast fact, exact ability-word, attachment-relative, public action, public zone, damage, draw, block, Cycling, face-up, fixed same-zone multi-event, or source-self binding",
+          "one represented beginning-of-step, typed spell-cast fact, exact ability-word, attachment-relative, public action, public zone, damage, draw, block, Cycling, face-up, fixed same-zone multi-event, or source-self binding, including controller-only draw-step schedules",
           "one mandatory or optional exact typed effect body",
           "current or last-known battlefield, stack, or Cycling hand source",
           "immutable normalized event facts, per-subscription conditions, and exact one-or-more aggregation when declared",
@@ -8764,7 +9341,13 @@
         "test_fixed_face_down_methods_compile_and_fail_closed",
         "test_source_combat_growth_triggers_compile_exactly_and_fail_closed",
         "test_four_strict_ability_word_bindings_compile_through_shared_owner",
-        "test_exact_self_event_body_keeps_original_span_and_source_reference"
+        "test_exact_self_event_body_keeps_original_span_and_source_reference",
+        "test_draw_step_schedules_keep_context_and_controller_recipients_distinct",
+        "test_fixed_additional_draw_wording_preserves_one_instruction_count",
+        "test_controller_draw_step_additional_draw_retains_event_and_recipient",
+        "test_original_kami_draws_for_active_opponent_after_ordinary_draw",
+        "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
+        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step"
       ],
       "negative_tests": [
         "test_fixed_multi_event_trigger_near_misses_remain_material",
@@ -8781,7 +9364,8 @@
         "test_public_action_event_capability_fails_closed",
         "test_public_event_binding_closure_dependencies_and_parser_mutant_fail_closed",
         "test_adjacent_event_and_body_grammar_remain_material",
-        "test_new_token_or_target_pronoun_is_not_rebound_to_source"
+        "test_new_token_or_target_pronoun_is_not_rebound_to_source",
+        "test_additional_draw_step_missing_authority_stays_residual"
       ],
       "interaction_tests": [
         "test_fixed_multi_event_source_triggers_share_events_and_replay",
@@ -8818,7 +9402,10 @@
         "test_constellation_distinguishes_control_and_includes_source_entry",
         "test_battalion_uses_sealed_three_attacker_transition",
         "test_actual_scorpion_death_deals_damage_and_gains_life_for_trigger_controller",
-        "test_blinked_firstblade_does_not_receive_old_source_trigger_twice"
+        "test_blinked_firstblade_does_not_receive_old_source_trigger_twice",
+        "test_original_kami_draws_for_active_opponent_after_ordinary_draw",
+        "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
+        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step"
       ],
       "multiplayer_tests": [
         "test_fixed_multi_event_departure_uses_lki_and_apnap",
@@ -8837,7 +9424,10 @@
         "test_cycle_entry_schedule_and_block_bindings_execute",
         "test_source_combat_growth_shares_apnap_and_pins_source_incarnation",
         "test_targeted_cast_projection_save_load_and_exact_replay",
-        "test_actual_scorpion_death_deals_damage_and_gains_life_for_trigger_controller"
+        "test_actual_scorpion_death_deals_damage_and_gains_life_for_trigger_controller",
+        "test_original_kami_draws_for_active_opponent_after_ordinary_draw",
+        "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
+        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step"
       ],
       "privacy_tests": [
         "test_fixed_multi_event_source_triggers_share_events_and_replay",
@@ -8851,7 +9441,8 @@
         "test_public_action_occurrences_replay_exactly",
         "test_attachment_attack_binding_uses_current_relation_and_ability",
         "test_source_combat_growth_attack_uses_current_ability_and_replays",
-        "test_targeted_cast_projection_save_load_and_exact_replay"
+        "test_targeted_cast_projection_save_load_and_exact_replay",
+        "test_original_kami_draws_for_active_opponent_after_ordinary_draw"
       ],
       "replay_tests": [
         "test_fixed_multi_event_source_triggers_share_events_and_replay",
@@ -8863,7 +9454,10 @@
         "test_attachment_attack_binding_uses_current_relation_and_ability",
         "test_source_combat_growth_attack_uses_current_ability_and_replays",
         "test_targeted_cast_projection_save_load_and_exact_replay",
-        "test_actual_veteran_tap_issues_optional_counter_and_replays"
+        "test_actual_veteran_tap_issues_optional_counter_and_replays",
+        "test_original_kami_draws_for_active_opponent_after_ordinary_draw",
+        "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
+        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step"
       ],
       "required_evidence": [
         "positive",
@@ -10397,14 +10991,14 @@
     },
     {
       "id": "choice.affected_player.fixed_discard",
-      "version": 2,
+      "version": 3,
       "official_rules": ["101.4", "115.1", "608.2b", "608.2c", "701.9", "701.9a", "701.9c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
-        "summary": "Compile and resolve one mandatory fixed affected-player discard, including a controller-only leaf inside the fixed draw sequence, by collecting private hand choices in APNAP order and committing every chosen card through one replacement-aware simultaneous zone transaction.",
-        "inputs": ["one source-spanned target-player, target-opponent, each-player, or each-opponent discard instruction with a fixed count from one through three, or one controller discard of one through four cards inside the closed fixed draw sequence", "one closed hand-zone ObjectQuerySpec", "affected players' private current hands", "stable actor-private card refs", "applicable zone-destination replacements"],
+        "summary": "Compile and resolve one mandatory fixed affected-player discard, including independently shape-gated controller and sealed-event recipient producers, by collecting private hand choices in APNAP order and committing every chosen card through one replacement-aware simultaneous zone transaction.",
+        "inputs": ["one source-spanned fixed discard instruction admitted by its target, group, controller-sequence or independently shape-gated controller/event-recipient producer", "one closed hand-zone ObjectQuerySpec", "affected players' private current hands", "stable actor-private card refs", "applicable zone-destination replacements"],
         "outputs": ["one affected-seat-scoped private choice at a time", "APNAP-ordered collection without early mutation or prior-choice disclosure", "one simultaneous replacement-aware discard commit", "normalized public post-move zone-change and discard events", "exact continuation replay"],
-        "exclusions": ["random, optional, variable, all-hand, half-hand, named-card, type-qualified, revealed-card, or arbitrary-number discards", "controller discards outside the closed two-instruction fixed draw sequence", "effects where another player chooses or observes the discarded cards", "linked discard results and conditional follow-ups outside independently closed sequence grammar", "discard costs, cleanup discards, Ward and Equip costs, Madness, Cycling, and other keyword-specific discard procedures"]
+        "exclusions": ["random, optional, variable, all-hand, half-hand, named-card, type-qualified, revealed-card, or arbitrary-number discards", "controller or event-recipient discards without an independently closed producer", "effects where another player chooses or observes the discarded cards", "linked discard results and conditional follow-ups outside independently closed sequence grammar", "discard costs, cleanup discards, Ward and Equip costs, Madness, Cycling, and other keyword-specific discard procedures"]
       },
       "dependencies": ["zone.change.destination_replacement"],
       "implementation_components": ["quorune.compiler.affected_player_discard_templates.FixedAffectedPlayerDiscardTemplate", "quorune.compiler.affected_player_discard_templates.fixed_affected_player_discard_effect_template", "quorune.compiler.affected_player_discard_templates.fixed_controller_discard_effect_template", "quorune.compiler.fixed_controller_effect_sequences.fixed_controller_effect_sequence_template", "quorune.rules.affected_player_discard_capability_shapes.fixed_affected_player_discard_node_capabilities", "quorune.selection.apnap.ApnapChoiceOwnerMixin", "quorune.semantic_choices.apnap_commit.ApnapObjectCommitHandler", "quorune.semantic_runtime.intents.MoveObjectsSimultaneouslyIntent", "quorune.semantic_choices.preparation_coordination.continue_semantic_preparation", "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously"],
@@ -11044,24 +11638,116 @@
     },
     {
       "id": "effect.choice.optional_fixed_mana_payment",
-      "version": 3,
-      "official_rules": ["109.5", "118.12", "603.5", "608.2c", "608.2d", "609.1"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 5,
+      "official_rules": [
+        "109.5",
+        "118.12",
+        "201.5",
+        "400.7",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Resolve a complete fixed mana, life, owned-card discard or controlled-permanent sacrifice payment with independently typed consequences through the existing optional-payment choice, preserving v1 payloads and explicit mandatory-prefix scope.",
-        "inputs": ["one source-spanned spell, activation or existing normalized trigger", "one positive fixed ordinary mana or life cost, one or two unqualified discards, one qualified discard or one controlled sacrifice", "independently exact typed consequence owners", "locked resolving controller and current selected zone incarnations", "body-owned targets chosen at normal placement"],
-        "outputs": ["controller-scoped pay-or-decline or optional current-object choice", "full resource, current predicate and incarnation revalidation", "canonical resource or simultaneous zone payment before typed consequences", "chosen-payment success despite destination replacement", "mandatory prefix remains outside conditional scope", "exact continuation replay"],
-        "exclusions": ["variable, hybrid, Phyrexian, snow, alternate, restricted and compound payments", "zero costs and unrepresented payment resources", "reflexive when-you-do triggers, repeated or nested payment and paid-object linked results", "independently unrepresented result owners or sibling abilities"]
+        "inputs": [
+          "one source-spanned spell, activation or existing normalized trigger",
+          "one positive fixed ordinary mana or life cost, one or two unqualified discards, one qualified discard or one controlled sacrifice",
+          "independently exact typed consequence owners",
+          "locked resolving controller, bound source or event-object results and current selected zone incarnations",
+          "body-owned targets chosen at normal placement"
+        ],
+        "outputs": [
+          "controller-scoped pay-or-decline or optional current-object choice",
+          "full resource, current predicate and incarnation revalidation",
+          "canonical resource or simultaneous zone payment before typed consequences",
+          "chosen-payment success despite destination replacement",
+          "mandatory prefix remains outside conditional scope",
+          "exact continuation replay"
+        ],
+        "exclusions": [
+          "variable, hybrid, Phyrexian, snow, alternate, restricted and compound payments",
+          "zero costs and unrepresented payment resources",
+          "reflexive when-you-do triggers, repeated or nested payment and paid-object linked results",
+          "independently unrepresented result owners or sibling abilities"
+        ]
       },
       "dependencies": [],
-      "implementation_components": ["quorune.compiler.optional_payment_templates.FixedOptionalManaPaymentTemplate", "quorune.compiler.fixed_effect_payment_templates.fixed_effect_payment_template", "quorune.fixed_effect_payment.FixedEffectPaymentSpec", "quorune.rules.fixed_effect_clause_shapes.fixed_optional_mana_payment_node_capabilities", "quorune.rules.fixed_effect_payment_shapes.fixed_effect_payment_node_capabilities", "quorune.semantic_choices.payments.FixedEffectOptionalPaymentHandler", "quorune.semantic_choices.fixed_effect_payment.prepare_fixed_effect_payment", "quorune.semantic_choices.fixed_effect_payment.complete_fixed_effect_payment", "quorune.semantic_choices.counter_coordination.continue_semantic_completion", "quorune.semantic_choices.intent_host.SemanticChoiceIntentHostMixin.pay_mana_cost_intent", "quorune.semantic_runtime.intents.PayManaCostIntent", "quorune.semantic_runtime.intents.PayLifeIntent", "quorune.semantic_runtime.intents.MoveObjectsSimultaneouslyIntent", "CommanderEngine._continue_resolution"],
-      "positive_tests": ["test_fixed_payment_composes_across_normalized_trigger_families", "test_lifecrafters_bestiary_is_an_exact_real_card_witness", "test_pay_decline_unpayable_and_stale_affordability_are_atomic", "test_fixed_resolution_payments_share_cost_result_and_carrier_owners", "test_two_card_payment_published_form_and_command_cardinalities_agree"],
-      "negative_tests": ["test_nonfixed_nested_and_nonexact_forms_remain_residual", "test_compiler_shape_and_handler_mutants_fail_closed", "test_runtime_wrapper_rejects_wrong_actor_extra_fields_and_nesting", "test_fixed_resolution_payment_rejects_partial_nested_and_linked_grammar"],
-      "interaction_tests": ["test_real_card_payment_is_private_commits_before_draw_and_replays", "test_payment_replacement_choice_resumes_once_after_save_load_and_replays", "test_trusted_life_activation_and_declined_prefix_preserve_cost_scope"],
-      "multiplayer_tests": ["test_real_card_payment_is_private_commits_before_draw_and_replays", "test_trusted_discard_spell_uses_real_cast_private_payment_and_pre_action_replay"],
-      "privacy_tests": ["test_real_card_payment_is_private_commits_before_draw_and_replays", "test_trusted_discard_spell_uses_real_cast_private_payment_and_pre_action_replay"],
-      "replay_tests": ["test_real_card_payment_is_private_commits_before_draw_and_replays", "test_trusted_discard_spell_uses_real_cast_private_payment_and_pre_action_replay", "test_payment_replacement_choice_resumes_once_after_save_load_and_replays"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "implementation_components": [
+        "quorune.compiler.optional_payment_templates.FixedOptionalManaPaymentTemplate",
+        "quorune.compiler.fixed_effect_payment_templates.fixed_effect_payment_template",
+        "quorune.fixed_effect_payment.FixedEffectPaymentSpec",
+        "quorune.rules.fixed_effect_clause_shapes.fixed_optional_mana_payment_node_capabilities",
+        "quorune.rules.fixed_effect_payment_shapes.fixed_effect_payment_node_capabilities",
+        "quorune.semantic_choices.payments.FixedEffectOptionalPaymentHandler",
+        "quorune.semantic_choices.fixed_effect_payment.prepare_fixed_effect_payment",
+        "quorune.semantic_choices.fixed_effect_payment.complete_fixed_effect_payment",
+        "quorune.semantic_choices.counter_coordination.continue_semantic_completion",
+        "quorune.semantic_choices.intent_host.SemanticChoiceIntentHostMixin.pay_mana_cost_intent",
+        "quorune.semantic_runtime.intents.PayManaCostIntent",
+        "quorune.semantic_runtime.intents.PayLifeIntent",
+        "quorune.semantic_runtime.intents.MoveObjectsSimultaneouslyIntent",
+        "CommanderEngine._continue_resolution",
+        "quorune.compiler.optional_payment_templates.binding_aware_optional_mana_payment_template",
+        "quorune.compiler.trigger_result_templates.binding_effect_template"
+      ],
+      "positive_tests": [
+        "test_fixed_payment_composes_across_normalized_trigger_families",
+        "test_lifecrafters_bestiary_is_an_exact_real_card_witness",
+        "test_pay_decline_unpayable_and_stale_affordability_are_atomic",
+        "test_fixed_resolution_payments_share_cost_result_and_carrier_owners",
+        "test_two_card_payment_published_form_and_command_cardinalities_agree",
+        "test_fixed_payment_preserves_bound_source_result_incarnation",
+        "test_fixed_payment_can_wrap_sealed_entering_object_copy_recipe",
+        "test_fixed_payment_target_copy_retains_typed_origin_and_closure"
+      ],
+      "negative_tests": [
+        "test_nonfixed_nested_and_nonexact_forms_remain_residual",
+        "test_compiler_shape_and_handler_mutants_fail_closed",
+        "test_runtime_wrapper_rejects_wrong_actor_extra_fields_and_nesting",
+        "test_fixed_resolution_payment_rejects_partial_nested_and_linked_grammar",
+        "test_bound_payment_nested_variable_and_reflexive_forms_remain_residual",
+        "test_original_cricket_unaffordable_payment_rejects_without_result"
+      ],
+      "interaction_tests": [
+        "test_real_card_payment_is_private_commits_before_draw_and_replays",
+        "test_payment_replacement_choice_resumes_once_after_save_load_and_replays",
+        "test_trusted_life_activation_and_declined_prefix_preserve_cost_scope",
+        "test_paid_attack_result_does_not_affect_reentered_source",
+        "test_original_mirrorworks_copies_departed_entering_object_information"
+      ],
+      "multiplayer_tests": [
+        "test_real_card_payment_is_private_commits_before_draw_and_replays",
+        "test_trusted_discard_spell_uses_real_cast_private_payment_and_pre_action_replay",
+        "test_original_cricket_payment_is_private_affordable_and_replays"
+      ],
+      "privacy_tests": [
+        "test_real_card_payment_is_private_commits_before_draw_and_replays",
+        "test_trusted_discard_spell_uses_real_cast_private_payment_and_pre_action_replay",
+        "test_original_cricket_payment_is_private_affordable_and_replays"
+      ],
+      "replay_tests": [
+        "test_real_card_payment_is_private_commits_before_draw_and_replays",
+        "test_trusted_discard_spell_uses_real_cast_private_payment_and_pre_action_replay",
+        "test_payment_replacement_choice_resumes_once_after_save_load_and_replays",
+        "test_original_cricket_payment_is_private_affordable_and_replays",
+        "test_original_mirrorworks_paid_entry_creates_exact_copy_and_replays"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "The wrapper receives no trust unless the payment shape is positive and ordinary and its nested body independently resolves to an existing capability-closed effect with its exact target schema.",
       "implementation_mutation_status": "killed",
@@ -11514,24 +12200,103 @@
     },
     {
       "id": "zone.self_move.activated",
-      "version": 2,
-      "official_rules": ["400.2", "400.3", "400.7", "602.1", "602.2", "608.2c", "701.23"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 3,
+      "official_rules": [
+        "400.2",
+        "400.3",
+        "400.7",
+        "602.1",
+        "602.2",
+        "608.2c",
+        "701.23"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Resolve one source-self activated zone movement from graveyard to owner hand, graveyard to battlefield tapped or untapped, or a battlefield Aura to owner hand through canonical identity and zone owners.",
-        "inputs": ["one source-spanned colon-form activated ability", "same physical card and logical source incarnation", "supported origin, destination, tapped state, and source form", "represented activation costs", "current replacement and trigger state"],
-        "outputs": ["one server-authored source-zone activation", "ordinary ability stack object", "resolution-time source identity revalidation", "replacement-aware canonical zone move", "public or private destination projection", "normalized zone events and exact replay"],
-        "exclusions": ["targeted, mass, optional, delayed, transformed, or controller-relative movement", "multiple objects or destinations", "unsupported source-form predicates", "unrepresented activated costs or activation conditions", "battlefield materialization when the complete CardProgram remains residual", "copied, granted, or text-changed abilities outside current typed discovery"]
+        "inputs": [
+          "one source-spanned colon-form activated ability",
+          "same physical card and logical source incarnation",
+          "supported origin, destination, tapped state, and source form",
+          "represented activation costs",
+          "current replacement and trigger state",
+          "complete activation restriction suffix matching retained typed timing, limit and conditions"
+        ],
+        "outputs": [
+          "one server-authored source-zone activation",
+          "ordinary ability stack object",
+          "resolution-time source identity revalidation",
+          "replacement-aware canonical zone move",
+          "public or private destination projection",
+          "normalized zone events and exact replay"
+        ],
+        "exclusions": [
+          "targeted, mass, optional, delayed, transformed, or controller-relative movement",
+          "multiple objects or destinations",
+          "unsupported source-form predicates",
+          "unrepresented activated costs or activation conditions",
+          "battlefield materialization when the complete CardProgram remains residual",
+          "copied, granted, or text-changed abilities outside current typed discovery"
+        ]
       },
-      "dependencies": ["trigger.event.normalized_zone_change", "trigger.placement.apnap", "zone.change.destination_replacement"],
-      "implementation_components": ["quorune.self_zone_move.SelfZoneMoveSpec", "quorune.compiler.activated_mana_nodes.activated_oracle_node", "quorune.semantic_runtime.self_zone_move.SelfZoneMoveAbilityHandler", "quorune.semantic_runtime.self_zone_move.SelfZoneMoveEffectHandler", "quorune.compiled_activated_abilities.compiled_activated_abilities", "quorune.rules.activation.proposal.build_activation_offer", "quorune.rules.activation.commit.commit_activation", "quorune.self_zone_move.resolve_self_zone_move", "quorune.zone_transitions.ZoneTransitionOwner"],
-      "positive_tests": ["test_supported_self_zone_moves_compile_source_spanned_programs", "test_graveyard_to_hand_is_owner_scoped_private_and_replays", "test_tapped_reanimation_and_aura_return_use_zone_owners", "test_source_self_reanimation_preserves_untapped_result"],
-      "negative_tests": ["test_unsupported_self_zone_move_shapes_remain_residual", "test_partial_reanimation_and_stale_sources_fail_closed"],
-      "interaction_tests": ["test_tapped_reanimation_and_aura_return_use_zone_owners", "test_partial_reanimation_and_stale_sources_fail_closed", "test_target_revalidation_and_self_return_coexist_on_one_card"],
-      "multiplayer_tests": ["test_graveyard_to_hand_is_owner_scoped_private_and_replays"],
-      "privacy_tests": ["test_graveyard_to_hand_is_owner_scoped_private_and_replays"],
-      "replay_tests": ["test_graveyard_to_hand_is_owner_scoped_private_and_replays", "test_source_self_reanimation_preserves_untapped_result"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "trigger.event.normalized_zone_change",
+        "trigger.placement.apnap",
+        "zone.change.destination_replacement"
+      ],
+      "implementation_components": [
+        "quorune.self_zone_move.SelfZoneMoveSpec",
+        "quorune.compiler.activated_mana_nodes.activated_oracle_node",
+        "quorune.semantic_runtime.self_zone_move.SelfZoneMoveAbilityHandler",
+        "quorune.semantic_runtime.self_zone_move.SelfZoneMoveEffectHandler",
+        "quorune.compiled_activated_abilities.compiled_activated_abilities",
+        "quorune.rules.activation.proposal.build_activation_offer",
+        "quorune.rules.activation.commit.commit_activation",
+        "quorune.self_zone_move.resolve_self_zone_move",
+        "quorune.zone_transitions.ZoneTransitionOwner"
+      ],
+      "positive_tests": [
+        "test_supported_self_zone_moves_compile_source_spanned_programs",
+        "test_graveyard_to_hand_is_owner_scoped_private_and_replays",
+        "test_tapped_reanimation_and_aura_return_use_zone_owners",
+        "test_source_self_reanimation_preserves_untapped_result",
+        "test_restricted_source_return_preserves_existing_typed_timing",
+        "test_original_restricted_returns_offer_only_typed_timing_and_replay"
+      ],
+      "negative_tests": [
+        "test_unsupported_self_zone_move_shapes_remain_residual",
+        "test_partial_reanimation_and_stale_sources_fail_closed",
+        "test_restricted_source_return_preserves_existing_typed_timing"
+      ],
+      "interaction_tests": [
+        "test_tapped_reanimation_and_aura_return_use_zone_owners",
+        "test_partial_reanimation_and_stale_sources_fail_closed",
+        "test_target_revalidation_and_self_return_coexist_on_one_card",
+        "test_original_restricted_returns_offer_only_typed_timing_and_replay"
+      ],
+      "multiplayer_tests": [
+        "test_graveyard_to_hand_is_owner_scoped_private_and_replays",
+        "test_original_restricted_returns_offer_only_typed_timing_and_replay"
+      ],
+      "privacy_tests": [
+        "test_graveyard_to_hand_is_owner_scoped_private_and_replays"
+      ],
+      "replay_tests": [
+        "test_graveyard_to_hand_is_owner_scoped_private_and_replays",
+        "test_source_self_reanimation_preserves_untapped_result",
+        "test_original_restricted_returns_offer_only_typed_timing_and_replay"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Blocking destination replacement, normalized zone events, or APNAP trigger placement prevents the self-zone-move node from receiving trusted closure.",
       "implementation_mutation_status": "killed",
@@ -12176,24 +12941,82 @@
     },
     {
       "id": "continuous.characteristics.chosen_designation",
-      "version": 1,
-      "official_rules": ["105.1", "205.3m", "613.1f", "613.1g", "613.4c", "614.12a", "707.2"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 2,
+      "official_rules": [
+        "105.1",
+        "205.3m",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Instantiate a fixed public creature characteristic query from the source's retained entry choice through the existing layer-six and layer-seven-c owners.",
-        "inputs": ["typed intrinsic source descriptor", "destination controller and original incarnation", "pinned public color or creature-type vocabulary"],
-        "outputs": ["persisted public replacement choice", "source-bound chosen-value characteristic predicate"],
-        "exclusions": ["compound, optional or restricted entry choices", "multiple same-kind entry choices", "entry choices linked to source-type additions", "arbitrary chosen-value rules or independently unsupported siblings"]
+        "inputs": [
+          "typed intrinsic source descriptor",
+          "destination controller and original incarnation",
+          "pinned public color or creature-type vocabulary"
+        ],
+        "outputs": [
+          "persisted public replacement choice",
+          "source-bound chosen-value characteristic predicate"
+        ],
+        "exclusions": [
+          "compound, optional or restricted entry choices",
+          "multiple same-kind entry choices",
+          "entry choices linked to source-type additions",
+          "arbitrary chosen-value rules or independently unsupported siblings",
+          "source-counter scaling bodies until independently represented by the chosen-value owner"
+        ]
       },
-      "dependencies": ["zone.entry.public_designation"],
-      "implementation_components": ["quorune.semantic_runtime.chosen_characteristics.ChosenCharacteristicsHandler"],
-      "positive_tests": ["test_original_entry_designation_programs_close_and_keep_source_spans", "test_entry_designation_reuses_mutually_exclusive_public_replacements"],
-      "negative_tests": ["test_entry_designation_vocabulary_and_descriptor_are_closed", "test_original_entry_designation_unsupported_siblings_reject_admission", "test_duplicate_intrinsic_designations_preserve_linking_residuals", "test_linked_source_type_additions_keep_the_existing_entry_owner", "test_entry_designations_clear_with_departed_zone_object"],
-      "interaction_tests": ["test_chosen_characteristics_bind_public_value_to_existing_query_owner", "test_printed_entry_designation_cast_choice_privacy_persistence_and_replay", "test_printed_copy_gets_fresh_entry_designation_and_replays"],
-      "multiplayer_tests": ["test_printed_entry_designation_cast_choice_privacy_persistence_and_replay", "test_printed_copy_gets_fresh_entry_designation_and_replays"],
-      "privacy_tests": ["test_printed_entry_designation_cast_choice_privacy_persistence_and_replay"],
-      "replay_tests": ["test_printed_entry_designation_cast_choice_privacy_persistence_and_replay", "test_printed_copy_gets_fresh_entry_designation_and_replays"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "zone.entry.public_designation"
+      ],
+      "implementation_components": [
+        "quorune.semantic_runtime.chosen_characteristics.ChosenCharacteristicsHandler"
+      ],
+      "positive_tests": [
+        "test_original_entry_designation_programs_close_and_keep_source_spans",
+        "test_entry_designation_reuses_mutually_exclusive_public_replacements"
+      ],
+      "negative_tests": [
+        "test_entry_designation_vocabulary_and_descriptor_are_closed",
+        "test_original_entry_designation_unsupported_siblings_reject_admission",
+        "test_duplicate_intrinsic_designations_preserve_linking_residuals",
+        "test_linked_source_type_additions_keep_the_existing_entry_owner",
+        "test_entry_designations_clear_with_departed_zone_object",
+        "test_chosen_counter_scaling_remains_residual_without_registered_body_composition"
+      ],
+      "interaction_tests": [
+        "test_chosen_characteristics_bind_public_value_to_existing_query_owner",
+        "test_printed_entry_designation_cast_choice_privacy_persistence_and_replay",
+        "test_printed_copy_gets_fresh_entry_designation_and_replays"
+      ],
+      "multiplayer_tests": [
+        "test_printed_entry_designation_cast_choice_privacy_persistence_and_replay",
+        "test_printed_copy_gets_fresh_entry_designation_and_replays"
+      ],
+      "privacy_tests": [
+        "test_printed_entry_designation_cast_choice_privacy_persistence_and_replay"
+      ],
+      "replay_tests": [
+        "test_printed_entry_designation_cast_choice_privacy_persistence_and_replay",
+        "test_printed_copy_gets_fresh_entry_designation_and_replays"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Blocking the entry designation dependency prevents exact whole-card closure; the independent entry owner has no extra dependencies.",
       "implementation_mutation_status": "killed",
@@ -12592,13 +13415,14 @@
     },
     {
       "id": "trigger.event.scheduled_player_result",
-      "version": 3,
+      "version": 4,
       "official_rules": [
         "109.5",
         "503.1",
         "603.3a",
         "603.3b",
-        "608.2c"
+        "608.2c",
+        "504.1"
       ],
       "supported_profiles": [
         "traditional",
@@ -12606,7 +13430,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Bind fixed nontargeted draw/life/mill/damage results to the sealed active player of each-player, each-opponent, or current enchanted-object controller upkeep while preserving the trigger source controller.",
+        "summary": "Bind fixed nontargeted draw/life/mill/damage results to the sealed active player of each-player or each-opponent upkeep and draw-step schedules, each-other-player draw schedules, or current enchanted-object controller upkeep, while preserving the trigger source controller.",
         "inputs": [
           "one source-spanned scheduled trigger",
           "normalized step player and step",
@@ -12638,31 +13462,48 @@
         "test_each_player_and_opponent_results_are_nontargeted_context_bound",
         "test_mixed_scheduled_result_preserves_each_original_recipient",
         "test_mixed_upkeep_resolves_draw_and_locked_controller_life_privately",
-        "test_mixed_upkeep_replays_from_before_triggering_step"
+        "test_mixed_upkeep_replays_from_before_triggering_step",
+        "test_draw_step_schedules_keep_context_and_controller_recipients_distinct",
+        "test_fixed_additional_draw_wording_preserves_one_instruction_count",
+        "test_controller_draw_step_additional_draw_retains_event_and_recipient",
+        "test_original_kami_draws_for_active_opponent_after_ordinary_draw",
+        "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
+        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step"
       ],
       "negative_tests": [
         "test_unknown_bound_results_and_monarch_schedules_remain_residual",
         "test_mixed_scheduled_shape_rejects_malformed_second_player",
-        "test_bound_player_damage_shape_requires_exact_player_and_positive_amount"
+        "test_bound_player_damage_shape_requires_exact_player_and_positive_amount",
+        "test_additional_draw_step_missing_authority_stays_residual"
       ],
       "interaction_tests": [
         "test_actual_seizan_upkeep_affects_active_player_not_source_controller",
         "test_actual_aura_upkeep_uses_recipient_controller_and_keeps_queued_player",
         "test_actual_copper_tablet_deals_damage_to_each_active_upkeep_player",
         "test_mixed_upkeep_resolves_draw_and_locked_controller_life_privately",
-        "test_mixed_upkeep_replays_from_before_triggering_step"
+        "test_mixed_upkeep_replays_from_before_triggering_step",
+        "test_original_kami_draws_for_active_opponent_after_ordinary_draw",
+        "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
+        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step"
       ],
       "multiplayer_tests": [
-        "test_each_opponent_upkeep_filter_excludes_source_controller"
+        "test_each_opponent_upkeep_filter_excludes_source_controller",
+        "test_original_kami_draws_for_active_opponent_after_ordinary_draw",
+        "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
+        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step"
       ],
       "privacy_tests": [
-        "test_actual_seizan_upkeep_affects_active_player_not_source_controller"
+        "test_actual_seizan_upkeep_affects_active_player_not_source_controller",
+        "test_original_kami_draws_for_active_opponent_after_ordinary_draw"
       ],
       "replay_tests": [
         "test_actual_seizan_upkeep_affects_active_player_not_source_controller",
         "test_actual_aura_upkeep_uses_recipient_controller_and_keeps_queued_player",
         "test_mixed_upkeep_resolves_draw_and_locked_controller_life_privately",
-        "test_mixed_upkeep_replays_from_before_triggering_step"
+        "test_mixed_upkeep_replays_from_before_triggering_step",
+        "test_original_kami_draws_for_active_opponent_after_ordinary_draw",
+        "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
+        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step"
       ],
       "required_evidence": [
         "positive",
@@ -14020,6 +14861,268 @@
       "dependency_fail_closed_rationale": "Omitting fixed resolution mana capability blocks exact effect admission.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Omitting the registered mana effect fails an actual Dark Ritual cast and final pool.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "choice.affected_player.fixed_controller_discard",
+      "version": 1,
+      "official_rules": [
+        "101.4",
+        "109.5",
+        "603.3a",
+        "608.2c",
+        "609.3",
+        "701.9",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Standalone fixed controller discards of one through four unqualified cards reuse the affected-player private choice and replacement-aware simultaneous discard owner.",
+        "inputs": [
+          "one complete fixed discard instruction",
+          "one explicit controller or event-player relation",
+          "affected player private current hand",
+          "original triggering controller and sealed occurrence context"
+        ],
+        "outputs": [
+          "one affected-seat-scoped private choice at a time",
+          "APNAP-ordered collection without early mutation or prior-choice disclosure",
+          "one simultaneous replacement-aware discard commit",
+          "normalized public post-move zone-change and discard events",
+          "exact continuation replay"
+        ],
+        "exclusions": [
+          "random, qualified, linked-result or variable discards",
+          "discard costs and cleanup",
+          "arbitrary or unsealed context player expressions",
+          "unknown siblings and unsupported event bindings"
+        ]
+      },
+      "dependencies": [
+        "choice.affected_player.fixed_discard"
+      ],
+      "implementation_components": [
+        "quorune.rules.affected_player_discard_capability_shapes.fixed_controller_discard_node_capabilities",
+        "quorune.selection.apnap.ApnapChoiceOwnerMixin",
+        "quorune.semantic_choices.apnap_commit.ApnapObjectCommitHandler",
+        "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously",
+        "quorune.rules.affected_player_discard_capability_shapes.is_closed_fixed_bound_discard_program"
+      ],
+      "positive_tests": [
+        "test_standalone_controller_discard_uses_private_affected_player_choice"
+      ],
+      "negative_tests": [
+        "test_context_discard_scope_and_shape_boundaries_fail_closed"
+      ],
+      "interaction_tests": [
+        "test_context_discard_runtime_is_private_principal_correct_and_replays",
+        "test_controller_discard_uses_short_hand_and_skips_empty_hand"
+      ],
+      "multiplayer_tests": [
+        "test_context_discard_runtime_is_private_principal_correct_and_replays",
+        "test_controller_discard_uses_short_hand_and_skips_empty_hand"
+      ],
+      "privacy_tests": [
+        "test_context_discard_runtime_is_private_principal_correct_and_replays",
+        "test_controller_discard_uses_short_hand_and_skips_empty_hand"
+      ],
+      "replay_tests": [
+        "test_context_discard_runtime_is_private_principal_correct_and_replays",
+        "test_controller_discard_uses_short_hand_and_skips_empty_hand"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Missing the affected-player choice or destination-replacement owner rejects whole-program admission; malformed actors, player references and fixed counts remain closed.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "The exact compiler/shape boundary witness removes each producer and rejects malformed actor, context player, count and private-selection shapes; the original action witnesses establish execution and replay separately.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "trigger.result.fixed_context_player_discard",
+      "version": 1,
+      "official_rules": [
+        "101.4",
+        "109.5",
+        "603.3a",
+        "608.2c",
+        "609.3",
+        "701.9",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Fixed untargeted discards of one through three cards bind the affected player from a sealed upkeep or normalized player-damage occurrence while retaining the trigger controller as effect actor.",
+        "inputs": [
+          "one complete fixed discard instruction",
+          "one explicit controller or event-player relation",
+          "affected player private current hand",
+          "original triggering controller and sealed occurrence context"
+        ],
+        "outputs": [
+          "one affected-seat-scoped private choice at a time",
+          "APNAP-ordered collection without early mutation or prior-choice disclosure",
+          "one simultaneous replacement-aware discard commit",
+          "normalized public post-move zone-change and discard events",
+          "exact continuation replay"
+        ],
+        "exclusions": [
+          "random, qualified, linked-result or variable discards",
+          "discard costs and cleanup",
+          "arbitrary or unsealed context player expressions",
+          "unknown siblings and unsupported event bindings"
+        ]
+      },
+      "dependencies": [
+        "choice.affected_player.fixed_discard"
+      ],
+      "implementation_components": [
+        "quorune.rules.affected_player_discard_capability_shapes.fixed_context_player_discard_node_capabilities",
+        "quorune.selection.apnap.ApnapChoiceOwnerMixin",
+        "quorune.semantic_choices.apnap_commit.ApnapObjectCommitHandler",
+        "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously",
+        "quorune.rules.affected_player_discard_capability_shapes.is_closed_fixed_bound_discard_program"
+      ],
+      "positive_tests": [
+        "test_combat_damage_discard_preserves_trigger_controller_and_damaged_player"
+      ],
+      "negative_tests": [
+        "test_context_discard_scope_and_shape_boundaries_fail_closed"
+      ],
+      "interaction_tests": [
+        "test_original_specter_combat_discard_ignores_player_shroud_and_replays",
+        "test_original_mists_upkeep_discard_retains_affected_player_and_replays",
+        "test_mixed_upkeep_discards_for_active_player_and_gains_for_controller"
+      ],
+      "multiplayer_tests": [
+        "test_original_specter_combat_discard_ignores_player_shroud_and_replays",
+        "test_original_mists_upkeep_discard_retains_affected_player_and_replays",
+        "test_mixed_upkeep_discards_for_active_player_and_gains_for_controller"
+      ],
+      "privacy_tests": [
+        "test_original_specter_combat_discard_ignores_player_shroud_and_replays",
+        "test_original_mists_upkeep_discard_retains_affected_player_and_replays",
+        "test_mixed_upkeep_discards_for_active_player_and_gains_for_controller"
+      ],
+      "replay_tests": [
+        "test_original_specter_combat_discard_ignores_player_shroud_and_replays",
+        "test_original_mists_upkeep_discard_retains_affected_player_and_replays",
+        "test_mixed_upkeep_discards_for_active_player_and_gains_for_controller"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Missing the affected-player choice or destination-replacement owner rejects whole-program admission; malformed actors, player references and fixed counts remain closed.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "The exact compiler/shape boundary witness removes each producer and rejects malformed actor, context player, count and private-selection shapes; the original action witnesses establish execution and replay separately.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "turn.extra.fixed_after_current",
+      "version": 1,
+      "official_rules": [
+        "500.7",
+        "608.2c",
+        "608.2b",
+        "800.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Schedule one through ten fixed extra turns after the current turn for the locked controller or one revalidated target player through the existing turn-step owner.",
+        "inputs": [
+          "complete source-spanned fixed extra-turn instruction",
+          "one resolving controller or ordinary player/opponent target",
+          "one through ten independently represented scheduling effects",
+          "existing authenticated cast, activation or trigger carrier"
+        ],
+        "outputs": [
+          "canonical unique extra-turn queue entries created at resolution",
+          "most recently created turn taken first",
+          "ordinary normal-turn ordering resumes after the extra-turn queue",
+          "exact queue and source replay"
+        ],
+        "exclusions": [
+          "variable, optional, conditional or unknown turn quantities",
+          "different turn insertion points",
+          "each-player or simultaneous-player extra-turn groups",
+          "turn-specific loss, prevention, untap or other linked riders",
+          "unrepresented whole-card siblings"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.compiler.extra_turn_templates.fixed_extra_turn_effect_template",
+        "quorune.rules.extra_turn_shapes.fixed_extra_turn_node_capabilities",
+        "quorune.rules.extra_turn_shapes.is_closed_fixed_extra_turn_program",
+        "quorune.effect_runtime.damage_life_and_turns._apply_extra_turn",
+        "quorune.turn_step_owner.TurnStepOwner.schedule_extra_turn",
+        "quorune.turn_step_owner.TurnStepOwner.select_next_turn"
+      ],
+      "positive_tests": [
+        "test_fixed_extra_turn_controller_and_target_grammar_preserves_recipients",
+        "test_fixed_extra_turn_reuses_activation_and_trigger_carriers"
+      ],
+      "negative_tests": [
+        "test_unrepresented_extra_turn_qualifiers_and_riders_remain_material",
+        "test_extra_turn_shape_dependency_and_compiler_mutants_fail_closed"
+      ],
+      "interaction_tests": [
+        "test_original_turn_spells_lock_recipients_schedule_lifo_and_replay",
+        "test_original_scepter_pays_source_counter_price_before_scheduling_and_replays"
+      ],
+      "multiplayer_tests": [
+        "test_original_turn_spells_lock_recipients_schedule_lifo_and_replay"
+      ],
+      "privacy_tests": [
+        "test_original_turn_spells_lock_recipients_schedule_lifo_and_replay"
+      ],
+      "replay_tests": [
+        "test_original_turn_spells_lock_recipients_schedule_lifo_and_replay",
+        "test_original_scepter_pays_source_counter_price_before_scheduling_and_replays"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Only a complete ordinary controller or player-target shape receives extra-turn authority; blocking its scheduler capability or removing the exact target schema leaves a material residual.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the compiler producer and corrupting the recipient, source, target count or instruction fields are rejected by the distinguishing compiler and shape regressions.",
       "blockers": [],
       "status": "trusted"
     }

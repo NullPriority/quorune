@@ -3742,5 +3742,191 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                 )
 
 
+class FlavorNamedTriggerCompilerTests(unittest.TestCase):
+    # CR 207.2c-d: ability words and flavor words do not alter the rules body.
+    # Normalize only a complete leading label before a triggered ability;
+    # preserve its original source span and every body exclusion.
+    compile = FixedCounterEventTriggerCompilerTests.compile
+
+    @classmethod
+    def setUpClass(cls):
+        cls.capabilities = load_default_capability_registry()
+
+    def test_flavor_and_numeric_trigger_labels_preserve_body_and_source(self):
+        cases = (
+            ("Rapid-fire Battle Cannon", "Whenever this creature attacks, draw a card."),
+            ("Do You Like Squirrels?", "Whenever this creature enters or attacks, create a 1/1 green Squirrel creature token."),
+            ("Descend 4", "Whenever this creature attacks, if there are four or more permanent cards in your graveyard, draw a card."),
+        )
+        fields = ("event", "effects", "handlers", "target_schema", "event_condition", "trigger_limit", "runtime_coverage", "capability_dependencies")
+        for label, body in cases:
+            with self.subTest(label=label):
+                text = label + " \u2014 " + body
+                ir = self.compile(text, type_line="Creature \u2014 Test")
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                self.assertEqual(text, node.text)
+                self.assertEqual((0, len(text), 1), (node.span.start, node.span.end, node.span.line))
+                expected = self.compile(body, type_line="Creature \u2014 Test").faces[0].nodes[0]
+                for field in fields:
+                    self.assertEqual(getattr(expected, field), getattr(node, field), field)
+
+    def test_flavor_label_omission_mutant_is_killed(self):
+        import re
+        text = "Rapid-fire Battle Cannon \u2014 Whenever this creature attacks, draw a card."
+        self.assertEqual("exact", self.compile(text, type_line="Creature \u2014 Test").status)
+        old_pattern = re.compile(r"^[A-Za-z][A-Za-z ']+\s+[\u2014-]\s+(?P<body>(?:when|whenever|at the beginning of)\b.+)$", re.I)
+        with patch("quorune.compiler.draw_templates._TRIGGER_ABILITY_WORD", old_pattern):
+            mutant = self.compile(text, type_line="Creature \u2014 Test")
+        self.assertNotEqual("exact", mutant.status)
+        self.assertTrue(mutant.material_residuals)
+
+    def test_flavor_labels_keep_unrepresented_bodies_and_inner_dashes_residual(self):
+        cases = (
+            "Not Yet! \u2014 Whenever this creature attacks, choose a card name, then draw a card with that name.",
+            "Reflexive? \u2014 When you do, draw a card.",
+            "A Mode! \u2014 Choose one \u2014 Draw a card.",
+            "Whenever this creature attacks, each opponent faces a villainous choice \u2014 That player draws a card or sacrifices a creature.",
+        )
+        for text in cases:
+            with self.subTest(text=text):
+                ir = self.compile(text, type_line="Creature \u2014 Test")
+                self.assertNotEqual("exact", ir.status)
+                self.assertTrue(ir.material_residuals)
+
+
+class FlavorNamedTriggerRuntimeTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from quorune.deck import DeckDefinition, DeckEntry
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "flavor-named-triggers.sqlite3"
+        build_fixture_database([ROOT / "tests/fixtures/bound-effect-program-cards.json",
+            ROOT / "tests/fixtures/flavor-named-trigger-cards.json"], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Flavor named triggers", [DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 99)], ["Generic Bound Commander"])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    import test_bound_effect_programs as _witnesses
+    session = _witnesses.BoundEffectProgramRuntimeTests.session
+    add = _witnesses.BoundEffectProgramRuntimeTests.add
+    ready = _witnesses.BoundEffectProgramRuntimeTests.ready
+    checkpoint = _witnesses.BoundEffectProgramRuntimeTests.checkpoint
+    resolve = _witnesses.BoundEffectProgramRuntimeTests.resolve
+    replay = _witnesses.BoundEffectProgramRuntimeTests.replay
+
+    def assert_whole_admission(self, session, name):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        program = compile_best_available_card_program(self.db, self.db.lookup(name),
+            semantic_registry=session.engine.semantics, capability_registry=self.registry,
+            capability_profile="commander_review")
+        binding = bind_card_program_runtime(program, capability_registry=self.registry, profile="commander_review")
+        self.assertTrue(binding["strict_capability_ready"], binding)
+
+    def test_original_screamer_flavor_trigger_uses_real_cast_target_and_replay(self):
+        session = self.session(334010)
+        self.add(session.engine, "Screamer-Killer")
+        spell = self.add(session.engine, "Generic Flavor Trigger Big Spell", zone="hand")
+        self.assert_whole_admission(session, "Screamer-Killer")
+        self.assert_whole_admission(session, spell.printed_name)
+        life = {seat: session.state.players[seat].life for seat in "ABCD"}
+        action = self.ready(session, spell, {"C": 5})
+        self.checkpoint(session)
+        before = authoritative_state_hash(session.state)
+        rejected = session.act("pilot:B", {"action_id": action["id"], "pay": "auto"})
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        cast = session.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+        self.assertTrue(cast.ok, cast.summary)
+        self.assertEqual("semantic.target", self.resolve(session).kind)
+        self.assertEqual(life, {seat: session.state.players[seat].life for seat in "ABCD"})
+        session = self.replay(session, load=True)
+        before = authoritative_state_hash(session.state)
+        rejected = session.act("pilot:B", {"action_id": "choose", "targets": ["B"]})
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        choice = session.act("pilot:A", {"action_id": "choose", "targets": ["B"]})
+        self.assertTrue(choice.ok, choice.summary)
+        self.resolve(session)
+        self.assertEqual(life["B"] - 5, session.state.players["B"].life)
+        for seat in "ACD":
+            self.assertEqual(life[seat], session.state.players[seat].life)
+        self.assertEqual("battlefield", session.state.cards[spell.object_id].zone)
+        self.assertEqual(0, session.state.players["A"].mana_pool.get("C", 0))
+        self.replay(session, load=True)
+
+    def test_original_squirrel_flavor_attack_creates_one_token_and_replays(self):
+        session = self.session(334011)
+        engine = session.engine
+        source = self.add(engine, "The Unbeatable Squirrel Girl")
+        self.assert_whole_admission(session, source.printed_name)
+        engine.permissions.invalidate_current()
+        session.state.pending_decision = None
+        session.state.active_player = "A"
+        session.state.started = True
+        session.state.phase = "combat"
+        session.state.step = "declare_attackers"
+        session.state.phase_index = 5
+        session.state.combat = CombatState()
+        source.acquired_control_turn_count = -1
+        engine._issue_attackers()
+        self.checkpoint(session)
+        attack = session.act("pilot:A", {"a": "attack", "atk": {source.ref: "B"}})
+        self.assertTrue(attack.ok, attack.summary)
+        self.resolve(session)
+        tokens = [card for card in session.state.cards.values() if card.zone == "battlefield" and card.object_kind == "token"]
+        self.assertEqual(1, len(tokens))
+        data = engine._effective_card_data(tokens[0])
+        self.assertEqual(("1", "1"), (data["power"], data["toughness"]))
+        self.assertEqual(["G"], data["colors"])
+        self.assertIn("Squirrel", data["type_line"])
+        self.assertEqual("A", tokens[0].controller)
+        self.replay(session, load=True)
+
+    def test_original_screamer_flavor_keeps_cast_mana_value_predicate(self):
+        session = self.session(334012)
+        self.add(session.engine, "Screamer-Killer")
+        spell = self.add(session.engine, "Generic Bound Mentor", zone="hand")
+        self.assert_whole_admission(session, "Screamer-Killer")
+        life = {seat: session.state.players[seat].life for seat in "ABCD"}
+        action = self.ready(session, spell, {"C": 2})
+        self.checkpoint(session)
+        cast = session.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+        self.assertTrue(cast.ok, cast.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(life, {seat: session.state.players[seat].life for seat in "ABCD"})
+        self.assertEqual("battlefield", session.state.cards[spell.object_id].zone)
+        self.assertFalse(session.state.stack)
+        self.replay(session, load=True)
+
+    def test_original_squirrel_flavor_entry_creates_one_token_and_replays(self):
+        session = self.session(334013)
+        source = self.add(session.engine, "The Unbeatable Squirrel Girl", zone="hand")
+        self.assert_whole_admission(session, source.printed_name)
+        action = self.ready(session, source, {"C": 1, "G": 3})
+        self.checkpoint(session)
+        cast = session.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+        self.assertTrue(cast.ok, cast.summary)
+        self.resolve(session)
+        self.assertEqual("battlefield", session.state.cards[source.object_id].zone)
+        tokens = [card for card in session.state.cards.values() if card.zone == "battlefield" and card.object_kind == "token"]
+        self.assertEqual(1, len(tokens))
+        data = session.engine._effective_card_data(tokens[0])
+        self.assertEqual(("1", "1"), (data["power"], data["toughness"]))
+        self.assertEqual(["G"], data["colors"])
+        self.assertIn("Squirrel", data["type_line"])
+        self.assertEqual("A", tokens[0].controller)
+        self.assertEqual(0, session.state.players["A"].mana_pool.get("C", 0))
+        self.assertEqual(0, session.state.players["A"].mana_pool.get("G", 0))
+        self.replay(session, load=True)
+
+
 if __name__ == "__main__":
     unittest.main()

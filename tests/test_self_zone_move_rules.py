@@ -101,6 +101,22 @@ def focused_card_database(directory: str) -> CardDatabase:
 
 
 class SelfZoneMoveModelTests(unittest.TestCase):
+    def test_restricted_source_return_preserves_existing_typed_timing(self):
+        for restriction in ('during your upkeep','as a sorcery'):
+            text='{2}: Return this card from your graveyard to your hand. Activate only '+restriction+'.'
+            ability=parse_activated_abilities(card_name='Timing witness',oracle_text=text,keywords=())[0]
+            spec=compile_self_zone_move(ability)
+            self.assertIsNotNone(spec)
+            self.assertEqual(('graveyard',),spec.ability.zones)
+            self.assertEqual(ability.activation_conditions,spec.ability.activation_conditions)
+            self.assertEqual(ability.sorcery_speed,spec.ability.sorcery_speed)
+            self.assertEqual(ability.effect_text,spec.ability.effect_text)
+        ability=parse_activated_abilities(card_name='Timing witness',oracle_text=
+            '{2}: Return this card from your graveyard to your hand. Activate only during your upkeep.',keywords=())[0]
+        from dataclasses import replace
+        self.assertIsNone(compile_self_zone_move(replace(ability,activation_conditions=())))
+
+
     def test_descriptor_and_effect_handler_are_closed_and_typed(self):
         ability = parse_activated_abilities(
             card_name="Self Zone Move Fixture",
@@ -755,6 +771,82 @@ class SelfZoneMoveRuntimeTests(unittest.TestCase):
             engine.state.to_dict(),
             type(engine.state).from_dict(engine.state.to_dict()).to_dict(),
         )
+
+
+class RestrictedSelfReturnRuntimeTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from quorune.deck import DeckDefinition,DeckEntry
+
+        cls.temporary=tempfile.TemporaryDirectory()
+        path=Path(cls.temporary.name)/'restricted-return.sqlite3'
+        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',
+                              ROOT/'tests/fixtures/restricted-self-return-cards.json'],path)
+        cls.db=CardDatabase(path)
+        cls.registry=load_default_capability_registry()
+        cls.deck=DeckDefinition('Restricted return',[DeckEntry('Generic Bound Commander',1,'commander'),
+                               DeckEntry('Generic Bound Plains',12)],['Generic Bound Commander'])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    import test_bound_effect_programs as _bound
+    session=_bound.BoundEffectProgramRuntimeTests.session
+    add=_bound.BoundEffectProgramRuntimeTests.add
+    checkpoint=_bound.BoundEffectProgramRuntimeTests.checkpoint
+    replay=_bound.BoundEffectProgramRuntimeTests.replay
+    resolve=_bound.BoundEffectProgramRuntimeTests.resolve
+
+    def test_original_restricted_returns_offer_only_typed_timing_and_replay(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.engine import TURN_STEPS
+        from quorune.semantics import SemanticRegistry
+
+        for name,legal_step,illegal_step,mana in (
+            ('Eternal Dragon',('beginning','upkeep'),('precombat_main','main'),{'W':2,'C':3}),
+            ('Summoned Dromedary',('precombat_main','main'),('beginning','upkeep'),{'W':1,'C':1}),
+        ):
+            with self.subTest(name=name):
+                program=compile_best_available_card_program(self.db,self.db.lookup(name),
+                    semantic_registry=SemanticRegistry(),capability_registry=self.registry,
+                    capability_profile='commander_review')
+                self.assertTrue(bind_card_program_runtime(program,capability_registry=self.registry,
+                    profile='commander_review')['strict_capability_ready'])
+                session=self.session(348100+int(name=='Summoned Dromedary'))
+                engine=session.engine
+                source=self.add(engine,name,zone='graveyard')
+                def offers(step,active='A'):
+                    engine.permissions.invalidate_current()
+                    session.state.pending_decision=None
+                    session.state.active_player=active
+                    session.state.started=True
+                    session.state.phase,session.state.step=step
+                    session.state.phase_index=TURN_STEPS.index(step)
+                    session.state.players['A'].mana_pool.update(mana)
+                    engine._grant_priority('A')
+                    engine.pump()
+                    return [row for row in session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+                            if row['id'].startswith('activate:'+source.ref+':')]
+                self.assertEqual([],offers(illegal_step))
+                self.assertEqual([],offers(legal_step,active='B'))
+                legal=offers(legal_step)
+                self.assertEqual(1,len(legal),'restricted source return lost legal activation')
+                self.checkpoint(session)
+                before=authoritative_state_hash(session.state)
+                rejected=session.act('pilot:B',{'action_id':legal[0]['id']})
+                self.assertFalse(rejected.ok)
+                self.assertEqual(before,authoritative_state_hash(session.state))
+                source=engine.state.cards[source.object_id]
+                accepted=session.act('pilot:A',{'action_id':legal[0]['id'],'pay':'auto'})
+                self.assertTrue(accepted.ok,accepted.summary)
+                self.assertEqual('graveyard',source.zone)
+                self.replay(session,load=True)
+                self.resolve(session)
+                self.assertEqual('hand',source.zone)
+                self.replay(session)
 
 
 if __name__ == "__main__":

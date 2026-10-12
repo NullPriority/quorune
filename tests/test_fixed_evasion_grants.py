@@ -41,7 +41,7 @@ class FixedEvasionGrantCompilerTests(unittest.TestCase):
                      'Creatures you control have landwalk of the chosen type.','Enchanted creature has snow forestwalk.'):
             self.assertIsNone(fixed_query_keyword_grant_handler(text) if text.startswith('Creatures')
                               else attached_fixed_characteristics_handler(text))
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
         for keyword,cap in (('forestwalk','combat.block.landwalk.basic_type'),('horsemanship','combat.block.horsemanship')):
             value=json.loads(json.dumps(raw))
             next(c for c in value['capabilities'] if c['id']==cap).update(status='blocked',blockers=['evasion owner unavailable'])

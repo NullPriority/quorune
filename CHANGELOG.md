@@ -11,6 +11,45 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Compile each-player life loss through the existing simultaneous life owner,
+  preserving controller inclusion, departed-seat exclusion, shared global
+  quantities, prices, and complete resolution before state-based actions.
+
+- Admit fixed stack mana-value counter predicates and align the shared target
+  projection with announced X, preserving the existing counter and payment
+  owners and ordinary replay.
+
+- Admit qualified temporary combat restrictions through shared target queries,
+  revalidating before creation and retaining the resolved incarnation-bound
+  rule after later characteristic changes.
+
+- Compile owned-graveyard library placement and qualified battlefield library
+  targets through the existing owner-destination move, with one shared live
+  promotion and admission boundary.
+
+- Route qualified regeneration through the shared permanent-target query,
+  preserving Kindred subtype targets and resolution-time counter predicates.
+
+- Compile fixed controller and player-target extra turns through the canonical
+  scheduler, retaining ordinary prices, target revalidation, turn order and
+  replay without a second turn journal.
+
+- Align temporary source-keyword scope with the shared basic-landwalk owner
+  and add original-card offer, command, rollback, and replay evidence.
+
+- Normalize numeric and punctuated ability or flavor names before complete
+  typed trigger compilation, retaining printed spans and every body condition.
+
+- Distinguish fixed paid counter results from free optional counter placement,
+  retaining target selection, payment-before-placement and exact replay.
+
+- Preserve occurrence-bound source and entering-object references inside fixed
+  optional mana payments. Paid source results respect the original incarnation,
+  and entering-object copies retain current or last-known copiable information.
+
+- Lower fixed controller and occurrence-bound player discards through the
+  existing private APNAP selection owner. Keep trigger control separate from
+  the affected player's choice and retain untargeted resolution and replay.
 - Count matching Kindred permanents and cards in bare creature-subtype
   quantities, retaining explicit Creature card-type constraints.
 

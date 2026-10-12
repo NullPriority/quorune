@@ -29,6 +29,7 @@ from ..leveler_bands import (
     LevelerBandsSpec,
 )
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
+from ..counter_names import normalized_counter_name
 from ..replacement.immutable import FrozenMap
 from ..continuous_conditions import FixedPublicStateConditionSnapshot
 from ..defender_permission import DefenderAttackPermission
@@ -79,6 +80,7 @@ class FixedQueryPowerToughnessAnthemNode:
     exclude_source: bool
     power: int
     toughness: int
+    source_counter: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -399,7 +401,8 @@ class FixedQueryPowerToughnessAnthemHandler:
         )
         if descriptor["handler_id"] != self.handler_id:
             raise SemanticNodeError("Runtime handler ID does not match registry")
-        if descriptor["schema_version"] != self.schema_version:
+        version = descriptor["schema_version"]
+        if type(version) is not int or version != self.schema_version:
             raise SemanticNodeError(
                 f"Unsupported {self.handler_id} schema version"
             )
@@ -461,7 +464,7 @@ class FixedQueryPowerToughnessAnthemHandler:
             )
         exact_fields(
             modifier,
-            {"power", "toughness"},
+            {"power", "toughness", *(("source_counter",) if version == 3 else ())},
             field="runtime handler modifier",
         )
         power = modifier["power"]
@@ -470,6 +473,17 @@ class FixedQueryPowerToughnessAnthemHandler:
             raise SemanticNodeError(
                 "fixed query anthem modifiers must be integers"
             )
+        counter = None
+        if version == 3:
+            counter = modifier['source_counter']
+            if type(counter) is not str:
+                raise SemanticNodeError("Scaled anthem requires a named source counter")
+            try:
+                normalized = normalized_counter_name(counter)
+            except ValueError as exc:
+                raise SemanticNodeError(str(exc)) from exc
+            if normalized != counter:
+                raise SemanticNodeError("Scaled anthem source counter must be canonical")
         if power == 0 and toughness == 0:
             raise SemanticNodeError(
                 "fixed query anthem must modify power or toughness"
@@ -480,6 +494,7 @@ class FixedQueryPowerToughnessAnthemHandler:
             exclude_source=condition["exclude_source"],
             power=power,
             toughness=toughness,
+            source_counter=counter,
         )
 
     def lower(
@@ -488,6 +503,7 @@ class FixedQueryPowerToughnessAnthemHandler:
         context: ContinuousEffectSourceContext,
     ) -> tuple[ContinuousEffect, ...]:
         node = self.validate(descriptor)
+        multiplier = context.source_counters.get(node.source_counter, 0) if node.source_counter is not None else 1
         predicate = _fixed_query_effect_predicate(
             node.predicate,
             target_controller=node.target_controller,
@@ -506,7 +522,7 @@ class FixedQueryPowerToughnessAnthemHandler:
                 operations=(
                     ContinuousOperation(
                         "modify_power_toughness",
-                        [node.power, node.toughness],
+                        [node.power * multiplier, node.toughness * multiplier],
                     ),
                 ),
                 origin=ContinuousEffectOrigin.STATIC_ABILITY,
@@ -1321,6 +1337,9 @@ def default_continuous_effect_component_registry(
             ChosenCharacteristicsHandler(),
             FixedPowerToughnessAnthemHandler(),
             FixedQueryPowerToughnessAnthemHandler(),
+            FixedQueryPowerToughnessAnthemHandler(
+                handler_id="continuous.anthem.source-counter-query.v3", schema_version=3,
+            ),
             AddBasicLandTypeHandler(),
             FixedQueryAbilityGrantHandler(),
             FixedQueryKeywordGrantHandler(),

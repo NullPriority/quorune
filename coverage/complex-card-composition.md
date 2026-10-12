@@ -2,7 +2,7 @@
 title: "Complex card composition benchmark"
 status: "generated"
 authoritative_source: "coverage/complex-card-composition.json"
-verified: "3ba6f6cc56b1b7733955fe3a9f34c19ba3b030c57526aa37f9397516a1fb13a0"
+verified: "e146b4b7c39dc9fe8f1bc102bf6af885a74149a048acef32e7b72fe086706dbe"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -32,11 +32,11 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Inventive Iteration // Living Breakthrough | 208 | 26 | 8 | 6 | 8 | 8 | `blocked` |
 | Jill, Shiva's Dominant // Shiva, Warden of Ice | 208 | 25 | 7 | 5 | 10 | 8 | `blocked` |
 | Starscream, Power Hungry // Starscream, Seeker Leader | 208 | 28 | 6 | 8 | 4 | 19 | `blocked` |
+| The Legend of Kuruk // Avatar Kuruk | 208 | 30 | 6 | 6 | 10 | 5 | `blocked` |
 | Emet-Selch, Unsundered // Hades, Sorcerer of Eld | 207 | 30 | 6 | 6 | 6 | 13 | `blocked` |
 | Invasion of Kaldheim // Pyre of the World Tree | 205 | 25 | 7 | 4 | 5 | 22 | `blocked` |
 | Ugin, Eye of the Storms | 205 | 41 | 5 | 5 | 11 | 3 | `blocked` |
 | Invasion of New Phyrexia // Teferi Akosa of Zhalfir | 204 | 19 | 6 | 5 | 14 | 18 | `blocked` |
-| The Legend of Kuruk // Avatar Kuruk | 204 | 28 | 6 | 6 | 11 | 5 | `blocked` |
 | The Fall of Lord Konda // Fragment of Konda | 203 | 27 | 8 | 6 | 6 | 6 | `blocked` |
 | Hidetsugu Consumes All // Vessel of the All-Consuming | 202 | 23 | 7 | 7 | 8 | 10 | `blocked` |
 | Fable of the Mirror-Breaker // Reflection of Kiki-Jiki | 201 | 23 | 8 | 5 | 6 | 13 | `blocked` |
@@ -44,6 +44,7 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Will Kenrith | 200 | 23 | 5 | 6 | 6 | 23 | `blocked` |
 | Cleric Class | 199 | 26 | 6 | 8 | 5 | 12 | `blocked` |
 | Tamiyo, Inquisitive Student // Tamiyo, Seasoned Scholar | 199 | 29 | 6 | 6 | 11 | 10 | `blocked` |
+| Gossip's Talent | 197 | 31 | 6 | 8 | 2 | 11 | `blocked` |
 | Garruk Relentless // Garruk, the Veil-Cursed | 195 | 25 | 6 | 6 | 15 | 6 | `blocked` |
 | Invasion of Innistrad // Deluge of the Dead | 194 | 23 | 6 | 5 | 9 | 16 | `blocked` |
 | The Legend of Kyoshi // Avatar Kyoshi | 193 | 18 | 7 | 6 | 9 | 14 | `blocked` |
@@ -57,10 +58,9 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Invasion of Ulgrotha // Grandmother Ravi Sengir | 187 | 24 | 6 | 4 | 5 | 17 | `blocked` |
 | Arlinn, the Pack's Hope // Arlinn, the Moon's Fury | 185 | 31 | 5 | 6 | 5 | 12 | `blocked` |
 | Artist's Talent | 185 | 28 | 5 | 8 | 3 | 10 | `blocked` |
+| Invasion of Ixalan // Belligerent Regisaur | 185 | 24 | 6 | 4 | 5 | 16 | `blocked` |
 | Befriending the Moths // Imperial Moth | 184 | 22 | 8 | 5 | 6 | 6 | `blocked` |
 | Flamewar, Brash Veteran // Flamewar, Streetwise Operative | 184 | 22 | 6 | 6 | 9 | 15 | `blocked` |
 | Ticket Booth // Tunnel of Hate | 184 | 19 | 5 | 4 | 3 | 32 | `blocked` |
 | Boseiju Reaches Skyward // Branch of Boseiju | 183 | 22 | 7 | 6 | 6 | 6 | `blocked` |
-| Grist, Voracious Larva // Grist, the Plague Swarm | 183 | 25 | 5 | 5 | 10 | 14 | `blocked` |
-| Invasion of Theros // Ephara, Ever-Sheltering | 183 | 22 | 6 | 4 | 5 | 18 | `blocked` |
 | Animate Dead | 110 | 13 | 4 | 3 | 2 | 5 | `blocked` |

@@ -59,6 +59,7 @@ class MillCardsIntent:
     player: str
     count: int
     reason: str
+    batch_players: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         if any(
@@ -70,6 +71,16 @@ class MillCardsIntent:
             )
         if type(self.count) is not int or self.count < 0:
             raise ValueError("Mill intents require a nonnegative fixed count")
+        if not isinstance(self.batch_players, (list, tuple)):
+            raise ValueError("Mill batch recipients require a typed sequence")
+        players = tuple(self.batch_players)
+        if (
+            any(type(player) is not str or not player for player in players)
+            or len(set(players)) != len(players)
+            or players and self.player != self.actor
+        ):
+            raise ValueError("Mill batch recipients must be distinct typed players")
+        object.__setattr__(self, "batch_players", players)
 
 
 @dataclass(frozen=True, slots=True)
