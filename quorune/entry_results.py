@@ -55,6 +55,10 @@ def commit_prepared_entry_results(
 ) -> None:
     """Commit typed nested-counter and layer-6 results after one entry."""
 
+    from .entry_reveal import ENTRY_REVEAL_FIELD
+    from .effect_runtime.hand_inspection import commit_entry_hand_reveal
+    commit_entry_hand_reveal(host,prepared.event.payload.get(ENTRY_REVEAL_FIELD),source_ref=card.ref)
+
     copy_values = prepared.event.payload.get('entry_copy')
     if copy_values is not None:
         from .entry_copy import COPIABLE_ORACLE_FIELD

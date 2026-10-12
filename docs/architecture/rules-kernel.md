@@ -35,6 +35,14 @@ power modifier; a blinked attacker does not. Negative additive results use
 zero under CR 107.1b. Attack choices sort before history capture so saved
 mapping order cannot change replay.
 
+An intrinsic reveal-or-tapped entry replacement privately selects a matching
+card in the prospective controller's hand or declines. Selection is validated
+against the original hand-card incarnation before mutation. The existing hand
+inspection mutation owner records only that selected card as public knowledge
+and publishes its reveal; unchosen candidates remain private. The replacement
+journal preserves the decision through save/load and replay. Decline sets tapped
+entry, while acceptance leaves other tap-state replacements in force.
+
 Exert adds a separately selected optional attack cost. Current typed abilities
 and trusted linked result identities govern both the offer and accepted
 declaration. The canonical tap-state owner records the exerting player and

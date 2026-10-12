@@ -568,6 +568,17 @@ The shared declaration solver selects distinct attacker sets up to current
 capacity while retaining costs and maximum requirement satisfaction. Open
 quantities and independently unsupported siblings remain residual.
 
+Intrinsic reveal-or-tapped entry clauses lower through
+`compiler/entry_reveal_templates.py` to a closed hand subtype query. The
+prospective controller sees only matching private hand cards and may decline.
+The canonical replacement owner completes that choice before entry; only the
+chosen card becomes public knowledge. Revealing does not force untapped state,
+so independently applied tapped-entry replacements still apply. Copied entry
+abilities use the same query with the copier's prospective controller. One
+unchanged hand card can satisfy distinct simultaneous reveal choices. Unknown
+qualifiers, paid reveals, and reveal-or-current-battlefield condition compounds
+remain residual.
+
 Printed Enlist compiles separate typed attack-cost and reflexive growth
 components. The shared attack declaration exposes optional donor assignments
 and validates untapped state, control history, haste, source exclusion and

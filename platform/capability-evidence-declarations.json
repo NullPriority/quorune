@@ -60908,6 +60908,402 @@
       "applicability_note": "Printed copy makes a fresh entry choice, rejects a stale selection atomically and replays; duplicated linked choices and departed incarnations do not retain admission or choice state."
     },
     {
+      "capability_id": "zone.entry.reveal_hand_or_tapped",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_typed_land_entry_participation.RevealEntryRuntimeTests.test_entering_land_cannot_reveal_itself_and_stale_private_identity_fails_atomically",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1e",
+        "701.20a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One intrinsic entry replacement privately selects a matching card from the prospective controllers hand, reveals only that card, or enters tapped on decline, using the canonical replacement ordering and entry commit."
+    },
+    {
+      "capability_id": "zone.entry.reveal_hand_or_tapped",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_typed_land_entry_participation.RevealEntryRuntimeTests.test_original_copy_land_applies_copied_reveal_choice_to_copier_controller_and_replays",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1e",
+        "701.20a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One intrinsic entry replacement privately selects a matching card from the prospective controllers hand, reveals only that card, or enters tapped on decline, using the canonical replacement ordering and entry commit."
+    },
+    {
+      "capability_id": "zone.entry.reveal_hand_or_tapped",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_typed_land_entry_participation.RevealEntryRuntimeTests.test_original_game_trail_private_choice_selected_reveal_untapped_entry_and_pending_replay",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1e",
+        "701.20a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One intrinsic entry replacement privately selects a matching card from the prospective controllers hand, reveals only that card, or enters tapped on decline, using the canonical replacement ordering and entry commit."
+    },
+    {
+      "capability_id": "zone.entry.reveal_hand_or_tapped",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_typed_land_entry_participation.RevealEntryRuntimeTests.test_original_secluded_glen_matches_kindred_subtype_without_creature_requirement",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1e",
+        "701.20a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One intrinsic entry replacement privately selects a matching card from the prospective controllers hand, reveals only that card, or enters tapped on decline, using the canonical replacement ordering and entry commit."
+    },
+    {
+      "capability_id": "zone.entry.reveal_hand_or_tapped",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_typed_land_entry_participation.RevealEntryRuntimeTests.test_reveal_does_not_override_independent_tapped_entry_and_reuses_same_hand_card",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1e",
+        "701.20a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One intrinsic entry replacement privately selects a matching card from the prospective controllers hand, reveals only that card, or enters tapped on decline, using the canonical replacement ordering and entry commit."
+    },
+    {
+      "capability_id": "zone.entry.reveal_hand_or_tapped",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_typed_land_entry_participation.RevealEntryRuntimeTests.test_original_game_trail_private_choice_selected_reveal_untapped_entry_and_pending_replay",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1e",
+        "701.20a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One intrinsic entry replacement privately selects a matching card from the prospective controllers hand, reveals only that card, or enters tapped on decline, using the canonical replacement ordering and entry commit."
+    },
+    {
+      "capability_id": "zone.entry.reveal_hand_or_tapped",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_typed_land_entry_participation.RevealEntryRuntimeTests.test_reveal_entry_producer_omission_mutant_is_killed",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1e",
+        "701.20a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One intrinsic entry replacement privately selects a matching card from the prospective controllers hand, reveals only that card, or enters tapped on decline, using the canonical replacement ordering and entry commit."
+    },
+    {
+      "capability_id": "zone.entry.reveal_hand_or_tapped",
+      "evidence_class": "negative",
+      "test_id": "tests.test_typed_land_entry_participation.RevealEntryRuntimeTests.test_entering_land_cannot_reveal_itself_and_stale_private_identity_fails_atomically",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1e",
+        "701.20a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One intrinsic entry replacement privately selects a matching card from the prospective controllers hand, reveals only that card, or enters tapped on decline, using the canonical replacement ordering and entry commit."
+    },
+    {
+      "capability_id": "zone.entry.reveal_hand_or_tapped",
+      "evidence_class": "negative",
+      "test_id": "tests.test_typed_land_entry_participation.RevealEntryRuntimeTests.test_original_game_trail_decline_and_no_match_enter_tapped_without_reveal",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1e",
+        "701.20a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One intrinsic entry replacement privately selects a matching card from the prospective controllers hand, reveals only that card, or enters tapped on decline, using the canonical replacement ordering and entry commit."
+    },
+    {
+      "capability_id": "zone.entry.reveal_hand_or_tapped",
+      "evidence_class": "negative",
+      "test_id": "tests.test_typed_land_entry_participation.TypedLandEntryCompilerTests.test_reveal_entry_contract_rejects_open_queries_and_untrusted_owner",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1e",
+        "701.20a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One intrinsic entry replacement privately selects a matching card from the prospective controllers hand, reveals only that card, or enters tapped on decline, using the canonical replacement ordering and entry commit."
+    },
+    {
+      "capability_id": "zone.entry.reveal_hand_or_tapped",
+      "evidence_class": "positive",
+      "test_id": "tests.test_typed_land_entry_participation.RevealEntryRuntimeTests.test_original_copy_land_applies_copied_reveal_choice_to_copier_controller_and_replays",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1e",
+        "701.20a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One intrinsic entry replacement privately selects a matching card from the prospective controllers hand, reveals only that card, or enters tapped on decline, using the canonical replacement ordering and entry commit."
+    },
+    {
+      "capability_id": "zone.entry.reveal_hand_or_tapped",
+      "evidence_class": "positive",
+      "test_id": "tests.test_typed_land_entry_participation.RevealEntryRuntimeTests.test_original_game_trail_private_choice_selected_reveal_untapped_entry_and_pending_replay",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1e",
+        "701.20a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One intrinsic entry replacement privately selects a matching card from the prospective controllers hand, reveals only that card, or enters tapped on decline, using the canonical replacement ordering and entry commit."
+    },
+    {
+      "capability_id": "zone.entry.reveal_hand_or_tapped",
+      "evidence_class": "positive",
+      "test_id": "tests.test_typed_land_entry_participation.RevealEntryRuntimeTests.test_original_secluded_glen_matches_kindred_subtype_without_creature_requirement",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1e",
+        "701.20a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One intrinsic entry replacement privately selects a matching card from the prospective controllers hand, reveals only that card, or enters tapped on decline, using the canonical replacement ordering and entry commit."
+    },
+    {
+      "capability_id": "zone.entry.reveal_hand_or_tapped",
+      "evidence_class": "positive",
+      "test_id": "tests.test_typed_land_entry_participation.RevealEntryRuntimeTests.test_reveal_does_not_override_independent_tapped_entry_and_reuses_same_hand_card",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1e",
+        "701.20a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One intrinsic entry replacement privately selects a matching card from the prospective controllers hand, reveals only that card, or enters tapped on decline, using the canonical replacement ordering and entry commit."
+    },
+    {
+      "capability_id": "zone.entry.reveal_hand_or_tapped",
+      "evidence_class": "positive",
+      "test_id": "tests.test_typed_land_entry_participation.TypedLandEntryCompilerTests.test_reveal_entry_has_typed_private_hand_query_and_optional_replacement",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1e",
+        "701.20a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One intrinsic entry replacement privately selects a matching card from the prospective controllers hand, reveals only that card, or enters tapped on decline, using the canonical replacement ordering and entry commit."
+    },
+    {
+      "capability_id": "zone.entry.reveal_hand_or_tapped",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_typed_land_entry_participation.RevealEntryRuntimeTests.test_original_game_trail_decline_and_no_match_enter_tapped_without_reveal",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1e",
+        "701.20a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One intrinsic entry replacement privately selects a matching card from the prospective controllers hand, reveals only that card, or enters tapped on decline, using the canonical replacement ordering and entry commit."
+    },
+    {
+      "capability_id": "zone.entry.reveal_hand_or_tapped",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_typed_land_entry_participation.RevealEntryRuntimeTests.test_original_game_trail_private_choice_selected_reveal_untapped_entry_and_pending_replay",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1e",
+        "701.20a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One intrinsic entry replacement privately selects a matching card from the prospective controllers hand, reveals only that card, or enters tapped on decline, using the canonical replacement ordering and entry commit."
+    },
+    {
+      "capability_id": "zone.entry.reveal_hand_or_tapped",
+      "evidence_class": "replay",
+      "test_id": "tests.test_typed_land_entry_participation.RevealEntryRuntimeTests.test_entering_land_cannot_reveal_itself_and_stale_private_identity_fails_atomically",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1e",
+        "701.20a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One intrinsic entry replacement privately selects a matching card from the prospective controllers hand, reveals only that card, or enters tapped on decline, using the canonical replacement ordering and entry commit."
+    },
+    {
+      "capability_id": "zone.entry.reveal_hand_or_tapped",
+      "evidence_class": "replay",
+      "test_id": "tests.test_typed_land_entry_participation.RevealEntryRuntimeTests.test_original_copy_land_applies_copied_reveal_choice_to_copier_controller_and_replays",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1e",
+        "701.20a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One intrinsic entry replacement privately selects a matching card from the prospective controllers hand, reveals only that card, or enters tapped on decline, using the canonical replacement ordering and entry commit."
+    },
+    {
+      "capability_id": "zone.entry.reveal_hand_or_tapped",
+      "evidence_class": "replay",
+      "test_id": "tests.test_typed_land_entry_participation.RevealEntryRuntimeTests.test_original_game_trail_decline_and_no_match_enter_tapped_without_reveal",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1e",
+        "701.20a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One intrinsic entry replacement privately selects a matching card from the prospective controllers hand, reveals only that card, or enters tapped on decline, using the canonical replacement ordering and entry commit."
+    },
+    {
+      "capability_id": "zone.entry.reveal_hand_or_tapped",
+      "evidence_class": "replay",
+      "test_id": "tests.test_typed_land_entry_participation.RevealEntryRuntimeTests.test_original_game_trail_private_choice_selected_reveal_untapped_entry_and_pending_replay",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1e",
+        "701.20a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One intrinsic entry replacement privately selects a matching card from the prospective controllers hand, reveals only that card, or enters tapped on decline, using the canonical replacement ordering and entry commit."
+    },
+    {
+      "capability_id": "zone.entry.reveal_hand_or_tapped",
+      "evidence_class": "replay",
+      "test_id": "tests.test_typed_land_entry_participation.RevealEntryRuntimeTests.test_original_secluded_glen_matches_kindred_subtype_without_creature_requirement",
+      "official_rule_ids": [
+        "614.12",
+        "614.12a",
+        "616.1e",
+        "701.20a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One intrinsic entry replacement privately selects a matching card from the prospective controllers hand, reveals only that card, or enters tapped on decline, using the canonical replacement ordering and entry commit."
+    },
+    {
       "capability_id": "zone.entry.tapped_state",
       "evidence_class": "interaction",
       "test_id": "tests.test_typed_land_entry_participation.TypedLandEntryRuntimeTests.test_agadeem_residual_spell_stays_fail_closed_while_land_entry_executes",

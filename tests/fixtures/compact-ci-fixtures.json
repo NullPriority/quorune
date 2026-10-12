@@ -114,6 +114,7 @@
     "tests/fixtures/repeatable-object-action-triggers.json",
     "tests/fixtures/resolution-public-condition-cards.json",
     "tests/fixtures/restricted-self-return-cards.json",
+    "tests/fixtures/reveal-entry-cards.json",
     "tests/fixtures/scalar-effect-amount-cards.json",
     "tests/fixtures/scheduled-player-triggers.json",
     "tests/fixtures/scoped-damage-prevention-cards.json",
@@ -761,6 +762,96 @@
       "deck_files": [],
       "fixture_files": [],
       "rationale": "Real fixed mana result omission and pending replacement continuation retain exact-source fixture identity."
+    },
+    {
+      "source": "tests/test_typed_land_entry_participation.py",
+      "symbol": "RevealEntryRuntimeTests.test_original_game_trail_private_choice_selected_reveal_untapped_entry_and_pending_replay",
+      "card_names": [
+        "Forest",
+        "Game Trail",
+        "Island",
+        "Mountain"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Original reveal-entry land/copy actions and typed simultaneous choices use the shared compact fixture source."
+    },
+    {
+      "source": "tests/test_typed_land_entry_participation.py",
+      "symbol": "RevealEntryRuntimeTests.test_original_game_trail_decline_and_no_match_enter_tapped_without_reveal",
+      "card_names": [
+        "Forest",
+        "Game Trail",
+        "Island"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Original reveal-entry land/copy actions and typed simultaneous choices use the shared compact fixture source."
+    },
+    {
+      "source": "tests/test_typed_land_entry_participation.py",
+      "symbol": "RevealEntryRuntimeTests.test_original_secluded_glen_matches_kindred_subtype_without_creature_requirement",
+      "card_names": [
+        "Bitterblossom",
+        "Secluded Glen"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Original reveal-entry land/copy actions and typed simultaneous choices use the shared compact fixture source."
+    },
+    {
+      "source": "tests/test_typed_land_entry_participation.py",
+      "symbol": "RevealEntryRuntimeTests.test_reveal_entry_producer_omission_mutant_is_killed",
+      "card_names": [
+        "Forest",
+        "Game Trail",
+        "Island",
+        "Mountain"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Original reveal-entry land/copy actions and typed simultaneous choices use the shared compact fixture source."
+    },
+    {
+      "source": "tests/test_typed_land_entry_participation.py",
+      "symbol": "RevealEntryRuntimeTests.test_original_copy_land_applies_copied_reveal_choice_to_copier_controller_and_replays",
+      "card_names": [
+        "Copy Land",
+        "Forest",
+        "Game Trail"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Original reveal-entry land/copy actions and typed simultaneous choices use the shared compact fixture source."
+    },
+    {
+      "source": "tests/test_typed_land_entry_participation.py",
+      "symbol": "RevealEntryRuntimeTests.test_reveal_does_not_override_independent_tapped_entry_and_reuses_same_hand_card",
+      "card_names": [
+        "Forest",
+        "Game Trail"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Original reveal-entry land/copy actions and typed simultaneous choices use the shared compact fixture source."
+    },
+    {
+      "source": "tests/test_typed_land_entry_participation.py",
+      "symbol": "RevealEntryRuntimeTests.test_entering_land_cannot_reveal_itself_and_stale_private_identity_fails_atomically",
+      "card_names": [
+        "Forest",
+        "Murmuring Bosk"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Original reveal-entry and malformed retained hand identity controls use these exact cards."
     }
   ],
   "full_database_only": []

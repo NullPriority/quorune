@@ -16132,6 +16132,98 @@
       "implementation_mutation_rationale": "Omitting the typed result from the actual original pain-land mode leaves life unchanged and is detected by the real action witness.",
       "blockers": [],
       "status": "trusted"
+    },
+    {
+      "id": "zone.entry.reveal_hand_or_tapped",
+      "version": 1,
+      "official_rules": [
+        "614.12",
+        "614.12a",
+        "616.1e",
+        "701.20a",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "One intrinsic entry replacement privately selects a matching card from the prospective controllers hand, reveals only that card, or enters tapped on decline, using the canonical replacement ordering and entry commit.",
+        "inputs": [
+          "complete source-spanned reveal-or-tapped clause",
+          "typed matching hand subtype query",
+          "prospective entry controller",
+          "one original hand card identity"
+        ],
+        "outputs": [
+          "private replacement options",
+          "public selected-card reveal",
+          "tapped entry on decline"
+        ],
+        "exclusions": [
+          "reveal or current battlefield condition compounds",
+          "unknown hand qualifiers",
+          "costs with hand movement",
+          "unrepresented conditional or paid reveal entry compositions"
+        ]
+      },
+      "dependencies": [
+        "zone.change.destination_replacement"
+      ],
+      "implementation_components": [
+        "quorune.compiler.entry_reveal_templates.entry_reveal_node",
+        "quorune.semantic_runtime.entry_reveal.EntryRevealHandler",
+        "quorune.semantic_runtime.entry_reveal.entry_reveal_replacement_effects",
+        "quorune.effect_runtime.hand_inspection.commit_entry_hand_reveal"
+      ],
+      "positive_tests": [
+        "test_reveal_entry_has_typed_private_hand_query_and_optional_replacement",
+        "test_original_game_trail_private_choice_selected_reveal_untapped_entry_and_pending_replay",
+        "test_original_secluded_glen_matches_kindred_subtype_without_creature_requirement",
+        "test_original_copy_land_applies_copied_reveal_choice_to_copier_controller_and_replays",
+        "test_reveal_does_not_override_independent_tapped_entry_and_reuses_same_hand_card"
+      ],
+      "negative_tests": [
+        "test_reveal_entry_contract_rejects_open_queries_and_untrusted_owner",
+        "test_original_game_trail_decline_and_no_match_enter_tapped_without_reveal",
+        "test_entering_land_cannot_reveal_itself_and_stale_private_identity_fails_atomically"
+      ],
+      "interaction_tests": [
+        "test_original_game_trail_private_choice_selected_reveal_untapped_entry_and_pending_replay",
+        "test_original_secluded_glen_matches_kindred_subtype_without_creature_requirement",
+        "test_original_copy_land_applies_copied_reveal_choice_to_copier_controller_and_replays",
+        "test_reveal_does_not_override_independent_tapped_entry_and_reuses_same_hand_card",
+        "test_entering_land_cannot_reveal_itself_and_stale_private_identity_fails_atomically"
+      ],
+      "multiplayer_tests": [
+        "test_original_game_trail_private_choice_selected_reveal_untapped_entry_and_pending_replay"
+      ],
+      "privacy_tests": [
+        "test_original_game_trail_private_choice_selected_reveal_untapped_entry_and_pending_replay",
+        "test_original_game_trail_decline_and_no_match_enter_tapped_without_reveal"
+      ],
+      "replay_tests": [
+        "test_original_game_trail_private_choice_selected_reveal_untapped_entry_and_pending_replay",
+        "test_original_game_trail_decline_and_no_match_enter_tapped_without_reveal",
+        "test_original_secluded_glen_matches_kindred_subtype_without_creature_requirement",
+        "test_original_copy_land_applies_copied_reveal_choice_to_copier_controller_and_replays",
+        "test_entering_land_cannot_reveal_itself_and_stale_private_identity_fails_atomically"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Entry replacement closure remains separately required.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "The actual original land-play witness detects removal of the reveal replacement producer before publication.",
+      "blockers": [],
+      "status": "trusted"
     }
   ]
 }
