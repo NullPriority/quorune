@@ -568,6 +568,14 @@ The shared declaration solver selects distinct attacker sets up to current
 capacity while retaining costs and maximum requirement satisfaction. Open
 quantities and independently unsupported siblings remain residual.
 
+Ordered effect programs may include one independently closed all-damage
+prevention shield. Its fixed mode, turn-bound duration and complete typed scope
+must close before the program is trusted. An established direct target remains
+index zero through later modifier, untap and prevention instructions; shield
+creation cannot add a new target. Unknown scope fields, derived amounts,
+additional aftermath and unrepresented target references remain excluded from
+this component contract.
+
 The shared direct-permanent predicate accepts the pinned artifact, enchantment,
 and land subtype vocabulary in bare targets. "Target Equipment," "target
 Aura," and "target Mountain" require that subtype on a current permanent;

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "9972c1591b5d4bf047e630612c990c4a0b6fd1b8fc20b2b3e4b5816d8b02e5ec",
-  "declaration_source_fingerprint": "e9fa4774e05d69d6c9b0885c6dffa23728ee74237ed096382d045eeaeae42e3c",
+  "registry_fingerprint": "2d1a5f5099f82b135c3053ae21ba86b661c5954d44e85b752669a674f29b4650",
+  "declaration_source_fingerprint": "a95228e7f1d52ac942b4eb3442003aec7d76f58d507054a72d592b7d604933e4",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -79149,6 +79149,48 @@
     },
     {
       "capability_id": "resolution.effect_program.bound_references",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_scoped_damage_prevention.PreventionCompositionRuntimeTests.test_original_djeru_untap_and_prevention_expire_and_preserve_target_authority",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A fixed all-damage prevention component retains its exact closed scope and target-zero binding; ordinary shield creation, damage, duration, privacy and replay owners remain authoritative."
+    },
+    {
+      "capability_id": "resolution.effect_program.bound_references",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_scoped_damage_prevention.PreventionCompositionRuntimeTests.test_original_leap_of_faith_modifier_and_prevention_resolve_then_damage_boundary_replays",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A fixed all-damage prevention component retains its exact closed scope and target-zero binding; ordinary shield creation, damage, duration, privacy and replay owners remain authoritative."
+    },
+    {
+      "capability_id": "resolution.effect_program.bound_references",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_bound_effect_programs.BoundEffectProgramRuntimeTests.test_trusted_player_subject_draw_loss_and_discard",
       "official_rule_ids": [
@@ -79167,6 +79209,48 @@
         "commander_review"
       ],
       "applicability_note": "Use the selected player and their existing private choice authority in a four-seat game."
+    },
+    {
+      "capability_id": "resolution.effect_program.bound_references",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_scoped_damage_prevention.PreventionCompositionRuntimeTests.test_original_djeru_untap_and_prevention_expire_and_preserve_target_authority",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A fixed all-damage prevention component retains its exact closed scope and target-zero binding; ordinary shield creation, damage, duration, privacy and replay owners remain authoritative."
+    },
+    {
+      "capability_id": "resolution.effect_program.bound_references",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_scoped_damage_prevention.PreventionCompositionRuntimeTests.test_original_leap_of_faith_modifier_and_prevention_resolve_then_damage_boundary_replays",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A fixed all-damage prevention component retains its exact closed scope and target-zero binding; ordinary shield creation, damage, duration, privacy and replay owners remain authoritative."
     },
     {
       "capability_id": "resolution.effect_program.bound_references",
@@ -79191,6 +79275,27 @@
     },
     {
       "capability_id": "resolution.effect_program.bound_references",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_scoped_damage_prevention.PreventionCompositionRuntimeTests.test_prevention_component_omission_mutant_is_killed",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A fixed all-damage prevention component retains its exact closed scope and target-zero binding; ordinary shield creation, damage, duration, privacy and replay owners remain authoritative."
+    },
+    {
+      "capability_id": "resolution.effect_program.bound_references",
       "evidence_class": "negative",
       "test_id": "tests.test_bound_effect_programs.BoundEffectProgramCompilerTests.test_bound_effect_exclusions_and_malformed_shapes",
       "official_rule_ids": [
@@ -79209,6 +79314,48 @@
         "commander_review"
       ],
       "applicability_note": "Keep separate target occurrences, unsupported possessive or cross-zone references, unknown components and malformed descriptor fields outside admission."
+    },
+    {
+      "capability_id": "resolution.effect_program.bound_references",
+      "evidence_class": "negative",
+      "test_id": "tests.test_scoped_damage_prevention.PreventionCompositionRuntimeTests.test_original_djeru_untap_and_prevention_expire_and_preserve_target_authority",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A fixed all-damage prevention component retains its exact closed scope and target-zero binding; ordinary shield creation, damage, duration, privacy and replay owners remain authoritative."
+    },
+    {
+      "capability_id": "resolution.effect_program.bound_references",
+      "evidence_class": "negative",
+      "test_id": "tests.test_scoped_damage_prevention.ScopedPreventionCompilerTests.test_prevention_component_rejects_derived_amounts_open_scopes_and_missing_owner",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A fixed all-damage prevention component retains its exact closed scope and target-zero binding; ordinary shield creation, damage, duration, privacy and replay owners remain authoritative."
     },
     {
       "capability_id": "resolution.effect_program.bound_references",
@@ -79254,6 +79401,69 @@
     },
     {
       "capability_id": "resolution.effect_program.bound_references",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scoped_damage_prevention.PreventionCompositionRuntimeTests.test_original_djeru_untap_and_prevention_expire_and_preserve_target_authority",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A fixed all-damage prevention component retains its exact closed scope and target-zero binding; ordinary shield creation, damage, duration, privacy and replay owners remain authoritative."
+    },
+    {
+      "capability_id": "resolution.effect_program.bound_references",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scoped_damage_prevention.PreventionCompositionRuntimeTests.test_original_leap_of_faith_modifier_and_prevention_resolve_then_damage_boundary_replays",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A fixed all-damage prevention component retains its exact closed scope and target-zero binding; ordinary shield creation, damage, duration, privacy and replay owners remain authoritative."
+    },
+    {
+      "capability_id": "resolution.effect_program.bound_references",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scoped_damage_prevention.ScopedPreventionCompilerTests.test_target_modifier_and_fixed_prevention_share_one_bound_target_program",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A fixed all-damage prevention component retains its exact closed scope and target-zero binding; ordinary shield creation, damage, duration, privacy and replay owners remain authoritative."
+    },
+    {
+      "capability_id": "resolution.effect_program.bound_references",
       "evidence_class": "privacy",
       "test_id": "tests.test_bound_effect_programs.BoundEffectProgramRuntimeTests.test_trusted_player_subject_draw_loss_and_discard",
       "official_rule_ids": [
@@ -79272,6 +79482,27 @@
         "commander_review"
       ],
       "applicability_note": "The discard decision belongs only to the affected principal and no other seat receives its private schema."
+    },
+    {
+      "capability_id": "resolution.effect_program.bound_references",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_scoped_damage_prevention.PreventionCompositionRuntimeTests.test_original_leap_of_faith_modifier_and_prevention_resolve_then_damage_boundary_replays",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A fixed all-damage prevention component retains its exact closed scope and target-zero binding; ordinary shield creation, damage, duration, privacy and replay owners remain authoritative."
     },
     {
       "capability_id": "resolution.effect_program.bound_references",
@@ -79356,6 +79587,48 @@
         "commander_review"
       ],
       "applicability_note": "Replay real offered casts and activations with the inherited target contract and complete characteristic/untap consequences."
+    },
+    {
+      "capability_id": "resolution.effect_program.bound_references",
+      "evidence_class": "replay",
+      "test_id": "tests.test_scoped_damage_prevention.PreventionCompositionRuntimeTests.test_original_djeru_untap_and_prevention_expire_and_preserve_target_authority",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A fixed all-damage prevention component retains its exact closed scope and target-zero binding; ordinary shield creation, damage, duration, privacy and replay owners remain authoritative."
+    },
+    {
+      "capability_id": "resolution.effect_program.bound_references",
+      "evidence_class": "replay",
+      "test_id": "tests.test_scoped_damage_prevention.PreventionCompositionRuntimeTests.test_original_leap_of_faith_modifier_and_prevention_resolve_then_damage_boundary_replays",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A fixed all-damage prevention component retains its exact closed scope and target-zero binding; ordinary shield creation, damage, duration, privacy and replay owners remain authoritative."
     },
     {
       "capability_id": "resolution.effect_program.bound_references",
@@ -114842,5 +115115,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "312d45a39515f27fb4fe060c3ac67a8b692251ce10328080a12a398580095ab2"
+  "fingerprint": "2999c6442e3f492252e2913f34df17cdd1e1d9501fe707dc8eb5e91b2e7f1e37"
 }

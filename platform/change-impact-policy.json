@@ -85,6 +85,21 @@
   ],
   "path_rules": [
     {
+      "id": "fixed-prevention-component-composition",
+      "patterns": [
+        "quorune/rules/prevention_component_shapes.py",
+        "tests/fixtures/prevention-composition-cards.json"
+      ],
+      "test_modules": [
+        "test_scoped_damage_prevention",
+        "test_bound_effect_programs",
+        "test_fixed_effect_clause_sequences",
+        "test_closed_effect_programs",
+        "test_damage_prevention_creation",
+        "test_card_program_trust"
+      ]
+    },
+    {
       "id": "private-reveal-entry-contract",
       "patterns": [
         "quorune/entry_reveal.py",
