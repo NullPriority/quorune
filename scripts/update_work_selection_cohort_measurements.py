@@ -34,6 +34,7 @@ from quorune.work_selection_evidence import (
 from scripts.work_selection_cohort_measurements import (
     build_work_selection_cohort_measurements,
 )
+from scripts.cohort_compilation import cohort_compilation_snapshot
 from scripts.validate_python_runtime import require_supported_python
 
 
@@ -56,6 +57,7 @@ def _inputs() -> tuple[dict, dict, list[dict], dict[str, str]]:
     return frontier, coverage, bundles, fingerprints
 
 
+@cohort_compilation_snapshot()
 def _build(database: Path) -> dict:
     frontier, coverage, bundles, fingerprints = _inputs()
     with CardDatabase(database) as cards:

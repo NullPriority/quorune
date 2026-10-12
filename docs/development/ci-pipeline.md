@@ -37,6 +37,14 @@ still run independently for every original complete card.
 The extracted controller-program measurement uses the same invocation scope
 and keeps unsupported sibling nodes outside complete-card closure.
 
+One synchronous cohort build shares validated capability inputs and reuses
+identical Oracle IR compilations across its probes. The key includes the full
+card record, trusted mechanics, capability registry and evidence identity,
+profile, and compiler callable. Returned IR mappings are defensive copies.
+Nested builds reuse the active scope; success and exceptions discard it, and
+later builds reread authoritative inputs. Probe grammar, source-span checks,
+whole-program compilation, and strict runtime binding still run independently.
+
 The source-pronoun damage-trigger probe applies its existing grammar exclusion
 before compiling the card, avoiding compilation for candidates that the same
 predicate would reject afterward. Every admitted candidate still goes through

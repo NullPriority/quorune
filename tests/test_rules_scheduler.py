@@ -269,6 +269,125 @@ class CohortPrefilterTests(unittest.TestCase):
             faces=(), raw={},
         )
 
+    def test_cohort_builder_validates_shared_inputs_once_and_refreshes_next_call(self):
+        from scripts import work_selection_cohort_measurements as measurements
+        from quorune.rules.capabilities import CapabilityRegistry, load_default_capability_registry
+        from quorune.rules.evidence import _VALIDATION_REGISTRY
+
+        record = self.record()
+        arguments = dict(frontier={}, bundle_policies=[
+            {"bundle_id": "bundle:first", "measurement_probe_id": "fixture"},
+            {"bundle_id": "bundle:second", "measurement_probe_id": "fixture"},
+        ], cards_by_oracle_id={}, coverage={}, cohort_fingerprints={
+            "bundle:first": "first", "bundle:second": "second"})
+        def measure(**kwargs):
+            registry = load_default_capability_registry()
+            return measurements.compile_oracle_card(record, capability_registry=registry,
+                capability_profile="commander_review").to_dict()
+        with mock.patch.object(measurements, "_measurement", side_effect=measure), mock.patch.object(
+            CapabilityRegistry, "from_path", wraps=CapabilityRegistry.from_path
+        ) as loader:
+            first = measurements.build_work_selection_cohort_measurements(**arguments)
+            self.assertEqual(first["measurements"][0], first["measurements"][1])
+            self.assertEqual(1, loader.call_count)
+            self.assertIsNone(_VALIDATION_REGISTRY.get())
+            second = measurements.build_work_selection_cohort_measurements(**arguments)
+            self.assertEqual(first, second)
+            self.assertEqual(2, loader.call_count)
+        self.assertIsNone(_VALIDATION_REGISTRY.get())
+
+    def test_cohort_compilation_reuses_content_without_sharing_mutable_results(self):
+        from scripts import cohort_compilation as compilation
+        from quorune.rules.capabilities import load_default_capability_registry
+
+        record = self.record()
+        registry = load_default_capability_registry()
+        arguments = dict(capability_registry=registry, capability_profile="commander_review")
+        original = compilation._compile_oracle_card
+        with mock.patch.object(compilation, "_compile_oracle_card", wraps=original) as compiler:
+            with compilation.cohort_compilation_snapshot():
+                first = compilation.compile_cohort_card(record, **arguments)
+                expected = first.to_dict()
+                first.faces[0].nodes[0].effects[0]["fixture_mutation"] = True
+                second = compilation.compile_cohort_card(replace(record, raw={}), **arguments)
+                self.assertEqual(expected, second.to_dict())
+                with compilation.cohort_compilation_snapshot():
+                    self.assertEqual(expected, compilation.compile_cohort_card(record, **arguments).to_dict())
+                self.assertEqual(1, compiler.call_count)
+            self.assertIsNone(compilation._COMPILATIONS.get())
+            compilation.compile_cohort_card(record, **arguments)
+            with compilation.cohort_compilation_snapshot():
+                compilation.compile_cohort_card(record, **arguments)
+            self.assertEqual(3, compiler.call_count)
+
+    def test_cohort_compilation_distinguishes_source_registry_profile_and_mechanics(self):
+        from scripts import cohort_compilation as compilation
+        from quorune.rules.capabilities import load_default_capability_registry
+
+        record = self.record()
+        registry = load_default_capability_registry()
+        other_registry = load_default_capability_registry()
+        arguments = dict(capability_registry=registry, capability_profile="commander_review")
+        original = compilation._compile_oracle_card
+        with mock.patch.object(compilation, "_compile_oracle_card", wraps=original) as compiler:
+            with compilation.cohort_compilation_snapshot():
+                compilation.compile_cohort_card(record, **arguments)
+                record.raw["new_input"] = "current"
+                compilation.compile_cohort_card(record, **arguments)
+                changed = replace(record, oracle_text="Draw a card.")
+                compilation.compile_cohort_card(changed, **arguments)
+                changed = replace(changed, faces=({"name": record.name, "type_line": "Instant",
+                    "oracle_text": "You gain 2 life.", "mana_cost": "{R}"},))
+                compilation.compile_cohort_card(changed, **arguments)
+                compilation.compile_cohort_card(record, **{**arguments, "capability_profile": "traditional"})
+                compilation.compile_cohort_card(record, **{**arguments, "capability_registry": other_registry})
+                compilation.compile_cohort_card(record, trusted_mechanics=("cr-120-damage",), **arguments)
+                self.assertEqual(7, compiler.call_count)
+                with mock.patch.object(type(registry), "evidence_fingerprint",
+                                       new_callable=mock.PropertyMock, return_value="0" * 64):
+                    compilation.compile_cohort_card(record, **arguments)
+                self.assertEqual(8, compiler.call_count)
+                with mock.patch.object(compilation, "_compile_oracle_card", wraps=original) as changed_compiler:
+                    compilation.compile_cohort_card(record, **arguments)
+                    changed_compiler.assert_called_once()
+
+    def test_cohort_compilation_failures_clear_scope_and_do_not_cache_failed_compiles(self):
+        from scripts import cohort_compilation as compilation
+        from scripts import work_selection_cohort_measurements as measurements
+        from quorune.rules.capabilities import load_default_capability_registry
+        from quorune.rules.evidence import CapabilityEvidenceError, _VALIDATION_REGISTRY
+
+        record = self.record()
+        registry = load_default_capability_registry()
+        arguments = dict(capability_registry=registry, capability_profile="commander_review")
+        original = compilation._compile_oracle_card
+        result = original(record, **arguments)
+        with mock.patch.object(compilation, "_compile_oracle_card",
+                               side_effect=[RuntimeError("compiler failed"), result]) as compiler:
+            with compilation.cohort_compilation_snapshot():
+                with self.assertRaisesRegex(RuntimeError, "compiler failed"):
+                    compilation.compile_cohort_card(record, **arguments)
+                self.assertEqual(result, compilation.compile_cohort_card(record, **arguments))
+                self.assertEqual(2, compiler.call_count)
+        builder_arguments = dict(frontier={}, bundle_policies=[{
+            "bundle_id": "bundle:fixture", "measurement_probe_id": "fixture"}],
+            cards_by_oracle_id={}, coverage={}, cohort_fingerprints={"bundle:fixture": "fixture"})
+        with mock.patch.object(measurements, "_measurement", side_effect=RuntimeError("probe failed")):
+            with self.assertRaisesRegex(RuntimeError, "probe failed"):
+                measurements.build_work_selection_cohort_measurements(**builder_arguments)
+        self.assertIsNone(compilation._COMPILATIONS.get())
+        self.assertIsNone(_VALIDATION_REGISTRY.get())
+        with mock.patch('quorune.rules.evidence.load_capability_evidence_index',
+                        side_effect=CapabilityEvidenceError("changed evidence")):
+            with self.assertRaisesRegex(CapabilityEvidenceError, "changed evidence"):
+                with compilation.cohort_compilation_snapshot():
+                    load_default_capability_registry()
+        self.assertIsNone(compilation._COMPILATIONS.get())
+        self.assertIsNone(_VALIDATION_REGISTRY.get())
+        with compilation.cohort_compilation_snapshot():
+            self.assertEqual(result, compilation.compile_cohort_card(record, **{
+                **arguments, "capability_registry": load_default_capability_registry()}))
+
     def test_source_pronoun_prefilter_skips_only_grammar_already_excluded(self):
         from scripts import work_selection_cohort_measurements as measurements
 
