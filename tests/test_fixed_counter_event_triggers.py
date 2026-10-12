@@ -3,6 +3,7 @@ from __future__ import annotations
 from copy import deepcopy
 from dataclasses import FrozenInstanceError, replace
 import json
+import re
 from pathlib import Path
 import tempfile
 from typing import Mapping
@@ -139,6 +140,19 @@ def focused_database(directory: str) -> CardDatabase:
 
 
 class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
+    def test_main_phase_schedules_bind_phase_step_and_controller_independently(self):
+        from test_bound_effect_programs import record
+        for schedule,phase in [('your first main phase','precombat_main'),('your precombat main phase','precombat_main'),
+                               ('your second main phase','postcombat_main'),('your postcombat main phase','postcombat_main')]:
+            text='At the beginning of '+schedule+', draw a card.'
+            ir=compile_oracle_card(record(text,'Enchantment'),capability_registry=load_default_capability_registry(),capability_profile='commander_review')
+            self.assertEqual('exact',ir.status,ir.material_residuals)
+            node=ir.faces[0].nodes[0];self.assertEqual('step.begin',node.event)
+            clauses=node.event_condition['all']
+            self.assertIn({'field':'phase','op':'eq','value':phase},clauses)
+            self.assertIn({'field':'step','op':'eq','value':'main'},clauses)
+            self.assertIn({'field':'player','op':'eq','value':'$source.controller'},clauses)
+
     @classmethod
     def setUpClass(cls):
         cls.temporary = tempfile.TemporaryDirectory()
@@ -3930,3 +3944,69 @@ class FlavorNamedTriggerRuntimeTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class MainPhaseTriggerRuntimeTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from quorune.deck import DeckDefinition,DeckEntry
+        cls.temporary=tempfile.TemporaryDirectory();path=Path(cls.temporary.name)/'main-phase.sqlite3'
+        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/main-phase-trigger-cards.json'],path)
+        cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
+        cls.deck=DeckDefinition('Main phase',[DeckEntry('Generic Bound Commander',1,'commander'),DeckEntry('Generic Bound Plains',30)],['Generic Bound Commander'])
+    @classmethod
+    def tearDownClass(cls):cls.db.close();cls.temporary.cleanup()
+    from test_bound_effect_programs import BoundEffectProgramRuntimeTests as _Witnesses
+    session=_Witnesses.session
+    add=_Witnesses.add
+    checkpoint=_Witnesses.checkpoint
+    replay=_Witnesses.replay
+    resolve=_Witnesses.resolve
+
+    def boundary(self,s,seat,index):
+        e=s.engine;e.permissions.invalidate_current();e.state.pending_decision=None;e.state.started=True
+        e.state.active_player=seat;e.state.priority_passes=[];e.state.phase_index=index
+        from quorune.engine import TURN_STEPS
+        e.state.phase,e.state.step=TURN_STEPS[index];e._grant_priority(seat);e.pump();self.checkpoint(s)
+
+    def pass_to_main(self,s,phase):
+        for _ in range(24):
+            if s.state.phase==phase and s.state.step=='main':return
+            accepted=s.act(s.pending_principals()[0],{'action_id':'pass'});self.assertTrue(accepted.ok,accepted.summary)
+        self.fail('Main phase boundary did not advance')
+
+    def test_original_survivor_second_main_condition_and_controller_grid_replay(self):
+        from quorune.engine import TURN_STEPS
+        for seat,tapped in [('A',True),('A',False),('B',True)]:
+            s=self.session(362001+int(tapped)+(seat=='B'));e=s.engine;source=self.add(e,'Cautious Survivor');source.tapped=tapped
+            self.boundary(s,seat,TURN_STEPS.index(('combat','end_combat')));life=e.state.players['A'].life
+            self.pass_to_main(s,'postcombat_main');self.resolve(s)
+            self.assertEqual(life+(2 if seat=='A' and tapped else 0),e.state.players['A'].life)
+            self.replay(s,load=True)
+
+    def test_original_hulking_raptor_first_main_mana_is_triggered_and_excludes_second_phase(self):
+        from quorune.engine import TURN_STEPS
+        s=self.session(362006);e=s.engine;source=self.add(e,'Hulking Raptor')
+        self.boundary(s,'A',TURN_STEPS.index(('beginning','draw')));self.pass_to_main(s,'precombat_main')
+        self.assertEqual(0,e.state.players['A'].mana_pool['G']);self.assertEqual(1,len(e.state.stack))
+        self.resolve(s);self.assertEqual(2,e.state.players['A'].mana_pool['G']);self.replay(s,load=True)
+        self.boundary(s,'A',TURN_STEPS.index(('combat','end_combat')));self.pass_to_main(s,'postcombat_main')
+        self.assertFalse(e.state.stack);self.assertEqual(0,e.state.players['A'].mana_pool['G']);self.replay(s,load=True)
+
+    def test_original_four_knocks_first_main_private_draw_and_replay(self):
+        from quorune.engine import TURN_STEPS
+        s=self.session(362007);e=s.engine;source=self.add(e,'Four Knocks');source.counters['time']=4
+        self.boundary(s,'A',TURN_STEPS.index(('beginning','draw')));hand=len(e.state.players['A'].zones['hand'])
+        self.pass_to_main(s,'precombat_main');self.resolve(s)
+        self.assertEqual(hand+1,len(e.state.players['A'].zones['hand']))
+        projection=json.dumps(s.projector._snapshot('pilot:D'),sort_keys=True)
+        for seat in 'ABC':
+            for oid in e.state.players[seat].zones['hand']:self.assertNotIn(e.state.cards[oid].ref,projection)
+        self.replay(s,load=True)
+
+    def test_main_phase_schedule_omission_mutant_is_killed(self):
+        from quorune.compiler import fixed_counter_trigger_nodes as owner
+        original=owner._SCHEDULED_TRIGGER
+        with patch.object(owner,'_SCHEDULED_TRIGGER',re.compile(r'(?!)')):
+            with self.assertRaises(AssertionError):
+                self.test_original_hulking_raptor_first_main_mana_is_triggered_and_excludes_second_phase()

@@ -87,6 +87,7 @@
     "tests/fixtures/leveler-bands-cards.json",
     "tests/fixtures/library-search-qualifier-cards.json",
     "tests/fixtures/limited-event-triggers.json",
+    "tests/fixtures/main-phase-trigger-cards.json",
     "tests/fixtures/mayhem-cards.json",
     "tests/fixtures/new-support-residual-boundaries.json",
     "tests/fixtures/optional-draw-discard-sequences.json",
@@ -898,6 +899,50 @@
       "deck_files": [],
       "fixture_files": [],
       "rationale": "Actual original source damage-to-controller carriers and their strict replay witnesses use this exact compact fixture subset."
+    },
+    {
+      "source": "tests/test_fixed_counter_event_triggers.py",
+      "symbol": "MainPhaseTriggerRuntimeTests.test_original_survivor_second_main_condition_and_controller_grid_replay",
+      "card_names": [
+        "Cautious Survivor"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Actual main-phase schedule transitions and private/replay consequences require these strict original fixtures."
+    },
+    {
+      "source": "tests/test_fixed_counter_event_triggers.py",
+      "symbol": "MainPhaseTriggerRuntimeTests.test_original_hulking_raptor_first_main_mana_is_triggered_and_excludes_second_phase",
+      "card_names": [
+        "Hulking Raptor"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Actual main-phase schedule transitions and private/replay consequences require these strict original fixtures."
+    },
+    {
+      "source": "tests/test_fixed_counter_event_triggers.py",
+      "symbol": "MainPhaseTriggerRuntimeTests.test_original_four_knocks_first_main_private_draw_and_replay",
+      "card_names": [
+        "Four Knocks"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Actual main-phase schedule transitions and private/replay consequences require these strict original fixtures."
+    },
+    {
+      "source": "tests/test_fixed_counter_event_triggers.py",
+      "symbol": "MainPhaseTriggerRuntimeTests.test_main_phase_schedule_omission_mutant_is_killed",
+      "card_names": [
+        "Hulking Raptor"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Actual main-phase schedule transitions and private/replay consequences require these strict original fixtures."
     }
   ],
   "full_database_only": []

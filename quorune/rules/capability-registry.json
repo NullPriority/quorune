@@ -9873,7 +9873,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -9888,7 +9892,8 @@
           "current or last-known battlefield, stack, or Cycling hand source",
           "immutable normalized event facts, per-subscription conditions, and exact one-or-more aggregation when declared",
           "body-specific target schema and capability closure",
-          "current typed source ability component when the family requires layer-6 applicability"
+          "current typed source ability component when the family requires layer-6 applicability",
+          "standard controller first/precombat or second/postcombat main phase with distinct phase and step predicates"
         ],
         "outputs": [
           "one ordinary triggered CardProgram",
@@ -9958,7 +9963,11 @@
         "test_controller_draw_step_additional_draw_retains_event_and_recipient",
         "test_original_kami_draws_for_active_opponent_after_ordinary_draw",
         "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
-        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step"
+        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step",
+        "test_main_phase_schedules_bind_phase_step_and_controller_independently",
+        "test_original_survivor_second_main_condition_and_controller_grid_replay",
+        "test_original_hulking_raptor_first_main_mana_is_triggered_and_excludes_second_phase",
+        "test_original_four_knocks_first_main_private_draw_and_replay"
       ],
       "negative_tests": [
         "test_fixed_multi_event_trigger_near_misses_remain_material",
@@ -9976,7 +9985,10 @@
         "test_public_event_binding_closure_dependencies_and_parser_mutant_fail_closed",
         "test_adjacent_event_and_body_grammar_remain_material",
         "test_new_token_or_target_pronoun_is_not_rebound_to_source",
-        "test_additional_draw_step_missing_authority_stays_residual"
+        "test_additional_draw_step_missing_authority_stays_residual",
+        "test_main_phase_schedules_bind_phase_step_and_controller_independently",
+        "test_original_survivor_second_main_condition_and_controller_grid_replay",
+        "test_original_hulking_raptor_first_main_mana_is_triggered_and_excludes_second_phase"
       ],
       "interaction_tests": [
         "test_fixed_multi_event_source_triggers_share_events_and_replay",
@@ -10016,7 +10028,9 @@
         "test_blinked_firstblade_does_not_receive_old_source_trigger_twice",
         "test_original_kami_draws_for_active_opponent_after_ordinary_draw",
         "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
-        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step"
+        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step",
+        "test_original_survivor_second_main_condition_and_controller_grid_replay",
+        "test_original_hulking_raptor_first_main_mana_is_triggered_and_excludes_second_phase"
       ],
       "multiplayer_tests": [
         "test_fixed_multi_event_departure_uses_lki_and_apnap",
@@ -10038,7 +10052,8 @@
         "test_actual_scorpion_death_deals_damage_and_gains_life_for_trigger_controller",
         "test_original_kami_draws_for_active_opponent_after_ordinary_draw",
         "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
-        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step"
+        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step",
+        "test_original_survivor_second_main_condition_and_controller_grid_replay"
       ],
       "privacy_tests": [
         "test_fixed_multi_event_source_triggers_share_events_and_replay",
@@ -10053,7 +10068,8 @@
         "test_attachment_attack_binding_uses_current_relation_and_ability",
         "test_source_combat_growth_attack_uses_current_ability_and_replays",
         "test_targeted_cast_projection_save_load_and_exact_replay",
-        "test_original_kami_draws_for_active_opponent_after_ordinary_draw"
+        "test_original_kami_draws_for_active_opponent_after_ordinary_draw",
+        "test_original_four_knocks_first_main_private_draw_and_replay"
       ],
       "replay_tests": [
         "test_fixed_multi_event_source_triggers_share_events_and_replay",
@@ -10068,7 +10084,10 @@
         "test_actual_veteran_tap_issues_optional_counter_and_replays",
         "test_original_kami_draws_for_active_opponent_after_ordinary_draw",
         "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
-        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step"
+        "test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step",
+        "test_original_survivor_second_main_condition_and_controller_grid_replay",
+        "test_original_hulking_raptor_first_main_mana_is_triggered_and_excludes_second_phase",
+        "test_original_four_knocks_first_main_private_draw_and_replay"
       ],
       "required_evidence": [
         "positive",

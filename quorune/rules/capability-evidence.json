@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "2ce226265cea6a28acf45b552e2ddccdb5c2318f6d62ff584e317c583be69772",
-  "declaration_source_fingerprint": "e9406bba9c2c13927993eaf444c270fafbe7c636110398b6f79190509adc3539",
+  "registry_fingerprint": "904b1941427988ac14f8d8ec6f7c9c062329f5f66529f663bd9a3eecd18d9965",
+  "declaration_source_fingerprint": "6d20bc88aa4cd69070bb54cb125eb5fea05d405b17ec52465d78a0aca21f9b3d",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -89499,7 +89499,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -89507,6 +89511,64 @@
         "commander_review"
       ],
       "applicability_note": "Compose two distinct strict predicates and typed bodies over one committed cast without duplicating trigger placement."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_event_triggers.MainPhaseTriggerRuntimeTests.test_original_hulking_raptor_first_main_mana_is_triggered_and_excludes_second_phase",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Distinct main-phase and controller predicates consume the ordinary step event; existing intervening conditions revalidate on resolution and normal source ability presence applies."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_event_triggers.MainPhaseTriggerRuntimeTests.test_original_survivor_second_main_condition_and_controller_grid_replay",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Distinct main-phase and controller predicates consume the ordinary step event; existing intervening conditions revalidate on resolution and normal source ability presence applies."
     },
     {
       "capability_id": "trigger.effect.fixed_event",
@@ -89524,7 +89586,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -89549,7 +89615,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -89574,7 +89644,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -89599,7 +89673,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -89624,7 +89702,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -89649,7 +89731,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -89674,7 +89760,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -89699,7 +89789,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -89724,7 +89818,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -89749,7 +89847,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -89774,7 +89876,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -89799,7 +89905,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -89824,7 +89934,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -89849,7 +89963,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -89857,6 +89975,35 @@
         "commander_review"
       ],
       "applicability_note": "Place the strict Heroic trigger through an ordinary four-player trigger and priority boundary."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_counter_event_triggers.MainPhaseTriggerRuntimeTests.test_original_survivor_second_main_condition_and_controller_grid_replay",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Distinct main-phase and controller predicates consume the ordinary step event; existing intervening conditions revalidate on resolution and normal source ability presence applies."
     },
     {
       "capability_id": "trigger.effect.fixed_event",
@@ -89874,7 +90021,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -89899,7 +90050,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -89924,7 +90079,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -89949,7 +90108,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -89974,7 +90137,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -89999,7 +90166,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -90024,7 +90195,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -90049,7 +90224,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -90074,7 +90253,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -90099,7 +90282,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -90124,7 +90311,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -90149,7 +90340,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -90174,7 +90369,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -90182,6 +90381,35 @@
         "commander_review"
       ],
       "applicability_note": "Restoring the old label grammar kills the independently expected hyphenated flavor-trigger admission."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_counter_event_triggers.MainPhaseTriggerRuntimeTests.test_main_phase_schedule_omission_mutant_is_killed",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Distinct main-phase and controller predicates consume the ordinary step event; existing intervening conditions revalidate on resolution and normal source ability presence applies."
     },
     {
       "capability_id": "trigger.effect.fixed_event",
@@ -90199,7 +90427,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -90224,7 +90456,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -90249,7 +90485,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -90274,7 +90514,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -90299,7 +90543,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -90324,7 +90572,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -90349,7 +90601,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -90374,7 +90630,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -90399,7 +90659,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -90424,7 +90688,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -90432,6 +90700,35 @@
         "commander_review"
       ],
       "applicability_note": "Keep optional, intervening-if, cast-or-copy, attacks-alone, reflexive, and modal-header variants source-spanned and outside generic trigger authority."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_main_phase_schedules_bind_phase_step_and_controller_independently",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Distinct main-phase and controller predicates consume the ordinary step event; existing intervening conditions revalidate on resolution and normal source ability presence applies."
     },
     {
       "capability_id": "trigger.effect.fixed_event",
@@ -90449,7 +90746,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -90474,7 +90775,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -90499,7 +90804,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -90507,6 +90816,64 @@
         "commander_review"
       ],
       "applicability_note": "An outer flavor name never discards an unrepresented body, reflexive trigger, modal instruction or inner-dash clause."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_counter_event_triggers.MainPhaseTriggerRuntimeTests.test_original_hulking_raptor_first_main_mana_is_triggered_and_excludes_second_phase",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Distinct main-phase and controller predicates consume the ordinary step event; existing intervening conditions revalidate on resolution and normal source ability presence applies."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_counter_event_triggers.MainPhaseTriggerRuntimeTests.test_original_survivor_second_main_condition_and_controller_grid_replay",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Distinct main-phase and controller predicates consume the ordinary step event; existing intervening conditions revalidate on resolution and normal source ability presence applies."
     },
     {
       "capability_id": "trigger.effect.fixed_event",
@@ -90524,7 +90891,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -90549,7 +90920,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -90574,7 +90949,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -90599,7 +90978,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -90624,7 +91007,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -90649,7 +91036,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -90674,7 +91065,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -90699,7 +91094,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -90707,6 +91106,35 @@
         "commander_review"
       ],
       "applicability_note": "Compile represented step, cast, life, draw, entry, and death bindings with independently closed draw, token, Surveil, life, damage, Scry, and characteristic effect bodies."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_main_phase_schedules_bind_phase_step_and_controller_independently",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Distinct main-phase and controller predicates consume the ordinary step event; existing intervening conditions revalidate on resolution and normal source ability presence applies."
     },
     {
       "capability_id": "trigger.effect.fixed_event",
@@ -90724,7 +91152,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -90749,7 +91181,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -90774,7 +91210,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -90799,7 +91239,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -90807,6 +91251,93 @@
         "commander_review"
       ],
       "applicability_note": "CR 207.2c-d labels with hyphens, punctuation or numeric words preserve complete event, condition, result and original-source fields."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_event_triggers.MainPhaseTriggerRuntimeTests.test_original_four_knocks_first_main_private_draw_and_replay",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Distinct main-phase and controller predicates consume the ordinary step event; existing intervening conditions revalidate on resolution and normal source ability presence applies."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_event_triggers.MainPhaseTriggerRuntimeTests.test_original_hulking_raptor_first_main_mana_is_triggered_and_excludes_second_phase",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Distinct main-phase and controller predicates consume the ordinary step event; existing intervening conditions revalidate on resolution and normal source ability presence applies."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_event_triggers.MainPhaseTriggerRuntimeTests.test_original_survivor_second_main_condition_and_controller_grid_replay",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Distinct main-phase and controller predicates consume the ordinary step event; existing intervening conditions revalidate on resolution and normal source ability presence applies."
     },
     {
       "capability_id": "trigger.effect.fixed_event",
@@ -90824,7 +91355,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -90849,7 +91384,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -90874,7 +91413,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -90899,7 +91442,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -90924,7 +91471,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -90949,7 +91500,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -90957,6 +91512,35 @@
         "commander_review"
       ],
       "applicability_note": "Expose only public source and target references for the resulting trigger to all four seats."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_counter_event_triggers.MainPhaseTriggerRuntimeTests.test_original_four_knocks_first_main_private_draw_and_replay",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Distinct main-phase and controller predicates consume the ordinary step event; existing intervening conditions revalidate on resolution and normal source ability presence applies."
     },
     {
       "capability_id": "trigger.effect.fixed_event",
@@ -90974,7 +91558,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -90999,7 +91587,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -91024,7 +91616,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -91049,7 +91645,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -91074,7 +91674,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -91099,7 +91703,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -91124,7 +91732,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -91149,7 +91761,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -91174,7 +91790,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -91182,6 +91802,93 @@
         "commander_review"
       ],
       "applicability_note": "Replay the event predicate, source-current ability component, and trigger placement to the identical authoritative hash."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_counter_event_triggers.MainPhaseTriggerRuntimeTests.test_original_four_knocks_first_main_private_draw_and_replay",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Distinct main-phase and controller predicates consume the ordinary step event; existing intervening conditions revalidate on resolution and normal source ability presence applies."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_counter_event_triggers.MainPhaseTriggerRuntimeTests.test_original_hulking_raptor_first_main_mana_is_triggered_and_excludes_second_phase",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Distinct main-phase and controller predicates consume the ordinary step event; existing intervening conditions revalidate on resolution and normal source ability presence applies."
+    },
+    {
+      "capability_id": "trigger.effect.fixed_event",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_counter_event_triggers.MainPhaseTriggerRuntimeTests.test_original_survivor_second_main_condition_and_controller_grid_replay",
+      "official_rule_ids": [
+        "115.1",
+        "120.4",
+        "508.3c",
+        "508.3d",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Distinct main-phase and controller predicates consume the ordinary step event; existing intervening conditions revalidate on resolution and normal source ability presence applies."
     },
     {
       "capability_id": "trigger.effect.fixed_event",
@@ -91199,7 +91906,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -91224,7 +91935,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -91249,7 +91964,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -91274,7 +91993,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -91299,7 +92022,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -91324,7 +92051,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -91349,7 +92080,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -91374,7 +92109,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -91399,7 +92138,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -91424,7 +92167,11 @@
         "608.2b",
         "608.2c",
         "701.9",
-        "701.21"
+        "701.21",
+        "500.6",
+        "505.1",
+        "505.1a",
+        "505.1b"
       ],
       "supported_profiles": [
         "traditional",
@@ -113502,5 +114249,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "0b9e2e2b15afc679f7623e0fb3dffd4babf9a8c8bfc43b2cfece4eaad0be87e3"
+  "fingerprint": "db844dfe172d49beda051c411f009607dc22f01107caa2c6dd49adfc1496cef2"
 }

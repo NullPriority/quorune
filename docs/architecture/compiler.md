@@ -568,6 +568,14 @@ The shared declaration solver selects distinct attacker sets up to current
 capacity while retaining costs and maximum requirement satisfaction. Open
 quantities and independently unsupported siblings remain residual.
 
+Fixed scheduled triggers distinguish the controller's first/precombat main
+phase from second/postcombat main phase with both phase and step predicates.
+They consume the existing normalized boundary event and ordinary APNAP trigger
+placement. Main-phase mana results remain stack-using triggered abilities.
+Current source ability presence and represented intervening conditions retain
+their existing checks. Additional main-phase ordinals and unrepresented
+extra-phase or skipped-phase instructions remain outside this slice.
+
 Intrinsic reveal-or-tapped entry clauses lower through
 `compiler/entry_reveal_templates.py` to a closed hand subtype query. The
 prospective controller sees only matching private hand cards and may decline.
