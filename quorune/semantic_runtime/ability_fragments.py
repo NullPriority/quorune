@@ -48,6 +48,7 @@ from .graveyard_copy_keyword import GraveyardCopyKeywordHandler
 from .player_speed import StartEnginesHandler
 from .prototype import PrototypeAbilityHandler
 from .enlist import EnlistAbilityFragmentHandler
+from .exert import ExertAttackFragmentHandler
 
 
 ENCHANT_FRAGMENT_HANDLER_ID = "ability.static.enchant.v1"
@@ -1365,6 +1366,7 @@ def default_ability_fragment_registry() -> AbilityFragmentRegistry:
             BlockCapacityAbilityFragmentHandler(),
             PrototypeAbilityHandler(),
             EnlistAbilityFragmentHandler(),
+            ExertAttackFragmentHandler(),
             AsUnblockedAssignmentFragmentHandler(),
             ToughnessAssignmentFragmentHandler(),
             UmbraArmorFragmentHandler(),

@@ -3,94 +3,6 @@
   "classification_policy": "default_deny_exact_production_python_v1",
   "modules": [
     {
-      "file": "quorune/copied_aura_entry.py",
-      "layer": "rules",
-      "owning_subsystem": "semantic_runtime",
-      "allowed_dependency_layers": [
-        "domain",
-        "rules",
-        "semantics"
-      ],
-      "game_state_access": "none",
-      "card_specificity_policy": "generic_no_growth",
-      "visibility_sensitivity": "authoritative_internal",
-      "replay_participation": "authoritative"
-    },
-    {
-      "file": "quorune/semantic_runtime/entry_copy.py",
-      "layer": "semantics",
-      "owning_subsystem": "semantic_runtime",
-      "allowed_dependency_layers": [
-        "adapter",
-        "domain",
-        "rules",
-        "semantics"
-      ],
-      "game_state_access": "none",
-      "card_specificity_policy": "generic_no_growth",
-      "visibility_sensitivity": "authoritative_internal",
-      "replay_participation": "authoritative"
-    },
-    {
-      "file": "quorune/entry_copy.py",
-      "layer": "rules",
-      "owning_subsystem": "legacy_rules",
-      "allowed_dependency_layers": [
-        "domain",
-        "rules",
-        "semantics"
-      ],
-      "game_state_access": "none",
-      "card_specificity_policy": "generic_no_growth",
-      "visibility_sensitivity": "authoritative_internal",
-      "replay_participation": "none"
-    },
-    {
-      "file": "quorune/compiler/entry_copy_templates.py",
-      "layer": "semantics",
-      "owning_subsystem": "oracle_compiler",
-      "allowed_dependency_layers": [
-        "adapter",
-        "domain",
-        "rules",
-        "semantics"
-      ],
-      "game_state_access": "none",
-      "card_specificity_policy": "generic_no_growth",
-      "visibility_sensitivity": "authoritative_internal",
-      "replay_participation": "none"
-    },
-    {
-      "file": "quorune/compiler/resolution_characteristic_program_closure.py",
-      "layer": "semantics",
-      "owning_subsystem": "oracle_compiler",
-      "allowed_dependency_layers": [
-        "adapter",
-        "domain",
-        "rules",
-        "semantics"
-      ],
-      "game_state_access": "none",
-      "card_specificity_policy": "generic_no_growth",
-      "visibility_sensitivity": "authoritative_internal",
-      "replay_participation": "none"
-    },
-    {
-      "file": "quorune/compiler/temporary_quoted_ability_nodes.py",
-      "layer": "semantics",
-      "owning_subsystem": "oracle_compiler",
-      "allowed_dependency_layers": [
-        "adapter",
-        "domain",
-        "rules",
-        "semantics"
-      ],
-      "game_state_access": "none",
-      "card_specificity_policy": "generic_no_growth",
-      "visibility_sensitivity": "authoritative_internal",
-      "replay_participation": "none"
-    },
-    {
       "file": "quorune/__init__.py",
       "layer": "application",
       "owning_subsystem": "legacy_application",
@@ -2556,6 +2468,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/entry_copy_templates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/entry_designation_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -2587,6 +2514,21 @@
     },
     {
       "file": "quorune/compiler/event_card_return_templates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/compiler/exert_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
       "allowed_dependency_layers": [
@@ -3996,6 +3938,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/resolution_characteristic_program_closure.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/resolution_condition_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -4461,6 +4418,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/temporary_quoted_ability_nodes.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/temporary_target_interactions.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -4808,6 +4780,20 @@
       "card_specificity_policy": "generic_no_growth",
       "visibility_sensitivity": "authoritative_internal",
       "replay_participation": "none"
+    },
+    {
+      "file": "quorune/copied_aura_entry.py",
+      "layer": "rules",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
     },
     {
       "file": "quorune/counter_doubling.py",
@@ -5860,6 +5846,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/entry_copy.py",
+      "layer": "rules",
+      "owning_subsystem": "legacy_rules",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/entry_counter_coordination.py",
       "layer": "rules",
       "owning_subsystem": "counter_placement",
@@ -6014,6 +6014,18 @@
       "file": "quorune/evolve.py",
       "layer": "domain",
       "owning_subsystem": "counter_placement",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/exert_model.py",
+      "layer": "domain",
+      "owning_subsystem": "legacy_domain",
       "allowed_dependency_layers": [
         "domain"
       ],
@@ -8377,6 +8389,20 @@
     },
     {
       "file": "quorune/rules/evidence.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/rules/exert.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
       "allowed_dependency_layers": [
@@ -10929,6 +10955,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_runtime/entry_copy.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_runtime/entry_designations.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
@@ -10960,6 +11001,21 @@
     },
     {
       "file": "quorune/semantic_runtime/executor.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
+      "file": "quorune/semantic_runtime/exert.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
       "allowed_dependency_layers": [
@@ -12796,5 +12852,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "5d25c27f9bc749894106e55bda51ac8138dddebdecf17f7af757ebd69ffd1703"
+  "fingerprint": "4de476950b1b359e793bd021eaf9c972bff6a67b4fd29df8741fdf933d912afc"
 }

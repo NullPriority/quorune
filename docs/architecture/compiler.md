@@ -576,6 +576,17 @@ the existing live-or-last-known scalar power owner. Multiple printed instances
 remain independent, and unrepresented Enlist-dependent sibling instructions
 retain their residuals.
 
+`compiler/exert_nodes.py` lowers one complete "You may exert this creature as it
+attacks. When you do" paragraph into a typed optional-cost fragment and a
+separate linked result program. The independently closed result body keeps
+its ordinary targets and effects. Self results bind the original source
+incarnation. `combat.attack.exert` depends on the player-locked
+`untap.step.exert_player` duration owner and ordinary trigger placement;
+unknown bodies or missing dependencies keep the paragraph residual. Separate
+paragraphs retain distinct linked identities, and paying one cost cannot
+publish another paragraph's result. Conditional attack permissions and other
+Exert producers require their own typed contracts.
+
 Fixed all-damage prevention shares the existing scope codec for static and
 turn-bound forms. Closed source and recipient predicates include attacking
 creatures, own creature tokens, enchanted creature sources, accepted combat

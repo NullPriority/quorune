@@ -75,6 +75,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/block_capacity_model.py",
         "quorune/prototype_model.py",
         "quorune/enlist_model.py",
+        "quorune/exert_model.py",
         "quorune/declaration_rule_effects.py",
         "quorune/continuous_conditions.py",
         "quorune/resolution_conditions.py",
@@ -250,6 +251,8 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/dynamic_characteristics.py",
         "quorune/engine.py",
         "quorune/entry_counter_coordination.py",
+        "quorune/entry_copy.py",
+        "quorune/copied_aura_entry.py",
         "quorune/entry_counters.py",
         "quorune/entry_state_conditions.py",
         "quorune/entry_state_metrics.py",
@@ -345,6 +348,8 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
 
 
 def _owner(relative: str, layer: str) -> str:
+    if relative == "quorune/copied_aura_entry.py":
+        return "semantic_runtime"
     if relative.startswith("server/"):
         return "server_transport"
     if relative.startswith("quorune/semantic_runtime/"):
@@ -787,6 +792,7 @@ def build_classifications() -> dict[str, Any]:
                             "attack_transition",
                             "block_transition",
                             "spell_copy_engine_adapter.py",
+                            "copied_aura_entry.py",
                             "ability_fragment_host.py",
                             "ability_fragments.py",
                             "characteristic_fragments.py",

@@ -15,6 +15,25 @@ function form(fields: ChoiceForm["fields"]): ChoiceForm {
   return { v: 1, fields, submit_label: "Submit" };
 }
 
+test("Exert costs require declared attackers and keep linked instances independent", () => {
+  const exert = form([
+    { name: "attackers", control: "assignment_map", required: true, allow_none: true,
+      rows: [{ value: "CREATURE", options: [{ value: "B" }] }] },
+    { name: "exert", control: "assignment_map", required: false, allow_none: true,
+      source_assignment: "attackers", rows: [{ value: "CREATURE", maximum: 2,
+        options: [{ value: "first-result" }, { value: "second-result" }] }] },
+  ]);
+  const attackers = { CREATURE: "B" };
+  assert.deepEqual(validateChoices(exert, { attackers, exert: {} }), []);
+  assert.deepEqual(validateChoices(exert, { attackers, exert: { CREATURE: "first-result" } }), []);
+  assert.deepEqual(validateChoices(exert, { attackers, exert: { CREATURE: ["first-result", "second-result"] } }), []);
+  for (const values of [
+    { attackers: {}, exert: { CREATURE: "first-result" } },
+    { attackers, exert: { CREATURE: ["first-result", "first-result"] } },
+    { attackers, exert: { CREATURE: "unknown-result" } },
+  ]) assert.ok(validateChoices(exert, values).length);
+});
+
 test("dynamic mana allocations enforce colors, integers, total and color multiplicity", () => {
   const field = {name: "mana_output", label: "Mana", control: "mana_modes", required: true,
     allowed_colors: ["G", "U"], total: 3, single_color: false, default: {G: 3}};

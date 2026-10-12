@@ -50,6 +50,7 @@
     "tests/fixtures/entry-copy-cards.json",
     "tests/fixtures/entry-designation-cards.json",
     "tests/fixtures/event-card-return.json",
+    "tests/fixtures/exert-cards.json",
     "tests/fixtures/explore-cards.json",
     "tests/fixtures/extort-cards.json",
     "tests/fixtures/fading-cards.json",
@@ -555,6 +556,120 @@
       "deck_files": [],
       "fixture_files": [],
       "rationale": "Strict original-card registration plus opponent target selection consumes these exact fixture cards."
+    },
+    {
+      "source": "tests/test_enlist_rules.py",
+      "symbol": "ExertAttackRuntimeTests.test_original_entangler_optional_attack_cost_linked_result_and_pending_replay",
+      "card_names": [
+        "Nef-Crop Entangler"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Original typed Exert attack actions and linked untap, privacy and replay witnesses consume these exact cards."
+    },
+    {
+      "source": "tests/test_enlist_rules.py",
+      "symbol": "ExertAttackRuntimeTests.test_original_naga_draw_uses_locked_controller_private_projection_and_replay",
+      "card_names": [
+        "Watchful Naga"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Original typed Exert attack actions and linked untap, privacy and replay witnesses consume these exact cards."
+    },
+    {
+      "source": "tests/test_enlist_rules.py",
+      "symbol": "ExertAttackRuntimeTests.test_exert_invalid_authority_and_cost_instances_roll_back_and_decline_is_legal",
+      "card_names": [
+        "Generic Bound Body",
+        "Gust Walker"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Original typed Exert attack actions and linked untap, privacy and replay witnesses consume these exact cards."
+    },
+    {
+      "source": "tests/test_enlist_rules.py",
+      "symbol": "ExertAttackRuntimeTests.test_exert_duration_locks_player_through_control_change_repeated_costs_and_stun",
+      "card_names": [
+        "Gust Walker"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Original typed Exert attack actions and linked untap, privacy and replay witnesses consume these exact cards."
+    },
+    {
+      "source": "tests/test_enlist_rules.py",
+      "symbol": "ExertAttackRuntimeTests.test_exert_producer_omission_mutant_is_killed",
+      "card_names": [
+        "Nef-Crop Entangler"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Original typed Exert attack actions and linked untap, privacy and replay witnesses consume these exact cards."
+    },
+    {
+      "source": "tests/test_enlist_rules.py",
+      "symbol": "ExertAttackRuntimeTests.test_original_crasher_linked_target_choice_has_authority_and_pending_replay",
+      "card_names": [
+        "Ahn-Crop Crasher",
+        "Generic Bound Body"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Original attack Exert publishes an ordinary target choice through the shared authoritative choice owner."
+    },
+    {
+      "source": "tests/test_enlist_rules.py",
+      "symbol": "ExertAttackRuntimeTests.test_actual_exert_source_blink_removes_duration_and_invalidates_original_self_result",
+      "card_names": [
+        "Ephemerate",
+        "Nef-Crop Entangler"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Actual Ephemerate departure resets the Exert duration and distinguishes the original linked result incarnation."
+    },
+    {
+      "source": "tests/test_enlist_rules.py",
+      "symbol": "ExertAttackRuntimeTests.test_current_ability_loss_removes_exert_offer_but_paid_result_and_duration_persist",
+      "card_names": [
+        "Nef-Crop Entangler"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Typed Exert layer-six presence, independent linked costs and canonical duration-state validation witnesses consume these exact fixtures."
+    },
+    {
+      "source": "tests/test_enlist_rules.py",
+      "symbol": "ExertAttackRuntimeTests.test_distinct_exert_paragraphs_publish_only_paid_linked_results",
+      "card_names": [
+        "Generic Exert Dual Result"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Typed Exert layer-six presence, independent linked costs and canonical duration-state validation witnesses consume these exact fixtures."
+    },
+    {
+      "source": "tests/test_enlist_rules.py",
+      "symbol": "ExertAttackRuntimeTests.test_exert_duration_validation_is_atomic_and_preserves_other_players",
+      "card_names": [
+        "Gust Walker",
+        "Nef-Crop Entangler"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Typed Exert layer-six presence, independent linked costs and canonical duration-state validation witnesses consume these exact fixtures."
     }
   ],
   "full_database_only": []

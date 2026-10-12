@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Mapping
+from typing import Any, Iterable, Mapping
 
 
 PARTNER_WITH_FRAGMENT_HANDLER_ID = "ability.static.partner-with.v1"
@@ -93,3 +93,25 @@ __all__ = [
     "TOXIC_ABILITY_FRAGMENT_KIND",
     "ToxicSpec",
 ]
+
+
+def normalized_protection_terms(
+    values: Iterable[str],
+    *,
+    field_name: str,
+    allowed: frozenset[str],
+) -> tuple[str, ...]:
+    if not isinstance(values, (list, tuple)):
+        raise AbilityFragmentError(
+            f"Protection source predicate {field_name} must be an array"
+        )
+    normalized = tuple(sorted(str(value).casefold() for value in values))
+    if (
+        any(type(value) is not str or not value for value in values)
+        or len(set(normalized)) != len(normalized)
+        or any(value not in allowed for value in normalized)
+    ):
+        raise AbilityFragmentError(
+            f"Protection source predicate {field_name} is unsupported"
+        )
+    return normalized

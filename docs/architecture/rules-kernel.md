@@ -26,6 +26,19 @@ power modifier; a blinked attacker does not. Negative additive results use
 zero under CR 107.1b. Attack choices sort before history capture so saved
 mapping order cannot change replay.
 
+Exert adds a separately selected optional attack cost. Current typed abilities
+and trusted linked result identities govern both the offer and accepted
+declaration. The canonical tap-state owner records the exerting player and
+publishes the linked occurrence while attack costs are paid; the resulting
+trigger waits for the existing APNAP placement boundary. Its controller and
+source incarnation remain locked after a control change or departure. Exert
+does not require a tapped permanent. Repeated exertions expire together during
+the exerting player's next physical untap step, regardless of the permanent's
+current controller. That step does not consume a stun counter on the prohibited
+permanent. Departure removes the old duration through the canonical zone reset.
+Unsupported conditional permissions, standalone activated Exert costs, and
+unrepresented phasing or skipped-step compositions remain outside this family.
+
 Self-transform activations pin the original source incarnation and its
 transform count when placed on the stack. The existing transform owner keeps
 the same permanent, counters, damage, attachments and acquisition history.

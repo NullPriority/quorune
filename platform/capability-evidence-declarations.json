@@ -10724,6 +10724,594 @@
       "applicability_note": "Optional Enlist taps and original source identity persist through pending triggers; live or last-known enlisted power is resolved through the canonical scalar owner, with negative additive results using zero."
     },
     {
+      "capability_id": "combat.attack.exert",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_actual_exert_source_blink_removes_duration_and_invalidates_original_self_result",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "combat.attack.exert",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_current_ability_loss_removes_exert_offer_but_paid_result_and_duration_persist",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "combat.attack.exert",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_distinct_exert_paragraphs_publish_only_paid_linked_results",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "combat.attack.exert",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_exert_duration_locks_player_through_control_change_repeated_costs_and_stun",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "combat.attack.exert",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_exert_duration_validation_is_atomic_and_preserves_other_players",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "combat.attack.exert",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_original_crasher_linked_target_choice_has_authority_and_pending_replay",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "combat.attack.exert",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_original_entangler_optional_attack_cost_linked_result_and_pending_replay",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "combat.attack.exert",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_original_naga_draw_uses_locked_controller_private_projection_and_replay",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "combat.attack.exert",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_original_entangler_optional_attack_cost_linked_result_and_pending_replay",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "combat.attack.exert",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_original_naga_draw_uses_locked_controller_private_projection_and_replay",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "combat.attack.exert",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_exert_producer_omission_mutant_is_killed",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "combat.attack.exert",
+      "evidence_class": "negative",
+      "test_id": "tests.test_enlist_rules.ExertAttackCompilerTests.test_exert_contract_rejects_open_bodies_malformed_values_and_missing_duration_owner",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "combat.attack.exert",
+      "evidence_class": "negative",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_current_ability_loss_removes_exert_offer_but_paid_result_and_duration_persist",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "combat.attack.exert",
+      "evidence_class": "negative",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_exert_duration_validation_is_atomic_and_preserves_other_players",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "combat.attack.exert",
+      "evidence_class": "negative",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_exert_invalid_authority_and_cost_instances_roll_back_and_decline_is_legal",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "combat.attack.exert",
+      "evidence_class": "positive",
+      "test_id": "tests.test_enlist_rules.ExertAttackCompilerTests.test_exert_as_attack_permission_and_result_are_linked_typed_nodes",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "combat.attack.exert",
+      "evidence_class": "positive",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_actual_exert_source_blink_removes_duration_and_invalidates_original_self_result",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "combat.attack.exert",
+      "evidence_class": "positive",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_distinct_exert_paragraphs_publish_only_paid_linked_results",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "combat.attack.exert",
+      "evidence_class": "positive",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_original_crasher_linked_target_choice_has_authority_and_pending_replay",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "combat.attack.exert",
+      "evidence_class": "positive",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_original_entangler_optional_attack_cost_linked_result_and_pending_replay",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "combat.attack.exert",
+      "evidence_class": "positive",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_original_naga_draw_uses_locked_controller_private_projection_and_replay",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "combat.attack.exert",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_original_naga_draw_uses_locked_controller_private_projection_and_replay",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "combat.attack.exert",
+      "evidence_class": "replay",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_actual_exert_source_blink_removes_duration_and_invalidates_original_self_result",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "combat.attack.exert",
+      "evidence_class": "replay",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_current_ability_loss_removes_exert_offer_but_paid_result_and_duration_persist",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "combat.attack.exert",
+      "evidence_class": "replay",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_distinct_exert_paragraphs_publish_only_paid_linked_results",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "combat.attack.exert",
+      "evidence_class": "replay",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_original_crasher_linked_target_choice_has_authority_and_pending_replay",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "combat.attack.exert",
+      "evidence_class": "replay",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_original_entangler_optional_attack_cost_linked_result_and_pending_replay",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "combat.attack.exert",
+      "evidence_class": "replay",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_original_naga_draw_uses_locked_controller_private_projection_and_replay",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
       "capability_id": "combat.attack.haste",
       "evidence_class": "interaction",
       "test_id": "tests.test_declare_attackers_rules.DeclareAttackersRuleTests.test_haste_attack_permission_uses_current_effective_keywords",
@@ -54856,6 +55444,594 @@
     {"capability_id":"turn.extra.fixed_after_current","evidence_class":"replay","test_id":"tests.test_fixed_extra_turns.FixedExtraTurnRuntimeTests.test_original_target_turn_spell_fizzles_after_accepted_target_concession","official_rule_ids":["500.7","608.2c","608.2b","800.4a"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Time Warp pays its full casting price and locks B as its target. An actual accepted B concession before resolution invalidates the sole target, moves the spell to its ordinary graveyard without scheduling any turn and replays from before cast."},
     {"capability_id":"turn.extra.fixed_after_current","evidence_class":"replay","test_id":"tests.test_fixed_extra_turns.FixedExtraTurnRuntimeTests.test_original_turn_spells_lock_recipients_schedule_lifo_and_replay","official_rule_ids":["500.7","608.2c","608.2b","800.4a"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Actual original Time Warp and Time Stretch casts pay their complete prices, lock distinct controller/target recipients, schedule only on resolution, reject unauthorized or malformed targeting without mutation, project decisions by principal and save/load/replay the resulting LIFO queue from before cast."},
     {"capability_id":"turn.extra.fixed_after_current","evidence_class":"rollback","test_id":"tests.test_fixed_extra_turns.FixedExtraTurnRuntimeTests.test_original_turn_spells_lock_recipients_schedule_lifo_and_replay","official_rule_ids":["500.7","608.2c","608.2b","800.4a"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Actual original Time Warp and Time Stretch casts pay their complete prices, lock distinct controller/target recipients, schedule only on resolution, reject unauthorized or malformed targeting without mutation, project decisions by principal and save/load/replay the resulting LIFO queue from before cast."},
+    {
+      "capability_id": "untap.step.exert_player",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_actual_exert_source_blink_removes_duration_and_invalidates_original_self_result",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "untap.step.exert_player",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_current_ability_loss_removes_exert_offer_but_paid_result_and_duration_persist",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "untap.step.exert_player",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_distinct_exert_paragraphs_publish_only_paid_linked_results",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "untap.step.exert_player",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_exert_duration_locks_player_through_control_change_repeated_costs_and_stun",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "untap.step.exert_player",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_exert_duration_validation_is_atomic_and_preserves_other_players",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "untap.step.exert_player",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_original_crasher_linked_target_choice_has_authority_and_pending_replay",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "untap.step.exert_player",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_original_entangler_optional_attack_cost_linked_result_and_pending_replay",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "untap.step.exert_player",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_original_naga_draw_uses_locked_controller_private_projection_and_replay",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "untap.step.exert_player",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_original_entangler_optional_attack_cost_linked_result_and_pending_replay",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "untap.step.exert_player",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_original_naga_draw_uses_locked_controller_private_projection_and_replay",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "untap.step.exert_player",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_exert_producer_omission_mutant_is_killed",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "untap.step.exert_player",
+      "evidence_class": "negative",
+      "test_id": "tests.test_enlist_rules.ExertAttackCompilerTests.test_exert_contract_rejects_open_bodies_malformed_values_and_missing_duration_owner",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "untap.step.exert_player",
+      "evidence_class": "negative",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_current_ability_loss_removes_exert_offer_but_paid_result_and_duration_persist",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "untap.step.exert_player",
+      "evidence_class": "negative",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_exert_duration_validation_is_atomic_and_preserves_other_players",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "untap.step.exert_player",
+      "evidence_class": "negative",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_exert_invalid_authority_and_cost_instances_roll_back_and_decline_is_legal",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "untap.step.exert_player",
+      "evidence_class": "positive",
+      "test_id": "tests.test_enlist_rules.ExertAttackCompilerTests.test_exert_as_attack_permission_and_result_are_linked_typed_nodes",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "untap.step.exert_player",
+      "evidence_class": "positive",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_actual_exert_source_blink_removes_duration_and_invalidates_original_self_result",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "untap.step.exert_player",
+      "evidence_class": "positive",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_distinct_exert_paragraphs_publish_only_paid_linked_results",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "untap.step.exert_player",
+      "evidence_class": "positive",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_original_crasher_linked_target_choice_has_authority_and_pending_replay",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "untap.step.exert_player",
+      "evidence_class": "positive",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_original_entangler_optional_attack_cost_linked_result_and_pending_replay",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "untap.step.exert_player",
+      "evidence_class": "positive",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_original_naga_draw_uses_locked_controller_private_projection_and_replay",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "untap.step.exert_player",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_original_naga_draw_uses_locked_controller_private_projection_and_replay",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "untap.step.exert_player",
+      "evidence_class": "replay",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_actual_exert_source_blink_removes_duration_and_invalidates_original_self_result",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "untap.step.exert_player",
+      "evidence_class": "replay",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_current_ability_loss_removes_exert_offer_but_paid_result_and_duration_persist",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "untap.step.exert_player",
+      "evidence_class": "replay",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_distinct_exert_paragraphs_publish_only_paid_linked_results",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "untap.step.exert_player",
+      "evidence_class": "replay",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_original_crasher_linked_target_choice_has_authority_and_pending_replay",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "untap.step.exert_player",
+      "evidence_class": "replay",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_original_entangler_optional_attack_cost_linked_result_and_pending_replay",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
+    {
+      "capability_id": "untap.step.exert_player",
+      "evidence_class": "replay",
+      "test_id": "tests.test_enlist_rules.ExertAttackRuntimeTests.test_original_naga_draw_uses_locked_controller_private_projection_and_replay",
+      "official_rule_ids": [
+        "701.43a",
+        "701.43b",
+        "701.43c",
+        "701.43d",
+        "508.1g",
+        "607.2h",
+        "502.3",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A typed optional attack Exert cost publishes only its linked result and retains a restriction through the exerting players next physical untap step, independent of current control."
+    },
     {
       "capability_id": "untap.step.optional_source",
       "evidence_class": "interaction",

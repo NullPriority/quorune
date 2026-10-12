@@ -8,6 +8,7 @@ from typing import Any, Iterable, Mapping, TypeAlias
 
 from .ability_fragment_primitives import (
     AbilityFragmentError,
+    normalized_protection_terms as _normalized_protection_terms,
     PARTNER_WITH_FRAGMENT_HANDLER_ID,
     PartnerWithSpec,
     TOXIC_ABILITY_FRAGMENT_KIND,
@@ -41,13 +42,13 @@ from .declaration_fragments import (
 from .defender_permission import DefenderAttackPermission
 from .block_capacity_model import BlockCapacitySpec
 from .enlist_model import EnlistSpec
+from .exert_model import ExertAttackSpec
 from .as_unblocked import AsUnblockedAssignmentPermission
 from .toughness_assignment_model import ToughnessAssignmentSpec
 from .umbra_armor_model import UmbraArmorSpec
 from .creature_subtypes import canonical_creature_subtype
 from .replacement.immutable import FrozenMap, thaw_value
 from .trigger_participation import TriggerMultiplierSpec, WardSpec
-from .replacement.immutable import thaw_value
 from .static_component_scope import (
     StaticComponentApplicabilitySpec,
     StaticComponentScopeSpec,
@@ -160,28 +161,6 @@ _PROTECTION_SUPERTYPES = frozenset(
 _PROTECTION_COLOR_COUNTS = frozenset(
     {"colored", "monocolored", "multicolored"}
 )
-
-
-def _normalized_protection_terms(
-    values: Iterable[str],
-    *,
-    field_name: str,
-    allowed: frozenset[str],
-) -> tuple[str, ...]:
-    if not isinstance(values, (list, tuple)):
-        raise AbilityFragmentError(
-            f"Protection source predicate {field_name} must be an array"
-        )
-    normalized = tuple(sorted(str(value).casefold() for value in values))
-    if (
-        any(type(value) is not str or not value for value in values)
-        or len(set(normalized)) != len(normalized)
-        or any(value not in allowed for value in normalized)
-    ):
-        raise AbilityFragmentError(
-            f"Protection source predicate {field_name} is unsupported"
-        )
-    return normalized
 
 
 @dataclass(frozen=True, slots=True)
@@ -992,6 +971,7 @@ StaticAbilityFragment: TypeAlias = (
     | DefenderAttackPermission
     | BlockCapacitySpec
     | EnlistSpec
+    | ExertAttackSpec
     | AsUnblockedAssignmentPermission
     | ToughnessAssignmentSpec
     | UmbraArmorSpec
@@ -1055,6 +1035,8 @@ def ability_fragment_to_dict(
         kind = "block_capacity"
     elif isinstance(fragment, EnlistSpec):
         kind = 'enlist'
+    elif isinstance(fragment, ExertAttackSpec):
+        kind = 'exert_as_attacks'
     elif isinstance(fragment, AsUnblockedAssignmentPermission):
         kind = "as_unblocked_assignment"
     elif isinstance(fragment,ToughnessAssignmentSpec):kind='toughness_assignment_rule'
@@ -1163,6 +1145,7 @@ def ability_fragment_from_dict(
     if value["kind"] == "block_capacity":
         return BlockCapacitySpec.from_dict(value["value"])
     if value['kind']=='enlist':return EnlistSpec.from_dict(dict(value['value']))
+    if value['kind']=='exert_as_attacks':return ExertAttackSpec.from_dict(dict(value['value']))
     if value["kind"] == "as_unblocked_assignment":
         return AsUnblockedAssignmentPermission.from_dict(value["value"])
     if value['kind']=='toughness_assignment_rule':return ToughnessAssignmentSpec.from_dict(value['value'])
@@ -1223,6 +1206,7 @@ def canonical_ability_fragments(
                 DefenderAttackPermission,
                 BlockCapacitySpec,
                 EnlistSpec,
+                ExertAttackSpec,
                 AsUnblockedAssignmentPermission,
                 ToughnessAssignmentSpec,
                 UmbraArmorSpec,
