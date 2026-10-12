@@ -93,3 +93,11 @@ and mutation declarations are checked independently; see the
 Trust computation is deterministic metadata work. It is performed at compile,
 preflight, load, and replay boundaries rather than inside characteristic hot
 paths.
+
+Session creation and one synchronous Game Record replay share one validated
+read-only capability registry/evidence snapshot across their nested trust
+checks. This is an invocation boundary: the next call re-reads and validates
+registry, evidence, and implementation inputs, including edits with unchanged
+file metadata. Nested component batches reuse the current snapshot; normal
+return and exceptions clear it. No process-wide metadata cache grants trust,
+and a session load that needs no capability validation remains lazy.

@@ -34,6 +34,62 @@ class GameRecordV3Tests(unittest.TestCase):
     def tearDownClass(cls):
         cls.db.close()
 
+    def test_replay_validates_capability_inputs_once_per_invocation_and_refreshes_next(self):
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.rules.evidence import CapabilityEvidenceError, _VALIDATION_REGISTRY
+
+        session = make_session(self.db, self.mishra, self.zimone, players=2,
+                               seed=31011, auto_pass_empty=False)
+        keep_all(session)
+        for _ in range(4):
+            accepted = session.act(session.pending_principals()[0], {'action_id': 'pass'})
+            self.assertTrue(accepted.ok, accepted.summary)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'replay-snapshot'
+            session.save(path)
+            with patch.object(CapabilityRegistry, 'from_path', wraps=CapabilityRegistry.from_path) as loader:
+                first = replay_record(path, self.db, verify=True)
+                self.assertTrue(first['ok'])
+                self.assertEqual(1, loader.call_count, 'Replay repeats invariant registry validation')
+            self.assertIsNone(_VALIDATION_REGISTRY.get())
+            from quorune.rules.capabilities import CapabilityRegistryError
+            with patch('quorune.rules.capabilities.implementation_component_resolves', return_value=False):
+                with self.assertRaisesRegex(CapabilityRegistryError, 'resolvable implementation'):
+                    replay_record(path, self.db, verify=True)
+            self.assertIsNone(_VALIDATION_REGISTRY.get())
+            second = replay_record(path, self.db, verify=True)
+            self.assertEqual(first['final_state_hash'], second['final_state_hash'])
+            with patch('quorune.rules.evidence.load_capability_evidence_index',
+                       side_effect=CapabilityEvidenceError('changed evidence between replays')):
+                with self.assertRaisesRegex(CapabilityEvidenceError, 'changed evidence between replays'):
+                    replay_record(path, self.db, verify=True)
+            self.assertIsNone(_VALIDATION_REGISTRY.get())
+
+    def test_session_create_validation_snapshot_ends_before_later_invocations(self):
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.rules.evidence import CapabilityEvidenceError, _VALIDATION_REGISTRY
+
+        with patch.object(CapabilityRegistry, 'from_path', wraps=CapabilityRegistry.from_path) as loader:
+            session = make_session(self.db, self.mishra, self.zimone, players=2,
+                                   seed=31012, auto_pass_empty=False)
+            self.assertEqual(1, loader.call_count)
+        self.assertIsNone(_VALIDATION_REGISTRY.get())
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'session-snapshot'
+            session.save(path)
+            with patch.object(CapabilityRegistry, 'from_path', wraps=CapabilityRegistry.from_path) as loader:
+                loaded = CommanderSession.load(self.db, path)
+                self.assertEqual(0, loader.call_count)
+                from quorune.record import authoritative_state_hash
+                self.assertEqual(authoritative_state_hash(session.state), authoritative_state_hash(loaded.state))
+            self.assertIsNone(_VALIDATION_REGISTRY.get())
+            with patch('quorune.rules.evidence.load_capability_evidence_index',
+                       side_effect=CapabilityEvidenceError('changed invocation inputs')):
+                with self.assertRaisesRegex(CapabilityEvidenceError, 'changed invocation inputs'):
+                    make_session(self.db, self.mishra, self.zimone, players=2,
+                                 seed=31013, auto_pass_empty=False)
+                self.assertIsNone(_VALIDATION_REGISTRY.get())
+
     def test_nonsemantic_action_records_without_loading_unused_binding_registry(self):
         session = make_session(self.db, self.mishra, self.zimone, players=2,
                                seed=31001, auto_pass_empty=False)

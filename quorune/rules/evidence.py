@@ -271,7 +271,7 @@ _VALIDATION_REGISTRY: ContextVar[dict[str, Any] | None] = ContextVar(
 
 @contextmanager
 def _capability_validation_snapshot():
-    """Share validated read-only inputs only within one component batch."""
+    """Share validated read-only inputs within one synchronous validation operation."""
     if _VALIDATION_REGISTRY.get() is not None:
         yield
         return
