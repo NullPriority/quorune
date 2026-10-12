@@ -259,7 +259,7 @@ def query_characteristic_quantity(
     source = SourceReferenceSpec(source_name).regex_pattern
     counter = re.fullmatch(
         rf"(?P<counter>[A-Za-z0-9+/-]+) counters? on "
-        rf"(?:it|him|her|this (?:Aura|creature|Equipment|permanent|token)|{source})",
+        rf"(?:it|him|her|this (?:artifact|Aura|creature|enchantment|Equipment|land|permanent|token)|{source})",
         text,
         re.IGNORECASE,
     )

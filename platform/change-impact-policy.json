@@ -3364,6 +3364,25 @@
         "test_card_program_trust",
         "test_activated_abilities"
       ]
+    },
+    {
+      "id": "source-counter-anthem-contract",
+      "patterns": [
+        "quorune/compiler/source_counter_anthems.py",
+        "quorune/compiler/continuous_templates.py",
+        "quorune/compiler/query_characteristic_templates.py",
+        "quorune/compiler/runtime_templates.py",
+        "quorune/semantic_runtime/continuous_components.py",
+        "tests/fixtures/source-counter-anthem-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_query_keyword_grants",
+        "test_continuous_effect_duration",
+        "test_fixed_public_state_characteristics",
+        "test_query_power_toughness_definitions",
+        "test_proliferate_rules",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

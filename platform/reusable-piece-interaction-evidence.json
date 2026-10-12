@@ -9455,12 +9455,12 @@
       "assurance_kind": "runtime_composition",
       "test_id": "test_original_chill_mills_available_cards_and_preserves_replacement_destinations",
       "piece_ids": [
-        "capability.zone.mill.fixed",
-        "capability.zone.change.destination_replacement"
+        "capability.zone.change.destination_replacement",
+        "capability.zone.mill.fixed"
       ],
       "capability_ids": [
-        "zone.mill.fixed",
-        "zone.change.destination_replacement"
+        "zone.change.destination_replacement",
+        "zone.mill.fixed"
       ],
       "interaction_order": 2,
       "assertion": "Original Chill of Foreboding mills every available short-library card in one batch; a current opponent-graveyard replacement redirects opponents to exile while the controller mills normally, with no empty-library loss and exact pre-cast replay."
@@ -9470,15 +9470,30 @@
       "assurance_kind": "runtime_composition",
       "test_id": "test_original_howling_mine_rechecks_untapped_condition_at_resolution",
       "piece_ids": [
-        "capability.trigger.event.scheduled_player_result",
-        "capability.trigger.condition.fixed_public_state"
+        "capability.trigger.condition.fixed_public_state",
+        "capability.trigger.event.scheduled_player_result"
       ],
       "capability_ids": [
-        "trigger.event.scheduled_player_result",
-        "trigger.condition.fixed_public_state"
+        "trigger.condition.fixed_public_state",
+        "trigger.event.scheduled_player_result"
       ],
       "interaction_order": 2,
       "assertion": "Original Howling Mine checks its untapped condition at draw-step occurrence and again after an actual Icy Manipulator response taps it. The normal turn draw remains, the additional draw is suppressed, and pre-response replay preserves the outcome."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_boon_live_counter_bonus_tracks_proliferate_late_entry_and_departure",
+      "piece_ids": [
+        "capability.continuous.power_toughness.fixed_anthem",
+        "capability.counter.producer.proliferate"
+      ],
+      "capability_ids": [
+        "continuous.power_toughness.fixed_anthem",
+        "counter.producer.proliferate"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Boon of the Spirit Realm receives its first Constellation counter, then actual Contentious Plan Proliferate increases the live creature bonus; a later creature joins and source destruction removes the bonus, with pending load and pre-cast replay."
     }
   ]
 }

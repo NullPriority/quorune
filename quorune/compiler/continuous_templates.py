@@ -229,8 +229,14 @@ _FIXED_QUERY_POWER_TOUGHNESS = re.compile(
 )
 def fixed_power_toughness_anthem_handler(
     oracle_line: str,
+    *,
+    source_name: str = "source",
 ) -> tuple[str, Mapping[str, Any], str | tuple[str, ...]] | None:
     text = _TRAILING_REMINDER.sub("", oracle_line.strip()).strip()
+    if "for each" in text.casefold():
+        from .source_counter_anthems import source_counter_anthem_handler
+        return source_counter_anthem_handler(text, source_name=source_name,
+            compile_fixed=lambda body: fixed_power_toughness_anthem_handler(body))
     match = _FIXED_QUERY_POWER_TOUGHNESS.fullmatch(text)
     if match is None:
         return None

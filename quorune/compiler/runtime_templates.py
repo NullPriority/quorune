@@ -468,7 +468,7 @@ def _continuous_static_runtime_template(
                     "closed typed capability"
                 ),
             )
-    fixed_anthem = fixed_power_toughness_anthem_handler(text)
+    fixed_anthem = fixed_power_toughness_anthem_handler(text, source_name=source_name or "source")
     if fixed_anthem is None:
         return None
     return StaticRuntimeTemplate(

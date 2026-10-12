@@ -19304,6 +19304,25 @@
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_query_keyword_grants.SourceCounterAnthemRuntimeTests.test_original_boon_live_counter_bonus_tracks_proliferate_late_entry_and_departure",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Boon of the Spirit Realm is actually cast, its Constellation result creates the first blessing counter, actual Contentious Plan Proliferate increases the live bonus, a later Grizzly Bears cast joins the current recipient set, and actual Disenchant removes the source and bonus. Foreign-controller creatures stay unchanged; pending save/load and pre-cast replay are exact."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "interaction",
       "test_id": "tests.test_global_plural_characteristic_sets.GlobalPluralCharacteristicRuntimeTests.test_actual_atlantis_layer_grant_changes_block_offers_and_acceptance",
       "official_rule_ids": [
         "604.1",
@@ -19361,6 +19380,25 @@
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_query_keyword_grants.SourceCounterAnthemRuntimeTests.test_original_boon_live_counter_bonus_tracks_proliferate_late_entry_and_departure",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Boon of the Spirit Realm is actually cast, its Constellation result creates the first blessing counter, actual Contentious Plan Proliferate increases the live bonus, a later Grizzly Bears cast joins the current recipient set, and actual Disenchant removes the source and bonus. Foreign-controller creatures stay unchanged; pending save/load and pre-cast replay are exact."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_global_plural_characteristic_sets.GlobalPluralCharacteristicRuntimeTests.test_actual_atlantis_cast_grants_foreign_merfolk_and_source_exclusion_with_replay",
       "official_rule_ids": [
         "604.1",
@@ -19395,6 +19433,44 @@
         "commander_review"
       ],
       "applicability_note": "Reject removal of the generic typed static-anthem lowering."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_source_counter_anthem_missing_authority_and_producer_remain_residual",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Omitting the existing static anthem authority or shared source quantity producer prevents exact source-counter group admission."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_query_keyword_grants.SourceCounterAnthemRuntimeTests.test_source_counter_scaling_omission_mutant_is_killed_by_original_boon",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Removing only the source-counter scaling fact is killed at the explicit bonus assertion after actual Proliferate; a fixed one-counter bonus cannot mask the missing multiplier."
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
@@ -19452,6 +19528,63 @@
         "commander_review"
       ],
       "applicability_note": "Block the shared public query and retain the affected anthem as a source-spanned material residual."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_source_counter_anthem_descriptor_keeps_legacy_shape_and_rejects_malformed_scaling",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Legacy version-two fixed anthem descriptors remain accepted; version-three source-counter descriptors reject unknown/noncanonical counters and malformed versions."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_source_counter_anthem_missing_authority_and_producer_remain_residual",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Omitting the existing static anthem authority or shared source quantity producer prevents exact source-counter group admission."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_source_counter_group_anthems_preserve_live_public_query_and_named_counter",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Named source-counter bonuses reuse the closed live creature query and retain each named counter. Recipient-relative pronouns, all-counter totals and target-relative counters remain residual."
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
@@ -19551,6 +19684,44 @@
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_source_counter_anthem_descriptor_keeps_legacy_shape_and_rejects_malformed_scaling",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Legacy version-two fixed anthem descriptors remain accepted; version-three source-counter descriptors reject unknown/noncanonical counters and malformed versions."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_source_counter_group_anthems_preserve_live_public_query_and_named_counter",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Named source-counter bonuses reuse the closed live creature query and retain each named counter. Recipient-relative pronouns, all-counter totals and target-relative counters remain residual."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_measured_50_card_lower_bound_is_capability_closed",
       "official_rule_ids": [
         "604.1",
@@ -19570,6 +19741,25 @@
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_query_keyword_grants.SourceCounterAnthemRuntimeTests.test_original_boon_live_counter_bonus_tracks_proliferate_late_entry_and_departure",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Boon of the Spirit Realm is actually cast, its Constellation result creates the first blessing counter, actual Contentious Plan Proliferate increases the live bonus, a later Grizzly Bears cast joins the current recipient set, and actual Disenchant removes the source and bonus. Foreign-controller creatures stay unchanged; pending save/load and pre-cast replay are exact."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "positive",
       "test_id": "tests.test_global_plural_characteristic_sets.GlobalPluralCharacteristicCompilerTests.test_global_other_plural_uses_canonical_subtype_without_controller_filter",
       "official_rule_ids": [
         "604.1",
@@ -19585,6 +19775,25 @@
         "commander_review"
       ],
       "applicability_note": "Original global canonical subtype plural grants use one current set across layer-six keywords and fixed stats, all controllers and source exclusion; actual block legality, private commands and replay preserve authority."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "property",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_source_counter_anthem_descriptor_keeps_legacy_shape_and_rejects_malformed_scaling",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Legacy version-two fixed anthem descriptors remain accepted; version-three source-counter descriptors reject unknown/noncanonical counters and malformed versions."
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",
@@ -19623,6 +19832,25 @@
         "commander_review"
       ],
       "applicability_note": "Round-trip extended affected-set and schema-v2 conditional descriptors, then replay their resulting layer-7c modifiers exactly."
+    },
+    {
+      "capability_id": "continuous.power_toughness.fixed_anthem",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_query_keyword_grants.SourceCounterAnthemRuntimeTests.test_original_boon_live_counter_bonus_tracks_proliferate_late_entry_and_departure",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Boon of the Spirit Realm is actually cast, its Constellation result creates the first blessing counter, actual Contentious Plan Proliferate increases the live bonus, a later Grizzly Bears cast joins the current recipient set, and actual Disenchant removes the source and bonus. Foreign-controller creatures stay unchanged; pending save/load and pre-cast replay are exact."
     },
     {
       "capability_id": "continuous.power_toughness.fixed_anthem",

@@ -394,6 +394,16 @@ opponent-only targets, attachment-relative, chosen, counter-qualified, tapped,
 modified, keyword-qualified, dynamic, conditional, quoted, Protection,
 type-changing, and variable-duration forms remain source-spanned residuals.
 
+`compiler/source_counter_anthems.py` extends the existing live static anthem
+owner with fixed signed power/toughness coefficients per named counter on the
+source. The creature recipient query remains independently closed and live;
+the shared continuous source context supplies the current counter count for
+layer 7c. Source departure or ability removal ends applicability, and later
+matching creatures receive the current bonus. Version-three anthem descriptors
+add only `source_counter`; fixed version-two descriptors retain their decoder.
+Ambiguous recipient pronouns, all-counter totals, counters on other objects,
+and unrelated quantity expressions remain residual in this production.
+
 `compiler/fixed_target_effect_sequences.py` also owns one fixed source-
 characteristic result shared by activated and normalized triggered contexts.
 It accepts a fixed power/toughness modifier plus supported keywords, one or
