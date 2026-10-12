@@ -87,6 +87,11 @@ a granted ability. Ambiguous "other" groups, variable target counts,
 two-object restrictions, unrepresented predicates, and different durations
 remain residual.
 
+Temporary declaration routing recognizes only the complete unconditional
+"can't attack/block/be blocked this turn" instruction. Static restrictions
+whose public condition refers to activity this turn retain their ordinary
+declaration owner and condition evaluation.
+
 `compiler/extra_turn_templates.py` lowers one through ten fixed extra turns
 after the current turn for the resolving controller or one ordinary player or
 opponent target. Each turn is a separate existing `extra_turn` instruction;
@@ -700,6 +705,11 @@ no counters. Variable,
 hybrid, Phyrexian, snow, zero, restricted, and nonmana
 costs, reflexive `when you do` forms, nested or repeated choices, linked
 results, and multi-effect or independently inexact bodies remain residual.
+
+Fixed optional payment shapes also recognize the target origin retained by a
+typed token-copy recipe. String target placeholders and recipe origins share
+the same independently closed target/copy authority; an unsupported recipe
+still fails its canonical shape validator.
 
 `compiler/power_up_templates.py` specializes the parser's explicit Power-up
 marker into a typed price descriptor and once-only activation limit. Both the

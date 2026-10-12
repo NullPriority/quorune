@@ -40,9 +40,9 @@ def closed_static_or_replacement_node(
 ) -> OracleNode | None:
     """Dispatch closed nontriggered static and replacement line owners."""
 
-    if (
-        re.search(r"\bthis turn\.?$", material_line, re.I)
-        and re.search(r"\bcan't (?:attack|block|be blocked)\b", material_line, re.I)
+    if re.fullmatch(
+        r".+? can't (?:attack or block|attack|block|be blocked) this turn\.?",
+        material_line, re.I,
     ):
         return None
 

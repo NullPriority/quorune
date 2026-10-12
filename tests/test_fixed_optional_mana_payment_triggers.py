@@ -123,6 +123,15 @@ def payment_continuation(effect) -> SemanticChoiceContinuation:
 
 
 class FixedOptionalManaPaymentCompilerTests(unittest.TestCase):
+    def test_fixed_payment_target_copy_retains_typed_origin_and_closure(self):
+        text="Whenever this creature becomes untapped, you may pay {1}{R}. If you do, create a token that's a copy of another target creature, except it's an enchantment in addition to its other types. It gains haste. Exile it at the beginning of the next end step."
+        ir=compile_oracle_card(payment_record(text),capability_registry=load_default_capability_registry(),
+                               capability_profile='commander_review')
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        node=ir.faces[0].nodes[0]
+        self.assertEqual('target',node.effects[0]['effects'][0]['copy_spec']['origin'])
+        self.assertIn('effect.choice.optional_fixed_mana_payment',node.capability_dependencies)
+        self.assertIn('token.creation.fixed_copy',node.capability_dependencies)
     # CR 201.5, 400.7 and 608.2c: the paid result refers to the original
     # triggering source or sealed entering object, not a later same-name/ref
     # object. Payment is offered at resolution. "When you do" creates a

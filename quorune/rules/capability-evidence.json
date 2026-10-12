@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "8d6b0818cb27c21a394f4e11efd0c0a9cbd7fbaea161996c47c0b8afded1a077",
-  "declaration_source_fingerprint": "de6daa4b88dfee5cad3d84917a261e94318e9ba6e6a61453b43e4dc72476331b",
+  "registry_fingerprint": "e8670b343e07a3bdd353057460077c16a992bbda44cc0a20b55e955cb92af679",
+  "declaration_source_fingerprint": "20bc2db8dccca1917aef61cc93775ff4e19b3a8b625712038da56f45dfa217d5",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -36605,6 +36605,23 @@
     {
       "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
       "evidence_class": "positive",
+      "test_id": "tests.test_temporary_declaration_restriction_effects.GroupDeclarationCompilerTests.test_static_this_turn_history_conditions_keep_their_declaration_owner",
+      "official_rule_ids": [
+        "508.1c",
+        "509.1b",
+        "611.2c",
+        "514.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Static attack/unblockable restrictions conditioned on current-turn history remain exact under their original declaration owner; only complete unconditional this-turn instructions route to resolution."
+    },
+    {
+      "capability_id": "continuous.resolution.declaration_rules_until_end_of_turn",
+      "evidence_class": "positive",
       "test_id": "tests.test_temporary_declaration_restriction_effects.GroupDeclarationRuntimeTests.test_original_blizzard_revalidates_each_target_and_retains_only_resolved_incarnations",
       "official_rule_ids": [
         "508.1c",
@@ -60141,6 +60158,28 @@
         "commander_review"
       ],
       "applicability_note": "A paid attack result retains the particular triggering source's logical incarnation."
+    },
+    {
+      "capability_id": "effect.choice.optional_fixed_mana_payment",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_optional_mana_payment_triggers.FixedOptionalManaPaymentCompilerTests.test_fixed_payment_target_copy_retains_typed_origin_and_closure",
+      "official_rule_ids": [
+        "109.5",
+        "118.12",
+        "201.5",
+        "400.7",
+        "603.5",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A fixed payment preserves the existing typed target-origin copy recipe and its token-copy plus target-revalidation closure; the source-untap copy body used by original Felhide Spiritbinder remains exact."
     },
     {
       "capability_id": "effect.choice.optional_fixed_mana_payment",
@@ -107896,5 +107935,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "d5e89a4744a5ee91cf7355b2c159d7e23256a1cc150e62c720a6092ddb831103"
+  "fingerprint": "c1e33a536d4bd652806c5a536e94b98228e04cea49c8e118b72e3a1d889d4d62"
 }

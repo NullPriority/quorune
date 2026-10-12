@@ -174,6 +174,13 @@ def _contains_target_reference(value: Any) -> bool:
             or value.startswith("$target.")
         )
     if isinstance(value, Mapping):
+        if value.get('op') == 'create_token' and isinstance(value.get('copy_spec'), Mapping):
+            from ..token_copy_recipes import TokenCopyRecipeSpec
+            try:
+                if TokenCopyRecipeSpec.from_dict(value['copy_spec']).origin == 'target':
+                    return True
+            except (TypeError, ValueError):
+                pass
         return any(_contains_target_reference(child) for child in value.values())
     if isinstance(value, (list, tuple)):
         return any(_contains_target_reference(child) for child in value)

@@ -1073,6 +1073,18 @@ class GroupDeclarationCompilerTests(unittest.TestCase):
             capability_registry=load_default_capability_registry(),
             capability_profile="commander_review")
 
+    def test_static_this_turn_history_conditions_keep_their_declaration_owner(self):
+        for text in (
+            "This creature can't attack unless you've cast a creature spell this turn.",
+            "This creature can't attack or block unless a creature died under your control this turn.",
+            "This creature can't be blocked as long as you've drawn two or more cards this turn.",
+        ):
+            with self.subTest(text=text):
+                ir=compile_oracle_card(qualified_declaration_record(text),
+                    capability_registry=load_default_capability_registry(),capability_profile="commander_review")
+                self.assertEqual("exact",ir.status,ir.material_residuals)
+                self.assertTrue(ir.faces[0].nodes[0].template_id.startswith("intrinsic-"))
+
     def test_bounded_target_groups_keep_target_count_and_one_rule_instruction(self):
         from test_qualified_zone_event_queries import query_record
 
