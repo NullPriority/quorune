@@ -181,6 +181,22 @@ def fixed_public_multi_event_binding_spec(
 ) -> FixedPublicEventBindingSpec | None:
     """Parse one exact two-event source subscription with one active zone."""
 
+    qualified = re.fullmatch(r'(?:When|Whenever) (?P<subject>(?:a|an|another) .+?) (?P<pair>enters or dies|enters or leaves the battlefield), (?P<body>.+)', material_line, re.I)
+    if qualified is not None:
+        from .qualified_zone_event_bindings import qualified_public_zone_event_binding_spec
+        verbs = ('enters', 'dies' if qualified['pair'].casefold().endswith('dies') else 'leaves the battlefield')
+        children = tuple(qualified_public_zone_event_binding_spec(
+            f"Whenever {qualified['subject']} {verb}, {qualified['body']}", card_name=card_name)
+            for verb in verbs)
+        if any(child is None for child in children):
+            return None
+        subscriptions = tuple(FixedEventSubscription(child.event, child.condition) for child in children)
+        return _spec(children[0].event, 'qualified_zone_event_pair', qualified['body'],
+            'fixed-qualified-zone-event-pair-v1', 'trigger-event-normalized-zone-change',
+            condition=fixed_event_subscription_condition(subscriptions),
+            capabilities=tuple(sorted({'trigger.subscription.fixed_multi_event',
+                *(cap for child in children for cap in child.capabilities)})))
+
     independent = re.fullmatch(r'(?P<first>(?:When|Whenever) .+?) and (?P<second>(?:when|whenever) .+?), (?P<body>.+)', material_line, re.I)
     if independent is not None and _SOURCE_ARTIFACT_ENTRY_SACRIFICE.fullmatch(material_line) is None:
         if re.search(r'\band (?:when|whenever)\b', independent['first'] + ' ' + independent['second'], re.I):

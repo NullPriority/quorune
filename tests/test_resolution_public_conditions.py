@@ -103,6 +103,37 @@ class ResolutionPublicConditionCompilerTests(unittest.TestCase):
             with self.assertRaises(AssertionError):
                 self.test_independent_dual_event_subscription_keeps_each_condition()
 
+    def test_qualified_zone_event_pair_preserves_each_occurrence_predicate(self):
+        from test_bound_effect_programs import record
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.event_subscriptions import FixedEventSubscriptionSet
+        text = 'Whenever another creature you control enters or dies, draw a card.'
+        ir = compile_oracle_card(record(text, 'Enchantment'), capability_registry=load_default_capability_registry())
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        node = next(n for n in ir.faces[0].nodes if n.kind == 'triggered_ability')
+        subscriptions = FixedEventSubscriptionSet.from_condition(node.event_condition)
+        self.assertEqual({'permanent.enter','creature.dies'}, {r.event for r in subscriptions.subscriptions})
+        for row in subscriptions.subscriptions:
+            condition = str(row.condition)
+            self.assertIn('$source.controller', condition)
+            self.assertIn('$source.ref', condition)
+            self.assertIn('creature', condition)
+
+    def test_qualified_event_pair_unknown_predicate_and_parser_omission_fail_closed(self):
+        from test_bound_effect_programs import record
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.compiler import fixed_public_multi_event_bindings as owner
+        registry = load_default_capability_registry()
+        for text in (
+            'Whenever another creature you control with an unknown quality enters or dies, draw a card.',
+            'Whenever one or more creatures you control enter or die, draw a card.',
+            'Whenever another creature you control enters, dies, or attacks, draw a card.',
+        ):
+            self.assertNotEqual('exact', compile_oracle_card(record(text, 'Enchantment'), capability_registry=registry).status)
+        with patch.object(owner, 'fixed_public_multi_event_binding_spec', return_value=None):
+            with self.assertRaises(AssertionError):
+                self.test_qualified_zone_event_pair_preserves_each_occurrence_predicate()
+
     def test_bare_subtype_condition_retains_permanent_not_creature_domain(self):
         # CR 109.2: a bare subtype denotes battlefield permanents, including Kindred.
         from quorune.compiler.public_state_queries import fixed_public_state_condition
@@ -369,6 +400,40 @@ class ResolutionPublicConditionRuntimeTests(unittest.TestCase):
         for oid in session.state.players['A'].zones['hand']:
             self.assertNotIn(session.state.cards[oid].ref, projected)
         self.replay(session, load=True)
+
+    def test_qualified_pair_actual_entry_and_death_draw_only_for_source_controller(self):
+        session = self.session(357302)
+        engine = session.engine
+        source = self.add(engine, 'Generic Qualified Entry Death Draw', zone='hand')
+        own = self.add(engine, 'Hill Giant', zone='hand', ref='pair-own')
+        foreign = self.add(engine, 'Generic Bound Body', seat='B', ref='pair-foreign')
+        removal = self.add(engine, 'Murder', zone='hand')
+        action = self.ready(session, source, {'G': 1, 'R': 1, 'B': 2, 'C': 4})
+        self.checkpoint(session)
+        accepted = session.act('pilot:A', {'action_id': action['id'], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        while session.pending_principals()[0] != 'pilot:A':
+            self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
+        action = next(a for a in session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions'] if a.get('card') == own.ref)
+        before = len(session.state.players['A'].zones['hand'])
+        accepted = session.act('pilot:A', {'action_id': action['id'], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        self.assertEqual(before, len(session.state.players['A'].zones['hand']))
+        while session.pending_principals()[0] != 'pilot:A':
+            self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
+        action = next(a for a in session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions'] if a.get('card') == removal.ref)
+        before = len(session.state.players['A'].zones['hand'])
+        accepted = session.act('pilot:A', {'action_id': action['id'], 'targets': [own.ref], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        self.assertEqual(before, len(session.state.players['A'].zones['hand']))
+        self.replay(session, load=True)
+        before = len(session.state.players['A'].zones['hand'])
+        engine.apply_effect({'op': 'destroy', 'card': foreign.ref}, actor='A')
+        self.resolve(session)
+        self.assertEqual(before, len(session.state.players['A'].zones['hand']))
 
     def test_trusted_prefix_changes_condition_before_private_result_and_replay(self):
         session = self.session(4821001)

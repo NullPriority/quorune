@@ -53732,6 +53732,22 @@
     },
     {
       "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_qualified_pair_actual_entry_and_death_draw_only_for_source_controller",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified entry/death subscriptions retain controller, source exclusion and public characteristic predicates across canonical occurrences, predeparture snapshots and replay; unknown subjects remain residual."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_fixed_multi_event_departure_uses_lki_and_apnap",
       "official_rule_ids": ["603.2", "603.3", "603.6"],
@@ -53756,6 +53772,22 @@
     },
     {
       "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_qualified_pair_actual_entry_and_death_draw_only_for_source_controller",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified entry/death subscriptions retain controller, source exclusion and public characteristic predicates across canonical occurrences, predeparture snapshots and replay; unknown subjects remain residual."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_fixed_multi_event_dependency_and_parser_mutant_fail_closed",
       "official_rule_ids": ["603.2", "603.3", "603.6"],
@@ -53777,6 +53809,22 @@
         "commander_review"
       ],
       "applicability_note": "Two distinct typed subscriptions share one source-zone and result while preserving source entry, controller and mana-value predicates; actual casts, foreign/small controls, privacy, replay and compiler omission evidence."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionCompilerTests.test_qualified_event_pair_unknown_predicate_and_parser_omission_fail_closed",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified entry/death subscriptions retain controller, source exclusion and public characteristic predicates across canonical occurrences, predeparture snapshots and replay; unknown subjects remain residual."
     },
     {
       "capability_id": "trigger.subscription.fixed_multi_event",
@@ -53805,6 +53853,22 @@
     {
       "capability_id": "trigger.subscription.fixed_multi_event",
       "evidence_class": "negative",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionCompilerTests.test_qualified_event_pair_unknown_predicate_and_parser_omission_fail_closed",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified entry/death subscriptions retain controller, source exclusion and public characteristic predicates across canonical occurrences, predeparture snapshots and replay; unknown subjects remain residual."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "negative",
       "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay",
       "official_rule_ids": [
         "603.2",
@@ -53817,6 +53881,22 @@
         "commander_review"
       ],
       "applicability_note": "Two distinct typed subscriptions share one source-zone and result while preserving source entry, controller and mana-value predicates; actual casts, foreign/small controls, privacy, replay and compiler omission evidence."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "negative",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_qualified_pair_actual_entry_and_death_draw_only_for_source_controller",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified entry/death subscriptions retain controller, source exclusion and public characteristic predicates across canonical occurrences, predeparture snapshots and replay; unknown subjects remain residual."
     },
     {
       "capability_id": "trigger.subscription.fixed_multi_event",
@@ -53847,6 +53927,22 @@
     {
       "capability_id": "trigger.subscription.fixed_multi_event",
       "evidence_class": "positive",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionCompilerTests.test_qualified_zone_event_pair_preserves_each_occurrence_predicate",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified entry/death subscriptions retain controller, source exclusion and public characteristic predicates across canonical occurrences, predeparture snapshots and replay; unknown subjects remain residual."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "positive",
       "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay",
       "official_rule_ids": [
         "603.2",
@@ -53859,6 +53955,22 @@
         "commander_review"
       ],
       "applicability_note": "Two distinct typed subscriptions share one source-zone and result while preserving source entry, controller and mana-value predicates; actual casts, foreign/small controls, privacy, replay and compiler omission evidence."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "positive",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_qualified_pair_actual_entry_and_death_draw_only_for_source_controller",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified entry/death subscriptions retain controller, source exclusion and public characteristic predicates across canonical occurrences, predeparture snapshots and replay; unknown subjects remain residual."
     },
     {
       "capability_id": "trigger.subscription.fixed_multi_event",
@@ -53909,6 +54021,22 @@
         "commander_review"
       ],
       "applicability_note": "Two distinct typed subscriptions share one source-zone and result while preserving source entry, controller and mana-value predicates; actual casts, foreign/small controls, privacy, replay and compiler omission evidence."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "replay",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_qualified_pair_actual_entry_and_death_draw_only_for_source_controller",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified entry/death subscriptions retain controller, source exclusion and public characteristic predicates across canonical occurrences, predeparture snapshots and replay; unknown subjects remain residual."
     },
     {
       "capability_id": "trigger.upkeep.previous_turn_transform",

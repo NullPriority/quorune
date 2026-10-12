@@ -148,6 +148,20 @@
   "dynamic_requirements": [
     {
       "source": "tests/test_resolution_public_conditions.py",
+      "symbol": "ResolutionPublicConditionRuntimeTests.test_qualified_pair_actual_entry_and_death_draw_only_for_source_controller",
+      "card_names": [
+        "Generic Bound Body",
+        "Generic Qualified Entry Death Draw",
+        "Hill Giant",
+        "Murder"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Registered generic subscription owner executes actual creature cast/death and foreign-controller negative controls."
+    },
+    {
+      "source": "tests/test_resolution_public_conditions.py",
       "symbol": "ResolutionPublicConditionRuntimeTests.test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay",
       "card_names": [
         "Craw Wurm",

@@ -9408,7 +9408,8 @@
           "one battlefield active zone",
           "one closed predicate per event",
           "one independently exact noncounter effect body",
-          "one explicit source-entry prefix conjoined with one independently closed distinct same-zone event prefix"
+          "one explicit source-entry prefix conjoined with one independently closed distinct same-zone event prefix",
+          "one independently closed qualified public subject entering or dying/leaving"
         ],
         "outputs": [
           "one CardProgram ability",
@@ -9442,23 +9443,29 @@
         "test_fixed_multi_event_source_triggers_share_events_and_replay",
         "test_fixed_multi_event_departure_uses_lki_and_apnap",
         "test_independent_dual_event_subscription_keeps_each_condition",
-        "test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay"
+        "test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay",
+        "test_qualified_zone_event_pair_preserves_each_occurrence_predicate",
+        "test_qualified_pair_actual_entry_and_death_draw_only_for_source_controller"
       ],
       "negative_tests": [
         "test_fixed_multi_event_trigger_near_misses_remain_material",
         "test_fixed_multi_event_subscription_model_rejects_malformed",
         "test_fixed_multi_event_dependency_and_parser_mutant_fail_closed",
         "test_independent_dual_event_rejects_nested_or_unrepresented_prefixes_and_mutant",
-        "test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay"
+        "test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay",
+        "test_qualified_event_pair_unknown_predicate_and_parser_omission_fail_closed",
+        "test_qualified_pair_actual_entry_and_death_draw_only_for_source_controller"
       ],
       "interaction_tests": [
         "test_fixed_multi_event_source_triggers_share_events_and_replay",
         "test_fixed_multi_event_departure_uses_lki_and_apnap",
-        "test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay"
+        "test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay",
+        "test_qualified_pair_actual_entry_and_death_draw_only_for_source_controller"
       ],
       "multiplayer_tests": [
         "test_fixed_multi_event_departure_uses_lki_and_apnap",
-        "test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay"
+        "test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay",
+        "test_qualified_pair_actual_entry_and_death_draw_only_for_source_controller"
       ],
       "privacy_tests": [
         "test_fixed_multi_event_source_triggers_share_events_and_replay",
@@ -9466,7 +9473,8 @@
       ],
       "replay_tests": [
         "test_fixed_multi_event_source_triggers_share_events_and_replay",
-        "test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay"
+        "test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay",
+        "test_qualified_pair_actual_entry_and_death_draw_only_for_source_controller"
       ],
       "required_evidence": [
         "positive",

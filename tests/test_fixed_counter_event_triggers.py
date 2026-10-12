@@ -3080,7 +3080,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             "Whenever an enchantment you control enters and whenever you fully "
             "unlock a Room, draw a card.",
             "When this creature enters or the creature it haunts dies, draw a card.",
-            "Whenever another creature you control enters or dies, draw a card.",
+            "Whenever another creature you control with an unrepresented quality enters or dies, draw a card.",
             "Whenever this creature enters or becomes renowned, draw a card.",
             "Whenever this creature enters, attacks, or blocks, draw a card.",
             "Whenever a creature you control of the chosen type enters or "

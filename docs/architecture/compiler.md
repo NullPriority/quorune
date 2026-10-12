@@ -139,7 +139,10 @@ The multi-event compiler also composes an explicit source-entry prefix with
 one independently exact distinct same-zone event prefix. Each subscription
 retains its own source, controller and characteristic predicates; one shared
 result remains one ability. Nested subscriptions, repeated normalized events,
-mixed active zones, and unrepresented prefixes remain residual.
+mixed active zones, and unrepresented prefixes remain residual. Qualified
+public subjects may similarly subscribe to entry and death or departure using
+two independently accepted zone predicates. The canonical predeparture
+snapshot supplies departing characteristics and controller.
 
 ```mermaid
 flowchart LR
