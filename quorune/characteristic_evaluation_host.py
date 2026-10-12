@@ -9,7 +9,7 @@ from .card_programs.runtime import (
     collect_card_program_continuous_effects,
     fixed_public_state_condition_matches,
 )
-from .continuous_conditions import FixedPublicStateConditionSpec
+from .continuous_conditions import FixedPublicStateConditionKind, FixedPublicStateConditionSpec
 from .ability_fragments import (
     CURRENT_ABILITY_FRAGMENT_COVERAGE,
     StaticComponentScopeSpec,
@@ -91,6 +91,16 @@ class CharacteristicEvaluationHostMixin:
         *,
         require_available: bool = False,
     ) -> bool:
+        if condition.kind is FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS:
+            from .object_query import object_query_result
+            def current_numeric_object(card):
+                effective = self._effective_card_data(card)
+                return object_query_result(card, effective,
+                    type_parts=self._type_parts(str(effective.get('type_line') or '')), known_to_actor=True,
+                    attached_to_ref=None)
+            return fixed_public_state_condition_matches(self.state, source, condition,
+                public_object_resolver=current_numeric_object, quantity_resolver=None,
+                require_available=require_available)
         return fixed_public_state_condition_matches(
             self.state,
             source,

@@ -1909,6 +1909,23 @@
       ]
     },
     {
+      "id": "fixed-numeric-condition-contract",
+      "patterns": [
+        "quorune/continuous_conditions.py",
+        "quorune/compiler/public_state_queries.py",
+        "quorune/characteristic_evaluation_host.py",
+        "quorune/rules/resolution_condition_shapes.py"
+      ],
+      "test_modules": [
+        "test_resolution_public_conditions",
+        "test_public_activation_conditions",
+        "test_fixed_public_state_characteristics",
+        "test_fixed_counter_event_triggers",
+        "test_card_program_trust",
+        "test_object_query"
+      ]
+    },
+    {
       "id": "temporary-quoted-ability-contract",
       "patterns": [
         "quorune/compiler/temporary_quoted_ability_nodes.py",

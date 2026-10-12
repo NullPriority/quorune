@@ -521,6 +521,14 @@ Its explicit numeric creature filter reads completed effective power/toughness
 before creating the new effect and locks the selected incarnations. Live
 static quantities retain the separate layer-5 boundary.
 
+Schema-five public conditions have a separate numeric creature-existence
+predicate. Intervening triggers and resolution instructions read complete
+current effective power or toughness under their locked controller. They
+recheck intervening conditions at occurrence and resolution, include counters
+and represented buffs, and reject unavailable numeric facts. Static
+characteristic conditions reject this schema because their cycle-safe read
+boundary remains at layer five.
+
 Fixed public static conditions snapshot the same layer-5 query boundary along
 with canonical aggregate hand/draw counts, typed current-turn spell-cast
 history, named source and player counters, and the public monarch designation.

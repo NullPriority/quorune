@@ -147,6 +147,32 @@
   ],
   "dynamic_requirements": [
     {
+      "source": "tests/test_resolution_public_conditions.py",
+      "symbol": "ResolutionPublicConditionRuntimeTests.test_original_numeric_entry_condition_uses_current_power_at_both_trigger_boundaries",
+      "card_names": [
+        "Beastbond Outcaster",
+        "Giant Growth",
+        "Hill Giant",
+        "Murder"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Actual numeric condition cast and response witness selects the registered original and generic fixtures."
+    },
+    {
+      "source": "tests/test_resolution_public_conditions.py",
+      "symbol": "ResolutionPublicConditionRuntimeTests.test_numeric_resolution_uses_current_stats_and_condition_omission_mutant_is_killed",
+      "card_names": [
+        "Generic Numeric Resolution Draw",
+        "Hill Giant"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Actual numeric condition cast and response witness selects the registered original and generic fixtures."
+    },
+    {
       "source": "tests/test_typed_grant_carriers.py",
       "symbol": "TemporaryQuotedGrantRuntimeTests.test_temporary_death_grant_uses_departing_recipient_controller_private_draw_and_replay",
       "card_names": [

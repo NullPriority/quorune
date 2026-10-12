@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 226,
+  "registry_version": 227,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -238,6 +238,86 @@
     }
   ],
   "capabilities": [
+    {
+      "id": "condition.creature.fixed_numeric_exists",
+      "version": 1,
+      "official_rules": [
+        "603.4",
+        "608.2a",
+        "608.2c",
+        "613.1g",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "At represented event and resolution boundaries, test whether the locked controller currently controls a phased-in creature satisfying one fixed power or toughness comparison using complete current effective characteristics.",
+        "inputs": [
+          "one locked condition controller",
+          "current public battlefield creatures",
+          "one fixed integral numeric predicate"
+        ],
+        "outputs": [
+          "current existence result",
+          "intervening-if occurrence and resolution rechecks"
+        ],
+        "exclusions": [
+          "static layer-conditioned characteristic effects",
+          "dynamic numeric thresholds",
+          "aggregate total power",
+          "linked or hidden numeric facts"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.compiler.public_state_queries.fixed_public_state_condition",
+        "quorune.continuous_conditions.FixedPublicStateConditionSpec",
+        "quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin._fixed_public_state_condition_holds",
+        "quorune.card_programs.runtime._FixedPublicStateSnapshotResolver._condition_quantity"
+      ],
+      "positive_tests": [
+        "test_fixed_numeric_existence_condition_has_explicit_timing_and_closed_value",
+        "test_original_numeric_entry_condition_uses_current_power_at_both_trigger_boundaries",
+        "test_numeric_resolution_uses_current_stats_and_condition_omission_mutant_is_killed"
+      ],
+      "negative_tests": [
+        "test_fixed_numeric_existence_condition_has_explicit_timing_and_closed_value",
+        "test_numeric_existence_schema_rejects_malformed_values_and_kills_comparison_mutant",
+        "test_original_numeric_entry_condition_uses_current_power_at_both_trigger_boundaries",
+        "test_numeric_existence_unavailable_stats_fail_closed_and_phased_objects_do_not_count"
+      ],
+      "interaction_tests": [
+        "test_original_numeric_entry_condition_uses_current_power_at_both_trigger_boundaries",
+        "test_numeric_resolution_uses_current_stats_and_condition_omission_mutant_is_killed"
+      ],
+      "multiplayer_tests": [
+        "test_original_numeric_entry_condition_uses_current_power_at_both_trigger_boundaries"
+      ],
+      "privacy_tests": [
+        "test_original_numeric_entry_condition_uses_current_power_at_both_trigger_boundaries"
+      ],
+      "replay_tests": [
+        "test_original_numeric_entry_condition_uses_current_power_at_both_trigger_boundaries",
+        "test_numeric_resolution_uses_current_stats_and_condition_omission_mutant_is_killed"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The independent numeric-condition capability mutation keeps the complete entry trigger residual; child effect and condition gates remain separate.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "The comparison mutant admits below-threshold power; the runtime condition omission skips an actual accepted conditional draw. Both altered outcomes are detected.",
+      "blockers": [],
+      "status": "trusted"
+    },
     {
       "id": "continuous.ability.temporary_quoted_grant",
       "version": 1,

@@ -65,6 +65,7 @@ class FixedPublicStateConditionKind(StrEnum):
     QUERY_COUNT_AT_LEAST = "query_count_at_least"
     QUERY_COUNT_AT_MOST = "query_count_at_most"
     PUBLIC_FACT_AT_LEAST = "public_fact_at_least"
+    CONTROLLER_CREATURE_NUMERIC_EXISTS = "controller_creature_numeric_exists"
 
 
 class FixedPublicStateFact(StrEnum):
@@ -300,6 +301,7 @@ class FixedPublicStateConditionSpec:
             2,
             3,
             4,
+            5,
         }:
             raise FixedPublicStateConditionError(
                 "Unsupported fixed public-state condition schema version"
@@ -358,6 +360,7 @@ class FixedPublicStateConditionSpec:
         object_query_kinds = {
             FixedPublicStateConditionKind.SOURCE_MATCHES_QUERY,
             FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY,
+            FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS,
         }
         if self.kind in object_query_kinds:
             if not isinstance(self.predicate, ObjectQuerySpec):
@@ -391,6 +394,13 @@ class FixedPublicStateConditionSpec:
             raise FixedPublicStateConditionError(
                 "Only query-count conditions may carry a quantity"
             )
+        if self.kind is FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS:
+            query = self.predicate
+            if (self.schema_version != 5 or query is None or query.numeric_characteristic is None
+                    or query.numeric_characteristic.characteristic.value not in {'power', 'toughness'}
+                    or query != ObjectQuerySpec(zones=('battlefield',), types_all=('creature',),
+                        numeric_characteristic=query.numeric_characteristic)):
+                raise FixedPublicStateConditionError('Numeric existence requires one fixed battlefield creature predicate')
         _validate_public_fact_fields(
             kind=self.kind,
             fact=self.fact,
@@ -404,6 +414,7 @@ class FixedPublicStateConditionSpec:
             )
         if (
             self.kind not in extended_kinds | fact_kinds
+            | {FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS}
             and self.schema_version != 1
         ):
             raise FixedPublicStateConditionError(
@@ -417,7 +428,7 @@ class FixedPublicStateConditionSpec:
             "amount": self.amount,
             "counter_name": self.counter_name,
         }
-        if self.schema_version == 2:
+        if self.schema_version in {2, 5}:
             value.update(
                 {
                     "predicate": (
@@ -521,6 +532,7 @@ class FixedPublicStateConditionSpec:
             FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY,
             FixedPublicStateConditionKind.CONTROLLER_IS_MONARCH,
             FixedPublicStateConditionKind.CONTROLLER_MAX_SPEED,
+            FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS,
         }
         if (
             self.kind
@@ -591,6 +603,8 @@ class FixedPublicStateConditionSpec:
             return counters.get(str(self.counter_name), 0) >= int(self.amount)
         if self.kind is FixedPublicStateConditionKind.SOURCE_MATCHES_QUERY:
             return snapshot.source_query_matches is True
+        if self.kind is FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS:
+            return snapshot.condition_quantity is not None and snapshot.condition_quantity > 0
         if self.kind is FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY:
             return snapshot.attached_query_matches is True
         if self.kind is FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST:

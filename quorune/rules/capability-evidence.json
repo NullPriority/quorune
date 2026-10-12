@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "c90b4cd87804073d6c32737f360604b751d77afd94ff5ced408cb13447f2f6bf",
-  "declaration_source_fingerprint": "f017fa97551472ba2d643471ea5db4986cdd445ff583ca70975810fe2ec9f003",
+  "registry_fingerprint": "b4d94538138a213badf9e59a36b245d94ae35caa82cbfa478b7282eb09996234",
+  "declaration_source_fingerprint": "517ed09e24d931cd0d9f1ea839f07ef1cbab965ec85d9dd51e7b316a9bfd8cdf",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -27763,6 +27763,276 @@
         "commander_review"
       ],
       "applicability_note": "Round-trip the trusted generated CardProgram and prove the reminder contributes no executable node or residual."
+    },
+    {
+      "capability_id": "condition.creature.fixed_numeric_exists",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_numeric_resolution_uses_current_stats_and_condition_omission_mutant_is_killed",
+      "official_rule_ids": [
+        "603.4",
+        "608.2a",
+        "608.2c",
+        "613.1g",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed event/resolution numeric existence reads complete effective stats; unrepresented stats fail closed, phased-out objects are excluded, and canonical draw/replay plus focused mutations distinguish exact behavior."
+    },
+    {
+      "capability_id": "condition.creature.fixed_numeric_exists",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_original_numeric_entry_condition_uses_current_power_at_both_trigger_boundaries",
+      "official_rule_ids": [
+        "603.4",
+        "608.2a",
+        "608.2c",
+        "613.1g",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One fixed creature numeric existence condition reads complete effective power at trigger occurrence and resolution; counters, buffs, removal response, opponent boundaries, privacy and replay are distinguished from unsupported static timing."
+    },
+    {
+      "capability_id": "condition.creature.fixed_numeric_exists",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_original_numeric_entry_condition_uses_current_power_at_both_trigger_boundaries",
+      "official_rule_ids": [
+        "603.4",
+        "608.2a",
+        "608.2c",
+        "613.1g",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One fixed creature numeric existence condition reads complete effective power at trigger occurrence and resolution; counters, buffs, removal response, opponent boundaries, privacy and replay are distinguished from unsupported static timing."
+    },
+    {
+      "capability_id": "condition.creature.fixed_numeric_exists",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionCompilerTests.test_numeric_existence_schema_rejects_malformed_values_and_kills_comparison_mutant",
+      "official_rule_ids": [
+        "603.4",
+        "608.2a",
+        "608.2c",
+        "613.1g",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One fixed creature numeric existence condition reads complete effective power at trigger occurrence and resolution; counters, buffs, removal response, opponent boundaries, privacy and replay are distinguished from unsupported static timing."
+    },
+    {
+      "capability_id": "condition.creature.fixed_numeric_exists",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_numeric_resolution_uses_current_stats_and_condition_omission_mutant_is_killed",
+      "official_rule_ids": [
+        "603.4",
+        "608.2a",
+        "608.2c",
+        "613.1g",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed event/resolution numeric existence reads complete effective stats; unrepresented stats fail closed, phased-out objects are excluded, and canonical draw/replay plus focused mutations distinguish exact behavior."
+    },
+    {
+      "capability_id": "condition.creature.fixed_numeric_exists",
+      "evidence_class": "negative",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionCompilerTests.test_fixed_numeric_existence_condition_has_explicit_timing_and_closed_value",
+      "official_rule_ids": [
+        "603.4",
+        "608.2a",
+        "608.2c",
+        "613.1g",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One fixed creature numeric existence condition reads complete effective power at trigger occurrence and resolution; counters, buffs, removal response, opponent boundaries, privacy and replay are distinguished from unsupported static timing."
+    },
+    {
+      "capability_id": "condition.creature.fixed_numeric_exists",
+      "evidence_class": "negative",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionCompilerTests.test_numeric_existence_schema_rejects_malformed_values_and_kills_comparison_mutant",
+      "official_rule_ids": [
+        "603.4",
+        "608.2a",
+        "608.2c",
+        "613.1g",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One fixed creature numeric existence condition reads complete effective power at trigger occurrence and resolution; counters, buffs, removal response, opponent boundaries, privacy and replay are distinguished from unsupported static timing."
+    },
+    {
+      "capability_id": "condition.creature.fixed_numeric_exists",
+      "evidence_class": "negative",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionCompilerTests.test_numeric_existence_unavailable_stats_fail_closed_and_phased_objects_do_not_count",
+      "official_rule_ids": [
+        "603.4",
+        "608.2a",
+        "608.2c",
+        "613.1g",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed event/resolution numeric existence reads complete effective stats; unrepresented stats fail closed, phased-out objects are excluded, and canonical draw/replay plus focused mutations distinguish exact behavior."
+    },
+    {
+      "capability_id": "condition.creature.fixed_numeric_exists",
+      "evidence_class": "negative",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_original_numeric_entry_condition_uses_current_power_at_both_trigger_boundaries",
+      "official_rule_ids": [
+        "603.4",
+        "608.2a",
+        "608.2c",
+        "613.1g",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One fixed creature numeric existence condition reads complete effective power at trigger occurrence and resolution; counters, buffs, removal response, opponent boundaries, privacy and replay are distinguished from unsupported static timing."
+    },
+    {
+      "capability_id": "condition.creature.fixed_numeric_exists",
+      "evidence_class": "positive",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionCompilerTests.test_fixed_numeric_existence_condition_has_explicit_timing_and_closed_value",
+      "official_rule_ids": [
+        "603.4",
+        "608.2a",
+        "608.2c",
+        "613.1g",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One fixed creature numeric existence condition reads complete effective power at trigger occurrence and resolution; counters, buffs, removal response, opponent boundaries, privacy and replay are distinguished from unsupported static timing."
+    },
+    {
+      "capability_id": "condition.creature.fixed_numeric_exists",
+      "evidence_class": "positive",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_numeric_resolution_uses_current_stats_and_condition_omission_mutant_is_killed",
+      "official_rule_ids": [
+        "603.4",
+        "608.2a",
+        "608.2c",
+        "613.1g",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed event/resolution numeric existence reads complete effective stats; unrepresented stats fail closed, phased-out objects are excluded, and canonical draw/replay plus focused mutations distinguish exact behavior."
+    },
+    {
+      "capability_id": "condition.creature.fixed_numeric_exists",
+      "evidence_class": "positive",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_original_numeric_entry_condition_uses_current_power_at_both_trigger_boundaries",
+      "official_rule_ids": [
+        "603.4",
+        "608.2a",
+        "608.2c",
+        "613.1g",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One fixed creature numeric existence condition reads complete effective power at trigger occurrence and resolution; counters, buffs, removal response, opponent boundaries, privacy and replay are distinguished from unsupported static timing."
+    },
+    {
+      "capability_id": "condition.creature.fixed_numeric_exists",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_original_numeric_entry_condition_uses_current_power_at_both_trigger_boundaries",
+      "official_rule_ids": [
+        "603.4",
+        "608.2a",
+        "608.2c",
+        "613.1g",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One fixed creature numeric existence condition reads complete effective power at trigger occurrence and resolution; counters, buffs, removal response, opponent boundaries, privacy and replay are distinguished from unsupported static timing."
+    },
+    {
+      "capability_id": "condition.creature.fixed_numeric_exists",
+      "evidence_class": "replay",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_numeric_resolution_uses_current_stats_and_condition_omission_mutant_is_killed",
+      "official_rule_ids": [
+        "603.4",
+        "608.2a",
+        "608.2c",
+        "613.1g",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed event/resolution numeric existence reads complete effective stats; unrepresented stats fail closed, phased-out objects are excluded, and canonical draw/replay plus focused mutations distinguish exact behavior."
+    },
+    {
+      "capability_id": "condition.creature.fixed_numeric_exists",
+      "evidence_class": "replay",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_original_numeric_entry_condition_uses_current_power_at_both_trigger_boundaries",
+      "official_rule_ids": [
+        "603.4",
+        "608.2a",
+        "608.2c",
+        "613.1g",
+        "109.5"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "One fixed creature numeric existence condition reads complete effective power at trigger occurrence and resolution; counters, buffs, removal response, opponent boundaries, privacy and replay are distinguished from unsupported static timing."
     },
     {
       "capability_id": "continuous.ability.fixed_public_state_grant",
@@ -109323,5 +109593,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "999d08d6d763795a20707130ad8730c2b4a2e8dec25d1278aeabdea56d7dee56"
+  "fingerprint": "c25172aded908e31c77a8710412692e28964b9cdb4a492ac05b2b940095448af"
 }

@@ -1307,7 +1307,7 @@ def fixed_counter_event_trigger_node(
         explicit_capabilities=(
             *binding.explicit_capabilities,
             *(
-                (FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY,)
+                (FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY, *(('condition.creature.fixed_numeric_exists',) if binding.public_state_condition.kind is FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS else ()))
                 if binding.public_state_condition is not None
                 else ()
             ),
@@ -1436,7 +1436,7 @@ def fixed_typed_event_effect_trigger_node(
         explicit_capabilities=(
             *binding.explicit_capabilities,
             *(
-                (FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY,)
+                (FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY, *(('condition.creature.fixed_numeric_exists',) if binding.public_state_condition.kind is FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS else ()))
                 if binding.public_state_condition is not None
                 else ()
             ),

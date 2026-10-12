@@ -45,6 +45,8 @@ def resolution_condition_node_capabilities(
     if len(targeted) > 1 or (target_schema is not None) != bool(targeted):
         return ()
     dependencies = {RESOLUTION_CONDITION_CAPABILITY}
+    if _condition.kind.value == 'controller_creature_numeric_exists':
+        dependencies.add('condition.creature.fixed_numeric_exists')
     if wrapper.get('schema_version') == 2:
         from ..resolution_conditions import CAST_FACT_CONDITION_CAPABILITY, CAST_FACT_CONDITION_MECHANIC
         if CAST_FACT_CONDITION_MECHANIC not in mechanics or wrapper['cast_fact'] != '$context.kicked':

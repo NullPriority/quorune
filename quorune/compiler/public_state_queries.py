@@ -14,6 +14,7 @@ from ..continuous_conditions import (
 )
 from ..object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
 from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
+from ..target_numeric import TargetNumericCharacteristic, TargetNumericCharacteristicSpec, TargetNumericComparison
 from ..rules.source_references import SourceReferenceSpec
 from .creature_subtypes import (
     canonical_creature_subtype,
@@ -1461,6 +1462,13 @@ def _fixed_public_state_condition(
     source_name: str,
 ) -> FixedPublicStateConditionSpec | None:
     normalized = text.strip().rstrip(".")
+    numeric = re.fullmatch(r'you control a creature with (?P<stat>power|toughness) (?P<amount>[0-9]+) or (?P<bound>greater|less)', normalized, re.I)
+    if numeric is not None:
+        return FixedPublicStateConditionSpec(FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS,
+            predicate=ObjectQuerySpec(zones=('battlefield',), types_all=('creature',),
+                numeric_characteristic=TargetNumericCharacteristicSpec(TargetNumericCharacteristic(numeric['stat'].casefold()),
+                    TargetNumericComparison.AT_LEAST if numeric['bound'].casefold() == 'greater' else TargetNumericComparison.AT_MOST,
+                    int(numeric['amount']))), schema_version=5)
     legacy = _legacy_public_state_condition(normalized)
     if legacy is not None:
         return legacy
@@ -1538,7 +1546,7 @@ def fixed_public_state_parts(
             ),
             source_name=source_name,
         )
-        return (condition, during.group("body")) if condition else None
+        return (condition, during.group("body")) if condition and condition.kind is not FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS else None
     prefix = re.fullmatch(
         r"As long as (?P<condition>.+?), (?P<body>.+)",
         text,
@@ -1552,7 +1560,7 @@ def fixed_public_state_parts(
             ),
             source_name=source_name,
         )
-        return (condition, prefix.group("body")) if condition else None
+        return (condition, prefix.group("body")) if condition and condition.kind is not FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS else None
     marker = text.casefold().rfind(" as long as ")
     if marker <= 0:
         return None
@@ -1564,7 +1572,7 @@ def fixed_public_state_parts(
         ),
         source_name=source_name,
     )
-    return (condition, body) if condition else None
+    return (condition, body) if condition and condition.kind is not FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS else None
 
 
 __all__ = [

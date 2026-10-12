@@ -650,6 +650,11 @@ counting distinct attacking logical objects. Schema-v3 public facts remain a
   evaluate the shared descriptor at occurrence and again under their locked
   trigger controller at resolution. Descend remains a distinct unsupported
   all-zone permanent-card history domain.
+Schema-five conditions represent one fixed power or toughness comparison for
+a creature currently controlled by the condition player. Event and resolution
+consumers require the explicit numeric-condition capability and read complete
+effective stats. Static characteristic productions, aggregate total power,
+variable thresholds and linked numeric facts remain residual.
 Most-common or tied comparisons, dynamic amounts, top-library, chosen,
 hidden-identity, city blessing, dungeon, initiative, speed, sticker, crime,
 dice, open arithmetic, otherwise branches, per-opponent aggregate, unowned
