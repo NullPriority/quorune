@@ -15982,6 +15982,26 @@
     {
       "capability_id": "continuous.characteristics.chosen_designation",
       "evidence_class": "negative",
+      "test_id": "tests.test_entry_designations.EntryDesignationTests.test_chosen_counter_scaling_remains_residual_without_registered_body_composition",
+      "official_rule_ids": [
+        "105.1",
+        "205.3m",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Chosen-type source-counter scaling is rejected by the compiler until the canonical chosen-characteristic owner accepts that inner descriptor. Existing fixed chosen-color/type bodies remain represented; Banner of Kinship and Door of Destinies preserve residuals instead of failing CardProgram construction."
+    },
+    {
+      "capability_id": "continuous.characteristics.chosen_designation",
+      "evidence_class": "negative",
       "test_id": "tests.test_entry_designations.EntryDesignationTests.test_duplicate_intrinsic_designations_preserve_linking_residuals",
       "official_rule_ids": ["105.1", "205.3m", "613.1f", "613.1g", "613.4c", "614.12a", "707.2"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],

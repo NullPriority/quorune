@@ -407,6 +407,9 @@ matching creatures receive the current bonus. Version-three anthem descriptors
 add only `source_counter`; fixed version-two descriptors retain their decoder.
 Ambiguous recipient pronouns, all-counter totals, counters on other objects,
 and unrelated quantity expressions remain residual in this production.
+Chosen-color or chosen-type wrappers validate their nested descriptor against
+the existing chosen-characteristic owner before exact lowering. A source-counter
+anthem inside that unrepresented wrapper remains residual.
 
 `compiler/fixed_target_effect_sequences.py` also owns one fixed source-
 characteristic result shared by activated and normalized triggered contexts.

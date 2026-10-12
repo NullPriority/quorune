@@ -832,6 +832,7 @@
             "capability:activation.typecycling.hand",
             "capability:choice.affected_player.fixed_controller_discard",
             "capability:choice.affected_player.fixed_discard",
+            "capability:continuous.characteristics.chosen_designation",
             "capability:continuous.characteristics.fixed_public_state",
             "capability:continuous.power_toughness.fixed_anthem",
             "capability:continuous.resolution.declaration_rules_until_end_of_turn",
@@ -5851,7 +5852,7 @@
     },
     "semantic_transition_declaration": {
       "transition_id": "oracle-ir-v349-batched-trigger-and-effect-closure",
-      "compiler_version": "oracle-ir-v350",
+      "compiler_version": "oracle-ir-v351",
       "bundle_id": "bundle:batched-card-support",
       "candidate_ids": [
         "coverage_family:bundle:batched-card-support"
@@ -5934,6 +5935,7 @@
         "activation.typecycling.hand",
         "choice.affected_player.fixed_controller_discard",
         "choice.affected_player.fixed_discard",
+        "continuous.characteristics.chosen_designation",
         "continuous.characteristics.fixed_public_state",
         "continuous.power_toughness.fixed_anthem",
         "continuous.resolution.declaration_rules_until_end_of_turn",

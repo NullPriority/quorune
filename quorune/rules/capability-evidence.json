@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "ccd2ebb64dcc23fa44a34a258e3345742bcc267f6c96fe39339d9f413e54d6ea",
-  "declaration_source_fingerprint": "3475bd290fb8b7965fe5a60d46f3a0509f376eb649f1a2a0e9fa0e86b68d8e0e",
+  "registry_fingerprint": "8d6b0818cb27c21a394f4e11efd0c0a9cbd7fbaea161996c47c0b8afded1a077",
+  "declaration_source_fingerprint": "de6daa4b88dfee5cad3d84917a261e94318e9ba6e6a61453b43e4dc72476331b",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -30392,6 +30392,26 @@
         "commander_review"
       ],
       "applicability_note": "Remove the typed compiler production or block its dependency and preserve whole-card rejection."
+    },
+    {
+      "capability_id": "continuous.characteristics.chosen_designation",
+      "evidence_class": "negative",
+      "test_id": "tests.test_entry_designations.EntryDesignationTests.test_chosen_counter_scaling_remains_residual_without_registered_body_composition",
+      "official_rule_ids": [
+        "105.1",
+        "205.3m",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "614.12a",
+        "707.2"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Chosen-type source-counter scaling is rejected by the compiler until the canonical chosen-characteristic owner accepts that inner descriptor. Existing fixed chosen-color/type bodies remain represented; Banner of Kinship and Door of Destinies preserve residuals instead of failing CardProgram construction."
     },
     {
       "capability_id": "continuous.characteristics.chosen_designation",
@@ -107876,5 +107896,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "4a37e3d114e43886d670ae3c5123b4b02c46c04ee09db3974aa8654089c21472"
+  "fingerprint": "d5e89a4744a5ee91cf7355b2c159d7e23256a1cc150e62c720a6092ddb831103"
 }
