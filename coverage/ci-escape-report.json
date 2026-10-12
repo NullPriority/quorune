@@ -1486,6 +1486,36 @@
       "resolution": "Add actual Aura/grant and Shroud/sacrifice-redirection runtime witnesses with strict compiler admission, rollback, privacy and replay, plus whole-program fail-closed witnesses for both fixed-mana/replacement residual pairs using five original carriers. Register their exact qualified IDs and add consumer impact edges. Preserve scheduler debt prioritization and runtime-composition evidence requirements; canonical generation owns the refreshed interaction counts.",
       "run_id": 38125267611,
       "summary": "The regenerated corpus exposed four applicable high-risk pairs without explicit evidence. The rules scheduler correctly foregrounded assurance debt, causing stale harvest-selection assumptions to fail in Ubuntu and Windows generated governance."
+    },
+    {
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "failed_surfaces": [
+        "PR / Python / functional-02",
+        "PR / Python / functional-03",
+        "PR / Python / functional-04",
+        "PR / Python / functional-05",
+        "PR / Python / functional-09",
+        "PR / Python / functional-12",
+        "PR / Windows / functional-02",
+        "PR / Windows / functional-03",
+        "PR / Windows / functional-04",
+        "PR / Windows / functional-05",
+        "PR / Windows / functional-09",
+        "PR / Windows / functional-12"
+      ],
+      "head_sha": "658ef19c26accfb36e05bca488224a463db0b9d8",
+      "id": "ci-20261012-504-bare-subtype-reviewed-overlap",
+      "impact_edge_status": "added",
+      "regressions": [
+        "test_card_program_trust.CardProgramTrustTests.test_corrected_bare_subtype_anthem_supersedes_only_matching_reviewed_source",
+        "test_exact_mishra_closure.ExactMishraClosureTests.test_stridehangar_adds_thopter_and_applies_anthem",
+        "test_continuous_effect_components.ContinuousEffectComponentTests.test_multiple_anthem_components_stack_and_respect_control",
+        "test_oracle_ir.OracleIRTests.test_newly_exact_nodes_deduplicate_against_reviewed_programs"
+      ],
+      "resolution": "Use the shared reviewed-overlay owner to replace only a trusted source/rulings-matched legacy subtype anthem with the corrected generic instruction. Preserve modifiers, controllers, source exclusions, distinct generated siblings, original gameplay multiplicity and replay assertions. Update stale bare-subtype table expectations and add the canonical affected-consumer edge. Advance compiler identity and regenerate the semantic bundle; do not reuse the superseded census.",
+      "run_id": 38260770476,
+      "summary": "Corrected generic subtype anthem predicates diverged from a narrower reviewed compatibility descriptor, exposing duplicate current execution in both assembly paths and stale Creature-only query expectations."
     }
   ],
   "known_flaky_tests": [],
@@ -1546,7 +1576,7 @@
   ],
   "repository": "NullPriority/quorune",
   "schema_version": 2,
-  "source_fingerprint": "d65a0a69ed61c485f0262f7b7d08df61a16ab90145dda5d1b701f05bd1b4bf0d",
+  "source_fingerprint": "a6f292f92713ced35b74772702fb64a3366eac46180aa4bf807b47b8b0769905",
   "summary": {
     "average_critical_path_seconds": 181.25,
     "average_pushes_per_merged_pr": null,
@@ -1556,13 +1586,13 @@
       "flaky_test": 9,
       "generated_artifact_drift": 10,
       "infrastructure": 1,
-      "missing_affected_test": 37,
+      "missing_affected_test": 38,
       "source_correctness": 22,
       "windows_compatibility": 1
     },
     "current_missing_impact_edges": [],
-    "deterministic_escape_count": 78,
-    "escape_count": 85,
+    "deterministic_escape_count": 79,
+    "escape_count": 86,
     "eventual_final_head_certification_pass_rate": 1.0,
     "eventual_final_head_certification_sample_size": 4,
     "first_eligible_head_certification_pass_rate": null,
