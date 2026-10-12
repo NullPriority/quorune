@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "2d1a5f5099f82b135c3053ae21ba86b661c5954d44e85b752669a674f29b4650",
-  "declaration_source_fingerprint": "a95228e7f1d52ac942b4eb3442003aec7d76f58d507054a72d592b7d604933e4",
+  "registry_fingerprint": "07eafef1922abd8262b88cbe3bfe7b580eb3abb3e16cb4530cba0f67f225ef07",
+  "declaration_source_fingerprint": "bf72c019611e87349d684c5aa6062cefc82d551a3e19c5969e5eb3e4f4f3de9a",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -39169,6 +39169,44 @@
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_original_cactusfolk_numeric_group_locks_current_power_and_replays",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolution membership reads complete current creature stats once, locks selected incarnations, and leaves static-layer numeric queries closed; bare subtypes retain noncreature Kindred recipients."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_original_lord_resolution_grants_kindred_locks_incarnations_and_expires",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolution membership reads complete current creature stats once, locks selected incarnations, and leaves static-layer numeric queries closed; bare subtypes retain noncreature Kindred recipients."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_targeted_shadow_uses_shared_keyword_and_block_legality",
       "official_rule_ids": [
         "611.2a",
@@ -39298,6 +39336,44 @@
         "commander_review"
       ],
       "applicability_note": "Select only matching permanents across a four-player battlefield and preserve that locked set."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_original_cactusfolk_numeric_group_locks_current_power_and_replays",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolution membership reads complete current creature stats once, locks selected incarnations, and leaves static-layer numeric queries closed; bare subtypes retain noncreature Kindred recipients."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_original_lord_resolution_grants_kindred_locks_incarnations_and_expires",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolution membership reads complete current creature stats once, locks selected incarnations, and leaves static-layer numeric queries closed; bare subtypes retain noncreature Kindred recipients."
     },
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
@@ -39549,6 +39625,44 @@
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
       "evidence_class": "negative",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_nested_subtype_body_casing_preserves_the_complete_public_query",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolution membership reads complete current creature stats once, locks selected incarnations, and leaves static-layer numeric queries closed; bare subtypes retain noncreature Kindred recipients."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_resolution_public_stat_filter_uses_one_fixed_numeric_owner",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolution membership reads complete current creature stats once, locks selected incarnations, and leaves static-layer numeric queries closed; bare subtypes retain noncreature Kindred recipients."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "negative",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_shared_public_query_dependency_fails_closed_across_consumers",
       "official_rule_ids": [
         "611.2a",
@@ -39682,6 +39796,63 @@
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_bare_subtype_resolution_sets_preserve_kindred_and_creature_boundaries",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolution membership reads complete current creature stats once, locks selected incarnations, and leaves static-layer numeric queries closed; bare subtypes retain noncreature Kindred recipients."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_nested_subtype_body_casing_preserves_the_complete_public_query",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolution membership reads complete current creature stats once, locks selected incarnations, and leaves static-layer numeric queries closed; bare subtypes retain noncreature Kindred recipients."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_resolution_public_stat_filter_uses_one_fixed_numeric_owner",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolution membership reads complete current creature stats once, locks selected incarnations, and leaves static-layer numeric queries closed; bare subtypes retain noncreature Kindred recipients."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_shared_public_set_query_fans_into_layers_and_resolution",
       "official_rule_ids": [
         "611.2a",
@@ -39697,6 +39868,44 @@
         "commander_review"
       ],
       "applicability_note": "Compile the same bounded public query into the existing resolution-time membership lock while excluding ability-qualified sets."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_original_cactusfolk_numeric_group_locks_current_power_and_replays",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolution membership reads complete current creature stats once, locks selected incarnations, and leaves static-layer numeric queries closed; bare subtypes retain noncreature Kindred recipients."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_original_lord_resolution_grants_kindred_locks_incarnations_and_expires",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolution membership reads complete current creature stats once, locks selected incarnations, and leaves static-layer numeric queries closed; bare subtypes retain noncreature Kindred recipients."
     },
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
@@ -39792,6 +40001,25 @@
         "commander_review"
       ],
       "applicability_note": "Keep authoritative physical identities out of a seat projection while preserving the public result."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_original_lord_resolution_grants_kindred_locks_incarnations_and_expires",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolution membership reads complete current creature stats once, locks selected incarnations, and leaves static-layer numeric queries closed; bare subtypes retain noncreature Kindred recipients."
     },
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
@@ -39906,6 +40134,44 @@
         "commander_review"
       ],
       "applicability_note": "Serialize and replay a source-bound resolution-created effect from exact commands."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_original_cactusfolk_numeric_group_locks_current_power_and_replays",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolution membership reads complete current creature stats once, locks selected incarnations, and leaves static-layer numeric queries closed; bare subtypes retain noncreature Kindred recipients."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantRuntimeTests.test_original_lord_resolution_grants_kindred_locks_incarnations_and_expires",
+      "official_rule_ids": [
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Resolution membership reads complete current creature stats once, locks selected incarnations, and leaves static-layer numeric queries closed; bare subtypes retain noncreature Kindred recipients."
     },
     {
       "capability_id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
@@ -115115,5 +115381,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "2999c6442e3f492252e2913f34df17cdd1e1d9501fe707dc8eb5e91b2e7f1e37"
+  "fingerprint": "987f0d6c70d3dad974af98fea21598868ce039f6a73c4d118733a37dfcb50e71"
 }
