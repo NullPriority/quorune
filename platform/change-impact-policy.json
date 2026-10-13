@@ -2731,6 +2731,7 @@
     {
       "id": "bound-effect-program-contract",
       "patterns": [
+        "tests/fixtures/prevention-composition-cards.json",
         "quorune/compiler/bound_effect_programs.py",
         "quorune/compiler/effect_template_composition.py",
         "quorune/rules/bound_effect_program_shapes.py",

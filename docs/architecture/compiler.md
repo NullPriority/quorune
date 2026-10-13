@@ -835,8 +835,14 @@ composition boundary. Two through four mandatory components may share one
 player subject or reuse one explicitly established player or battlefield target
 through “it,” “that player,” “that creature,” or “that permanent.” It retains
 the original target qualifiers and source exclusion, verifies reference-domain
-compatibility, and emits the existing effects in printed order. Separate
-explicit target occurrences never become one target merely because their
+compatibility, and emits the existing effects in printed order. Pronoun
+normalization uses a generic permanent reference before restoring the
+original target schema, so a creature-bound prevention instruction retains its
+closed prevention scope instead of switching to an incompatible leaf shape.
+If that generic leaf rejects the instruction and the original target requires a
+creature, a creature form may use its already closed leaf before the original
+target schema is restored. A noncreature target cannot use that retry.
+Separate explicit target occurrences never become one target merely because their
 schemas match. The bound-reference capability checks every component against
 its typed owner; execution, replacement choices, private affected-player
 choices, and checkpoint continuations remain in their existing owners. Owner

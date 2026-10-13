@@ -9674,7 +9674,9 @@
         "test_trusted_player_subject_draw_loss_and_discard",
         "test_target_modifier_and_fixed_prevention_share_one_bound_target_program",
         "test_original_leap_of_faith_modifier_and_prevention_resolve_then_damage_boundary_replays",
-        "test_original_djeru_untap_and_prevention_expire_and_preserve_target_authority"
+        "test_original_djeru_untap_and_prevention_expire_and_preserve_target_authority",
+        "test_bound_creature_prevention_pronouns_preserve_closed_scope_shape",
+        "test_original_djeru_resolve_untaps_then_prevents_damage_and_replays"
       ],
       "negative_tests": [
         "test_bound_effect_exclusions_and_malformed_shapes",
@@ -9688,7 +9690,8 @@
         "test_trusted_qualified_target_binding_and_stale_rollback",
         "test_trusted_player_subject_draw_loss_and_discard",
         "test_original_leap_of_faith_modifier_and_prevention_resolve_then_damage_boundary_replays",
-        "test_original_djeru_untap_and_prevention_expire_and_preserve_target_authority"
+        "test_original_djeru_untap_and_prevention_expire_and_preserve_target_authority",
+        "test_original_djeru_resolve_untaps_then_prevents_damage_and_replays"
       ],
       "multiplayer_tests": [
         "test_trusted_player_subject_draw_loss_and_discard",
@@ -9705,7 +9708,8 @@
         "test_trusted_qualified_target_binding_and_stale_rollback",
         "test_trusted_player_subject_draw_loss_and_discard",
         "test_original_leap_of_faith_modifier_and_prevention_resolve_then_damage_boundary_replays",
-        "test_original_djeru_untap_and_prevention_expire_and_preserve_target_authority"
+        "test_original_djeru_untap_and_prevention_expire_and_preserve_target_authority",
+        "test_original_djeru_resolve_untaps_then_prevents_damage_and_replays"
       ],
       "required_evidence": [
         "positive",
@@ -12208,7 +12212,9 @@
         "test_targeted_prevention_scope_substitutes_nested_target_reference",
         "test_role_token_attachment_source_color_and_pair_scopes_are_closed",
         "test_actual_emmara_prevents_only_own_creature_token_shock_and_replays",
-        "test_actual_dolmen_attackers_take_no_combat_damage_but_unblocked_attacker_hits_player"
+        "test_actual_dolmen_attackers_take_no_combat_damage_but_unblocked_attacker_hits_player",
+        "test_bound_creature_prevention_pronouns_preserve_closed_scope_shape",
+        "test_original_djeru_resolve_untaps_then_prevents_damage_and_replays"
       ],
       "negative_tests": [
         "test_unpreventable_damage_does_not_consume_shield",
@@ -12256,7 +12262,8 @@
         "test_actual_hindervines_preserves_only_countered_source_combat_damage",
         "test_actual_luminesce_prevents_red_shock_but_not_blue_damage",
         "test_actual_enchanted_source_prevention_follows_aura_damage_scope",
-        "test_actual_oaf_prevents_only_its_damage_to_red_creature"
+        "test_actual_oaf_prevents_only_its_damage_to_red_creature",
+        "test_original_djeru_resolve_untaps_then_prevents_damage_and_replays"
       ],
       "multiplayer_tests": [
         "test_simultaneous_sources_require_and_replay_exact_allocation",
@@ -12292,7 +12299,8 @@
         "test_actual_hindervines_preserves_only_countered_source_combat_damage",
         "test_actual_luminesce_prevents_red_shock_but_not_blue_damage",
         "test_actual_enchanted_source_prevention_follows_aura_damage_scope",
-        "test_actual_oaf_prevents_only_its_damage_to_red_creature"
+        "test_actual_oaf_prevents_only_its_damage_to_red_creature",
+        "test_original_djeru_resolve_untaps_then_prevents_damage_and_replays"
       ],
       "required_evidence": [
         "positive",

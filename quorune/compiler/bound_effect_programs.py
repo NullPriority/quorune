@@ -110,8 +110,6 @@ def _single_target_reference(text: str, compile_component: ComponentCompiler):
             continue
         assert schema is not None
         generic_subject = "target player" if schema["categories"] == ["player"] else "target permanent"
-        if schema.get('types_any')==['creature'] or 'creature' in schema.get('types_all',[]):
-            generic_subject='target creature'
         compiled = [first]
         bound_reference_seen = False
         for clause in clauses[1:]:
@@ -139,6 +137,12 @@ def _single_target_reference(text: str, compile_component: ComponentCompiler):
                 break
             normalized = clause[:reference.start()] + generic_subject + clause[reference.end():]
             component = compile_component(normalized)
+            if component[0] is None and (
+                schema.get("types_any") == ["creature"]
+                or "creature" in schema.get("types_all", [])
+            ):
+                creature_clause = clause[:reference.start()] + "target creature" + clause[reference.end():]
+                component = compile_component(creature_clause)
             if (
                 component[0] is None or component[2] is None
                 or not _public_single_target(component[2])

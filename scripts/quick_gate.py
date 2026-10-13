@@ -176,6 +176,13 @@ def build_plan(
                  "-p", "test_fixed_keyword_event_effects.py", "-k",
                  "test_exploit_target_result_is_accepted_by_corpus_assurance_and_rejects_changed_effect"),
             ))
+        if "quorune/compiler/bound_effect_programs.py" in paths:
+            steps.append(QuickStep(
+                "bound-target-prevention-carrier-contract",
+                (python, "-m", "unittest", "discover", "-s", "tests",
+                 "-p", "test_bound_effect_programs.py", "-k",
+                 "test_bound_creature_prevention_pronouns_preserve_closed_scope_shape"),
+            ))
         if "quorune/compiler/event_card_return_templates.py" in paths:
             steps.append(QuickStep(
                 "event-return-source-less-probe-contract",

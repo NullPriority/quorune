@@ -33011,6 +33011,37 @@
     {
       "capability_id": "damage.prevention.persistent_amount",
       "evidence_class": "interaction",
+      "test_id": "tests.test_bound_effect_programs.BoundEffectProgramRuntimeTests.test_original_djeru_resolve_untaps_then_prevents_damage_and_replays",
+      "official_rule_ids": [
+        "609.7",
+        "609.7a",
+        "609.7b",
+        "615.1",
+        "615.2",
+        "615.3",
+        "615.4",
+        "615.5",
+        "615.6",
+        "615.7",
+        "615.8",
+        "615.9",
+        "615.11",
+        "615.12",
+        "615.12a",
+        "615.13",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Generic bound-target pronouns retain the original creature target schema while prevention uses its closed scope descriptor. Original Djeru\u2019s Resolve casts through offered trusted action, untaps its target, then prevents original Lightning Bolt damage, with pre-action replay and pending load."
+    },
+    {
+      "capability_id": "damage.prevention.persistent_amount",
+      "evidence_class": "interaction",
       "test_id": "tests.test_damage_prevention_creation.DamagePreventionCreationTests.test_incarnation_safe_source_filters_are_rechecked_when_damage_happens",
       "official_rule_ids": [
         "609.7",
@@ -34344,6 +34375,68 @@
     {
       "capability_id": "damage.prevention.persistent_amount",
       "evidence_class": "positive",
+      "test_id": "tests.test_bound_effect_programs.BoundEffectProgramCompilerTests.test_bound_creature_prevention_pronouns_preserve_closed_scope_shape",
+      "official_rule_ids": [
+        "609.7",
+        "609.7a",
+        "609.7b",
+        "615.1",
+        "615.2",
+        "615.3",
+        "615.4",
+        "615.5",
+        "615.6",
+        "615.7",
+        "615.8",
+        "615.9",
+        "615.11",
+        "615.12",
+        "615.12a",
+        "615.13",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Generic bound-target pronouns retain the original creature target schema while prevention uses its closed scope descriptor. Original Djeru\u2019s Resolve casts through offered trusted action, untaps its target, then prevents original Lightning Bolt damage, with pre-action replay and pending load."
+    },
+    {
+      "capability_id": "damage.prevention.persistent_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_bound_effect_programs.BoundEffectProgramRuntimeTests.test_original_djeru_resolve_untaps_then_prevents_damage_and_replays",
+      "official_rule_ids": [
+        "609.7",
+        "609.7a",
+        "609.7b",
+        "615.1",
+        "615.2",
+        "615.3",
+        "615.4",
+        "615.5",
+        "615.6",
+        "615.7",
+        "615.8",
+        "615.9",
+        "615.11",
+        "615.12",
+        "615.12a",
+        "615.13",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Generic bound-target pronouns retain the original creature target schema while prevention uses its closed scope descriptor. Original Djeru\u2019s Resolve casts through offered trusted action, untaps its target, then prevents original Lightning Bolt damage, with pre-action replay and pending load."
+    },
+    {
+      "capability_id": "damage.prevention.persistent_amount",
+      "evidence_class": "positive",
       "test_id": "tests.test_damage_prevention_creation.DamagePreventionCreationTests.test_chosen_permanent_spell_continues_to_the_permanent_it_becomes",
       "official_rule_ids": [
         "609.7",
@@ -34929,6 +35022,37 @@
         "commander_review"
       ],
       "applicability_note": "Expose explicitly referred public objects while excluding hidden and unrelated former-zone objects."
+    },
+    {
+      "capability_id": "damage.prevention.persistent_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_bound_effect_programs.BoundEffectProgramRuntimeTests.test_original_djeru_resolve_untaps_then_prevents_damage_and_replays",
+      "official_rule_ids": [
+        "609.7",
+        "609.7a",
+        "609.7b",
+        "615.1",
+        "615.2",
+        "615.3",
+        "615.4",
+        "615.5",
+        "615.6",
+        "615.7",
+        "615.8",
+        "615.9",
+        "615.11",
+        "615.12",
+        "615.12a",
+        "615.13",
+        "616.1",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Generic bound-target pronouns retain the original creature target schema while prevention uses its closed scope descriptor. Original Djeru\u2019s Resolve casts through offered trusted action, untaps its target, then prevents original Lightning Bolt damage, with pre-action replay and pending load."
     },
     {
       "capability_id": "damage.prevention.persistent_amount",
@@ -48574,6 +48698,27 @@
       "applicability_note": "Replay begins before the real offered action and reproduces the prefix, conditional result and exact authoritative hash."
     },
     {"capability_id":"resolution.effect_program.bound_references","evidence_class":"interaction","test_id":"tests.test_bound_effect_programs.BoundEffectProgramRuntimeTests.test_counter_choice_resumes_after_prior_effect_once","official_rule_ids":["115.1","115.3","400.7","608.2b","608.2c","608.2d","608.2h","609.3"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Commit a prior modifier, suspend at counter replacement ordering, then apply the counter and final untap without repeating prior work."},
+    {
+      "capability_id": "resolution.effect_program.bound_references",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_bound_effect_programs.BoundEffectProgramRuntimeTests.test_original_djeru_resolve_untaps_then_prevents_damage_and_replays",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Generic bound-target pronouns retain the original creature target schema while prevention uses its closed scope descriptor. Original Djeru\u2019s Resolve casts through offered trusted action, untaps its target, then prevents original Lightning Bolt damage, with pre-action replay and pending load."
+    },
     {"capability_id":"resolution.effect_program.bound_references","evidence_class":"interaction","test_id":"tests.test_bound_effect_programs.BoundEffectProgramRuntimeTests.test_target_revalidation_precedes_but_does_not_repeat_between_effects","official_rule_ids":["115.1","115.3","400.7","608.2b","608.2c","608.2d","608.2h","609.3"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Revalidate original target qualifiers before resolution, then retain the established reference after an earlier effect grants Shroud."},
     {"capability_id":"resolution.effect_program.bound_references","evidence_class":"interaction","test_id":"tests.test_bound_effect_programs.BoundEffectProgramRuntimeTests.test_trusted_player_subject_draw_loss_and_discard","official_rule_ids":["115.1","115.3","400.7","608.2b","608.2c","608.2d","608.2h","609.3"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"The targeted player draws or privately discards before that player's life changes; the casting controller remains distinct."},
     {
@@ -48726,7 +48871,49 @@
       ],
       "applicability_note": "A fixed all-damage prevention component retains its exact closed scope and target-zero binding; ordinary shield creation, damage, duration, privacy and replay owners remain authoritative."
     },
+    {
+      "capability_id": "resolution.effect_program.bound_references",
+      "evidence_class": "positive",
+      "test_id": "tests.test_bound_effect_programs.BoundEffectProgramCompilerTests.test_bound_creature_prevention_pronouns_preserve_closed_scope_shape",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Generic bound-target pronouns retain the original creature target schema while prevention uses its closed scope descriptor. Original Djeru\u2019s Resolve casts through offered trusted action, untaps its target, then prevents original Lightning Bolt damage, with pre-action replay and pending load."
+    },
     {"capability_id":"resolution.effect_program.bound_references","evidence_class":"positive","test_id":"tests.test_bound_effect_programs.BoundEffectProgramCompilerTests.test_bound_effect_grammar_compiles_across_contexts","official_rule_ids":["115.1","115.3","400.7","608.2b","608.2c","608.2d","608.2h","609.3"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Bind grammatical subjects and one target-zero reference across independently typed ordered components in spell, activation, trigger and modal carriers."},
+    {
+      "capability_id": "resolution.effect_program.bound_references",
+      "evidence_class": "positive",
+      "test_id": "tests.test_bound_effect_programs.BoundEffectProgramRuntimeTests.test_original_djeru_resolve_untaps_then_prevents_damage_and_replays",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Generic bound-target pronouns retain the original creature target schema while prevention uses its closed scope descriptor. Original Djeru\u2019s Resolve casts through offered trusted action, untaps its target, then prevents original Lightning Bolt damage, with pre-action replay and pending load."
+    },
     {"capability_id":"resolution.effect_program.bound_references","evidence_class":"positive","test_id":"tests.test_bound_effect_programs.BoundEffectProgramRuntimeTests.test_trusted_qualified_target_binding_and_stale_rollback","official_rule_ids":["115.1","115.3","400.7","608.2b","608.2c","608.2d","608.2h","609.3"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Offer and pay a real registered qualified cast and source-excluding activation, resolve both components and preserve cleanup expiration."},
     {
       "capability_id": "resolution.effect_program.bound_references",
@@ -48814,6 +49001,27 @@
       "applicability_note": "A fixed all-damage prevention component retains its exact closed scope and target-zero binding; ordinary shield creation, damage, duration, privacy and replay owners remain authoritative."
     },
     {"capability_id":"resolution.effect_program.bound_references","evidence_class":"replay","test_id":"tests.test_bound_effect_programs.BoundEffectProgramRuntimeTests.test_counter_choice_resumes_after_prior_effect_once","official_rule_ids":["115.1","115.3","400.7","608.2b","608.2c","608.2d","608.2h","609.3"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Save/load at the represented replacement boundary and replay the actual cast and resumed consequences from its pre-action checkpoint."},
+    {
+      "capability_id": "resolution.effect_program.bound_references",
+      "evidence_class": "replay",
+      "test_id": "tests.test_bound_effect_programs.BoundEffectProgramRuntimeTests.test_original_djeru_resolve_untaps_then_prevents_damage_and_replays",
+      "official_rule_ids": [
+        "115.1",
+        "115.3",
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "608.2d",
+        "608.2h",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Generic bound-target pronouns retain the original creature target schema while prevention uses its closed scope descriptor. Original Djeru\u2019s Resolve casts through offered trusted action, untaps its target, then prevents original Lightning Bolt damage, with pre-action replay and pending load."
+    },
     {"capability_id":"resolution.effect_program.bound_references","evidence_class":"replay","test_id":"tests.test_bound_effect_programs.BoundEffectProgramRuntimeTests.test_target_revalidation_precedes_but_does_not_repeat_between_effects","official_rule_ids":["115.1","115.3","400.7","608.2b","608.2c","608.2d","608.2h","609.3"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Exact replay begins before the real trusted cast and preserves the later untap after the earlier Shroud grant."},
     {"capability_id":"resolution.effect_program.bound_references","evidence_class":"replay","test_id":"tests.test_bound_effect_programs.BoundEffectProgramRuntimeTests.test_trusted_player_subject_draw_loss_and_discard","official_rule_ids":["115.1","115.3","400.7","608.2b","608.2c","608.2d","608.2h","609.3"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Replay targeted draw/life changes and save/load a pending discard before the later life-loss component."},
     {"capability_id":"resolution.effect_program.bound_references","evidence_class":"replay","test_id":"tests.test_bound_effect_programs.BoundEffectProgramRuntimeTests.test_trusted_qualified_target_binding_and_stale_rollback","official_rule_ids":["115.1","115.3","400.7","608.2b","608.2c","608.2d","608.2h","609.3"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Replay real offered casts and activations with the inherited target contract and complete characteristic/untap consequences."},
