@@ -85,6 +85,21 @@
   ],
   "path_rules": [
     {
+      "id": "explicit-object-reference-query",
+      "patterns": [
+        "quorune/selection/target_query.py"
+      ],
+      "test_modules": [
+        "test_object_identity",
+        "test_fixed_control_effects",
+        "test_fixed_combat_entry_keyword_lifecycles",
+        "test_action_proposals",
+        "test_casting_activation_proposal_equivalence",
+        "test_targeting_v070",
+        "test_game_record_v3"
+      ]
+    },
+    {
       "id": "noncreature-subtype-target-assurance",
       "patterns": [
         "quorune/compiler/direct_target.py",

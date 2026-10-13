@@ -940,7 +940,7 @@ class GameState:
     def active_seats(self) -> list[str]:
         return [seat for seat in self.turn_order if self.players[seat].in_game]
 
-    def to_dict(self) -> dict[str, Any]:
+    def to_dict(self, *, include_ephemeral: bool = True) -> dict[str, Any]:
         if self.tap_state_event_version is not None and (
             type(self.tap_state_event_version) is not int or self.tap_state_event_version != 1
         ):
@@ -1013,13 +1013,13 @@ class GameState:
                 batch.to_dict() for batch in self.pending_trigger_batches
             ],
             "combat": self.combat.to_dict(),
-            "events": [event.to_dict() for event in self.events],
+            "events": [event.to_dict() for event in self.events] if include_ephemeral else [],
             "annotations": copy.deepcopy(self.annotations),
             "action_opportunities": copy.deepcopy(self.action_opportunities),
             "opportunity_sequence": self.opportunity_sequence,
             "timestamp_sequence": self.timestamp_sequence,
             "pending_decision": self.pending_decision.to_dict() if self.pending_decision else None,
-            "capabilities": {token: cap.to_dict() for token, cap in self.capabilities.items()},
+            "capabilities": {token: cap.to_dict() for token, cap in self.capabilities.items()} if include_ephemeral else {},
             "started": self.started,
             "game_over": self.game_over,
             "winner": self.winner,

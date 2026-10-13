@@ -52,6 +52,14 @@ must declare its own explicit `ability_id`. Test-shard validation enforces this
 boundary so a later compiler promotion cannot make the synthetic program
 collide with that card's newly trusted ability.
 
+Rules fixtures that repeatedly register cards may load one verified capability
+registry in class setup and reuse it for those registrations while fixture
+inputs remain unchanged. Each test still creates its own engine, semantics and
+state, and each original card still compiles and binds independently. Tests of
+edited capability or evidence inputs use fresh invocations rather than that
+fixture snapshot. Production trust checks retain their existing validation
+scope.
+
 For a semantic scope expansion, select the reachable boundaries that can change
 the result. Bounded stateful or property exploration should cover meaningful
 sequences around control changes, ability removal and restoration, source

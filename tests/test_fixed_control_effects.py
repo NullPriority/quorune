@@ -299,10 +299,12 @@ class FixedControlGameplayTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.db, cls.mishra, cls.zimone = load_assets()
+        cls.capabilities = load_default_capability_registry()
 
     @classmethod
     def tearDownClass(cls):
         cls.db.close()
+        del cls.capabilities
 
     def session(self, seed):
         session = make_session(self.db, self.mishra, self.zimone, players=4, seed=seed)
@@ -329,7 +331,7 @@ class FixedControlGameplayTests(unittest.TestCase):
         engine.state.players[seat].zones[zone].append(card.object_id)
         register_generated_programs(
             self.db, engine.semantics, (record,), trust_level="trusted",
-            capability_registry=load_default_capability_registry(), capability_profile="commander_review",
+            capability_registry=self.capabilities, capability_profile="commander_review",
             promote_exact_runtime_handlers=True, promote_exact_trigger_programs=True,
             promote_exact_effect_programs=True, promote_exact_capability_declarations=True,
         )

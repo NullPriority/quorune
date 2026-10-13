@@ -47,6 +47,11 @@ validation. State hashes cover canonical authoritative state, including
 versioned rules-relevant fields and continuations. They exclude presentation
 text, raw capability tokens, connection cursors, and derived review.
 
+Checkpoint serialization omits event logs and capability credentials before
+constructing their payloads, while full `GameState.to_dict()` retains them for
+its ordinary callers. The checkpoint remains a deep-isolated copy of every
+retained authoritative field, with the same canonical payload and hash.
+
 Every accepted command records:
 
 - sequential record command identity and optional network idempotency identity;

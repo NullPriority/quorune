@@ -29,6 +29,12 @@ output parity and edited, missing, malformed, and unreadable input boundaries
 before relying on an optimization. Keep exact-source certification, complete
 test inventory, and the checked concurrency envelope intact.
 
+Public-reference lookup resolves identity before the fallback effective-name
+query. Profile the same real-action and replay witness before and after a
+lookup change, and retain wrong-zone, wrong-owner, wrong-controller, duplicate
+reference, name-ambiguity and name-change controls. A reference-only path
+avoids evaluating every unrelated card's characteristics without caching state.
+
 Whole-program cohort probes lazily construct one built-in semantic registry
 per measurement and reuse it for read-only compilation of that measurement's
 cards. Separate measurements construct fresh registries, and probes with no
