@@ -1466,7 +1466,9 @@ residuals.
 resolution body for every promoted standalone or sequenced fixed-target node,
 then requires the source grammar, emitted effects, target relation, closed
 capability shape, and declared capability closure to agree. The normal pinned
-compiler census derives grammatical shapes and representative identities from
+corpus includes the fixed source Exploit result as a composing carrier; its
+inner target effect retains the same independent grammar and shape checks.
+The compiler census derives grammatical shapes and representative identities from
 the complete corpus; it does not maintain a card list. Its synthetic contract
 also covers every accepted keyword, spell/trigger/activation context,
 two-/three-clause and target-/counter-first sequence, controller relation, and

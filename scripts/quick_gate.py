@@ -169,6 +169,13 @@ def build_plan(
                  "-p", "test_fixed_counter_event_triggers.py", "-k",
                  "test_tap_state_target_body_is_accepted_by_corpus_assurance"),
             ))
+        if {"quorune/compiler/keyword_event_effect_nodes.py", "quorune/compiler/target_effect_corpus_assurance.py"}.intersection(paths):
+            steps.append(QuickStep(
+                "exploit-target-corpus-carrier-contract",
+                (python, "-m", "unittest", "discover", "-s", "tests",
+                 "-p", "test_fixed_keyword_event_effects.py", "-k",
+                 "test_exploit_target_result_is_accepted_by_corpus_assurance_and_rejects_changed_effect"),
+            ))
         if "quorune/compiler/event_card_return_templates.py" in paths:
             steps.append(QuickStep(
                 "event-return-source-less-probe-contract",

@@ -87,6 +87,7 @@
     {
       "id": "intrinsic-exploit-sacrifice-contract",
       "patterns": [
+        "quorune/compiler/target_effect_corpus_assurance.py",
         "quorune/semantic_choices/exploit.py",
         "quorune/semantic_runtime/exploit_intent.py",
         "quorune/rules/exploit_capability_shapes.py",

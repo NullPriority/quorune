@@ -283,6 +283,20 @@ class FixedKeywordEventEffectCompilerTests(unittest.TestCase):
         self.assertEqual({'op':'exploit','player':'$controller','source':'$source'},nodes[0].effects[0])
         self.assertEqual([1,2],[node.span.line for node in nodes])
 
+    def test_exploit_target_result_is_accepted_by_corpus_assurance_and_rejects_changed_effect(self):
+        from quorune.compiler.target_effect_corpus_assurance import TargetEffectCorpusCollector,TargetEffectAssuranceError
+        from test_fixed_library_selection import base_record
+        card=replace(base_record(),name='Generic Exploiter',type_line='Creature — Zombie',
+            oracle_text='Exploit\nWhen this creature exploits a creature, target creature gets -3/-3 until end of turn.',keywords=('Exploit',))
+        registry=load_default_capability_registry()
+        ir=compile_oracle_card(card,capability_registry=registry,capability_profile='commander_review')
+        self.assertEqual('exact',ir.status)
+        TargetEffectCorpusCollector().observe(card,ir)
+        node=ir.faces[0].nodes[1]
+        changed=replace(node,effects=({**node.effects[0],'power':-2},))
+        mutated=replace(ir,faces=(replace(ir.faces[0],nodes=(ir.faces[0].nodes[0],changed)),))
+        with self.assertRaises(TargetEffectAssuranceError):TargetEffectCorpusCollector().observe(card,mutated)
+
     @classmethod
     def setUpClass(cls) -> None:
         cls.temporary = tempfile.TemporaryDirectory()

@@ -44,7 +44,7 @@ if TYPE_CHECKING:
 
 
 ASSURANCE_SCHEMA_VERSION = 1
-ASSURANCE_ALGORITHM_VERSION = "fixed-target-corpus-assurance-v10"
+ASSURANCE_ALGORITHM_VERSION = "fixed-target-corpus-assurance-v11"
 STANDALONE_TEMPLATE_ID = (
     "fixed-target-characteristics-until-end-of-turn-v1"
 )
@@ -57,6 +57,7 @@ TARGET_TEMPLATE_IDS = frozenset(
 COMPOSING_TEMPLATE_IDS = frozenset(
     FIXED_COUNTER_EVENT_TRIGGER_TEMPLATE_IDS
     | FIXED_TYPED_EVENT_EFFECT_TRIGGER_TEMPLATE_IDS
+    | {"fixed-source-exploit-result-v1"}
 )
 SUPPORTED_CONTEXTS = (
     "activated_ability",
