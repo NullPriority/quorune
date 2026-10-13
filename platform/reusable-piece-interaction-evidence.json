@@ -9682,6 +9682,126 @@
       ],
       "interaction_order": 2,
       "assertion": "A constructed Forest carrier retains its recognized intrinsic green mana node and an unsupported coin-replacement sibling; strict and compatible whole-program admission reject that residual composition without a hard construction failure."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_connive_redirected_discard_and_counter_replacements_resume_once",
+      "piece_ids": [
+        "capability.counter.placement.quantity_replacement",
+        "capability.hand.connive.fixed_count"
+      ],
+      "capability_ids": [
+        "counter.placement.quantity_replacement",
+        "hand.connive.fixed_count"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original fixed Connive draws, selects mandatory private discards, resumes redirected discard and counter replacements once, and places counters only on the retained source incarnation with pending reload and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_connive_redirected_discard_and_counter_replacements_resume_once",
+      "piece_ids": [
+        "capability.hand.connive.fixed_count",
+        "capability.zone.change.destination_replacement"
+      ],
+      "capability_ids": [
+        "hand.connive.fixed_count",
+        "zone.change.destination_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original fixed Connive draws, selects mandatory private discards, resumes redirected discard and counter replacements once, and places counters only on the retained source incarnation with pending reload and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_exploit_decline_source_bounce_and_redirected_sacrifice_distinguish_bonus",
+      "piece_ids": [
+        "capability.trigger.keyword.exploit.creature_sacrifice",
+        "capability.zone.change.destination_replacement"
+      ],
+      "capability_ids": [
+        "trigger.keyword.exploit.creature_sacrifice",
+        "zone.change.destination_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Exploit distinguishes decline, source departure and a redirected actual sacrifice before its dependent bonus. The canonical sacrifice cause and retained source occurrence control the complete result with replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_transmute_discard_replacement_retains_mana_value_and_replays",
+      "piece_ids": [
+        "capability.activation.transmute.hand",
+        "capability.zone.change.destination_replacement"
+      ],
+      "capability_ids": [
+        "activation.transmute.hand",
+        "zone.change.destination_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Transmute pays its hand discard through destination replacement, retains the discarded source mana value, then performs the canonical private equal-value library search and shuffle with exact pre-activation replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_controller_sacrifice_keeps_choice_across_destination_replacement",
+      "piece_ids": [
+        "capability.choice.affected_player.fixed_sacrifice",
+        "capability.zone.change.destination_replacement"
+      ],
+      "capability_ids": [
+        "choice.affected_player.fixed_sacrifice",
+        "zone.change.destination_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Perilous Research completes draws before controller sacrifice. Competing original Dauthi replacements suspend before movement, retain the chosen permanent, reject another principal, and resume after pending save/load with exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_random_discard_replacement_pending_selection_reload_rollback_and_replay",
+      "piece_ids": [
+        "capability.zone.change.destination_replacement",
+        "capability.zone.discard.fixed_random"
+      ],
+      "capability_ids": [
+        "zone.change.destination_replacement",
+        "zone.discard.fixed_random"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Hymn selects a deterministic distinct random hand subset before competing Dauthi replacements. The private complete membership snapshot rejects stale hand changes and wrong principals; pending reload and pre-cast replay retain the same selected identities."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_library_actions_trigger_only_current_controller_observers_after_completion",
+      "piece_ids": [
+        "capability.library.scry.fixed_controller",
+        "capability.trigger.event.normalized_public_action"
+      ],
+      "capability_ids": [
+        "library.scry.fixed_controller",
+        "trigger.event.normalized_public_action"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual casts resolve controller Scry counts and trigger only the current controller observer after the private partition finishes. Zero performs no action; a positive empty-library procedure completes and triggers once. Pending reload and pre-cast replay preserve the result."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_library_actions_trigger_only_current_controller_observers_after_completion",
+      "piece_ids": [
+        "capability.library.surveil.fixed_controller",
+        "capability.trigger.event.normalized_public_action"
+      ],
+      "capability_ids": [
+        "library.surveil.fixed_controller",
+        "trigger.event.normalized_public_action"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual casts resolve controller Surveil counts and trigger only the current controller observer after the private partition finishes. Zero performs no action; positive empty-library completion triggers once. Pending reload and pre-cast replay preserve the result."
     }
   ]
 }

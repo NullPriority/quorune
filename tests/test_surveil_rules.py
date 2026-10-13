@@ -134,7 +134,7 @@ class FixedSurveilCompilerTests(unittest.TestCase):
             "Surveil X.",
             "Target player surveils 2.",
             "Surveil 2, then draw a card for each card put into your graveyard this way.",
-            "Whenever you surveil, draw a card.",
+            "Whenever you surveil, draw a card for each card put into your graveyard this way.",
         )
         for index, text in enumerate(variants):
             with self.subTest(text=text):
@@ -151,6 +151,9 @@ class FixedSurveilCompilerTests(unittest.TestCase):
                 ir = self.compile(record)
                 self.assertNotEqual("exact", ir.status)
                 self.assertTrue(ir.material_residuals)
+        supported = replace(self.base, oracle_id="fixture:represented-surveil-observer",
+            oracle_text="Whenever you surveil, draw a card.", type_line="Enchantment")
+        self.assertEqual("exact", self.compile(supported).status)
 
     def test_surveil_shape_dependency_and_compiler_mutants_fail_closed(self):
         valid = ({"op": "surveil", "player": "$controller", "count": 2},)

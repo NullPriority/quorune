@@ -3861,6 +3861,10 @@
     {
       "id": "library-count-and-completion-contract",
       "patterns": [
+        "mechanics/contracts/scry.json",
+        "mechanics/contracts/surveil.json",
+        "rules/conformance-reviews/cr-701-22-scry.json",
+        "rules/conformance-reviews/cr-701-25-surveil.json",
         "quorune/compiler/declared_effect_amounts.py",
         "quorune/compiler/public_query_effect_amounts.py",
         "quorune/compiler/fixed_public_action_event_bindings.py",

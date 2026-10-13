@@ -40,11 +40,11 @@
       "assertion_kind": "executable_engine",
       "reviewed": true,
       "implementation_components": ["quorune.semantic_choices.scry.ScryChoiceHandler"],
-      "executable_test_ids": ["tests.test_scry_rules.ScryRuntimeTests.test_scry_zero_and_empty_library_create_no_event"],
+      "executable_test_ids": ["tests.test_scry_rules.ScryRuntimeTests.test_scry_zero_has_no_event_and_positive_empty_library_completes_event", "tests.test_variable_library_counts.VariableLibraryCountActionTests.test_zero_public_count_creates_no_choice_or_scry_surveil_event"],
       "required_scenarios": ["positive", "negative", "replay"],
       "covered_scenarios": ["positive", "negative", "replay"],
       "blockers": [],
-      "notes": ["Scry 0 auto-continues without a Scry event or player task; an empty library likewise creates no physical choice."]
+      "notes": ["Scry 0 auto-continues without an event or player task. Positive empty-library completion is separately covered by 701.22d."]
     },
     {
       "rule_id": "701.22c",
@@ -59,6 +59,20 @@
       "covered_scenarios": ["negative"],
       "blockers": ["one instruction making multiple players Scry simultaneously is not lowered", "the APNAP decision order and simultaneous library commit have no typed coordinator"],
       "notes": ["Normal four-player resolution for one instructed player is covered; simultaneous multi-player Scry is deliberately outside this capability."]
+    },
+    {
+      "rule_id": "701.22d",
+      "rule_text_sha256": "ae9390235aa64de4ff777050f7112310c63c7602e2607c0cd359b9cdb659a874",
+      "classification": "behavioral",
+      "status": "passing",
+      "assertion_kind": "executable_engine",
+      "reviewed": true,
+      "implementation_components": ["quorune.semantic_choices.scry.ScryChoiceHandler", "quorune.rules.library_scry.commit_scry_arrangement", "quorune.trigger_discovery.dispatch_semantic_event"],
+      "executable_test_ids": ["tests.test_variable_library_counts.VariableLibraryCountActionTests.test_positive_scry_on_empty_library_completes_an_event_without_private_choice", "tests.test_variable_library_counts.VariableLibraryCountActionTests.test_actual_library_actions_trigger_only_current_controller_observers_after_completion"],
+      "required_scenarios": ["positive", "negative", "interaction", "multiplayer", "replay"],
+      "covered_scenarios": ["positive", "negative", "interaction", "multiplayer", "replay"],
+      "blockers": [],
+      "notes": ["A completed positive Scry instruction emits player.scried after the entire procedure, including an empty library; zero emits no action. Controller observers exclude another player's completed procedure."]
     }
   ]
 }
