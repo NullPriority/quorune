@@ -103,6 +103,8 @@ _STATE_BASED_DESTRUCTION_FIELDS = {
     "replacement_resume_kind", "state_based_frame", "replacement_selections",
     "replacement_batch", "replacement_effects",
 }
+_CONDITIONAL_RETURN_FIELDS = {'replacement_resume_kind','conditional_bindings','conditional_departures','conditional_aura_targets',
+    'replacement_selections','replacement_batch','replacement_effects'}
 _MANA_FRAME_FIELDS = {
     "active_player",
     "phase",
@@ -200,6 +202,9 @@ class ReplacementContinuation:
         if resume_kind == "state_based_destruction":
             from ..state_based_replacement_coordination import decode_state_based_replacement
             return decode_state_based_replacement(cls, value, batch, effects)
+        if resume_kind == 'conditional_return':
+            from ..conditional_exile_return import decode_conditional_return
+            return decode_conditional_return(cls,value,batch,effects)
         return _decode_semantic_continuation(cls, value, batch, effects)
 
     def thaw_combat_assignments(self) -> list[dict[str, Any]]:
@@ -304,6 +309,7 @@ def _validate_continuation_shape(value: Mapping[str, Any]) -> str:
             "turn-counter action continuation",
         ),
         "state_based_destruction": (_STATE_BASED_DESTRUCTION_FIELDS, "state-based destruction continuation"),
+        'conditional_return': (_CONDITIONAL_RETURN_FIELDS,'conditional return continuation'),
     }
     shape = shapes.get(resume_kind)
     if shape is None:

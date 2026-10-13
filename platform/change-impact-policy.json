@@ -3772,7 +3772,16 @@
         "quorune/conditional_exile_return.py",
         "quorune/compiler/conditional_exile_templates.py",
         "quorune/linked_exile_return_model.py",
-        "quorune/linked_exile_return.py"
+        "quorune/linked_exile_return.py",
+        "quorune/replacement/replay.py",
+        "quorune/replacement_decisions.py",
+        "quorune/zone_transition_model.py",
+        "quorune/zone_transitions.py",
+        "quorune/state_based_execution.py",
+        "quorune/rules/activation/commit.py",
+        "tests/fixtures/conditional-exile-cards.json",
+        "quorune/mana_activation.py",
+        "quorune/aura/decisions.py"
       ],
       "test_modules": [
         "test_conditional_exile",
@@ -3780,7 +3789,10 @@
         "test_linked_abilities",
         "test_single_object_zone_transition",
         "test_card_program_trust",
-        "test_game_record_v3"
+        "test_game_record_v3",
+        "test_state_based_actions",
+        "test_ordinary_cycling",
+        "test_transmute"
       ]
     }
   ],

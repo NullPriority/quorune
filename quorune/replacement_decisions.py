@@ -249,6 +249,9 @@ def apply_effect_with_replacement_choice(
         else:
             execute_intent_plan(host, plan)
     except ReplacementChoiceRequired as required:
+        from .conditional_exile_return import ConditionalReturnChoiceRequired
+        if isinstance(required, ConditionalReturnChoiceRequired):
+            effect = required.return_effect()
         issue_replacement_order_choice(
             host,
             item=item,
@@ -261,6 +264,12 @@ def apply_effect_with_replacement_choice(
         )
         return False
     except AuraEntryChoiceRequired as required:
+        from .conditional_exile_return import ConditionalReturnAuraChoiceRequired, issue_conditional_aura_choice
+        if isinstance(required,ConditionalReturnAuraChoiceRequired):
+            issue_conditional_aura_choice(host,required,{'stack_ref':item.ref,'remaining':list(remaining),
+                'destination':destination,'note':note,'instruction_pointer':instruction_pointer,
+                'semantic_frame':host._semantic_frame(item,instruction_pointer=instruction_pointer)})
+            return False
         issue_aura_entry_choice(
             host,
             item=item,
@@ -532,6 +541,10 @@ def complete_replacement_order_choice(
     selection = _replacement_selection(
         response, pending, error_type=error_type
     )
+    if restored.resume_kind == 'conditional_return':
+        from .conditional_exile_return import resume_conditional_return
+        resume_conditional_return(host,restored,selection)
+        return
     if restored.resume_kind == "state_based_destruction":
         from .state_based_replacement_coordination import resume_state_based_replacement
         resume_state_based_replacement(host, restored, selection, error_type=error_type)

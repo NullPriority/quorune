@@ -191,6 +191,9 @@ def complete_mana_activation(
         )
     else:
         clear_mana_undo_stack(host.state.players[seat].stats)
+    from .conditional_exile_return import conditional_cost_returns_pending
+    if conditional_cost_returns_pending():
+        return
     if host._stabilize():
         clear_mana_undo_stack(host.state.players[seat].stats)
         return

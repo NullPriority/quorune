@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "constructed_rules_contract",
+  "source": "Constructed generic conditional return/entry-replacement witness",
+  "cards": [
+    {
+      "name": "Generic Conditional Counter Body",
+      "oracle_id": "fixture:conditional-counter-body",
+      "mana_cost": "{1}{G}",
+      "cmc": 2,
+      "type_line": "Creature \u2014 Test",
+      "oracle_text": "This creature enters with a +1/+1 counter on it.",
+      "power": "2",
+      "toughness": "2",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "name": "Generic Conditional Sacrifice Source",
+      "oracle_id": "fixture:conditional-sacrifice-source",
+      "mana_cost": "{1}",
+      "cmc": 1,
+      "type_line": "Artifact",
+      "oracle_text": "{0}, Sacrifice this artifact: Draw a card.",
+      "power": null,
+      "toughness": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "name": "Generic Conditional Aura",
+      "oracle_id": "fixture:conditional-aura",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "type_line": "Enchantment \u2014 Aura",
+      "oracle_text": "Enchant creature\nEnchanted creature gets +1/+1.",
+      "power": null,
+      "toughness": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "name": "Generic Conditional Mana Source",
+      "oracle_id": "fixture:conditional-mana-source",
+      "mana_cost": "{1}",
+      "cmc": 1,
+      "type_line": "Artifact",
+      "oracle_text": "Sacrifice this artifact: Add {C}.",
+      "power": null,
+      "toughness": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "rulings": []
+}

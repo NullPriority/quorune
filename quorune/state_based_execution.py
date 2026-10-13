@@ -309,6 +309,16 @@ def commit_state_based_zone_changes(
     host: DestructionHost,
     plan: StateBasedExecutionPlan,
 ) -> None:
+    from .conditional_exile_return import defer_conditional_cost_returns, finish_conditional_cost_returns
+    with defer_conditional_cost_returns() as waiting:
+        _commit_state_based_zone_changes(host,plan)
+    finish_conditional_cost_returns(host,waiting)
+
+
+def _commit_state_based_zone_changes(
+    host: DestructionHost,
+    plan: StateBasedExecutionPlan,
+) -> None:
     if not isinstance(plan, StateBasedExecutionPlan):
         raise StateBasedExecutionError(
             "State-based commit requires a typed execution plan"

@@ -67,7 +67,7 @@ def return_linked_exiled_objects(
     *, actor: str, operation: str, reason: str,
 ) -> list[str]:
     del operation
-    allowed = {"op", "objects", "spec", "_runtime_source", "_replacement_selections"}
+    allowed = {"op", "objects", "spec", "_runtime_source", "_replacement_selections", "_aura_target_refs"}
     if set(effect) - allowed or not {"op", "objects", "spec"}.issubset(effect):
         raise GameRuleError("Linked return has an invalid shape")
     spec = _spec(effect)
@@ -95,6 +95,7 @@ def return_linked_exiled_objects(
         tapped=spec.tapped, destination_controllers=controllers,
         effect_entry_counters=counters,
         replacement_selections=tuple(effect.get("_replacement_selections") or ()),
+        aura_target_refs=effect.get('_aura_target_refs'),
     )
     returned = tuple(card for card in moved if card.zone == "battlefield")
     if spec.keywords and returned:

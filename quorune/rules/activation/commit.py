@@ -732,6 +732,15 @@ def commit_activation(
     proposal: ActivationProposal,
     response: Mapping[str, Any],
 ) -> None:
+    from ...conditional_exile_return import commit_activation_with_conditional_returns
+    commit_activation_with_conditional_returns(host,proposal,response)
+
+
+def _commit_activation_costs_and_stack(
+    host: ActivationCommitHost,
+    proposal: ActivationProposal,
+    response: Mapping[str, Any],
+) -> bool | None:
     """Commit one revalidated activation proposal through typed state owners."""
 
     source, ability, mana_option = _revalidate_activation(host, proposal)
@@ -816,7 +825,7 @@ def commit_activation(
             source_was_snow=source_was_snow,
             source_information=mana_source_information,
         )
-        return
+        return True
     item = _activation_stack_item(
         host,
         proposal,
@@ -874,11 +883,7 @@ def commit_activation(
         changed_players=[proposal.seat],
     )
     _dispatch_cycling_event(host, proposal, item, cycling_snapshot)
-    if host._stabilize():
-        return
-    host.state.priority_player = proposal.seat
-    host.state.priority_passes = []
-    host.state.players[proposal.seat].yield_policy = YieldPolicy()
+    return False
 
 
 __all__ = ["ActivationCommitHost", "commit_activation"]

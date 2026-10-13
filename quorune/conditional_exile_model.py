@@ -12,6 +12,8 @@ from typing import Any, Mapping, Sequence
 from .continuous_effect_model import ContinuousObjectIdentity
 from .linked_exile_return_model import ExiledObjectIdentity
 
+CONDITIONAL_EXILE_BINDINGS = 'conditional_exile_bindings'
+
 
 @dataclass(frozen=True, slots=True)
 class ConditionalExileBinding:
@@ -54,6 +56,20 @@ def conditional_source_remains(source: ContinuousObjectIdentity, cards: Mapping[
     card = cards.get(source.object_id)
     return bool(card is not None and card.zone == 'battlefield'
         and card.logical_object_id == source.logical_object_id)
+
+
+def source_conditional_bindings(card: Any) -> tuple[ConditionalExileBinding, ...]:
+    """Decode the noncopiable instructions owned by this source incarnation."""
+    raw = card.annotations.get(CONDITIONAL_EXILE_BINDINGS, ())
+    if not isinstance(raw, (list, tuple)):
+        raise ValueError('Conditional source bindings must be an array')
+    result = tuple(ConditionalExileBinding.from_dict(value) for value in raw)
+    identity = ContinuousObjectIdentity(card.object_id, card.logical_object_id)
+    if any(value.source != identity for value in result):
+        raise ValueError('Conditional source bindings belong to another incarnation')
+    if len({value.binding_id for value in result}) != len(result):
+        raise ValueError('Conditional source instruction identities must be distinct')
+    return result
 
 
 def conditional_return_objects(binding: ConditionalExileBinding, cards: Mapping[str, Any]) -> tuple[Any, ...]:

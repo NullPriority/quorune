@@ -129,6 +129,200 @@ class ConditionalExileCompilerRecognitionTests(unittest.TestCase):
 
 
 class ConditionalExileZoneBoundaryTests(unittest.TestCase):
+    def test_mixed_return_keeps_unattachable_aura_exiled_and_returns_other_objects(self):
+        from pathlib import Path
+        import tempfile
+        from common import ROOT
+        from scripts.build_test_database import build_fixture_database
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition, DeckEntry
+        from quorune.rules.capabilities import load_default_capability_registry
+        from quorune.zone_transitions import ZoneTransitionOwner
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests as Actions
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'mixed.sqlite3';build_fixture_database([
+                ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/conditional-exile-cards.json'],path)
+            db=CardDatabase(path)
+            try:
+                actions=Actions();actions.db=db;actions.registry=load_default_capability_registry()
+                actions.deck=DeckDefinition('Generic mixed return',[DeckEntry('Generic Bound Commander',1,'commander'),
+                    DeckEntry('Generic Bound Plains',30)],['Generic Bound Commander'])
+                session=actions.session(6100305);engine=session.engine;owner=ZoneTransitionOwner(engine)
+                source=actions.add(engine,'Generic Conditional Sacrifice Source',ref='mixed-source')
+                aura=actions.add(engine,'Generic Conditional Aura',zone='exile',ref='unattachable-aura')
+                body=actions.add(engine,'Generic Bound Body',seat='B',zone='exile',ref='simultaneous-body')
+                binding=ConditionalExileBinding('mixed-created',ContinuousObjectIdentity(source.object_id,source.logical_object_id),
+                    tuple(ExiledObjectIdentity(card.object_id,card.ref,card.logical_object_id) for card in (aura,body)))
+                owner.remember_conditional_exile(binding)
+                owner.move_card(source.object_id,'hand',reason='mixed return specified event')
+                self.assertEqual('exile',aura.zone)
+                self.assertEqual(('battlefield','B'),(body.zone,body.controller))
+            finally:db.close()
+
+    def run_created_binding_return_choice(self, *, sacrifice, state_based=False, aura=False, mana=False):
+        from pathlib import Path
+        import tempfile
+        from common import ROOT
+        from scripts.build_test_database import build_fixture_database
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition, DeckEntry
+        from quorune.rules.capabilities import load_default_capability_registry
+        from quorune.zone_transitions import ZoneTransitionOwner
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests as Actions
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'conditional.sqlite3'
+            build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',
+                ROOT/'tests/fixtures/linked-exile-return-cards.json',ROOT/'tests/fixtures/conditional-exile-cards.json'],path)
+            db=CardDatabase(path)
+            try:
+                actions=Actions();actions.db=db;actions.registry=load_default_capability_registry()
+                actions.deck=DeckDefinition('Generic conditional test',[DeckEntry('Generic Bound Commander',1,'commander'),
+                    DeckEntry('Generic Bound Plains',30)],['Generic Bound Commander'])
+                session=actions.session(6100304);engine=session.engine
+                source=actions.add(engine,'Generic Conditional Mana Source' if mana else
+                    'Generic Conditional Sacrifice Source' if sacrifice else 'Generic Bound Body',ref='removal-source')
+                held=actions.add(engine,'Generic Conditional Aura' if aura else 'Generic Conditional Counter Body',zone='exile',ref='replacement-held')
+                attachment=actions.add(engine,'Generic Bound Body',seat='B',ref='return-aura-subject') if aura else None
+                actions.add(engine,'Generic Blink Counter Doubler',ref='return-double')
+                actions.add(engine,'Generic Blink Counter Addition',ref='return-plus')
+                binding=ConditionalExileBinding('already-created',ContinuousObjectIdentity(source.object_id,source.logical_object_id),
+                    (ExiledObjectIdentity(held.object_id,held.ref,held.logical_object_id),))
+                ZoneTransitionOwner(engine).remember_conditional_exile(binding)
+                removal=source if sacrifice else actions.add(engine,'Murder',zone='hand',ref='actual-removal-spell')
+                action=actions.ready(session,removal,{} if sacrifice else {'B':2,'C':1})
+                if state_based:source.marked_damage=20
+                actions.checkpoint(session)
+                before_hand=len(session.state.players['A'].zones['hand'])
+                accepted=session.act('pilot:A',{'action_id':'pass'} if state_based else
+                    {'action_id':action['id'],**({} if sacrifice else {'targets':[source.ref]}),'pay':'auto'})
+                self.assertTrue(accepted.ok,accepted.summary)
+                if not sacrifice and not state_based:actions.resolve(session)
+                if state_based:
+                    for _ in range(12):
+                        if session.state.pending_decision.kind=='replacement.order':break
+                        self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+                self.assertEqual('aura.entry' if aura else 'replacement.order',session.state.pending_decision.kind)
+                self.assertEqual('graveyard',session.state.cards[source.object_id].zone)
+                self.assertEqual('exile',session.state.cards[held.object_id].zone)
+                if (sacrifice or state_based) and not aura:
+                    self.assertEqual('conditional_return',session.state.pending_decision.continuation['replacement_resume_kind'])
+                    if sacrifice:self.assertEqual(before_hand,len(session.state.players['A'].zones['hand']))
+                    if sacrifice and not mana:self.assertEqual('activated_ability',session.state.stack[-1].kind)
+                elif not aura:self.assertEqual('return_linked_exiled_objects',session.state.pending_decision.continuation['effect']['op'])
+                resumed=actions.replay(session,load=True)
+                from quorune.record import authoritative_state_hash
+                before_choice=authoritative_state_hash(resumed.state)
+                denied=resumed.act('pilot:D',{'action_id':'choose',**({'aura_target':attachment.ref} if aura else {'replacement':'unknown'})})
+                self.assertFalse(denied.ok);self.assertEqual(before_choice,authoritative_state_hash(resumed.state))
+                if aura:accepted=resumed.act('pilot:A',{'action_id':'choose','aura_target':attachment.ref})
+                else:
+                    options=resumed.packet('pilot:A',full=True)['decision']['ctx']['options']
+                    chosen=next(row['id'] for row in options if 'return-plus' in row['id'])
+                    accepted=resumed.act('pilot:A',{'action_id':'choose','replacement':chosen})
+                self.assertTrue(accepted.ok,accepted.summary)
+                if sacrifice:
+                    self.assertEqual(before_hand,len(resumed.state.players['A'].zones['hand']))
+                    if not mana:self.assertEqual('activated_ability',resumed.state.stack[-1].kind)
+                actions.resolve(resumed)
+                self.assertEqual('graveyard',resumed.state.cards[source.object_id].zone)
+                self.assertEqual(1,resumed.state.cards[source.object_id].zone_change_counter)
+                self.assertEqual('battlefield',resumed.state.cards[held.object_id].zone)
+                if aura:self.assertEqual(attachment.object_id,resumed.state.cards[held.object_id].attached_to)
+                else:self.assertEqual(4,resumed.state.cards[held.object_id].counters['+1/+1'])
+                if sacrifice and not mana:self.assertEqual(before_hand+1,len(resumed.state.players['A'].zones['hand']))
+                if mana:self.assertEqual(1,resumed.state.players['A'].mana_pool['C'])
+                actions.replay(resumed)
+            finally:db.close()
+
+    def test_conditional_return_continuation_rejects_wrong_departures_and_extra_aura_objects(self):
+        # Reuse an actual pending cost return; decoding must reject changed
+        # source lifetimes and unrelated object selections before resumption.
+        from quorune.replacement.replay import ReplacementContinuation
+        from quorune.replacement.model import ReplacementEffectError
+        from unittest.mock import patch
+        import quorune.conditional_exile_return as owner
+        original=owner.issue_conditional_return_choice
+        observed=[]
+        def inspect(host,required):
+            original(host,required);observed.append(json.loads(json.dumps(host.state.pending_decision.continuation)))
+        with patch.object(owner,'issue_conditional_return_choice',inspect):
+            self.run_created_binding_return_choice(sacrifice=True)
+        value=observed[0];self.assertEqual('conditional_return',ReplacementContinuation.from_dict(value).resume_kind)
+        for change in ('source','aura','event'):
+            altered=json.loads(json.dumps(value))
+            if change=='source':altered['conditional_departures'][0]['logical_object_id']='new-incarnation'
+            elif change=='aura':altered['conditional_aura_targets']={'unrelated':'OBJECT'}
+            else:altered['replacement_batch']['events'][0]['payload']['origin']='hand'
+            with self.assertRaises(ReplacementEffectError):ReplacementContinuation.from_dict(altered)
+
+    def test_semantic_source_removal_waits_for_return_only_and_replays_from_actual_cast(self):
+        self.run_created_binding_return_choice(sacrifice=False)
+
+    def test_actual_sacrifice_cost_return_choice_does_not_resolve_parent_activation(self):
+        self.run_created_binding_return_choice(sacrifice=True)
+
+    def test_state_based_source_departure_return_replacement_replays_from_actual_pass(self):
+        self.run_created_binding_return_choice(sacrifice=False,state_based=True)
+
+    def test_actual_source_removal_returns_aura_after_attachment_choice_and_replays(self):
+        self.run_created_binding_return_choice(sacrifice=False,aura=True)
+
+    def test_actual_sacrifice_cost_aura_return_keeps_parent_ability_pending(self):
+        self.run_created_binding_return_choice(sacrifice=True,aura=True)
+
+    def test_native_mana_sacrifice_return_choice_retains_payment_without_repeating_cost(self):
+        self.run_created_binding_return_choice(sacrifice=True,mana=True)
+
+    def test_canonical_storage_survives_hydration_and_is_captured_before_source_reset(self):
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests as Actions
+        from quorune.conditional_exile_model import source_conditional_bindings, CONDITIONAL_EXILE_BINDINGS
+        from quorune.zone_transitions import ZoneTransitionOwner
+        from quorune.errors import GameRuleError
+        Actions.setUpClass()
+        try:
+            actions=Actions();session=actions.session(6100302);engine=session.engine
+            source=actions.add(engine,'Generic Bound Mentor',ref='stored-conditional-source')
+            held=actions.add(engine,'Generic Bound Body',seat='B',zone='exile',ref='stored-held-object')
+            binding=ConditionalExileBinding('created-instruction',ContinuousObjectIdentity(source.object_id,source.logical_object_id),
+                (ExiledObjectIdentity(held.object_id,held.ref,held.logical_object_id),))
+            owner=ZoneTransitionOwner(engine);owner.remember_conditional_exile(binding)
+            hydrated=CardInstance.from_dict(json.loads(json.dumps(source.to_dict())))
+            self.assertEqual((binding,),source_conditional_bindings(hydrated))
+            source.controller='C';source.phased_out=True;source.annotations['removed_abilities']=True
+            self.assertEqual((binding,),source_conditional_bindings(source))
+            with self.assertRaises(GameRuleError):owner.remember_conditional_exile(binding)
+            source.phased_out=False
+            snapshot=owner._capture_departure(source,semantic_events=True)
+            self.assertEqual((binding,),snapshot.conditional_returns)
+            batch_snapshot=owner._simultaneous_departure(source,source_snapshot=snapshot.trigger_sources)[1]
+            self.assertEqual((binding,),batch_snapshot.conditional_returns)
+            owner.move_card(source.object_id,'hand',reason='conditional binding departure storage boundary')
+            self.assertNotIn(CONDITIONAL_EXILE_BINDINGS,source.annotations)
+            self.assertEqual((binding,),snapshot.conditional_returns)
+            self.assertEqual(('battlefield','B'),(held.zone,held.controller))
+            owner.move_card(source.object_id,'battlefield',reason='new source incarnation')
+            with self.assertRaises(GameRuleError):owner.remember_conditional_exile(binding)
+        finally:Actions.tearDownClass()
+
+    def test_native_simultaneous_source_departures_return_held_objects_in_one_event(self):
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests as Actions
+        from quorune.zone_transitions import ZoneTransitionOwner
+        Actions.setUpClass()
+        try:
+            actions=Actions();session=actions.session(6100303);engine=session.engine;owner=ZoneTransitionOwner(engine)
+            sources=[actions.add(engine,'Generic Bound Mentor',ref='batch-source-'+seat,seat=seat) for seat in 'AC']
+            held=[actions.add(engine,'Generic Bound Body',ref='batch-held-'+seat,seat=seat,zone='exile') for seat in 'BD']
+            for source,card in zip(sources,held):
+                owner.remember_conditional_exile(ConditionalExileBinding('instruction-'+source.ref,
+                    ContinuousObjectIdentity(source.object_id,source.logical_object_id),
+                    (ExiledObjectIdentity(card.object_id,card.ref,card.logical_object_id),)))
+            owner.move_cards_simultaneously(tuple((card.object_id,'hand') for card in sources),reason='two sources depart together')
+            self.assertEqual(['battlefield','battlefield'],[card.zone for card in held])
+            self.assertEqual(['B','D'],[card.controller for card in held])
+            self.assertEqual(held[0].zone_timestamp,held[1].zone_timestamp)
+            self.assertEqual([],session.state.stack)
+        finally:Actions.tearDownClass()
+
     def test_current_source_or_phasing_cannot_end_the_conditional_instruction(self):
         from quorune.conditional_exile_return import return_after_source_departures
         from quorune.errors import GameRuleError
