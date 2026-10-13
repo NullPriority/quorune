@@ -445,6 +445,7 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/class_levels.py",
         "quorune/crew.py",
         "quorune/cycling_abilities.py",
+        "quorune/transmute.py",
         "quorune/station.py",
     }:
         return "activated_abilities"
@@ -875,6 +876,7 @@ def build_classifications() -> dict[str, Any]:
                             "compiled_activated_abilities.py",
                             "crew.py",
                             "cycling_abilities.py",
+                            "transmute.py",
                             "fixed_mana_abilities.py",
                             "public_quantity_mana",
                             "whole_hand_discard",

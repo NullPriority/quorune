@@ -235,7 +235,8 @@
     "quorune/zone_transition_journal.py",
     "quorune/zone_transition_model.py",
     "quorune/zone_transitions.py",
-    "quorune/object_query.py"
+    "quorune/object_query.py",
+    "quorune/transmute.py"
   ],
   "protected_future_prefixes": [
     "quorune/domain/",

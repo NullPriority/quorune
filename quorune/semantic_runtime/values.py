@@ -120,6 +120,12 @@ def resolve_semantic_value(
         return host.state.active_player
     if value == "$source":
         return host._stack_source_ref(item)
+    if value == '$source.discarded_mana_value':
+        from ..transmute import retained_transmute_mana_value
+        try:
+            return retained_transmute_mana_value(item)
+        except ValueError as exc:
+            raise SemanticNodeError(str(exc)) from exc
     if value == "$source.zone_object":
         object_id = str(getattr(item, "source_object_id", None) or "")
         logical_object_id = str(

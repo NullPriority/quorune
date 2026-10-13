@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "b13c71716a6e23a83aa0f893791233f67d22d6fd29f3027db2fbed09bf6b7bb9",
-  "declaration_source_fingerprint": "fc241c009b123a496742798b2f1c93814a707cfd6a6a0114f8a9a80e91d4ef80",
+  "registry_fingerprint": "c31902823c9c795d0af82154018886d94d5265d178d25316afac38f95e72c84f",
+  "declaration_source_fingerprint": "415a707e3ea66996a435a27ff088966fd17c8e8e6de4559a53961bf45a555910",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -5606,6 +5606,650 @@
         "commander_review"
       ],
       "applicability_note": "Replay a current-haste mana activation from an exact initial checkpoint and command."
+    },
+    {
+      "capability_id": "activation.transmute.hand",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_transmute.TransmuteRuntimeTests.test_original_transmute_discard_replacement_retains_mana_value_and_replays",
+      "official_rule_ids": [
+        "202.3",
+        "400.7",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.9a",
+        "701.9c",
+        "701.23",
+        "701.23b",
+        "701.23c",
+        "701.24",
+        "702.53",
+        "702.53a",
+        "702.53b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed fixed-cost Transmute with actual canonical activation/search actions; current-version replay and principal-correct private candidates. Snapshot helper evidence is separately scoped."
+    },
+    {
+      "capability_id": "activation.transmute.hand",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_transmute.TransmuteRuntimeTests.test_original_transmute_uses_actual_cost_private_search_reveal_shuffle_and_replay",
+      "official_rule_ids": [
+        "202.3",
+        "400.7",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.9a",
+        "701.9c",
+        "701.23",
+        "701.23b",
+        "701.23c",
+        "701.24",
+        "702.53",
+        "702.53a",
+        "702.53b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed fixed-cost Transmute with actual canonical activation/search actions; current-version replay and principal-correct private candidates. Snapshot helper evidence is separately scoped."
+    },
+    {
+      "capability_id": "activation.transmute.hand",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_transmute.TransmuteRuntimeTests.test_transmute_is_unavailable_while_an_actual_spell_is_on_stack",
+      "official_rule_ids": [
+        "202.3",
+        "400.7",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.9a",
+        "701.9c",
+        "701.23",
+        "701.23b",
+        "701.23c",
+        "701.24",
+        "702.53",
+        "702.53a",
+        "702.53b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed fixed-cost Transmute with actual canonical activation/search actions; current-version replay and principal-correct private candidates. Snapshot helper evidence is separately scoped."
+    },
+    {
+      "capability_id": "activation.transmute.hand",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_transmute.TransmuteRuntimeTests.test_transmute_restrictive_search_may_fail_to_find_and_still_shuffles",
+      "official_rule_ids": [
+        "202.3",
+        "400.7",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.9a",
+        "701.9c",
+        "701.23",
+        "701.23b",
+        "701.23c",
+        "701.24",
+        "702.53",
+        "702.53a",
+        "702.53b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed fixed-cost Transmute with actual canonical activation/search actions; current-version replay and principal-correct private candidates. Snapshot helper evidence is separately scoped."
+    },
+    {
+      "capability_id": "activation.transmute.hand",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_transmute.TransmuteRuntimeTests.test_original_transmute_discard_replacement_retains_mana_value_and_replays",
+      "official_rule_ids": [
+        "202.3",
+        "400.7",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.9a",
+        "701.9c",
+        "701.23",
+        "701.23b",
+        "701.23c",
+        "701.24",
+        "702.53",
+        "702.53a",
+        "702.53b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed fixed-cost Transmute with actual canonical activation/search actions; current-version replay and principal-correct private candidates. Snapshot helper evidence is separately scoped."
+    },
+    {
+      "capability_id": "activation.transmute.hand",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_transmute.TransmuteRuntimeTests.test_original_transmute_uses_actual_cost_private_search_reveal_shuffle_and_replay",
+      "official_rule_ids": [
+        "202.3",
+        "400.7",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.9a",
+        "701.9c",
+        "701.23",
+        "701.23b",
+        "701.23c",
+        "701.24",
+        "702.53",
+        "702.53a",
+        "702.53b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed fixed-cost Transmute with actual canonical activation/search actions; current-version replay and principal-correct private candidates. Snapshot helper evidence is separately scoped."
+    },
+    {
+      "capability_id": "activation.transmute.hand",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_transmute.TransmuteCompilerTests.test_transmute_open_costs_companions_shape_and_dependency_mutants_fail_closed",
+      "official_rule_ids": [
+        "202.3",
+        "400.7",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.9a",
+        "701.9c",
+        "701.23",
+        "701.23b",
+        "701.23c",
+        "701.24",
+        "702.53",
+        "702.53a",
+        "702.53b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed fixed-cost Transmute with actual canonical activation/search actions; current-version replay and principal-correct private candidates. Snapshot helper evidence is separately scoped."
+    },
+    {
+      "capability_id": "activation.transmute.hand",
+      "evidence_class": "negative",
+      "test_id": "tests.test_transmute.TransmuteCompilerTests.test_retained_discard_snapshot_is_strict_and_does_not_query_current_source",
+      "official_rule_ids": [
+        "202.3",
+        "400.7",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.9a",
+        "701.9c",
+        "701.23",
+        "701.23b",
+        "701.23c",
+        "701.24",
+        "702.53",
+        "702.53a",
+        "702.53b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed fixed-cost Transmute with actual canonical activation/search actions; current-version replay and principal-correct private candidates. Snapshot helper evidence is separately scoped."
+    },
+    {
+      "capability_id": "activation.transmute.hand",
+      "evidence_class": "negative",
+      "test_id": "tests.test_transmute.TransmuteCompilerTests.test_transmute_open_costs_companions_shape_and_dependency_mutants_fail_closed",
+      "official_rule_ids": [
+        "202.3",
+        "400.7",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.9a",
+        "701.9c",
+        "701.23",
+        "701.23b",
+        "701.23c",
+        "701.24",
+        "702.53",
+        "702.53a",
+        "702.53b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed fixed-cost Transmute with actual canonical activation/search actions; current-version replay and principal-correct private candidates. Snapshot helper evidence is separately scoped."
+    },
+    {
+      "capability_id": "activation.transmute.hand",
+      "evidence_class": "negative",
+      "test_id": "tests.test_transmute.TransmuteCompilerTests.test_undefined_discard_quality_finds_nothing_through_canonical_private_search",
+      "official_rule_ids": [
+        "202.3",
+        "400.7",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.9a",
+        "701.9c",
+        "701.23",
+        "701.23b",
+        "701.23c",
+        "701.24",
+        "702.53",
+        "702.53a",
+        "702.53b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Compiler-to-canonical-search helper witness: undefined hidden-discard mana value cannot admit a library result; distinct from actual public-exile discard replacement gameplay."
+    },
+    {
+      "capability_id": "activation.transmute.hand",
+      "evidence_class": "negative",
+      "test_id": "tests.test_transmute.TransmuteRuntimeTests.test_residual_companion_card_cannot_expose_or_accept_transmute",
+      "official_rule_ids": [
+        "202.3",
+        "400.7",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.9a",
+        "701.9c",
+        "701.23",
+        "701.23b",
+        "701.23c",
+        "701.24",
+        "702.53",
+        "702.53a",
+        "702.53b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed fixed-cost Transmute with actual canonical activation/search actions; current-version replay and principal-correct private candidates. Snapshot helper evidence is separately scoped."
+    },
+    {
+      "capability_id": "activation.transmute.hand",
+      "evidence_class": "negative",
+      "test_id": "tests.test_transmute.TransmuteRuntimeTests.test_transmute_is_unavailable_while_an_actual_spell_is_on_stack",
+      "official_rule_ids": [
+        "202.3",
+        "400.7",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.9a",
+        "701.9c",
+        "701.23",
+        "701.23b",
+        "701.23c",
+        "701.24",
+        "702.53",
+        "702.53a",
+        "702.53b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed fixed-cost Transmute with actual canonical activation/search actions; current-version replay and principal-correct private candidates. Snapshot helper evidence is separately scoped."
+    },
+    {
+      "capability_id": "activation.transmute.hand",
+      "evidence_class": "negative",
+      "test_id": "tests.test_transmute.TransmuteRuntimeTests.test_transmute_timing_zone_and_unpayable_offers_match_rejection_and_rollback",
+      "official_rule_ids": [
+        "202.3",
+        "400.7",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.9a",
+        "701.9c",
+        "701.23",
+        "701.23b",
+        "701.23c",
+        "701.24",
+        "702.53",
+        "702.53a",
+        "702.53b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed fixed-cost Transmute with actual canonical activation/search actions; current-version replay and principal-correct private candidates. Snapshot helper evidence is separately scoped."
+    },
+    {
+      "capability_id": "activation.transmute.hand",
+      "evidence_class": "positive",
+      "test_id": "tests.test_transmute.TransmuteCompilerTests.test_printed_transmute_lowers_complete_hand_activation_and_bound_search",
+      "official_rule_ids": [
+        "202.3",
+        "400.7",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.9a",
+        "701.9c",
+        "701.23",
+        "701.23b",
+        "701.23c",
+        "701.24",
+        "702.53",
+        "702.53a",
+        "702.53b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed fixed-cost Transmute with actual canonical activation/search actions; current-version replay and principal-correct private candidates. Snapshot helper evidence is separately scoped."
+    },
+    {
+      "capability_id": "activation.transmute.hand",
+      "evidence_class": "positive",
+      "test_id": "tests.test_transmute.TransmuteRuntimeTests.test_original_transmute_discard_replacement_retains_mana_value_and_replays",
+      "official_rule_ids": [
+        "202.3",
+        "400.7",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.9a",
+        "701.9c",
+        "701.23",
+        "701.23b",
+        "701.23c",
+        "701.24",
+        "702.53",
+        "702.53a",
+        "702.53b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed fixed-cost Transmute with actual canonical activation/search actions; current-version replay and principal-correct private candidates. Snapshot helper evidence is separately scoped."
+    },
+    {
+      "capability_id": "activation.transmute.hand",
+      "evidence_class": "positive",
+      "test_id": "tests.test_transmute.TransmuteRuntimeTests.test_original_transmute_uses_actual_cost_private_search_reveal_shuffle_and_replay",
+      "official_rule_ids": [
+        "202.3",
+        "400.7",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.9a",
+        "701.9c",
+        "701.23",
+        "701.23b",
+        "701.23c",
+        "701.24",
+        "702.53",
+        "702.53a",
+        "702.53b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed fixed-cost Transmute with actual canonical activation/search actions; current-version replay and principal-correct private candidates. Snapshot helper evidence is separately scoped."
+    },
+    {
+      "capability_id": "activation.transmute.hand",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_transmute.TransmuteRuntimeTests.test_original_transmute_discard_replacement_retains_mana_value_and_replays",
+      "official_rule_ids": [
+        "202.3",
+        "400.7",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.9a",
+        "701.9c",
+        "701.23",
+        "701.23b",
+        "701.23c",
+        "701.24",
+        "702.53",
+        "702.53a",
+        "702.53b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed fixed-cost Transmute with actual canonical activation/search actions; current-version replay and principal-correct private candidates. Snapshot helper evidence is separately scoped."
+    },
+    {
+      "capability_id": "activation.transmute.hand",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_transmute.TransmuteRuntimeTests.test_original_transmute_uses_actual_cost_private_search_reveal_shuffle_and_replay",
+      "official_rule_ids": [
+        "202.3",
+        "400.7",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.9a",
+        "701.9c",
+        "701.23",
+        "701.23b",
+        "701.23c",
+        "701.24",
+        "702.53",
+        "702.53a",
+        "702.53b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed fixed-cost Transmute with actual canonical activation/search actions; current-version replay and principal-correct private candidates. Snapshot helper evidence is separately scoped."
+    },
+    {
+      "capability_id": "activation.transmute.hand",
+      "evidence_class": "replay",
+      "test_id": "tests.test_transmute.TransmuteRuntimeTests.test_original_transmute_discard_replacement_retains_mana_value_and_replays",
+      "official_rule_ids": [
+        "202.3",
+        "400.7",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.9a",
+        "701.9c",
+        "701.23",
+        "701.23b",
+        "701.23c",
+        "701.24",
+        "702.53",
+        "702.53a",
+        "702.53b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed fixed-cost Transmute with actual canonical activation/search actions; current-version replay and principal-correct private candidates. Snapshot helper evidence is separately scoped."
+    },
+    {
+      "capability_id": "activation.transmute.hand",
+      "evidence_class": "replay",
+      "test_id": "tests.test_transmute.TransmuteRuntimeTests.test_original_transmute_uses_actual_cost_private_search_reveal_shuffle_and_replay",
+      "official_rule_ids": [
+        "202.3",
+        "400.7",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.9a",
+        "701.9c",
+        "701.23",
+        "701.23b",
+        "701.23c",
+        "701.24",
+        "702.53",
+        "702.53a",
+        "702.53b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed fixed-cost Transmute with actual canonical activation/search actions; current-version replay and principal-correct private candidates. Snapshot helper evidence is separately scoped."
+    },
+    {
+      "capability_id": "activation.transmute.hand",
+      "evidence_class": "replay",
+      "test_id": "tests.test_transmute.TransmuteRuntimeTests.test_transmute_is_unavailable_while_an_actual_spell_is_on_stack",
+      "official_rule_ids": [
+        "202.3",
+        "400.7",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.9a",
+        "701.9c",
+        "701.23",
+        "701.23b",
+        "701.23c",
+        "701.24",
+        "702.53",
+        "702.53a",
+        "702.53b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed fixed-cost Transmute with actual canonical activation/search actions; current-version replay and principal-correct private candidates. Snapshot helper evidence is separately scoped."
+    },
+    {
+      "capability_id": "activation.transmute.hand",
+      "evidence_class": "replay",
+      "test_id": "tests.test_transmute.TransmuteRuntimeTests.test_transmute_restrictive_search_may_fail_to_find_and_still_shuffles",
+      "official_rule_ids": [
+        "202.3",
+        "400.7",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.9a",
+        "701.9c",
+        "701.23",
+        "701.23b",
+        "701.23c",
+        "701.24",
+        "702.53",
+        "702.53a",
+        "702.53b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed fixed-cost Transmute with actual canonical activation/search actions; current-version replay and principal-correct private candidates. Snapshot helper evidence is separately scoped."
+    },
+    {
+      "capability_id": "activation.transmute.hand",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_transmute.TransmuteRuntimeTests.test_original_transmute_uses_actual_cost_private_search_reveal_shuffle_and_replay",
+      "official_rule_ids": [
+        "202.3",
+        "400.7",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.9a",
+        "701.9c",
+        "701.23",
+        "701.23b",
+        "701.23c",
+        "701.24",
+        "702.53",
+        "702.53a",
+        "702.53b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Printed fixed-cost Transmute with actual canonical activation/search actions; current-version replay and principal-correct private candidates. Snapshot helper evidence is separately scoped."
     },
     {
       "capability_id": "activation.typecycling.hand",
@@ -118683,5 +119327,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "be062b0e56be9ceeeed4969baa65f5f91613f56de0d438974c9702a8c32438b6"
+  "fingerprint": "3f2f13bb9b720e00394023e4d2cd672f422c17ac5671c9aa28926fcaac496ced"
 }

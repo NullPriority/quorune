@@ -128,6 +128,7 @@ from ..rules.closed_effect_program_shapes import (
 from ..rules.echo_capability_shapes import fixed_mana_echo_node_capabilities
 from ..rules.public_quantity_mana_shapes import is_closed_public_quantity_mana_program
 from ..rules.whole_hand_discard_shapes import is_closed_whole_hand_discard_program
+from ..transmute import is_closed_transmute_program
 from ..rules.as_unblocked_effect import is_closed_optional_as_unblocked_program
 from ..semantics import SemanticProgram, SemanticRegistry
 from ..util import stable_json
@@ -1270,6 +1271,7 @@ def _is_closed_fixed_owner_zone_move_program(program: SemanticProgram) -> bool:
 
 def _closed_effect_recognizers():
     return (
+        is_closed_transmute_program,
         _is_closed_fixed_owner_zone_move_program,
         is_closed_fixed_instruction_program,
         is_closed_fixed_bound_discard_program,

@@ -3,6 +3,10 @@ from __future__ import annotations
 
 def special_node_capabilities(*,effects,target_schema,mechanics,cost_schema=None):
     """Route independently owned special shapes before ordinary leaf composition."""
+    if 'transmute' in mechanics:
+        from ..transmute import transmute_node_capabilities
+        return transmute_node_capabilities(effects=effects, target_schema=target_schema,
+            mechanic_ids=mechanics, cost_schema=cost_schema)
     from .temporary_ability_grant import TEMPORARY_QUOTED_GRANT_MECHANIC, temporary_quoted_grant_node_capabilities
     if TEMPORARY_QUOTED_GRANT_MECHANIC in mechanics:
         return temporary_quoted_grant_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics, cost_schema=cost_schema)

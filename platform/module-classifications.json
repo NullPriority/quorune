@@ -4568,6 +4568,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/transmute_nodes.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/trigger_limit_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -12519,6 +12534,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/transmute.py",
+      "layer": "rules",
+      "owning_subsystem": "activated_abilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/trigger_batches.py",
       "layer": "domain",
       "owning_subsystem": "trigger_processing",
@@ -13095,5 +13124,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "652d370f25d857fb837913dca73fbbebf4d7b8831bee0106ea3a0f7ad76fc38e"
+  "fingerprint": "fd3acfe6108ef5470066401e24ef6e4ecc72a7499372fc45e4057e72174af680"
 }

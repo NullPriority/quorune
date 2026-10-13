@@ -11,6 +11,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Compile printed fixed-mana Transmute through hand-only sorcery activation and
+  the existing private library-search owner, retaining the discarded source's
+  mana value across cost replacement, save/load, and replay.
+
 - Preserve each source-specific child event when compiling an independent dual
   trigger, preventing unrelated damage from producing a source's result.
   Usage limits inspect every subscription and keep departure branches outside

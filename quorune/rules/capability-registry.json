@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 236,
+  "registry_version": 237,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -17548,6 +17548,123 @@
       "dependency_fail_closed_rationale": "Exact intrinsic and result programs require the same precise Exploit producer; unknown choice fields and selected incarnation changes reject before mutation.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Omitting the Exploit keyword spec producer removes source-spanned intrinsic admission.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "activation.transmute.hand",
+      "version": 1,
+      "official_rules": [
+        "202.3",
+        "400.7",
+        "602.1",
+        "602.2",
+        "602.2a",
+        "602.2b",
+        "701.9a",
+        "701.9c",
+        "701.23",
+        "701.23b",
+        "701.23c",
+        "701.24",
+        "702.53",
+        "702.53a",
+        "702.53b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Printed fixed ordinary-mana Transmute activates from hand at sorcery timing, discards the source through canonical replacement-aware cost payment, retains its pre-discard mana value, and searches privately for an equal-value card to reveal and put into hand before one shuffle.",
+        "inputs": [
+          "complete source-pinned CardProgram",
+          "current owner-controlled card in hand",
+          "fixed ordinary mana cost and sorcery timing",
+          "retained pre-discard source incarnation and mana value"
+        ],
+        "outputs": [
+          "one payable hand-zone activation offer",
+          "atomic mana and source discard payment",
+          "one ordinary activated stack object",
+          "one private restrictive search allowing fail-to-find",
+          "public reveal of the selected result and canonical hand movement",
+          "one deterministic shuffle",
+          "undefined hidden redirected discard quality yields no result while search and shuffle continue"
+        ],
+        "exclusions": [
+          "variable, hybrid, Phyrexian, snow or nonmana Transmute costs",
+          "granted or copied Transmute abilities",
+          "unrepresented companion Oracle text"
+        ]
+      },
+      "dependencies": [
+        "activation.source_zone_change.fixed",
+        "variant.commander.zone_return",
+        "zone.change.destination_replacement"
+      ],
+      "implementation_components": [
+        "quorune.transmute.fixed_transmute_ability",
+        "quorune.transmute.capture_transmute_discard",
+        "quorune.transmute.retained_transmute_mana_value",
+        "quorune.transmute.transmute_node_capabilities",
+        "quorune.compiler.transmute_nodes.fixed_transmute_keyword_node",
+        "quorune.semantic_runtime.activated_abilities.ActivatedAbilityCatalogHandler",
+        "quorune.semantic_runtime.values.resolve_semantic_value",
+        "quorune.rules.activation.commit.commit_activation",
+        "quorune.compiled_activated_abilities.compiled_activated_abilities",
+        "quorune.selection.searching.HiddenSearchOwnerMixin",
+        "quorune.zone_transitions.ZoneTransitionOwner.reveal_library_search_results",
+        "quorune.zone_transitions.ZoneTransitionOwner.shuffle_library",
+        "quorune.transmute.is_closed_transmute_program",
+        "quorune.transmute.finalize_transmute_discard"
+      ],
+      "positive_tests": [
+        "test_original_transmute_discard_replacement_retains_mana_value_and_replays",
+        "test_original_transmute_uses_actual_cost_private_search_reveal_shuffle_and_replay",
+        "test_printed_transmute_lowers_complete_hand_activation_and_bound_search"
+      ],
+      "negative_tests": [
+        "test_residual_companion_card_cannot_expose_or_accept_transmute",
+        "test_retained_discard_snapshot_is_strict_and_does_not_query_current_source",
+        "test_transmute_is_unavailable_while_an_actual_spell_is_on_stack",
+        "test_transmute_open_costs_companions_shape_and_dependency_mutants_fail_closed",
+        "test_transmute_timing_zone_and_unpayable_offers_match_rejection_and_rollback",
+        "test_undefined_discard_quality_finds_nothing_through_canonical_private_search"
+      ],
+      "interaction_tests": [
+        "test_original_transmute_discard_replacement_retains_mana_value_and_replays",
+        "test_original_transmute_uses_actual_cost_private_search_reveal_shuffle_and_replay",
+        "test_transmute_is_unavailable_while_an_actual_spell_is_on_stack",
+        "test_transmute_restrictive_search_may_fail_to_find_and_still_shuffles"
+      ],
+      "multiplayer_tests": [
+        "test_original_transmute_discard_replacement_retains_mana_value_and_replays",
+        "test_original_transmute_uses_actual_cost_private_search_reveal_shuffle_and_replay"
+      ],
+      "privacy_tests": [
+        "test_original_transmute_discard_replacement_retains_mana_value_and_replays",
+        "test_original_transmute_uses_actual_cost_private_search_reveal_shuffle_and_replay"
+      ],
+      "replay_tests": [
+        "test_original_transmute_discard_replacement_retains_mana_value_and_replays",
+        "test_original_transmute_uses_actual_cost_private_search_reveal_shuffle_and_replay",
+        "test_transmute_is_unavailable_while_an_actual_spell_is_on_stack",
+        "test_transmute_restrictive_search_may_fail_to_find_and_still_shuffles"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The focused compiler witness blocks Transmute, source discard payment and destination replacement dependencies and rejects exactness.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "The focused producer mutation removes the printed Transmute lowering and rejects exact admission.",
       "blockers": [],
       "status": "trusted"
     }

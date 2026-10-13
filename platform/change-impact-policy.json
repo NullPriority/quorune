@@ -3747,6 +3747,23 @@
         "test_proliferate_rules",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "printed-transmute-contract",
+      "patterns": [
+        "quorune/transmute.py",
+        "quorune/compiler/transmute_nodes.py",
+        "tests/fixtures/transmute-cards.json"
+      ],
+      "test_modules": [
+        "test_transmute",
+        "test_ordinary_cycling",
+        "test_typecycling",
+        "test_card_program_trust",
+        "test_game_record_v3",
+        "test_typed_activated_ability_catalog",
+        "test_activating_abilities_rules"
+      ]
     }
   ],
   "symbol_rules": [

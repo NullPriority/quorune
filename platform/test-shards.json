@@ -271,6 +271,7 @@
       "test_self_zone_move_rules",
       "test_surveil_rules",
       "test_targeted_destruction_effect_clauses",
+      "test_transmute",
       "test_turn_history_rules"
     ],
     "functional-09": [

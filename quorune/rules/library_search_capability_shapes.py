@@ -47,6 +47,8 @@ def fixed_library_search_covered_mechanics(
 
     capabilities = set(supplied)
     covered: set[str] = set()
+    if 'activation.transmute.hand' in capabilities:
+        covered.add('transmute')
     if FIXED_LIBRARY_SEARCH_CAPABILITY_ID in capabilities:
         covered.add(FIXED_LIBRARY_SEARCH_MECHANIC_ID)
     if FIXED_TYPE_TO_HAND_SEARCH_CAPABILITY_ID in capabilities:

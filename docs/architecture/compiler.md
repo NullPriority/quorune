@@ -2121,6 +2121,18 @@ Ordinary Cycling explicitly
 declares the existing draw handler dependency beside its activation capability;
 runtime binding still rejects undeclared registered dependencies.
 
+Printed fixed ordinary-mana Transmute uses the existing activation catalog with
+complete-card admission, a hand-only discard cost, and canonical sorcery timing.
+The activation owner captures the source incarnation and mana value before the
+discard transition. Resolution reads that retained information and delegates
+the equal-value private library search, public result reveal, hand movement,
+fail-to-find choice, and shuffle to the existing search owner. Source departure
+or a public discard replacement does not change the retained search value. An
+unrevealed discard redirected into a hidden zone leaves its characteristics
+undefined; the canonical search permits looking and shuffling while finding no
+card with that undefined quality. Variable,
+hybrid, Phyrexian, snow, nonmana, and granted Transmute remain residual.
+
 `compiler/effect_template_composition.py` routes reviewed atomic effects into
 closed clause/program composition and gives query-derived amounts one shared
 entry point. `compiler/public_query_effect_amounts.py` reuses that same typed
