@@ -22,6 +22,25 @@ from .aura import AuraEntryChoiceRequired
 _DEFERRED_RETURNS: ContextVar[list[Any] | None] = ContextVar('conditional_cost_returns', default=None)
 
 
+def conditional_exile_source(effect: Mapping[str,Any]) -> ContinuousObjectIdentity:
+    source=effect.get('_runtime_source')
+    if not isinstance(source,Mapping):raise GameRuleError('Conditional exile requires authoritative source context')
+    try:return ContinuousObjectIdentity(source['object_id'],source['logical_object_id'])
+    except (KeyError,ValueError) as exc:raise GameRuleError('Conditional exile source identity is unavailable') from exc
+
+
+def retain_or_return_conditional_exile(host: Any, item: Any, binding_id: str, objects: Sequence[Any], effect: Mapping[str,Any]):
+    from .linked_exile_return_model import ExiledObjectIdentity
+    if not objects:return []
+    source=conditional_exile_source(effect)
+    binding=ConditionalExileBinding(item.ref+':'+binding_id,source,
+        tuple(ExiledObjectIdentity.from_dict(value) for value in objects))
+    if conditional_source_remains(source,host.state.cards):
+        ZoneTransitionOwner(host).remember_conditional_exile(binding)
+        return []
+    return [card.ref for card in return_after_source_departures(host,(binding,),(source,))]
+
+
 def conditional_cost_returns_pending() -> bool:
     return bool(_DEFERRED_RETURNS.get())
 

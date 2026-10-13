@@ -24,6 +24,7 @@ from .affected_player_sacrifice_templates import (
 from .fixed_attachment_templates import fixed_source_attachment_effect_template
 from .fixed_control_templates import fixed_control_effect_template, fixed_control_set_effect_template
 from .linked_exile_return_templates import linked_exile_return_effect_template
+from .conditional_exile_templates import conditional_source_exile_template
 from .amass_templates import fixed_amass_effect_template
 from .bolster_templates import fixed_bolster_effect_template
 from .counter_placement_templates import (
@@ -145,6 +146,8 @@ def _source_context_resolution_template(
     ) or fixed_control_set_effect_template(text)
     if control is not None:
         return control.compiled()
+    conditional=conditional_source_exile_template(text,card_name=card_name,source_is_permanent=source_is_permanent)
+    if conditional is not None:return conditional.compiled()
     return linked_exile_return_effect_template(text, card_name=card_name, source_is_permanent=source_is_permanent)
 
 

@@ -2,8 +2,8 @@ from __future__ import annotations
 
 """Source-spanned recognition for CR610.3, separate from linked triggers.
 
-Recognition returns typed compiler data. It is not routed into executable IR
-until the conditional zone-change and continuation owner is complete.
+Recognition retains target predicates and emits the existing linked operation
+with an explicit conditional source-departure lifecycle.
 """
 
 from dataclasses import dataclass
@@ -13,6 +13,9 @@ from ..replacement.immutable import FrozenMap
 from ..rules.source_references import SourceReferenceSpec, source_self_permanent_type
 from .direct_target import direct_permanent_target_spec
 from .fixed_homogeneous_target_sets import _singularize_subject
+import hashlib
+from ..linked_exile_return_model import LinkedExileReturnSpec, LINKED_EXILE_RETURN_MECHANIC
+from ..replacement.immutable import thaw_value
 
 
 _UNTIL = re.compile(r'^Exile (?P<subject>.+?) until (?P<source>.+?) leaves the battlefield\.?$', re.IGNORECASE)
@@ -27,6 +30,15 @@ class ConditionalSourceExileTemplate:
     def __post_init__(self) -> None:
         if not isinstance(self.target_schema, FrozenMap):
             raise ValueError('Conditional exile target data must be immutable')
+
+    def compiled(self):
+        schema=thaw_value(self.target_schema)
+        spec=LinkedExileReturnSpec(schema_version=2,timing='source_departure').to_dict()
+        binding='blink:'+hashlib.sha256(repr(sorted(schema.items())).encode('utf-8')).hexdigest()[:24]
+        return 'conditional-source-exile-v1', (
+            {'op':'linked_exile_return','phase':'exile','cards':'$targets','binding_id':binding,'spec':spec},
+            {'op':'linked_exile_return','phase':'return','binding_id':binding,'spec':spec},
+        ),schema,(LINKED_EXILE_RETURN_MECHANIC,'cr-115-targets')
 
 
 def conditional_source_exile_template(text: str, *, card_name: str,

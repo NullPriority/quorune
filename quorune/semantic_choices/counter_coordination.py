@@ -242,6 +242,9 @@ def continue_semantic_completion(
                 ),
             )
         except ReplacementChoiceRequired as required:
+            from ..conditional_exile_return import ConditionalReturnChoiceRequired
+            if isinstance(required,ConditionalReturnChoiceRequired):
+                raise SemanticChoiceError('Conditional return after semantic choice requires its completed-intent continuation') from required
             if isinstance(intent, PlaceCountersIntent):
                 _issue_counter_replacement_choice(
                     host,

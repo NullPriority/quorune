@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 237,
+  "registry_version": 238,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -17667,6 +17667,102 @@
       "implementation_mutation_rationale": "The focused producer mutation removes the printed Transmute lowering and rejects exact admission.",
       "blockers": [],
       "status": "trusted"
+    },
+    {
+      "id": "zone.exile_until_source_departure.fixed",
+      "version": 1,
+      "official_rules": [
+        "201.5",
+        "400.7",
+        "610.3",
+        "610.3a",
+        "610.3b",
+        "610.3c",
+        "610.3d",
+        "303.4f",
+        "303.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "One source-bound exile instruction retains actual exiled incarnations and creates independent immediate return on the original source departure, with owner control and simultaneous return/entry choices.",
+        "inputs": [
+          "trusted complete source instruction",
+          "original battlefield source incarnation",
+          "canonical target selection and resolution revalidation",
+          "actual replacement-aware exile outcome"
+        ],
+        "outputs": [
+          "conditional exile or no movement if source already departed",
+          "durable original-source binding",
+          "one simultaneous owner-controlled return",
+          "authenticated replacement and Aura entry choices"
+        ],
+        "exclusions": [
+          "separate linked entry/leave triggers under CR607",
+          "other specified events and return zones",
+          "unrepresented riders or dynamic target cardinality"
+        ]
+      },
+      "dependencies": [
+        "zone.linked_exile_return.fixed"
+      ],
+      "implementation_components": [
+        "quorune.compiler.conditional_exile_templates.conditional_source_exile_template",
+        "quorune.conditional_exile_model.ConditionalExileBinding",
+        "quorune.conditional_exile_return.retain_or_return_conditional_exile",
+        "quorune.conditional_exile_return.return_from_departure_snapshots",
+        "quorune.zone_transitions.ZoneTransitionOwner.remember_conditional_exile"
+      ],
+      "positive_tests": [
+        "test_recognition_alone_does_not_promote_conditional_exile_to_executable_ir",
+        "test_original_banishing_light_exiles_returns_under_owner_and_replays_actual_actions",
+        "test_original_banishing_light_can_exile_opponent_noncreature_kindred_permanent"
+      ],
+      "negative_tests": [
+        "test_conditional_exile_dependency_and_producer_mutations_fail_closed",
+        "test_source_presence_uses_original_incarnation_and_does_not_depend_on_ability_or_controller",
+        "test_original_banishing_light_source_leaves_before_resolution_exiles_nothing",
+        "test_original_portable_hole_rejects_own_land_and_excess_mana_value_and_replays"
+      ],
+      "interaction_tests": [
+        "test_original_banishing_light_exiles_returns_under_owner_and_replays_actual_actions",
+        "test_original_banisher_priest_return_survives_actual_ability_removal_response",
+        "test_two_original_banishing_sources_keep_distinct_holds_and_return_only_departed_source"
+      ],
+      "multiplayer_tests": [
+        "test_original_banishing_light_exiles_returns_under_owner_and_replays_actual_actions",
+        "test_two_original_banishing_sources_keep_distinct_holds_and_return_only_departed_source"
+      ],
+      "privacy_tests": [
+        "test_original_banishing_light_exiles_returns_under_owner_and_replays_actual_actions"
+      ],
+      "replay_tests": [
+        "test_original_banishing_light_exiles_returns_under_owner_and_replays_actual_actions",
+        "test_original_banishing_light_source_leaves_before_resolution_exiles_nothing",
+        "test_original_banisher_priest_return_survives_actual_ability_removal_response",
+        "test_two_original_banishing_sources_keep_distinct_holds_and_return_only_departed_source"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The exact compiler test blocks conditional lifecycle, zone replacement and target revalidation dependencies.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "The exact producer mutation removes conditional-source lowering and rejects exactness.",
+      "blockers": [
+        "semantic-choice and nested-source departure return continuation composition remains unverified",
+        "mixed Aura attachment and entry-replacement resumption requires a combined witness"
+      ],
+      "status": "blocked"
     }
   ]
 }

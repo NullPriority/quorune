@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "c31902823c9c795d0af82154018886d94d5265d178d25316afac38f95e72c84f",
-  "declaration_source_fingerprint": "415a707e3ea66996a435a27ff088966fd17c8e8e6de4559a53961bf45a555910",
+  "registry_fingerprint": "d57bd39bb51e9dbdeb772f431d0eca7cda95b6aae622bd9f0f1861a8c10695c3",
+  "declaration_source_fingerprint": "82b3a0704ea67d6f6da6ca151f5f9ecc0d0e556a50db971909c212113a7b0820",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -115613,6 +115613,424 @@
       "applicability_note": "Replay an ordinary priority-issued land play through fixed condition evaluation and the canonical zone journal to the same authoritative hash."
     },
     {
+      "capability_id": "zone.exile_until_source_departure.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_conditional_exile.ConditionalExileOriginalActionTests.test_original_banisher_priest_return_survives_actual_ability_removal_response",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "610.3",
+        "610.3a",
+        "610.3b",
+        "610.3c",
+        "610.3d",
+        "303.4f",
+        "303.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original-card source/target contrasts, distinct observer holds and retained return after ability removal; current-version command replay from pre-action checkpoints."
+    },
+    {
+      "capability_id": "zone.exile_until_source_departure.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_conditional_exile.ConditionalExileOriginalActionTests.test_original_banishing_light_exiles_returns_under_owner_and_replays_actual_actions",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "610.3",
+        "610.3a",
+        "610.3b",
+        "610.3c",
+        "610.3d",
+        "303.4f",
+        "303.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Conditional source exile through ordinary compiler admission and actual original-card casts/removal; model source/identity checks are separately scoped."
+    },
+    {
+      "capability_id": "zone.exile_until_source_departure.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_conditional_exile.ConditionalExileOriginalActionTests.test_two_original_banishing_sources_keep_distinct_holds_and_return_only_departed_source",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "610.3",
+        "610.3a",
+        "610.3b",
+        "610.3c",
+        "610.3d",
+        "303.4f",
+        "303.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original-card source/target contrasts, distinct observer holds and retained return after ability removal; current-version command replay from pre-action checkpoints."
+    },
+    {
+      "capability_id": "zone.exile_until_source_departure.fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_conditional_exile.ConditionalExileOriginalActionTests.test_original_banishing_light_exiles_returns_under_owner_and_replays_actual_actions",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "610.3",
+        "610.3a",
+        "610.3b",
+        "610.3c",
+        "610.3d",
+        "303.4f",
+        "303.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Conditional source exile through ordinary compiler admission and actual original-card casts/removal; model source/identity checks are separately scoped."
+    },
+    {
+      "capability_id": "zone.exile_until_source_departure.fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_conditional_exile.ConditionalExileOriginalActionTests.test_two_original_banishing_sources_keep_distinct_holds_and_return_only_departed_source",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "610.3",
+        "610.3a",
+        "610.3b",
+        "610.3c",
+        "610.3d",
+        "303.4f",
+        "303.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original-card source/target contrasts, distinct observer holds and retained return after ability removal; current-version command replay from pre-action checkpoints."
+    },
+    {
+      "capability_id": "zone.exile_until_source_departure.fixed",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_conditional_exile.ConditionalExileCompilerRecognitionTests.test_conditional_exile_dependency_and_producer_mutations_fail_closed",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "610.3",
+        "610.3a",
+        "610.3b",
+        "610.3c",
+        "610.3d",
+        "303.4f",
+        "303.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Conditional source exile through ordinary compiler admission and actual original-card casts/removal; model source/identity checks are separately scoped."
+    },
+    {
+      "capability_id": "zone.exile_until_source_departure.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_conditional_exile.ConditionalExileCompilerRecognitionTests.test_conditional_exile_dependency_and_producer_mutations_fail_closed",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "610.3",
+        "610.3a",
+        "610.3b",
+        "610.3c",
+        "610.3d",
+        "303.4f",
+        "303.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Conditional source exile through ordinary compiler admission and actual original-card casts/removal; model source/identity checks are separately scoped."
+    },
+    {
+      "capability_id": "zone.exile_until_source_departure.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_conditional_exile.ConditionalExileModelTests.test_source_presence_uses_original_incarnation_and_does_not_depend_on_ability_or_controller",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "610.3",
+        "610.3a",
+        "610.3b",
+        "610.3c",
+        "610.3d",
+        "303.4f",
+        "303.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Conditional source exile through ordinary compiler admission and actual original-card casts/removal; model source/identity checks are separately scoped."
+    },
+    {
+      "capability_id": "zone.exile_until_source_departure.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_conditional_exile.ConditionalExileOriginalActionTests.test_original_banishing_light_source_leaves_before_resolution_exiles_nothing",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "610.3",
+        "610.3a",
+        "610.3b",
+        "610.3c",
+        "610.3d",
+        "303.4f",
+        "303.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original-card source/target contrasts, distinct observer holds and retained return after ability removal; current-version command replay from pre-action checkpoints."
+    },
+    {
+      "capability_id": "zone.exile_until_source_departure.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_conditional_exile.ConditionalExileOriginalActionTests.test_original_portable_hole_rejects_own_land_and_excess_mana_value_and_replays",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "610.3",
+        "610.3a",
+        "610.3b",
+        "610.3c",
+        "610.3d",
+        "303.4f",
+        "303.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original-card source/target contrasts, distinct observer holds and retained return after ability removal; current-version command replay from pre-action checkpoints."
+    },
+    {
+      "capability_id": "zone.exile_until_source_departure.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_conditional_exile.ConditionalExileCompilerRecognitionTests.test_recognition_alone_does_not_promote_conditional_exile_to_executable_ir",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "610.3",
+        "610.3a",
+        "610.3b",
+        "610.3c",
+        "610.3d",
+        "303.4f",
+        "303.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Conditional source exile through ordinary compiler admission and actual original-card casts/removal; model source/identity checks are separately scoped."
+    },
+    {
+      "capability_id": "zone.exile_until_source_departure.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_conditional_exile.ConditionalExileOriginalActionTests.test_original_banishing_light_can_exile_opponent_noncreature_kindred_permanent",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "610.3",
+        "610.3a",
+        "610.3b",
+        "610.3c",
+        "610.3d",
+        "303.4f",
+        "303.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original-card source/target contrasts, distinct observer holds and retained return after ability removal; current-version command replay from pre-action checkpoints."
+    },
+    {
+      "capability_id": "zone.exile_until_source_departure.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_conditional_exile.ConditionalExileOriginalActionTests.test_original_banishing_light_exiles_returns_under_owner_and_replays_actual_actions",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "610.3",
+        "610.3a",
+        "610.3b",
+        "610.3c",
+        "610.3d",
+        "303.4f",
+        "303.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Conditional source exile through ordinary compiler admission and actual original-card casts/removal; model source/identity checks are separately scoped."
+    },
+    {
+      "capability_id": "zone.exile_until_source_departure.fixed",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_conditional_exile.ConditionalExileOriginalActionTests.test_original_banishing_light_exiles_returns_under_owner_and_replays_actual_actions",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "610.3",
+        "610.3a",
+        "610.3b",
+        "610.3c",
+        "610.3d",
+        "303.4f",
+        "303.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Conditional source exile through ordinary compiler admission and actual original-card casts/removal; model source/identity checks are separately scoped."
+    },
+    {
+      "capability_id": "zone.exile_until_source_departure.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_conditional_exile.ConditionalExileOriginalActionTests.test_original_banisher_priest_return_survives_actual_ability_removal_response",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "610.3",
+        "610.3a",
+        "610.3b",
+        "610.3c",
+        "610.3d",
+        "303.4f",
+        "303.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original-card source/target contrasts, distinct observer holds and retained return after ability removal; current-version command replay from pre-action checkpoints."
+    },
+    {
+      "capability_id": "zone.exile_until_source_departure.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_conditional_exile.ConditionalExileOriginalActionTests.test_original_banishing_light_exiles_returns_under_owner_and_replays_actual_actions",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "610.3",
+        "610.3a",
+        "610.3b",
+        "610.3c",
+        "610.3d",
+        "303.4f",
+        "303.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Conditional source exile through ordinary compiler admission and actual original-card casts/removal; model source/identity checks are separately scoped."
+    },
+    {
+      "capability_id": "zone.exile_until_source_departure.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_conditional_exile.ConditionalExileOriginalActionTests.test_original_banishing_light_source_leaves_before_resolution_exiles_nothing",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "610.3",
+        "610.3a",
+        "610.3b",
+        "610.3c",
+        "610.3d",
+        "303.4f",
+        "303.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original-card source/target contrasts, distinct observer holds and retained return after ability removal; current-version command replay from pre-action checkpoints."
+    },
+    {
+      "capability_id": "zone.exile_until_source_departure.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_conditional_exile.ConditionalExileOriginalActionTests.test_two_original_banishing_sources_keep_distinct_holds_and_return_only_departed_source",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "610.3",
+        "610.3a",
+        "610.3b",
+        "610.3c",
+        "610.3d",
+        "303.4f",
+        "303.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original-card source/target contrasts, distinct observer holds and retained return after ability removal; current-version command replay from pre-action checkpoints."
+    },
+    {
+      "capability_id": "zone.exile_until_source_departure.fixed",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_conditional_exile.ConditionalExileOriginalActionTests.test_original_banishing_light_exiles_returns_under_owner_and_replays_actual_actions",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "610.3",
+        "610.3a",
+        "610.3b",
+        "610.3c",
+        "610.3d",
+        "303.4f",
+        "303.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Conditional source exile through ordinary compiler admission and actual original-card casts/removal; model source/identity checks are separately scoped."
+    },
+    {
       "capability_id": "zone.impulse_access.fixed",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_impulse_access.FixedImpulseAccessRuntimeTests.test_compiled_impulse_access_uses_ordinary_land_and_cast_owners",
@@ -119327,5 +119745,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "3f2f13bb9b720e00394023e4d2cd672f422c17ac5671c9aa28926fcaac496ced"
+  "fingerprint": "42b5d7af23d1790e7da23ed2e31a9e47ec275246599cc59f5b7204523d64877a"
 }

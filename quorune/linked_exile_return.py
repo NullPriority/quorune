@@ -131,6 +131,12 @@ def resolve_linked_exile_return(
     if phase == "exile":
         if binding_id in journal:
             raise GameRuleError("Linked exile instruction has already committed")
+        if spec.timing == 'source_departure':
+            from .conditional_exile_return import conditional_exile_source
+            from .conditional_exile_model import conditional_source_remains
+            if not conditional_source_remains(conditional_exile_source(effect),host.state.cards):
+                journal[binding_id]={'spec':spec.to_dict(),'objects':[],'completed':False}
+                return []
         refs = effect["cards"]
         if refs is None:
             refs = []
@@ -155,7 +161,10 @@ def resolve_linked_exile_return(
     if not isinstance(binding, Mapping) or set(binding) != {"spec", "objects", "completed"} or binding["spec"] != spec.to_dict() or binding["completed"] is not False:
         raise GameRuleError("Linked return continuation changed or already completed")
     objects = binding["objects"]
-    if spec.timing == "immediate":
+    if spec.timing == 'source_departure':
+        from .conditional_exile_return import retain_or_return_conditional_exile
+        result=retain_or_return_conditional_exile(host,item,binding_id,objects,effect)
+    elif spec.timing == "immediate":
         result = return_linked_exiled_objects(
             host,
             {"op": LINKED_RETURN_OPERATION, "objects": objects,

@@ -45,6 +45,9 @@ def bind_semantic_program_runtime(
             blockers.add(f"runtime_trigger_limit:invalid:{exc}")
     for effect in program.effects:
         operation = str(effect.get("op") or "")
+        if operation == 'linked_exile_return' and effect.get('spec',{}).get('timing') == 'source_departure':
+            from ..linked_exile_return_model import CONDITIONAL_EXILE_CAPABILITY
+            required.add(CONDITIONAL_EXILE_CAPABILITY)
         descriptor = semantic_handlers.describe(operation)
         if operation == "fixed_self_counter_keyword_action" and effect.get("action") in {"fading", "vanishing_upkeep", "vanishing_sacrifice"}:
             from ..rules.node_capability_shapes import fixed_self_counter_keyword_action_node_capabilities

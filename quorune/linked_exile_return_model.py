@@ -12,6 +12,7 @@ LINKED_EXILE_RETURN_CAPABILITY = "zone.linked_exile_return.fixed"
 LINKED_EXILE_RETURN_MECHANIC = "linked-exile-return"
 LINKED_EXILE_RETURN_OPERATION = "linked_exile_return"
 LINKED_RETURN_OPERATION = "return_linked_exiled_objects"
+CONDITIONAL_EXILE_CAPABILITY = 'zone.exile_until_source_departure.fixed'
 
 
 @dataclass(frozen=True, slots=True)
@@ -76,10 +77,14 @@ class LinkedExileReturnSpec:
     schema_version: int = 1
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version != 1:
+        if type(self.schema_version) is not int or self.schema_version not in {1,2}:
             raise ValueError("Unsupported linked exile/return schema")
-        if self.timing not in {"immediate", "next_end_step", "controller_next_end_step"}:
+        if self.timing not in {"immediate", "next_end_step", "controller_next_end_step", 'source_departure'}:
             raise ValueError("Unsupported linked return timing")
+        if (self.schema_version == 2) != (self.timing == 'source_departure'):
+            raise ValueError('Conditional source departure requires its explicit linked spec version')
+        if self.timing == 'source_departure' and (self.controller != 'owner' or self.tapped or self.entry_counters or self.keywords):
+            raise ValueError('Conditional departure returns have a fixed prior-zone owner policy')
         if self.controller not in {"owner", "actor"} or type(self.tapped) is not bool:
             raise ValueError("Linked return controller or tapped state is malformed")
         if len(set(name for name, _ in self.entry_counters)) != len(self.entry_counters):

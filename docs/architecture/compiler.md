@@ -246,14 +246,19 @@ attachment restoration, and unsupported riders remain residual.
 departure form in CR 610.3. Its immutable binding data retain the original
 source and the actual exiled incarnations; the return boundary collects one
 simultaneous owner-controlled movement through the canonical zone owner.
-Recognition and this zone-boundary contract do not admit printed gameplay.
+The compiler emits a paired linked instruction with a versioned conditional
+departure timing. Its initial movement requires the original source to remain
+on the battlefield; it stores only actual exile outcomes. If that initial
+movement itself removes the source, the return occurs immediately afterward.
 Created instructions are stored on the original source incarnation and captured
 before its zone reset. Single and simultaneous departures use those retained
 instructions. A return entry choice resumes the return movement rather than
 repeating the source departure; native activation cost and state-based departure
 choices preserve their enclosing transaction. Aura attachment subjects are
-chosen before simultaneous movement. Executable lowering, complete capability
-evidence, and printed-card action witnesses remain required for admission.
+chosen before simultaneous movement. The conditional capability remains blocked
+while nested source returns and semantic-choice parent continuations lack
+complete composition evidence. Passing original-card action witnesses do not
+override that broader admission boundary.
 Separate entry and leave triggers remain a linked-ability contract under CR 607.
 
 `compiler/fixed_target_effect_sequences.py` owns the closed cross-sentence

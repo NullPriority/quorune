@@ -124,11 +124,90 @@ class ConditionalExileCompilerRecognitionTests(unittest.TestCase):
         text='When this enchantment enters, exile target creature until this enchantment leaves the battlefield.'
         ir=compile_oracle_card(record(text,type_line='Enchantment'),capability_registry=load_default_capability_registry(),
             capability_profile='commander_review')
-        self.assertNotEqual('exact',ir.status)
-        self.assertTrue(ir.material_residuals)
+        from quorune.linked_exile_return_model import CONDITIONAL_EXILE_CAPABILITY
+        if not load_default_capability_registry().closure((CONDITIONAL_EXILE_CAPABILITY,),profile='commander_review').trusted:
+            self.assertNotEqual('exact',ir.status)
+            self.assertTrue(ir.material_residuals)
+        else:
+            self.assertEqual('exact',ir.status)
+            self.assertEqual(2,ir.faces[0].nodes[0].effects[0]['spec']['schema_version'])
+
+    def test_conditional_exile_dependency_and_producer_mutations_fail_closed(self):
+        from pathlib import Path
+        from common import ROOT
+        from unittest.mock import patch
+        from quorune.rules.capabilities import CapabilityRegistry,load_default_capability_registry
+        from quorune.oracle_ir import compile_oracle_card
+        from test_linked_exile_return import record
+        value=record('When this enchantment enters, exile target creature until this enchantment leaves the battlefield.',type_line='Enchantment')
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        for dependency in ('zone.exile_until_source_departure.fixed','zone.change.destination_replacement','target.revalidate_resolution'):
+            modified=json.loads(json.dumps(raw));row=next(x for x in modified['capabilities'] if x['id']==dependency)
+            row.update(status='blocked',blockers=['conditional exile dependency witness']);registry=CapabilityRegistry(modified)
+            registry.mark_evidence_verified('0'*64)
+            self.assertNotEqual('exact',compile_oracle_card(value,capability_registry=registry,capability_profile='commander_review').status)
+        with patch('quorune.compiler.resolution_effect_templates.conditional_source_exile_template',return_value=None):
+            self.assertNotEqual('exact',compile_oracle_card(value,capability_registry=load_default_capability_registry(),capability_profile='commander_review').status)
+        from quorune.linked_exile_return_model import LinkedExileReturnSpec
+        for altered in ({'schema_version':1,'timing':'source_departure'},
+                        {'schema_version':2,'timing':'immediate'},
+                        {'schema_version':2,'timing':'source_departure','controller':'actor'},
+                        {'schema_version':2,'timing':'source_departure','tapped':True}):
+            with self.assertRaises(ValueError):LinkedExileReturnSpec(**altered)
+        from quorune.compiler.program_generation import generated_programs
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from dataclasses import replace
+        class SourceDatabase:
+            def rulings(self,record):return []
+        program=next(p for p in generated_programs(SourceDatabase(),value,capability_registry=load_default_capability_registry(),
+            capability_profile='commander_review') if any(e.get('spec',{}).get('timing')=='source_departure' for e in p.effects))
+        dependencies=tuple(c for c in program.capability_dependencies if c!='zone.exile_until_source_departure.fixed')
+        closure=load_default_capability_registry().closure(dependencies,profile='commander_review').to_dict()
+        forged=replace(program,capability_dependencies=dependencies,capability_closure=closure)
+        self.assertFalse(bind_semantic_program_runtime(forged,capability_registry=load_default_capability_registry(),profile='commander_review')['strict'])
 
 
 class ConditionalExileZoneBoundaryTests(unittest.TestCase):
+    def test_initial_exile_of_its_source_returns_immediately_and_other_destinations_are_not_linked(self):
+        # A scoped zone/lifecycle witness; original-card commands are tested
+        # separately and this does not force semantic program trust.
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests as Actions
+        from quorune.model import StackItem
+        from quorune.linked_exile_return import resolve_linked_exile_return
+        from quorune.linked_exile_return_model import LinkedExileReturnSpec
+        from quorune.zone_transitions import ZoneTransitionOwner
+        from unittest.mock import patch
+        Actions.setUpClass()
+        try:
+            actions=Actions();session=actions.session(6100320);engine=session.engine
+            source=actions.add(engine,'Generic Bound Mentor',ref='initial-self-exile')
+            other=actions.add(engine,'Generic Bound Body',seat='B',ref='initial-held-control')
+            item=StackItem(stack_id='lifecycle-kernel',ref='KERNEL',kind='triggered_ability',controller='A',label='kernel',
+                source_object_id=source.object_id,context={'source_logical_object_id':source.logical_object_id})
+            engine.state.stack.append(item)
+            common={'op':'linked_exile_return','binding_id':'blink:initial','spec':LinkedExileReturnSpec(schema_version=2,timing='source_departure').to_dict(),
+                '_runtime_source':{'stack_ref':item.ref,'object_id':source.object_id,'logical_object_id':source.logical_object_id,'card_ref':source.ref}}
+            resolve_linked_exile_return(engine,{**common,'phase':'exile','cards':[source.ref,other.ref]},actor='A',operation='linked_exile_return',reason='initial conditional movement')
+            resolve_linked_exile_return(engine,{**common,'phase':'return'},actor='A',operation='linked_exile_return',reason='initial conditional movement')
+            self.assertEqual(['battlefield','battlefield'],[source.zone,other.zone])
+            self.assertEqual(['A','B'],[source.controller,other.controller])
+            self.assertEqual(2,source.zone_change_counter);self.assertEqual(2,other.zone_change_counter)
+            # A canonical destination result other than exile is not retained.
+            second=actions.add(engine,'Generic Bound Mentor',ref='alternative-source')
+            target=actions.add(engine,'Generic Bound Body',seat='B',ref='alternative-target')
+            item.context={};item.source_object_id=second.object_id
+            common={**common,'binding_id':'blink:alternative','_runtime_source':{
+                'stack_ref':item.ref,'object_id':second.object_id,'logical_object_id':second.logical_object_id,'card_ref':second.ref}}
+            original=ZoneTransitionOwner.move_cards_simultaneously
+            def redirect(owner,changes,**kwargs):
+                return original(owner,tuple((key,'hand' if key==target.object_id and zone=='exile' else zone) for key,zone in changes),**kwargs)
+            with patch.object(ZoneTransitionOwner,'move_cards_simultaneously',redirect):
+                resolve_linked_exile_return(engine,{**common,'phase':'exile','cards':[target.ref]},actor='A',operation='linked_exile_return',reason='canonical outcome diagnostic')
+                resolve_linked_exile_return(engine,{**common,'phase':'return'},actor='A',operation='linked_exile_return',reason='canonical outcome diagnostic')
+            from quorune.conditional_exile_model import source_conditional_bindings
+            self.assertEqual('hand',target.zone);self.assertEqual((),source_conditional_bindings(second))
+        finally:Actions.tearDownClass()
+
     def test_mixed_return_keeps_unattachable_aura_exiled_and_returns_other_objects(self):
         from pathlib import Path
         import tempfile
@@ -362,3 +441,182 @@ class ConditionalExileZoneBoundaryTests(unittest.TestCase):
             self.assertNotEqual(first_exile,first.logical_object_id);self.assertNotEqual(second_exile,second.logical_object_id)
             self.assertEqual((),return_after_source_departures(engine,(restored,),(retained,)))
         finally:Actions.tearDownClass()
+
+
+class ConditionalExileOriginalActionTests(unittest.TestCase):
+    from test_bound_effect_programs import BoundEffectProgramRuntimeTests as _Actions
+    add=_Actions.add
+    ready=_Actions.ready
+    checkpoint=_Actions.checkpoint
+    resolve=_Actions.resolve
+    replay=_Actions.replay
+
+    @classmethod
+    def setUpClass(cls):
+        from pathlib import Path
+        import tempfile
+        from common import ROOT
+        from scripts.build_test_database import build_fixture_database
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition,DeckEntry
+        from quorune.rules.capabilities import load_default_capability_registry
+        from quorune.linked_exile_return_model import CONDITIONAL_EXILE_CAPABILITY
+        if not load_default_capability_registry().closure((CONDITIONAL_EXILE_CAPABILITY,),profile='commander_review').trusted:
+            raise unittest.SkipTest('Conditional gameplay admission waits for complete parent-continuation evidence')
+        cls.temporary=tempfile.TemporaryDirectory();path=Path(cls.temporary.name)/'original-exile.sqlite3'
+        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/conditional-exile-cards.json'],path)
+        cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
+        cls.deck=DeckDefinition('Generic original conditional deck',[DeckEntry('Generic Bound Commander',1,'commander'),
+            DeckEntry('Generic Bound Plains',30)],['Generic Bound Commander'])
+
+    @classmethod
+    def tearDownClass(cls):cls.db.close();cls.temporary.cleanup()
+
+    def session(self,seed):
+        from quorune.semantics import SemanticRegistry
+        from quorune.oracle_ir import register_generated_programs
+        session=self._Actions.session(self,seed)
+        session.engine.semantics=SemanticRegistry(include_builtin_packs=False)
+        register_generated_programs(self.db,session.engine.semantics,tuple(self.db.iter_cards()),trust_level='provisional',
+            capability_registry=self.registry,capability_profile='commander_review',promote_exact_runtime_handlers=True,
+            promote_exact_trigger_programs=True,promote_exact_effect_programs=True,promote_exact_capability_declarations=True)
+        return session
+
+    def test_original_banishing_light_exiles_returns_under_owner_and_replays_actual_actions(self):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.record import authoritative_state_hash
+        session=self.session(6100310);engine=session.engine
+        source=self.add(engine,'Banishing Light',zone='hand',ref='original-banish')
+        target=self.add(engine,'Generic Bound Body',seat='B',ref='original-held')
+        own=self.add(engine,'Generic Bound Body',seat='A',ref='opponent-only-control')
+        removal=self.add(engine,'Disenchant',zone='hand',ref='source-removal')
+        self.add(engine,'Generic Bound Plains',ref='source-removal-land-one')
+        self.add(engine,'Generic Bound Plains',ref='source-removal-land-two')
+        program=compile_best_available_card_program(self.db,self.db.lookup('Banishing Light'),semantic_registry=engine.semantics,
+            capability_registry=self.registry,capability_profile='commander_review')
+        self.assertTrue(bind_card_program_runtime(program,capability_registry=self.registry,profile='commander_review')['strict_capability_ready'])
+        action=self.ready(session,source,{'W':1,'C':2});self.checkpoint(session)
+        self.assertTrue(session.act('pilot:A',{'action_id':action['id'],'pay':'auto'}).ok)
+        self.assertEqual('semantic.target',self.resolve(session).kind)
+        before=authoritative_state_hash(session.state)
+        self.assertFalse(session.act('pilot:A',{'action_id':'choose','targets':[own.ref]}).ok)
+        self.assertEqual(before,authoritative_state_hash(session.state))
+        self.assertTrue(session.act('pilot:A',{'action_id':'choose','targets':[target.ref]}).ok)
+        self.resolve(session);self.assertEqual('exile',session.state.cards[target.object_id].zone)
+        from quorune.conditional_exile_model import source_conditional_bindings
+        self.assertEqual(1,len(source_conditional_bindings(session.state.cards[source.object_id])))
+        session=self.replay(session,load=True);engine=session.engine
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        cast=next(row for row in actions if row.get('card')==removal.ref)
+        accepted=session.act('pilot:A',{'action_id':cast['id'],'targets':[source.ref],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        self.assertEqual(('battlefield','B'),(session.state.cards[target.object_id].zone,session.state.cards[target.object_id].controller))
+        self.assertEqual('graveyard',session.state.cards[source.object_id].zone)
+        self.assertEqual((),source_conditional_bindings(session.state.cards[source.object_id]))
+        for seat in 'ACD':self.assertIn(target.ref,json.dumps(session.packet('pilot:'+seat,full=True)))
+        self.replay(session)
+
+    def test_original_banishing_light_source_leaves_before_resolution_exiles_nothing(self):
+        from quorune.conditional_exile_model import source_conditional_bindings
+        session=self.session(6100311);engine=session.engine
+        source=self.add(engine,'Banishing Light',zone='hand',ref='early-banish')
+        target=self.add(engine,'Generic Bound Body',seat='B',ref='early-target')
+        removal=self.add(engine,'Disenchant',zone='hand',ref='early-removal')
+        self.add(engine,'Generic Bound Plains',ref='early-land-one');self.add(engine,'Generic Bound Plains',ref='early-land-two')
+        action=self.ready(session,source,{'W':1,'C':2});self.checkpoint(session)
+        self.assertTrue(session.act('pilot:A',{'action_id':action['id'],'pay':'auto'}).ok)
+        self.assertEqual('semantic.target',self.resolve(session).kind)
+        self.assertTrue(session.act('pilot:A',{'action_id':'choose','targets':[target.ref]}).ok)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        action=next(row for row in actions if row.get('card')==removal.ref)
+        self.assertTrue(session.act('pilot:A',{'action_id':action['id'],'targets':[source.ref],'pay':'auto'}).ok)
+        self.resolve(session)
+        self.assertEqual('graveyard',session.state.cards[source.object_id].zone)
+        self.assertEqual('battlefield',session.state.cards[target.object_id].zone)
+        self.assertEqual(0,session.state.cards[target.object_id].zone_change_counter)
+        self.assertEqual((),source_conditional_bindings(session.state.cards[source.object_id]))
+        self.replay(session,load=True)
+
+    def test_original_portable_hole_rejects_own_land_and_excess_mana_value_and_replays(self):
+        from quorune.record import authoritative_state_hash
+        session=self.session(6100312);engine=session.engine
+        source=self.add(engine,'Portable Hole',zone='hand',ref='hole-source')
+        valid=self.add(engine,'Generic Bound Body',seat='B',ref='hole-valid')
+        own=self.add(engine,'Generic Bound Body',seat='A',ref='hole-own')
+        land=self.add(engine,'Generic Bound Plains',seat='B',ref='hole-land')
+        large=self.add(engine,'Banishing Light',seat='B',ref='hole-large')
+        action=self.ready(session,source,{'W':1});self.checkpoint(session)
+        self.assertTrue(session.act('pilot:A',{'action_id':action['id'],'pay':'auto'}).ok)
+        self.assertEqual('semantic.target',self.resolve(session).kind)
+        for invalid in (own,land,large):
+            before=authoritative_state_hash(session.state)
+            self.assertFalse(session.act('pilot:A',{'action_id':'choose','targets':[invalid.ref]}).ok)
+            self.assertEqual(before,authoritative_state_hash(session.state))
+        self.assertTrue(session.act('pilot:A',{'action_id':'choose','targets':[valid.ref]}).ok)
+        self.resolve(session);self.assertEqual('exile',session.state.cards[valid.object_id].zone)
+        self.replay(session,load=True)
+
+    def test_original_banishing_light_can_exile_opponent_noncreature_kindred_permanent(self):
+        session=self.session(6100314);engine=session.engine
+        source=self.add(engine,'Banishing Light',zone='hand',ref='kindred-banish')
+        target=self.add(engine,'Generic Kindred Zombie Enchantment',seat='B',ref='kindred-exile-target')
+        action=self.ready(session,source,{'W':1,'C':2});self.checkpoint(session)
+        self.assertTrue(session.act('pilot:A',{'action_id':action['id'],'pay':'auto'}).ok)
+        self.assertEqual('semantic.target',self.resolve(session).kind)
+        self.assertTrue(session.act('pilot:A',{'action_id':'choose','targets':[target.ref]}).ok)
+        self.resolve(session);self.assertEqual('exile',session.state.cards[target.object_id].zone)
+        self.replay(session,load=True)
+
+    def test_original_banisher_priest_return_survives_actual_ability_removal_response(self):
+        session=self.session(6100313);engine=session.engine
+        source=self.add(engine,'Banisher Priest',zone='hand',ref='priest-source')
+        target=self.add(engine,'Generic Bound Body',seat='B',ref='priest-held')
+        snake=self.add(engine,'Snakeform',zone='hand',ref='priest-ability-removal')
+        murder=self.add(engine,'Murder',zone='hand',ref='priest-departure')
+        self.add(engine,'Island',ref='priest-island')
+        self.add(engine,'Swamp',ref='priest-swamp-one');self.add(engine,'Swamp',ref='priest-swamp-two')
+        for index in range(5):self.add(engine,'Generic Bound Plains',ref='priest-land-'+str(index))
+        action=self.ready(session,source,{'W':2,'C':1});self.checkpoint(session)
+        self.assertTrue(session.act('pilot:A',{'action_id':action['id'],'pay':'auto'}).ok)
+        self.assertEqual('semantic.target',self.resolve(session).kind)
+        self.assertTrue(session.act('pilot:A',{'action_id':'choose','targets':[target.ref]}).ok)
+        self.resolve(session);self.assertEqual('exile',session.state.cards[target.object_id].zone)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        action=next(row for row in actions if row.get('card')==snake.ref)
+        self.assertTrue(session.act('pilot:A',{'action_id':action['id'],'targets':[source.ref],'pay':'auto'}).ok)
+        self.resolve(session);self.assertFalse(session.engine._effective_ability_fragments(session.state.cards[source.object_id]))
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        action=next(row for row in actions if row.get('card')==murder.ref)
+        self.assertTrue(session.act('pilot:A',{'action_id':action['id'],'targets':[source.ref],'pay':'auto'}).ok)
+        self.resolve(session)
+        self.assertEqual(('battlefield','B'),(session.state.cards[target.object_id].zone,session.state.cards[target.object_id].controller))
+        self.replay(session,load=True)
+
+    def test_two_original_banishing_sources_keep_distinct_holds_and_return_only_departed_source(self):
+        from quorune.conditional_exile_model import source_conditional_bindings
+        session=self.session(6100315);engine=session.engine
+        first=self.add(engine,'Banishing Light',zone='hand',ref='first-banish-source')
+        second=self.add(engine,'Banishing Light',zone='hand',ref='second-banish-source')
+        first_target=self.add(engine,'Generic Bound Body',seat='B',ref='first-held-object')
+        second_target=self.add(engine,'Generic Bound Body',seat='D',ref='second-held-object')
+        removal=self.add(engine,'Disenchant',zone='hand',ref='first-source-removal')
+        for index in range(8):self.add(engine,'Generic Bound Plains',ref='multiple-banish-land-'+str(index))
+        action=self.ready(session,first,{'W':1,'C':2});self.checkpoint(session)
+        self.assertTrue(session.act('pilot:A',{'action_id':action['id'],'pay':'auto'}).ok)
+        self.assertEqual('semantic.target',self.resolve(session).kind)
+        self.assertTrue(session.act('pilot:A',{'action_id':'choose','targets':[first_target.ref]}).ok);self.resolve(session)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        action=next(row for row in actions if row.get('card')==second.ref)
+        self.assertTrue(session.act('pilot:A',{'action_id':action['id'],'pay':'auto'}).ok)
+        self.assertEqual('semantic.target',self.resolve(session).kind)
+        self.assertTrue(session.act('pilot:A',{'action_id':'choose','targets':[second_target.ref]}).ok);self.resolve(session)
+        self.assertNotEqual(source_conditional_bindings(session.state.cards[first.object_id])[0].source,
+            source_conditional_bindings(session.state.cards[second.object_id])[0].source)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        action=next(row for row in actions if row.get('card')==removal.ref)
+        self.assertTrue(session.act('pilot:A',{'action_id':action['id'],'targets':[first.ref],'pay':'auto'}).ok);self.resolve(session)
+        self.assertEqual('battlefield',session.state.cards[first_target.object_id].zone)
+        self.assertEqual('exile',session.state.cards[second_target.object_id].zone)
+        self.assertEqual(1,len(source_conditional_bindings(session.state.cards[second.object_id])))
+        self.replay(session,load=True)
