@@ -63,7 +63,7 @@ class ControllerSacrificeActionTests(unittest.TestCase):
         cls.temporary=tempfile.TemporaryDirectory();path=Path(cls.temporary.name)/'controller-sacrifice.sqlite3'
         build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',
             ROOT/'tests/fixtures/controller-sacrifice-cards.json',ROOT/'tests/fixtures/whole-hand-discard-cards.json',
-            ROOT/'tests/fixtures/conditional-exile-cards.json'],path)
+            ROOT/'tests/fixtures/conditional-exile-cards.json',ROOT/'tests/fixtures/typed-land-entry-cards.json'],path)
         cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
         cls.deck=DeckDefinition('Controller sacrifice witness',[DeckEntry('Generic Bound Commander',1,'commander'),
             DeckEntry('Generic Bound Plains',30)],['Generic Bound Commander'])

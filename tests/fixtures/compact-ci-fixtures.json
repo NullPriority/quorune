@@ -312,6 +312,23 @@
       "deck_files": [],
       "fixture_files": [],
       "rationale": "Actual resolution numeric/bare-subtype gameplay witnesses iterate these precise registered fixture identities."
+    },
+
+    {
+      "source": "tests/test_high_risk_interaction_assurance.py",
+      "symbol": "HighRiskInteractionAssuranceTests.test_original_batched_scope_expansions_keep_unrepresented_compositions_untrusted",
+      "card_names": [
+        "Aang's Iceberg",
+        "Assimilation Aegis",
+        "Bilbo's Ring",
+        "Gelatinous Cube",
+        "Perilous Snare",
+        "Tibalt, the Fiend-Blooded"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "The bounded dictionary iterates these original cards from classified-interaction-assurance-cards.json to assert whole-program rejection of their exact unresolved composition boundaries."
     }
   ],
   "full_database_only": []
