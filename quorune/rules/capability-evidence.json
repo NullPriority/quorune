@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "d57bd39bb51e9dbdeb772f431d0eca7cda95b6aae622bd9f0f1861a8c10695c3",
-  "declaration_source_fingerprint": "82b3a0704ea67d6f6da6ca151f5f9ecc0d0e556a50db971909c212113a7b0820",
+  "registry_fingerprint": "c2164433893d096e892feb2e176839ce28b0a33997c44fe083216d7bf57594a3",
+  "declaration_source_fingerprint": "41ae00c46f3dcce45dff6ca3b6b951df8dec23aedb2889669a3d1b20a22e6c78",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -115615,6 +115615,28 @@
     {
       "capability_id": "zone.exile_until_source_departure.fixed",
       "evidence_class": "interaction",
+      "test_id": "tests.test_conditional_exile.ConditionalExileOriginalActionTests.test_actual_exile_departure_does_not_return_retired_held_object_when_source_leaves",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "610.3",
+        "610.3a",
+        "610.3b",
+        "610.3c",
+        "610.3d",
+        "303.4f",
+        "303.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual APNAP choices, multiple-owner returns, source reentry and actual retired exile controls; codec rejection remains a scoped continuation witness."
+    },
+    {
+      "capability_id": "zone.exile_until_source_departure.fixed",
+      "evidence_class": "interaction",
       "test_id": "tests.test_conditional_exile.ConditionalExileOriginalActionTests.test_original_banisher_priest_return_survives_actual_ability_removal_response",
       "official_rule_ids": [
         "201.5",
@@ -115659,6 +115681,28 @@
     {
       "capability_id": "zone.exile_until_source_departure.fixed",
       "evidence_class": "interaction",
+      "test_id": "tests.test_conditional_exile.ConditionalExileOriginalActionTests.test_original_priest_departure_reentry_does_not_reattach_old_instruction",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "610.3",
+        "610.3a",
+        "610.3b",
+        "610.3c",
+        "610.3d",
+        "303.4f",
+        "303.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual APNAP choices, multiple-owner returns, source reentry and actual retired exile controls; codec rejection remains a scoped continuation witness."
+    },
+    {
+      "capability_id": "zone.exile_until_source_departure.fixed",
+      "evidence_class": "interaction",
       "test_id": "tests.test_conditional_exile.ConditionalExileOriginalActionTests.test_two_original_banishing_sources_keep_distinct_holds_and_return_only_departed_source",
       "official_rule_ids": [
         "201.5",
@@ -115677,6 +115721,50 @@
         "commander_review"
       ],
       "applicability_note": "Actual original-card source/target contrasts, distinct observer holds and retained return after ability removal; current-version command replay from pre-action checkpoints."
+    },
+    {
+      "capability_id": "zone.exile_until_source_departure.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_conditional_exile.ConditionalExileZoneBoundaryTests.test_each_player_sacrifice_return_resumes_record_intent_and_remaining_apnap_choices",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "610.3",
+        "610.3a",
+        "610.3b",
+        "610.3c",
+        "610.3d",
+        "303.4f",
+        "303.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual APNAP choices, multiple-owner returns, source reentry and actual retired exile controls; codec rejection remains a scoped continuation witness."
+    },
+    {
+      "capability_id": "zone.exile_until_source_departure.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_conditional_exile.ConditionalExileZoneBoundaryTests.test_simultaneous_distinct_source_departures_return_multiple_owners_after_entry_choice",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "610.3",
+        "610.3a",
+        "610.3b",
+        "610.3c",
+        "610.3d",
+        "303.4f",
+        "303.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual APNAP choices, multiple-owner returns, source reentry and actual retired exile controls; codec rejection remains a scoped continuation witness."
     },
     {
       "capability_id": "zone.exile_until_source_departure.fixed",
@@ -115721,6 +115809,28 @@
         "commander_review"
       ],
       "applicability_note": "Actual original-card source/target contrasts, distinct observer holds and retained return after ability removal; current-version command replay from pre-action checkpoints."
+    },
+    {
+      "capability_id": "zone.exile_until_source_departure.fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_conditional_exile.ConditionalExileZoneBoundaryTests.test_simultaneous_distinct_source_departures_return_multiple_owners_after_entry_choice",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "610.3",
+        "610.3a",
+        "610.3b",
+        "610.3c",
+        "610.3d",
+        "303.4f",
+        "303.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual APNAP choices, multiple-owner returns, source reentry and actual retired exile controls; codec rejection remains a scoped continuation witness."
     },
     {
       "capability_id": "zone.exile_until_source_departure.fixed",
@@ -115791,6 +115901,28 @@
     {
       "capability_id": "zone.exile_until_source_departure.fixed",
       "evidence_class": "negative",
+      "test_id": "tests.test_conditional_exile.ConditionalExileOriginalActionTests.test_actual_exile_departure_does_not_return_retired_held_object_when_source_leaves",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "610.3",
+        "610.3a",
+        "610.3b",
+        "610.3c",
+        "610.3d",
+        "303.4f",
+        "303.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual APNAP choices, multiple-owner returns, source reentry and actual retired exile controls; codec rejection remains a scoped continuation witness."
+    },
+    {
+      "capability_id": "zone.exile_until_source_departure.fixed",
+      "evidence_class": "negative",
       "test_id": "tests.test_conditional_exile.ConditionalExileOriginalActionTests.test_original_banishing_light_source_leaves_before_resolution_exiles_nothing",
       "official_rule_ids": [
         "201.5",
@@ -115831,6 +115963,28 @@
         "commander_review"
       ],
       "applicability_note": "Actual original-card source/target contrasts, distinct observer holds and retained return after ability removal; current-version command replay from pre-action checkpoints."
+    },
+    {
+      "capability_id": "zone.exile_until_source_departure.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_conditional_exile.ConditionalExileZoneBoundaryTests.test_completed_choice_payload_rejects_unknown_intents_and_malformed_completion",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "610.3",
+        "610.3a",
+        "610.3b",
+        "610.3c",
+        "610.3d",
+        "303.4f",
+        "303.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual APNAP choices, multiple-owner returns, source reentry and actual retired exile controls; codec rejection remains a scoped continuation witness."
     },
     {
       "capability_id": "zone.exile_until_source_departure.fixed",
@@ -115923,6 +116077,28 @@
     {
       "capability_id": "zone.exile_until_source_departure.fixed",
       "evidence_class": "replay",
+      "test_id": "tests.test_conditional_exile.ConditionalExileOriginalActionTests.test_actual_exile_departure_does_not_return_retired_held_object_when_source_leaves",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "610.3",
+        "610.3a",
+        "610.3b",
+        "610.3c",
+        "610.3d",
+        "303.4f",
+        "303.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual APNAP choices, multiple-owner returns, source reentry and actual retired exile controls; codec rejection remains a scoped continuation witness."
+    },
+    {
+      "capability_id": "zone.exile_until_source_departure.fixed",
+      "evidence_class": "replay",
       "test_id": "tests.test_conditional_exile.ConditionalExileOriginalActionTests.test_original_banisher_priest_return_survives_actual_ability_removal_response",
       "official_rule_ids": [
         "201.5",
@@ -115989,6 +116165,28 @@
     {
       "capability_id": "zone.exile_until_source_departure.fixed",
       "evidence_class": "replay",
+      "test_id": "tests.test_conditional_exile.ConditionalExileOriginalActionTests.test_original_priest_departure_reentry_does_not_reattach_old_instruction",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "610.3",
+        "610.3a",
+        "610.3b",
+        "610.3c",
+        "610.3d",
+        "303.4f",
+        "303.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual APNAP choices, multiple-owner returns, source reentry and actual retired exile controls; codec rejection remains a scoped continuation witness."
+    },
+    {
+      "capability_id": "zone.exile_until_source_departure.fixed",
+      "evidence_class": "replay",
       "test_id": "tests.test_conditional_exile.ConditionalExileOriginalActionTests.test_two_original_banishing_sources_keep_distinct_holds_and_return_only_departed_source",
       "official_rule_ids": [
         "201.5",
@@ -116007,6 +116205,50 @@
         "commander_review"
       ],
       "applicability_note": "Actual original-card source/target contrasts, distinct observer holds and retained return after ability removal; current-version command replay from pre-action checkpoints."
+    },
+    {
+      "capability_id": "zone.exile_until_source_departure.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_conditional_exile.ConditionalExileZoneBoundaryTests.test_each_player_sacrifice_return_resumes_record_intent_and_remaining_apnap_choices",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "610.3",
+        "610.3a",
+        "610.3b",
+        "610.3c",
+        "610.3d",
+        "303.4f",
+        "303.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual APNAP choices, multiple-owner returns, source reentry and actual retired exile controls; codec rejection remains a scoped continuation witness."
+    },
+    {
+      "capability_id": "zone.exile_until_source_departure.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_conditional_exile.ConditionalExileZoneBoundaryTests.test_simultaneous_distinct_source_departures_return_multiple_owners_after_entry_choice",
+      "official_rule_ids": [
+        "201.5",
+        "400.7",
+        "610.3",
+        "610.3a",
+        "610.3b",
+        "610.3c",
+        "610.3d",
+        "303.4f",
+        "303.4g"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual APNAP choices, multiple-owner returns, source reentry and actual retired exile controls; codec rejection remains a scoped continuation witness."
     },
     {
       "capability_id": "zone.exile_until_source_departure.fixed",
@@ -119745,5 +119987,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "42b5d7af23d1790e7da23ed2e31a9e47ec275246599cc59f5b7204523d64877a"
+  "fingerprint": "d90d66f4821af222629d73c3443c4951f524c648004da234a1f22513ddb54286"
 }

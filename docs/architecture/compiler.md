@@ -255,16 +255,19 @@ before its zone reset. Single and simultaneous departures use those retained
 instructions. A return entry choice resumes the return movement rather than
 repeating the source departure; native activation cost and state-based departure
 choices preserve their enclosing transaction. Aura attachment subjects are
-chosen before simultaneous movement. The conditional capability remains blocked
-while nested source returns and semantic-choice parent continuations lack
-complete composition evidence. Passing original-card action witnesses do not
-override that broader admission boundary.
+chosen before simultaneous movement. The conditional capability admits the
+closed targeted source-departure form with the ordinary target, replacement,
+APNAP, Aura-entry, and retained-completion dependencies. Other specified events,
+return zones, unsupported riders, and unrepresented target sets remain residual.
 After a choice's movement commits, a conditional return pause retains the
 already-computed remaining completion as closed typed data. Resumption validates
 the original parent frame and continues those remaining intents and effects;
 it does not recompute a consumed sacrifice or discard choice. Preparation uses
 the same boundary for retained automatic effects and prepared requests. Casting
 cost returns preserve the paid cost and parent spell before priority resumes.
+Retired exile incarnations and earlier source lifetimes do not reattach when a
+physical card reenters. Multiple original sources retain distinct instructions;
+simultaneous specified departures collect one owner-controlled return batch.
 Separate entry and leave triggers remain a linked-ability contract under CR 607.
 
 `compiler/fixed_target_effect_sequences.py` owns the closed cross-sentence

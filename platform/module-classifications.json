@@ -3578,6 +3578,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/nonleaf_effect_closure.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/optional_effect_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -13182,5 +13197,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "ee2c84f9977d12508b9b1ce0eb618e344711e3e7493808490152dc85db5ef516"
+  "fingerprint": "a7f3393657f07dac225121102a641f33d446072260246017645214ef3e8b84b6"
 }

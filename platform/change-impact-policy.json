@@ -3785,7 +3785,9 @@
         "quorune/semantic_choices/completed_choice.py",
         "quorune/semantic_choices/counter_coordination.py",
         "quorune/semantic_choices/preparation_coordination.py",
-        "quorune/rules/casting/commit.py"
+        "quorune/rules/casting/commit.py",
+        "quorune/compiler/nonleaf_effect_closure.py",
+        "quorune/rules/affected_player_sacrifice_capability_shapes.py"
       ],
       "test_modules": [
         "test_conditional_exile",

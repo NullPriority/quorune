@@ -11,6 +11,11 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Compile targeted exile until the original source leaves the battlefield,
+  retaining actual exile incarnations and immediate owner-controlled return.
+  Replacement, Aura-entry, casting-cost, and completed-choice pauses preserve
+  the already committed movement and ordinary command replay.
+
 - Compile printed fixed-mana Transmute through hand-only sorcery activation and
   the existing private library-search owner, retaining the discarded source's
   mana value across cost replacement, save/load, and replay.

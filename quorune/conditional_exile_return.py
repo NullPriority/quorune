@@ -191,6 +191,19 @@ def resume_conditional_aura_choice(host: Any, decision: Any, *, error_type: type
         'spec','advertised_targets','bindings','departures','selections','aura_targets','parent'}
     if set(data)!=expected or type(data['schema_version']) is not int or data['schema_version']!=1 or data['conditional_aura_return'] is not True:
         raise error_type('Conditional Aura return continuation is malformed')
+    try:
+        bindings=tuple(ConditionalExileBinding.from_dict(item) for item in data['bindings'])
+        departures=tuple(ContinuousObjectIdentity.from_dict(item) for item in data['departures'])
+        held={identity.object_id:identity for binding in bindings for identity in binding.objects}
+        if not bindings or not departures or any(binding.source not in departures for binding in bindings):
+            raise ValueError('Conditional Aura source departures changed')
+        if data['source_object_id'] not in held or held[data['source_object_id']].logical_object_id!=data['source_logical_object_id']:
+            raise ValueError('Conditional Aura is outside the retained return set')
+        if not isinstance(data['aura_targets'],Mapping) or set(data['aura_targets'])-set(held) or any(type(ref) is not str or not ref for ref in data['aura_targets'].values()):
+            raise ValueError('Conditional Aura subject map is malformed')
+        if data['parent'] is not None and not isinstance(data['parent'],Mapping):
+            raise ValueError('Conditional Aura parent is malformed')
+    except (KeyError,TypeError,ValueError) as exc:raise error_type(str(exc)) from exc
     if data['parent'] is not None and data['parent'].get('kind') in {'completed_semantic_choice','prepared_semantic_request'}:
         from .semantic_choices.completed_choice import decode_remaining_completion
         continuation,_actor,_response,_completion=decode_remaining_completion(data['parent'])
@@ -213,8 +226,6 @@ def resume_conditional_aura_choice(host: Any, decision: Any, *, error_type: type
     if selected not in data['advertised_targets'] or selected not in legal_aura_target_refs(host,aura,spec,controller=actor,as_target=False):
         raise error_type('Conditional Aura return subject is no longer legal')
     targets={**data['aura_targets'],aura.object_id:selected}
-    bindings=tuple(ConditionalExileBinding.from_dict(item) for item in data['bindings'])
-    departures=tuple(ContinuousObjectIdentity.from_dict(item) for item in data['departures'])
     try:
         return_after_source_departures(host,bindings,departures,replacement_selections=data['selections'],aura_target_refs=targets)
     except ConditionalReturnAuraChoiceRequired as required:

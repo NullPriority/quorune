@@ -11,6 +11,12 @@ from ..compiler.affected_player_sacrifice_templates import (
 )
 
 
+def is_closed_affected_player_sacrifice_program(program: Any) -> bool:
+    required=fixed_affected_player_sacrifice_node_capabilities(effects=program.effects,
+        target_schema=program.target_schema,mechanic_ids=program.coverage)
+    return bool(required) and set(required).issubset(program.capability_dependencies)
+
+
 def fixed_affected_player_sacrifice_node_capabilities(
     *,
     effects: Sequence[Mapping[str, Any]],

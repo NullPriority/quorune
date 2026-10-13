@@ -1364,12 +1364,8 @@ def _is_closed_effect_program(program: SemanticProgram) -> bool:
 
     if is_closed_permanent_additional_cost_program(program):
         return True
-    from ..rules.linked_exile_return_shapes import linked_exile_return_node_capabilities
-    from ..rules.resolution_condition_shapes import resolution_condition_node_capabilities
-    if _node_capabilities_close_program(program, resolution_condition_node_capabilities):
-        return True
-    if _node_capabilities_close_program(program, linked_exile_return_node_capabilities):
-        return True
+    from .nonleaf_effect_closure import nonleaf_effect_program_is_closed
+    if nonleaf_effect_program_is_closed(program):return True
     if is_closed_composed_spell_effect_program(
         program,
         component_recognizers=_closed_effect_recognizers(),

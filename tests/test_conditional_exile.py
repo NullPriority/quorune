@@ -168,6 +168,53 @@ class ConditionalExileCompilerRecognitionTests(unittest.TestCase):
 
 
 class ConditionalExileZoneBoundaryTests(unittest.TestCase):
+    def test_each_player_sacrifice_return_resumes_record_intent_and_remaining_apnap_choices(self):
+        from pathlib import Path
+        import tempfile
+        from common import ROOT
+        from scripts.build_test_database import build_fixture_database
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition,DeckEntry
+        from quorune.rules.capabilities import load_default_capability_registry
+        from quorune.zone_transitions import ZoneTransitionOwner
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests as Actions
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'apnap.sqlite3';build_fixture_database([
+                ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/linked-exile-return-cards.json',
+                ROOT/'tests/fixtures/conditional-exile-cards.json'],path)
+            db=CardDatabase(path)
+            try:
+                actions=Actions();actions.db=db;actions.registry=load_default_capability_registry()
+                actions.deck=DeckDefinition('Generic APNAP return',[DeckEntry('Generic Bound Commander',1,'commander'),
+                    DeckEntry('Generic Bound Plains',30)],['Generic Bound Commander'])
+                session=actions.session(6100340);engine=session.engine
+                sources={seat:actions.add(engine,'Generic Bound Body',seat=seat,ref='apnap-sacrifice-'+seat) for seat in 'ABCD'}
+                held=actions.add(engine,'Generic Conditional Counter Body',zone='exile',ref='apnap-held')
+                actions.add(engine,'Generic Blink Counter Doubler',ref='apnap-double')
+                actions.add(engine,'Generic Blink Counter Addition',ref='apnap-plus')
+                source=sources['A'];ZoneTransitionOwner(engine).remember_conditional_exile(ConditionalExileBinding('apnap-hold',
+                    ContinuousObjectIdentity(source.object_id,source.logical_object_id),
+                    (ExiledObjectIdentity(held.object_id,held.ref,held.logical_object_id),)))
+                spell=actions.add(engine,'Innocent Blood',zone='hand',ref='apnap-spell')
+                offered=actions.ready(session,spell,{'B':1});actions.checkpoint(session)
+                self.assertTrue(session.act('pilot:A',{'action_id':offered['id'],'pay':'auto'}).ok)
+                actions.resolve(session)
+                for seat in 'ABCD':
+                    self.assertEqual(['pilot:'+seat],session.pending_principals())
+                    accepted=session.act('pilot:'+seat,{'action_id':'choose','cards':[sources[seat].ref]})
+                    self.assertTrue(accepted.ok,accepted.summary)
+                self.assertEqual('replacement.order',session.state.pending_decision.kind)
+                resumed=actions.replay(session,load=True)
+                options=resumed.packet('pilot:A',full=True)['decision']['ctx']['options']
+                chosen=next(row['id'] for row in options if 'apnap-plus' in row['id'])
+                accepted=resumed.act('pilot:A',{'action_id':'choose','replacement':chosen})
+                self.assertTrue(accepted.ok,accepted.summary);actions.resolve(resumed)
+                for card in sources.values():self.assertEqual('graveyard',resumed.state.cards[card.object_id].zone)
+                self.assertEqual('battlefield',resumed.state.cards[held.object_id].zone)
+                self.assertEqual(4,resumed.state.cards[held.object_id].counters['+1/+1'])
+                actions.replay(resumed)
+            finally:db.close()
+
     def test_nested_source_departures_ignore_retired_exile_and_preserve_current_binding(self):
         from test_bound_effect_programs import BoundEffectProgramRuntimeTests as Actions
         from quorune.zone_transitions import ZoneTransitionOwner
@@ -213,6 +260,67 @@ class ConditionalExileZoneBoundaryTests(unittest.TestCase):
             from quorune.conditional_exile_model import source_conditional_bindings
             self.assertEqual((),source_conditional_bindings(inner))
         finally:Actions.tearDownClass()
+
+    def test_simultaneous_distinct_source_departures_return_multiple_owners_after_entry_choice(self):
+        from pathlib import Path
+        import tempfile
+        from common import ROOT
+        from scripts.build_test_database import build_fixture_database
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition,DeckEntry
+        from quorune.rules.capabilities import load_default_capability_registry
+        from quorune.zone_transitions import ZoneTransitionOwner
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests as Actions
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'owners.sqlite3';build_fixture_database([
+                ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/linked-exile-return-cards.json',
+                ROOT/'tests/fixtures/conditional-exile-cards.json'],path)
+            db=CardDatabase(path)
+            try:
+                actions=Actions();actions.db=db;actions.registry=load_default_capability_registry()
+                actions.deck=DeckDefinition('Generic multiple owner',[DeckEntry('Generic Bound Commander',1,'commander'),
+                    DeckEntry('Generic Bound Plains',30)],['Generic Bound Commander'])
+                session=actions.session(6100341);engine=session.engine;owner=ZoneTransitionOwner(engine)
+                sources={seat:actions.add(engine,'Generic Bound Body',seat=seat,ref='owner-source-'+seat) for seat in 'ABCD'}
+                held={seat:actions.add(engine,'Generic Conditional Counter Body',seat=seat,zone='exile',ref='owner-held-'+seat) for seat in 'AB'}
+                for seat in 'AB':
+                    actions.add(engine,'Generic Blink Counter Doubler',seat=seat,ref='owner-double-'+seat)
+                    actions.add(engine,'Generic Blink Counter Addition',seat=seat,ref='owner-plus-'+seat)
+                    source=sources[seat];card=held[seat]
+                    owner.remember_conditional_exile(ConditionalExileBinding('owner-link-'+seat,
+                        ContinuousObjectIdentity(source.object_id,source.logical_object_id),
+                        (ExiledObjectIdentity(card.object_id,card.ref,card.logical_object_id),)))
+                spell=actions.add(engine,'Innocent Blood',zone='hand',ref='owners-sacrifice')
+                offered=actions.ready(session,spell,{'B':1});actions.checkpoint(session)
+                self.assertTrue(session.act('pilot:A',{'action_id':offered['id'],'pay':'auto'}).ok);actions.resolve(session)
+                for seat in 'ABCD':self.assertTrue(session.act('pilot:'+seat,{'action_id':'choose','cards':[sources[seat].ref]}).ok)
+                self.assertEqual('replacement.order',session.state.pending_decision.kind)
+                resumed=actions.replay(session,load=True);choosers=[]
+                for _ in range(6):
+                    if resumed.state.pending_decision.kind!='replacement.order':break
+                    principal=resumed.pending_principals()[0];choosers.append(principal)
+                    options=resumed.packet(principal,full=True)['decision']['ctx']['options']
+                    selected=next((row['id'] for row in options if 'owner-plus' in row['id']),options[0]['id'])
+                    result=resumed.act(principal,{'action_id':'choose','replacement':selected});self.assertTrue(result.ok,result.summary)
+                actions.resolve(resumed)
+                self.assertIn('pilot:A',choosers);self.assertIn('pilot:B',choosers)
+                self.assertLess(choosers.index('pilot:A'),choosers.index('pilot:B'))
+                for seat,card in held.items():
+                    current=resumed.state.cards[card.object_id];self.assertEqual(('battlefield',seat),(current.zone,current.controller))
+                self.assertEqual(resumed.state.cards[held['A'].object_id].zone_timestamp,resumed.state.cards[held['B'].object_id].zone_timestamp)
+                actions.replay(resumed)
+            finally:db.close()
+
+    def test_existing_apnap_sacrifice_promotion_requires_its_closed_shape_and_dependencies(self):
+        from quorune.rules.affected_player_sacrifice_capability_shapes import is_closed_affected_player_sacrifice_program
+        from quorune.compiler.affected_player_sacrifice_templates import fixed_affected_player_sacrifice_effect_template
+        value=fixed_affected_player_sacrifice_effect_template('Each player sacrifices a creature of their choice.')
+        self.assertIsNotNone(value)
+        program=SimpleNamespace(effects=value.effects,target_schema=value.target_schema,coverage=value.mechanics,
+            capability_dependencies=('choice.affected_player.fixed_sacrifice','zone.change.destination_replacement'))
+        self.assertTrue(is_closed_affected_player_sacrifice_program(program))
+        program.capability_dependencies=();self.assertFalse(is_closed_affected_player_sacrifice_program(program))
+        program.effects=({**value.effects[0],'count':99},);self.assertFalse(is_closed_affected_player_sacrifice_program(program))
 
     def run_consumed_sacrifice_return(self, *, aura=False, mixed=False):
         from pathlib import Path
@@ -441,6 +549,15 @@ class ConditionalExileZoneBoundaryTests(unittest.TestCase):
                 before_choice=authoritative_state_hash(resumed.state)
                 denied=resumed.act('pilot:D',{'action_id':'choose',**({'aura_target':attachment.ref} if aura else {'replacement':'unknown'})})
                 self.assertFalse(denied.ok);self.assertEqual(before_choice,authoritative_state_hash(resumed.state))
+                if aura:
+                    denied=resumed.act('pilot:A',{'action_id':'choose','aura_target':source.ref})
+                    self.assertFalse(denied.ok);self.assertEqual(before_choice,authoritative_state_hash(resumed.state))
+                    saved=json.loads(json.dumps(resumed.state.pending_decision.continuation))
+                    resumed.state.pending_decision.continuation['source_logical_object_id']='retired-aura'
+                    malformed_before=authoritative_state_hash(resumed.state)
+                    denied=resumed.act('pilot:A',{'action_id':'choose','aura_target':attachment.ref})
+                    self.assertFalse(denied.ok);self.assertEqual(malformed_before,authoritative_state_hash(resumed.state))
+                    resumed.state.pending_decision.continuation=saved
                 if aura:accepted=resumed.act('pilot:A',{'action_id':'choose','aura_target':attachment.ref})
                 else:
                     options=resumed.packet('pilot:A',full=True)['decision']['ctx']['options']
@@ -596,6 +713,61 @@ class ConditionalExileZoneBoundaryTests(unittest.TestCase):
 
 
 class ConditionalExileOriginalActionTests(unittest.TestCase):
+    def test_actual_exile_departure_does_not_return_retired_held_object_when_source_leaves(self):
+        session=self.session(6100351);engine=session.engine
+        source=self.add(engine,'Banishing Light',zone='hand',ref='retired-banish-source')
+        target=self.add(engine,'Generic Bound Body',seat='B',ref='retired-exile-target')
+        pull=self.add(engine,'Pull from Eternity',zone='hand',ref='actual-exile-departure')
+        removal=self.add(engine,'Disenchant',zone='hand',ref='retired-source-removal')
+        for index in range(4):self.add(engine,'Generic Bound Plains',ref='retired-land-'+str(index))
+        offered=self.ready(session,source,{'W':1,'C':2});self.checkpoint(session)
+        self.assertTrue(session.act('pilot:A',{'action_id':offered['id'],'pay':'auto'}).ok)
+        self.assertEqual('semantic.target',self.resolve(session).kind)
+        self.assertTrue(session.act('pilot:A',{'action_id':'choose','targets':[target.ref]}).ok);self.resolve(session)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        action=next(row for row in actions if row.get('card')==pull.ref)
+        accepted=session.act('pilot:A',{'action_id':action['id'],'targets':[session.state.cards[target.object_id].ref],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        self.assertEqual('graveyard',session.state.cards[target.object_id].zone)
+        after=session.state.cards[target.object_id].logical_object_id
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        action=next(row for row in actions if row.get('card')==removal.ref)
+        self.assertTrue(session.act('pilot:A',{'action_id':action['id'],'targets':[source.ref],'pay':'auto'}).ok);self.resolve(session)
+        self.assertEqual('graveyard',session.state.cards[target.object_id].zone)
+        self.assertEqual(after,session.state.cards[target.object_id].logical_object_id)
+        self.replay(session,load=True)
+
+    def test_original_priest_departure_reentry_does_not_reattach_old_instruction(self):
+        from quorune.conditional_exile_model import source_conditional_bindings
+        session=self.session(6100350);engine=session.engine
+        source=self.add(engine,'Banisher Priest',zone='hand',ref='reentry-priest')
+        first=self.add(engine,'Generic Bound Body',seat='B',ref='reentry-first-held')
+        second=self.add(engine,'Generic Bound Body',seat='D',ref='reentry-second-held')
+        bounce=self.add(engine,'Unsummon',zone='hand',ref='priest-bounce')
+        self.add(engine,'Island',ref='reentry-island')
+        for index in range(6):self.add(engine,'Generic Bound Plains',ref='reentry-land-'+str(index))
+        action=self.ready(session,source,{'W':2,'C':1});self.checkpoint(session)
+        self.assertTrue(session.act('pilot:A',{'action_id':action['id'],'pay':'auto'}).ok)
+        self.assertEqual('semantic.target',self.resolve(session).kind)
+        self.assertTrue(session.act('pilot:A',{'action_id':'choose','targets':[first.ref]}).ok);self.resolve(session)
+        old=source_conditional_bindings(session.state.cards[source.object_id])[0].source
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        action=next(row for row in actions if row.get('card')==bounce.ref)
+        self.assertTrue(session.act('pilot:A',{'action_id':action['id'],'targets':[source.ref],'pay':'auto'}).ok);self.resolve(session)
+        self.assertEqual('battlefield',session.state.cards[first.object_id].zone)
+        self.assertEqual('hand',session.state.cards[source.object_id].zone)
+        self.assertEqual((),source_conditional_bindings(session.state.cards[source.object_id]))
+        current_ref=session.state.cards[source.object_id].ref
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        action=next(row for row in actions if row.get('card')==current_ref)
+        self.assertTrue(session.act('pilot:A',{'action_id':action['id'],'pay':'auto'}).ok)
+        self.assertEqual('semantic.target',self.resolve(session).kind)
+        self.assertTrue(session.act('pilot:A',{'action_id':'choose','targets':[second.ref]}).ok);self.resolve(session)
+        self.assertEqual('battlefield',session.state.cards[first.object_id].zone)
+        self.assertEqual('exile',session.state.cards[second.object_id].zone)
+        self.assertNotEqual(old,source_conditional_bindings(session.state.cards[source.object_id])[0].source)
+        self.replay(session,load=True)
+
     from test_bound_effect_programs import BoundEffectProgramRuntimeTests as _Actions
     add=_Actions.add
     ready=_Actions.ready
