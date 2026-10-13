@@ -493,6 +493,52 @@
         "commander": "legal"
       },
       "id": "fixture-kindred-zombie-enchantment"
+    },
+    {
+      "name": "Generic Conditional Choice Sacrifice",
+      "oracle_id": "fixture:conditional-choice-sacrifice",
+      "mana_cost": "{B}",
+      "cmc": 1,
+      "type_line": "Sorcery",
+      "oracle_text": "Target player sacrifices a creature, then loses 1 life.",
+      "power": null,
+      "toughness": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "name": "Generic Conditional Cast Sacrifice",
+      "oracle_id": "fixture:conditional-cast-sacrifice",
+      "mana_cost": "{B}",
+      "cmc": 1,
+      "type_line": "Instant",
+      "oracle_text": "As an additional cost to cast this spell, sacrifice a creature.\nDraw a card.",
+      "power": null,
+      "toughness": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
     }
   ],
   "rulings": [

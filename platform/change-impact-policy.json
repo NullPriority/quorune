@@ -3781,7 +3781,11 @@
         "quorune/rules/activation/commit.py",
         "tests/fixtures/conditional-exile-cards.json",
         "quorune/mana_activation.py",
-        "quorune/aura/decisions.py"
+        "quorune/aura/decisions.py",
+        "quorune/semantic_choices/completed_choice.py",
+        "quorune/semantic_choices/counter_coordination.py",
+        "quorune/semantic_choices/preparation_coordination.py",
+        "quorune/rules/casting/commit.py"
       ],
       "test_modules": [
         "test_conditional_exile",
@@ -3792,7 +3796,11 @@
         "test_game_record_v3",
         "test_state_based_actions",
         "test_ordinary_cycling",
-        "test_transmute"
+        "test_transmute",
+        "test_semantic_counter_replacement_continuations",
+        "test_fixed_controller_effect_sequences",
+        "test_fixed_affected_player_sacrifices",
+        "test_permanent_additional_costs"
       ]
     }
   ],

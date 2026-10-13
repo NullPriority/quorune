@@ -259,6 +259,12 @@ chosen before simultaneous movement. The conditional capability remains blocked
 while nested source returns and semantic-choice parent continuations lack
 complete composition evidence. Passing original-card action witnesses do not
 override that broader admission boundary.
+After a choice's movement commits, a conditional return pause retains the
+already-computed remaining completion as closed typed data. Resumption validates
+the original parent frame and continues those remaining intents and effects;
+it does not recompute a consumed sacrifice or discard choice. Preparation uses
+the same boundary for retained automatic effects and prepared requests. Casting
+cost returns preserve the paid cost and parent spell before priority resumes.
 Separate entry and leave triggers remain a linked-ability contract under CR 607.
 
 `compiler/fixed_target_effect_sequences.py` owns the closed cross-sentence

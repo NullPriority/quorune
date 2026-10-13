@@ -168,6 +168,152 @@ class ConditionalExileCompilerRecognitionTests(unittest.TestCase):
 
 
 class ConditionalExileZoneBoundaryTests(unittest.TestCase):
+    def test_nested_source_departures_ignore_retired_exile_and_preserve_current_binding(self):
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests as Actions
+        from quorune.zone_transitions import ZoneTransitionOwner
+        Actions.setUpClass()
+        try:
+            actions=Actions();session=actions.session(6100332);engine=session.engine;owner=ZoneTransitionOwner(engine)
+            first=actions.add(engine,'Generic Bound Mentor',ref='nested-first')
+            second=actions.add(engine,'Generic Bound Mentor',ref='nested-second')
+            held=actions.add(engine,'Generic Bound Body',seat='B',zone='exile',ref='nested-held')
+            old=ConditionalExileBinding('old-hold',ContinuousObjectIdentity(first.object_id,first.logical_object_id),
+                (ExiledObjectIdentity(held.object_id,held.ref,held.logical_object_id),))
+            owner.remember_conditional_exile(old)
+            owner.move_card(held.object_id,'battlefield',controller='B',reason='held object leaves original exile')
+            owner.move_card(held.object_id,'exile',reason='new exile instruction')
+            current=ConditionalExileBinding('current-hold',ContinuousObjectIdentity(second.object_id,second.logical_object_id),
+                (ExiledObjectIdentity(held.object_id,held.ref,held.logical_object_id),))
+            owner.remember_conditional_exile(current)
+            owner.move_card(first.object_id,'hand',reason='retired binding source departs')
+            self.assertEqual('exile',held.zone)
+            owner.move_card(second.object_id,'hand',reason='current binding source departs')
+            self.assertEqual(('battlefield','B'),(held.zone,held.controller))
+            self.assertEqual(3,held.zone_change_counter)
+        finally:Actions.tearDownClass()
+
+    def test_exiling_a_bound_source_returns_its_hold_then_outer_departure_returns_that_source(self):
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests as Actions
+        from quorune.zone_transitions import ZoneTransitionOwner
+        Actions.setUpClass()
+        try:
+            actions=Actions();session=actions.session(6100333);engine=session.engine;owner=ZoneTransitionOwner(engine)
+            outer=actions.add(engine,'Generic Bound Mentor',ref='outer-source')
+            inner=actions.add(engine,'Generic Bound Mentor',seat='C',ref='inner-source')
+            held=actions.add(engine,'Generic Bound Body',seat='B',zone='exile',ref='inner-held')
+            owner.remember_conditional_exile(ConditionalExileBinding('inner-binding',ContinuousObjectIdentity(inner.object_id,inner.logical_object_id),
+                (ExiledObjectIdentity(held.object_id,held.ref,held.logical_object_id),)))
+            owner.move_card(inner.object_id,'exile',reason='outer first one-shot exiles inner source')
+            self.assertEqual(('battlefield','B'),(held.zone,held.controller))
+            owner.remember_conditional_exile(ConditionalExileBinding('outer-binding',ContinuousObjectIdentity(outer.object_id,outer.logical_object_id),
+                (ExiledObjectIdentity(inner.object_id,inner.ref,inner.logical_object_id),)))
+            owner.move_card(outer.object_id,'hand',reason='outer specified event')
+            self.assertEqual(('battlefield','C'),(inner.zone,inner.controller))
+            self.assertEqual('battlefield',held.zone)
+            from quorune.conditional_exile_model import source_conditional_bindings
+            self.assertEqual((),source_conditional_bindings(inner))
+        finally:Actions.tearDownClass()
+
+    def run_consumed_sacrifice_return(self, *, aura=False, mixed=False):
+        from pathlib import Path
+        import tempfile
+        from common import ROOT
+        from scripts.build_test_database import build_fixture_database
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition,DeckEntry
+        from quorune.rules.capabilities import load_default_capability_registry
+        from quorune.zone_transitions import ZoneTransitionOwner
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests as Actions
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'consumed-choice.sqlite3';build_fixture_database([
+                ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/linked-exile-return-cards.json',
+                ROOT/'tests/fixtures/conditional-exile-cards.json'],path)
+            db=CardDatabase(path)
+            try:
+                actions=Actions();actions.db=db;actions.registry=load_default_capability_registry()
+                actions.deck=DeckDefinition('Generic completed choice',[DeckEntry('Generic Bound Commander',1,'commander'),
+                    DeckEntry('Generic Bound Plains',30)],['Generic Bound Commander'])
+                session=actions.session(6100330);engine=session.engine
+                source=actions.add(engine,'Generic Bound Body',ref='choice-source')
+                held=actions.add(engine,'Generic Conditional Aura' if aura else 'Generic Conditional Counter Body',zone='exile',ref='choice-held')
+                extra_aura=actions.add(engine,'Generic Conditional Aura',zone='exile',ref='mixed-choice-aura') if mixed else None
+                attachment=actions.add(engine,'Generic Bound Body',seat='B',ref='completed-aura-subject') if aura else None
+                if mixed:attachment=actions.add(engine,'Generic Bound Body',seat='B',ref='mixed-attachment-subject')
+                actions.add(engine,'Generic Blink Counter Doubler',ref='choice-double')
+                actions.add(engine,'Generic Blink Counter Addition',ref='choice-plus')
+                ZoneTransitionOwner(engine).remember_conditional_exile(ConditionalExileBinding('choice-binding',
+                    ContinuousObjectIdentity(source.object_id,source.logical_object_id),
+                    tuple(ExiledObjectIdentity(card.object_id,card.ref,card.logical_object_id) for card in
+                        ((held,extra_aura) if mixed else (held,)))))
+                spell=actions.add(engine,'Generic Conditional Choice Sacrifice',zone='hand',ref='choice-spell')
+                offered=actions.ready(session,spell,{'B':1});actions.checkpoint(session)
+                self.assertTrue(session.act('pilot:A',{'action_id':offered['id'],'targets':['A'],'pay':'auto'}).ok)
+                decision=actions.resolve(session);self.assertIsNotNone(decision)
+                packet=session.packet('pilot:A',full=True)['decision'];self.assertIn('sacrifice',json.dumps(packet).casefold())
+                life=session.state.players['A'].life
+                accepted=session.act('pilot:A',{'action_id':'choose','cards':[source.ref]})
+                self.assertTrue(accepted.ok,accepted.summary)
+                self.assertEqual('aura.entry' if aura else 'replacement.order',session.state.pending_decision.kind)
+                self.assertEqual('graveyard',session.state.cards[source.object_id].zone)
+                self.assertEqual(life,session.state.players['A'].life)
+                resumed=actions.replay(session,load=True)
+                if aura:accepted=resumed.act('pilot:A',{'action_id':'choose','aura_target':attachment.ref})
+                else:
+                    choice=resumed.packet('pilot:A',full=True)['decision']['ctx']['options']
+                    selected=next(row['id'] for row in choice if 'choice-plus' in row['id'])
+                    accepted=resumed.act('pilot:A',{'action_id':'choose','replacement':selected})
+                self.assertTrue(accepted.ok,accepted.summary)
+                if mixed:
+                    self.assertEqual('aura.entry',resumed.state.pending_decision.kind)
+                    self.assertEqual('exile',resumed.state.cards[held.object_id].zone)
+                    resumed=actions.replay(resumed,load=True)
+                    accepted=resumed.act('pilot:A',{'action_id':'choose','aura_target':attachment.ref})
+                    self.assertTrue(accepted.ok,accepted.summary)
+                actions.resolve(resumed)
+                self.assertEqual(life-1,resumed.state.players['A'].life)
+                self.assertEqual(1,resumed.state.cards[source.object_id].zone_change_counter)
+                if aura:self.assertEqual(('battlefield',attachment.object_id),(resumed.state.cards[held.object_id].zone,
+                    resumed.state.cards[held.object_id].attached_to))
+                else:self.assertEqual(('battlefield',4),(resumed.state.cards[held.object_id].zone,
+                    resumed.state.cards[held.object_id].counters['+1/+1']))
+                actions.replay(resumed)
+            finally:db.close()
+
+    def test_consumed_sacrifice_choice_returns_held_card_then_continues_without_rechoosing(self):
+        self.run_consumed_sacrifice_return()
+
+    def test_consumed_sacrifice_choice_returns_aura_and_resumes_remaining_effect_once(self):
+        self.run_consumed_sacrifice_return(aura=True)
+
+    def test_consumed_choice_mixed_aura_and_counter_return_preserves_both_choices_and_replay(self):
+        self.run_consumed_sacrifice_return(mixed=True)
+
+    def test_completed_choice_payload_rejects_unknown_intents_and_malformed_completion(self):
+        from unittest.mock import patch
+        import quorune.conditional_exile_return as owner
+        from quorune.semantic_choices.completed_choice import decode_remaining_completion
+        from quorune.semantic_choices.model import SemanticChoiceError
+        captured=[];original=owner.issue_conditional_return_choice
+        def inspect(host,required,completed_choice=None):
+            original(host,required,completed_choice)
+            if completed_choice is not None:captured.append(json.loads(json.dumps(completed_choice)))
+        with patch.object(owner,'issue_conditional_return_choice',inspect):
+            self.test_consumed_sacrifice_choice_returns_held_card_then_continues_without_rechoosing()
+        self.assertTrue(captured)
+        value=captured[0];decode_remaining_completion(value)
+        for key,replacement in (('schema_version',True),('actor',''),('intents',[{'kind':'arbitrary_callback','fields':{}}]),
+                                ('prepend_effects',None)):
+            with self.assertRaises((SemanticChoiceError,ValueError,TypeError)):
+                decode_remaining_completion({**value,key:replacement})
+        from quorune.semantic_runtime.intents import LifeChangeIntent,PlaceCounterBatchIntent,CounterPlacementAmount
+        from quorune.semantic_choices.completed_choice import encode_remaining_completion
+        from quorune.semantic_choices.model import SemanticChoiceCompletion
+        continuation,actor,response,_=decode_remaining_completion(value)
+        completion=SemanticChoiceCompletion(intents=(LifeChangeIntent(actor,actor,-2,'sealed result'),
+            PlaceCounterBatchIntent(actor,'OBJECT',(CounterPlacementAmount('+1/+1',2),CounterPlacementAmount('flying',1)),'sealed counters')))
+        encoded=encode_remaining_completion(continuation,actor,response,completion,0)
+        self.assertEqual(completion.intents,decode_remaining_completion(json.loads(json.dumps(encoded)))[3].intents)
+
     def test_initial_exile_of_its_source_returns_immediately_and_other_destinations_are_not_linked(self):
         # A scoped zone/lifecycle witness; original-card commands are tested
         # separately and this does not force semantic program trust.
@@ -238,7 +384,7 @@ class ConditionalExileZoneBoundaryTests(unittest.TestCase):
                 self.assertEqual(('battlefield','B'),(body.zone,body.controller))
             finally:db.close()
 
-    def run_created_binding_return_choice(self, *, sacrifice, state_based=False, aura=False, mana=False):
+    def run_created_binding_return_choice(self, *, sacrifice, state_based=False, aura=False, mana=False, cast_cost=False):
         from pathlib import Path
         import tempfile
         from common import ROOT
@@ -267,15 +413,16 @@ class ConditionalExileZoneBoundaryTests(unittest.TestCase):
                 binding=ConditionalExileBinding('already-created',ContinuousObjectIdentity(source.object_id,source.logical_object_id),
                     (ExiledObjectIdentity(held.object_id,held.ref,held.logical_object_id),))
                 ZoneTransitionOwner(engine).remember_conditional_exile(binding)
-                removal=source if sacrifice else actions.add(engine,'Murder',zone='hand',ref='actual-removal-spell')
-                action=actions.ready(session,removal,{} if sacrifice else {'B':2,'C':1})
+                removal=(actions.add(engine,'Generic Conditional Cast Sacrifice',zone='hand',ref='cast-sacrifice-spell') if cast_cost else
+                    source if sacrifice else actions.add(engine,'Murder',zone='hand',ref='actual-removal-spell'))
+                action=actions.ready(session,removal,{'B':1} if cast_cost else {} if sacrifice else {'B':2,'C':1})
                 if state_based:source.marked_damage=20
                 actions.checkpoint(session)
                 before_hand=len(session.state.players['A'].zones['hand'])
                 accepted=session.act('pilot:A',{'action_id':'pass'} if state_based else
-                    {'action_id':action['id'],**({} if sacrifice else {'targets':[source.ref]}),'pay':'auto'})
+                    {'action_id':action['id'],**({'sacrifice_cards':[source.ref]} if cast_cost else {} if sacrifice else {'targets':[source.ref]}),'pay':'auto'})
                 self.assertTrue(accepted.ok,accepted.summary)
-                if not sacrifice and not state_based:actions.resolve(session)
+                if not sacrifice and not state_based and not cast_cost:actions.resolve(session)
                 if state_based:
                     for _ in range(12):
                         if session.state.pending_decision.kind=='replacement.order':break
@@ -283,10 +430,11 @@ class ConditionalExileZoneBoundaryTests(unittest.TestCase):
                 self.assertEqual('aura.entry' if aura else 'replacement.order',session.state.pending_decision.kind)
                 self.assertEqual('graveyard',session.state.cards[source.object_id].zone)
                 self.assertEqual('exile',session.state.cards[held.object_id].zone)
-                if (sacrifice or state_based) and not aura:
+                if (sacrifice or state_based or cast_cost) and not aura:
                     self.assertEqual('conditional_return',session.state.pending_decision.continuation['replacement_resume_kind'])
                     if sacrifice:self.assertEqual(before_hand,len(session.state.players['A'].zones['hand']))
                     if sacrifice and not mana:self.assertEqual('activated_ability',session.state.stack[-1].kind)
+                    if cast_cost:self.assertEqual('spell',session.state.stack[-1].kind)
                 elif not aura:self.assertEqual('return_linked_exiled_objects',session.state.pending_decision.continuation['effect']['op'])
                 resumed=actions.replay(session,load=True)
                 from quorune.record import authoritative_state_hash
@@ -302,6 +450,7 @@ class ConditionalExileZoneBoundaryTests(unittest.TestCase):
                 if sacrifice:
                     self.assertEqual(before_hand,len(resumed.state.players['A'].zones['hand']))
                     if not mana:self.assertEqual('activated_ability',resumed.state.stack[-1].kind)
+                if cast_cost:self.assertEqual('spell',resumed.state.stack[-1].kind)
                 actions.resolve(resumed)
                 self.assertEqual('graveyard',resumed.state.cards[source.object_id].zone)
                 self.assertEqual(1,resumed.state.cards[source.object_id].zone_change_counter)
@@ -351,6 +500,9 @@ class ConditionalExileZoneBoundaryTests(unittest.TestCase):
 
     def test_native_mana_sacrifice_return_choice_retains_payment_without_repeating_cost(self):
         self.run_created_binding_return_choice(sacrifice=True,mana=True)
+
+    def test_actual_casting_sacrifice_cost_return_choice_keeps_parent_spell_pending(self):
+        self.run_created_binding_return_choice(sacrifice=False,cast_cost=True)
 
     def test_canonical_storage_survives_hydration_and_is_captured_before_source_reset(self):
         from test_bound_effect_programs import BoundEffectProgramRuntimeTests as Actions

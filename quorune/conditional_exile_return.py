@@ -87,7 +87,15 @@ def commit_activation_with_conditional_returns(host: Any, proposal: Any, respons
     host.state.players[proposal.seat].yield_policy = YieldPolicy()
 
 
-def issue_conditional_return_choice(host: Any, required: 'ConditionalReturnChoiceRequired') -> None:
+def commit_cast_with_conditional_returns(host: Any, proposal: Any, response: Mapping[str,Any]) -> None:
+    from .rules.casting.commit import _commit_cast_costs_and_stack
+    with defer_conditional_cost_returns() as waiting:
+        during_resolution=_commit_cast_costs_and_stack(host,proposal,response)
+    if finish_conditional_cost_returns(host,waiting) or during_resolution or host._stabilize():return
+    host.state.priority_player=proposal.seat;host.state.priority_passes=[]
+
+
+def issue_conditional_return_choice(host: Any, required: 'ConditionalReturnChoiceRequired', completed_choice=None) -> None:
     from .replacement.ordering import replacement_choice_payload
     chooser = required.pending.choice.chooser
     host.permissions.issue(kind='replacement.order',role='pilot',actors=[chooser],allowed_actions=['choose'],
@@ -96,6 +104,7 @@ def issue_conditional_return_choice(host: Any, required: 'ConditionalReturnChoic
             'conditional_bindings':[binding.to_dict() for binding in required.bindings],
             'conditional_departures':[source.to_dict() for source in required.departed_sources],
             'conditional_aura_targets':dict(required.aura_targets),
+            'completed_choice':completed_choice,
             'replacement_selections':list(required.selections),'replacement_batch':required.batch.to_dict(),
             'replacement_effects':[effect.to_dict() for effect in required.effects]})
 
@@ -116,17 +125,24 @@ def decode_conditional_return(continuation_type, value, batch, effects):
         held_ids={identity.object_id for binding in bindings for identity in binding.objects}
         if not isinstance(targets,Mapping) or set(targets)-held_ids or any(type(ref) is not str or not ref for ref in targets.values()):
             raise ValueError('Conditional return Aura selections are malformed')
+        if value['completed_choice'] is not None:
+            from .semantic_choices.completed_choice import decode_remaining_completion
+            decode_remaining_completion(value['completed_choice'])
     except (TypeError,ValueError,KeyError) as exc:
         raise ReplacementEffectError(str(exc)) from exc
     return continuation_type(batch=batch,effects=effects,resume_kind='conditional_return',
         effect=FrozenMap({'bindings':[item.to_dict() for item in bindings],
-            'departures':[item.to_dict() for item in departures], 'aura_targets':dict(value['conditional_aura_targets'])}),
+            'departures':[item.to_dict() for item in departures], 'aura_targets':dict(value['conditional_aura_targets']),
+            'completed_choice':value['completed_choice']}),
         replacement_selections=_decode_combat_selections(value))
 
 
 def resume_conditional_return(host: Any, restored: Any, selection: Any) -> None:
     from .replacement.immutable import thaw_value
     values=restored.thaw_effect()
+    if values['completed_choice'] is not None:
+        from .semantic_choices.completed_choice import validate_completed_choice_parent
+        validate_completed_choice_parent(host,values['completed_choice'])
     bindings=tuple(ConditionalExileBinding.from_dict(item) for item in values['bindings'])
     departures=tuple(ContinuousObjectIdentity.from_dict(item) for item in values['departures'])
     try:
@@ -134,12 +150,15 @@ def resume_conditional_return(host: Any, restored: Any, selection: Any) -> None:
             replacement_selections=tuple(thaw_value(item) for item in restored.replacement_selections)+(selection,),
             aura_target_refs=values['aura_targets'])
     except ConditionalReturnChoiceRequired as required:
-        issue_conditional_return_choice(host,required)
+        issue_conditional_return_choice(host,required,values['completed_choice'])
         return
     except ConditionalReturnAuraChoiceRequired as required:
-        issue_conditional_aura_choice(host,required)
+        issue_conditional_aura_choice(host,required,values['completed_choice'])
         return
-    if not host._stabilize():
+    if values['completed_choice'] is not None:
+        from .semantic_choices.completed_choice import resume_completed_choice
+        resume_completed_choice(host,values['completed_choice'])
+    elif not host._stabilize():
         host._grant_priority(host.state.active_player)
 
 
@@ -172,7 +191,13 @@ def resume_conditional_aura_choice(host: Any, decision: Any, *, error_type: type
         'spec','advertised_targets','bindings','departures','selections','aura_targets','parent'}
     if set(data)!=expected or type(data['schema_version']) is not int or data['schema_version']!=1 or data['conditional_aura_return'] is not True:
         raise error_type('Conditional Aura return continuation is malformed')
-    if data['parent'] is not None:
+    if data['parent'] is not None and data['parent'].get('kind') in {'completed_semantic_choice','prepared_semantic_request'}:
+        from .semantic_choices.completed_choice import decode_remaining_completion
+        continuation,_actor,_response,_completion=decode_remaining_completion(data['parent'])
+        item=next((item for item in host.state.stack if item.ref==continuation.stack_ref),None)
+        if item is None:raise error_type('Completed conditional Aura choice parent disappeared')
+        host._validate_semantic_frame(continuation.semantic_frame.to_dict(),item)
+    if data['parent'] is not None and data['parent'].get('kind') not in {'completed_semantic_choice','prepared_semantic_request'}:
         parent=data['parent']
         if not isinstance(parent,Mapping) or set(parent)!={'stack_ref','remaining','destination','note','instruction_pointer','semantic_frame'}:
             raise error_type('Conditional Aura return parent frame is malformed')
@@ -195,7 +220,9 @@ def resume_conditional_aura_choice(host: Any, decision: Any, *, error_type: type
     except ConditionalReturnAuraChoiceRequired as required:
         issue_conditional_aura_choice(host,required,data['parent']);return
     except ConditionalReturnChoiceRequired as required:
-        if data['parent'] is not None:
+        if data['parent'] is not None and data['parent'].get('kind') in {'completed_semantic_choice','prepared_semantic_request'}:
+            issue_conditional_return_choice(host,required,data['parent'])
+        elif data['parent'] is not None:
             parent=data['parent'];item=next(value for value in host.state.stack if value.ref==parent['stack_ref'])
             from .replacement_decisions import issue_replacement_order_choice
             issue_replacement_order_choice(host,item=item,effect=required.return_effect(),remaining=parent['remaining'],
@@ -203,7 +230,11 @@ def resume_conditional_aura_choice(host: Any, decision: Any, *, error_type: type
         else:issue_conditional_return_choice(host,required)
         return
     if data['parent'] is not None:
-        parent=data['parent'];host._continue_resolution(stack_ref=parent['stack_ref'],effects=parent['remaining'],
+        parent=data['parent']
+        if parent.get('kind') in {'completed_semantic_choice','prepared_semantic_request'}:
+            from .semantic_choices.completed_choice import resume_completed_choice
+            resume_completed_choice(host,parent)
+        else:host._continue_resolution(stack_ref=parent['stack_ref'],effects=parent['remaining'],
             destination=parent['destination'],note=parent['note'],instruction_pointer=parent['instruction_pointer']+1)
     elif not host._stabilize():host._grant_priority(host.state.active_player)
 

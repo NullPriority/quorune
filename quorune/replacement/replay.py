@@ -104,7 +104,7 @@ _STATE_BASED_DESTRUCTION_FIELDS = {
     "replacement_batch", "replacement_effects",
 }
 _CONDITIONAL_RETURN_FIELDS = {'replacement_resume_kind','conditional_bindings','conditional_departures','conditional_aura_targets',
-    'replacement_selections','replacement_batch','replacement_effects'}
+    'replacement_selections','replacement_batch','replacement_effects','completed_choice'}
 _MANA_FRAME_FIELDS = {
     "active_player",
     "phase",

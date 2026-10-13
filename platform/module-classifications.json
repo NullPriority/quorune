@@ -9951,6 +9951,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_choices/completed_choice.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_choices",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_choices/conditional_draw.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_choices",
@@ -13167,5 +13182,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "fc6a2c21a61ed13dc9be117486ef4635139afe3d469134de0205a58fed9ee91d"
+  "fingerprint": "ee2c84f9977d12508b9b1ce0eb618e344711e3e7493808490152dc85db5ef516"
 }
