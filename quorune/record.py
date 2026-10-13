@@ -74,10 +74,7 @@ def _canonical_hash(value: Any) -> str:
 
 def checkpoint_state(state: GameState) -> dict[str, Any]:
     """Return authoritative state without logs or transport credentials."""
-    payload = copy.deepcopy(state.to_dict())
-    payload["events"] = []
-    payload["capabilities"] = {}
-    return payload
+    return copy.deepcopy(state.to_dict(include_ephemeral=False))
 
 
 def authoritative_state_hash(state: GameState | Mapping[str, Any]) -> str:

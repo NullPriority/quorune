@@ -4,6 +4,8 @@ import gzip
 import json
 import tempfile
 import unittest
+import copy
+from types import SimpleNamespace
 from pathlib import Path
 from unittest.mock import patch
 
@@ -23,6 +25,70 @@ from quorune.semantic_runtime import (
     runtime_component_inventory,
 )
 from quorune.session import CommanderSession
+
+
+class AuthoritativeCheckpointSerializationTests(unittest.TestCase):
+    @staticmethod
+    def state():
+        from quorune.model import CardInstance, GameConfig, GameState
+
+        card = CardInstance('checkpoint-card', 'P-checkpoint', 'custom-token:checkpoint', 'Checkpoint fixture', 'A', 'A', 'battlefield')
+        card.annotations['nested'] = {'values': [1, 2]}
+        return GameState(
+            game_id='checkpoint-fixture', config=GameConfig(seed=1), players={},
+            cards={card.object_id: card}, deck_names={}, commander_oracle_ids={},
+            turn_order=['A'], current_turn=None, last_normal_turn_player=None,
+            annotations={'nested': {'values': [3]}}, action_opportunities={'nested': [4]},
+        )
+
+    def test_checkpoint_skips_discarded_event_and_capability_serializers(self):
+        from quorune.record import checkpoint_state
+
+        state = self.state()
+        def discarded():
+            raise AssertionError('discarded transport/log serialization')
+        state.events = [SimpleNamespace(to_dict=discarded)]
+        state.capabilities = {'raw-credential': SimpleNamespace(to_dict=discarded)}
+        payload = checkpoint_state(state)
+        self.assertEqual([], payload['events'])
+        self.assertEqual({}, payload['capabilities'])
+
+    def test_checkpoint_retains_canonical_payload_hash_and_deep_isolation(self):
+        from quorune.record import authoritative_state_hash, checkpoint_state
+
+        state = self.state()
+        state.events = [SimpleNamespace(to_dict=lambda: {'log': {'values': [1]}})]
+        state.capabilities = {'raw-credential': SimpleNamespace(to_dict=lambda: {'token': 'raw-credential'})}
+        expected = copy.deepcopy(state.to_dict())
+        expected['events'] = []
+        expected['capabilities'] = {}
+        actual = checkpoint_state(state)
+        self.assertEqual(expected, actual)
+        self.assertEqual(authoritative_state_hash(expected), authoritative_state_hash(state))
+        full = state.to_dict()
+        self.assertEqual([{'log': {'values': [1]}}], full['events'])
+        self.assertEqual({'raw-credential': {'token': 'raw-credential'}}, full['capabilities'])
+        actual['cards']['checkpoint-card']['annotations']['nested']['values'].append(5)
+        actual['annotations']['nested']['values'].append(6)
+        actual['action_opportunities']['nested'].append(7)
+        self.assertEqual([1, 2], state.cards['checkpoint-card'].annotations['nested']['values'])
+        self.assertEqual([3], state.annotations['nested']['values'])
+        self.assertEqual([4], state.action_opportunities['nested'])
+        self.assertEqual(1, len(state.events))
+        self.assertIn('raw-credential', state.capabilities)
+
+    def test_checkpoint_preserves_legacy_omissions_and_current_designation_hashes(self):
+        from quorune.record import authoritative_state_hash, checkpoint_state
+
+        state = self.state()
+        for monarch, continuous in ((None, None), ('A', [])):
+            with self.subTest(monarch=monarch):
+                state.monarch = monarch
+                state.continuous_effects = continuous
+                expected = copy.deepcopy(state.to_dict())
+                expected.update(events=[], capabilities={})
+                self.assertEqual(expected, checkpoint_state(state))
+                self.assertEqual(authoritative_state_hash(expected), authoritative_state_hash(state))
 
 
 class GameRecordV3Tests(unittest.TestCase):
