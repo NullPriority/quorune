@@ -375,7 +375,7 @@
       },
       "candidate_bundles": [
         {
-          "bundle_id": "bundle:batched-resolution-and-temporal-closure-v359",
+          "bundle_id": "bundle:batched-resolution-and-temporal-closure-v358",
           "member_family_ids": [
             "activated_effect:destroy-target",
             "activated_effect:unparsed-all-zombies-gain",
@@ -6016,9 +6016,9 @@
     "semantic_transition_declaration": {
       "transition_id": "oracle-ir-v359-batched-resolution-and-temporal-closure",
       "compiler_version": "oracle-ir-v359",
-      "bundle_id": "bundle:batched-resolution-and-temporal-closure-v359",
+      "bundle_id": "bundle:batched-resolution-and-temporal-closure-v358",
       "candidate_ids": [
-        "bundle:batched-resolution-and-temporal-closure-v359"
+        "bundle:batched-resolution-and-temporal-closure-v358"
       ],
       "family_ids": [
         "activated_effect:destroy-target",
@@ -6080,7 +6080,7 @@
         "zone.entry.reveal_hand_or_tapped",
         "zone.return.fixed_event_battlefield"
       ],
-      "measurement_id": "measurement:batched-resolution-and-temporal-closure-v359",
+      "measurement_id": "measurement:batched-resolution-and-temporal-closure-v358",
       "non_harvest_reason": null
     },
 
