@@ -284,10 +284,14 @@ class FixedKeywordEventEffectCompilerTests(unittest.TestCase):
         self.assertEqual([1,2],[node.span.line for node in nodes])
 
     def test_exploit_target_result_is_accepted_by_corpus_assurance_and_rejects_changed_effect(self):
+        from quorune.carddb import CardRecord
         from quorune.compiler.target_effect_corpus_assurance import TargetEffectCorpusCollector,TargetEffectAssuranceError
-        from test_fixed_library_selection import base_record
-        card=replace(base_record(),name='Generic Exploiter',type_line='Creature — Zombie',
-            oracle_text='Exploit\nWhen this creature exploits a creature, target creature gets -3/-3 until end of turn.',keywords=('Exploit',))
+        card=CardRecord(oracle_id='fixture:exploit-target-assurance',name='Generic Exploiter',
+            mana_cost='{B}',mana_value=1,type_line='Creature — Zombie',
+            oracle_text='Exploit\nWhen this creature exploits a creature, target creature gets -3/-3 until end of turn.',
+            power='2',toughness='2',loyalty=None,defense=None,colors=('B',),color_identity=('B',),
+            keywords=('Exploit',),produced_mana=(),layout='normal',released_at='2026-01-01',
+            legalities={'commander':'legal'},faces=(),raw={})
         registry=load_default_capability_registry()
         ir=compile_oracle_card(card,capability_registry=registry,capability_profile='commander_review')
         self.assertEqual('exact',ir.status)
