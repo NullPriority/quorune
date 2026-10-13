@@ -3830,6 +3830,19 @@
       ]
     },
     {
+      "id": "library-single-remainder-contract",
+      "patterns": [
+        "quorune/compiler/fixed_library_selection_templates.py",
+        "tests/fixtures/library-other-remainder-cards.json"
+      ],
+      "test_modules": [
+        "test_library_selection_remainders",
+        "test_fixed_library_selection",
+        "test_card_program_trust",
+        "test_game_record_v3"
+      ]
+    },
+    {
       "id": "library-count-and-completion-contract",
       "patterns": [
         "quorune/compiler/declared_effect_amounts.py",

@@ -86,6 +86,7 @@
     "tests/fixtures/kicked-spell-conditions.json",
     "tests/fixtures/kindred-subtype-quantities.json",
     "tests/fixtures/leveler-bands-cards.json",
+    "tests/fixtures/library-other-remainder-cards.json",
     "tests/fixtures/library-search-qualifier-cards.json",
     "tests/fixtures/limited-event-triggers.json",
     "tests/fixtures/main-phase-trigger-cards.json",

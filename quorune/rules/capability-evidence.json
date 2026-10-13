@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "851f5b76eec39fcd316bab20aa95670236266b86fae2f34c6906b8d5afe2a94e",
-  "declaration_source_fingerprint": "e0f6ab338bed0d4c1ff82f40cd4f119c7cdf3663cefeca7f9f7caaad4f1e9120",
+  "registry_fingerprint": "dca63221a1cc5657008c2b9aea478a2eb46703a57498193aa7a343eafc4510df",
+  "declaration_source_fingerprint": "3fe599ceeae262d945391319a406e9f17c39031efee7a5dd0bfe034593d111c2",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -69664,6 +69664,24 @@
     },
     {
       "capability_id": "library.select.fixed_controller",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_library_selection_remainders.LibraryRemainderActionTests.test_original_sleight_on_short_library_commits_only_available_cards",
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The sole other remainder requires a mandatory fixed selection leaving one card, then uses the existing private complete partition. Native Sleight of Hand and Tower Geist casts cover controller privacy, rejected commands, short libraries, pending reload and replay."
+    },
+    {
+      "capability_id": "library.select.fixed_controller",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_library_selection.FixedLibrarySelectionRuntimeTests.test_private_look_and_public_reveal_are_projected_to_the_correct_seats",
       "official_rule_ids": [
@@ -69679,6 +69697,24 @@
         "commander_review"
       ],
       "applicability_note": "Resolve both private inspection and printed public reveal in four-player state with seat-correct projection."
+    },
+    {
+      "capability_id": "library.select.fixed_controller",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_library_selection_remainders.LibraryRemainderActionTests.test_original_sleight_and_tower_geist_private_partition_reload_and_replay",
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The sole other remainder requires a mandatory fixed selection leaving one card, then uses the existing private complete partition. Native Sleight of Hand and Tower Geist casts cover controller privacy, rejected commands, short libraries, pending reload and replay."
     },
     {
       "capability_id": "library.select.fixed_controller",
@@ -69718,6 +69754,24 @@
     },
     {
       "capability_id": "library.select.fixed_controller",
+      "evidence_class": "negative",
+      "test_id": "tests.test_library_selection_remainders.LibraryRemainderCompilerTests.test_single_other_remainder_uses_fixed_selection_only_when_cardinality_agrees",
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The sole other remainder requires a mandatory fixed selection leaving one card, then uses the existing private complete partition. Native Sleight of Hand and Tower Geist casts cover controller privacy, rejected commands, short libraries, pending reload and replay."
+    },
+    {
+      "capability_id": "library.select.fixed_controller",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_library_selection.FixedLibrarySelectionCompilerTests.test_compiles_fixed_library_selection_across_spell_activation_trigger_and_modal_contexts",
       "official_rule_ids": [
@@ -69733,6 +69787,42 @@
         "commander_review"
       ],
       "applicability_note": "Lower one shared fixed library selection through spell, activated, triggered, and modal effect owners without reparsing Oracle prose at runtime."
+    },
+    {
+      "capability_id": "library.select.fixed_controller",
+      "evidence_class": "positive",
+      "test_id": "tests.test_library_selection_remainders.LibraryRemainderActionTests.test_original_sleight_and_tower_geist_private_partition_reload_and_replay",
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The sole other remainder requires a mandatory fixed selection leaving one card, then uses the existing private complete partition. Native Sleight of Hand and Tower Geist casts cover controller privacy, rejected commands, short libraries, pending reload and replay."
+    },
+    {
+      "capability_id": "library.select.fixed_controller",
+      "evidence_class": "positive",
+      "test_id": "tests.test_library_selection_remainders.LibraryRemainderCompilerTests.test_single_other_remainder_uses_fixed_selection_only_when_cardinality_agrees",
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The sole other remainder requires a mandatory fixed selection leaving one card, then uses the existing private complete partition. Native Sleight of Hand and Tower Geist casts cover controller privacy, rejected commands, short libraries, pending reload and replay."
     },
     {
       "capability_id": "library.select.fixed_controller",
@@ -69754,6 +69844,24 @@
     },
     {
       "capability_id": "library.select.fixed_controller",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_library_selection_remainders.LibraryRemainderActionTests.test_original_sleight_and_tower_geist_private_partition_reload_and_replay",
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The sole other remainder requires a mandatory fixed selection leaving one card, then uses the existing private complete partition. Native Sleight of Hand and Tower Geist casts cover controller privacy, rejected commands, short libraries, pending reload and replay."
+    },
+    {
+      "capability_id": "library.select.fixed_controller",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_library_selection.FixedLibrarySelectionRuntimeTests.test_selected_cards_and_remainder_commit_in_printed_destinations",
       "official_rule_ids": [
@@ -69769,6 +69877,42 @@
         "commander_review"
       ],
       "applicability_note": "Replay the private complete partition, replacement-aware simultaneous movement, destination order, event record, and final authoritative hash exactly."
+    },
+    {
+      "capability_id": "library.select.fixed_controller",
+      "evidence_class": "replay",
+      "test_id": "tests.test_library_selection_remainders.LibraryRemainderActionTests.test_original_sleight_and_tower_geist_private_partition_reload_and_replay",
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The sole other remainder requires a mandatory fixed selection leaving one card, then uses the existing private complete partition. Native Sleight of Hand and Tower Geist casts cover controller privacy, rejected commands, short libraries, pending reload and replay."
+    },
+    {
+      "capability_id": "library.select.fixed_controller",
+      "evidence_class": "replay",
+      "test_id": "tests.test_library_selection_remainders.LibraryRemainderActionTests.test_original_sleight_on_short_library_commits_only_available_cards",
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "The sole other remainder requires a mandatory fixed selection leaving one card, then uses the existing private complete partition. Native Sleight of Hand and Tower Geist casts cover controller privacy, rejected commands, short libraries, pending reload and replay."
     },
     {
       "capability_id": "library.surveil.fixed_controller",
@@ -121598,5 +121742,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "1efe95fb5ae96e8983f65bbfa5876df4c187b313ecb20b3a1aa79acd6fde1587"
+  "fingerprint": "7e989f1d508acdf3345fc9f8b45b47715e96fb0d991d18884a4809870fba3eb6"
 }

@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Compile sole “the other” library remainders through the existing private
+  selection partition, including short-library and pending replay behavior.
+
 - Resolve fixed random discard effects through deterministic private hand
   sampling, canonical simultaneous discards, and replacement-safe replay.
 

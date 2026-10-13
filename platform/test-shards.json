@@ -262,6 +262,7 @@
       "test_interactions_v070",
       "test_intrinsic_entry_counters",
       "test_landwalk",
+      "test_library_selection_remainders",
       "test_madness_rules",
       "test_mana_abilities",
       "test_mayhem_rules",

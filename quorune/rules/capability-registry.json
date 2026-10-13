@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 240,
+  "registry_version": 241,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -3401,7 +3401,7 @@
     },
     {
       "id": "library.select.fixed_controller",
-      "version": 1,
+      "version": 2,
       "official_rules": ["400.2", "401.4", "404.3", "608.2c", "701.16"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability": {
@@ -3412,12 +3412,12 @@
       },
       "dependencies": ["trigger.event.normalized_zone_change", "trigger.placement.apnap", "zone.change.destination_replacement"],
       "implementation_components": ["quorune.compiler.fixed_library_selection_templates.fixed_library_selection_effect_template", "quorune.rules.library_selection_capability_shapes.fixed_library_selection_node_capabilities", "quorune.semantic_choices.fixed_library_selection.FixedLibrarySelectionChoiceHandler", "quorune.rules.library_selection.LibrarySelectionArrangement", "quorune.rules.library_selection.commit_library_selection", "quorune.semantic_runtime.intents.LibrarySelectionIntent", "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously"],
-      "positive_tests": ["test_compiles_fixed_library_selection_across_spell_activation_trigger_and_modal_contexts", "test_selected_cards_and_remainder_commit_in_printed_destinations"],
-      "negative_tests": ["test_unsupported_library_selection_grammar_remains_residual", "test_malformed_stale_and_predicate_invalid_responses_fail_before_mutation"],
-      "interaction_tests": ["test_graveyard_destination_replacement_resumes_before_partition_commit"],
-      "multiplayer_tests": ["test_private_look_and_public_reveal_are_projected_to_the_correct_seats"],
-      "privacy_tests": ["test_private_look_and_public_reveal_are_projected_to_the_correct_seats"],
-      "replay_tests": ["test_selected_cards_and_remainder_commit_in_printed_destinations", "test_graveyard_destination_replacement_resumes_before_partition_commit"],
+      "positive_tests": ["test_compiles_fixed_library_selection_across_spell_activation_trigger_and_modal_contexts", "test_selected_cards_and_remainder_commit_in_printed_destinations", "test_single_other_remainder_uses_fixed_selection_only_when_cardinality_agrees", "test_original_sleight_and_tower_geist_private_partition_reload_and_replay"],
+      "negative_tests": ["test_unsupported_library_selection_grammar_remains_residual", "test_malformed_stale_and_predicate_invalid_responses_fail_before_mutation", "test_single_other_remainder_uses_fixed_selection_only_when_cardinality_agrees"],
+      "interaction_tests": ["test_graveyard_destination_replacement_resumes_before_partition_commit", "test_original_sleight_on_short_library_commits_only_available_cards"],
+      "multiplayer_tests": ["test_private_look_and_public_reveal_are_projected_to_the_correct_seats", "test_original_sleight_and_tower_geist_private_partition_reload_and_replay"],
+      "privacy_tests": ["test_private_look_and_public_reveal_are_projected_to_the_correct_seats", "test_original_sleight_and_tower_geist_private_partition_reload_and_replay"],
+      "replay_tests": ["test_selected_cards_and_remainder_commit_in_printed_destinations", "test_graveyard_destination_replacement_resumes_before_partition_commit", "test_original_sleight_and_tower_geist_private_partition_reload_and_replay", "test_original_sleight_on_short_library_commits_only_available_cards"],
       "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Removing destination-replacement closure prevents the compiler node from becoming trusted, while malformed, stale, predicate-invalid, and incomplete partitions fail before any card moves or hidden order changes.",

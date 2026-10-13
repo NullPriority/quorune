@@ -90,6 +90,12 @@ graveyard or library-bottom remainder destination. It may request one complete
 `LibraryPartitionChoice`, or a bounded object choice when the printed remainder
 uses random order.
 
+“The other” remainder is accepted when a mandatory fixed selection leaves
+exactly one card from the requested inspection. It retains the same complete
+partition and printed destination as “the rest.” A short library selects only
+the available cards; an optional selection or inconsistent requested remainder
+cardinality is not inferred from this grammar.
+
 `LibrarySelectionArrangement` pins every looked-at physical and logical object
 identity and requires an exhaustive `selected_refs` and `remainder_refs`
 partition. Commit revalidates the unchanged library top before mutation,
