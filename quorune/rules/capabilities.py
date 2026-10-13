@@ -5,6 +5,7 @@ from .extra_turn_shapes import fixed_extra_turn_node_capabilities
 from .whole_hand_discard_shapes import whole_hand_discard_node_capabilities
 from .connive_capability_shapes import fixed_connive_node_capabilities
 from .goad_capability_shapes import fixed_goad_node_capabilities
+from .exploit_capability_shapes import exploit_instruction_node_capabilities
 from .affected_player_choice_coverage import (
     affected_player_choice_covered_mechanics as _affected_player_choice_covered_mechanics,
 )
@@ -1062,7 +1063,7 @@ def _targeted_effect_capabilities(
     for resolver in (
         fixed_extra_turn_node_capabilities,
         whole_hand_discard_node_capabilities,
-        fixed_connive_node_capabilities, fixed_goad_node_capabilities,
+        fixed_connive_node_capabilities, fixed_goad_node_capabilities, exploit_instruction_node_capabilities,
         fixed_control_node_capabilities,
         fixed_attachment_action_node_capabilities,
         all_counter_removal_node_capabilities,
@@ -1533,6 +1534,7 @@ def capability_covered_mechanics(
         covered.update({"amass", "cr-111-tokens", "cr-122-counters"})
     if 'hand.connive.fixed_count' in supplied:covered.add('fixed-connive')
     if 'combat.goad.fixed_instruction' in supplied:covered.update({'fixed-goad','goad'})
+    if 'trigger.keyword.exploit.creature_sacrifice' in supplied:covered.update({'exploit','fixed-exploit-result'})
     if "counter.producer.fixed_player_effect" in supplied:
         covered.add("cr-122-counters")
     if "casting.additional_cost.fixed_counter_placement" in supplied:

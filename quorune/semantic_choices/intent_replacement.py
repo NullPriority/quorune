@@ -1,6 +1,7 @@
 from __future__ import annotations
 from ..semantic_runtime.life_batch_intent import LifeLossBatchIntent
 from ..semantic_runtime.counter_movement_intent import MoveCountersIntent, decode_counter_movement_identity
+from ..semantic_runtime.exploit_intent import ExploitSacrificeIntent,validate_exploit_identity
 
 from dataclasses import replace
 from typing import Any, Mapping, Sequence
@@ -346,6 +347,7 @@ def semantic_intent_identity(intent: Any) -> tuple[str, dict[str, Any]]:
     """Return the closed identity of a replacement-capable typed intent."""
 
     if isinstance(intent,LifeLossBatchIntent):return 'life_loss_batch',intent.identity()
+    if isinstance(intent,ExploitSacrificeIntent):return 'exploit_sacrifice',intent.identity()
     if isinstance(intent, DESTRUCTION_INTENT_TYPES):
         return destruction_intent_identity(intent)
 
@@ -742,6 +744,9 @@ def validate_semantic_intent_identity(
     kind: str,
     value: Mapping[str, Any],
 ) -> dict[str, Any]:
+    if kind=='exploit_sacrifice':
+        try:return validate_exploit_identity(value)
+        except ValueError as exc:raise SemanticChoiceError(str(exc)) from exc
     if kind in {"destroy_permanent", "destroy_permanent_set", "destroy_permanent_targets"}:
         return validate_destruction_intent_identity(kind, value)
     if kind=='life_loss_batch':

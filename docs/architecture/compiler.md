@@ -9,6 +9,12 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+Intrinsic Exploit lowers to one entry trigger with an optional creature
+sacrifice. The separately printed “When this creature exploits a creature”
+ability subscribes to the committed source-incarnation occurrence and composes
+its existing typed result grammar. Their source spans and program identities
+remain separate, including when the resulting ability targets a player.
+
 Self stat modifiers can reuse complete collection values through the existing
 query-characteristic owner. Explicit where-X forms carry a signed coefficient
 for each affected stat. A printed “for each … and each …” form carries two

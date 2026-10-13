@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 234,
+  "registry_version": 235,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -17445,6 +17445,94 @@
       "implementation_mutation_rationale": "Omitting the fixed set production removes whole-card admission for the exact Goad instruction.",
       "status": "trusted",
       "blockers": []
+    },
+    {
+      "id": "trigger.keyword.exploit.creature_sacrifice",
+      "version": 1,
+      "official_rules": [
+        "702.110a",
+        "702.110b",
+        "701.21a",
+        "400.7",
+        "603.3",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Compile intrinsic Exploit as an entry trigger that offers one controller-selected creature sacrifice, and publish a separate source-incarnation Exploit occurrence only after the canonical sacrifice commits.",
+        "inputs": [
+          "one source entry trigger",
+          "locked trigger controller",
+          "current controlled creature candidates",
+          "retained source and selected creature incarnation"
+        ],
+        "outputs": [
+          "zero-or-one public creature choice",
+          "canonical sacrifice and history through replacement-aware zone owner",
+          "separate Exploit result trigger including self-sacrifice LKI",
+          "private results stay principal-scoped and replay exact"
+        ],
+        "exclusions": [
+          "granted or copied Exploit outside existing source propagation",
+          "external qualified Exploit observers",
+          "linked exploited-characteristic results",
+          "ambiguous multirider or unsupported result grammar"
+        ]
+      },
+      "dependencies": [
+        "trigger.event.normalized_zone_change",
+        "trigger.placement.apnap",
+        "zone.change.destination_replacement"
+      ],
+      "implementation_components": [
+        "quorune.compiler.keyword_event_effect_nodes.fixed_keyword_event_effect_spec",
+        "quorune.semantic_choices.exploit.ExploitChoiceHandler",
+        "quorune.semantic_runtime.exploit_intent.ExploitSacrificeIntent",
+        "quorune.semantic_choices.intent_host.SemanticChoiceIntentHostMixin.exploit_sacrifice_intent",
+        "quorune.rules.exploit_capability_shapes.exploit_instruction_node_capabilities"
+      ],
+      "positive_tests": [
+        "test_exploit_has_separate_source_spanned_entry_and_sacrifice_result_nodes"
+      ],
+      "negative_tests": [
+        "test_exploit_instruction_rejects_unknown_fields_and_closed_owner_withdrawal",
+        "test_original_exploit_decline_source_bounce_and_redirected_sacrifice_distinguish_bonus"
+      ],
+      "interaction_tests": [
+        "test_original_fell_stinger_self_sacrifice_creates_separate_targeted_draw_loss_and_replays",
+        "test_original_exploit_decline_source_bounce_and_redirected_sacrifice_distinguish_bonus",
+        "test_exploit_sacrifice_chooser_is_locked_while_result_controller_is_current"
+      ],
+      "multiplayer_tests": [
+        "test_original_fell_stinger_self_sacrifice_creates_separate_targeted_draw_loss_and_replays",
+        "test_exploit_sacrifice_chooser_is_locked_while_result_controller_is_current"
+      ],
+      "privacy_tests": [
+        "test_original_fell_stinger_self_sacrifice_creates_separate_targeted_draw_loss_and_replays"
+      ],
+      "replay_tests": [
+        "test_original_fell_stinger_self_sacrifice_creates_separate_targeted_draw_loss_and_replays",
+        "test_original_exploit_decline_source_bounce_and_redirected_sacrifice_distinguish_bonus",
+        "test_exploit_sacrifice_chooser_is_locked_while_result_controller_is_current"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Exact intrinsic and result programs require the same precise Exploit producer; unknown choice fields and selected incarnation changes reject before mutation.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the Exploit keyword spec producer removes source-spanned intrinsic admission.",
+      "blockers": [],
+      "status": "trusted"
     }
   ]
 }

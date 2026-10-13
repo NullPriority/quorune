@@ -22,6 +22,7 @@ _KEYWORDS = {
     "ingest",
     "mobilize",
     "soulshift",
+    "exploit",
 }
 _PARAMETERIZED = re.compile(
     r"^(?P<keyword>Afflict|Annihilator|Firebending|Mobilize|Soulshift) "
@@ -66,11 +67,12 @@ class FixedKeywordEventEffectSpec:
             raise ValueError("Keyword event-effect kind is unsupported")
         if type(self.amount) is not int or not 1 <= self.amount <= 20:
             raise ValueError("Keyword event-effect amount is unsupported")
-        if self.keyword == "ingest" and self.amount != 1:
+        if self.keyword in {"ingest", "exploit"} and self.amount != 1:
             raise ValueError("Ingest has no numeric parameter")
 
     @property
     def capability_id(self) -> str:
+        if self.keyword=='exploit':return 'trigger.keyword.exploit.creature_sacrifice'
         return f"trigger.keyword.{self.keyword}.fixed"
 
     @property
@@ -82,6 +84,7 @@ class FixedKeywordEventEffectSpec:
             "ingest": "damage.dealt.self",
             "mobilize": "creature.attacks",
             "soulshift": "permanent.graveyard.self",
+            "exploit": "permanent.enter.self",
         }[self.keyword]
 
     @property
@@ -104,6 +107,7 @@ class FixedKeywordEventEffectSpec:
 
     @property
     def effects(self) -> tuple[Mapping[str, Any], ...]:
+        if self.keyword=='exploit':return ({'op':'exploit','player':'$controller','source':'$source'},)
         if self.keyword == "afflict":
             return (
                 {
@@ -188,8 +192,8 @@ def fixed_keyword_event_effect_spec(
     material_line: str,
 ) -> FixedKeywordEventEffectSpec | None:
     normalized = " ".join(material_line.strip().split())
-    if re.fullmatch(r"Ingest\.?", normalized, re.IGNORECASE):
-        return FixedKeywordEventEffectSpec("ingest")
+    if re.fullmatch(r"(?:Ingest|Exploit)\.?", normalized, re.IGNORECASE):
+        return FixedKeywordEventEffectSpec(normalized.rstrip('.').casefold())
     match = _PARAMETERIZED.fullmatch(normalized)
     if match is None:
         return None

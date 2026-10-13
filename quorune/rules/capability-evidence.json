@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "ea99d1031e61250de0827b39da5d069daf490e29a13d950cc9b38802a18d5c47",
-  "declaration_source_fingerprint": "f7e0fa3e149ff7fcc51d0491ef327cb498f254ccfe94f01afd1654aa69093824",
+  "registry_fingerprint": "c23d80e07e30059e205093b9e113b20f1d2dc2a2ca9e933f28e4fdddc2bf941c",
+  "declaration_source_fingerprint": "39cc1ac5f2059b81e7e64d8dad8f4730db3ef90f4e7c50acab626a58b3b69a88",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -103228,6 +103228,253 @@
       "applicability_note": "Replay the seat-scoped refusal and typed sacrifice to the identical authoritative state hash."
     },
     {
+      "capability_id": "trigger.keyword.exploit.creature_sacrifice",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_keyword_event_effects.ExploitRuntimeTests.test_exploit_sacrifice_chooser_is_locked_while_result_controller_is_current",
+      "official_rule_ids": [
+        "702.110a",
+        "702.110b",
+        "701.21a",
+        "400.7",
+        "603.3",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Intrinsic Exploit optional sacrifice and separate source-incarnation occurrence through canonical zone and trigger owners."
+    },
+    {
+      "capability_id": "trigger.keyword.exploit.creature_sacrifice",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_keyword_event_effects.ExploitRuntimeTests.test_original_exploit_decline_source_bounce_and_redirected_sacrifice_distinguish_bonus",
+      "official_rule_ids": [
+        "702.110a",
+        "702.110b",
+        "701.21a",
+        "400.7",
+        "603.3",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Intrinsic Exploit optional sacrifice and separate source-incarnation occurrence through canonical zone and trigger owners."
+    },
+    {
+      "capability_id": "trigger.keyword.exploit.creature_sacrifice",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_keyword_event_effects.ExploitRuntimeTests.test_original_fell_stinger_self_sacrifice_creates_separate_targeted_draw_loss_and_replays",
+      "official_rule_ids": [
+        "702.110a",
+        "702.110b",
+        "701.21a",
+        "400.7",
+        "603.3",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Intrinsic Exploit optional sacrifice and separate source-incarnation occurrence through canonical zone and trigger owners."
+    },
+    {
+      "capability_id": "trigger.keyword.exploit.creature_sacrifice",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_keyword_event_effects.ExploitRuntimeTests.test_exploit_sacrifice_chooser_is_locked_while_result_controller_is_current",
+      "official_rule_ids": [
+        "702.110a",
+        "702.110b",
+        "701.21a",
+        "400.7",
+        "603.3",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Intrinsic Exploit optional sacrifice and separate source-incarnation occurrence through canonical zone and trigger owners."
+    },
+    {
+      "capability_id": "trigger.keyword.exploit.creature_sacrifice",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_keyword_event_effects.ExploitRuntimeTests.test_original_fell_stinger_self_sacrifice_creates_separate_targeted_draw_loss_and_replays",
+      "official_rule_ids": [
+        "702.110a",
+        "702.110b",
+        "701.21a",
+        "400.7",
+        "603.3",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Intrinsic Exploit optional sacrifice and separate source-incarnation occurrence through canonical zone and trigger owners."
+    },
+    {
+      "capability_id": "trigger.keyword.exploit.creature_sacrifice",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectCompilerTests.test_exploit_instruction_rejects_unknown_fields_and_closed_owner_withdrawal",
+      "official_rule_ids": [
+        "702.110a",
+        "702.110b",
+        "701.21a",
+        "400.7",
+        "603.3",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Intrinsic Exploit optional sacrifice and separate source-incarnation occurrence through canonical zone and trigger owners."
+    },
+    {
+      "capability_id": "trigger.keyword.exploit.creature_sacrifice",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_keyword_event_effects.ExploitRuntimeTests.test_original_exploit_decline_source_bounce_and_redirected_sacrifice_distinguish_bonus",
+      "official_rule_ids": [
+        "702.110a",
+        "702.110b",
+        "701.21a",
+        "400.7",
+        "603.3",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Intrinsic Exploit optional sacrifice and separate source-incarnation occurrence through canonical zone and trigger owners."
+    },
+    {
+      "capability_id": "trigger.keyword.exploit.creature_sacrifice",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectCompilerTests.test_exploit_instruction_rejects_unknown_fields_and_closed_owner_withdrawal",
+      "official_rule_ids": [
+        "702.110a",
+        "702.110b",
+        "701.21a",
+        "400.7",
+        "603.3",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Intrinsic Exploit optional sacrifice and separate source-incarnation occurrence through canonical zone and trigger owners."
+    },
+    {
+      "capability_id": "trigger.keyword.exploit.creature_sacrifice",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectCompilerTests.test_exploit_has_separate_source_spanned_entry_and_sacrifice_result_nodes",
+      "official_rule_ids": [
+        "702.110a",
+        "702.110b",
+        "701.21a",
+        "400.7",
+        "603.3",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Intrinsic Exploit optional sacrifice and separate source-incarnation occurrence through canonical zone and trigger owners."
+    },
+    {
+      "capability_id": "trigger.keyword.exploit.creature_sacrifice",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_keyword_event_effects.ExploitRuntimeTests.test_original_fell_stinger_self_sacrifice_creates_separate_targeted_draw_loss_and_replays",
+      "official_rule_ids": [
+        "702.110a",
+        "702.110b",
+        "701.21a",
+        "400.7",
+        "603.3",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Intrinsic Exploit optional sacrifice and separate source-incarnation occurrence through canonical zone and trigger owners."
+    },
+    {
+      "capability_id": "trigger.keyword.exploit.creature_sacrifice",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_keyword_event_effects.ExploitRuntimeTests.test_exploit_sacrifice_chooser_is_locked_while_result_controller_is_current",
+      "official_rule_ids": [
+        "702.110a",
+        "702.110b",
+        "701.21a",
+        "400.7",
+        "603.3",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Intrinsic Exploit optional sacrifice and separate source-incarnation occurrence through canonical zone and trigger owners."
+    },
+    {
+      "capability_id": "trigger.keyword.exploit.creature_sacrifice",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_keyword_event_effects.ExploitRuntimeTests.test_original_exploit_decline_source_bounce_and_redirected_sacrifice_distinguish_bonus",
+      "official_rule_ids": [
+        "702.110a",
+        "702.110b",
+        "701.21a",
+        "400.7",
+        "603.3",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Intrinsic Exploit optional sacrifice and separate source-incarnation occurrence through canonical zone and trigger owners."
+    },
+    {
+      "capability_id": "trigger.keyword.exploit.creature_sacrifice",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_keyword_event_effects.ExploitRuntimeTests.test_original_fell_stinger_self_sacrifice_creates_separate_targeted_draw_loss_and_replays",
+      "official_rule_ids": [
+        "702.110a",
+        "702.110b",
+        "701.21a",
+        "400.7",
+        "603.3",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Intrinsic Exploit optional sacrifice and separate source-incarnation occurrence through canonical zone and trigger owners."
+    },
+    {
       "capability_id": "trigger.keyword.extort",
       "evidence_class": "interaction",
       "test_id": "tests.test_extort_rules.ExtortRuntimeTests.test_actual_gain_multiplier_applies_after_total_loss",
@@ -118120,5 +118367,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "c73fda2327b69180dd4e598d69165fe60e853f695b8ead5a5ea1ca6907dd0d9b"
+  "fingerprint": "4408883caecdb4ff98a2b9add2af091b511648748cbd0e2183640792e1bb1bcf"
 }

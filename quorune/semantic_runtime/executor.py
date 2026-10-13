@@ -1,6 +1,7 @@
 from __future__ import annotations
 from .life_batch_intent import LifeLossBatchIntent
 from .counter_movement_intent import MoveCountersIntent
+from .exploit_intent import ExploitSacrificeIntent
 from .life_execution import LIFE_INTENT_TYPES,execute_life_intent
 from .control_intents import GainControlIntent, GainControlSetIntent
 from ..whole_hand_discard_model import DiscardWholeHandsIntent
@@ -148,6 +149,7 @@ class SemanticIntentSink(
     def complete_connive_intent(self, intent: ConniveCompletedIntent) -> None: ...
 
     def move_object_intent(self, intent: ZoneMoveIntent) -> str: ...
+    def exploit_sacrifice_intent(self,intent: ExploitSacrificeIntent) -> str: ...
 
     def move_objects_simultaneously_intent(
         self,
@@ -761,6 +763,10 @@ def execute_intent_plan(sink: SemanticIntentSink, plan: IntentPlan) -> object:
         if isinstance(intent, SelfZoneMoveIntent):
             result = resolve_self_zone_move(sink, intent)
             results.append((intent.card_ref, result))
+            continue
+        if isinstance(intent,ExploitSacrificeIntent):
+            result=sink.exploit_sacrifice_intent(intent)
+            results.append((intent.actor,result))
             continue
         if isinstance(intent, MoveObjectsSimultaneouslyIntent):
             result = sink.move_objects_simultaneously_intent(intent)

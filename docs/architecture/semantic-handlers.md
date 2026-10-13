@@ -9,6 +9,19 @@ maintenance: "hand-maintained"
 
 # Typed semantic handlers
 
+Intrinsic Exploit uses a public zero-or-one creature choice issued to the
+locked entry-trigger controller. The typed sacrifice intent retains both
+incarnations and delegates to the canonical replacement-aware zone owner.
+Its committed sacrifice history distinguishes a completed sacrifice from an
+ordinary departure. The host captures the current trigger-source snapshot
+before sacrifice, so sacrificing the exploiting creature itself can produce
+its separate Exploit result trigger. A source that departed before this
+instruction cannot supply that result ability. Replacement redirection
+preserves the sacrifice occurrence even when the selected creature does not
+die. Saved replacement choices retain the exact intent identity.
+Qualified external observers and linked exploited-characteristic results
+remain residuals.
+
 Fixed single-object Connive lowers to a versioned instruction under CR 701.50.
 Its current controller draws, then privately chooses the mandatory number of
 discards. A departing source retains its last controller and incarnation;

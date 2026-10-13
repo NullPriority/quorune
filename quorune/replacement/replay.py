@@ -1138,6 +1138,7 @@ def _decode_semantic_intent_continuation(
             "library_selection",
             "move_objects_simultaneously",
             "move_counters",
+            "exploit_sacrifice",
             "place_counter_batch",
             "place_counters",
             "place_counters_on_set",

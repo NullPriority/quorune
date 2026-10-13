@@ -85,6 +85,26 @@
   ],
   "path_rules": [
     {
+      "id": "intrinsic-exploit-sacrifice-contract",
+      "patterns": [
+        "quorune/semantic_choices/exploit.py",
+        "quorune/semantic_runtime/exploit_intent.py",
+        "quorune/rules/exploit_capability_shapes.py",
+        "quorune/compiler/keyword_event_effect_nodes.py",
+        "quorune/compiler/fixed_public_event_trigger_bindings.py",
+        "tests/fixtures/exploit-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_keyword_event_effects",
+        "test_fixed_counter_event_triggers",
+        "test_fixed_affected_player_sacrifices",
+        "test_semantic_counter_replacement_continuations",
+        "test_trigger_batches",
+        "test_card_program_trust",
+        "test_high_risk_interaction_assurance"
+      ]
+    },
+    {
       "id": "fixed-goad-instruction-contract",
       "patterns": [
         "quorune/compiler/goad_templates.py",
