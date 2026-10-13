@@ -355,6 +355,12 @@ class TypedDynamicCharacteristicCompilerTests(unittest.TestCase):
                 QUERY_HANDLER,
                 "continuous.characteristics.query_count_modifier",
             ),
+            (
+                "Generic Multicolored Protection Grant",
+                "Multicolored creatures you control have protection from red.",
+                "continuous.ability.fixed-query-protection-grant.v2",
+                "protection.typed.debt",
+            ),
         )
         for index, (name, text, handler_id, capability_id) in enumerate(cases):
             with self.subTest(name=name):
@@ -376,7 +382,7 @@ class TypedDynamicCharacteristicCompilerTests(unittest.TestCase):
                 self.assertEqual((), program.residuals)
 
         unsupported = (
-            "Multicolored creatures you control have protection from red.",
+            "Multicolored creatures you control have protection from the chosen color.",
             "This creature has haste as long as you have exactly 10 life.",
             "This creature gets +1/+1 for each color among cards in your hand.",
             "This creature gets +2/+2 if there are three land cards in your graveyard.",

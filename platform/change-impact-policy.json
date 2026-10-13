@@ -140,6 +140,7 @@
         "test_continuous_effect_components",
         "test_player_target_protection",
         "test_fixed_public_state_characteristics",
+        "test_typed_dynamic_characteristics",
         "test_high_risk_interaction_assurance"
       ]
     },
