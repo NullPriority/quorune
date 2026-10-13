@@ -1284,6 +1284,16 @@ public-state condition grammar consumed by continuous characteristics, typed
 queried ability grants, resolution-locked characteristic sets, and untap-step
 participation. It accepts only battlefield sets representable by one immutable
 `ObjectQuerySpec` over a source-controller, source-opponent, or global relation.
+
+Live query and attachment keyword grants may carry fixed typed combat and
+spell-cast trigger fragments for already-represented keywords. The shared
+keyword codec binds each label to its exact fragment and consumer capability;
+the runtime rejects missing, duplicated or mismatched fragments. Separate
+grant sources retain separate trigger instances. Granted Prowess contributes
+only instances beyond current printed Prowess programs, locks the recipient's
+incarnation and trigger controller at the cast event, and uses the existing
+ordered stack and temporary-characteristic owners. Later loss of the grant
+does not remove an already-created trigger.
 Closed predicates cover card-type unions, pinned creature-subtype conjunctions
 and unions, the defined Outlaw group, color and multicolor cardinality,
 supertype, token identity, a named +1/+1 counter, attacking, blocking, tapped,

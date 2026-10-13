@@ -19,6 +19,7 @@ from ..characteristic_fragments import (
 from ..keyword_abilities import (
     FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES,
     FIXED_CHARACTERISTIC_KEYWORDS,
+    triggered_keyword_grant,
 )
 from .creature_subtypes import CREATURE_SUBTYPES, canonical_creature_subtype
 from .fixed_resolution_characteristic_queries import (
@@ -552,6 +553,12 @@ def _attached_granted_abilities(
             granted_abilities.extend(ordinary)
             fragments.extend(_toxic_ability_fragments(ordinary))
             continue
+        triggered = triggered_keyword_grant(term)
+        if triggered is not None:
+            label, fragment, _capability = triggered
+            granted_abilities.append(label)
+            fragments.append(fragment)
+            continue
         ward = fixed_ward_spec(term)
         if ward is None or ward.generic_cost is None:
             return None
@@ -574,6 +581,8 @@ def _attached_ability_capabilities(
             capabilities.add("damage.result.toxic")
         elif ability.startswith("Ward {"):
             capabilities.add("trigger.keyword.ward.fixed_generic")
+        elif (triggered := triggered_keyword_grant(ability)) is not None:
+            capabilities.add(triggered[2])
         else:
             capabilities.update(
                 FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES.get(ability, ())

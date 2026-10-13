@@ -1210,6 +1210,37 @@ def _ordered_event_sources(host,sources):
     return sorted(host._semantic_event_sources(),key=lambda source:(source.zone_timestamp,source.object_id,source.logical_object_id))
 
 
+def _granted_prowess_trigger_items(host, source, event, context, *, active_zone, characteristics, programs):
+    """Materialize granted instances without duplicating printed Prowess programs."""
+    if (event != 'spell.cast' or active_zone != 'battlefield' or source.phased_out
+            or context.get('controller') != source.controller
+            or 'creature' in {str(t).casefold() for t in context.get('types', ())}):
+        return ()
+    fragments = canonical_ability_fragments(characteristics.get('ability_fragments', ()))
+    total = sum(isinstance(f, SpellCastKeywordTriggerSpec) and f.kind is SpellCastKeywordTriggerKind.PROWESS for f in fragments)
+    printed = sum(
+        program.provenance.get('template_id') == 'prowess-noncreature-spell-trigger-v1'
+        and program_has_current_ability_fragments(program, characteristics)
+        for program in programs
+    )
+    result = []
+    for instance in range(max(0, total-printed)):
+        ref = host._next_ref('S')
+        item = StackItem(
+            stack_id=host._stable_runtime_id('stack', ref), ref=ref,
+            kind='triggered_ability', controller=source.controller,
+            label=source.printed_name+' granted Prowess', source_object_id=source.object_id,
+            visibility=list(host.seats), context={
+                'event':event,'event_context':copy.deepcopy(dict(context)),
+                'source_logical_object_id':source.logical_object_id,'granted_prowess_instance':instance,
+                'dynamic_effects':[{'op':'modify_stats_until_end_of_turn','card':'$source.zone_object','power':1,'toughness':1}],
+            },
+        )
+        result.append(item)
+        result.extend(_trigger_multiplier_copies(host, item=item, source=source, event=event, context=context))
+    return tuple(result)
+
+
 def dispatch_semantic_event(
     host: TriggerDiscoveryHost,
     event: str,
@@ -1246,6 +1277,8 @@ def dispatch_semantic_event(
             source_zones=source_zones,
             source_characteristics=source_characteristics,
         )
+        triggered.extend(_granted_prowess_trigger_items(host, source, event, context,
+            active_zone=active_zone, characteristics=characteristics, programs=programs))
         blitz_item = _shared_blitz_trigger_item(
             host,
             source,

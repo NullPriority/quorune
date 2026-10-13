@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "43306209eb478da30485e578ac126ec716f2e79287777bdd78230a5eb3e66ec6",
-  "declaration_source_fingerprint": "ba09d8efd85db362671aca42b998b663b047c96821d154c19502a5a770a1d34b",
+  "registry_fingerprint": "4e28761ada9a72fc81976029f1bc06de42e7cc0fd18cdd0e8d968238d283ae75",
+  "declaration_source_fingerprint": "869027acd10184710b1e90dd264c7f4088c395c071afb618d402b0d1e0ad3be4",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -29822,6 +29822,48 @@
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_query_keyword_grants.TriggeredKeywordGrantRuntimeTests.test_original_archangels_grant_independent_exalted_instances_and_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed live keyword grants retain exact trigger instances, current recipient/controller authority, source and recipient departure boundaries, wrong-principal rollback and exact replay."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_query_keyword_grants.TriggeredKeywordGrantRuntimeTests.test_original_bria_granted_prowess_locks_recipient_after_source_bounce_and_replays",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed live keyword grants retain exact trigger instances, current recipient/controller authority, source and recipient departure boundaries, wrong-principal rollback and exact replay."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "interaction",
       "test_id": "tests.test_global_plural_characteristic_sets.GlobalPluralCharacteristicRuntimeTests.test_actual_atlantis_layer_grant_changes_block_offers_and_acceptance",
       "official_rule_ids": [
         "604.1",
@@ -29948,6 +29990,27 @@
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_query_keyword_grants.TriggeredKeywordGrantRuntimeTests.test_original_bria_granted_prowess_locks_recipient_after_source_bounce_and_replays",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed live keyword grants retain exact trigger instances, current recipient/controller authority, source and recipient departure boundaries, wrong-principal rollback and exact replay."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_global_plural_characteristic_sets.GlobalPluralCharacteristicRuntimeTests.test_actual_atlantis_cast_grants_foreign_merfolk_and_source_exclusion_with_replay",
       "official_rule_ids": [
         "604.1",
@@ -30007,6 +30070,48 @@
         "commander_review"
       ],
       "applicability_note": "Kill a global-to-controller query-scope mutant by requiring the changed runtime descriptor to change the enclosing CardProgram fingerprint."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_triggered_keyword_grant_codec_omission_mutant_is_killed",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed live keyword grants retain exact trigger instances, current recipient/controller authority, source and recipient departure boundaries, wrong-principal rollback and exact replay."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_query_keyword_grants.TriggeredKeywordGrantRuntimeTests.test_granted_prowess_runtime_omission_mutant_is_killed",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed live keyword grants retain exact trigger instances, current recipient/controller authority, source and recipient departure boundaries, wrong-principal rollback and exact replay."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
@@ -30154,6 +30259,27 @@
         "commander_review"
       ],
       "applicability_note": "Block the shared query dependency and retain the affected static keyword ability as a material residual."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_triggered_keyword_grant_labels_and_fragments_are_exact_and_fail_closed",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed live keyword grants retain exact trigger instances, current recipient/controller authority, source and recipient departure boundaries, wrong-principal rollback and exact replay."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
@@ -30368,6 +30494,27 @@
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_live_keyword_trigger_grants_carry_exact_fragment_and_consumer_dependencies",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed live keyword grants retain exact trigger instances, current recipient/controller authority, source and recipient departure boundaries, wrong-principal rollback and exact replay."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_shared_public_set_query_fans_into_layers_and_resolution",
       "official_rule_ids": [
         "604.1",
@@ -30493,6 +30640,27 @@
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_query_keyword_grants.TriggeredKeywordGrantRuntimeTests.test_original_bria_granted_prowess_locks_recipient_after_source_bounce_and_replays",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed live keyword grants retain exact trigger instances, current recipient/controller authority, source and recipient departure boundaries, wrong-principal rollback and exact replay."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_live_public_object_state_and_layer_five_queries_recompute",
       "official_rule_ids": [
@@ -30595,6 +30763,48 @@
         "commander_review"
       ],
       "applicability_note": "Replay a command exactly from a checkpoint containing the actual compiled fixed-query sources and their live effective grants."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_query_keyword_grants.TriggeredKeywordGrantRuntimeTests.test_granted_prowess_response_bounce_invalidates_old_recipient_and_replays",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed live keyword grants retain exact trigger instances, current recipient/controller authority, source and recipient departure boundaries, wrong-principal rollback and exact replay."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_query_keyword_grants.TriggeredKeywordGrantRuntimeTests.test_original_archangels_grant_independent_exalted_instances_and_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed live keyword grants retain exact trigger instances, current recipient/controller authority, source and recipient departure boundaries, wrong-principal rollback and exact replay."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
@@ -31636,6 +31846,52 @@
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_query_keyword_grants.TriggeredKeywordGrantRuntimeTests.test_original_archangels_grant_independent_exalted_instances_and_replay",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed live keyword grants retain exact trigger instances, current recipient/controller authority, source and recipient departure boundaries, wrong-principal rollback and exact replay."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_query_keyword_grants.TriggeredKeywordGrantRuntimeTests.test_original_bria_granted_prowess_locks_recipient_after_source_bounce_and_replays",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed live keyword grants retain exact trigger instances, current recipient/controller authority, source and recipient departure boundaries, wrong-principal rollback and exact replay."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_attached_static_characteristics.AttachedStaticEngineTests.test_multiple_sources_apply_independently_in_four_player_game",
       "official_rule_ids": [
@@ -31659,6 +31915,29 @@
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_query_keyword_grants.TriggeredKeywordGrantRuntimeTests.test_original_bria_granted_prowess_locks_recipient_after_source_bounce_and_replays",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed live keyword grants retain exact trigger instances, current recipient/controller authority, source and recipient departure boundaries, wrong-principal rollback and exact replay."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "mutation",
       "test_id": "tests.test_capability_implementation_mutations.CapabilityImplementationMutationTests.test_attached_characteristic_relation_mutant_is_killed",
       "official_rule_ids": [
@@ -31679,6 +31958,52 @@
         "commander_review"
       ],
       "applicability_note": "Kill removal of the relation-bound attached-characteristic lowering."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_triggered_keyword_grant_codec_omission_mutant_is_killed",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed live keyword grants retain exact trigger instances, current recipient/controller authority, source and recipient departure boundaries, wrong-principal rollback and exact replay."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_query_keyword_grants.TriggeredKeywordGrantRuntimeTests.test_granted_prowess_runtime_omission_mutant_is_killed",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed live keyword grants retain exact trigger instances, current recipient/controller authority, source and recipient departure boundaries, wrong-principal rollback and exact replay."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -31817,6 +32142,29 @@
         "commander_review"
       ],
       "applicability_note": "Reject temporary, malformed, and unsupported attached declaration bodies rather than widening the characteristic shell."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_triggered_keyword_grant_labels_and_fragments_are_exact_and_fail_closed",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed live keyword grants retain exact trigger instances, current recipient/controller authority, source and recipient departure boundaries, wrong-principal rollback and exact replay."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -31981,6 +32329,29 @@
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_live_keyword_trigger_grants_carry_exact_fragment_and_consumer_dependencies",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed live keyword grants retain exact trigger instances, current recipient/controller authority, source and recipient departure boundaries, wrong-principal rollback and exact replay."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "privacy",
       "test_id": "tests.test_attached_static_characteristics.AttachedStaticEngineTests.test_projection_hides_relation_identity_and_replay_is_exact",
       "official_rule_ids": [
@@ -32001,6 +32372,29 @@
         "commander_review"
       ],
       "applicability_note": "Project public characteristics without physical or logical relation IDs."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_query_keyword_grants.TriggeredKeywordGrantRuntimeTests.test_original_bria_granted_prowess_locks_recipient_after_source_bounce_and_replays",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed live keyword grants retain exact trigger instances, current recipient/controller authority, source and recipient departure boundaries, wrong-principal rollback and exact replay."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -32070,6 +32464,52 @@
         "commander_review"
       ],
       "applicability_note": "Replay a timestamped attach command and its characteristic result exactly."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_query_keyword_grants.TriggeredKeywordGrantRuntimeTests.test_granted_prowess_response_bounce_invalidates_old_recipient_and_replays",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed live keyword grants retain exact trigger instances, current recipient/controller authority, source and recipient departure boundaries, wrong-principal rollback and exact replay."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_query_keyword_grants.TriggeredKeywordGrantRuntimeTests.test_original_archangels_grant_independent_exalted_instances_and_replay",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed live keyword grants retain exact trigger instances, current recipient/controller authority, source and recipient departure boundaries, wrong-principal rollback and exact replay."
     },
     {
       "capability_id": "continuous.basic_land_type.add_all_lands",
@@ -102110,6 +102550,44 @@
     {
       "capability_id": "trigger.keyword.prowess",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_query_keyword_grants.TriggeredKeywordGrantRuntimeTests.test_original_archangels_grant_independent_exalted_instances_and_replay",
+      "official_rule_ids": [
+        "601.2i",
+        "603.2",
+        "603.3",
+        "702.108",
+        "702.108a",
+        "702.108b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed live keyword grants retain exact trigger instances, current recipient/controller authority, source and recipient departure boundaries, wrong-principal rollback and exact replay."
+    },
+    {
+      "capability_id": "trigger.keyword.prowess",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_query_keyword_grants.TriggeredKeywordGrantRuntimeTests.test_original_bria_granted_prowess_locks_recipient_after_source_bounce_and_replays",
+      "official_rule_ids": [
+        "601.2i",
+        "603.2",
+        "603.3",
+        "702.108",
+        "702.108a",
+        "702.108b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed live keyword grants retain exact trigger instances, current recipient/controller authority, source and recipient departure boundaries, wrong-principal rollback and exact replay."
+    },
+    {
+      "capability_id": "trigger.keyword.prowess",
+      "evidence_class": "interaction",
       "test_id": "tests.test_prowess_rules.ProwessRuntimeTests.test_prowess_and_opponent_cast_trigger_share_one_apnap_batch",
       "official_rule_ids": [
         "601.2i",
@@ -102148,6 +102626,25 @@
     {
       "capability_id": "trigger.keyword.prowess",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_query_keyword_grants.TriggeredKeywordGrantRuntimeTests.test_original_bria_granted_prowess_locks_recipient_after_source_bounce_and_replays",
+      "official_rule_ids": [
+        "601.2i",
+        "603.2",
+        "603.3",
+        "702.108",
+        "702.108a",
+        "702.108b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed live keyword grants retain exact trigger instances, current recipient/controller authority, source and recipient departure boundaries, wrong-principal rollback and exact replay."
+    },
+    {
+      "capability_id": "trigger.keyword.prowess",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_prowess_rules.ProwessRuntimeTests.test_four_player_prowess_batch_is_public_and_apnap_ordered",
       "official_rule_ids": [
         "601.2i",
@@ -102167,6 +102664,44 @@
     {
       "capability_id": "trigger.keyword.prowess",
       "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_triggered_keyword_grant_codec_omission_mutant_is_killed",
+      "official_rule_ids": [
+        "601.2i",
+        "603.2",
+        "603.3",
+        "702.108",
+        "702.108a",
+        "702.108b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed live keyword grants retain exact trigger instances, current recipient/controller authority, source and recipient departure boundaries, wrong-principal rollback and exact replay."
+    },
+    {
+      "capability_id": "trigger.keyword.prowess",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_query_keyword_grants.TriggeredKeywordGrantRuntimeTests.test_granted_prowess_runtime_omission_mutant_is_killed",
+      "official_rule_ids": [
+        "601.2i",
+        "603.2",
+        "603.3",
+        "702.108",
+        "702.108a",
+        "702.108b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed live keyword grants retain exact trigger instances, current recipient/controller authority, source and recipient departure boundaries, wrong-principal rollback and exact replay."
+    },
+    {
+      "capability_id": "trigger.keyword.prowess",
+      "evidence_class": "mutation",
       "test_id": "tests.test_prowess_rules.ProwessCompilerTests.test_prowess_dependency_and_compiler_mutations_fail_closed",
       "official_rule_ids": [
         "601.2i",
@@ -102182,6 +102717,25 @@
         "commander_review"
       ],
       "applicability_note": "Remove Prowess lowering and prove the exact source-spanned CardProgram cannot survive."
+    },
+    {
+      "capability_id": "trigger.keyword.prowess",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_triggered_keyword_grant_labels_and_fragments_are_exact_and_fail_closed",
+      "official_rule_ids": [
+        "601.2i",
+        "603.2",
+        "603.3",
+        "702.108",
+        "702.108a",
+        "702.108b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed live keyword grants retain exact trigger instances, current recipient/controller authority, source and recipient departure boundaries, wrong-principal rollback and exact replay."
     },
     {
       "capability_id": "trigger.keyword.prowess",
@@ -102243,6 +102797,25 @@
     {
       "capability_id": "trigger.keyword.prowess",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_live_keyword_trigger_grants_carry_exact_fragment_and_consumer_dependencies",
+      "official_rule_ids": [
+        "601.2i",
+        "603.2",
+        "603.3",
+        "702.108",
+        "702.108a",
+        "702.108b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed live keyword grants retain exact trigger instances, current recipient/controller authority, source and recipient departure boundaries, wrong-principal rollback and exact replay."
+    },
+    {
+      "capability_id": "trigger.keyword.prowess",
+      "evidence_class": "positive",
       "test_id": "tests.test_prowess_rules.ProwessCompilerTests.test_prowess_keyword_lowers_each_instance_with_precise_spans",
       "official_rule_ids": [
         "601.2i",
@@ -102300,6 +102873,25 @@
     {
       "capability_id": "trigger.keyword.prowess",
       "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_query_keyword_grants.TriggeredKeywordGrantRuntimeTests.test_original_bria_granted_prowess_locks_recipient_after_source_bounce_and_replays",
+      "official_rule_ids": [
+        "601.2i",
+        "603.2",
+        "603.3",
+        "702.108",
+        "702.108a",
+        "702.108b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed live keyword grants retain exact trigger instances, current recipient/controller authority, source and recipient departure boundaries, wrong-principal rollback and exact replay."
+    },
+    {
+      "capability_id": "trigger.keyword.prowess",
+      "evidence_class": "privacy",
       "test_id": "tests.test_prowess_rules.ProwessRuntimeTests.test_four_player_prowess_batch_is_public_and_apnap_ordered",
       "official_rule_ids": [
         "601.2i",
@@ -102315,6 +102907,44 @@
         "commander_review"
       ],
       "applicability_note": "Project public Prowess source, spell, and trigger facts without exposing opposing hand identities."
+    },
+    {
+      "capability_id": "trigger.keyword.prowess",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_query_keyword_grants.TriggeredKeywordGrantRuntimeTests.test_granted_prowess_response_bounce_invalidates_old_recipient_and_replays",
+      "official_rule_ids": [
+        "601.2i",
+        "603.2",
+        "603.3",
+        "702.108",
+        "702.108a",
+        "702.108b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed live keyword grants retain exact trigger instances, current recipient/controller authority, source and recipient departure boundaries, wrong-principal rollback and exact replay."
+    },
+    {
+      "capability_id": "trigger.keyword.prowess",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_query_keyword_grants.TriggeredKeywordGrantRuntimeTests.test_original_archangels_grant_independent_exalted_instances_and_replay",
+      "official_rule_ids": [
+        "601.2i",
+        "603.2",
+        "603.3",
+        "702.108",
+        "702.108a",
+        "702.108b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed live keyword grants retain exact trigger instances, current recipient/controller authority, source and recipient departure boundaries, wrong-principal rollback and exact replay."
     },
     {
       "capability_id": "trigger.keyword.prowess",
@@ -115831,5 +116461,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "3c021ddac3547b2f76d06163008f2e35ba073be798dd076b641d9e3e8f399b75"
+  "fingerprint": "0a8305e943b0d86f40b2ecd0730176f288b4e5f0ba121a0f1e1e5447bdf12870"
 }

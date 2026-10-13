@@ -2,6 +2,45 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from typing import Any, Protocol
+import re
+
+from .ability_fragments import (
+    CombatKeywordTriggerKind, CombatKeywordTriggerSpec,
+    SpellCastKeywordTriggerKind, SpellCastKeywordTriggerSpec,
+    ability_fragment_to_dict,
+)
+
+
+TRIGGERED_KEYWORD_GRANT_CAPABILITIES = {
+    'Flanking': 'combat.trigger.flanking',
+    'Exalted': 'combat.trigger.exalted',
+    'Battle Cry': 'combat.trigger.battle_cry',
+    'Melee': 'combat.trigger.melee',
+    'Mentor': 'counter.producer.mentor',
+    'Dethrone': 'counter.producer.dethrone',
+    'Training': 'counter.producer.training',
+    'Prowess': 'trigger.keyword.prowess',
+}
+
+
+def triggered_keyword_grant(value: str):
+    """Return a canonical label, fragment and owner for one closed keyword."""
+    if type(value) is not str:
+        return None
+    label = ' '.join(value.strip().split()).title()
+    if label == 'Prowess':
+        fragment = SpellCastKeywordTriggerSpec(kind=SpellCastKeywordTriggerKind.PROWESS)
+    elif label in TRIGGERED_KEYWORD_GRANT_CAPABILITIES:
+        fragment = CombatKeywordTriggerSpec(
+            kind=CombatKeywordTriggerKind(label.casefold().replace(' ', '_')), amount=1,
+        )
+    else:
+        match = re.fullmatch(r'Bushido ([1-9]\d*)', label)
+        if match is None:
+            return None
+        fragment = CombatKeywordTriggerSpec(kind=CombatKeywordTriggerKind.BUSHIDO, amount=int(match[1]))
+        return label, ability_fragment_to_dict(fragment), 'combat.trigger.bushido'
+    return label, ability_fragment_to_dict(fragment), TRIGGERED_KEYWORD_GRANT_CAPABILITIES[label]
 
 
 FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES: Mapping[

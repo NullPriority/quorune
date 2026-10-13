@@ -20,7 +20,7 @@ from ..continuous_effects import (
     ContinuousOperation,
     Layer,
 )
-from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
+from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS, triggered_keyword_grant
 from ..mana import BASIC_LAND_MANA
 from ..leveler_bands import (
     LEVELER_BANDS_CAPABILITY_ID,
@@ -948,19 +948,24 @@ class FixedQueryKeywordGrantHandler:
             raise SemanticNodeError(
                 "fixed query keyword grant fragments are malformed"
             ) from exc
-        if any(
-            not isinstance(fragment, WardSpec)
-            or fragment.generic_cost is None
+        expected_triggered = tuple(
+            triggered[1] for ability in abilities
+            if (triggered := triggered_keyword_grant(ability)) is not None
+        )
+        actual_triggered = tuple(
+            ability_fragment_to_dict(fragment) for fragment in fragments
+            if not isinstance(fragment, WardSpec)
+        )
+        if actual_triggered != expected_triggered or any(
+            isinstance(fragment, WardSpec) and fragment.generic_cost is None
             for fragment in fragments
         ):
-            raise SemanticNodeError(
-                "fixed query keyword grants accept only fixed-generic Ward fragments"
-            )
+            raise SemanticNodeError('Keyword grant fragments must exactly match their typed keyword labels')
         ward_labels = tuple(
-            f"Ward {{{fragment.generic_cost}}}" for fragment in fragments
+            f"Ward {{{fragment.generic_cost}}}" for fragment in fragments if isinstance(fragment, WardSpec)
         )
         ordinary = tuple(
-            ability for ability in abilities if not ability.startswith("Ward {")
+            ability for ability in abilities if not ability.startswith("Ward {") and triggered_keyword_grant(ability) is None
         )
         if (
             not abilities
