@@ -13524,13 +13524,13 @@
     },
     "interaction_assurance_baseline": {
       "applicable_high_risk_pairs": 406,
-      "applicable_piece_pairs": 116265,
+      "applicable_piece_pairs": 116242,
       "available": true,
-      "covered_high_risk_pairs": 392,
-      "covered_piece_pairs": 1208,
+      "covered_high_risk_pairs": 406,
+      "covered_piece_pairs": 1222,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "b1cdfb76560455da213a9f32d53835ddc7d17285ae7ad5dc8925cf6271fc5133",
-      "uncovered_high_risk_pairs": 14
+      "source_fingerprint": "71f5a5b75c4916c9131958bd3d1cf6b22501138b2c0654544d42448903dec14f",
+      "uncovered_high_risk_pairs": 0
     },
     "migration_queue": [],
     "missing_dedicated_owners": [],
@@ -13918,7 +13918,7 @@
           "visibility": "public"
         }
       ],
-      "logical_lines": 253517,
+      "logical_lines": 253519,
       "methods": {
         "dunder": 648,
         "private": 981,
@@ -13990,18 +13990,18 @@
           "physical_lines": 1583
         },
         {
+          "file": "quorune/compiler/continuous_templates.py",
+          "functions_and_methods": 32,
+          "language": "python",
+          "logical_lines": 1497,
+          "physical_lines": 1620
+        },
+        {
           "file": "quorune/work_selection.py",
           "functions_and_methods": 28,
           "language": "python",
           "logical_lines": 1496,
           "physical_lines": 1558
-        },
-        {
-          "file": "quorune/compiler/continuous_templates.py",
-          "functions_and_methods": 32,
-          "language": "python",
-          "logical_lines": 1495,
-          "physical_lines": 1616
         },
         {
           "file": "quorune/compiler/program_generation.py",
@@ -20803,7 +20803,7 @@
           "physical_lines": 1690
         }
       ],
-      "physical_lines": 277804,
+      "physical_lines": 277808,
       "python_file_count": 918,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -37707,7 +37707,7 @@
         "cost": 780,
         "declaration_cost": 10,
         "declaration_restriction": 57,
-        "dependency_contract": 456,
+        "dependency_contract": 454,
         "effect": 3217,
         "entry_designation": 4,
         "keyword_grammar": 72,
@@ -37716,7 +37716,7 @@
         "replacement_effect": 1107,
         "saga_chapter": 358,
         "spell_additional_cost": 116,
-        "spell_effect": 5227,
+        "spell_effect": 5229,
         "static_ability": 3393,
         "trigger": 8553,
         "unsupported_crew_cost": 1,
@@ -37739,8 +37739,8 @@
       },
       "status_counts": {
         "exact": 14045,
-        "partial": 9496,
-        "unresolved": 8082
+        "partial": 9494,
+        "unresolved": 8084
       },
       "template_count": 1818,
       "total_faces": 32431,
@@ -37759,7 +37759,7 @@
         "cost": 965,
         "declaration_cost": 11,
         "declaration_restriction": 70,
-        "dependency_contract": 533,
+        "dependency_contract": 531,
         "effect": 3775,
         "entry_designation": 5,
         "keyword_grammar": 80,
@@ -37768,7 +37768,7 @@
         "replacement_effect": 1316,
         "saga_chapter": 397,
         "spell_additional_cost": 122,
-        "spell_effect": 7223,
+        "spell_effect": 7225,
         "static_ability": 4468,
         "trigger": 10666,
         "unsupported_crew_cost": 1,
@@ -37792,8 +37792,8 @@
       },
       "status_counts": {
         "exact": 17400,
-        "partial": 10776,
-        "unresolved": 10447
+        "partial": 10774,
+        "unresolved": 10449
       },
       "template_count": 1852,
       "total_faces": 41840,
@@ -38434,7 +38434,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "e368c31f143885c46712fcefd444f924d4a13762fb64899480abd9edbeed691d",
+      "fingerprint": "4a3a3a7721562bd966609ae9f5c03d307f441b2cb56f16b2741f1497f683f2e7",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -39292,8 +39292,8 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 6007,
-      "discovered_total": 9355,
+      "conventional_ast_cases": 6016,
+      "discovered_total": 9325,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 270,
@@ -39302,7 +39302,7 @@
         "replay_named": 621,
         "server_named": 47
       },
-      "reconciles": false,
+      "reconciles": true,
       "test_files": 431
     }
   }
