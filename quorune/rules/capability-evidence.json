@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "a0c6244908fa0fa7ad9f39612ba77996135cd2a2f6ace54089c65d05e81b8c6c",
-  "declaration_source_fingerprint": "765b67dbff783a70106e8fbd9b6597f1b7df0bba86cbf9eb561781530d09ac9c",
+  "registry_fingerprint": "e3950168325f605820e093a4704b19114824e7bf3c07239326974fddd35bf4e0",
+  "declaration_source_fingerprint": "012d7bd79ad4ee727ac21af9cea6a5ffbdc65842ca12d0774081a77da8cecb7e",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -27482,6 +27482,196 @@
         "commander_review"
       ],
       "applicability_note": "Exercise a genuine oracle-ir-v219 Encore Game Record through the real replay entry point and reject its two-trigger cleanup at the runtime-trust identity boundary instead of reinterpreting it as the grouped result."
+    },
+    {
+      "capability_id": "combat.goad.fixed_instruction",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_goad_rules.FixedGoadInstructionRuntimeTests.test_original_disrupt_decorum_goads_only_resolving_opponent_set_and_replays",
+      "official_rule_ids": [
+        "701.15a",
+        "701.15b",
+        "701.15c",
+        "701.15d",
+        "508.1d",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed Goad instruction through canonical designation, resolving-set, next-turn duration and shared combat requirements."
+    },
+    {
+      "capability_id": "combat.goad.fixed_instruction",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_goad_rules.FixedGoadInstructionRuntimeTests.test_original_geode_rager_landfall_goads_chosen_player_set_with_source_independent_duration",
+      "official_rule_ids": [
+        "701.15a",
+        "701.15b",
+        "701.15c",
+        "701.15d",
+        "508.1d",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed Goad instruction through canonical designation, resolving-set, next-turn duration and shared combat requirements."
+    },
+    {
+      "capability_id": "combat.goad.fixed_instruction",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_goad_rules.FixedGoadInstructionRuntimeTests.test_original_disrupt_decorum_goads_only_resolving_opponent_set_and_replays",
+      "official_rule_ids": [
+        "701.15a",
+        "701.15b",
+        "701.15c",
+        "701.15d",
+        "508.1d",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed Goad instruction through canonical designation, resolving-set, next-turn duration and shared combat requirements."
+    },
+    {
+      "capability_id": "combat.goad.fixed_instruction",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_goad_rules.GoadRuleTests.test_fixed_goad_shapes_and_precise_dependency_fail_closed",
+      "official_rule_ids": [
+        "701.15a",
+        "701.15b",
+        "701.15c",
+        "701.15d",
+        "508.1d",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed Goad instruction through canonical designation, resolving-set, next-turn duration and shared combat requirements."
+    },
+    {
+      "capability_id": "combat.goad.fixed_instruction",
+      "evidence_class": "negative",
+      "test_id": "tests.test_goad_rules.GoadRuleTests.test_fixed_goad_shapes_and_precise_dependency_fail_closed",
+      "official_rule_ids": [
+        "701.15a",
+        "701.15b",
+        "701.15c",
+        "701.15d",
+        "508.1d",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed Goad instruction through canonical designation, resolving-set, next-turn duration and shared combat requirements."
+    },
+    {
+      "capability_id": "combat.goad.fixed_instruction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_goad_rules.FixedGoadInstructionRuntimeTests.test_original_geode_rager_landfall_goads_chosen_player_set_with_source_independent_duration",
+      "official_rule_ids": [
+        "701.15a",
+        "701.15b",
+        "701.15c",
+        "701.15d",
+        "508.1d",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed Goad instruction through canonical designation, resolving-set, next-turn duration and shared combat requirements."
+    },
+    {
+      "capability_id": "combat.goad.fixed_instruction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_goad_rules.GoadRuleTests.test_fixed_goad_compiler_preserves_closed_target_and_public_set_queries",
+      "official_rule_ids": [
+        "701.15a",
+        "701.15b",
+        "701.15c",
+        "701.15d",
+        "508.1d",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed Goad instruction through canonical designation, resolving-set, next-turn duration and shared combat requirements."
+    },
+    {
+      "capability_id": "combat.goad.fixed_instruction",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_goad_rules.FixedGoadInstructionRuntimeTests.test_original_disrupt_decorum_goads_only_resolving_opponent_set_and_replays",
+      "official_rule_ids": [
+        "701.15a",
+        "701.15b",
+        "701.15c",
+        "701.15d",
+        "508.1d",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed Goad instruction through canonical designation, resolving-set, next-turn duration and shared combat requirements."
+    },
+    {
+      "capability_id": "combat.goad.fixed_instruction",
+      "evidence_class": "replay",
+      "test_id": "tests.test_goad_rules.FixedGoadInstructionRuntimeTests.test_original_disrupt_decorum_goads_only_resolving_opponent_set_and_replays",
+      "official_rule_ids": [
+        "701.15a",
+        "701.15b",
+        "701.15c",
+        "701.15d",
+        "508.1d",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed Goad instruction through canonical designation, resolving-set, next-turn duration and shared combat requirements."
+    },
+    {
+      "capability_id": "combat.goad.fixed_instruction",
+      "evidence_class": "replay",
+      "test_id": "tests.test_goad_rules.FixedGoadInstructionRuntimeTests.test_original_geode_rager_landfall_goads_chosen_player_set_with_source_independent_duration",
+      "official_rule_ids": [
+        "701.15a",
+        "701.15b",
+        "701.15c",
+        "701.15d",
+        "508.1d",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed Goad instruction through canonical designation, resolving-set, next-turn duration and shared combat requirements."
     },
     {
       "capability_id": "combat.goad.prohibition.controller_creatures",
@@ -117769,5 +117959,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "3b6223909512f32720e4b26ede5617bc9a29819a061fa8f10c81226b60210c29"
+  "fingerprint": "61824c6b38b7604ebb6a26265aaccff66e0d0de3d60d712dc193e7d3579f300d"
 }

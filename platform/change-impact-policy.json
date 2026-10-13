@@ -85,6 +85,26 @@
   ],
   "path_rules": [
     {
+      "id": "fixed-goad-instruction-contract",
+      "patterns": [
+        "quorune/compiler/goad_templates.py",
+        "quorune/goad_instruction.py",
+        "quorune/rules/goad_capability_shapes.py",
+        "quorune/compiler/fixed_instruction_program_closure.py",
+        "quorune/compiler/bound_effect_programs.py",
+        "tests/fixtures/fixed-goad-instruction-cards.json"
+      ],
+      "test_modules": [
+        "test_goad_rules",
+        "test_bound_effect_programs",
+        "test_fixed_counter_event_triggers",
+        "test_card_program_trust",
+        "test_attack_keyword_triggers",
+        "test_declare_attackers_rules",
+        "test_high_risk_interaction_assurance"
+      ]
+    },
+    {
       "id": "typed-public-protection-grants",
       "patterns": [
         "quorune/compiler/temporary_target_interactions.py",

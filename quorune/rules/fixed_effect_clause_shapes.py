@@ -56,6 +56,7 @@ from .node_capability_shapes import (
     targeted_tap_state_node_capabilities,
     temporary_declaration_restriction_node_capabilities,
 )
+from .goad_capability_shapes import fixed_goad_node_capabilities
 from .fixed_homogeneous_target_set_capability_shapes import (
     fixed_homogeneous_target_set_node_capabilities,
 )
@@ -107,6 +108,7 @@ FIXED_EFFECT_CLAUSE_SEQUENCE_CAPABILITY = (
 )
 
 _COMPONENT_RESOLVERS = (
+    fixed_goad_node_capabilities,
     fixed_prevention_component_capabilities,
     fixed_extra_turn_node_capabilities,
     whole_hand_discard_node_capabilities,

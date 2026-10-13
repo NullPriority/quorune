@@ -213,6 +213,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/commander.py",
         "quorune/commander_zones.py",
         "quorune/connive.py",
+        "quorune/goad_instruction.py",
         "quorune/convoke.py",
         "quorune/cast_timing.py",
         "quorune/cast_lifecycles.py",
@@ -453,6 +454,8 @@ def _owner(relative: str, layer: str) -> str:
         return "zones_and_object_identity"
     if relative == "quorune/connive.py":
         return "semantic_choices"
+    if relative == "quorune/goad_instruction.py":
+        return "combat_declaration"
     if relative in {"quorune/hand_entry_queries.py", "quorune/hand_entry_move.py"}:
         return "zones_and_object_identity"
     if relative in {"quorune/whole_hand_discard.py", "quorune/whole_hand_discard_model.py"}:

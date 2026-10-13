@@ -9,6 +9,7 @@ from .defender_permission_templates import temporary_defender_permission_templat
 from .as_unblocked_templates import temporary_as_unblocked_template
 from .toughness_assignment_templates import temporary_toughness_assignment_template
 from .connive_templates import fixed_connive_effect_template
+from .goad_templates import fixed_goad_effect_template
 
 from typing import Any, Mapping, Sequence
 
@@ -118,6 +119,8 @@ def _source_context_resolution_template(
     text: str, *, card_name: str, source_is_permanent: bool | None,
     source_card_types: Sequence[str],
 ) -> CompiledEffectTemplate | None:
+    goad = fixed_goad_effect_template(text)
+    if goad is not None:return goad
     connive = fixed_connive_effect_template(text, source_name=card_name, source_is_permanent=source_is_permanent)
     if connive is not None:return connive
     extra_turn = fixed_extra_turn_effect_template(text)

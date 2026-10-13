@@ -9,6 +9,17 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+Fixed Goad instructions reuse the canonical designation and combat requirement
+owners. Historical single-target descriptors retain their payloads. Expanded
+single creature targets and closed public creature sets use an explicit version
+that selects the current phased-in set at resolution. Target-player sets retain
+the selected player's identity. A later bound clause may goad the existing
+creature target while preserving its original target schema and incarnation.
+Optional fixed Goad uses the ordinary apply-or-decline continuation. The
+goader remains the resolving controller, and source departure does not shorten
+the designation's next-turn duration. Continuous “is goaded” text, linked result
+sets, variable target cardinalities and other durations remain residuals.
+
 Fixed Connive accepts a complete single-object instruction with a represented
 integer count. Explicit self references require a permanent source; source
 pronouns require a closed source event binding. Target creature instructions

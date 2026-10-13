@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 232,
+  "registry_version": 233,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -17294,6 +17294,91 @@
       "implementation_mutation_rationale": "The source template omission witness removes previously exact compiler admission.",
       "blockers": [],
       "status": "trusted"
+    },
+    {
+      "id": "combat.goad.fixed_instruction",
+      "version": 1,
+      "official_rules": [
+        "701.15a",
+        "701.15b",
+        "701.15c",
+        "701.15d",
+        "508.1d",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Resolve closed single-creature or public creature-set Goad through the existing canonical designation owner, pinning the resolving controller and next-turn expiration while preserving maximized combat requirements.",
+        "inputs": [
+          "one canonical single creature target or fixed public creature query",
+          "resolving controller",
+          "current battlefield set and existing Goad prohibition"
+        ],
+        "outputs": [
+          "one designation per affected current incarnation and goader",
+          "late entrants remain unaffected",
+          "multiple goaders create independent combat requirements",
+          "next goader turn expiration and exact replay"
+        ],
+        "exclusions": [
+          "continuous static is-goaded producers",
+          "linked instruction-result sets",
+          "unrepresented multi-target cardinalities",
+          "noncreature targets",
+          "arbitrary durations"
+        ]
+      },
+      "dependencies": [
+        "combat.declaration.typed_components",
+        "combat.goad.prohibition.controller_creatures"
+      ],
+      "implementation_components": [
+        "quorune.compiler.goad_templates.fixed_goad_effect_template",
+        "quorune.rules.goad_capability_shapes.fixed_goad_node_capabilities",
+        "quorune.goad_instruction.validate_fixed_goad",
+        "quorune.goad_instruction.resolve_fixed_goad_refs",
+        "quorune.effect_runtime.state_and_permissions._apply_goad",
+        "quorune.engine.CommanderEngine._active_goad_designations"
+      ],
+      "positive_tests": [
+        "test_fixed_goad_compiler_preserves_closed_target_and_public_set_queries",
+        "test_original_geode_rager_landfall_goads_chosen_player_set_with_source_independent_duration"
+      ],
+      "negative_tests": [
+        "test_fixed_goad_shapes_and_precise_dependency_fail_closed"
+      ],
+      "interaction_tests": [
+        "test_original_disrupt_decorum_goads_only_resolving_opponent_set_and_replays",
+        "test_original_geode_rager_landfall_goads_chosen_player_set_with_source_independent_duration"
+      ],
+      "multiplayer_tests": [
+        "test_original_disrupt_decorum_goads_only_resolving_opponent_set_and_replays"
+      ],
+      "privacy_tests": [
+        "test_original_disrupt_decorum_goads_only_resolving_opponent_set_and_replays"
+      ],
+      "replay_tests": [
+        "test_original_disrupt_decorum_goads_only_resolving_opponent_set_and_replays",
+        "test_original_geode_rager_landfall_goads_chosen_player_set_with_source_independent_duration"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The full compiler keeps closed Goad residual when its precise owner is withdrawn; malformed or hidden-zone set requests are rejected.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the fixed set production removes whole-card admission for the exact Goad instruction.",
+      "status": "trusted",
+      "blockers": []
     }
   ]
 }

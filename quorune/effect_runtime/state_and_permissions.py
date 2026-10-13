@@ -75,6 +75,15 @@ def _apply_goad(
 ) -> Any:
     op = operation
     host._require_seat(actor, in_game=True)
+    if effect.get('schema_version') == 2:
+        from ..goad_instruction import resolve_fixed_goad_refs
+        try:
+            instruction={key:value for key,value in effect.items() if key!='_runtime_source'}
+            refs=resolve_fixed_goad_refs(host,instruction,actor=actor)
+        except (ValueError,TypeError,KeyError) as exc:raise GameRuleError(str(exc)) from exc
+        for ref in refs:
+            _apply_goad(host,{'op':'goad','card':ref},actor=actor,operation=operation,reason=reason)
+        return refs
     card = host._resolve_object(
         actor,
         str(effect["card"]),

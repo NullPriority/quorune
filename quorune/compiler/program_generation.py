@@ -1,9 +1,8 @@
 from __future__ import annotations
-from ..rules.connive_capability_shapes import is_closed_fixed_connive_program
+from .fixed_instruction_program_closure import is_closed_fixed_instruction_program
 from ..rules.control_capability_shapes import fixed_control_node_capabilities
 from ..rules.scheduled_player_shapes import is_closed_scheduled_player_program
 from ..rules.affected_player_discard_capability_shapes import is_closed_fixed_bound_discard_program
-from ..rules.extra_turn_shapes import is_closed_fixed_extra_turn_program
 from ..rules.public_zone_move_capability_shapes import fixed_owner_zone_move_node_capabilities
 from ..rules.target_characteristic_sets import is_closed_target_characteristic_set_program
 
@@ -1272,8 +1271,7 @@ def _is_closed_fixed_owner_zone_move_program(program: SemanticProgram) -> bool:
 def _closed_effect_recognizers():
     return (
         _is_closed_fixed_owner_zone_move_program,
-        is_closed_fixed_extra_turn_program,
-        is_closed_fixed_connive_program,
+        is_closed_fixed_instruction_program,
         is_closed_fixed_bound_discard_program,
         is_closed_reanimation_effect_program,
         is_closed_public_quantity_mana_program, is_closed_whole_hand_discard_program, _is_closed_fixed_control_program, is_closed_scheduled_player_program, is_closed_target_characteristic_set_program,

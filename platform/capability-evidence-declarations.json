@@ -14744,6 +14744,196 @@
       "applicability_note": "Exercise a genuine oracle-ir-v219 Encore Game Record through the real replay entry point and reject its two-trigger cleanup at the runtime-trust identity boundary instead of reinterpreting it as the grouped result."
     },
     {
+      "capability_id": "combat.goad.fixed_instruction",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_goad_rules.FixedGoadInstructionRuntimeTests.test_original_disrupt_decorum_goads_only_resolving_opponent_set_and_replays",
+      "official_rule_ids": [
+        "701.15a",
+        "701.15b",
+        "701.15c",
+        "701.15d",
+        "508.1d",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed Goad instruction through canonical designation, resolving-set, next-turn duration and shared combat requirements."
+    },
+    {
+      "capability_id": "combat.goad.fixed_instruction",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_goad_rules.FixedGoadInstructionRuntimeTests.test_original_geode_rager_landfall_goads_chosen_player_set_with_source_independent_duration",
+      "official_rule_ids": [
+        "701.15a",
+        "701.15b",
+        "701.15c",
+        "701.15d",
+        "508.1d",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed Goad instruction through canonical designation, resolving-set, next-turn duration and shared combat requirements."
+    },
+    {
+      "capability_id": "combat.goad.fixed_instruction",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_goad_rules.FixedGoadInstructionRuntimeTests.test_original_disrupt_decorum_goads_only_resolving_opponent_set_and_replays",
+      "official_rule_ids": [
+        "701.15a",
+        "701.15b",
+        "701.15c",
+        "701.15d",
+        "508.1d",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed Goad instruction through canonical designation, resolving-set, next-turn duration and shared combat requirements."
+    },
+    {
+      "capability_id": "combat.goad.fixed_instruction",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_goad_rules.GoadRuleTests.test_fixed_goad_shapes_and_precise_dependency_fail_closed",
+      "official_rule_ids": [
+        "701.15a",
+        "701.15b",
+        "701.15c",
+        "701.15d",
+        "508.1d",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed Goad instruction through canonical designation, resolving-set, next-turn duration and shared combat requirements."
+    },
+    {
+      "capability_id": "combat.goad.fixed_instruction",
+      "evidence_class": "negative",
+      "test_id": "tests.test_goad_rules.GoadRuleTests.test_fixed_goad_shapes_and_precise_dependency_fail_closed",
+      "official_rule_ids": [
+        "701.15a",
+        "701.15b",
+        "701.15c",
+        "701.15d",
+        "508.1d",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed Goad instruction through canonical designation, resolving-set, next-turn duration and shared combat requirements."
+    },
+    {
+      "capability_id": "combat.goad.fixed_instruction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_goad_rules.FixedGoadInstructionRuntimeTests.test_original_geode_rager_landfall_goads_chosen_player_set_with_source_independent_duration",
+      "official_rule_ids": [
+        "701.15a",
+        "701.15b",
+        "701.15c",
+        "701.15d",
+        "508.1d",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed Goad instruction through canonical designation, resolving-set, next-turn duration and shared combat requirements."
+    },
+    {
+      "capability_id": "combat.goad.fixed_instruction",
+      "evidence_class": "positive",
+      "test_id": "tests.test_goad_rules.GoadRuleTests.test_fixed_goad_compiler_preserves_closed_target_and_public_set_queries",
+      "official_rule_ids": [
+        "701.15a",
+        "701.15b",
+        "701.15c",
+        "701.15d",
+        "508.1d",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed Goad instruction through canonical designation, resolving-set, next-turn duration and shared combat requirements."
+    },
+    {
+      "capability_id": "combat.goad.fixed_instruction",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_goad_rules.FixedGoadInstructionRuntimeTests.test_original_disrupt_decorum_goads_only_resolving_opponent_set_and_replays",
+      "official_rule_ids": [
+        "701.15a",
+        "701.15b",
+        "701.15c",
+        "701.15d",
+        "508.1d",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed Goad instruction through canonical designation, resolving-set, next-turn duration and shared combat requirements."
+    },
+    {
+      "capability_id": "combat.goad.fixed_instruction",
+      "evidence_class": "replay",
+      "test_id": "tests.test_goad_rules.FixedGoadInstructionRuntimeTests.test_original_disrupt_decorum_goads_only_resolving_opponent_set_and_replays",
+      "official_rule_ids": [
+        "701.15a",
+        "701.15b",
+        "701.15c",
+        "701.15d",
+        "508.1d",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed Goad instruction through canonical designation, resolving-set, next-turn duration and shared combat requirements."
+    },
+    {
+      "capability_id": "combat.goad.fixed_instruction",
+      "evidence_class": "replay",
+      "test_id": "tests.test_goad_rules.FixedGoadInstructionRuntimeTests.test_original_geode_rager_landfall_goads_chosen_player_set_with_source_independent_duration",
+      "official_rule_ids": [
+        "701.15a",
+        "701.15b",
+        "701.15c",
+        "701.15d",
+        "508.1d",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed Goad instruction through canonical designation, resolving-set, next-turn duration and shared combat requirements."
+    },
+    {
       "capability_id": "combat.goad.prohibition.controller_creatures",
       "evidence_class": "interaction",
       "test_id": "tests.test_goad_rules.GoadRuleTests.test_typed_goad_prohibition_is_controller_scoped_and_replays",
