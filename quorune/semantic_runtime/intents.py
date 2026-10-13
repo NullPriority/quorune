@@ -4,6 +4,7 @@ from .control_intents import ControlIntent
 from .domain_intent import DomainEffectIntent
 from .zone_move_intent import ZoneMoveIntent, _freeze_replacement_selections
 from .counter_movement_intent import MoveCountersIntent
+from .connive_intent import ConniveCompletedIntent
 
 from dataclasses import dataclass, field
 from typing import Any, Literal, Mapping, TypeAlias
@@ -1555,6 +1556,7 @@ SemanticIntent: TypeAlias = (
     | BecomeMonstrousIntent
     | BecomeRenownedIntent
     | RecordChoiceIntent
+    | ConniveCompletedIntent
     | ZoneMoveIntent
     | MoveObjectsSimultaneouslyIntent
     | MadnessChoiceIntent

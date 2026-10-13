@@ -1,6 +1,7 @@
 from __future__ import annotations
 from ..semantic_runtime.life_batch_intent import LifeLossBatchIntent
 from ..semantic_runtime.control_intents import GainControlIntent, GainControlSetIntent
+from ..semantic_runtime.connive_intent import ConniveCompletedIntent
 
 import copy
 import random
@@ -440,6 +441,22 @@ class SemanticChoiceIntentHostMixin:
             "permanent.explores",
             details,
         )
+
+    def complete_connive_intent(self, intent: ConniveCompletedIntent) -> None:
+        retained = intent.conniver
+        current = self.state.cards.get(retained.object_id)
+        details = {
+            'player': retained.controller, 'controller': retained.controller,
+            'conniver': retained.ref, 'conniver_object_id': retained.object_id,
+            'conniver_logical_object_id': retained.logical_object_id,
+            'count': intent.count, 'nonlands_discarded': intent.nonlands_discarded,
+            'reason': intent.reason,
+        }
+        self._log(intent.actor, 'connive.complete', f'{retained.ref} connived for {retained.controller}.', details,
+                  importance=2, changed_players=[retained.controller],
+                  changed_objects=([retained.object_id] if current is not None
+                                   and current.logical_object_id == retained.logical_object_id else []))
+        self._dispatch_semantic_event('permanent.connives', details)
 
     def move_object_intent(self, intent: ZoneMoveIntent) -> str:
         try:

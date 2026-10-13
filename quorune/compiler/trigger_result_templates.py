@@ -11,6 +11,11 @@ from .fixed_entry_return_requirements import fixed_entry_return_effect_template
 
 
 def binding_effect_template(binding, body: str, *, card_name: str, effect_template, _allow_payment: bool = True):
+    if binding.event.value.endswith('.self') or binding.variant in {'source_attacks', 'this_creature_blocks', 'this_creature_becomes_blocked'}:
+        from .connive_templates import fixed_connive_effect_template
+        connive = fixed_connive_effect_template(body, source_name=card_name, source_is_permanent=True,
+                                                allow_source_pronoun=True)
+        if connive is not None:return connive, False
     if _allow_payment:
         from .optional_payment_templates import binding_aware_optional_mana_payment_template
         payment = binding_aware_optional_mana_payment_template(

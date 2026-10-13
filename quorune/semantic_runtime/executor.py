@@ -57,6 +57,7 @@ from .intents import (
     IntentPlan,
     EliminatePlayersIntent,
     ExploreCompletedIntent,
+    ConniveCompletedIntent,
     ExilePermanentIntent,
     ExilePublicGraveyardCardIntent,
     GrantZoneObjectKeywordIntent,
@@ -143,6 +144,8 @@ class SemanticIntentSink(
         self,
         intent: ExploreCompletedIntent,
     ) -> None: ...
+
+    def complete_connive_intent(self, intent: ConniveCompletedIntent) -> None: ...
 
     def move_object_intent(self, intent: ZoneMoveIntent) -> str: ...
 
@@ -473,10 +476,11 @@ def _execute_permanent_object_intent(
     )
 
 
-RecordingIntent = RecordChoiceIntent | ExploreCompletedIntent | InspectHandIntent
+RecordingIntent = RecordChoiceIntent | ExploreCompletedIntent | ConniveCompletedIntent | InspectHandIntent
 RECORDING_INTENT_TYPES = (
     RecordChoiceIntent,
     ExploreCompletedIntent,
+    ConniveCompletedIntent,
     InspectHandIntent,
 )
 
@@ -490,6 +494,9 @@ def _execute_recording_intent(
         return intent.actor, None
     if isinstance(intent, InspectHandIntent):
         return intent.player, sink.inspect_hand_intent(intent)
+    if isinstance(intent, ConniveCompletedIntent):
+        sink.complete_connive_intent(intent)
+        return intent.conniver.ref, None
     sink.complete_explore_intent(intent)
     return intent.explorer_ref, None
 

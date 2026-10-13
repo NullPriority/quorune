@@ -9,6 +9,21 @@ maintenance: "hand-maintained"
 
 # Typed semantic handlers
 
+Fixed single-object Connive lowers to a versioned instruction under CR 701.50.
+Its current controller draws, then privately chooses the mandatory number of
+discards. A departing source retains its last controller and incarnation;
+returning the physical card creates a separate object. Fixed Connive N uses the
+same ordered phases. Zero performs no action and publishes no Connive event.
+The canonical discard journal determines which selected incarnations actually
+committed, including public replacement redirection. CR 701.9c excludes
+unrevealed hidden redirected cards from characteristic-dependent nonland
+counting. Counter placement uses the existing replacement-aware owner and
+requires the retained permanent incarnation. Completion publishes only after
+draw, discard and counter continuations finish, including impossible actions.
+Private candidate ordering is deterministic across checkpoint serialization.
+Variable counts, simultaneous connivers, Connive replacements and unrepresented
+listeners or reflexive results remain residuals.
+
 The existing optional-effect choice also represents fixed controller draw
 followed by “If you do, discard” instructions. Decline performs neither action.
 Acceptance resumes the draw and then the mandatory private discard through

@@ -1988,6 +1988,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/connive_templates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/continuous_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -4693,6 +4708,20 @@
       "owning_subsystem": "oracle_compiler",
       "allowed_dependency_layers": [
         "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/connive.py",
+      "layer": "rules",
+      "owning_subsystem": "semantic_choices",
+      "allowed_dependency_layers": [
         "domain",
         "rules",
         "semantics"
@@ -8147,6 +8176,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/connive_capability_shapes.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/control_capability_shapes.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -9793,6 +9836,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_choices/connive.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_choices",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_choices/context.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_choices",
@@ -10649,6 +10707,21 @@
     },
     {
       "file": "quorune/semantic_runtime/conditional_entry_counters.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
+      "file": "quorune/semantic_runtime/connive_intent.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
       "allowed_dependency_layers": [
@@ -12920,5 +12993,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "80b2df6095d7e276d45a60a2490bb3167406293c4cea29ee6f089061f681ea94"
+  "fingerprint": "b1195383729debcd0d9728669bd68ec4a37876e1f843c5ca995d42150520f3f8"
 }

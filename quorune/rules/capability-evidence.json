@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "4e28761ada9a72fc81976029f1bc06de42e7cc0fd18cdd0e8d968238d283ae75",
-  "declaration_source_fingerprint": "869027acd10184710b1e90dd264c7f4088c395c071afb618d402b0d1e0ad3be4",
+  "registry_fingerprint": "88131dda51db8c0811f27cf756af153a8f661b4175a648f7aaecc7fbdcf7e7ff",
+  "declaration_source_fingerprint": "f60f13531a80027474d8a0125ac76a28a87c9328b6fbd277f3f1dd6708471bb9",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -65009,6 +65009,486 @@
       "applicability_note": "Replay the trusted Class carrier with the permission component and resulting level-trigger sequence under the exact program fingerprint."
     },
     {
+      "capability_id": "hand.connive.fixed_count",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_controller_effect_sequences.FixedConniveRuntimeTests.test_connive_departure_trigger_captures_original_controller_before_new_stack_item",
+      "official_rule_ids": [
+        "121.2",
+        "122.1a",
+        "400.7",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "701.50a",
+        "701.50b",
+        "701.50d",
+        "701.50e",
+        "701.50f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed single-object Connive; exact private principal, committed discard, counter and completion boundaries."
+    },
+    {
+      "capability_id": "hand.connive.fixed_count",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_controller_effect_sequences.FixedConniveRuntimeTests.test_original_connive_departure_uses_last_controller_and_never_counters_returned_object",
+      "official_rule_ids": [
+        "121.2",
+        "122.1a",
+        "400.7",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "701.50a",
+        "701.50b",
+        "701.50d",
+        "701.50e",
+        "701.50f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed single-object Connive; exact private principal, committed discard, counter and completion boundaries."
+    },
+    {
+      "capability_id": "hand.connive.fixed_count",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_controller_effect_sequences.FixedConniveRuntimeTests.test_original_connive_draw_replacement_preserves_mandatory_discard_and_replay",
+      "official_rule_ids": [
+        "121.2",
+        "122.1a",
+        "400.7",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "701.50a",
+        "701.50b",
+        "701.50d",
+        "701.50e",
+        "701.50f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed single-object Connive; exact private principal, committed discard, counter and completion boundaries."
+    },
+    {
+      "capability_id": "hand.connive.fixed_count",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_controller_effect_sequences.FixedConniveRuntimeTests.test_original_connive_redirected_discard_and_counter_replacements_resume_once",
+      "official_rule_ids": [
+        "121.2",
+        "122.1a",
+        "400.7",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "701.50a",
+        "701.50b",
+        "701.50d",
+        "701.50e",
+        "701.50f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed single-object Connive; exact private principal, committed discard, counter and completion boundaries."
+    },
+    {
+      "capability_id": "hand.connive.fixed_count",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_controller_effect_sequences.FixedControllerEffectSequenceCompilerTests.test_connive_phases_keep_identity_and_committed_discard_results",
+      "official_rule_ids": [
+        "121.2",
+        "122.1a",
+        "400.7",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "701.50a",
+        "701.50b",
+        "701.50d",
+        "701.50e",
+        "701.50f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed single-object Connive; exact private principal, committed discard, counter and completion boundaries."
+    },
+    {
+      "capability_id": "hand.connive.fixed_count",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_controller_effect_sequences.FixedConniveRuntimeTests.test_original_connive_uses_private_discard_and_replays_from_cast",
+      "official_rule_ids": [
+        "121.2",
+        "122.1a",
+        "400.7",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "701.50a",
+        "701.50b",
+        "701.50d",
+        "701.50e",
+        "701.50f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed single-object Connive; exact private principal, committed discard, counter and completion boundaries."
+    },
+    {
+      "capability_id": "hand.connive.fixed_count",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_controller_effect_sequences.FixedConniveRuntimeTests.test_connive_counter_omission_mutant_is_killed_by_original_card_action",
+      "official_rule_ids": [
+        "121.2",
+        "122.1a",
+        "400.7",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "701.50a",
+        "701.50b",
+        "701.50d",
+        "701.50e",
+        "701.50f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed single-object Connive; exact private principal, committed discard, counter and completion boundaries."
+    },
+    {
+      "capability_id": "hand.connive.fixed_count",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_controller_effect_sequences.FixedControllerEffectSequenceCompilerTests.test_fixed_connive_producer_omission_mutant_is_killed",
+      "official_rule_ids": [
+        "121.2",
+        "122.1a",
+        "400.7",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "701.50a",
+        "701.50b",
+        "701.50d",
+        "701.50e",
+        "701.50f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed single-object Connive; exact private principal, committed discard, counter and completion boundaries."
+    },
+    {
+      "capability_id": "hand.connive.fixed_count",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_controller_effect_sequences.FixedConniveRuntimeTests.test_connive_zero_has_no_draw_discard_counter_or_completion",
+      "official_rule_ids": [
+        "121.2",
+        "122.1a",
+        "400.7",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "701.50a",
+        "701.50b",
+        "701.50d",
+        "701.50e",
+        "701.50f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed single-object Connive; exact private principal, committed discard, counter and completion boundaries."
+    },
+    {
+      "capability_id": "hand.connive.fixed_count",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_controller_effect_sequences.FixedControllerEffectSequenceCompilerTests.test_connive_empty_hand_stale_choice_and_hidden_discard_fail_closed",
+      "official_rule_ids": [
+        "121.2",
+        "122.1a",
+        "400.7",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "701.50a",
+        "701.50b",
+        "701.50d",
+        "701.50e",
+        "701.50f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed single-object Connive; exact private principal, committed discard, counter and completion boundaries."
+    },
+    {
+      "capability_id": "hand.connive.fixed_count",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_controller_effect_sequences.FixedControllerEffectSequenceCompilerTests.test_fixed_connive_admission_rejects_open_shapes_and_missing_dependencies",
+      "official_rule_ids": [
+        "121.2",
+        "122.1a",
+        "400.7",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "701.50a",
+        "701.50b",
+        "701.50d",
+        "701.50e",
+        "701.50f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed single-object Connive; exact private principal, committed discard, counter and completion boundaries."
+    },
+    {
+      "capability_id": "hand.connive.fixed_count",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_controller_effect_sequences.FixedConniveRuntimeTests.test_target_connive_uses_target_controller_and_fixed_n_keeps_land_distinction",
+      "official_rule_ids": [
+        "121.2",
+        "122.1a",
+        "400.7",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "701.50a",
+        "701.50b",
+        "701.50d",
+        "701.50e",
+        "701.50f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed single-object Connive; exact private principal, committed discard, counter and completion boundaries."
+    },
+    {
+      "capability_id": "hand.connive.fixed_count",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_controller_effect_sequences.FixedControllerEffectSequenceCompilerTests.test_connive_phases_keep_identity_and_committed_discard_results",
+      "official_rule_ids": [
+        "121.2",
+        "122.1a",
+        "400.7",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "701.50a",
+        "701.50b",
+        "701.50d",
+        "701.50e",
+        "701.50f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed single-object Connive; exact private principal, committed discard, counter and completion boundaries."
+    },
+    {
+      "capability_id": "hand.connive.fixed_count",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_controller_effect_sequences.FixedControllerEffectSequenceCompilerTests.test_fixed_connive_codec_and_recipient_grammar_are_closed",
+      "official_rule_ids": [
+        "121.2",
+        "122.1a",
+        "400.7",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "701.50a",
+        "701.50b",
+        "701.50d",
+        "701.50e",
+        "701.50f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed single-object Connive; exact private principal, committed discard, counter and completion boundaries."
+    },
+    {
+      "capability_id": "hand.connive.fixed_count",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_controller_effect_sequences.FixedConniveRuntimeTests.test_original_connive_uses_private_discard_and_replays_from_cast",
+      "official_rule_ids": [
+        "121.2",
+        "122.1a",
+        "400.7",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "701.50a",
+        "701.50b",
+        "701.50d",
+        "701.50e",
+        "701.50f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed single-object Connive; exact private principal, committed discard, counter and completion boundaries."
+    },
+    {
+      "capability_id": "hand.connive.fixed_count",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_controller_effect_sequences.FixedConniveRuntimeTests.test_original_connive_departure_uses_last_controller_and_never_counters_returned_object",
+      "official_rule_ids": [
+        "121.2",
+        "122.1a",
+        "400.7",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "701.50a",
+        "701.50b",
+        "701.50d",
+        "701.50e",
+        "701.50f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed single-object Connive; exact private principal, committed discard, counter and completion boundaries."
+    },
+    {
+      "capability_id": "hand.connive.fixed_count",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_controller_effect_sequences.FixedConniveRuntimeTests.test_original_connive_draw_replacement_preserves_mandatory_discard_and_replay",
+      "official_rule_ids": [
+        "121.2",
+        "122.1a",
+        "400.7",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "701.50a",
+        "701.50b",
+        "701.50d",
+        "701.50e",
+        "701.50f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed single-object Connive; exact private principal, committed discard, counter and completion boundaries."
+    },
+    {
+      "capability_id": "hand.connive.fixed_count",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_controller_effect_sequences.FixedConniveRuntimeTests.test_original_connive_redirected_discard_and_counter_replacements_resume_once",
+      "official_rule_ids": [
+        "121.2",
+        "122.1a",
+        "400.7",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "701.50a",
+        "701.50b",
+        "701.50d",
+        "701.50e",
+        "701.50f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed single-object Connive; exact private principal, committed discard, counter and completion boundaries."
+    },
+    {
+      "capability_id": "hand.connive.fixed_count",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_controller_effect_sequences.FixedConniveRuntimeTests.test_original_connive_uses_private_discard_and_replays_from_cast",
+      "official_rule_ids": [
+        "121.2",
+        "122.1a",
+        "400.7",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "701.50a",
+        "701.50b",
+        "701.50d",
+        "701.50e",
+        "701.50f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed single-object Connive; exact private principal, committed discard, counter and completion boundaries."
+    },
+    {
+      "capability_id": "hand.connive.fixed_count",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_controller_effect_sequences.FixedConniveRuntimeTests.test_target_connive_uses_target_controller_and_fixed_n_keeps_land_distinction",
+      "official_rule_ids": [
+        "121.2",
+        "122.1a",
+        "400.7",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "701.50a",
+        "701.50b",
+        "701.50d",
+        "701.50e",
+        "701.50f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed single-object Connive; exact private principal, committed discard, counter and completion boundaries."
+    },
+    {
       "capability_id": "keyword_action.adapt.fixed",
       "evidence_class": "interaction",
       "test_id": "tests.test_self_counter_keyword_actions.PermanentDesignationTests.test_adapt_uses_canonical_counter_replacement_and_replays",
@@ -116461,5 +116941,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "0a8305e943b0d86f40b2ecd0730176f288b4e5f0ba121a0f1e1e5447bdf12870"
+  "fingerprint": "e0b4365a1c850e6405c7127f5fa0bdb481f853d58a4642bf2bda40bc098781fa"
 }

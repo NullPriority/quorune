@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 230,
+  "registry_version": 231,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -17014,6 +17014,111 @@
       "dependency_fail_closed_rationale": "Entry replacement closure remains separately required.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "The actual original land-play witness detects removal of the reveal replacement producer before publication.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "hand.connive.fixed_count",
+      "version": 1,
+      "official_rules": [
+        "121.2",
+        "122.1a",
+        "400.7",
+        "701.9a",
+        "701.9b",
+        "701.9c",
+        "701.50a",
+        "701.50b",
+        "701.50d",
+        "701.50e",
+        "701.50f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Resolve fixed single-object Connive with current or retained controller, replacement-aware private draws and mandatory chosen discards, committed nonland counting, incarnation-bound counters, and completion after the full process.",
+        "inputs": [
+          "one source permanent or one target creature",
+          "fixed count zero through twenty",
+          "current or retained source incarnation and controller",
+          "private hand choice and canonical committed discard history"
+        ],
+        "outputs": [
+          "draw then discard in printed order",
+          "conditional canonical +1/+1 counter placement",
+          "normalized Connive completion after all phases",
+          "private principal-bound continuation and exact replay"
+        ],
+        "exclusions": [
+          "simultaneous multiple connivers",
+          "variable or unbounded Connive amounts",
+          "Connive replacement effects",
+          "unrepresented event listeners and reflexive results",
+          "ambiguous recipient pronouns outside source-local instructions"
+        ]
+      },
+      "dependencies": [
+        "counter.placement.quantity_replacement",
+        "zone.change.destination_replacement",
+        "zone.discard.typed_cause",
+        "zone.draw.library_to_hand"
+      ],
+      "implementation_components": [
+        "quorune.compiler.connive_templates.fixed_connive_effect_template",
+        "quorune.rules.connive_capability_shapes.fixed_connive_node_capabilities",
+        "quorune.semantic_choices.connive.FixedConniveChoiceHandler",
+        "quorune.semantic_runtime.connive_intent.ConniveCompletedIntent",
+        "quorune.connive.bind_connive_instruction",
+        "quorune.connive.capture_connive_source_departure",
+        "quorune.connive.connive_discard_characteristic_ids",
+        "quorune.connive.connive_trigger_departure_context",
+        "quorune.semantic_choices.intent_host.SemanticChoiceIntentHostMixin.complete_connive_intent"
+      ],
+      "positive_tests": [
+        "test_fixed_connive_codec_and_recipient_grammar_are_closed",
+        "test_connive_phases_keep_identity_and_committed_discard_results",
+        "test_target_connive_uses_target_controller_and_fixed_n_keeps_land_distinction"
+      ],
+      "negative_tests": [
+        "test_fixed_connive_admission_rejects_open_shapes_and_missing_dependencies",
+        "test_connive_empty_hand_stale_choice_and_hidden_discard_fail_closed",
+        "test_connive_zero_has_no_draw_discard_counter_or_completion"
+      ],
+      "interaction_tests": [
+        "test_connive_phases_keep_identity_and_committed_discard_results",
+        "test_original_connive_departure_uses_last_controller_and_never_counters_returned_object",
+        "test_original_connive_redirected_discard_and_counter_replacements_resume_once",
+        "test_original_connive_draw_replacement_preserves_mandatory_discard_and_replay",
+        "test_connive_departure_trigger_captures_original_controller_before_new_stack_item"
+      ],
+      "multiplayer_tests": [
+        "test_original_connive_uses_private_discard_and_replays_from_cast"
+      ],
+      "privacy_tests": [
+        "test_original_connive_uses_private_discard_and_replays_from_cast"
+      ],
+      "replay_tests": [
+        "test_original_connive_uses_private_discard_and_replays_from_cast",
+        "test_original_connive_departure_uses_last_controller_and_never_counters_returned_object",
+        "test_original_connive_redirected_discard_and_counter_replacements_resume_once",
+        "test_original_connive_draw_replacement_preserves_mandatory_discard_and_replay",
+        "test_target_connive_uses_target_controller_and_fixed_n_keeps_land_distinction"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Exact shape and full compiler witnesses withdraw the precise Connive capability and retain the instruction as a material residual.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "The source template omission witness removes previously exact compiler admission.",
       "blockers": [],
       "status": "trusted"
     }

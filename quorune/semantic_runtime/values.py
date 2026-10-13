@@ -143,6 +143,9 @@ def resolve_semantic_value(
         return count
     if value == "$source.controller":
         return explore_source_controller(item, host.state.cards)
+    if value == "$source.connive_controller":
+        from ..connive import connive_source_controller
+        return connive_source_controller(item,host.state.cards)
     if value == "$card":
         card = host.state.cards.get(item.card_object_id or "")
         return card.ref if card else None

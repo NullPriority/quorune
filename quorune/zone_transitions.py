@@ -440,6 +440,8 @@ class ZoneTransitionOwner:
         )
         if card.zone == "battlefield":
             capture_explore_source_departure(self.host, card)
+            from .connive import capture_connive_source_departure
+            capture_connive_source_departure(self.host, card)
         return ZoneDepartureSnapshot(
             origin=card.zone,
             controller=card.controller,

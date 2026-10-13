@@ -9,6 +9,14 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+Fixed Connive accepts a complete single-object instruction with a represented
+integer count. Explicit self references require a permanent source; source
+pronouns require a closed source event binding. Target creature instructions
+retain the canonical target and bind its current controller at resolution.
+The precise Connive shape excludes internal continuation fields, open result
+tails and ambiguous event-object pronouns. Its capability closes through the
+existing draw, typed discard, destination replacement and counter owners.
+
 `compiler/fixed_resolution_mana.py` lowers complete fixed symbol bundles into
 the existing mana effect, one instruction per represented color or colorless
 quantity. A represented spending restriction remains attached to every unit.

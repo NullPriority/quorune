@@ -996,6 +996,8 @@ def _semantic_trigger_context(
     }
     from .effect_runtime.temporary_ability_bundle import printed_backup_source_context
     stack_context.update(printed_backup_source_context(source,program))
+    from .connive import connive_trigger_departure_context
+    stack_context.update(connive_trigger_departure_context(host, source, program))
     if "identity_pinned_graft_counter_movement" in program.coverage:
         recipient = next((card for card in host.state.cards.values()
                           if card.ref == context.get("card")), None)

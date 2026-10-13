@@ -342,6 +342,7 @@ _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
     "exile_public_graveyard_targets",
     "extra_turn",
     "explore",
+    "connive",
     "grant_keyword_until_end_of_turn",
     "grant_declaration_restriction_until_end_of_turn",
     "offer_draw",
