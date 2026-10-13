@@ -14,6 +14,14 @@ command validation, and resolution-time revalidation. A client receives only
 the legal public references in its current action schema and cannot substitute
 an authoritative object identifier or bypass the same predicate at commit.
 
+`selection/target_query.py` resolves an explicit object ID or case-insensitive
+public reference before name lookup. A matching reference keeps its identity
+even when another object's name matches that string. Zone, owner, controller
+and outside-zone filters still apply; a rejected reference does not fall back
+to another object's name. Without a reference match, the existing printed and
+effective name query retains ambiguity checks. Reference lookup does not
+evaluate unrelated objects' continuous characteristics or keep a state cache.
+
 `targets.py` owns the closed schema vocabulary and public-zone boundary.
 `target_predicates.py` owns reusable characteristic and relationship tests.
 `CommanderEngine._target_row_matches` remains the orchestration facade over

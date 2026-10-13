@@ -963,37 +963,12 @@ class CommanderEngine(
         controlled_only: bool = False,
         owned_only: bool = False,
     ) -> CardInstance:
-        self._require_seat(seat)
-        zone_filter = set(zones) if zones is not None else None
-        if value in self.state.cards:
-            card = self.state.cards[value]
-            candidates = [card]
-        else:
-            normalized = value.casefold().strip()
-            candidates = [
-                card
-                for card in self.state.cards.values()
-                if card.ref.casefold() == normalized
-                or card.printed_name.casefold() == normalized
-                or self.display_name(card.object_id).casefold() == normalized
-            ]
-        filtered: list[CardInstance] = []
-        for card in candidates:
-            if card.zone == "outside":
-                continue
-            if zone_filter is not None and card.zone not in zone_filter:
-                continue
-            if controlled_only and card.controller != seat:
-                continue
-            if owned_only and card.owner != seat:
-                continue
-            filtered.append(card)
-        if not filtered:
-            raise GameRuleError(f"Could not find {value!r} for {seat} in requested zones")
-        if len(filtered) > 1:
-            options = ", ".join(f"{card.ref}:{card.zone}" for card in filtered)
-            raise GameRuleError(f"Ambiguous object {value!r}; use a ref: {options}")
-        return filtered[0]
+        from .selection.target_query import resolve_object
+
+        return resolve_object(
+            self, seat, value, zones=zones,
+            controlled_only=controlled_only, owned_only=owned_only,
+        )
 
     def _next_active_after(self, seat: str) -> str:
         active = self.active_seats

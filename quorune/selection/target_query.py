@@ -2,13 +2,64 @@ from __future__ import annotations
 
 """Read-only target identity snapshots shared by proposal and revalidation."""
 
-from typing import Any, Mapping, Protocol
+from typing import Any, Iterable, Mapping, Protocol
+
+from ..errors import GameRuleError
 
 
 class TargetIdentityQuery(Protocol):
     state: Any
 
     def _effective_card_data(self, card: Any) -> Mapping[str, Any]: ...
+
+
+class ObjectIdentityQuery(Protocol):
+    state: Any
+
+    def _require_seat(self, seat: str) -> None: ...
+
+    def display_name(self, object_id: str) -> str: ...
+
+
+def resolve_object(
+    host: ObjectIdentityQuery,
+    seat: str,
+    value: str,
+    *,
+    zones: Iterable[str] | None = None,
+    controlled_only: bool = False,
+    owned_only: bool = False,
+) -> Any:
+    """Resolve explicit identities before evaluating the fallback name query."""
+    host._require_seat(seat)
+    zone_filter = set(zones) if zones is not None else None
+    if value in host.state.cards:
+        candidates = [host.state.cards[value]]
+    else:
+        normalized = value.casefold().strip()
+        candidates = [
+            card for card in host.state.cards.values()
+            if card.ref.casefold() == normalized
+        ]
+        if not candidates:
+            candidates = [
+                card for card in host.state.cards.values()
+                if card.printed_name.casefold() == normalized
+                or host.display_name(card.object_id).casefold() == normalized
+            ]
+    filtered = [
+        card for card in candidates
+        if card.zone != "outside"
+        and (zone_filter is None or card.zone in zone_filter)
+        and (not controlled_only or card.controller == seat)
+        and (not owned_only or card.owner == seat)
+    ]
+    if not filtered:
+        raise GameRuleError(f"Could not find {value!r} for {seat} in requested zones")
+    if len(filtered) > 1:
+        options = ", ".join(f"{card.ref}:{card.zone}" for card in filtered)
+        raise GameRuleError(f"Ambiguous object {value!r}; use a ref: {options}")
+    return filtered[0]
 
 
 def target_snapshot(host: TargetIdentityQuery, ref: str) -> dict[str, Any]:
@@ -94,4 +145,4 @@ def target_identity_matches_snapshot(
     )
 
 
-__all__ = ["target_identity_matches_snapshot", "target_snapshot"]
+__all__ = ["resolve_object", "target_identity_matches_snapshot", "target_snapshot"]

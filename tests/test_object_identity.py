@@ -4,6 +4,7 @@ from pathlib import Path
 import random
 import tempfile
 import unittest
+from types import SimpleNamespace
 from unittest.mock import patch
 
 from common import keep_all, load_assets, make_session
@@ -15,6 +16,98 @@ from quorune.record import (
 from quorune.semantics import SemanticProgram
 from quorune.targets import TargetGroup
 from quorune.util import stable_json
+
+
+class ObjectReferenceResolutionTests(unittest.TestCase):
+    def host(self, *cards, names=None):
+        from quorune.engine import CommanderEngine
+
+        host = SimpleNamespace(
+            state=SimpleNamespace(cards={card.object_id: card for card in cards}),
+            _require_seat=lambda seat: None,
+            display_name=lambda object_id: (names or {}).get(
+                object_id, next(card.printed_name for card in cards if card.object_id == object_id)
+            ),
+        )
+        host.resolve = lambda *args, **kwargs: CommanderEngine._resolve_object(host, *args, **kwargs)
+        return host
+
+    @staticmethod
+    def card(object_id, ref, *, name='Identity fixture', owner='A', controller='A', zone='battlefield'):
+        return CardInstance(object_id, ref, 'custom-token:identity', name, owner, controller, zone)
+
+    def test_public_ref_lookup_avoids_unrelated_effective_name_evaluation(self):
+        selected = self.card('selected', 'P-selected')
+        unrelated = self.card('unrelated', 'P-unrelated')
+        host = self.host(selected, unrelated)
+        with patch.object(host, 'display_name', side_effect=AssertionError('unrelated name evaluation')):
+            self.assertIs(selected, host.resolve('A', ' p-SELECTED ', zones={'battlefield'}))
+
+    def test_public_ref_is_identity_even_when_another_card_name_matches(self):
+        selected = self.card('selected', 'P-selected')
+        named = self.card('named', 'P-named', name='P-selected')
+        host = self.host(selected, named)
+        self.assertIs(selected, host.resolve('A', 'P-selected'))
+
+    def test_reference_resolution_preserves_all_filters_and_rejects_duplicates(self):
+        from quorune.errors import GameRuleError
+
+        selected = self.card('selected', 'P-selected', owner='B', controller='C')
+        host = self.host(selected)
+        self.assertIs(selected, host.resolve('B', 'P-selected', owned_only=True))
+        self.assertIs(selected, host.resolve('C', 'P-selected', controlled_only=True))
+        for options in ({'zones': {'hand'}}, {'owned_only': True}, {'controlled_only': True}):
+            with self.subTest(options=options), self.assertRaisesRegex(GameRuleError, 'Could not find'):
+                host.resolve('A', 'P-selected', **options)
+        selected.zone = 'outside'
+        with self.assertRaisesRegex(GameRuleError, 'Could not find'):
+            host.resolve('B', 'P-selected')
+        selected.zone = 'battlefield'
+        duplicate = self.card('duplicate', 'p-SELECTED')
+        with self.assertRaisesRegex(GameRuleError, 'Ambiguous object'):
+            self.host(selected, duplicate).resolve('A', 'P-selected')
+
+    def test_rejected_reference_cannot_fall_back_to_an_owned_namesake(self):
+        from quorune.errors import GameRuleError
+
+        selected = self.card('selected', 'P-selected', zone='graveyard', owner='B')
+        namesake = self.card('namesake', 'P-other', name='P-selected')
+        host = self.host(selected, namesake)
+        with self.assertRaisesRegex(GameRuleError, 'Could not find'):
+            host.resolve('A', selected.ref, zones={'battlefield'}, owned_only=True)
+        with patch.object(host, '_require_seat', side_effect=GameRuleError('invalid seat')):
+            with self.assertRaisesRegex(GameRuleError, 'invalid seat'):
+                host.resolve('UNKNOWN', selected.ref)
+
+    def test_name_lookup_retains_effective_names_ambiguity_and_filters(self):
+        from quorune.errors import GameRuleError
+
+        selected = self.card('selected', 'P-selected', name='Original')
+        foreign = self.card('foreign', 'P-foreign', name='Copied Name', owner='B', controller='B')
+        host = self.host(selected, foreign, names={'selected': 'Copied Name'})
+        self.assertIs(selected, host.resolve('A', 'original'))
+        with self.assertRaisesRegex(GameRuleError, 'Ambiguous object'):
+            host.resolve('A', 'copied name')
+        self.assertIs(selected, host.resolve('A', 'copied name', controlled_only=True))
+        self.assertIs(foreign, host.resolve('B', 'copied name', owned_only=True))
+        self.assertIs(selected, host.resolve('B', selected.object_id))
+
+    def test_reference_query_rereads_zone_control_and_reentered_instance(self):
+        from quorune.errors import GameRuleError
+
+        selected = self.card('selected', 'P-selected')
+        host = self.host(selected)
+        self.assertIs(selected, host.resolve('A', selected.ref, controlled_only=True))
+        selected.controller = 'B'
+        with self.assertRaisesRegex(GameRuleError, 'Could not find'):
+            host.resolve('A', selected.ref, controlled_only=True)
+        selected.zone = 'graveyard'
+        with self.assertRaisesRegex(GameRuleError, 'Could not find'):
+            host.resolve('B', selected.ref, zones={'battlefield'})
+        returned = self.card('selected', 'P-selected', controller='C')
+        returned.zone_change_counter = selected.zone_change_counter + 2
+        host.state.cards[selected.object_id] = returned
+        self.assertIs(returned, host.resolve('C', returned.ref, zones={'battlefield'}, controlled_only=True))
 
 
 class ObjectIdentityAndTokenLifecycleTests(unittest.TestCase):
@@ -82,6 +175,33 @@ class ObjectIdentityAndTokenLifecycleTests(unittest.TestCase):
             engine.state.timestamp_sequence,
             restored.timestamp_sequence,
         )
+
+    def test_reference_lookup_tracks_real_zone_control_and_rollback_boundaries(self):
+        from quorune.errors import GameRuleError
+
+        engine = self.make_engine(4018)
+        card = self.card(engine, 'A', 'Sol Ring')
+        engine.move_card(card.object_id, 'battlefield', controller='A', log=False)
+        self.assertIs(card, engine._resolve_object('A', card.ref, zones={'battlefield'}, controlled_only=True))
+        engine.change_control(card.object_id, 'B', reason='reference authority boundary')
+        with self.assertRaisesRegex(GameRuleError, 'Could not find'):
+            engine._resolve_object('A', card.ref, controlled_only=True)
+        self.assertIs(card, engine._resolve_object('B', card.ref, controlled_only=True))
+        original_identity = card.logical_object_id
+        with self.assertRaisesRegex(GameRuleError, 'rollback identity fixture'):
+            with engine.transaction():
+                engine.move_card(card.object_id, 'hand', log=False)
+                raise GameRuleError('rollback identity fixture')
+        current = engine.state.cards[card.object_id]
+        self.assertIsNot(card, current)
+        self.assertEqual(original_identity, current.logical_object_id)
+        self.assertIs(current, engine._resolve_object('B', current.ref, zones={'battlefield'}, controlled_only=True))
+        engine.move_card(current.object_id, 'hand', log=False)
+        with self.assertRaisesRegex(GameRuleError, 'Could not find'):
+            engine._resolve_object('B', current.ref, zones={'battlefield'})
+        engine.move_card(current.object_id, 'battlefield', controller='A', log=False)
+        self.assertNotEqual(original_identity, current.logical_object_id)
+        self.assertIs(current, engine._resolve_object('A', current.ref, zones={'battlefield'}, controlled_only=True))
 
     def test_incarnation_counter_is_monotonic_under_zone_mutation(self):
         engine = self.make_engine(4014)
