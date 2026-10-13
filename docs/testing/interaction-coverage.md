@@ -89,3 +89,12 @@ original-card land plays. The entry threshold determines whether an untapped-ent
 trigger exists; the chosen graveyard incarnation is then revalidated independently
 after a response moves it. Residual regeneration, targeting, and multiple-damage
 siblings retain separate whole-program admission rejection witnesses.
+
+Source-departure exile has actual Aura attachment and state-based departure
+witnesses, a target-incarnation revalidation witness, and a constructed Equip
+witness that distinguishes reattachment from source departure. Restricted Equip
+also has a constructed live turn-condition witness. Original Equipment carriers
+with unresolved copy or attack-alone siblings remain rejected at whole-program
+admission. Random discard revalidates a departed player before sampling any
+surviving hand. Controller sacrifice can select a Hexproof permanent because
+that choice does not target it.

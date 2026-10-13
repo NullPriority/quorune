@@ -10,6 +10,109 @@
   "repository": "NullPriority/quorune",
   "escapes": [
     {
+      "id": "ci-20261013-pr508-static-protection-expectations",
+      "run_id": 38478187352,
+      "head_sha": "f3d140fad245401e2438b56b4c8b9d162d2340dc",
+      "category": "source_correctness",
+      "deterministic": true,
+      "summary": "Whole-program query grant integration still classified newly represented typed red Protection as a material residual; Ubuntu and Windows functional-05 failed both ordinary and combined characteristic grant cases.",
+      "failed_surfaces": [
+        "PR / Python / functional-05",
+        "PR / Windows / functional-05"
+      ],
+      "regressions": [
+        "test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_open_or_unsupported_queries_remain_material_residuals"
+      ],
+      "impact_edge_status": "not_applicable",
+      "resolution": "Assert the promoted whole-program red quality and preserve a deliberate unresolved chosen-player quality as the negative boundary. The static Protection impact edge already selects this exact integration module."
+    },
+    {
+      "id": "ci-20261013-pr508-interaction-consumers",
+      "run_id": 38478187352,
+      "head_sha": "f3d140fad245401e2438b56b4c8b9d162d2340dc",
+      "category": "source_correctness",
+      "deterministic": true,
+      "summary": "Newly reachable Aura/exile, Equip, Hexproof/sacrifice, targeted random discard and unresolved sibling pairs lacked exact interaction declarations. Four unrelated scheduler fixture tests also inherited the live assurance debt and selected recovery instead of their intended ranking or freshness control.",
+      "failed_surfaces": [
+        "PR / Generated and architecture",
+        "PR / Windows / generated-validation"
+      ],
+      "regressions": [
+        "test_conditional_exile.ConditionalExileOriginalActionTests.test_original_conditional_exile_auras_return_when_their_attachment_leaves",
+        "test_conditional_exile.ConditionalExileOriginalActionTests.test_trusted_equipment_equip_does_not_end_conditional_exile_but_departure_does",
+        "test_conditional_exile.ConditionalExileOriginalActionTests.test_restricted_equip_uses_current_subtype_and_turn_condition_tracks_recipient",
+        "test_conditional_exile.ConditionalExileOriginalActionTests.test_original_lasso_revalidates_departed_target_without_creating_a_hold",
+        "test_controller_sacrifices.ControllerSacrificeActionTests.test_original_lotus_field_hexproof_does_not_prevent_controller_sacrifice",
+        "test_random_discard.RandomDiscardActionTests.test_original_hymn_revalidates_departed_player_without_discarding_surviving_hands",
+        "test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_original_batched_scope_expansions_keep_unrepresented_compositions_untrusted",
+        "test_rules_scheduler.RulesSchedulerTests.test_ranking_fixture_controls_unrelated_live_interaction_debt"
+      ],
+      "impact_edge_status": "not_applicable",
+      "resolution": "Add actual original Aura/exile, target-loss and Hexproof/controller-sacrifice actions with replay plus constructed strictly admitted Equipment controls. Unrepresented original Equipment and target/conditional siblings remain rejected through canonical whole-card binding. Declare exact supported pairs separately from fail-closed pairs; canonical fixtures serve every CI consumer. Isolate only unrelated exit debt in synthetic ranking inputs; the production assurance gate and all ranking assertions remain intact."
+    },
+    {
+      "id": "ci-20261013-pr508-collection-aliases",
+      "run_id": 38478187352,
+      "head_sha": "f3d140fad245401e2438b56b4c8b9d162d2340dc",
+      "category": "source_correctness",
+      "deterministic": true,
+      "summary": "Imported helper TestCase class globals caused unittest to collect existing methods repeatedly; Ubuntu functional-08/09 and Windows functional-08/09 rejected duplicate test IDs before gameplay execution. Generated-governance on both operating systems also failed architecture test-count reconciliation and OS/shard result expectations through the same duplicate collection.",
+      "failed_surfaces": [
+        "PR / Python / functional-08",
+        "PR / Python / functional-09",
+        "PR / Windows / functional-08",
+        "PR / Windows / functional-09",
+        "PR / Generated and architecture",
+        "PR / Windows / generated-validation",
+        "PR / Windows Certification",
+        "PR / Certification"
+      ],
+      "regressions": [
+        "test_test_shards.TestShardManifestTests.test_imported_helper_test_case_aliases_fail_before_matrix_collection"
+      ],
+      "impact_edge_status": "not_applicable",
+      "resolution": "Five new family test modules import helper modules instead of binding TestCase classes as globals. The existing shard partition validator now statically rejects the demonstrated imported TestCase alias and accepts module imports and ordinary helper classes before any matrix launches. Every primary collection has unique IDs; no tests or checks are removed."
+    },
+    {
+      "id": "ci-20261013-pr508-random-integration",
+      "run_id": 38478187352,
+      "head_sha": "f3d140fad245401e2438b56b4c8b9d162d2340dc",
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "summary": "The fixed random-discard owner promotes previously excluded whole-card spell, damage-player and draw-sequence instructions. Adjacent affected-player discard, hand inspection and controller sequence integration tests retained their prior residual expectations.",
+      "failed_surfaces": [
+        "PR / Python / functional-03",
+        "PR / Python / functional-06",
+        "PR / Windows / functional-06",
+        "PR / Windows / functional-03"
+      ],
+      "regressions": [
+        "test_fixed_affected_player_discards.FixedAffectedPlayerDiscardCompilerTests.test_context_discard_scope_and_shape_boundaries_fail_closed",
+        "test_fixed_affected_player_discards.FixedAffectedPlayerDiscardCompilerTests.test_unsupported_discard_choices_and_shape_mutations_fail_closed",
+        "test_fixed_hand_inspection.FixedHandInspectionCompilerTests.test_unsupported_hand_inspection_grammar_and_shape_mutations_fail_closed",
+        "test_fixed_controller_effect_sequences.FixedControllerEffectSequenceCompilerTests.test_unsupported_sequence_wording_remains_a_precise_residual"
+      ],
+      "impact_edge_status": "added",
+      "resolution": "Preserve isolated discard/inspection leaf rejection and assert positive whole-card random-owner integration. A filtered random creature-card case retains the meaningful unsupported boundary. Add hand inspection to the random-discard impact edge; the controller sequence and affected discard owners were already selected."
+    },
+    {
+      "id": "ci-20261013-pr508-temporary-fragments",
+      "run_id": 38478187352,
+      "head_sha": "f3d140fad245401e2438b56b4c8b9d162d2340dc",
+      "category": "source_correctness",
+      "deterministic": true,
+      "summary": "Expanded static grant parsing let the legacy temporary controller-set leaf emit a Protection label while dropping its typed color quality. The existing closed-set grammar assertion failed on both Ubuntu and Windows functional-10.",
+      "failed_surfaces": [
+        "PR / Python / functional-10",
+        "PR / Windows / functional-10"
+      ],
+      "regressions": [
+        "test_continuous_effect_duration.ContinuousEffectModelTests.test_fixed_controlled_characteristic_query_grammar_is_closed"
+      ],
+      "impact_edge_status": "added",
+      "resolution": "The label-only temporary set codec rejects any typed fragments it cannot represent, including Protection qualities and triggered Prowess. Ordinary keyword sets, static live typed grants and direct temporary Protection keep their existing owners. Add the continuous-duration consumer to the Protection impact edge; retained candidate and restored prevention IDs still bind strictly. The semantic correction receives a new canonical census."
+    },
+    {
       "id": "ci-20261008-80",
       "run_id": 37786890971,
       "head_sha": "4ee79fcbe4d382132983a946e77d8599c3afbb0d",

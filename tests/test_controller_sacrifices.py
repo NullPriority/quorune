@@ -13,7 +13,8 @@ from quorune.oracle_ir import compile_oracle_card
 from quorune.record import authoritative_state_hash
 from quorune.rules.capabilities import load_default_capability_registry
 from scripts.build_test_database import build_fixture_database
-from test_bound_effect_programs import BoundEffectProgramRuntimeTests, record
+import test_bound_effect_programs as bound_witnesses
+from test_bound_effect_programs import record
 
 
 class ControllerSacrificeCompilerTests(unittest.TestCase):
@@ -50,18 +51,19 @@ class ControllerSacrificeCompilerTests(unittest.TestCase):
 
 
 class ControllerSacrificeActionTests(unittest.TestCase):
-    add=BoundEffectProgramRuntimeTests.add
-    ready=BoundEffectProgramRuntimeTests.ready
-    checkpoint=BoundEffectProgramRuntimeTests.checkpoint
-    resolve=BoundEffectProgramRuntimeTests.resolve
-    replay=BoundEffectProgramRuntimeTests.replay
-    session=BoundEffectProgramRuntimeTests.session
+    add=bound_witnesses.BoundEffectProgramRuntimeTests.add
+    ready=bound_witnesses.BoundEffectProgramRuntimeTests.ready
+    checkpoint=bound_witnesses.BoundEffectProgramRuntimeTests.checkpoint
+    resolve=bound_witnesses.BoundEffectProgramRuntimeTests.resolve
+    replay=bound_witnesses.BoundEffectProgramRuntimeTests.replay
+    session=bound_witnesses.BoundEffectProgramRuntimeTests.session
 
     @classmethod
     def setUpClass(cls):
         cls.temporary=tempfile.TemporaryDirectory();path=Path(cls.temporary.name)/'controller-sacrifice.sqlite3'
         build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',
-            ROOT/'tests/fixtures/controller-sacrifice-cards.json',ROOT/'tests/fixtures/whole-hand-discard-cards.json'],path)
+            ROOT/'tests/fixtures/controller-sacrifice-cards.json',ROOT/'tests/fixtures/whole-hand-discard-cards.json',
+            ROOT/'tests/fixtures/conditional-exile-cards.json'],path)
         cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
         cls.deck=DeckDefinition('Controller sacrifice witness',[DeckEntry('Generic Bound Commander',1,'commander'),
             DeckEntry('Generic Bound Plains',30)],['Generic Bound Commander'])
@@ -100,6 +102,33 @@ class ControllerSacrificeActionTests(unittest.TestCase):
             self.assertEqual('battlefield',resumed.state.cards[enemy.object_id].zone)
             survivor=other if self_choice else source
             self.assertEqual('battlefield',resumed.state.cards[survivor.object_id].zone)
+
+    def test_original_lotus_field_hexproof_does_not_prevent_controller_sacrifice(self):
+        # CR 702.11b restricts opposing targets; CR 701.21 sacrifice is not targeting.
+        session=self.session(701216);engine=session.engine
+        field=self.add(engine,'Lotus Field',zone='hand',ref='hexproof-sacrifice-field')
+        spell=self.add(engine,'Perilous Research',zone='hand',ref='controller-land-sacrifice')
+        self.ready(session,field,{'U':1,'C':1});self.checkpoint(session)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        action=next(row for row in actions if row.get('card')==field.ref)
+        result=session.act('pilot:A',{'action_id':action['id']})
+        self.assertTrue(result.ok,result.summary)
+        self.assertEqual('choice.apnap',self.resolve(session).kind)
+        self.assertTrue(session.act('pilot:A',{'action_id':'choose','cards':[field.ref]}).ok)
+        self.resolve(session)
+        self.assertEqual('graveyard',session.state.cards[field.object_id].zone)
+        self.replay(session,load=True)
+
+        session=self.session(701217);engine=session.engine
+        field=self.add(engine,'Lotus Field',ref='hexproof-research-field')
+        spell=self.add(engine,'Perilous Research',zone='hand',ref='hexproof-research')
+        action=self.ready(session,spell,{'U':1,'C':1});self.checkpoint(session)
+        self.assertIn('hexproof',engine._combat_keywords(field))
+        self.assertTrue(session.act('pilot:A',{'action_id':action['id'],'pay':'auto'}).ok)
+        hand_size=len(session.state.players['A'].zones['hand'])
+        resumed=self.complete_sacrifice(session,field.ref)
+        self.assertEqual('graveyard',resumed.state.cards[field.object_id].zone)
+        self.assertEqual(hand_size+2,len(resumed.state.players['A'].zones['hand']))
 
     def test_subtype_sacrifice_uses_current_type_after_response_and_rejects_stale_choice(self):
         session=self.session(701220);engine=session.engine

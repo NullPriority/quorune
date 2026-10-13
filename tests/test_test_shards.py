@@ -28,11 +28,25 @@ from scripts.test_shards import (
     test_collection_fingerprint,
     TestShardError,
     validate_partition,
+    validate_imported_test_case_aliases,
     validate_semantic_program_fixture_identities,
 )
 
 
 class TestShardManifestTests(unittest.TestCase):
+    def test_imported_helper_test_case_aliases_fail_before_matrix_collection(self):
+        with TemporaryDirectory() as raw:
+            root=Path(raw)
+            (root/'test_helper.py').write_text('import unittest\nclass HelperTests(unittest.TestCase):\n    def test_example(self): pass\n',encoding='utf-8')
+            (root/'test_owner.py').write_text('from test_helper import HelperTests as Borrowed\n',encoding='utf-8')
+            with self.assertRaisesRegex(TestShardError,'duplicate collection'):
+                validate_imported_test_case_aliases(root)
+            (root/'test_owner.py').write_text('import test_helper as helpers\nclass OwnerTests:\n    method = helpers.HelperTests.test_example\n',encoding='utf-8')
+            validate_imported_test_case_aliases(root)
+            (root/'test_helper.py').write_text('class HelperTools:\n    def test_example(self): pass\n',encoding='utf-8')
+            (root/'test_owner.py').write_text('from test_helper import HelperTools\n',encoding='utf-8')
+            validate_imported_test_case_aliases(root)
+
     def setUp(self):
         self.manifest = load_manifest()
 

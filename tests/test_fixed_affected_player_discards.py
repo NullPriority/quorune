@@ -246,11 +246,15 @@ class FixedAffectedPlayerDiscardCompilerTests(unittest.TestCase):
                 self.assertEqual((), fixed_context_player_discard_node_capabilities(
                     effects=({**contextual, **changes},), target_schema=None,
                     mechanic_ids=context_mechanics))
-        for text in ("Discard a card at random.", "Discard five cards.",
+        for text in ("Discard five cards.",
                      "Discard a creature card.", "Discard X cards.",
                      "Whenever this creature deals combat damage to a player, that player discards four cards.",
-                     "Whenever this creature deals combat damage to a player, that player discards a card at random."):
+                     "Whenever this creature deals combat damage to a player, that player discards a creature card at random."):
             self.assertNotEqual("exact", self.compile(text, type_line="Creature — Test").status, text)
+        text="Whenever this creature deals combat damage to a player, that player discards a card at random."
+        ir=self.compile(text,type_line="Creature — Test")
+        self.assertEqual("exact",ir.status,ir.material_residuals)
+        self.assertEqual("discard_random_cards",ir.faces[0].nodes[0].effects[0]["op"])
         text = "Whenever this creature deals combat damage to a player, that player discards two cards."
         with patch("quorune.compiler.affected_player_discard_templates.damage_player_discard_result", return_value=None):
             self.assertNotEqual("exact", self.compile(text, type_line="Creature — Test").status)
@@ -279,8 +283,12 @@ class FixedAffectedPlayerDiscardCompilerTests(unittest.TestCase):
                     fixed_affected_player_discard_effect_template(text)
                 )
                 ir = self.compile(text)
-                self.assertNotEqual("exact", ir.status)
-                self.assertTrue(ir.material_residuals)
+                if text == "Target player discards a card at random.":
+                    self.assertEqual("exact",ir.status,ir.material_residuals)
+                    self.assertEqual("discard_random_cards",ir.faces[0].nodes[0].effects[0]["op"])
+                else:
+                    self.assertNotEqual("exact", ir.status)
+                    self.assertTrue(ir.material_residuals)
 
         template = fixed_affected_player_discard_effect_template(
             "Target player discards two cards."

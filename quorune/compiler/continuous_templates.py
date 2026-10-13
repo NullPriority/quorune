@@ -1565,6 +1565,10 @@ def controlled_characteristic_until_end_of_turn_effect(
     ):
         return None
     modifier = descriptor["modifier"]
+    if modifier.get("add_ability_fragments"):
+        # This legacy resolution-set codec carries ordinary keyword labels only.
+        # A typed quality or trigger must not be silently discarded here.
+        return None
     keywords = tuple(modifier["add_abilities"])
     mechanics = tuple(
         sorted(

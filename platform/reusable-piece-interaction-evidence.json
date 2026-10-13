@@ -9802,6 +9802,214 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual casts resolve controller Surveil counts and trigger only the current controller observer after the private partition finishes. Zero performs no action; positive empty-library completion triggers once. Pending reload and pre-cast replay preserve the result."
+    },
+
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_conditional_exile_auras_return_when_their_attachment_leaves",
+      "piece_ids": [
+        "capability.attachment.aura.simple_object",
+        "capability.zone.exile_until_source_departure.fixed"
+      ],
+      "capability_ids": [
+        "attachment.aura.simple_object",
+        "zone.exile_until_source_departure.fixed"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Faith Unbroken and Ossification strictly compile and bind, reject a foreign attachment recipient without mutation, cast onto the legal creature or basic land, and exile an opponent's actual object. An accepted return spell removes the enchanted recipient; state-based Aura departure returns the held incarnation under its owner exactly once, including pending save/load and pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_conditional_exile_auras_return_when_their_attachment_leaves",
+      "piece_ids": [
+        "capability.attachment.aura.simple_object",
+        "capability.zone.linked_exile_return.fixed"
+      ],
+      "capability_ids": [
+        "attachment.aura.simple_object",
+        "zone.linked_exile_return.fixed"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Faith Unbroken and Ossification strictly compile and bind, reject a foreign attachment recipient without mutation, cast onto the legal creature or basic land, and exile an opponent's actual object. An accepted return spell removes the enchanted recipient; state-based Aura departure returns the held incarnation under its owner exactly once, including pending save/load and pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_conditional_exile_auras_return_when_their_attachment_leaves",
+      "piece_ids": [
+        "capability.attachment.aura.typed_restriction",
+        "capability.zone.exile_until_source_departure.fixed"
+      ],
+      "capability_ids": [
+        "attachment.aura.typed_restriction",
+        "zone.exile_until_source_departure.fixed"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Faith Unbroken and Ossification strictly compile and bind, reject a foreign attachment recipient without mutation, cast onto the legal creature or basic land, and exile an opponent's actual object. An accepted return spell removes the enchanted recipient; state-based Aura departure returns the held incarnation under its owner exactly once, including pending save/load and pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_conditional_exile_auras_return_when_their_attachment_leaves",
+      "piece_ids": [
+        "capability.attachment.aura.typed_restriction",
+        "capability.zone.linked_exile_return.fixed"
+      ],
+      "capability_ids": [
+        "attachment.aura.typed_restriction",
+        "zone.linked_exile_return.fixed"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Faith Unbroken and Ossification strictly compile and bind, reject a foreign attachment recipient without mutation, cast onto the legal creature or basic land, and exile an opponent's actual object. An accepted return spell removes the enchanted recipient; state-based Aura departure returns the held incarnation under its owner exactly once, including pending save/load and pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_lotus_field_hexproof_does_not_prevent_controller_sacrifice",
+      "piece_ids": [
+        "capability.target.protection.hexproof_permanent",
+        "capability.zone.change.destination_replacement"
+      ],
+      "capability_ids": [
+        "target.protection.hexproof_permanent",
+        "zone.change.destination_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "An actually played original Lotus Field enters tapped and its controller can sacrifice the Hexproof source itself. A separate original Perilous Research cast also selects and sacrifices that source through the canonical zone-change owner without treating the nontargeting choice as an opposing target; commands and pending choices replay exactly."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_hymn_revalidates_departed_player_without_discarding_surviving_hands",
+      "piece_ids": [
+        "capability.target.revalidate_resolution",
+        "capability.zone.discard.fixed_random"
+      ],
+      "capability_ids": [
+        "target.revalidate_resolution",
+        "zone.discard.fixed_random"
+      ],
+      "interaction_order": 2,
+      "assertion": "An accepted original Hymn to Tourach targets a live opponent. That player concedes before resolution; the sole target is invalid, the spell reaches the graveyard, and no surviving private hand is sampled or discarded, with exact pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_lasso_revalidates_departed_target_without_creating_a_hold",
+      "piece_ids": [
+        "capability.target.revalidate_resolution",
+        "capability.zone.exile_until_source_departure.fixed"
+      ],
+      "capability_ids": [
+        "target.revalidate_resolution",
+        "zone.exile_until_source_departure.fixed"
+      ],
+      "interaction_order": 2,
+      "assertion": "An actual original Lassoed by the Law cast selects an opposing creature for its enter trigger. An accepted Unsummon response retires that target incarnation, so resolution creates no conditional hold while the separate Mercenary-producing ability still completes; exact replay retains both outcomes."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_original_batched_scope_expansions_keep_unrepresented_compositions_untrusted",
+      "piece_ids": [
+        "capability.zone.discard.fixed_random",
+        "residual.target_or_choice.target-predicate"
+      ],
+      "capability_ids": [
+        "zone.discard.fixed_random"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Tibalt preserves a supported random-discard loyalty body beside its unresolved targeted damage instruction. Canonical whole CardProgram binding rejects unresolved trust without constructing a gameplay approximation."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_original_batched_scope_expansions_keep_unrepresented_compositions_untrusted",
+      "piece_ids": [
+        "capability.zone.exile_until_source_departure.fixed",
+        "residual.target_or_choice.conditional-effect"
+      ],
+      "capability_ids": [
+        "zone.exile_until_source_departure.fixed"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Aang's Iceberg preserves conditional exile beside an unsupported sacrifice-conditioned Scry ability. Canonical whole CardProgram binding rejects unresolved trust without constructing a gameplay approximation."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_original_batched_scope_expansions_keep_unrepresented_compositions_untrusted",
+      "piece_ids": [
+        "capability.zone.linked_exile_return.fixed",
+        "residual.target_or_choice.conditional-effect"
+      ],
+      "capability_ids": [
+        "zone.linked_exile_return.fixed"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Aang's Iceberg preserves its typed linked return dependency beside the unsupported conditional sibling. Canonical whole CardProgram binding rejects unresolved trust without constructing a gameplay approximation."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_original_batched_scope_expansions_keep_unrepresented_compositions_untrusted",
+      "piece_ids": [
+        "capability.zone.exile_until_source_departure.fixed",
+        "residual.target_or_choice.target-predicate"
+      ],
+      "capability_ids": [
+        "zone.exile_until_source_departure.fixed"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Gelatinous Cube and Perilous Snare preserve conditional exile beside unresolved targeted activated siblings. Canonical whole CardProgram binding rejects unresolved trust without constructing a gameplay approximation."
+    },
+
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_trusted_equipment_equip_does_not_end_conditional_exile_but_departure_does",
+      "piece_ids": [
+        "capability.attachment.equip.fixed_mana",
+        "capability.zone.exile_until_source_departure.fixed"
+      ],
+      "capability_ids": [
+        "attachment.equip.fixed_mana",
+        "zone.exile_until_source_departure.fixed"
+      ],
+      "interaction_order": 2,
+      "assertion": "A constructed whole CardProgram binds strictly through canonical admission. Its actual Equipment cast exiles an opposing creature; an accepted Equip changes the attachment without returning the held incarnation. A subsequent Disenchant source departure returns the held object under its owner, detaches the Equipment, and replays exactly. This does not admit original Assimilation Aegis with its unsupported copy sibling."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_trusted_equipment_equip_does_not_end_conditional_exile_but_departure_does",
+      "piece_ids": [
+        "capability.attachment.equip.fixed_mana",
+        "capability.zone.linked_exile_return.fixed"
+      ],
+      "capability_ids": [
+        "attachment.equip.fixed_mana",
+        "zone.linked_exile_return.fixed"
+      ],
+      "interaction_order": 2,
+      "assertion": "A constructed whole CardProgram binds strictly through canonical admission. Its actual Equipment cast exiles an opposing creature; an accepted Equip changes the attachment without returning the held incarnation. A subsequent Disenchant source departure returns the held object under its owner, detaches the Equipment, and replays exactly. This does not admit original Assimilation Aegis with its unsupported copy sibling."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_restricted_equip_uses_current_subtype_and_turn_condition_tracks_recipient",
+      "piece_ids": [
+        "capability.attachment.equip.fixed_restricted",
+        "capability.continuous.characteristics.fixed_public_state"
+      ],
+      "capability_ids": [
+        "attachment.equip.fixed_restricted",
+        "continuous.characteristics.fixed_public_state"
+      ],
+      "interaction_order": 2,
+      "assertion": "A constructed strictly bound Equipment offers its restricted Halfling Equip only for the current matching creature. Accepted Equip grants conditional Hexproof on the controller turn; changing the active turn removes and restores the live grant, and accepted unrestricted re-equipping transfers it to the new recipient with exact replay. Original Bilbo's Ring retains its unresolved attack-alone sibling and remains untrusted."
     }
   ]
 }

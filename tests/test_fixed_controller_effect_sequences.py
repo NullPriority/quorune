@@ -876,6 +876,13 @@ class FixedControllerEffectSequenceCompilerTests(unittest.TestCase):
         self.assertEqual(1,effects[1]['count'])
 
     def test_unsupported_sequence_wording_remains_a_precise_residual(self):
+        supported="Draw two cards, then discard a card at random."
+        template=fixed_controller_effect_sequence_template(supported)
+        self.assertIsNotNone(template)
+        ir=compile_oracle_card(self.fixture(supported),capability_registry=self.capabilities,
+            capability_profile="commander_review")
+        self.assertEqual("exact",ir.status,ir.material_residuals)
+        self.assertEqual(("draw","discard_random_cards"),tuple(effect['op'] for effect in ir.faces[0].nodes[0].effects))
         composed = "Draw a card. Scry 1. You gain 1 life."
         self.assertIsNone(fixed_controller_effect_sequence_template(composed))
         for text in (
@@ -883,7 +890,7 @@ class FixedControllerEffectSequenceCompilerTests(unittest.TestCase):
             "Scry 1, then you may draw a card.",
             "Draw a card. Each player loses X life.",
             "Draw a card unless an opponent pays {1}.",
-            "Draw two cards, then discard a card at random.",
+            "Draw two cards, then discard a creature card at random.",
             "Draw two cards, then discard each opponent's hand.",
             "Draw two cards, then discard two cards if you control a Wizard.",
             "Draw a card, then discard five cards.",

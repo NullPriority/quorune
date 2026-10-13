@@ -617,8 +617,16 @@ def _without_pending_harvest_transition(inputs):
     return updated
 
 
+def _with_satisfied_interaction_exit(inputs):
+    """Ranking fixtures control unrelated assurance debt explicitly."""
+    updated = deepcopy(inputs)
+    interaction = updated["reusable_piece_delta"]["interaction_coverage"]
+    interaction["covered_high_risk_pairs"] = interaction["applicable_high_risk_pairs"]
+    return updated
+
+
 def _with_dependency_ready_compiler_harvest(inputs):
-    updated = _without_pending_harvest_transition(inputs)
+    updated = _with_satisfied_interaction_exit(_without_pending_harvest_transition(inputs))
     updated["reusable_piece_interactions"]["pairs"] = [
         row
         for row in updated["reusable_piece_interactions"]["pairs"]
@@ -1167,6 +1175,18 @@ class RulesSchedulerTests(unittest.TestCase):
             ],
             work["selection_policy"]["coverage_rank_order"],
         )
+
+    def test_ranking_fixture_controls_unrelated_live_interaction_debt(self):
+        inputs = deepcopy(self.work_inputs)
+        interaction = inputs["reusable_piece_delta"]["interaction_coverage"]
+        interaction["applicable_high_risk_pairs"] = 17
+        interaction["covered_high_risk_pairs"] = 3
+        snapshot = deepcopy(inputs)
+        isolated = _with_satisfied_interaction_exit(inputs)
+        self.assertEqual(snapshot, inputs)
+        self.assertEqual(17, isolated["reusable_piece_delta"]["interaction_coverage"]["covered_high_risk_pairs"])
+        snapshot["reusable_piece_delta"]["interaction_coverage"]["covered_high_risk_pairs"] = 17
+        self.assertEqual(snapshot, isolated)
 
     def test_prerequisite_exception_requires_measured_fanout_and_open_budget(self):
         inputs = _with_large_ability_compiler_harvest(self.work_inputs)
@@ -6092,7 +6112,7 @@ class RulesSchedulerTests(unittest.TestCase):
             )
 
     def test_measurement_freshness_ignores_unrelated_frontier_churn(self):
-        inputs = _without_pending_harvest_transition(self.work_inputs)
+        inputs = _with_satisfied_interaction_exit(_without_pending_harvest_transition(self.work_inputs))
         frontier = inputs["card_unlock_frontier"]
         frontier["fingerprint"] = "f" * 64
         measured_family_ids = {
@@ -6350,7 +6370,7 @@ class RulesSchedulerTests(unittest.TestCase):
         )
 
     def test_covered_fail_closed_pressure_does_not_create_false_foreground(self):
-        inputs = _without_pending_harvest_transition(self.work_inputs)
+        inputs = _with_satisfied_interaction_exit(_without_pending_harvest_transition(self.work_inputs))
         reviewed_comparisons = _reviewed_frontier_comparisons(inputs)
         inputs["card_unlock_frontier"]["family_candidates"] = [
             {

@@ -14,7 +14,8 @@ from quorune.oracle_ir import compile_oracle_card
 from quorune.record import authoritative_state_hash
 from quorune.rules.capabilities import load_default_capability_registry
 from scripts.build_test_database import build_fixture_database
-from test_bound_effect_programs import BoundEffectProgramRuntimeTests, record
+import test_bound_effect_programs as bound_witnesses
+from test_bound_effect_programs import record
 
 
 class LibraryRemainderCompilerTests(unittest.TestCase):
@@ -35,12 +36,12 @@ class LibraryRemainderCompilerTests(unittest.TestCase):
 
 
 class LibraryRemainderActionTests(unittest.TestCase):
-    add=BoundEffectProgramRuntimeTests.add
-    ready=BoundEffectProgramRuntimeTests.ready
-    checkpoint=BoundEffectProgramRuntimeTests.checkpoint
-    resolve=BoundEffectProgramRuntimeTests.resolve
-    replay=BoundEffectProgramRuntimeTests.replay
-    session=BoundEffectProgramRuntimeTests.session
+    add=bound_witnesses.BoundEffectProgramRuntimeTests.add
+    ready=bound_witnesses.BoundEffectProgramRuntimeTests.ready
+    checkpoint=bound_witnesses.BoundEffectProgramRuntimeTests.checkpoint
+    resolve=bound_witnesses.BoundEffectProgramRuntimeTests.resolve
+    replay=bound_witnesses.BoundEffectProgramRuntimeTests.replay
+    session=bound_witnesses.BoundEffectProgramRuntimeTests.session
 
     @classmethod
     def setUpClass(cls):

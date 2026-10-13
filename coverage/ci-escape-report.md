@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "b3d8eed173d5bad030dea300eed006f8deb64e77bb36ee0f3baa81507125a534"
+verified: "32eaffe88c3aeffc696aba80c3f098de88a82304ae8dad4a1375d67a8c07fe88"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -15,8 +15,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 - Observation window: 2026-08-25T03:52:06Z through 2026-08-25T20:56:41Z
 - Observed population: tracked recent pull requests (n=4)
-- Escapes: 92
-- Deterministic escapes: 85
+- Escapes: 97
+- Deterministic escapes: 90
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: null
@@ -29,6 +29,11 @@ This report classifies observed deterministic failures that escaped the local qu
 
 | ID | Run | Category | Impact edge | Resolution |
 |---|---:|---|---|---|
+| `ci-20261013-pr508-static-protection-expectations` | [38478187352](https://github.com/NullPriority/quorune/actions/runs/38478187352) | `source_correctness` | `not_applicable` | Assert the promoted whole-program red quality and preserve a deliberate unresolved chosen-player quality as the negative boundary. The static Protection impact edge already selects this exact integration module. |
+| `ci-20261013-pr508-interaction-consumers` | [38478187352](https://github.com/NullPriority/quorune/actions/runs/38478187352) | `source_correctness` | `not_applicable` | Add actual original Aura/exile, target-loss and Hexproof/controller-sacrifice actions with replay plus constructed strictly admitted Equipment controls. Unrepresented original Equipment and target/conditional siblings remain rejected through canonical whole-card binding. Declare exact supported pairs separately from fail-closed pairs; canonical fixtures serve every CI consumer. Isolate only unrelated exit debt in synthetic ranking inputs; the production assurance gate and all ranking assertions remain intact. |
+| `ci-20261013-pr508-collection-aliases` | [38478187352](https://github.com/NullPriority/quorune/actions/runs/38478187352) | `source_correctness` | `not_applicable` | Five new family test modules import helper modules instead of binding TestCase classes as globals. The existing shard partition validator now statically rejects the demonstrated imported TestCase alias and accepts module imports and ordinary helper classes before any matrix launches. Every primary collection has unique IDs; no tests or checks are removed. |
+| `ci-20261013-pr508-random-integration` | [38478187352](https://github.com/NullPriority/quorune/actions/runs/38478187352) | `missing_affected_test` | `added` | Preserve isolated discard/inspection leaf rejection and assert positive whole-card random-owner integration. A filtered random creature-card case retains the meaningful unsupported boundary. Add hand inspection to the random-discard impact edge; the controller sequence and affected discard owners were already selected. |
+| `ci-20261013-pr508-temporary-fragments` | [38478187352](https://github.com/NullPriority/quorune/actions/runs/38478187352) | `source_correctness` | `added` | The label-only temporary set codec rejects any typed fragments it cannot represent, including Protection qualities and triggered Prowess. Ordinary keyword sets, static live typed grants and direct temporary Protection keep their existing owners. Add the continuous-duration consumer to the Protection impact edge; retained candidate and restored prevention IDs still bind strictly. The semantic correction receives a new canonical census. |
 | `ci-20261008-80` | [37786890971](https://github.com/NullPriority/quorune/actions/runs/37786890971) | `missing_affected_test` | `added` | Retain the promoted single quoted activation as a positive whole-card witness, replace the excluded case with two independently quoted abilities, and add conditional_granted_ability_templates.py to the existing public-state characteristic impact edge. Gameplay and compiler identity remain unchanged; corpus output is reused. |
 | `ci-20261007-79` | [37684005905](https://github.com/NullPriority/quorune/actions/runs/37684005905) | `generated_artifact_drift` | `not_applicable` | Retain the original transition ID independently of the corrected compiler version. Register probe v2 and its linked-source exclusion contract while retaining v1 so an older completed measurement cannot seed the corrected bound. The canonical transition sealer recovers the original immutable main frontier and remeasures the complete original programs to the qualifying corrected lower bound without copied policy counts or weakened eligibility. Document this existing unmerged-revision workflow; runtime semantics and the completed v261 census remain unchanged. |
 | `ci-20261007-78` | [37680285397](https://github.com/NullPriority/quorune/actions/runs/37680285397) | `source_correctness` | `added` | Remove only the duplicate Roaming Throne card and ruling owner from the new fixture through the canonical export, retaining its primary fixture and exact ruling multiset. The original offered cast/one-choice/type-addition/replay witness fails on the unchanged compact database in 48.782 seconds and passes after correction in 68.900 seconds. Add a full compact fixture composition regression comparing the primary ruling multiset and repeated authoritative preflight and compatibility assembly. Preserve true Scryfall ruling multiplicity and fail-closed provenance checks; compiler semantics remain unchanged and the one v261 census is reused. |

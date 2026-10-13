@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Read-only CR610.3 contracts; conditional gameplay admission remains pending."""
+"""Pinned CR 610.3 contracts, typed admission, and actual conditional exile actions."""
 
 import json
 from types import SimpleNamespace
@@ -861,6 +861,166 @@ class ConditionalExileOriginalActionTests(unittest.TestCase):
         self.assertEqual(0,session.state.cards[target.object_id].zone_change_counter)
         self.assertEqual((),source_conditional_bindings(session.state.cards[source.object_id]))
         self.replay(session,load=True)
+
+    def test_original_conditional_exile_auras_return_when_their_attachment_leaves(self):
+        # CR 303.4, 704.5m and 610.3: an unattached Aura leaves via SBAs,
+        # ending its conditional exile without a separate return trigger.
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.conditional_exile_model import source_conditional_bindings
+        from quorune.record import authoritative_state_hash
+        cases=(('Faith Unbroken','Generic Bound Body',{'W':1,'C':3}),
+               ('Ossification','Generic Bound Plains',{'W':1,'C':1}))
+        for index,(name,recipient_name,mana) in enumerate(cases):
+            with self.subTest(name=name):
+                session=self.session(6100316+index);engine=session.engine
+                source=self.add(engine,name,zone='hand',ref='attached-exile-source')
+                recipient=self.add(engine,recipient_name,ref='aura-recipient')
+                target=self.add(engine,'Generic Bound Body',seat='B',ref='aura-held-object')
+                foreign=self.add(engine,recipient_name,seat='C',ref='foreign-aura-recipient')
+                removal=self.add(engine,'Unsummon',zone='hand',ref='recipient-removal') if index==0 else self.add(
+                    engine,'Generic Conditional Land Return',zone='hand',ref='recipient-removal')
+                self.add(engine,'Island',ref='recipient-removal-mana')
+                program=compile_best_available_card_program(self.db,self.db.lookup(name),semantic_registry=engine.semantics,
+                    capability_registry=self.registry,capability_profile='commander_review')
+                self.assertTrue(bind_card_program_runtime(program,capability_registry=self.registry,
+                    profile='commander_review')['strict_capability_ready'])
+                action=self.ready(session,source,mana);self.checkpoint(session)
+                self.assertIn(recipient.ref,action['target_schema']['legal_refs'])
+                self.assertNotIn(foreign.ref,action['target_schema']['legal_refs'])
+                before=authoritative_state_hash(session.state)
+                self.assertFalse(session.act('pilot:A',{'action_id':action['id'],'targets':[foreign.ref],'pay':'auto'}).ok)
+                self.assertEqual(before,authoritative_state_hash(session.state))
+                accepted=session.act('pilot:A',{'action_id':action['id'],'targets':[recipient.ref],'pay':'auto'})
+                self.assertTrue(accepted.ok,accepted.summary)
+                self.assertEqual('semantic.target',self.resolve(session).kind)
+                self.assertTrue(session.act('pilot:A',{'action_id':'choose','targets':[target.ref]}).ok)
+                self.resolve(session)
+                self.assertEqual(recipient.object_id,session.state.cards[source.object_id].attached_to)
+                self.assertEqual('exile',session.state.cards[target.object_id].zone)
+                session=self.replay(session,load=True)
+                actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+                action=next(row for row in actions if row.get('card')==removal.ref)
+                accepted=session.act('pilot:A',{'action_id':action['id'],'targets':[recipient.ref],'pay':'auto'})
+                self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+                self.assertEqual('graveyard',session.state.cards[source.object_id].zone)
+                self.assertEqual(('battlefield','B'),(session.state.cards[target.object_id].zone,
+                    session.state.cards[target.object_id].controller))
+                self.assertEqual((),source_conditional_bindings(session.state.cards[source.object_id]))
+                self.replay(session,load=True)
+
+    def test_original_lasso_revalidates_departed_target_without_creating_a_hold(self):
+        # CR 608.2b applies to the original enter trigger's target independently
+        # from its separate Mercenary-producing enter ability.
+        from quorune.conditional_exile_model import source_conditional_bindings
+        session=self.session(6100318);engine=session.engine
+        source=self.add(engine,'Lassoed by the Law',zone='hand',ref='lasso-target-revalidation')
+        target=self.add(engine,'Generic Bound Body',seat='B',ref='lasso-retired-target')
+        removal=self.add(engine,'Unsummon',zone='hand',ref='lasso-target-response')
+        self.add(engine,'Island',ref='lasso-response-mana')
+        action=self.ready(session,source,{'W':1,'C':3});self.checkpoint(session)
+        self.assertTrue(session.act('pilot:A',{'action_id':action['id'],'pay':'auto'}).ok)
+        self.assertEqual('trigger.order',self.resolve(session).kind)
+        batch=session.state.pending_trigger_batches[0]
+        self.assertTrue(session.act('pilot:A',{'action_id':'order','triggers':[item.ref for item in batch.items]}).ok)
+        self.assertEqual('semantic.target',self.resolve(session).kind)
+        self.assertTrue(session.act('pilot:A',{'action_id':'choose','targets':[target.ref]}).ok)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        action=next(row for row in actions if row.get('card')==removal.ref)
+        self.assertTrue(session.act('pilot:A',{'action_id':action['id'],'targets':[target.ref],'pay':'auto'}).ok)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual('hand',session.state.cards[target.object_id].zone)
+        self.assertEqual((),source_conditional_bindings(session.state.cards[source.object_id]))
+        self.assertEqual(1,sum(card.is_token and 'Mercenary' in card.printed_name
+            for card in session.state.cards.values() if card.zone=='battlefield'))
+        self.replay(session,load=True)
+
+    def test_trusted_equipment_equip_does_not_end_conditional_exile_but_departure_does(self):
+        # CR 610.3 follows source zone identity; CR 301.5 attachment changes
+        # do not end the interval. This is a constructed compiler/action witness.
+        from quorune.record import authoritative_state_hash
+        session=self.session(6100319);engine=session.engine
+        source=self.add(engine,'Generic Conditional Exile Equipment',zone='hand',ref='equipped-exile-source')
+        held=self.add(engine,'Generic Bound Body',seat='B',ref='equipment-held-object')
+        body=self.add(engine,'Generic Bound Body',ref='equipment-recipient')
+        foreign=self.add(engine,'Generic Bound Body',seat='C',ref='foreign-equip-recipient')
+        removal=self.add(engine,'Disenchant',zone='hand',ref='equipment-removal')
+        for index in range(4):self.add(engine,'Generic Bound Plains',ref='equipment-land-'+str(index))
+        action=self.ready_equipment(session,source,{'C':2});self.checkpoint(session)
+        self.assertTrue(session.act('pilot:A',{'action_id':action['id'],'pay':'auto'}).ok)
+        self.assertEqual('semantic.target',self.resolve(session).kind)
+        self.assertTrue(session.act('pilot:A',{'action_id':'choose','targets':[held.ref]}).ok)
+        self.resolve(session)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        action=next(row for row in actions if row['id'].startswith('activate:'+source.ref+':'))
+        self.assertIn(body.ref,action['target_schema']['legal_refs'])
+        self.assertNotIn(foreign.ref,action['target_schema']['legal_refs'])
+        before=authoritative_state_hash(session.state)
+        self.assertFalse(session.act('pilot:A',{'action_id':action['id'],'targets':[foreign.ref],'pay':'auto'}).ok)
+        self.assertEqual(before,authoritative_state_hash(session.state))
+        accepted=session.act('pilot:A',{'action_id':action['id'],'targets':[body.ref],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        self.assertEqual(body.object_id,session.state.cards[source.object_id].attached_to)
+        self.assertEqual('exile',session.state.cards[held.object_id].zone)
+        session=self.replay(session,load=True)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        action=next(row for row in actions if row.get('card')==removal.ref)
+        self.assertTrue(session.act('pilot:A',{'action_id':action['id'],'targets':[source.ref],'pay':'auto'}).ok)
+        self.resolve(session)
+        self.assertEqual(('battlefield','B'),(session.state.cards[held.object_id].zone,
+            session.state.cards[held.object_id].controller))
+        self.assertIsNone(session.state.cards[source.object_id].attached_to)
+        self.replay(session,load=True)
+
+    def test_restricted_equip_uses_current_subtype_and_turn_condition_tracks_recipient(self):
+        # CR 702.6a constrains the Equip recipient; CR 611.3 continuously
+        # evaluates the current attachment and active turn, including re-equipping.
+        from quorune.record import authoritative_state_hash
+        session=self.session(6100320);engine=session.engine
+        source=self.add(engine,'Generic Turn Restricted Equipment',ref='turn-restricted-equipment')
+        halfling=self.add(engine,'Generic Equipment Halfling',ref='restricted-equip-recipient')
+        ordinary=self.add(engine,'Generic Bound Body',ref='ordinary-equip-recipient')
+        action=self.ready_equipment(session,source,{'C':5});self.checkpoint(session)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        restricted=next(row for row in actions if row['id'].startswith('activate:'+source.ref+':')
+            and ordinary.ref not in row['target_schema']['legal_refs'])
+        self.assertIn(halfling.ref,restricted['target_schema']['legal_refs'])
+        before=authoritative_state_hash(session.state)
+        self.assertFalse(session.act('pilot:A',{'action_id':restricted['id'],'targets':[ordinary.ref],'pay':'auto'}).ok)
+        self.assertEqual(before,authoritative_state_hash(session.state))
+        accepted=session.act('pilot:A',{'action_id':restricted['id'],'targets':[halfling.ref],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        self.assertIn('hexproof',engine._combat_keywords(halfling))
+        session=self.replay(session,load=True);engine=session.engine
+        engine.state.active_player='B'
+        self.assertNotIn('hexproof',engine._combat_keywords(session.state.cards[halfling.object_id]))
+        engine.state.active_player='A'
+        self.assertIn('hexproof',engine._combat_keywords(session.state.cards[halfling.object_id]))
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        ordinary_equip=next(row for row in actions if row['id'].startswith('activate:'+source.ref+':')
+            and ordinary.ref in row['target_schema']['legal_refs'])
+        accepted=session.act('pilot:A',{'action_id':ordinary_equip['id'],'targets':[ordinary.ref],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        self.assertNotIn('hexproof',engine._combat_keywords(session.state.cards[halfling.object_id]))
+        self.assertIn('hexproof',engine._combat_keywords(session.state.cards[ordinary.object_id]))
+        self.replay(session,load=True)
+
+    def ready_equipment(self,session,source,mana):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        engine=session.engine
+        program=compile_best_available_card_program(self.db,self.db.lookup(source.printed_name),
+            semantic_registry=engine.semantics,capability_registry=self.registry,capability_profile='commander_review')
+        self.assertTrue(bind_card_program_runtime(program,capability_registry=self.registry,
+            profile='commander_review')['strict_capability_ready'])
+        engine.permissions.invalidate_current();engine.state.pending_decision=None
+        engine.state.active_player='A';engine.state.started=True
+        engine.state.phase='precombat_main';engine.state.step='main'
+        engine.state.players['A'].mana_pool.update(mana)
+        engine._grant_priority('A');engine.pump()
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        return next(row for row in actions if row.get('card')==source.ref
+            or row['id'].startswith('activate:'+source.ref+':'))
 
     def test_original_portable_hole_rejects_own_land_and_excess_mana_value_and_replays(self):
         from quorune.record import authoritative_state_hash

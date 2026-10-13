@@ -1076,14 +1076,29 @@ class FixedQueryKeywordGrantCompilerTests(unittest.TestCase):
         self.assertIn("Flying", evaluated.characteristics["abilities"])
 
     def test_open_or_unsupported_queries_remain_material_residuals(self):
+        for index, text in enumerate((
+            "Creatures you control have protection from red.",
+            "Creatures you control get +1/+1 and have protection from red.",
+        )):
+            program = self.compile(_permanent(
+                text, suffix=119_002_000 + index,
+                name=f"Typed Protection Grant {index}",
+            ))
+            self.assertEqual((), program.residuals)
+            descriptor = next(
+                descriptor for ability in program.abilities
+                for descriptor in ability.handlers
+                if descriptor["handler_id"].endswith("protection-grant.v2")
+            )
+            self.assertEqual("R", descriptor["modifier"]["add_ability_fragments"][0]["value"]["quality"])
         unsupported = (
             "Attacking tapped creatures you control have flying.",
             "Attacking creatures you control with a +1/+1 counter on them "
             "have trample.",
-            "Creatures you control have protection from red.",
+            "Creatures you control have protection from the chosen player.",
             "Other Rats you control have toxic 1.",
             "Artifact permanents you control have flying.",
-            "Creatures you control get +1/+1 and have protection from red.",
+            "Creatures you control get +1/+1 and have protection from the chosen player.",
             "Creatures you control have haste until end of turn.",
         )
         for index, text in enumerate(unsupported):

@@ -18,8 +18,9 @@ from quorune.random_discard import RandomDiscardIntent, resolve_random_discard
 from quorune.record import authoritative_state_hash
 from quorune.rules.capabilities import load_default_capability_registry
 from scripts.build_test_database import build_fixture_database
-from test_bound_effect_programs import BoundEffectProgramRuntimeTests, record
-from test_resolution_public_conditions import IndependentDualSourceEventRuntimeTests
+import test_bound_effect_programs as bound_witnesses
+from test_bound_effect_programs import record
+import test_resolution_public_conditions as combat_witnesses
 
 
 class RandomDiscardCompilerTests(unittest.TestCase):
@@ -68,13 +69,13 @@ class RandomDiscardCompilerTests(unittest.TestCase):
 
 
 class RandomDiscardActionTests(unittest.TestCase):
-    add=BoundEffectProgramRuntimeTests.add
-    ready=BoundEffectProgramRuntimeTests.ready
-    checkpoint=BoundEffectProgramRuntimeTests.checkpoint
-    resolve=BoundEffectProgramRuntimeTests.resolve
-    replay=BoundEffectProgramRuntimeTests.replay
-    session=BoundEffectProgramRuntimeTests.session
-    finish_combat=IndependentDualSourceEventRuntimeTests.finish_combat
+    add=bound_witnesses.BoundEffectProgramRuntimeTests.add
+    ready=bound_witnesses.BoundEffectProgramRuntimeTests.ready
+    checkpoint=bound_witnesses.BoundEffectProgramRuntimeTests.checkpoint
+    resolve=bound_witnesses.BoundEffectProgramRuntimeTests.resolve
+    replay=bound_witnesses.BoundEffectProgramRuntimeTests.replay
+    session=bound_witnesses.BoundEffectProgramRuntimeTests.session
+    finish_combat=combat_witnesses.IndependentDualSourceEventRuntimeTests.finish_combat
 
     @classmethod
     def setUpClass(cls):
@@ -124,6 +125,24 @@ class RandomDiscardActionTests(unittest.TestCase):
             for seat in 'ABCD':
                 self.assertEqual(max(0,len(hands[seat])-2),len(session.state.players[seat].zones['hand']))
             self.replay(session,load=True)
+
+    def test_original_hymn_revalidates_departed_player_without_discarding_surviving_hands(self):
+        # CR 608.2b: a targeted spell does not execute when its only target leaves.
+        session=self.session(701904);engine=session.engine
+        spell=self.add(engine,'Hymn to Tourach',zone='hand',ref='departed-random-target')
+        action=self.ready(session,spell,{'B':2});self.checkpoint(session)
+        self.assertTrue(session.act('pilot:A',{'action_id':action['id'],'targets':['B'],'pay':'auto'}).ok)
+        hands={seat:tuple(player.zones['hand']) for seat,player in session.state.players.items() if seat!='B'}
+        for _ in range(8):
+            if engine.state.priority_player=='B':break
+            self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+        self.assertEqual('B',engine.state.priority_player)
+        result=session.act('pilot:B',{'action_id':'concede','choices':{'confirm_concede':True}})
+        self.assertTrue(result.ok,result.summary)
+        self.assertIsNone(self.resolve(session))
+        for seat,hand in hands.items():self.assertEqual(hand,tuple(session.state.players[seat].zones['hand']))
+        self.assertEqual('graveyard',session.state.cards[spell.object_id].zone)
+        self.replay(session,load=True)
 
     def test_real_optional_random_discard_apply_decline_and_pending_reload(self):
         for index,choice in enumerate(('apply','decline')):

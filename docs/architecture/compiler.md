@@ -480,7 +480,12 @@ existing field and fragment contracts.
 `compiler/public_state_queries.py`, consumed by
 `compiler/continuous_templates.py`, lowers fixed controlled permanent sets that
 gain supported keywords, or gain fixed power/toughness and supported keywords,
-until end of turn. `compiler/fixed_public_characteristic_sets.py` extends that
+until end of turn. The legacy label-based set codec accepts only ordinary
+keyword labels;
+Protection qualities and triggered fragments require a separately represented
+temporary-set descriptor and are never discarded during this lowering. Static
+live grants and direct temporary Protection retain their typed fragments.
+`compiler/fixed_public_characteristic_sets.py` extends the same
 resolution owner to all creatures, creatures opponents or one target player
 control, current attacking or blocking creatures, and source-excluding attacking
 creatures. Both grammars feed one closed query validator. Resolution evaluates

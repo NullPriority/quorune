@@ -18,7 +18,8 @@ from quorune.transmute import (TRANSMUTE_CAPABILITY,
     is_closed_transmute_program, retained_transmute_mana_value, transmute_search_effect, transmute_node_capabilities)
 from quorune.transmute import finalize_transmute_discard
 from scripts.build_test_database import build_fixture_database
-from test_bound_effect_programs import record, BoundEffectProgramRuntimeTests
+import test_bound_effect_programs as bound_witnesses
+from test_bound_effect_programs import record
 
 
 class TransmuteCompilerTests(unittest.TestCase):
@@ -96,16 +97,16 @@ class TransmuteCompilerTests(unittest.TestCase):
 
 
 class TransmuteRuntimeTests(unittest.TestCase):
-    add=BoundEffectProgramRuntimeTests.add
-    ready=BoundEffectProgramRuntimeTests.ready
-    checkpoint=BoundEffectProgramRuntimeTests.checkpoint
-    resolve=BoundEffectProgramRuntimeTests.resolve
-    replay=BoundEffectProgramRuntimeTests.replay
+    add=bound_witnesses.BoundEffectProgramRuntimeTests.add
+    ready=bound_witnesses.BoundEffectProgramRuntimeTests.ready
+    checkpoint=bound_witnesses.BoundEffectProgramRuntimeTests.checkpoint
+    resolve=bound_witnesses.BoundEffectProgramRuntimeTests.resolve
+    replay=bound_witnesses.BoundEffectProgramRuntimeTests.replay
 
     def session(self,seed):
         from quorune.semantics import SemanticRegistry
         from quorune.oracle_ir import register_generated_programs
-        session=BoundEffectProgramRuntimeTests.session(self,seed)
+        session=bound_witnesses.BoundEffectProgramRuntimeTests.session(self,seed)
         session.engine.semantics=SemanticRegistry(include_builtin_packs=False)
         register_generated_programs(self.db,session.engine.semantics,tuple(self.db.iter_cards()),
             trust_level='provisional',capability_registry=self.registry,capability_profile='commander_review',

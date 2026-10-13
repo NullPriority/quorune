@@ -60,6 +60,16 @@ edited capability or evidence inputs use fresh invocations rather than that
 fixture snapshot. Production trust checks retain their existing validation
 scope.
 
+Tests that reuse another test module's methods import that module and reference
+its class through the module. Importing a helper `TestCase` class into a module
+global makes unittest collect it again. Shard validation rejects that duplicate
+collection boundary before launching a matrix.
+
+Scheduler ranking fixtures explicitly satisfy unrelated interaction exit debt
+when testing harvest ranking or measurement freshness. Dedicated assurance tests
+retain the current inventory and set their own debt boundary; live corpus growth
+must not silently change the premise of an unrelated ranking test.
+
 For a semantic scope expansion, select the reachable boundaries that can change
 the result. Bounded stateful or property exploration should cover meaningful
 sequences around control changes, ability removal and restoration, source
