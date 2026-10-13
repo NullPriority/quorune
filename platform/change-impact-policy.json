@@ -85,6 +85,16 @@
   ],
   "path_rules": [
     {
+      "id": "noncreature-subtype-target-assurance",
+      "patterns": [
+        "quorune/compiler/direct_target.py",
+        "quorune/compiler/target_effect_corpus_assurance.py"
+      ],
+      "test_modules": [
+        "test_fixed_target_effect_sequences"
+      ]
+    },
+    {
       "id": "fixed-prevention-component-composition",
       "patterns": [
         "quorune/rules/prevention_component_shapes.py",
@@ -112,6 +122,9 @@
         "test_typed_land_entry_participation",
         "test_entry_designations",
         "test_copy_objects",
+        "test_continuous_effect_duration",
+        "test_high_risk_interaction_assurance",
+        "test_mana_abilities",
         "test_card_program_trust",
         "test_choice_forms",
         "test_fixed_hand_inspection"

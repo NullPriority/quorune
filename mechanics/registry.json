@@ -520,7 +520,7 @@
     {
       "mechanic_id": "cr-605-mana-abilities",
       "path": "mechanics/contracts/mana-abilities.json",
-      "sha256": "c22e8b463a8949a5037caf0c40c0a15e038145c856dfac7926362286003b80b7",
+      "sha256": "0820f17fc7bc8db6c64b34bf054e8c945fb8d2ed6c7460081d9dc9e3e9453a93",
       "version": 4
     },
     {
@@ -9882,7 +9882,7 @@
     {
       "category": "spells_abilities_effects",
       "contract_path": "mechanics/contracts/mana-abilities.json",
-      "contract_sha256": "c22e8b463a8949a5037caf0c40c0a15e038145c856dfac7926362286003b80b7",
+      "contract_sha256": "0820f17fc7bc8db6c64b34bf054e8c945fb8d2ed6c7460081d9dc9e3e9453a93",
       "contract_version": 4,
       "coverage_status": "partial",
       "dependencies": [],
@@ -9940,7 +9940,7 @@
         "test_mana_classification_survives_zero_output_or_unavailability",
         "test_mana_drain_schedules_exact_next_main_phase_mana",
         "test_mana_producing_spell_is_not_a_mana_ability",
-        "test_murmuring_bosk_intrinsic_mana_executes_while_replacement_stays_residual",
+        "test_murmuring_bosk_intrinsic_mana_executes_with_closed_reveal_entry",
         "test_omitting_mana_result_mutant_is_killed_by_actual_ritual",
         "test_parenthesized_basic_land_reminder_is_not_an_executable_program",
         "test_predefined_token_profiles_enforce_mana_and_impulse_rules",

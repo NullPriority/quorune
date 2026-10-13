@@ -14,6 +14,7 @@ from quorune.compiler.fixed_target_effect_sequences import (
     fixed_target_effect_sequence_template,
     fixed_target_zone_object_keyword_sequence_template,
 )
+from quorune.compiler.direct_target import DIRECT_NONCREATURE_SUBTYPES
 from quorune.continuous_effect_model import ContinuousEffectDuration
 from quorune.continuous_effect_state import (
     expire_end_of_turn_continuous_effects,
@@ -146,7 +147,7 @@ class FixedTargetEffectSequenceCompilerTests(unittest.TestCase):
                 "forest",
                 "gate",
                 "vehicle",
-            },
+            } | set(DIRECT_NONCREATURE_SUBTYPES),
             set(contract["target_predicates"]),
         )
         self.assertEqual(

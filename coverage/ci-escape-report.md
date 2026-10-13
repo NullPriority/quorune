@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "b9f349219775de7712bb98540167b162cb379ca156d382e38a3c6e22098ec0ec"
+verified: "b3d8eed173d5bad030dea300eed006f8deb64e77bb36ee0f3baa81507125a534"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -15,8 +15,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 - Observation window: 2026-08-25T03:52:06Z through 2026-08-25T20:56:41Z
 - Observed population: tracked recent pull requests (n=4)
-- Escapes: 87
-- Deterministic escapes: 80
+- Escapes: 92
+- Deterministic escapes: 85
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: null
@@ -116,6 +116,11 @@ This report classifies observed deterministic failures that escaped the local qu
 | `ci-20261011-498-interaction-witnesses` | [38125267611](https://github.com/NullPriority/quorune/actions/runs/38125267611) | `missing_affected_test` | `added` | Add actual Aura/grant and Shroud/sacrifice-redirection runtime witnesses with strict compiler admission, rollback, privacy and replay, plus whole-program fail-closed witnesses for both fixed-mana/replacement residual pairs using five original carriers. Register their exact qualified IDs and add consumer impact edges. Preserve scheduler debt prioritization and runtime-composition evidence requirements; canonical generation owns the refreshed interaction counts. |
 | `ci-20261012-504-bare-subtype-reviewed-overlap` | [38260770476](https://github.com/NullPriority/quorune/actions/runs/38260770476) | `missing_affected_test` | `added` | Use the shared reviewed-overlay owner to replace only a trusted source/rulings-matched legacy subtype anthem with the corrected generic instruction. Preserve modifiers, controllers, source exclusions, distinct generated siblings, original gameplay multiplicity and replay assertions. Update stale bare-subtype table expectations and add the canonical affected-consumer edge. Advance compiler identity and regenerate the semantic bundle; do not reuse the superseded census. |
 | `ci-20261012-504-generated-static-preflight-consumer` | [38273011041](https://github.com/NullPriority/quorune/actions/runs/38273011041) | `missing_affected_test` | `added` | Recognize existing generated static coverage only within the current trusted, source-hash-matched program set. Preserve unsupported remainder checks, provisional and source-drift rejection, reference deck compatibility assertions and strict capability-only blockers. Current impact edges already select the complete consumer set; add this precise witness to retain the boundary. Compiler semantics and identity remain unchanged. |
+| `ci-20261013-505-promoted-entry-expectations` | [38324804400](https://github.com/NullPriority/quorune/actions/runs/38324804400) | `missing_affected_test` | `added` | Assert exact typed entry closure on the promoted originals; keep the independently unsupported Drogskol/Wilt-Leaf replacements and replace the fixed-mana negative with an explicit unsupported coin-replacement fixture. Add every affected integration module to the private entry impact edge and update the Bosk contract/evidence consumer references. |
+| `ci-20261013-505-physical-spell-record-owner` | [38324804400](https://github.com/NullPriority/quorune/actions/runs/38324804400) | `source_correctness` | `not_applicable` | Use the ordinary card-record owner unless retained copied program provenance changes effective Oracle identity; only then retrieve announced physical provenance. Preserve all six Aura assertions and the copied-Aura pending save/load, wrong-principal and replay witness. Existing intrinsic-entry-copy impact rule already selects the full affected Aura owner. |
+| `ci-20261013-505-subtype-assurance-inventory` | [38324804400](https://github.com/NullPriority/quorune/actions/runs/38324804400) | `missing_affected_test` | `added` | Compare the existing independent sequence dimensions plus the authoritative closed noncreature subtype inventory; keep accepted and rejected case generation unchanged. Add the direct-target and assurance owner paths to this integration consumer impact rule. |
+| `ci-20261013-505-interaction-evidence-completeness` | [38324804400](https://github.com/NullPriority/quorune/actions/runs/38324804400) | `missing_affected_test` | `added` | Retain correctness-first ranking. Add real original Abduction departure/LKI return and Flamekin private-entry/target-revalidation action witnesses with replay, plus a constructed copy/unsupported-target whole-admission boundary. Declare the actual new and existing copied-Aura and Feign/Demonic interactions, then regenerate the reusable matrix and scheduler through registered owners. |
+| `ci-20261013-505-bare-subtype-resolution-expectation` | [38324804400](https://github.com/NullPriority/quorune/actions/runs/38324804400) | `missing_affected_test` | `not_applicable` | Assert exact temporary predicates and source exclusion for all supported public sets, preserving keyword-qualified and type-union negative controls. The existing shared-public-battlefield-query-contract impact edge already selects this consumer; no selection widening or production change is needed. |
 
 ## Measurement limitations
 

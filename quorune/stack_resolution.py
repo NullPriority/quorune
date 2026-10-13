@@ -23,8 +23,10 @@ _COPY_TERM = "copy"
 
 def physical_stack_record(host: Any, item: StackItem):
     """Bind spell provenance to the announced physical card after copy entry."""
+    from .entry_copy import copiable_oracle_id
+
     card = host.state.cards.get(item.card_object_id or '')
-    if card is not None:
+    if card is not None and copiable_oracle_id(card) != card.oracle_id:
         return host.card_db.by_oracle_id(card.oracle_id)
     return host.card_record(item.card_object_id)
 

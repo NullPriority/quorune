@@ -865,10 +865,15 @@ class FixedQueryKeywordGrantCompilerTests(unittest.TestCase):
                 temporary = fixed_public_characteristic_set_effect_template(
                     f"{subject} get +1/+1 until end of turn."
                 )
-                if expected.get("types_all") == []:
-                    self.assertIsNone(temporary)
-                else:
-                    self.assertIsNotNone(temporary)
+                self.assertIsNotNone(temporary)
+                assert temporary is not None
+                effect = temporary[1][0]
+                for field, value in expected.items():
+                    self.assertEqual(value, effect["predicate"][field])
+                self.assertEqual(
+                    "$source" if excluded else None,
+                    effect["predicate"]["exclude_ref"],
+                )
 
         ability_qualified = fixed_characteristic_battlefield_query_subject(
             "Other creatures you control with flying"

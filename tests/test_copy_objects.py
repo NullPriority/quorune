@@ -29,6 +29,36 @@ from quorune.util import stable_json
 
 
 class EntryCopyContractTests(unittest.TestCase):
+    def test_entry_copy_with_unrepresented_target_sibling_rejects_whole_runtime_admission(self):
+        from high_risk_interaction_support import _record, _observed_piece_ids
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.compiler.unlock_frontier import analyze_card_unlocks
+        from quorune.rules.capabilities import load_default_capability_registry
+        from quorune.semantics import SemanticRegistry
+        from quorune.oracle_ir import compile_oracle_card
+        from common import load_assets
+
+        db, _, _ = load_assets()
+        try:
+            record = _record('entry-copy-target-boundary')
+            registry = load_default_capability_registry()
+            ir = compile_oracle_card(record, capability_registry=registry, capability_profile='commander_review')
+            program = compile_best_available_card_program(db, record, semantic_registry=SemanticRegistry(), capability_registry=registry, capability_profile='commander_review')
+            row = analyze_card_unlocks(ir, program=program, program_error=None, capabilities=registry, profile='commander_review')
+            self.assertLessEqual(
+                {'capability.zone.entry.fixed_copy', 'residual.target_or_choice.target-predicate'},
+                _observed_piece_ids(row),
+            )
+            self.assertEqual('residual', row['card_program_status'])
+            self.assertIsNone(row['hard_construction_failure'])
+            binding = bind_card_program_runtime(program, capability_registry=registry, profile='commander_review')
+            self.assertFalse(binding['strict_capability_ready'])
+            self.assertFalse(binding['compatible_ready'])
+            self.assertIn('trust_basis:unresolved', binding['blockers'])
+        finally:
+            db.close()
+
     def test_entry_copy_value_preserves_nontarget_selection_and_typed_exceptions(self):
         from quorune.compiler.entry_copy_templates import entry_copy_spec
         from quorune.entry_copy import EntryCopySpec

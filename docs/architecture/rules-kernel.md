@@ -187,6 +187,9 @@ Departure LKI retains that provenance for already-triggered abilities; the
 new zone incarnation discards the old copy. Copied Aura attachment uses the
 existing affected-controller choice before entry. Its retained replacement
 result preserves the chosen values while the later attachment choice resumes.
+Spell resolution and record trust use the ordinary record owner until copied
+program provenance changes the physical card's effective identity; only that
+changed identity requires lookup of the originally announced physical card.
 
 Schema-v2 public set descriptors
 also carry the exact prospective battlefield controller and tapped policy for

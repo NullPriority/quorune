@@ -939,6 +939,47 @@ class RevealEntryRuntimeTests(unittest.TestCase):
         projection=json.dumps(resumed.projector._snapshot('pilot:D'),sort_keys=True);self.assertIn(forest.ref,projection)
         self.assertNotIn(island.ref,projection);self.assertNotIn(foreign.ref,projection);self.replay(resumed,load=True)
 
+    def test_original_flamekin_village_private_entry_then_stale_haste_target_replays(self):
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.record import authoritative_state_hash
+        session = self.session(360009)
+        engine = session.engine
+        source = self.add(engine, 'Flamekin Village', zone='hand')
+        elemental = self.add(engine, 'Fire Elemental', zone='hand')
+        target = self.add(engine, 'Generic Bound Body', ref='village-haste-target')
+        removal = self.add(engine, 'Murder', zone='hand')
+        program = compile_best_available_card_program(self.db, self.db.lookup('Flamekin Village'), semantic_registry=engine.semantics, capability_registry=self.registry, capability_profile='commander_review')
+        self.assertTrue(bind_card_program_runtime(program, capability_registry=self.registry, profile='commander_review')['strict_capability_ready'])
+        action = self.ready(session, source)
+        engine.state.players['A'].mana_pool.update({'R': 1, 'B': 2, 'C': 1})
+        self.checkpoint(session)
+        self.assertTrue(session.act('pilot:A', {'action_id': action['id']}).ok)
+        options = session.packet('pilot:A', full=True)['decision']['ctx']['options']
+        choice = next(row['id'] for row in options if elemental.ref in row['id'])
+        self.assertNotIn(elemental.ref, str(session.packet('pilot:D', full=True)))
+        before = authoritative_state_hash(session.state)
+        denied = session.act('pilot:C', {'action_id': 'choose', 'replacement': choice})
+        self.assertFalse(denied.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self.assertTrue(session.act('pilot:A', {'action_id': 'choose', 'replacement': choice}).ok)
+        self.assertFalse(engine.state.cards[source.object_id].tapped)
+        action = next(row for row in session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions'] if row['id'].startswith('activate:' + source.ref + ':') and 'target_schema' in row)
+        accepted = session.act('pilot:A', {'action_id': action['id'], 'targets': [target.ref], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertTrue(engine.state.cards[source.object_id].tapped)
+        while session.pending_principals()[0] != 'pilot:A':
+            self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
+        action = next(row for row in session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions'] if row.get('card') == removal.ref)
+        accepted = session.act('pilot:A', {'action_id': action['id'], 'targets': [target.ref], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        BoundEffectProgramRuntimeTests.resolve(self, session)
+        self.assertEqual('graveyard', engine.state.cards[target.object_id].zone)
+        self.assertFalse(engine.state.cards[target.object_id].annotations.get('keywords'))
+        self.assertFalse(session.state.stack)
+        self.replay(session, load=True)
+
     def test_original_game_trail_decline_and_no_match_enter_tapped_without_reveal(self):
         for matching in (False,True):
             s=self.session(360002+int(matching));e=s.engine;source=self.add(e,'Game Trail',zone='hand')

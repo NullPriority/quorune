@@ -287,7 +287,7 @@ class EventCardReturnActionTests(unittest.TestCase):
         keep_all(session); engine = session.engine
         engine.permissions.invalidate_current(); engine.state.pending_decision = None
         engine.state.priority_player = None; engine.state.priority_passes = []
-        names = {'Atog', 'Aspect of Mongoose', 'Generic Swamp Return Aura', 'Spreading Algae', 'Spine of Ish Sah', 'Sol Ring', 'Mortus Strider', 'Demonic Vigor', "Squee's Embrace", "Altar's Reap", 'Naturalize', 'Murder', 'Generic Payment Commander', 'Generic Payment Plains'}
+        names = {'Abduction', 'Atog', 'Aspect of Mongoose', 'Generic Swamp Return Aura', 'Spreading Algae', 'Spine of Ish Sah', 'Sol Ring', 'Mortus Strider', 'Demonic Vigor', "Squee's Embrace", "Altar's Reap", 'Naturalize', 'Murder', 'Generic Payment Commander', 'Generic Payment Plains'}
         records = tuple(record for record in self.db.iter_cards() if record.name in names and compile_oracle_card(record, capability_registry=self.registry, capability_profile='commander_review').status == 'exact')
         register_generated_programs(self.db, engine.semantics, records, trust_level='trusted', capability_registry=self.registry, capability_profile='commander_review', promote_exact_runtime_handlers=True, promote_exact_trigger_programs=True, promote_exact_effect_programs=True, promote_exact_capability_declarations=True)
         return session
@@ -325,6 +325,50 @@ class EventCardReturnActionTests(unittest.TestCase):
             result = replay_record(path, self.db, verify=True)
         self.assertTrue(result['ok'], {key: value for key, value in result.items() if key != 'events'})
         self.assertEqual(expected, result['final_state_hash'])
+
+    def test_original_abduction_retains_attached_death_identity_after_aura_departure_and_replays(self):
+        session = self.session(4000710)
+        engine = session.engine
+        aura = self.add(engine, 'Abduction', ref='ABDUCTION', zone='hand')
+        body = self.add(engine, 'Atog', ref='ABDUCTED', owner='B')
+        removal = self.add(engine, 'Murder', ref='ABDUCTION-MURDER', zone='hand')
+        body.tapped = True
+        action = self.ready(session, aura, {'U': 2, 'B': 2, 'C': 3})
+        self.checkpoint(session)
+        accepted = session.act('pilot:A', {'action_id': action['id'], 'targets': [body.ref], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        self.assertEqual('battlefield', aura.zone)
+        self.assertEqual(body.object_id, aura.attached_to)
+        self.assertFalse(body.tapped)
+        self.assertEqual('A', body.controller)
+        while session.pending_principals()[0] != 'pilot:A':
+            self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
+        action = next(row for row in session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions'] if row.get('card') == removal.ref)
+        old_identity = body.logical_object_id
+        accepted = session.act('pilot:A', {'action_id': action['id'], 'targets': [body.ref], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        for _ in range(16):
+            if engine.state.cards[body.object_id].zone == 'graveyard':
+                break
+            self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
+        self.assertEqual('graveyard', engine.state.cards[body.object_id].zone)
+        self.assertEqual('graveyard', engine.state.cards[aura.object_id].zone)
+        self.assertTrue(any(item.kind == 'triggered_ability' for item in engine.state.stack))
+        self.replay(session)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'abduction-departed-aura'
+            session.save(path)
+            session = CommanderSession.load(self.db, path)
+        engine = session.engine
+        self.resolve(session)
+        current = engine.state.cards[body.object_id]
+        self.assertEqual('battlefield', current.zone)
+        self.assertEqual('B', current.controller)
+        self.assertNotEqual(old_identity, current.logical_object_id)
+        self.assertEqual('graveyard', engine.state.cards[aura.object_id].zone)
+        self.assertIsNone(current.attached_to)
+        self.replay(session)
 
     def test_actual_sacrifice_returns_exact_card_to_owner_hand_with_pre_action_replay(self):
         session = self.session(4000701); engine = session.engine
