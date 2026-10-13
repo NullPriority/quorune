@@ -21,6 +21,20 @@ from quorune.record import (
 
 
 class AttackKeywordTriggerIntegrationTests(unittest.TestCase):
+    def test_phased_out_trigger_source_is_absent_from_real_attack_transition(self):
+        session=self.make_session(388050);engine=session.engine
+        attacker=self.permanent(engine,'Active Attacker')
+        absent=self.permanent(engine,'Phased Exalted Source',CombatKeywordTriggerKind.EXALTED,creature=False)
+        absent.phased_out=True
+        engine._issue_attackers();session.initial_checkpoint=checkpoint_envelope(engine.state)
+        session.commands.clear();session.decisions.clear()
+        result=session.act('pilot:A',{'action_id':'attack','attackers':{attacker.ref:'B'}})
+        self.assertTrue(result.ok,result.summary)
+        self.assertFalse(any(item.source_object_id==absent.object_id for item in engine.state.stack))
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'phased-attack-source';session.save(path)
+            replay=replay_record(path,self.db,verify=True)
+        self.assertTrue(replay['ok'],replay)
     @classmethod
     def setUpClass(cls):
         cls.db, cls.mishra, cls.zimone = load_assets()

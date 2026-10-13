@@ -82,6 +82,9 @@ class EngineAttackTransitionQuery(AttackTransitionQuery):
         active = self.active_player()
         source_ids = []
         for object_id in self._engine.state.players[active].zones["battlefield"]:
+            card = self._engine.state.cards[object_id]
+            if card.phased_out:
+                continue
             participant = self.participant(object_id)
             if participant.trigger_specs:
                 source_ids.append(object_id)
