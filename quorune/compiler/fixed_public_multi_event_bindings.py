@@ -223,8 +223,13 @@ def fixed_public_multi_event_binding_spec(
         events = tuple(event_aliases.get(child.event.value.removesuffix('.self'), child.event.value.removesuffix('.self')) for child in children)
         if first.active_zone != second.active_zone or len(set(events)) != 2:
             return None
-        subscriptions = tuple(FixedEventSubscription(event,
-            _source_condition() if index == 0 else child.event_condition)
+        # The primary subscription uses the established source-entry predicate.
+        # Other children retain source identity in their typed event suffix;
+        # removing it would widen a source damage/departure clause to all objects.
+        subscriptions = tuple(FixedEventSubscription(
+            event + ('.self' if index != 0 and child.event.value.endswith('.self') else ''),
+            (_source_condition(child.event_condition) if child.event_condition is not None else _source_condition())
+            if index == 0 else child.event_condition)
             for index, (child, event) in enumerate(zip(children, events)))
         from ..rules.capabilities import MECHANIC_CAPABILITY_DEPENDENCIES
         event_capabilities = {cap for child in children for mechanic in child.event_mechanics

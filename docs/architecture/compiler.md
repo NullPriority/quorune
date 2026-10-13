@@ -138,7 +138,11 @@ Existing public intervening conditions are checked at occurrence and resolution.
 The multi-event compiler also composes an explicit source-entry prefix with
 one independently exact distinct same-zone event prefix. Each subscription
 retains its own source, controller and characteristic predicates; one shared
-result remains one ability. Nested subscriptions, repeated normalized events,
+result remains one ability. Event alias normalization retains a source-specific
+child's typed identity as well as its predicate; a controller-wide or global
+child does not acquire that source restriction. A printed once-per-turn limit
+requires every subscribed event to remain inside its supported nondeparture
+contract. Nested subscriptions, repeated normalized events,
 mixed active zones, and unrepresented prefixes remain residual. Qualified
 public subjects may similarly subscribe to entry and death or departure using
 two independently accepted zone predicates. The canonical predeparture
