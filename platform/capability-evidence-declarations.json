@@ -58529,15 +58529,119 @@
     {"capability_id": "trigger.source.fixed_maintenance", "evidence_class": "replay", "test_id": "tests.test_source_maintenance.SourceMaintenanceActionTests.test_trusted_granted_maintenance_uses_recipient_after_grant_source_leaves", "official_rule_ids": ["118.3", "118.12", "118.12a", "201.5", "400.7", "603.3", "603.3a", "608.2c", "701.21a"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "The printed global grant creates a recipient-controller trigger with the recipient incarnation, and removal of the granting permanent after placement preserves accepted recipient sacrifice and exact replay."},
     {"capability_id": "trigger.source.fixed_maintenance", "evidence_class": "replay", "test_id": "tests.test_source_maintenance.SourceMaintenanceActionTests.test_trusted_queued_mesa_retains_payer_after_source_control_changes", "official_rule_ids": ["118.3", "118.12", "118.12a", "201.5", "400.7", "603.3", "603.3a", "608.2c", "701.21a"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "A normally discovered upkeep trigger retains its original payer after authoritative control transfer and cannot sacrifice the now-opposing permanent; accepted decline and pre-action replay preserve that result."},
     {"capability_id": "trigger.source.fixed_maintenance", "evidence_class": "replay", "test_id": "tests.test_source_maintenance.SourceMaintenanceActionTests.test_trusted_rupture_spire_land_action_pays_or_sacrifices_and_replays", "official_rule_ids": ["118.3", "118.12", "118.12a", "201.5", "400.7", "603.3", "603.3a", "608.2c", "701.21a"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Actual registered printed-card commands preserve full costs, locked trigger controller, original source incarnation and canonical replacement continuations with independent expected results."},
-    {"capability_id":"trigger.subscription.fixed_multi_event","evidence_class":"interaction","test_id":"tests.test_fixed_counter_event_triggers.FlavorNamedTriggerRuntimeTests.test_original_squirrel_flavor_attack_creates_one_token_and_replays","official_rule_ids":["603.2","603.3","603.6"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Squirrel Girl's accepted attack produces one controlled green 1/1 Squirrel token through its labeled multi-event ability, with exact replay from before the action."},
-    {"capability_id":"trigger.subscription.fixed_multi_event","evidence_class":"interaction","test_id":"tests.test_fixed_counter_event_triggers.FlavorNamedTriggerRuntimeTests.test_original_squirrel_flavor_entry_creates_one_token_and_replays","official_rule_ids":["603.2","603.3","603.6"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Squirrel Girl's accepted cast and entry produces one controlled green 1/1 Squirrel token through its labeled multi-event ability, with exact replay from before the action."},
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_event_triggers.FlavorNamedTriggerRuntimeTests.test_original_squirrel_flavor_attack_creates_one_token_and_replays",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Squirrel Girl's accepted attack produces one controlled green 1/1 Squirrel token through its labeled multi-event ability, with exact replay from before the action."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_counter_event_triggers.FlavorNamedTriggerRuntimeTests.test_original_squirrel_flavor_entry_creates_one_token_and_replays",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Squirrel Girl's accepted cast and entry produces one controlled green 1/1 Squirrel token through its labeled multi-event ability, with exact replay from before the action."
+    },
     {
       "capability_id": "trigger.subscription.fixed_multi_event",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_fixed_multi_event_source_triggers_share_events_and_replay",
-      "official_rule_ids": ["603.2", "603.3", "603.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Route entry, attack, and committed combat-damage occurrences through distinct conditions on one shared typed trigger body."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_resolution_public_conditions.IndependentDualSourceEventRuntimeTests.test_created_dual_source_trigger_survives_real_ability_removal_response_and_replays",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent composition preserves each child source-specific event identity together with its existing predicate; global and controller-wide children retain their scope."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_resolution_public_conditions.IndependentDualSourceEventRuntimeTests.test_multiple_source_wound_observers_draw_once_each_after_actual_combat_in_apnap_order",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent composition preserves each child source-specific event identity together with its existing predicate; global and controller-wide children retain their scope."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_resolution_public_conditions.IndependentDualSourceEventRuntimeTests.test_trusted_dual_event_draws_only_for_each_actual_source_in_real_combat",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent composition preserves each child source-specific event identity together with its existing predicate; global and controller-wide children retain their scope."
     },
     {
       "capability_id": "trigger.subscription.fixed_multi_event",
@@ -58546,7 +58650,10 @@
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -58562,7 +58669,10 @@
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -58575,9 +58685,39 @@
       "capability_id": "trigger.subscription.fixed_multi_event",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_fixed_multi_event_departure_uses_lki_and_apnap",
-      "official_rule_ids": ["603.2", "603.3", "603.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Place simultaneous source-entry subscriptions for active and nonactive controllers through ordinary four-player APNAP ordering."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_resolution_public_conditions.IndependentDualSourceEventRuntimeTests.test_multiple_source_wound_observers_draw_once_each_after_actual_combat_in_apnap_order",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent composition preserves each child source-specific event identity together with its existing predicate; global and controller-wide children retain their scope."
     },
     {
       "capability_id": "trigger.subscription.fixed_multi_event",
@@ -58586,7 +58726,10 @@
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -58602,7 +58745,10 @@
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -58615,8 +58761,19 @@
       "capability_id": "trigger.subscription.fixed_multi_event",
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_fixed_multi_event_dependency_and_parser_mutant_fail_closed",
-      "official_rule_ids": ["603.2", "603.3", "603.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Remove the shared multi-event parser and prove the admitted source clause can no longer become an exact CardProgram trigger."
     },
     {
@@ -58626,7 +58783,10 @@
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -58642,7 +58802,10 @@
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -58655,9 +58818,39 @@
       "capability_id": "trigger.subscription.fixed_multi_event",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_fixed_multi_event_dependency_and_parser_mutant_fail_closed",
-      "official_rule_ids": ["603.2", "603.3", "603.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Retain a material residual when the typed multi-event capability or its shared parser is unavailable."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "negative",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionCompilerTests.test_independent_damage_child_keeps_source_identity_in_event_and_predicate",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent composition preserves each child source-specific event identity together with its existing predicate; global and controller-wide children retain their scope."
     },
     {
       "capability_id": "trigger.subscription.fixed_multi_event",
@@ -58666,7 +58859,10 @@
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -58682,7 +58878,10 @@
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -58698,7 +58897,10 @@
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -58714,7 +58916,10 @@
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -58727,12 +58932,97 @@
       "capability_id": "trigger.subscription.fixed_multi_event",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_fixed_multi_event_trigger_contract_matrix",
-      "official_rule_ids": ["603.2", "603.3", "603.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Compile each admitted two-event source clause to one ordered typed subscription set and one independently exact shared body."
     },
-    {"capability_id":"trigger.subscription.fixed_multi_event","evidence_class":"positive","test_id":"tests.test_fixed_counter_event_triggers.FlavorNamedTriggerRuntimeTests.test_original_squirrel_flavor_attack_creates_one_token_and_replays","official_rule_ids":["603.2","603.3","603.6"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Squirrel Girl's accepted attack produces one controlled green 1/1 Squirrel token through its labeled multi-event ability, with exact replay from before the action."},
-    {"capability_id":"trigger.subscription.fixed_multi_event","evidence_class":"positive","test_id":"tests.test_fixed_counter_event_triggers.FlavorNamedTriggerRuntimeTests.test_original_squirrel_flavor_entry_creates_one_token_and_replays","official_rule_ids":["603.2","603.3","603.6"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Squirrel Girl's accepted cast and entry produces one controlled green 1/1 Squirrel token through its labeled multi-event ability, with exact replay from before the action."},
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_event_triggers.FlavorNamedTriggerRuntimeTests.test_original_squirrel_flavor_attack_creates_one_token_and_replays",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Squirrel Girl's accepted attack produces one controlled green 1/1 Squirrel token through its labeled multi-event ability, with exact replay from before the action."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_event_triggers.FlavorNamedTriggerRuntimeTests.test_original_squirrel_flavor_entry_creates_one_token_and_replays",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Squirrel Girl's accepted cast and entry produces one controlled green 1/1 Squirrel token through its labeled multi-event ability, with exact replay from before the action."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "positive",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionCompilerTests.test_independent_children_preserve_standalone_source_global_and_departure_meaning",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent composition preserves each child source-specific event identity together with its existing predicate; global and controller-wide children retain their scope."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "positive",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionCompilerTests.test_independent_damage_child_keeps_source_identity_in_event_and_predicate",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent composition preserves each child source-specific event identity together with its existing predicate; global and controller-wide children retain their scope."
+    },
     {
       "capability_id": "trigger.subscription.fixed_multi_event",
       "evidence_class": "positive",
@@ -58740,7 +59030,10 @@
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -58756,7 +59049,10 @@
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -58772,7 +59068,10 @@
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -58788,7 +59087,10 @@
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -58801,18 +59103,51 @@
       "capability_id": "trigger.subscription.fixed_multi_event",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_fixed_multi_event_source_triggers_share_events_and_replay",
-      "official_rule_ids": ["603.2", "603.3", "603.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Project public entry and attack trigger facts to every seat without exposing source physical or logical identities."
     },
     {
       "capability_id": "trigger.subscription.fixed_multi_event",
       "evidence_class": "privacy",
+      "test_id": "tests.test_resolution_public_conditions.IndependentDualSourceEventRuntimeTests.test_multiple_source_wound_observers_draw_once_each_after_actual_combat_in_apnap_order",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent composition preserves each child source-specific event identity together with its existing predicate; global and controller-wide children retain their scope."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "privacy",
       "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay",
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -58821,15 +59156,100 @@
       ],
       "applicability_note": "Two distinct typed subscriptions share one source-zone and result while preserving source entry, controller and mana-value predicates; actual casts, foreign/small controls, privacy, replay and compiler omission evidence."
     },
-    {"capability_id":"trigger.subscription.fixed_multi_event","evidence_class":"replay","test_id":"tests.test_fixed_counter_event_triggers.FlavorNamedTriggerRuntimeTests.test_original_squirrel_flavor_attack_creates_one_token_and_replays","official_rule_ids":["603.2","603.3","603.6"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Squirrel Girl's accepted attack produces one controlled green 1/1 Squirrel token through its labeled multi-event ability, with exact replay from before the action."},
-    {"capability_id":"trigger.subscription.fixed_multi_event","evidence_class":"replay","test_id":"tests.test_fixed_counter_event_triggers.FlavorNamedTriggerRuntimeTests.test_original_squirrel_flavor_entry_creates_one_token_and_replays","official_rule_ids":["603.2","603.3","603.6"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Squirrel Girl's accepted cast and entry produces one controlled green 1/1 Squirrel token through its labeled multi-event ability, with exact replay from before the action."},
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_counter_event_triggers.FlavorNamedTriggerRuntimeTests.test_original_squirrel_flavor_attack_creates_one_token_and_replays",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Squirrel Girl's accepted attack produces one controlled green 1/1 Squirrel token through its labeled multi-event ability, with exact replay from before the action."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_counter_event_triggers.FlavorNamedTriggerRuntimeTests.test_original_squirrel_flavor_entry_creates_one_token_and_replays",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Squirrel Girl's accepted cast and entry produces one controlled green 1/1 Squirrel token through its labeled multi-event ability, with exact replay from before the action."
+    },
     {
       "capability_id": "trigger.subscription.fixed_multi_event",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_fixed_multi_event_source_triggers_share_events_and_replay",
-      "official_rule_ids": ["603.2", "603.3", "603.6"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Replay the second subscribed event and shared body from a pre-attack checkpoint to the identical authoritative hash."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "replay",
+      "test_id": "tests.test_resolution_public_conditions.IndependentDualSourceEventRuntimeTests.test_created_dual_source_trigger_survives_real_ability_removal_response_and_replays",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent composition preserves each child source-specific event identity together with its existing predicate; global and controller-wide children retain their scope."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "replay",
+      "test_id": "tests.test_resolution_public_conditions.IndependentDualSourceEventRuntimeTests.test_trusted_dual_event_draws_only_for_each_actual_source_in_real_combat",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent composition preserves each child source-specific event identity together with its existing predicate; global and controller-wide children retain their scope."
     },
     {
       "capability_id": "trigger.subscription.fixed_multi_event",
@@ -58838,7 +59258,10 @@
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -58854,7 +59277,10 @@
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -58936,6 +59362,24 @@
         "commander_review"
       ],
       "applicability_note": "One closed intrinsic trigger consumes its current-turn allowance at event discovery, with exact replay and authenticated command rejection."
+    },
+    {
+      "capability_id": "trigger.usage.once_per_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionCompilerTests.test_dual_departure_usage_limit_remains_outside_supported_nondeparture_contract",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A composed subscription is eligible only when every child event is nondeparture; a permitted primary event cannot mask an unsupported departure branch."
     },
     {
       "capability_id": "trigger.usage.once_per_turn",
@@ -59026,6 +59470,24 @@
         "commander_review"
       ],
       "applicability_note": "Both source-self and external sacrifice-departure combinations remain residual at whole-card admission."
+    },
+    {
+      "capability_id": "trigger.usage.once_per_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionCompilerTests.test_dual_departure_usage_limit_remains_outside_supported_nondeparture_contract",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A composed subscription is eligible only when every child event is nondeparture; a permitted primary event cannot mask an unsupported departure branch."
     },
     {
       "capability_id": "trigger.usage.once_per_turn",

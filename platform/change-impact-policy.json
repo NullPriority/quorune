@@ -2069,14 +2069,19 @@
       "id": "independent-dual-event-contract",
       "patterns": [
         "quorune/compiler/fixed_public_multi_event_bindings.py",
-        "quorune/compiler/fixed_counter_trigger_nodes.py"
+        "quorune/compiler/fixed_counter_trigger_nodes.py",
+        "quorune/compiler/trigger_limit_nodes.py",
+        "quorune/rules/trigger_limits.py",
+        "tests/fixtures/independent-dual-source-events.json"
       ],
       "test_modules": [
         "test_fixed_counter_event_triggers",
         "test_resolution_public_conditions",
         "test_card_program_v2",
         "test_exact_deck_triggers",
-        "test_card_program_trust"
+        "test_card_program_trust",
+        "test_limited_event_triggers",
+        "test_game_record_v3"
       ]
     },
     {

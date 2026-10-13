@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 230,
+  "registry_version": 231,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -9944,11 +9944,14 @@
     },
     {
       "id": "trigger.subscription.fixed_multi_event",
-      "version": 1,
+      "version": 2,
       "official_rules": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -9956,7 +9959,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Bind one source-spanned triggered ability to two fixed normalized events in the same active zone, preserving an independent typed condition for each subscription and one shared effect body.",
+        "summary": "Bind one source-spanned triggered ability to two fixed normalized events in the same active zone, preserving an independent typed condition for each subscription and one shared effect body. Independent composition preserves each child source-specific event identity together with its existing predicate; global and controller-wide children retain their scope.",
         "inputs": [
           "one exact two-event source clause",
           "two represented normalized event identities",
@@ -9991,7 +9994,8 @@
         "quorune.compiler.fixed_public_multi_event_bindings.fixed_public_multi_event_binding_spec",
         "quorune.compiler.fixed_counter_trigger_nodes.fixed_typed_event_effect_trigger_node",
         "quorune.trigger_discovery.semantic_event_matches",
-        "quorune.card_programs.model.ability_to_card_dict"
+        "quorune.card_programs.model.ability_to_card_dict",
+        "quorune.trigger_discovery._selected_event_subscription"
       ],
       "positive_tests": [
         "test_fixed_multi_event_trigger_contract_matrix",
@@ -10000,7 +10004,9 @@
         "test_independent_dual_event_subscription_keeps_each_condition",
         "test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay",
         "test_qualified_zone_event_pair_preserves_each_occurrence_predicate",
-        "test_qualified_pair_actual_entry_and_death_draw_only_for_source_controller"
+        "test_qualified_pair_actual_entry_and_death_draw_only_for_source_controller",
+        "test_independent_damage_child_keeps_source_identity_in_event_and_predicate",
+        "test_independent_children_preserve_standalone_source_global_and_departure_meaning"
       ],
       "negative_tests": [
         "test_fixed_multi_event_trigger_near_misses_remain_material",
@@ -10009,27 +10015,35 @@
         "test_independent_dual_event_rejects_nested_or_unrepresented_prefixes_and_mutant",
         "test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay",
         "test_qualified_event_pair_unknown_predicate_and_parser_omission_fail_closed",
-        "test_qualified_pair_actual_entry_and_death_draw_only_for_source_controller"
+        "test_qualified_pair_actual_entry_and_death_draw_only_for_source_controller",
+        "test_independent_damage_child_keeps_source_identity_in_event_and_predicate"
       ],
       "interaction_tests": [
         "test_fixed_multi_event_source_triggers_share_events_and_replay",
         "test_fixed_multi_event_departure_uses_lki_and_apnap",
         "test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay",
-        "test_qualified_pair_actual_entry_and_death_draw_only_for_source_controller"
+        "test_qualified_pair_actual_entry_and_death_draw_only_for_source_controller",
+        "test_trusted_dual_event_draws_only_for_each_actual_source_in_real_combat",
+        "test_multiple_source_wound_observers_draw_once_each_after_actual_combat_in_apnap_order",
+        "test_created_dual_source_trigger_survives_real_ability_removal_response_and_replays"
       ],
       "multiplayer_tests": [
         "test_fixed_multi_event_departure_uses_lki_and_apnap",
         "test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay",
-        "test_qualified_pair_actual_entry_and_death_draw_only_for_source_controller"
+        "test_qualified_pair_actual_entry_and_death_draw_only_for_source_controller",
+        "test_multiple_source_wound_observers_draw_once_each_after_actual_combat_in_apnap_order"
       ],
       "privacy_tests": [
         "test_fixed_multi_event_source_triggers_share_events_and_replay",
-        "test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay"
+        "test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay",
+        "test_multiple_source_wound_observers_draw_once_each_after_actual_combat_in_apnap_order"
       ],
       "replay_tests": [
         "test_fixed_multi_event_source_triggers_share_events_and_replay",
         "test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay",
-        "test_qualified_pair_actual_entry_and_death_draw_only_for_source_controller"
+        "test_qualified_pair_actual_entry_and_death_draw_only_for_source_controller",
+        "test_trusted_dual_event_draws_only_for_each_actual_source_in_real_combat",
+        "test_created_dual_source_trigger_survives_real_ability_removal_response_and_replays"
       ],
       "required_evidence": [
         "positive",
@@ -14324,7 +14338,7 @@
     },
     {
       "id": "trigger.usage.once_per_turn",
-      "version": 2,
+      "version": 3,
       "official_rules": [
         "400.7",
         "603.2",
@@ -14338,7 +14352,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Compose one printed once-each-turn limit with a closed current battlefield trigger; consume per intrinsic ability and logical incarnation at discovery, preserve same-object continuity, and prohibit additional-trigger multiplication.",
+        "summary": "Compose one printed once-each-turn limit with a closed current battlefield trigger; consume per intrinsic ability and logical incarnation at discovery, preserve same-object continuity, and prohibit additional-trigger multiplication. A composed subscription is eligible only when every child event is nondeparture; a permitted primary event cannot mask an unsupported departure branch.",
         "inputs": [
           "source-spanned typed trigger limit",
           "current intrinsic ability identity",
@@ -14368,7 +14382,8 @@
         "quorune.trigger_discovery.dispatch_semantic_event",
         "quorune.rules.trigger_limits.supported_trigger_limit_event",
         "quorune.rules.trigger_limits.validate_program_trigger_limit",
-        "quorune.card_programs.binding.bind_semantic_program_runtime"
+        "quorune.card_programs.binding.bind_semantic_program_runtime",
+        "quorune.rules.trigger_limits.supported_trigger_limit_subscriptions"
       ],
       "positive_tests": [
         "test_closed_limit_preserves_span_and_dependency",
@@ -14378,10 +14393,12 @@
         "test_unsupported_action_limits_and_departures_remain_residual",
         "test_codec_rejects_malformed_limit_and_preserves_old_shape",
         "test_departure_shape_and_forged_trust_binding_fail_closed",
-        "test_limited_sacrifice_departure_cards_fail_whole_program_admission"
+        "test_limited_sacrifice_departure_cards_fail_whole_program_admission",
+        "test_dual_departure_usage_limit_remains_outside_supported_nondeparture_contract"
       ],
       "interaction_tests": [
-        "test_actual_counter_events_draw_once_and_replay"
+        "test_actual_counter_events_draw_once_and_replay",
+        "test_dual_departure_usage_limit_remains_outside_supported_nondeparture_contract"
       ],
       "multiplayer_tests": [
         "test_actual_counter_events_draw_once_and_replay"
