@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from copy import deepcopy
+from dataclasses import replace
 from pathlib import Path
 import tempfile
 import unittest
@@ -24,6 +25,19 @@ from quorune.semantic_choices import SemanticChoiceContext, SnapshotSemanticChoi
 
 
 class KickedSpellConditionTests(unittest.TestCase):
+    def test_kicked_full_program_survives_numeric_condition_dependency_consumer(self):
+        from test_bound_effect_programs import record
+        text='Kicker {1}\nDraw a card. If this spell was kicked, draw a card.'
+        ir=compile_oracle_card(replace(record(text),keywords=('Kicker',)),capability_registry=load_default_capability_registry(),capability_profile='commander_review')
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        node=next(n for n in ir.faces[0].nodes if n.effects)
+        self.assertIn('resolution.effect.fixed_cast_fact',node.capability_dependencies)
+        self.assertNotIn('condition.creature.fixed_numeric_exists',node.capability_dependencies)
+        numeric=compile_oracle_card(record('If you control a creature with power 4 or greater, draw a card.'),
+            capability_registry=load_default_capability_registry(),capability_profile='commander_review')
+        self.assertEqual('exact',numeric.status,numeric.material_residuals)
+        self.assertIn('condition.creature.fixed_numeric_exists',numeric.faces[0].nodes[0].capability_dependencies)
+
     def test_kicked_result_is_separate_from_mandatory_prefix(self):
         result = kicked_spell_condition_template(
             "Return target nonland permanent to its owner's hand. If this spell was kicked, draw a card.",

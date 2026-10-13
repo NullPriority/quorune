@@ -40,7 +40,13 @@ _DIRECT_TYPE_ANY_VALUES = frozenset(
         "planeswalker",
     }
 )
-DIRECT_NONCREATURE_SUBTYPES = frozenset({"forest", "gate", "vehicle"})
+DIRECT_NONCREATURE_SUBTYPES = frozenset('''
+attraction blood bobblehead book clue contraption equipment food fortification
+gold incubator infinity junk lander map mutagen powerstone spacecraft stone
+treasure vehicle vibranium aura background cartouche case class curse plan
+role room rune saga shard shrine cave desert forest gate island lair locus
+mine mountain plains planet power-plant sphere swamp tower town urza's
+'''.split())
 DIRECT_PERMANENT_TYPES = _DIRECT_TYPE_ANY_VALUES | {"permanent"}
 _DIRECT_SUPERTYPES = frozenset({"basic", "legendary", "snow"})
 _DIRECT_KEYWORDS = frozenset(

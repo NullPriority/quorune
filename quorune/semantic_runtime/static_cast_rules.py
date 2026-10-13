@@ -1,4 +1,5 @@
 from __future__ import annotations
+from ..entry_copy import copiable_oracle_id
 
 """Typed battlefield-static casting and stack-counter rules."""
 
@@ -339,7 +340,7 @@ def active_static_cast_rules(host: StaticCastRuleHost) -> tuple[StaticCastRule, 
         if record is None:
             continue
         for program in host.semantics.runtime_handler_programs_for_oracle(
-            source.oracle_id,
+            copiable_oracle_id(source),
             active_zone="battlefield",
             event=STATIC_CAST_RULE_EVENT,
         ):

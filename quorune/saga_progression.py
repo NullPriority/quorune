@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .entry_copy import copiable_oracle_id
 
 """Typed counter ownership for ordinary Saga entry and turn actions."""
 
@@ -137,7 +138,7 @@ def represented_chapter_numbers(
 
     numbers: set[int] = set()
     characteristics: Mapping[str, Any] | None = None
-    for program in host.semantics.programs_for_oracle(card.oracle_id):
+    for program in host.semantics.programs_for_oracle(copiable_oracle_id(card)):
         match = _CHAPTER_EVENT.fullmatch(str(program.event or ""))
         if match is None or not host.semantic_program_is_current_trusted(program):
             continue
@@ -159,7 +160,7 @@ def _trusted_chapter_numbers(
 ) -> tuple[int, ...]:
     numbers = {
         int(match.group("number"))
-        for program in host.semantics.programs_for_oracle(card.oracle_id)
+        for program in host.semantics.programs_for_oracle(copiable_oracle_id(card))
         if (match := _CHAPTER_EVENT.fullmatch(str(program.event or "")))
         is not None
         and host.semantic_program_is_current_trusted(program)

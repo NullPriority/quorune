@@ -420,7 +420,8 @@
       "released_at": "2011-01-10",
       "toughness": "2",
       "type_line": "Creature \u2014 Atog"
-    }
+    },
+    {"oracle_id":"d0e1904e-1a37-41f6-8582-b9ea794bb886","name":"Abduction","mana_cost":"{2}{U}{U}","cmc":4.0,"type_line":"Enchantment — Aura","oracle_text":"Enchant creature\nWhen this Aura enters, untap enchanted creature.\nYou control enchanted creature.\nWhen enchanted creature dies, return that card to the battlefield under its owner's control.","power":null,"toughness":null,"loyalty":null,"defense":null,"colors":["U"],"color_identity":["U"],"keywords":["Enchant"],"produced_mana":[],"layout":"normal","released_at":"1999-04-21","legalities":{"alchemy":"not_legal","brawl":"not_legal","commander":"legal","competitivebrawl":"not_legal","duel":"legal","future":"not_legal","gladiator":"not_legal","historic":"not_legal","legacy":"legal","modern":"not_legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"not_legal","paupercommander":"not_legal","penny":"not_legal","pioneer":"not_legal","predh":"legal","premodern":"legal","standard":"not_legal","standardbrawl":"not_legal","timeless":"not_legal","tlr":"not_legal","vintage":"legal"},"faces":[]}
   ],
   "rulings": [
     {

@@ -417,7 +417,7 @@ function AssignmentMap({
           return (
             <fieldset key={key} className="choice-field">
               <legend>{text(row.label) || labelFor(key)}</legend>
-              <p className="choice-help">Choose up to {maximum} attackers.</p>
+              <p className="choice-help">Choose up to {maximum} {text(field.choice_label) || "attackers"}.</p>
               {list(row.options).map((rawOption) => {
                 const option = record(rawOption);
                 const ref = text(option.value);

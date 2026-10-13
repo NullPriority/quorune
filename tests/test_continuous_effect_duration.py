@@ -1902,7 +1902,6 @@ class ContinuousEffectEngineTests(unittest.TestCase):
         witness_names = (
             "Drogskol Infantry // Drogskol Armaments",
             "Wilt-Leaf Liege",
-            "Flamekin Village",
         )
         for name in witness_names:
             compiled = compile_oracle_card(
@@ -1922,6 +1921,26 @@ class ContinuousEffectEngineTests(unittest.TestCase):
                     "self-replacement and prevention ordering",
                 },
             )
+
+        # The private reveal-or-tapped entry owner now closes Flamekin Village;
+        # the other two cards still distinguish unsupported replacements from
+        # their independently exact continuous effects.
+        village_ir = compile_oracle_card(
+            self.db.lookup("Flamekin Village"),
+            capability_registry=registry,
+            capability_profile="commander_review",
+        )
+        self.assertEqual("exact", village_ir.status, village_ir.material_residuals)
+        self.assertEqual((), village_ir.material_residuals)
+        self.assertIn(
+            "zone.entry.reveal_hand_or_tapped",
+            {
+                dependency
+                for face in village_ir.faces
+                for node in face.nodes
+                for dependency in node.capability_dependencies
+            },
+        )
 
         target_ref = engine.create_token(
             "A",

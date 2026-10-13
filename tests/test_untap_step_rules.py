@@ -18,6 +18,73 @@ from quorune.semantic_runtime import default_untap_step_component_registry
 
 
 class UntapStepRuleTests(unittest.TestCase):
+    def test_next_untap_marker_follows_current_controller_and_repeated_markers_expire_together(self):
+        from quorune.tap_state import prohibit_next_untap, TapStateError
+        session = self.make_session(357007, players=4)
+        engine = session.engine
+        card = self.token(engine, 'A', 'Controller prohibition', tapped=True)
+        for _ in range(2):
+            prohibit_next_untap(engine, card.ref, actor='A', reason='repeat marker', logical_object_id=card.logical_object_id)
+        engine.change_control(card.object_id, 'B', reason='affected controller witness')
+        engine.state.active_player = 'A'
+        self.enter_untap(session)
+        self.assertTrue(card.annotations['does_not_untap_next'])
+        engine.permissions.invalidate_current(); engine.state.pending_decision = None
+        engine.state.active_player = 'B'; engine.state.priority_player = None; engine.state.priority_passes = []
+        self.enter_untap(session)
+        self.assertTrue(card.tapped)
+        self.assertNotIn('does_not_untap_next', card.annotations)
+        engine.permissions.invalidate_current(); engine.state.pending_decision = None
+        engine.state.priority_player = None; engine.state.priority_passes = []
+        self.enter_untap(session)
+        self.assertFalse(card.tapped)
+        card.annotations['does_not_untap_next'] = 'malformed'
+        before = dict(card.annotations)
+        with self.assertRaises(TapStateError):
+            from quorune.tap_state import consume_next_untap_prohibition
+            consume_next_untap_prohibition(card)
+        self.assertEqual(before, card.annotations)
+
+    def test_next_untap_producer_omission_mutant_is_killed(self):
+        from quorune import tap_state
+        def witness():
+            session = self.make_session(357005)
+            card = self.token(session.engine, 'A', 'Omission witness', tapped=True)
+            tap_state.prohibit_next_untap(session.engine, card.ref, actor='A',
+                reason='omission witness', logical_object_id=card.logical_object_id)
+            self.enter_untap(session)
+            self.assertTrue(card.tapped)
+        witness()
+        with mock.patch.object(tap_state, 'prohibit_next_untap', return_value='no-prohibition'):
+            with self.assertRaises(AssertionError):
+                witness()
+
+    def test_typed_next_untap_producer_pins_incarnation_and_does_not_consume_stun(self):
+        from quorune.tap_state import prohibit_next_untap
+        session = self.make_session(357003)
+        engine = session.engine
+        card = self.token(engine, 'A', 'Next untap producer', tapped=True)
+        card.counters['stun'] = 1
+        identity = card.logical_object_id
+        prohibit_next_untap(engine, card.ref, actor='A', reason='typed producer', logical_object_id=identity)
+        self.enter_untap(session)
+        self.assertTrue(card.tapped)
+        self.assertEqual(1, card.counters['stun'])
+        self.assertNotIn('does_not_untap_next', card.annotations)
+        engine.permissions.invalidate_current(); engine.state.pending_decision = None
+        engine.state.priority_player = None; engine.state.priority_passes = []
+        self.enter_untap(session)
+        self.assertNotIn('stun', card.counters)
+        self.assertTrue(card.tapped)
+        permanent = self.card(session, 'A', 'Sol Ring')
+        engine.move_card(permanent.object_id, 'battlefield', controller='A', reason='original producer control')
+        old_identity = permanent.logical_object_id
+        prohibit_next_untap(engine, permanent.ref, actor='A', reason='departure marker', logical_object_id=old_identity)
+        engine.move_card(permanent.object_id, 'hand', reason='stale producer control')
+        engine.move_card(permanent.object_id, 'battlefield', controller='A', reason='stale producer control')
+        prohibit_next_untap(engine, permanent.ref, actor='A', reason='stale producer', logical_object_id=old_identity)
+        self.assertNotIn('does_not_untap_next', permanent.annotations)
+
     @classmethod
     def setUpClass(cls):
         cls.db, cls.mishra, cls.zimone = load_assets()

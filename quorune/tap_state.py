@@ -16,8 +16,69 @@ REASON_FIELD = "reason"
 NEXT_UNTAP_PROHIBITION_ANNOTATION = "does_not_untap_next"
 
 
+def _exert_players(card: Any) -> list[str]:
+    from .exert_model import EXERT_PLAYER_ANNOTATION
+    value = card.annotations.get(EXERT_PLAYER_ANNOTATION, [])
+    if (type(value) is not list or any(type(player) is not str or not player for player in value)
+            or value != sorted(set(value))):
+        raise TapStateError('Exert duration requires canonical distinct player identities')
+    return value
+
+
+def exert_permanent(host: Any, card: Any, *, actor: str, linked_program: str,
+                    trigger_batch: list[Any]) -> None:
+    """Pay one CR 701.43 cost and publish its linked result before later costs."""
+    if (card.zone != 'battlefield' or card.phased_out or actor not in host.active_seats
+            or type(linked_program) is not str or not linked_program):
+        raise TapStateError('Exert requires a present permanent, acting player and linked cost')
+    prohibit_next_player_untap(host,card,actor=actor)
+    context = {'card': card.ref, 'player': actor, 'controller': card.controller,
+               'object_id': card.object_id, 'logical_object_id': card.logical_object_id,
+               'linked_exert_program': linked_program}
+    host._log(actor, 'permanent.exerted', 'Permanent was exerted as an attack cost.',
+              context, changed_objects=[card.object_id], changed_players=[actor])
+    host._dispatch_semantic_event('permanent.exerted', context, trigger_batch=trigger_batch)
+
+
+def prohibit_next_player_untap(host: Any, card: Any, *, actor: str) -> None:
+    """Retain one original permanent restriction through the acting player's step."""
+    from .exert_model import EXERT_PLAYER_ANNOTATION
+    if card.zone != 'battlefield' or card.phased_out or actor not in host.active_seats:
+        raise TapStateError('Next-player untap restriction requires a present permanent and player')
+    card.annotations[EXERT_PLAYER_ANNOTATION]=sorted({*_exert_players(card),actor})
+
+
+def expire_exert_untap_restrictions(host: Any, active_player: str) -> frozenset[str]:
+    """Expire the acting player's durations even if the permanent changed control."""
+    from .exert_model import EXERT_PLAYER_ANNOTATION
+    cards = [card for card in host.state.cards.values() if card.zone == 'battlefield']
+    prepared = [(card, _exert_players(card)) for card in cards]
+    prohibited = frozenset(card.object_id for card, players in prepared if active_player in players)
+    for card, players in prepared:
+        if active_player not in players:
+            continue
+        remaining = [player for player in players if player != active_player]
+        if remaining:
+            card.annotations[EXERT_PLAYER_ANNOTATION] = remaining
+        else:
+            card.annotations.pop(EXERT_PLAYER_ANNOTATION, None)
+    return prohibited
+
+
 class TapStateError(ValueError):
     """A requested canonical tap-state transition is malformed."""
+
+
+def prohibit_next_untap(host: Any, object_ref: str, *, actor: str, reason: str,
+                       logical_object_id: str | None = None) -> str:
+    """Retain one next-controller-untap restriction on the original permanent."""
+    card = host._resolve_object(actor, object_ref, zones={'battlefield'})
+    if logical_object_id is not None and card.logical_object_id != logical_object_id:
+        return card.ref
+    card.annotations[NEXT_UNTAP_PROHIBITION_ANNOTATION] = True
+    host._log(actor, 'permanent.next_untap.prohibited', 'Permanent will skip its next controller untap step.',
+              {'object': card.ref, REASON_FIELD: reason}, changed_objects=[card.object_id])
+    return card.ref
 
 
 def consume_next_untap_prohibition(card: Any) -> bool:
@@ -26,11 +87,12 @@ def consume_next_untap_prohibition(card: Any) -> bool:
     annotations = card.annotations
     if not isinstance(annotations, dict):
         raise TapStateError("Permanent annotations must be a mapping")
-    value = annotations.pop(NEXT_UNTAP_PROHIBITION_ANNOTATION, False)
+    value = annotations.get(NEXT_UNTAP_PROHIBITION_ANNOTATION, False)
     if type(value) is not bool:
         raise TapStateError(
             "Next-untap prohibition state must be boolean"
         )
+    annotations.pop(NEXT_UNTAP_PROHIBITION_ANNOTATION, None)
     return value
 
 

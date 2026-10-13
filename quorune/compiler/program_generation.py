@@ -27,6 +27,7 @@ from ..rules.capabilities import (
 from .modal_program_closure import is_closed_fixed_modal_program
 from .public_zone_program_closure import is_closed_reanimation_effect_program,is_closed_own_graveyard_return_program
 from .source_transform_program_closure import is_closed_source_transform_program
+from .resolution_characteristic_program_closure import is_closed_resolution_characteristic_program
 from ..rules.enlist_shapes import is_closed_enlist_reflexive_program
 from ..rules.fixed_resolution_mana_shapes import is_closed_fixed_resolution_mana_program
 from .fixed_effect_payment_templates import is_closed_fixed_effect_payment_program
@@ -1266,10 +1267,6 @@ def _is_closed_fixed_owner_zone_move_program(program: SemanticProgram) -> bool:
     return _node_capabilities_close_program(program, fixed_owner_zone_move_node_capabilities)
 
 
-def _is_closed_public_characteristic_set_program(program: SemanticProgram) -> bool:
-    from ..rules.fixed_resolution_characteristic_shapes import fixed_resolution_characteristic_set_node_capabilities
-    return _node_capabilities_close_program(program, fixed_resolution_characteristic_set_node_capabilities)
-
 
 def _closed_effect_recognizers():
     return (
@@ -1312,7 +1309,7 @@ def _closed_effect_recognizers():
         _is_closed_fixed_bolster_program,
         _is_closed_fixed_amass_program,
         _is_closed_fixed_target_characteristics_program,
-        _is_closed_public_characteristic_set_program,
+        is_closed_resolution_characteristic_program,
         _is_closed_temporary_target_interaction_program,
         _is_closed_fixed_source_characteristics_program,
         _is_closed_temporary_declaration_restriction_program,

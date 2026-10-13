@@ -104,6 +104,8 @@ def _matches(
     state: CharacteristicState,
     context: Mapping[str, Any],
 ) -> bool:
+    if condition.numeric_characteristic is not None:
+        raise ContinuousEffectError("Live numeric characteristic queries require a represented layer boundary")
     row = ObjectQueryResult(
         object_id=str(context.get("object_id") or "unrepresented"),
         ref=str(context.get("ref") or "unrepresented"),

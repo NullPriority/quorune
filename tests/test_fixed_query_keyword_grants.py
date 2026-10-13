@@ -189,6 +189,39 @@ def _permanent(
 
 
 class FixedQueryKeywordGrantCompilerTests(unittest.TestCase):
+    def test_resolution_public_stat_filter_uses_one_fixed_numeric_owner(self):
+        parsed = fixed_public_characteristic_set_effect_template(
+            'Other creatures you control with power 4 or greater gain trample and haste until end of turn.')
+        self.assertIsNotNone(parsed)
+        self.assertEqual({'characteristic': 'power', 'comparison': 'at_least', 'value': 4},
+                         parsed[1][0]['predicate']['numeric_characteristic'])
+        self.assertEqual('$source', parsed[1][0]['predicate']['exclude_ref'])
+        self.assertIsNone(fixed_public_characteristic_set_effect_template(
+            'Creatures you control with power X or greater gain haste until end of turn.'))
+        self.assertIsNone(fixed_query_keyword_grant_handler(
+            'Creatures you control with power 4 or greater have haste.'))
+
+    def test_nested_subtype_body_casing_preserves_the_complete_public_query(self):
+        texts = ('Other Spiders you control gain flying, first strike, trample, lifelink, and haste until end of turn.',
+                 'other Spiders you control gain flying, first strike, trample, lifelink, and haste until end of turn.')
+        results = [fixed_public_characteristic_set_effect_template(text) for text in texts]
+        self.assertTrue(all(result is not None for result in results))
+        self.assertEqual(results[0], results[1])
+        self.assertIsNone(fixed_public_characteristic_set_effect_template('other NotARealSubtype you control gain haste until end of turn.'))
+
+    def test_bare_subtype_resolution_sets_preserve_kindred_and_creature_boundaries(self):
+        for text in ('All Zombies gain menace until end of turn.',
+                     'Attacking Spirits get +1/+0 until end of turn.',
+                     'Other Faeries you control get +1/+1 and gain flying until end of turn.'):
+            with self.subTest(text=text):
+                parsed = fixed_public_characteristic_set_effect_template(text)
+                self.assertIsNotNone(parsed)
+                self.assertEqual([], parsed[1][0]['predicate']['types_all'])
+        explicit = fixed_public_characteristic_set_effect_template('Zombie creatures you control gain menace until end of turn.')
+        self.assertEqual(['creature'], explicit[1][0]['predicate']['types_all'])
+        self.assertIsNone(fixed_public_characteristic_set_effect_template('All Boguses gain menace until end of turn.'))
+        self.assertIsNone(fixed_public_characteristic_set_effect_template('All Zombies gain menace until your next turn.'))
+
     def test_bare_subtype_public_queries_do_not_invent_creature_type(self):
         for subject in ("Other Faeries you control", "Other Faeries", "Faerie tokens you control"):
             with self.subTest(subject=subject):
@@ -832,10 +865,15 @@ class FixedQueryKeywordGrantCompilerTests(unittest.TestCase):
                 temporary = fixed_public_characteristic_set_effect_template(
                     f"{subject} get +1/+1 until end of turn."
                 )
-                if expected.get("types_all") == []:
-                    self.assertIsNone(temporary)
-                else:
-                    self.assertIsNotNone(temporary)
+                self.assertIsNotNone(temporary)
+                assert temporary is not None
+                effect = temporary[1][0]
+                for field, value in expected.items():
+                    self.assertEqual(value, effect["predicate"][field])
+                self.assertEqual(
+                    "$source" if excluded else None,
+                    effect["predicate"]["exclude_ref"],
+                )
 
         ability_qualified = fixed_characteristic_battlefield_query_subject(
             "Other creatures you control with flying"
@@ -1124,6 +1162,119 @@ class FixedQueryKeywordGrantCompilerTests(unittest.TestCase):
 
 
 class FixedQueryKeywordGrantRuntimeTests(unittest.TestCase):
+    def test_original_cactusfolk_numeric_group_locks_current_power_and_replays(self):
+        from quorune.engine import TURN_STEPS
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.continuous_effect_state import expire_end_of_turn_continuous_effects
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests as actions
+        session = self.session(357002)
+        engine = session.engine
+        registry = load_default_capability_registry()
+        records = tuple(self.db.lookup(name) for name in ('Cactusfolk Sureshot', 'Hill Giant', 'Craw Wurm'))
+        for record in records:
+            program = compile_best_available_card_program(self.db, record, semantic_registry=engine.semantics,
+                capability_registry=registry, capability_profile='commander_review')
+            self.assertTrue(bind_card_program_runtime(program, capability_registry=registry,
+                profile='commander_review')['strict_capability_ready'], record.name)
+        register_generated_programs(self.db, engine.semantics, records, trust_level='provisional',
+            capability_registry=registry, capability_profile='commander_review',
+            promote_exact_runtime_handlers=True, promote_exact_trigger_programs=True,
+            promote_exact_effect_programs=True, promote_exact_capability_declarations=True)
+        source = actions.add(self, engine, 'Cactusfolk Sureshot', ref='numeric-source')
+        below = actions.add(self, engine, 'Hill Giant', ref='numeric-below')
+        selected = actions.add(self, engine, 'Hill Giant', ref='numeric-selected')
+        foreign = actions.add(self, engine, 'Craw Wurm', seat='B', ref='numeric-foreign')
+        selected.counters['+1/+1'] = 1
+        engine.permissions.invalidate_current(); engine.state.pending_decision = None
+        engine.state.active_player = 'A'; engine.state.started = True
+        engine.state.phase_index = TURN_STEPS.index(('precombat_main', 'main'))
+        engine.state.phase = 'precombat_main'; engine.state.step = 'main'; engine.state.priority_passes = []
+        engine._grant_priority('A'); engine.pump(); actions.checkpoint(self, session)
+        for _ in range(12):
+            if engine.state.stack:
+                break
+            accepted = session.act(session.pending_principals()[0], {'action_id': 'pass'})
+            self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual('beginning_combat', engine.state.step)
+        self.assertTrue(engine.state.stack)
+        actions.resolve(self, session)
+        self.assertGreaterEqual(engine._combat_keywords(selected), {'trample', 'haste'})
+        self.assertNotIn('haste', engine._combat_keywords(below))
+        self.assertNotIn('haste', engine._combat_keywords(foreign))
+        self.assertNotIn('haste', engine._combat_keywords(source))
+        actions.replay(self, session, load=True)
+        selected.counters.clear()
+        below.counters['+1/+1'] = 1
+        self.assertIn('haste', engine._combat_keywords(selected))
+        self.assertNotIn('haste', engine._combat_keywords(below))
+        self.assertGreater(expire_end_of_turn_continuous_effects(engine.state), 0)
+        self.assertNotIn('haste', engine._combat_keywords(selected))
+
+    def test_original_lord_resolution_grants_kindred_locks_incarnations_and_expires(self):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.continuous_effect_state import expire_end_of_turn_continuous_effects
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests as actions
+
+        session = self.session(357001)
+        engine = session.engine
+        registry = load_default_capability_registry()
+        records = tuple(self.db.lookup(name) for name in (
+            'Lord of the Accursed', 'Generic Resolution Kindred Zombie', 'Unsummon'))
+        for record in records:
+            program = compile_best_available_card_program(self.db, record, semantic_registry=engine.semantics,
+                capability_registry=registry, capability_profile='commander_review')
+            self.assertTrue(bind_card_program_runtime(program, capability_registry=registry,
+                profile='commander_review')['strict_capability_ready'], record.name)
+        register_generated_programs(self.db, engine.semantics, records, trust_level='provisional',
+            capability_registry=registry, capability_profile='commander_review',
+            promote_exact_runtime_handlers=True, promote_exact_trigger_programs=True,
+            promote_exact_effect_programs=True, promote_exact_capability_declarations=True)
+        source = actions.add(self, engine, 'Lord of the Accursed', ref='resolution-lord')
+        own = actions.add(self, engine, 'Generic Resolution Kindred Zombie', ref='resolution-kindred-own')
+        foreign = actions.add(self, engine, 'Generic Resolution Kindred Zombie', seat='B', ref='resolution-kindred-foreign')
+        bounce = actions.add(self, engine, 'Unsummon', zone='hand', ref='resolution-source-bounce')
+        offered = actions.ready(self, session, source, {'B': 1, 'C': 1, 'U': 2})
+        actions.checkpoint(self, session)
+        before = session.state.to_dict()
+        denied = session.act('pilot:B', {'action_id': offered['id'], 'pay': 'auto'})
+        self.assertFalse(denied.ok)
+        self.assertEqual(before, session.state.to_dict())
+        accepted = session.act('pilot:A', {'action_id': offered['id'], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        actions.resolve(self, session)
+        self.assertIn('menace', engine._combat_keywords(own))
+        self.assertIn('menace', engine._combat_keywords(foreign))
+        self.assertIsNone(engine._effective_card_data(own).get('power'))
+        for _ in range(8):
+            if session.state.priority_player == 'A':
+                break
+            passed = session.act(session.pending_principals()[0], {'action_id': 'pass'})
+            self.assertTrue(passed.ok, passed.summary)
+        cast = next(row for row in session.packet('pilot:A', full=True)['decision']['legal_actions']
+                    if row['id'] == 'cast:' + bounce.ref)
+        accepted = session.act('pilot:A', {'action_id': cast['id'], 'targets': [source.ref], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        actions.resolve(self, session)
+        self.assertEqual('hand', engine.state.cards[source.object_id].zone)
+        self.assertIn('menace', engine._combat_keywords(engine.state.cards[own.object_id]))
+        actions.replay(self, session, load=True)
+        later = actions.add(self, engine, 'Generic Resolution Kindred Zombie', seat='C', ref='resolution-kindred-later')
+        self.assertNotIn('menace', engine._combat_keywords(later))
+        old_identity = engine.state.cards[foreign.object_id].logical_object_id
+        engine.move_card(foreign.object_id, 'hand', reason='resolution-set incarnation control')
+        engine.move_card(foreign.object_id, 'battlefield', controller='B', reason='resolution-set incarnation control')
+        returned = engine.state.cards[foreign.object_id]
+        self.assertNotEqual(old_identity, returned.logical_object_id)
+        self.assertNotIn('menace', engine._combat_keywords(returned))
+        projected = session.projector._snapshot('pilot:D')
+        rendered = json.dumps(projected, sort_keys=True)
+        self.assertNotIn('continuous_effects', rendered)
+        self.assertNotIn(own.object_id, rendered)
+        self.assertGreater(expire_end_of_turn_continuous_effects(engine.state), 0)
+        self.assertNotIn('menace', engine._combat_keywords(engine.state.cards[own.object_id]))
+
     @classmethod
     def setUpClass(cls):
         cls.db, cls.mishra, cls.zimone = load_assets()

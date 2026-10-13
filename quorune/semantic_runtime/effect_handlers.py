@@ -39,6 +39,14 @@ class DomainEffectHandler:
             raise SemanticNodeError(
                 f"Handler {self.handler_id} cannot lower {operation!r}"
             )
+        if operation == 'reanimate' and effect.get('schema_version') == 2:
+            from ..event_card_return import event_battlefield_return_intent
+            try:
+                intent = event_battlefield_return_intent(effect, actor=context.actor, reason=context.default_reason)
+                context.query.require_known_seat(intent.new_controller)
+            except (ValueError, TypeError, KeyError) as exc:
+                raise SemanticNodeError(str(exc)) from exc
+            return IntentPlan(operation=operation, handler_id=self.handler_id, intents=(intent,))
         reason = str(effect.get("reason") or context.default_reason)
         if not reason:
             raise SemanticNodeError("A domain effect requires a reason")

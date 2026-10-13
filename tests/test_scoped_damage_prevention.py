@@ -20,6 +20,31 @@ import test_counter_placement_events as counter_witnesses
 
 
 class ScopedPreventionCompilerTests(unittest.TestCase):
+    def test_target_modifier_and_fixed_prevention_share_one_bound_target_program(self):
+        from test_bound_effect_programs import record
+        text='Target creature gains flying until end of turn. Prevent all damage that would be dealt to that creature this turn.'
+        ir=compile_oracle_card(record(text),capability_registry=load_default_capability_registry(),capability_profile='commander_review')
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        node=ir.faces[0].nodes[0]
+        self.assertEqual('$target.0',node.effects[1]['scope']['target_ref'])
+        self.assertIn('resolution.effect_program.bound_references',node.capability_dependencies)
+        self.assertIn('damage.prevention.persistent_amount',node.capability_dependencies)
+
+    def test_prevention_component_rejects_derived_amounts_open_scopes_and_missing_owner(self):
+        from test_bound_effect_programs import record
+        from quorune.rules.prevention_component_shapes import fixed_prevention_component_capabilities
+        from quorune.rules.capabilities import CapabilityRegistry
+        text='Target creature gains flying until end of turn. Prevent all damage that would be dealt to that creature this turn.'
+        ir=compile_oracle_card(record(text),capability_registry=load_default_capability_registry(),capability_profile='commander_review')
+        node=ir.faces[0].nodes[0];effect=dict(node.effects[1])
+        for wrong in ({**effect,'amount':'$x'},{**effect,'scope':{**effect['scope'],'private':True}},
+                      {**effect,'mode':'amount'},{**effect,'subject':'$target.1'}):
+            self.assertFalse(fixed_prevention_component_capabilities(effects=(wrong,),target_schema=node.target_schema,mechanic_ids=node.mechanics))
+        registry_value=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        next(c for c in registry_value['capabilities'] if c['id']=='damage.prevention.persistent_amount').update(status='blocked',blockers=['missing durable shield'])
+        registry=CapabilityRegistry(registry_value);registry.mark_evidence_verified('0'*64)
+        self.assertNotEqual('exact',compile_oracle_card(record(text),capability_registry=registry).status)
+
     def test_role_token_attachment_source_color_and_pair_scopes_are_closed(self):
         registry=load_default_capability_registry()
         for text in ('Prevent all combat damage that would be dealt to attacking creatures you control.',
@@ -303,3 +328,71 @@ class ScopedPreventionRuntimeTests(unittest.TestCase):
             if e.state.cards[attacker.object_id].zone=='graveyard':break
             result=s.act(s.pending_principals()[0],{'action_id':'pass'});self.assertTrue(result.ok,result.summary)
         self.assertEqual(0,e.state.cards[red.object_id].marked_damage);self.assertEqual('graveyard',e.state.cards[attacker.object_id].zone);self.replay(s,load=True)
+
+
+class PreventionCompositionRuntimeTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary=tempfile.TemporaryDirectory();path=Path(cls.temporary.name)/'prevention-composition.sqlite3'
+        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/prevention-composition-cards.json'],path)
+        cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
+        cls.deck=DeckDefinition('Prevention composition',[DeckEntry('Generic Bound Commander',1,'commander'),DeckEntry('Generic Bound Plains',30)],['Generic Bound Commander'])
+    @classmethod
+    def tearDownClass(cls):cls.db.close();cls.temporary.cleanup()
+    session=witnesses.BoundEffectProgramRuntimeTests.session
+    add=witnesses.BoundEffectProgramRuntimeTests.add
+    checkpoint=witnesses.BoundEffectProgramRuntimeTests.checkpoint
+    replay=witnesses.BoundEffectProgramRuntimeTests.replay
+    resolve=witnesses.BoundEffectProgramRuntimeTests.resolve
+
+    def ready(self,s,source,mana):
+        e=s.engine;e.permissions.invalidate_current();e.state.pending_decision=None;e.state.started=True
+        e.state.active_player='A';e.state.phase='precombat_main';e.state.step='main';e.state.priority_passes=[]
+        e.state.players['A'].mana_pool.update(mana);e._grant_priority('A');e.pump()
+        return next(row for row in s.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions'] if row.get('card')==source.ref)
+
+    def cast(self,s,card,target):
+        for _ in range(4):
+            if s.packet('pilot:A',full=True)['decision'] is not None:break
+            accepted=s.act(s.pending_principals()[0],{'action_id':'pass'});self.assertTrue(accepted.ok,accepted.summary)
+        action=next(row for row in s.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions'] if row.get('card')==card.ref)
+        accepted=s.act('pilot:A',{'action_id':action['id'],'targets':[target.ref],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(s)
+
+    def test_original_leap_of_faith_modifier_and_prevention_resolve_then_damage_boundary_replays(self):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+        s=self.session(364001);e=s.engine;spell=self.add(e,'Leap of Faith',zone='hand')
+        target=self.add(e,'Generic Bound Body',seat='B');other=self.add(e,'Generic Bound Body',seat='C',ref='other-body')
+        first=self.add(e,'Shock',zone='hand',ref='prevented-shock');second=self.add(e,'Shock',zone='hand',ref='other-shock')
+        p=compile_best_available_card_program(self.db,self.db.lookup('Leap of Faith'),semantic_registry=e.semantics,capability_registry=self.registry,capability_profile='commander_review')
+        self.assertTrue(bind_card_program_runtime(p,capability_registry=self.registry,profile='commander_review')['strict_capability_ready'])
+        self.ready(s,spell,{'W':1,'C':4,'R':4});self.checkpoint(s);self.cast(s,spell,target)
+        self.assertIn('flying',e._combat_keywords(e.state.cards[target.object_id]));self.assertEqual(1,len(e.state.damage_prevention_shields))
+        self.cast(s,first,target);self.assertEqual(0,e.state.cards[target.object_id].marked_damage)
+        self.cast(s,second,other);self.assertEqual(2,e.state.cards[other.object_id].marked_damage)
+        projection=json.dumps(s.projector._snapshot('pilot:D'),sort_keys=True)
+        for seat in 'ABC':
+            for oid in e.state.players[seat].zones['hand']:self.assertNotIn(e.state.cards[oid].ref,projection)
+        self.replay(s,load=True)
+
+    def test_original_djeru_untap_and_prevention_expire_and_preserve_target_authority(self):
+        from quorune.damage_prevention import expire_end_of_turn_damage_modifiers
+        from quorune.damage import damage_proposal,resolve_damage_batch
+        s=self.session(364002);e=s.engine;spell=self.add(e,"Djeru's Resolve",zone='hand')
+        target=self.add(e,'Generic Bound Body',seat='B');target.tapped=True
+        action=self.ready(s,spell,{'W':1});self.checkpoint(s);before=authoritative_state_hash(e.state)
+        denied=s.act('pilot:C',{'action_id':action['id'],'targets':[target.ref],'pay':'auto'})
+        self.assertFalse(denied.ok);self.assertEqual(before,authoritative_state_hash(e.state))
+        accepted=s.act('pilot:A',{'action_id':action['id'],'targets':[target.ref],'pay':'auto'});self.assertTrue(accepted.ok,accepted.summary)
+        self.resolve(s);self.assertFalse(e.state.cards[target.object_id].tapped);self.assertEqual(1,len(e.state.damage_prevention_shields))
+        self.replay(s,load=True);expire_end_of_turn_damage_modifiers(e.state)
+        result=resolve_damage_batch(e,(damage_proposal(e,proposal_id='fixture:expired-prevention',actor='A',source_ref=spell.ref,target=target.ref,amount=1,combat=False,reason='expired prevention distinction'),))
+        self.assertEqual(1,result.dealt_amount)
+
+    def test_prevention_component_omission_mutant_is_killed(self):
+        import quorune.rules.fixed_effect_clause_shapes as owner
+        resolvers=tuple(value for value in owner._COMPONENT_RESOLVERS if value.__name__!='fixed_prevention_component_capabilities')
+        with patch.object(owner,'_COMPONENT_RESOLVERS',resolvers):
+            with self.assertRaises(AssertionError):
+                self.test_original_leap_of_faith_modifier_and_prevention_resolve_then_damage_boundary_replays()

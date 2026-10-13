@@ -62,6 +62,13 @@ no such resolution retain their existing command and decision records without
 constructing an unused binding registry. A later semantic resolution validates
 fresh registry and evidence inputs; no action-level snapshot is retained.
 
+Intrinsic entry-copy records preserve physical card identity separately from
+copied program provenance. A copied triggered or activated ability records its
+registered program identity; the resolving spell's generic fallback records
+the originally announced physical spell. A pending copied-Aura attachment
+choice retains the chosen replacement result and resumes without refreshing
+the copy from its source.
+
 The manifest pins engine, card-data, rules, compiler, CardProgram, capability,
 semantic-handler, runtime-component, profile, and record-format identity as
 applicable. Loading rejects internal disagreement before replay begins.

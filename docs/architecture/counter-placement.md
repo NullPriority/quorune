@@ -432,7 +432,9 @@ from the departed creature's last-known public snapshot, preserves the
 graveyard incarnation and trigger controller, and places simultaneous triggers
 in the existing APNAP batch. Resolution returns only that same graveyard
 incarnation under its owner, then applies the required -1/-1 or +1/+1 counter
-through the effect-entry transaction. Control changes, duplicated keyword
+through the effect-entry transaction. The returned permanent's controller
+places the counter under CR 122.6a; the trigger controller remains separately
+locked for the resolving ability. Control changes, duplicated keyword
 instances, destination and quantity replacements, tokens, private projection,
 and replay therefore share existing owners rather than keyword-specific state
 writes. Granted or copied instances outside trusted typed ability fragments,

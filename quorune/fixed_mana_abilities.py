@@ -4,8 +4,9 @@ from __future__ import annotations
 
 This is intentionally a closed grammar.  It compiles target-free, nonloyalty
 activated mana abilities whose complete output is known before activation.
-Dynamic quantities, open restrictions, conditional output, and side effects
-in the effect clause remain outside this family.
+Dynamic quantities, open restrictions, conditional output, and unknown result
+clauses remain outside this family. One closed fixed result uses a separate
+version-two descriptor after the selected output.
 """
 
 from dataclasses import dataclass
@@ -25,11 +26,13 @@ from .mana_restrictions import (
 )
 from .replacement.immutable import FrozenMap, thaw_value
 from .util import normalize_mana_bundle
+from .fixed_mana_results import FixedManaResultSpec
 
 
 MANA_KEYS = ("W", "U", "B", "R", "G", "C")
 MANA_COST_KEYS = ("GENERIC", *MANA_KEYS)
 FIXED_MANA_HANDLER_ID = "ability.activated.mana.fixed-output.v1"
+FIXED_MANA_RESULT_HANDLER_ID = 'ability.activated.mana.fixed-result.v2'
 _ABILITY_ID = re.compile(r"^ab[1-9][0-9]*$")
 _SYMBOL_GROUP = re.compile(r"(?:\{[WUBRGC]\})+")
 _ANY_COLOR = re.compile(
@@ -156,8 +159,13 @@ class FixedActivatedManaAbilitySpec:
     activation_limit: ActivationLimit | None = None
     activation_conditions: tuple[ActivationCondition, ...] = ()
     source_counter_removal_cost: SourceCounterRemovalCost | None = None
+    result: FixedManaResultSpec | None = None
 
     def __post_init__(self) -> None:
+        if self.result is not None and not isinstance(self.result,FixedManaResultSpec):
+            raise FixedManaAbilityError('Fixed mana result must be typed or absent')
+        if self.result is not None and self.sacrifice_source:
+            raise FixedManaAbilityError('Fixed mana result with source sacrifice requires independent information timing')
         if (
             not isinstance(self.ability_id, str)
             or _ABILITY_ID.fullmatch(self.ability_id) is None
@@ -257,6 +265,8 @@ class FixedActivatedManaAbilitySpec:
             "life_payment": self.life_payment,
             "modes": [mode.to_dict() for mode in self.modes],
         }
+        if self.result is not None:
+            value['result']=self.result.to_dict()
         if self.activation_limit is not None:
             value["activation_limit"] = self.activation_limit.value
         if self.activation_conditions:
@@ -295,6 +305,8 @@ class FixedActivatedManaAbilitySpec:
             expected.add("spend_restriction")
         if "source_counter_removal_cost" in value:
             expected.add("source_counter_removal_cost")
+        if 'result' in value:
+            expected.add('result')
         _exact_fields(value, expected, field="fixed mana ability")
         mana_cost = value["mana_cost"]
         modes = value["modes"]
@@ -352,6 +364,7 @@ class FixedActivatedManaAbilitySpec:
                     raw_source_counter_cost
                 )
             ),
+            result=FixedManaResultSpec.from_dict(value['result']) if 'result' in value else None,
         )
 
     def to_activated_ability(self) -> Any:
@@ -374,6 +387,7 @@ class FixedActivatedManaAbilitySpec:
             activation_limit=self.activation_limit,
             activation_conditions=self.activation_conditions,
             source_counter_removal_cost=self.source_counter_removal_cost,
+            fixed_mana_result=self.result,
         )
 
 
@@ -497,6 +511,7 @@ def _supported_activation_constraints(ability: Any) -> bool:
 
 def compile_fixed_activated_mana_ability(
     ability: Any,
+    *, source_name: str = '',
 ) -> FixedActivatedManaAbilitySpec | None:
     """Lower one parsed ability when this family's entire contract closes."""
 
@@ -514,7 +529,18 @@ def compile_fixed_activated_mana_ability(
     base_effect = _without_spend_restriction(effect_text, restriction)
     if base_effect is None:
         return None
+    result = None
     modes = fixed_mana_modes_from_effect(base_effect)
+    if modes is None:
+        from .rules.source_references import SourceReferenceSpec
+        output,separator,tail=base_effect.partition('.')
+        named='|'+SourceReferenceSpec(source_name).regex_pattern if source_name else ''
+        subject=rf'(?:this (?:artifact|creature|land|permanent){named})'
+        damage=re.fullmatch(rf'\s*{subject} deals (?P<amount>[1-9][0-9]*) damage to you\.\s*',tail,re.I)
+        untap=re.fullmatch(rf"\s*{subject} doesn['’]t untap during your next untap step\.\s*",tail,re.I)
+        if separator and (damage is not None or untap is not None):
+            modes=fixed_mana_modes_from_effect(output.strip()+'.')
+            result=FixedManaResultSpec('damage_controller',int(damage['amount'])) if damage is not None else FixedManaResultSpec('skip_actor_untap')
     if modes is None or not _restricted_modes_are_closed(
         restriction,
         modes,
@@ -534,7 +560,10 @@ def compile_fixed_activated_mana_ability(
         or ability.uncompiled_costs
         or ability.sorcery_speed
         or ability.generic_reduction_per_legendary_creature
-        or ability.builtin_semantic_key is not None
+        or (ability.builtin_semantic_key is not None and not (
+            result is not None and result.kind=='damage_controller'
+            and ability.builtin_semantic_key==f'builtin:mana-result-damage-controller:{result.amount}'))
+        or (result is not None and ability.sacrifice_source)
         or ability.target_schema is not None
         or ability.crew_threshold is not None
         or not _supported_activation_constraints(ability)
@@ -557,6 +586,7 @@ def compile_fixed_activated_mana_ability(
         activation_limit=ability.activation_limit,
         activation_conditions=tuple(ability.activation_conditions),
         source_counter_removal_cost=ability.source_counter_removal_cost,
+        result=result,
     )
 
 
@@ -564,8 +594,8 @@ def fixed_mana_handler_descriptor(
     spec: FixedActivatedManaAbilitySpec,
 ) -> dict[str, Any]:
     return {
-        "handler_id": FIXED_MANA_HANDLER_ID,
-        "schema_version": 1,
+        "handler_id": FIXED_MANA_RESULT_HANDLER_ID if spec.result is not None else FIXED_MANA_HANDLER_ID,
+        "schema_version": 2 if spec.result is not None else 1,
         "event": "activate",
         "ability": spec.to_dict(),
     }

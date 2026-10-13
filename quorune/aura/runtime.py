@@ -202,7 +202,7 @@ def prepare_aura_entry(
             outcome=AuraEntryOutcome.ENTER_ATTACHED,
             target_ref=target_ref,
         )
-    if aura.zone == "stack":
+    if aura.zone == "stack" and resolving_as_spell:
         return AuraEntryPlan(
             **identity,
             outcome=AuraEntryOutcome.MOVE_TO_GRAVEYARD,

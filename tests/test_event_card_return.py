@@ -19,6 +19,69 @@ from scripts.build_test_database import build_fixture_database
 
 
 class EventCardReturnCompilerTests(unittest.TestCase):
+    def test_event_battlefield_return_lowers_owner_incarnation_tap_and_entry_counter(self):
+        from test_fixed_optional_mana_payment_triggers import payment_record
+        registry = load_default_capability_registry()
+        for suffix, tapped, counter in (
+            ("under its owner's control", False, None),
+            ("tapped under its owner's control", True, None),
+            ("tapped under its owner's control with a +1/+1 counter on it", True, '+1/+1'),
+        ):
+            text = 'When this creature dies, return it to the battlefield ' + suffix + '.'
+            ir = compile_oracle_card(payment_record(text), capability_registry=registry, capability_profile='commander_review')
+            self.assertEqual('exact', ir.status, ir.material_residuals)
+            node = next(n for n in ir.faces[0].nodes if n.kind == 'triggered_ability')
+            effect = node.effects[0]
+            self.assertEqual('reanimate', effect['op'])
+            self.assertEqual('$context.card', effect['card'])
+            self.assertEqual('$context.card_zone_change_counter', effect['expected_zone_change_counter'])
+            self.assertEqual('$context.owner', effect['controller'])
+            self.assertEqual(tapped, effect['tapped'])
+            self.assertEqual(counter, effect['entry_counter'])
+            self.assertIn('zone.return.fixed_event_battlefield', node.capability_dependencies)
+
+    def test_event_battlefield_intent_rejects_malformed_identity_and_entry_fields(self):
+        from quorune.event_card_return import event_battlefield_return_effect, event_battlefield_return_intent
+        effect = {**event_battlefield_return_effect(tapped=True, entry_counter='+1/+1'),
+            'card':'DEPARTED', 'expected_zone_change_counter':2, 'controller':'B', 'source':'S1'}
+        intent = event_battlefield_return_intent(effect, actor='A', reason='Closed witness')
+        self.assertEqual('B', intent.new_controller)
+        self.assertEqual(2, intent.expected_zone_change_counter)
+        self.assertEqual('tapped', intent.tapped_policy)
+        self.assertEqual(1, intent.effect_entry_counters[0].amount)
+        self.assertEqual('B', intent.effect_entry_counters[0].placing_player)
+        for change in ({'expected_zone_change_counter':True}, {'tapped':1}, {'entry_counter':'poison'}, {'unknown':True}, {'card':None}, {'_replacement_selections':'invalid'}):
+            with self.assertRaises(ValueError):
+                event_battlefield_return_intent({**effect, **change}, actor='A', reason='Malformed witness')
+        from quorune.semantic_runtime import default_semantic_handler_registry, ReadOnlyHandlerContext
+        from quorune.semantic_runtime.context import SemanticNodeError
+        context = ReadOnlyHandlerContext.from_sequences(actor='A', default_reason='Closed handler witness', seats='ABCD', active_seats='ABCD', apnap_order='ABCD')
+        plan = default_semantic_handler_registry().lower(effect, context)
+        self.assertEqual(event_battlefield_return_intent(effect, actor='A', reason=context.default_reason), plan.intents[0])
+        with self.assertRaises(SemanticNodeError):
+            default_semantic_handler_registry().lower({**effect, 'controller':'UNKNOWN'}, context)
+
+    def test_event_battlefield_dependencies_and_unrepresented_riders_fail_closed(self):
+        import json
+        from test_fixed_optional_mana_payment_triggers import payment_record
+        from quorune.rules.capabilities import CapabilityRegistry
+        registry = load_default_capability_registry()
+        text = "When this creature dies, return it to the battlefield tapped under its owner's control with a +1/+1 counter on it."
+        raw = json.loads((ROOT / 'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        for dependency in ('zone.return.fixed_event_battlefield', 'counter.producer.effect_entry', 'zone.change.destination_replacement'):
+            value = deepcopy(raw)
+            row = next(c for c in value['capabilities'] if c['id'] == dependency)
+            row.update(status='blocked', blockers=['Independent event battlefield dependency mutation'])
+            altered = CapabilityRegistry(value)
+            altered.mark_evidence_verified(registry.evidence_fingerprint)
+            self.assertNotEqual('exact', compile_oracle_card(payment_record(text), capability_registry=altered).status)
+        for body in (
+            "return it to the battlefield tapped under target player's control.",
+            "return it to the battlefield under its owner's control with X +1/+1 counters on it.",
+            "return it to the battlefield under its owner's control and rewrite history.",
+        ):
+            self.assertNotEqual('exact', compile_oracle_card(payment_record('When this creature dies, ' + body), capability_registry=registry).status)
+
     def test_event_return_missing_dependency_and_incarnation_mutants_fail_closed(self):
         import json
         from test_fixed_optional_mana_payment_triggers import payment_record
@@ -224,7 +287,7 @@ class EventCardReturnActionTests(unittest.TestCase):
         keep_all(session); engine = session.engine
         engine.permissions.invalidate_current(); engine.state.pending_decision = None
         engine.state.priority_player = None; engine.state.priority_passes = []
-        names = {'Atog', 'Aspect of Mongoose', 'Generic Swamp Return Aura', 'Spreading Algae', 'Spine of Ish Sah', 'Sol Ring', 'Mortus Strider', 'Demonic Vigor', "Squee's Embrace", "Altar's Reap", 'Naturalize', 'Murder', 'Generic Payment Commander', 'Generic Payment Plains'}
+        names = {'Abduction', 'Atog', 'Aspect of Mongoose', 'Generic Swamp Return Aura', 'Spreading Algae', 'Spine of Ish Sah', 'Sol Ring', 'Mortus Strider', 'Demonic Vigor', "Squee's Embrace", "Altar's Reap", 'Naturalize', 'Murder', 'Generic Payment Commander', 'Generic Payment Plains'}
         records = tuple(record for record in self.db.iter_cards() if record.name in names and compile_oracle_card(record, capability_registry=self.registry, capability_profile='commander_review').status == 'exact')
         register_generated_programs(self.db, engine.semantics, records, trust_level='trusted', capability_registry=self.registry, capability_profile='commander_review', promote_exact_runtime_handlers=True, promote_exact_trigger_programs=True, promote_exact_effect_programs=True, promote_exact_capability_declarations=True)
         return session
@@ -262,6 +325,50 @@ class EventCardReturnActionTests(unittest.TestCase):
             result = replay_record(path, self.db, verify=True)
         self.assertTrue(result['ok'], {key: value for key, value in result.items() if key != 'events'})
         self.assertEqual(expected, result['final_state_hash'])
+
+    def test_original_abduction_retains_attached_death_identity_after_aura_departure_and_replays(self):
+        session = self.session(4000710)
+        engine = session.engine
+        aura = self.add(engine, 'Abduction', ref='ABDUCTION', zone='hand')
+        body = self.add(engine, 'Atog', ref='ABDUCTED', owner='B')
+        removal = self.add(engine, 'Murder', ref='ABDUCTION-MURDER', zone='hand')
+        body.tapped = True
+        action = self.ready(session, aura, {'U': 2, 'B': 2, 'C': 3})
+        self.checkpoint(session)
+        accepted = session.act('pilot:A', {'action_id': action['id'], 'targets': [body.ref], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        self.assertEqual('battlefield', aura.zone)
+        self.assertEqual(body.object_id, aura.attached_to)
+        self.assertFalse(body.tapped)
+        self.assertEqual('A', body.controller)
+        while session.pending_principals()[0] != 'pilot:A':
+            self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
+        action = next(row for row in session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions'] if row.get('card') == removal.ref)
+        old_identity = body.logical_object_id
+        accepted = session.act('pilot:A', {'action_id': action['id'], 'targets': [body.ref], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        for _ in range(16):
+            if engine.state.cards[body.object_id].zone == 'graveyard':
+                break
+            self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
+        self.assertEqual('graveyard', engine.state.cards[body.object_id].zone)
+        self.assertEqual('graveyard', engine.state.cards[aura.object_id].zone)
+        self.assertTrue(any(item.kind == 'triggered_ability' for item in engine.state.stack))
+        self.replay(session)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'abduction-departed-aura'
+            session.save(path)
+            session = CommanderSession.load(self.db, path)
+        engine = session.engine
+        self.resolve(session)
+        current = engine.state.cards[body.object_id]
+        self.assertEqual('battlefield', current.zone)
+        self.assertEqual('B', current.controller)
+        self.assertNotEqual(old_identity, current.logical_object_id)
+        self.assertEqual('graveyard', engine.state.cards[aura.object_id].zone)
+        self.assertIsNone(current.attached_to)
+        self.replay(session)
 
     def test_actual_sacrifice_returns_exact_card_to_owner_hand_with_pre_action_replay(self):
         session = self.session(4000701); engine = session.engine

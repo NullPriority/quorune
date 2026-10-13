@@ -11,6 +11,7 @@ letting a pilot invent a cheaper cost or mutate state directly.
 
 from dataclasses import dataclass, field
 from .power_up_model import PowerUpSpec, POWER_UP_UNCOMPILED
+from .fixed_mana_results import FixedManaResultSpec
 from enum import Enum
 import re
 from typing import Any, Iterable, Mapping, Sequence
@@ -303,8 +304,11 @@ class ActivatedAbility:
     dynamic_mana_output: str | FrozenMap | None = None
     mana_spend_restriction: str | None = None
     power_up: PowerUpSpec | None = None
+    fixed_mana_result: FixedManaResultSpec | None = None
 
     def __post_init__(self) -> None:
+        if self.fixed_mana_result is not None and not isinstance(self.fixed_mana_result,FixedManaResultSpec):
+            raise ValueError('Fixed mana result must be typed')
         _validate_ability_identity_and_cost(self)
         _validate_ability_sequences_and_scalars(self)
         _normalize_and_validate_ability_descriptors(self)
@@ -372,6 +376,7 @@ class ActivatedAbility:
                 self.source_counter_removal_cost.to_dict()
             )
         if self.power_up is not None:result['power_up']=self.power_up.to_dict()
+        if self.fixed_mana_result is not None:result['fixed_mana_result']=self.fixed_mana_result.to_dict()
         return result
 
     @classmethod
@@ -379,6 +384,7 @@ class ActivatedAbility:
         value = validate_activated_ability_descriptor(value)
         return cls(
             ability_id=value["ability_id"],
+            fixed_mana_result=FixedManaResultSpec.from_dict(value['fixed_mana_result']) if 'fixed_mana_result' in value else None,
             power_up=PowerUpSpec.from_dict(value['power_up']) if 'power_up' in value else None,
             line_index=value["line_index"],
             oracle_line=value["oracle_line"],

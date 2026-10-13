@@ -125,6 +125,14 @@ class SetPermanentTappedIntent:
 
 
 @dataclass(frozen=True, slots=True)
+class ProhibitNextUntapIntent:
+    object_ref: str
+    actor: str
+    reason: str
+    logical_object_id: str | None = None
+
+
+@dataclass(frozen=True, slots=True)
 class SetPermanentsTappedIntent:
     object_refs: tuple[str, ...]
     actor: str
@@ -1529,6 +1537,7 @@ SemanticIntent: TypeAlias = (
     | MillCardsIntent
     | BecomeMonarchIntent
     | SetPermanentTappedIntent
+    | ProhibitNextUntapIntent
     | SetPermanentsTappedIntent
     | UntapAllCreaturesIntent
     | CreateRegenerationShieldIntent

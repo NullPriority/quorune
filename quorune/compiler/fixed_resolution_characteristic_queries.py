@@ -116,6 +116,7 @@ def fixed_resolution_characteristic_query_is_closed(
             query.colorless is not None,
             query.token is not None,
             query.state_predicate is not None,
+            query.numeric_characteristic is not None,
         )
     )
     if qualifier_groups > 2:

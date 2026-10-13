@@ -259,6 +259,8 @@ class FixedPublicStateCharacteristicsHandler:
             source_condition = FixedPublicStateConditionSpec.from_dict(
                 descriptor["source_condition"]
             )
+            if source_condition.kind.value == 'controller_creature_numeric_exists':
+                raise FixedPublicStateConditionError('Static numeric conditions require a separate layer timing owner')
         except (FixedPublicStateConditionError, TypeError) as exc:
             raise SemanticNodeError(str(exc)) from exc
 

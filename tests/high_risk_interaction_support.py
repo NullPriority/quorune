@@ -32,6 +32,15 @@ class _Witness:
 
 
 _WITNESSES = {
+    "entry-copy-target-boundary": _Witness(
+        "Generic Entry Copy Target Boundary Fixture",
+        "Creature — Shapeshifter",
+        "You may have this creature enter as a copy of any creature on the battlefield.\n"
+        "{1}: Put a +1/+1 counter on target creature with the chosen name.",
+        "{2}{U}",
+        power="2",
+        toughness="2",
+    ),
     "discard-multiple-damage-boundary": _Witness(
         "Generic Discard Damage Boundary Fixture",
         "Artifact",
@@ -461,12 +470,17 @@ _WITNESSES = {
         "{1}{W}, {T}: Prevent all combat damage that would be dealt by target "
         "attacking creature this turn.",
     ),
-    "game-trail": _Witness(
-        "Game Trail",
+    "mana-replacement-boundary": _Witness(
+        "Generic Fixed Mana Replacement Boundary Fixture",
         "Land",
-        "As this land enters, you may reveal a Mountain or Forest card from "
-        "your hand. If you don't, this land enters tapped.\n"
+        "If you would flip a coin, instead flip two coins and ignore one.\n"
         "{T}: Add {R} or {G}.",
+    ),
+    "intrinsic-mana-replacement-boundary": _Witness(
+        "Generic Intrinsic Forest Replacement Boundary Fixture",
+        "Land — Forest",
+        "({T}: Add {G}.)\n"
+        "If you would flip a coin, instead flip two coins and ignore one.",
     ),
     "rancid-earth": _Witness(
         "Rancid Earth",
@@ -1549,7 +1563,7 @@ _bind("zabaz", *EFFECT_AND_REPLACEMENT_PAIRS[6:8])
 _bind("damage-result-and-coin-replacement", *EFFECT_AND_REPLACEMENT_PAIRS[8:12])
 _bind("decode-transmissions", *EFFECT_AND_REPLACEMENT_PAIRS[12:14])
 _bind("alhammarrets-archive", *EFFECT_AND_REPLACEMENT_PAIRS[14:16])
-_bind("game-trail", *EFFECT_AND_REPLACEMENT_PAIRS[16:18])
+_bind("mana-replacement-boundary", *EFFECT_AND_REPLACEMENT_PAIRS[16:18])
 _bind("rancid-earth", *EFFECT_AND_REPLACEMENT_PAIRS[18:20])
 _bind("cleansing-meditation", *EFFECT_AND_REPLACEMENT_PAIRS[20:22])
 _bind("legacy-weapon", *EFFECT_AND_REPLACEMENT_PAIRS[22:24])

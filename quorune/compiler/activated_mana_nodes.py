@@ -87,7 +87,7 @@ def fixed_activated_mana_node(
     spec = (
         None
         if reminder_only
-        else compile_fixed_activated_mana_ability(ability)
+        else compile_fixed_activated_mana_ability(ability,source_name=source_name)
     )
     if spec is None:
         return public_quantity_activated_mana_node(
@@ -95,6 +95,10 @@ def fixed_activated_mana_node(
             capability_profile, residuals, source_name=source_name,
         )
     capabilities = list(FIXED_MANA_HANDLER_CAPABILITIES)
+    if spec.result is not None:
+        from ..fixed_mana_results import FIXED_MANA_RESULT_CAPABILITY
+        capabilities.append(FIXED_MANA_RESULT_CAPABILITY)
+        if spec.result.kind=='skip_actor_untap':capabilities.append('untap.step.exert_player')
     if ability.activation_limit is ActivationLimit.EXHAUST_ONCE:
         capabilities.append("activation.exhaust.once_per_object")
     capabilities.extend(activated_ability_cost_capabilities(ability))
@@ -131,9 +135,10 @@ def fixed_activated_mana_node(
         lowerable=True,
         exact=not gate.blockers,
         template_id=(
+            'activated-mana-fixed-result-v2' if spec.result is not None else (
             "activated-mana-restricted-fixed-output-v1"
             if spec.spend_restriction is not None
-            else "activated-mana-fixed-output-v1"
+            else "activated-mana-fixed-output-v1")
         ),
         cost=activated_ability_cost(ability),
         handlers=(fixed_mana_handler_descriptor(spec),),

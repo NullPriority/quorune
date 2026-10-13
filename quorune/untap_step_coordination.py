@@ -9,6 +9,7 @@ from .day_night import apply_untap_day_night_transition
 from .semantic_runtime.untap_steps import current_untap_step_plan
 from .tap_state import (
     consume_next_untap_prohibition,
+    expire_exert_untap_restrictions,
     REASON_FIELD,
     untap_permanent,
     tap_state_occurrence_context,
@@ -137,6 +138,7 @@ def commit_untap_step(
     optional = set(plan.optional_object_ids)
     selected = set(selected_optional_ids)
     untapped_object_ids: list[str] = []
+    exert_prohibited = expire_exert_untap_restrictions(host, active_player)
     if host.state.config.auto_untap:
         prohibited = set(plan.prohibited_object_ids)
         changed: list[str] = []
@@ -148,7 +150,8 @@ def commit_untap_step(
                 continue
             # A next-untap prohibition expires at this physical untap step
             # even when another prohibition independently keeps it tapped.
-            if consume_next_untap_prohibition(card):
+            next_untap_prohibited = consume_next_untap_prohibition(card)
+            if next_untap_prohibited or object_id in exert_prohibited:
                 continue
             if object_id in prohibited:
                 continue
@@ -187,6 +190,8 @@ def commit_untap_step(
                 host.state.players[seat].zones["battlefield"]
             ):
                 if object_id not in additional:
+                    continue
+                if object_id in exert_prohibited:
                     continue
                 card = host.state.cards[object_id]
                 if (

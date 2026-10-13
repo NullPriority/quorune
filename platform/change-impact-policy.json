@@ -85,6 +85,118 @@
   ],
   "path_rules": [
     {
+      "id": "noncreature-subtype-target-assurance",
+      "patterns": [
+        "quorune/compiler/direct_target.py",
+        "quorune/compiler/target_effect_corpus_assurance.py"
+      ],
+      "test_modules": [
+        "test_fixed_target_effect_sequences"
+      ]
+    },
+    {
+      "id": "fixed-prevention-component-composition",
+      "patterns": [
+        "quorune/rules/prevention_component_shapes.py",
+        "tests/fixtures/prevention-composition-cards.json"
+      ],
+      "test_modules": [
+        "test_scoped_damage_prevention",
+        "test_bound_effect_programs",
+        "test_fixed_effect_clause_sequences",
+        "test_closed_effect_programs",
+        "test_damage_prevention_creation",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "private-reveal-entry-contract",
+      "patterns": [
+        "quorune/entry_reveal.py",
+        "quorune/compiler/entry_reveal_templates.py",
+        "quorune/semantic_runtime/entry_reveal.py",
+        "quorune/effect_runtime/hand_inspection.py",
+        "tests/fixtures/reveal-entry-cards.json"
+      ],
+      "test_modules": [
+        "test_typed_land_entry_participation",
+        "test_entry_designations",
+        "test_copy_objects",
+        "test_continuous_effect_duration",
+        "test_high_risk_interaction_assurance",
+        "test_mana_abilities",
+        "test_card_program_trust",
+        "test_choice_forms",
+        "test_fixed_hand_inspection"
+      ],
+      "browser_focuses": [
+        "mana-action"
+      ]
+    },
+    {
+      "id": "fixed-mana-result-contract",
+      "patterns": [
+        "quorune/fixed_mana_results.py",
+        "quorune/fixed_mana_abilities.py",
+        "quorune/semantic_runtime/mana_abilities.py",
+        "quorune/mana_mode_effects.py",
+        "quorune/mana_ability_runtime.py",
+        "tests/fixtures/fixed-mana-result-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_mana_abilities",
+        "test_color_set_mana_abilities",
+        "test_public_quantity_mana",
+        "test_mana_abilities",
+        "test_card_program_trust",
+        "test_untap_step_rules",
+        "test_typed_untap_step_participation",
+        "test_typed_activated_ability_catalog"
+      ],
+      "browser_focuses": [
+        "mana-action"
+      ]
+    },
+    {
+      "id": "optional-attack-exert-contract",
+      "patterns": [
+        "quorune/compiler/exert_nodes.py",
+        "quorune/exert_model.py",
+        "quorune/rules/exert.py",
+        "quorune/semantic_runtime/exert.py",
+        "quorune/tap_state.py",
+        "quorune/untap_step_coordination.py",
+        "tests/fixtures/exert-cards.json"
+      ],
+      "test_modules": [
+        "test_enlist_rules",
+        "test_choice_forms",
+        "test_card_program_trust",
+        "test_declare_attackers_rules",
+        "test_untap_step_rules",
+        "test_typed_untap_step_participation"
+      ],
+      "browser_focuses": [
+        "combat"
+      ]
+    },
+    {
+      "id": "next-controller-untap-contract",
+      "patterns": [
+        "quorune/compiler/tap_state_templates.py",
+        "quorune/rules/tap_state_capability_shapes.py",
+        "quorune/semantic_runtime/tap_state_handlers.py",
+        "quorune/tap_state.py"
+      ],
+      "test_modules": [
+        "test_bound_effect_programs",
+        "test_card_program_trust",
+        "test_targeted_tap_state_effect_clauses",
+        "test_typed_untap_step_participation",
+        "test_untap_step_rules"
+      ]
+    },
+    {
       "id": "bare-subtype-reviewed-anthem-contract",
       "patterns": [
         "quorune/card_programs/reviewed_overlay.py"
@@ -1890,6 +2002,101 @@
         "test_fixed_target_reanimation",
         "test_targeted_graveyard_return_effect_clauses",
         "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "intrinsic-entry-copy-contract",
+      "patterns": [
+        "quorune/entry_copy.py",
+        "quorune/compiler/entry_copy_templates.py",
+        "quorune/semantic_runtime/entry_copy.py",
+        "quorune/copied_aura_entry.py",
+        "quorune/entry_results.py",
+        "quorune/card_program_faces.py",
+        "quorune/carddb_characteristics.py",
+        "quorune/record_trust.py",
+        "quorune/stack_resolution.py",
+        "tests/fixtures/entry-copy-cards.json"
+      ],
+      "test_modules": [
+        "test_copy_objects",
+        "test_aura_targeting_entry",
+        "test_entry_designations",
+        "test_copied_self_entry_counters",
+        "test_persist_undying_rules",
+        "test_fixed_token_creation_effects",
+        "test_card_program_trust",
+        "test_game_record_v3"
+      ]
+    },
+    {
+      "id": "event-battlefield-return-contract",
+      "patterns": [
+        "quorune/event_card_return.py",
+        "quorune/compiler/event_card_return_templates.py",
+        "quorune/semantic_runtime/effect_handlers.py",
+        "quorune/rules/reanimation_capability_shapes.py",
+        "quorune/semantic_choices/intent_host.py",
+        "quorune/semantic_choices/death_return.py",
+        "mechanics/contracts/persist.json",
+        "mechanics/contracts/undying.json"
+      ],
+      "test_modules": [
+        "test_event_card_return",
+        "test_typed_grant_carriers",
+        "test_persist_undying_rules",
+        "test_fixed_target_reanimation",
+        "test_zone_replacement_compiler",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "independent-dual-event-contract",
+      "patterns": [
+        "quorune/compiler/fixed_public_multi_event_bindings.py",
+        "quorune/compiler/fixed_counter_trigger_nodes.py"
+      ],
+      "test_modules": [
+        "test_fixed_counter_event_triggers",
+        "test_resolution_public_conditions",
+        "test_card_program_v2",
+        "test_exact_deck_triggers",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "fixed-numeric-condition-contract",
+      "patterns": [
+        "quorune/continuous_conditions.py",
+        "quorune/compiler/public_state_queries.py",
+        "quorune/characteristic_evaluation_host.py",
+        "quorune/rules/resolution_condition_shapes.py"
+      ],
+      "test_modules": [
+        "test_resolution_public_conditions",
+        "test_public_activation_conditions",
+        "test_fixed_public_state_characteristics",
+        "test_fixed_counter_event_triggers",
+        "test_card_program_trust",
+        "test_object_query"
+      ]
+    },
+    {
+      "id": "temporary-quoted-ability-contract",
+      "patterns": [
+        "quorune/compiler/temporary_quoted_ability_nodes.py",
+        "quorune/compiler/resolution_characteristic_program_closure.py",
+        "quorune/rules/temporary_ability_grant.py",
+        "quorune/effect_runtime/temporary_ability_bundle.py",
+        "quorune/effect_runtime/characteristic_version_dispatch.py"
+      ],
+      "test_modules": [
+        "test_typed_grant_carriers",
+        "test_backup_rules",
+        "test_fixed_query_keyword_grants",
+        "test_fixed_query_quoted_ability_grants",
+        "test_card_program_trust",
+        "test_bound_effect_programs"
       ]
     },
     {

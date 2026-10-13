@@ -70481,7 +70481,7 @@
         "tests.test_persist_undying_rules.PersistUndyingRuntimeTests.test_persist_returns_under_owner_with_replacement_aware_counter",
         "tests.test_persist_undying_rules.PersistUndyingRuntimeTests.test_existing_minus_counter_prevents_persist_trigger",
         "tests.test_persist_undying_rules.PersistUndyingRuntimeTests.test_repeated_persist_instances_trigger_separately_but_only_one_returns",
-        "tests.test_persist_undying_rules.PersistUndyingRuntimeTests.test_control_change_uses_trigger_controller_as_placing_player_and_owner_as_controller",
+        "tests.test_persist_undying_rules.PersistUndyingRuntimeTests.test_control_change_uses_returned_owner_as_counter_placing_player",
         "tests.test_persist_undying_rules.PersistUndyingRuntimeTests.test_stale_or_departed_graveyard_incarnation_does_not_return",
         "tests.test_persist_undying_rules.PersistUndyingRuntimeTests.test_death_return_replacement_resume_replays_exactly"
       ],
@@ -70493,7 +70493,7 @@
         "quorune.entry_counters.effect_entry_counter_effects"
       ],
       "notes": [
-        "Each represented printed Persist instance uses the departed creature's last-known -1/-1 counter state, returns only the same graveyard incarnation under its owner, and places the required counter through the canonical replacement-aware entry transaction."
+        "Each represented printed Persist instance uses the departed creature's last-known -1/-1 counter state, returns only the same graveyard incarnation under its owner, and places the required counter through the canonical replacement-aware entry transaction with the entering controller as placing player under CR 122.6a."
       ],
       "required_scenarios": [
         "positive",
@@ -72162,7 +72162,7 @@
       "executable_test_ids": [
         "tests.test_persist_undying_rules.PersistUndyingRuntimeTests.test_undying_returns_with_plus_counter",
         "tests.test_persist_undying_rules.PersistUndyingRuntimeTests.test_existing_plus_counter_prevents_undying_trigger",
-        "tests.test_persist_undying_rules.PersistUndyingRuntimeTests.test_control_change_uses_trigger_controller_as_placing_player_and_owner_as_controller",
+        "tests.test_persist_undying_rules.PersistUndyingRuntimeTests.test_control_change_uses_returned_owner_as_counter_placing_player",
         "tests.test_persist_undying_rules.PersistUndyingRuntimeTests.test_stale_or_departed_graveyard_incarnation_does_not_return",
         "tests.test_persist_undying_rules.PersistUndyingRuntimeTests.test_death_return_replacement_resume_replays_exactly"
       ],
@@ -72174,7 +72174,7 @@
         "quorune.entry_counters.effect_entry_counter_effects"
       ],
       "notes": [
-        "Each represented printed Undying instance uses the departed creature's last-known +1/+1 counter state, returns only the same graveyard incarnation under its owner, and places the required counter through the canonical replacement-aware entry transaction."
+        "Each represented printed Undying instance uses the departed creature's last-known +1/+1 counter state, returns only the same graveyard incarnation under its owner, and places the required counter through the canonical replacement-aware entry transaction with the entering controller as placing player under CR 122.6a."
       ],
       "required_scenarios": [
         "positive",

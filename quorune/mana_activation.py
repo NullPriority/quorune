@@ -114,7 +114,7 @@ def complete_mana_activation(
         for effect in (
             selected_mode.side_effects if selected_mode is not None else ()
         )
-        if effect.get("op") == "damage_self"
+        if effect.get("op") in {"damage_self",'skip_actor_untap'}
     )
     if result_effects:
         apply_mana_mode_effects(

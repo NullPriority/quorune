@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .entry_copy import copiable_oracle_id
 
 from collections import Counter
 from dataclasses import dataclass
@@ -197,7 +198,7 @@ def commander_pairing_declaration(
 
     candidates: list[tuple[SemanticProgram, CommanderPairingKind]] = []
     for program in registry.programs_for_oracle(
-        card.oracle_id,
+        copiable_oracle_id(card),
         active_zone="all",
         event=COMMANDER_PAIRING_EVENT,
     ):

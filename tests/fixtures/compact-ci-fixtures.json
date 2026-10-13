@@ -31,6 +31,7 @@
     "tests/fixtures/complex-activation-mana-cards.json",
     "tests/fixtures/composition-assurance-cards.json",
     "tests/fixtures/conditional-entry-library-targets.json",
+    "tests/fixtures/controller-damage-cards.json",
     "tests/fixtures/copied-self-entry-counter-cards.json",
     "tests/fixtures/counted-activation-costs.json",
     "tests/fixtures/counted-library-search-cards.json",
@@ -47,8 +48,10 @@
     "tests/fixtures/each-player-mill-cards.json",
     "tests/fixtures/echo-rules-cards.json",
     "tests/fixtures/enlist-cards.json",
+    "tests/fixtures/entry-copy-cards.json",
     "tests/fixtures/entry-designation-cards.json",
     "tests/fixtures/event-card-return.json",
+    "tests/fixtures/exert-cards.json",
     "tests/fixtures/explore-cards.json",
     "tests/fixtures/extort-cards.json",
     "tests/fixtures/fading-cards.json",
@@ -60,6 +63,7 @@
     "tests/fixtures/fixed-evasion-grants.json",
     "tests/fixtures/fixed-extra-turn-cards.json",
     "tests/fixtures/fixed-life-cumulative-upkeep-cards.json",
+    "tests/fixtures/fixed-mana-result-cards.json",
     "tests/fixtures/fixed-next-turn-draw-cards.json",
     "tests/fixtures/fixed-query-keyword-grant-cards.json",
     "tests/fixtures/fixed-resolution-mana-cards.json",
@@ -83,8 +87,10 @@
     "tests/fixtures/leveler-bands-cards.json",
     "tests/fixtures/library-search-qualifier-cards.json",
     "tests/fixtures/limited-event-triggers.json",
+    "tests/fixtures/main-phase-trigger-cards.json",
     "tests/fixtures/mayhem-cards.json",
     "tests/fixtures/new-support-residual-boundaries.json",
+    "tests/fixtures/noncreature-subtype-targets.json",
     "tests/fixtures/optional-draw-discard-sequences.json",
     "tests/fixtures/optional-object-action-counters.json",
     "tests/fixtures/ordered-quantity-results.json",
@@ -94,6 +100,7 @@
     "tests/fixtures/player-speed-cards.json",
     "tests/fixtures/player-target-protection-cards.json",
     "tests/fixtures/power-up-cards.json",
+    "tests/fixtures/prevention-composition-cards.json",
     "tests/fixtures/prototype-cards.json",
     "tests/fixtures/prowess-cards.json",
     "tests/fixtures/public-activation-condition-cards.json",
@@ -111,6 +118,7 @@
     "tests/fixtures/repeatable-object-action-triggers.json",
     "tests/fixtures/resolution-public-condition-cards.json",
     "tests/fixtures/restricted-self-return-cards.json",
+    "tests/fixtures/reveal-entry-cards.json",
     "tests/fixtures/scalar-effect-amount-cards.json",
     "tests/fixtures/scheduled-player-triggers.json",
     "tests/fixtures/scoped-damage-prevention-cards.json",
@@ -271,6 +279,32 @@
       "deck_files": [],
       "fixture_files": [],
       "rationale": "The test strictly binds these original-card records through a bounded tuple before executing actual targeting or lifecycle commands."
+    },
+    {
+      "source": "tests/test_fixed_query_keyword_grants.py",
+      "symbol": "FixedQueryKeywordGrantRuntimeTests.test_original_cactusfolk_numeric_group_locks_current_power_and_replays",
+      "card_names": [
+        "Cactusfolk Sureshot",
+        "Craw Wurm",
+        "Hill Giant"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Actual resolution numeric/bare-subtype gameplay witnesses iterate these precise registered fixture identities."
+    },
+    {
+      "source": "tests/test_fixed_query_keyword_grants.py",
+      "symbol": "FixedQueryKeywordGrantRuntimeTests.test_original_lord_resolution_grants_kindred_locks_incarnations_and_expires",
+      "card_names": [
+        "Generic Resolution Kindred Zombie",
+        "Lord of the Accursed",
+        "Unsummon"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "Actual resolution numeric/bare-subtype gameplay witnesses iterate these precise registered fixture identities."
     }
   ],
   "full_database_only": []

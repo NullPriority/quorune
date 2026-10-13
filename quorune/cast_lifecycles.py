@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .entry_copy import copiable_oracle_id
 
 """Typed fixed casting lifecycles and their post-resolution transitions."""
 
@@ -1075,7 +1076,7 @@ def _complete_blitz_resolution(
     _grant_lifecycle_haste(host, item=item, card=card)
     registered_programs = tuple(
         host.semantics.runtime_handler_programs_for_oracle(
-            card.oracle_id,
+            copiable_oracle_id(card),
             active_zone="all",
             event=FIXED_CAST_LIFECYCLE_RUNTIME_EVENT,
         )

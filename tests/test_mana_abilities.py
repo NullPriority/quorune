@@ -14,7 +14,7 @@ from quorune.mana_undo import (
     undo_mana_activation,
 )
 from quorune.model import CardInstance, StackItem
-from quorune.oracle_ir import compile_oracle_card
+from quorune.oracle_ir import compile_oracle_card, register_generated_programs
 from quorune.record import checkpoint_envelope, replay_record
 from quorune.rules.capabilities import load_default_capability_registry
 
@@ -363,7 +363,7 @@ class ManaAbilityRuleTests(unittest.TestCase):
             replay = replay_record(record_dir, self.db, verify=True)
         self.assertTrue(replay["ok"], replay)
 
-    def test_murmuring_bosk_intrinsic_mana_executes_while_replacement_stays_residual(
+    def test_murmuring_bosk_intrinsic_mana_executes_with_closed_reveal_entry(
         self,
     ):
         capabilities = load_default_capability_registry()
@@ -373,16 +373,15 @@ class ManaAbilityRuleTests(unittest.TestCase):
             capability_registry=capabilities,
             capability_profile="commander_review",
         )
-        blockers = {
-            blocker
-            for residual in compiled.material_residuals
-            for blocker in residual.blockers
-        }
-        self.assertGreaterEqual(
-            blockers,
+        self.assertEqual("exact", compiled.status, compiled.material_residuals)
+        self.assertFalse(compiled.material_residuals)
+        self.assertIn(
+            "zone.entry.reveal_hand_or_tapped",
             {
-                "replacement applicability",
-                "self-replacement and prevention ordering",
+                dependency
+                for face in compiled.faces
+                for node in face.nodes
+                for dependency in node.capability_dependencies
             },
         )
         self.assertTrue(
@@ -411,13 +410,27 @@ class ManaAbilityRuleTests(unittest.TestCase):
             printed_name=record.name,
             owner="B",
             controller="B",
-            zone="battlefield",
+            zone="hand",
             zone_timestamp=engine._next_zone_timestamp(),
             known_to=list(engine.seats),
             revealed_to=list(engine.seats),
         )
         engine.state.cards[bosk.object_id] = bosk
-        engine.state.players["B"].zones["battlefield"].append(bosk.object_id)
+        engine.state.players["B"].zones["hand"].append(bosk.object_id)
+        register_generated_programs(
+            self.db,
+            engine.semantics,
+            (record,),
+            capability_registry=capabilities,
+            capability_profile="commander_review",
+            promote_exact_runtime_handlers=True,
+            promote_exact_trigger_programs=True,
+            promote_exact_effect_programs=True,
+            promote_exact_capability_declarations=True,
+        )
+        engine.move_card(bosk.object_id, "battlefield", controller="B", log=False)
+        self.assertTrue(bosk.tapped)
+        engine.apply_effect({"op": "untap", "card": bosk.ref}, actor="B")
         self.prepare_main(engine, "B")
         engine.permissions.invalidate_current()
         engine._grant_priority("B")

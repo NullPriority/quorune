@@ -10,6 +10,18 @@ from quorune.choice_forms import (
 
 
 class ChoiceFormTests(unittest.TestCase):
+    def test_exert_attack_form_retains_independent_linked_costs_and_attacker_requirement(self):
+        rows=[{'value':'ATTACKER','label':'Attacker','maximum':2,'options':[
+            {'value':'printed:trigger:front:n1','label':'Draw result'},
+            {'value':'printed:trigger:front:n2','label':'Growth result'}]}]
+        action={'id':'attack','action':'attack'}
+        context={'candidates':[{'id':'ATTACKER','name':'Attacker'}],'defenders':['B'],'exert':rows}
+        form=build_action_form(action,decision_kind='combat.attackers',context=context)
+        field=next(field for field in form['fields'] if field['name']=='exert')
+        self.assertEqual('assignment_map',field['control']);self.assertFalse(field['required'])
+        self.assertEqual('attackers',field['source_assignment']);self.assertEqual(rows,field['rows'])
+        self.assertIn('exert',delegated_choice_fields(action,decision_kind='combat.attackers',context=context))
+
     def test_public_quantity_mana_form_preserves_allocation_constraints(self):
         action={"id":"activate:source:ab1","action":"activate","choice_schema":{
             "mana_output":{"type":"mana_bundle","label":"Mana to add",

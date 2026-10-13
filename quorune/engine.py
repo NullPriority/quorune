@@ -1,5 +1,7 @@
 from __future__ import annotations
+from .entry_copy import copiable_oracle_id
 from .rules.enlist import enlist_offer_rows,prepare_enlist_costs,commit_enlist_costs,enlist_trigger_items
+from .rules.exert import exert_offer_rows,prepare_exert_costs,commit_exert_costs
 
 import copy
 import hashlib
@@ -929,11 +931,11 @@ class CommanderEngine(
 
     def card_record(self, value: str | CardInstance) -> CardRecord | None:
         card = value if isinstance(value, CardInstance) else self.state.cards[value]
-        if card.oracle_id.startswith(
+        if copiable_oracle_id(card).startswith(
             ("custom-token:", "custom-copy:", "custom-emblem:")
         ):
             return None
-        return self.card_db.by_oracle_id(card.oracle_id)
+        return self.card_db.by_oracle_id(copiable_oracle_id(card))
 
     def display_name(self, object_id: str) -> str:
         return str(self._effective_card_data(object_id).get("name") or self.state.cards[object_id].printed_name)
@@ -5520,6 +5522,7 @@ class CommanderEngine(
                 active: {
                     "candidates": candidates,
                     **({'enlist':rows} if (rows:=enlist_offer_rows(self,active,candidates)) else {}),
+                    **({'exert':rows} if (rows:=exert_offer_rows(self,active,candidates)) else {}),
                     "defenders": [
                         *[
                             seat
@@ -5784,8 +5787,11 @@ class CommanderEngine(
         self._validate_declaration_requirements(problem, canonical)
         chosen.sort(key=lambda pair:(pair[0].ref,pair[0].object_id))
         enlist_plans=prepare_enlist_costs(self,active,chosen,response.get('enlist'))
+        exert_plans=prepare_exert_costs(self,active,chosen,response.get('exert'))
+        attack_triggers: list[StackItem] = []
         tap_declared_attackers(self, (card for card, _details in chosen))
         commit_enlist_costs(self,enlist_plans)
+        commit_exert_costs(self,exert_plans,trigger_batch=attack_triggers)
         requirements, selected_costs = self._selected_declaration_mana(
             locked_costs,
             canonical,
@@ -5849,7 +5855,6 @@ class CommanderEngine(
             changed_objects=list(used),
             changed_players=[active],
         )
-        attack_triggers: list[StackItem] = []
         attack_triggers.extend(enlist_trigger_items(self,enlist_plans))
         attack_triggers.extend(
             attack_transitions.attack_transition_stack_items(self)

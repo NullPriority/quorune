@@ -16,6 +16,15 @@ sacrifice and loyalty costs commit before resolution; a countered spell adds
 no mana. Typed spending restrictions enter the canonical provenance lots and
 use the same public spell-type predicates for advertised and accepted payment.
 
+Fixed activated mana abilities may add their selected output and then apply one
+typed source result. Damage is dealt to the activation controller through the
+canonical damage transaction, so prevention changes damage while retaining
+mana. A next-player untap result locks the activation controller and original
+permanent, even after a control change. Both explicit activation and automatic
+spell payment apply the result once after mana production. Result-bearing
+activations are irreversible for mana undo and retain ordinary transactional
+rollback, replacement continuations and replay.
+
 Enlist adds an optional tap cost to an accepted attack declaration. Each
 instance may tap one distinct eligible controlled nonattacking creature that
 has haste or has been controlled since the turn began. All choices validate
@@ -25,6 +34,27 @@ departure. The original attacker incarnation receives the until-end-of-turn
 power modifier; a blinked attacker does not. Negative additive results use
 zero under CR 107.1b. Attack choices sort before history capture so saved
 mapping order cannot change replay.
+
+An intrinsic reveal-or-tapped entry replacement privately selects a matching
+card in the prospective controller's hand or declines. Selection is validated
+against the original hand-card incarnation before mutation. The existing hand
+inspection mutation owner records only that selected card as public knowledge
+and publishes its reveal; unchosen candidates remain private. The replacement
+journal preserves the decision through save/load and replay. Decline sets tapped
+entry, while acceptance leaves other tap-state replacements in force.
+
+Exert adds a separately selected optional attack cost. Current typed abilities
+and trusted linked result identities govern both the offer and accepted
+declaration. The canonical tap-state owner records the exerting player and
+publishes the linked occurrence while attack costs are paid; the resulting
+trigger waits for the existing APNAP placement boundary. Its controller and
+source incarnation remain locked after a control change or departure. Exert
+does not require a tapped permanent. Repeated exertions expire together during
+the exerting player's next physical untap step, regardless of the permanent's
+current controller. That step does not consume a stun counter on the prohibited
+permanent. Departure removes the old duration through the canonical zone reset.
+Unsupported conditional permissions, standalone activated Exert costs, and
+unrepresented phasing or skipped-step compositions remain outside this family.
 
 Self-transform activations pin the original source incarnation and its
 transform count when placed on the stack. The existing transform owner keeps
@@ -146,7 +176,22 @@ counter destinations, or other
 unsupported grammar and interactions are materially reachable.
 The fixed public-zone-move handlers are a separate broad grammar over the same
 owners: one handler revalidates a public graveyard-card target, while the set
-handler emits one typed simultaneous intent. Schema-v2 public set descriptors
+handler emits one typed simultaneous intent.
+
+Intrinsic copy entry shares the canonical replacement and zone owners. An
+enters-copy replacement captures layer-one values and activates the selected
+source's typed intrinsic entry producers. Commit retains the physical card's
+Oracle identity and carries separate copied program provenance into effective
+characteristics, static owners, activation catalogs and event discovery.
+Departure LKI retains that provenance for already-triggered abilities; the
+new zone incarnation discards the old copy. Copied Aura attachment uses the
+existing affected-controller choice before entry. Its retained replacement
+result preserves the chosen values while the later attachment choice resumes.
+Spell resolution and record trust use the ordinary record owner until copied
+program provenance changes the physical card's effective identity; only that
+changed identity requires lookup of the originally announced physical card.
+
+Schema-v2 public set descriptors
 also carry the exact prospective battlefield controller and tapped policy for
 closed graveyard-entry groups; the canonical zone owner evaluates entry
 replacement facts before committing one timestamped batch. Fixed owner-
@@ -501,8 +546,14 @@ all-required from any-required card types and preserves colors, subtypes,
 supertypes, keywords, token/tap/phasing state, public relations, visibility,
 source exclusion, excluded controllers, minimum color cardinality, and closed
 public permanent-state predicates such as a named counter minimum. Historical
-schema-v1 through schema-v3 payloads retain their original field sets so Game
+schema-v1 through schema-v6 payloads retain their original field sets so Game
 Record v3 replay does not silently rewrite old descriptors.
+
+Version-seven queries carry a fixed typed numeric characteristic predicate for
+represented battlefield creature selection. They use the same comparison
+value as direct targets and require exact effective stats. Live layer matching
+and quantity expressions reject this field until their own read timing is
+represented; adding it to a query does not implicitly grant those consumers.
 
 The public battlefield compiler uses that same query for live layer-6 and
 layer-7c applicability, public-state-gated targets, resolution-time set locks,
@@ -510,9 +561,18 @@ typed queried ability and declaration-fragment grants, and untap participation.
 One descriptor may add fixed keywords and declaration fragments over the same
 query without duplicating applicability. Positive ability presence is evaluated
 after generic same-layer additions and removals of the required ability.
-Resolution-time characteristic selection deliberately stops at layer 5 and
-rejects ability-qualified sets rather than claiming a cyclic characteristic
-boundary.
+Resolution-time characteristic selection rejects ability-qualified sets.
+Its explicit numeric creature filter reads completed effective power/toughness
+before creating the new effect and locks the selected incarnations. Live
+static quantities retain the separate layer-5 boundary.
+
+Schema-five public conditions have a separate numeric creature-existence
+predicate. Intervening triggers and resolution instructions read complete
+current effective power or toughness under their locked controller. They
+recheck intervening conditions at occurrence and resolution, include counters
+and represented buffs, and reject unavailable numeric facts. Static
+characteristic conditions reject this schema because their cycle-safe read
+boundary remains at layer five.
 
 Fixed public static conditions snapshot the same layer-5 query boundary along
 with canonical aggregate hand/draw counts, typed current-turn spell-cast

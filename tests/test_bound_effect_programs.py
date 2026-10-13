@@ -204,6 +204,94 @@ class BoundEffectProgramCompilerTests(unittest.TestCase):
 
 
 class BoundEffectProgramRuntimeTests(unittest.TestCase):
+    def test_original_frost_lynx_entry_uses_opponent_target_next_untap_and_replay(self):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+        session = self.session(357006)
+        engine = session.engine
+        source = self.add(engine, 'Frost Lynx', zone='hand')
+        own = self.add(engine, 'Generic Bound Body', ref='frost-own-control')
+        target = self.add(engine, 'Generic Bound Body', seat='B', ref='frost-opponent-target')
+        program = compile_best_available_card_program(self.db, self.db.lookup('Frost Lynx'),
+            semantic_registry=engine.semantics, capability_registry=self.registry, capability_profile='commander_review')
+        self.assertTrue(bind_card_program_runtime(program, capability_registry=self.registry,
+            profile='commander_review')['strict_capability_ready'])
+        offered = self.ready(session, source, {'U': 1, 'C': 2})
+        self.checkpoint(session)
+        accepted = session.act('pilot:A', {'action_id': offered['id'], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        decision = self.resolve(session)
+        self.assertEqual('semantic.target', decision.kind)
+        before = session.state.to_dict()
+        denied = session.act('pilot:A', {'action_id': 'choose', 'targets': [own.ref]})
+        self.assertFalse(denied.ok)
+        self.assertEqual(before, session.state.to_dict())
+        accepted = session.act('pilot:A', {'action_id': 'choose', 'targets': [target.ref]})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        self.assertTrue(engine.state.cards[target.object_id].tapped)
+        self.assertTrue(engine.state.cards[target.object_id].annotations['does_not_untap_next'])
+        self.assertFalse(engine.state.cards[own.object_id].tapped)
+        projected = session.projector._snapshot('pilot:D')
+        public_refs = [row['id'] for row in projected['players']['B']['bf']]
+        self.assertIn(target.ref, public_refs)
+        rendered = json.dumps(projected, sort_keys=True)
+        self.assertNotIn(target.object_id, rendered)
+        for seat in 'ABC':
+            for object_id in engine.state.players[seat].zones['hand']:
+                self.assertNotIn(engine.state.cards[object_id].ref, rendered)
+        self.replay(session, load=True)
+
+    def test_next_untap_spell_uses_target_authority_controller_step_and_replay(self):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.engine import TURN_STEPS
+        session = self.session(357004)
+        engine = session.engine
+        source = self.add(engine, 'Generic Bound Next Untap', zone='hand')
+        target = self.add(engine, 'Generic Bound Body', seat='B', ref='next-untap-target')
+        target.counters['stun'] = 1
+        program = compile_best_available_card_program(self.db, self.db.lookup(source.printed_name),
+            semantic_registry=engine.semantics, capability_registry=self.registry, capability_profile='commander_review')
+        self.assertTrue(bind_card_program_runtime(program, capability_registry=self.registry,
+            profile='commander_review')['strict_capability_ready'])
+        offered = self.ready(session, source, {'U': 1})
+        self.checkpoint(session)
+        before = session.state.to_dict()
+        denied = session.act('pilot:C', {'action_id': offered['id'], 'targets': [target.ref], 'pay': 'auto'})
+        self.assertFalse(denied.ok)
+        self.assertEqual(before, session.state.to_dict())
+        accepted = session.act('pilot:A', {'action_id': offered['id'], 'targets': [target.ref], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        target = engine.state.cards[target.object_id]
+        self.assertTrue(target.tapped)
+        self.assertTrue(target.annotations['does_not_untap_next'])
+        self.replay(session, load=True)
+        # Fixture turn boundary is separately retained before accepted passes.
+        engine.change_control(target.object_id, 'C', reason='next-controller untap witness')
+        engine.permissions.invalidate_current(); engine.state.pending_decision = None
+        engine.state.active_player = 'B'; engine.state.last_normal_turn_player = 'B'; engine.state.started = True
+        engine.state.phase_index = TURN_STEPS.index(('ending', 'end_step'))
+        engine.state.phase = 'ending'; engine.state.step = 'end_step'; engine.state.priority_passes = []
+        engine._grant_priority('B'); engine.pump(); self.checkpoint(session)
+        for _ in range(20):
+            if engine.state.active_player == 'C' and engine.state.step == 'upkeep':
+                break
+            if session.state.pending_decision.kind == 'cleanup.discard':
+                actor = session.pending_principals()[0].removeprefix('pilot:')
+                context = session.state.pending_decision.payload_by_actor[actor]
+                payload = {'a': 'discard', 'cards': [row['id'] for row in context['hand'][:context['count']]]}
+            else:
+                payload = {'action_id': 'pass'}
+            passed = session.act(session.pending_principals()[0], payload)
+            self.assertTrue(passed.ok, passed.summary)
+        self.assertEqual('C', engine.state.active_player)
+        self.assertTrue(target.tapped)
+        self.assertEqual(1, target.counters['stun'])
+        self.assertNotIn('does_not_untap_next', target.annotations)
+        self.replay(session, load=True)
+
     @classmethod
     def setUpClass(cls):
         cls.temporary = tempfile.TemporaryDirectory()

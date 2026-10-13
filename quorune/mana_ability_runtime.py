@@ -47,6 +47,8 @@ _DAMAGE_CONTROLLER_RESULT = re.compile(
 def _mana_result_effects(
     ability: ActivatedAbility,
 ) -> tuple[dict[str, Any], ...]:
+    if ability.fixed_mana_result is not None:
+        return (ability.fixed_mana_result.mode_effect(),)
     key = ability.builtin_semantic_key or ""
     match = _DAMAGE_CONTROLLER_RESULT.fullmatch(key)
     if match is None:

@@ -21,6 +21,16 @@ from .combat_entry_activations import cleanup_ninjutsu_reveal
 _COPY_TERM = "copy"
 
 
+def physical_stack_record(host: Any, item: StackItem):
+    """Bind spell provenance to the announced physical card after copy entry."""
+    from .entry_copy import copiable_oracle_id
+
+    card = host.state.cards.get(item.card_object_id or '')
+    if card is not None and copiable_oracle_id(card) != card.oracle_id:
+        return host.card_db.by_oracle_id(card.oracle_id)
+    return host.card_record(item.card_object_id)
+
+
 class GenericStackResolutionQuery(Protocol):
     semantics: Any
 
@@ -60,7 +70,7 @@ def trusted_generic_empty_resolution(
         return None
     provenance: str | None = None
     if item.kind == "spell" and item.card_object_id:
-        record = host.card_record(item.card_object_id)
+        record = physical_stack_record(host, item)
         face=next((f for f in record.faces if f.get('name')==item.chosen_face),None) if record is not None and record.faces else None
         if record is not None:record=prospective_cast_record(record,face)
         if record and host._trusted_generic_spell(record):
@@ -159,7 +169,9 @@ def complete_stack_resolution(
             == "sneak"
             else None
         ),
-        **aura_resolution_move_kwargs(item),
+        **{**aura_resolution_move_kwargs(item),
+            **({'aura_target_ref': item.context['copied_entry_aura_target']}
+                if 'copied_entry_aura_target' in item.context else {})},
         prepared_replacement=prepared_replacement,
         reason="spell resolved",
         log=False,

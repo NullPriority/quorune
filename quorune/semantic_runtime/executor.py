@@ -90,6 +90,7 @@ from .intents import (
     RevealLibraryCardsIntent,
     SetCardDesignationIntent,
     SetPermanentTappedIntent,
+    ProhibitNextUntapIntent,
     SetPermanentsTappedIntent,
     ShuffleLibraryIntent,
     UntapAllCreaturesIntent,
@@ -577,11 +578,13 @@ PlayerIntent = BecomeMonarchIntent | MillCardsIntent | ImpulseAccessIntent | Dis
 PLAYER_INTENT_TYPES = (BecomeMonarchIntent, MillCardsIntent, ImpulseAccessIntent, DiscardWholeHandsIntent)
 TapStateIntent = (
     SetPermanentTappedIntent
+    | ProhibitNextUntapIntent
     | SetPermanentsTappedIntent
     | SetPublicPermanentsTappedIntent
 )
 TAP_STATE_INTENT_TYPES = (
     SetPermanentTappedIntent,
+    ProhibitNextUntapIntent,
     SetPermanentsTappedIntent,
     SetPublicPermanentsTappedIntent,
 )
@@ -640,6 +643,9 @@ def _execute_tap_state_intent(
     sink: SemanticIntentSink,
     intent: TapStateIntent,
 ) -> tuple[str, object]:
+    if isinstance(intent, ProhibitNextUntapIntent):
+        return intent.object_ref, tap_state.prohibit_next_untap(sink, intent.object_ref,
+            actor=intent.actor, reason=intent.reason, logical_object_id=intent.logical_object_id)
     if isinstance(intent, SetPermanentTappedIntent):
         result = tap_state.set_permanent_tapped(
             sink,

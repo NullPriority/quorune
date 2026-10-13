@@ -1362,6 +1362,102 @@
         "test_exact_mishra_closure.ExactMishraClosureTests.test_promoted_mishra_cards_preflight_fully"
       ],
       "resolution": "Recognize existing generated static coverage only within the current trusted, source-hash-matched program set. Preserve unsupported remainder checks, provisional and source-drift rejection, reference deck compatibility assertions and strict capability-only blockers. Current impact edges already select the complete consumer set; add this precise witness to retain the boundary. Compiler semantics and identity remain unchanged."
+    },
+    {
+      "run_id": 38324804400,
+      "head_sha": "275407f4875c4e2dc155b69ae24e9759bb5adc28",
+      "deterministic": true,
+      "id": "ci-20261013-505-promoted-entry-expectations",
+      "category": "missing_affected_test",
+      "impact_edge_status": "added",
+      "summary": "The new private hand reveal entry owner closes Flamekin Village, Game Trail and Murmuring Bosk, while older integration witnesses still assert generic replacement residuals.",
+      "failed_surfaces": [
+        "PR / Python / functional-08",
+        "PR / Windows / functional-08",
+        "PR / Python / functional-10",
+        "PR / Windows / functional-10",
+        "PR / Generated and architecture",
+        "PR / Windows / generated-validation"
+      ],
+      "regressions": [
+        "test_continuous_effect_duration.ContinuousEffectEngineTests.test_exact_continuous_effects_compose_while_replacements_stay_residual",
+        "test_mana_abilities.ManaAbilityRuleTests.test_murmuring_bosk_intrinsic_mana_executes_with_closed_reveal_entry",
+        "test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_all_declared_residual_pairs_fail_closed_at_runtime_boundary"
+      ],
+      "resolution": "Assert exact typed entry closure on the promoted originals; keep the independently unsupported Drogskol/Wilt-Leaf replacements and replace the fixed-mana negative with an explicit unsupported coin-replacement fixture. Add every affected integration module to the private entry impact edge and update the Bosk contract/evidence consumer references."
+    },
+    {
+      "run_id": 38324804400,
+      "head_sha": "275407f4875c4e2dc155b69ae24e9759bb5adc28",
+      "deterministic": true,
+      "id": "ci-20261013-505-physical-spell-record-owner",
+      "category": "source_correctness",
+      "impact_edge_status": "not_applicable",
+      "summary": "The copied-entry physical provenance helper bypassed the ordinary card-record owner for every physical spell, breaking six admitted Aura fixture resolution paths.",
+      "failed_surfaces": [
+        "PR / Python / functional-12",
+        "PR / Windows / functional-12"
+      ],
+      "regressions": [
+        "test_aura_targeting_entry.AuraTargetingEntryEngineTests.test_spell_resolution_attaches_and_illegal_target_counters_by_rule",
+        "test_aura_targeting_entry.AuraTargetingEntryEngineTests.test_player_aura_cast_attachment_projection_and_replay",
+        "test_copy_objects.EntryCopyRuntimeTests.test_original_mirrormade_copy_aura_keeps_intrinsic_attachment_choice_before_entry"
+      ],
+      "resolution": "Use the ordinary card-record owner unless retained copied program provenance changes effective Oracle identity; only then retrieve announced physical provenance. Preserve all six Aura assertions and the copied-Aura pending save/load, wrong-principal and replay witness. Existing intrinsic-entry-copy impact rule already selects the full affected Aura owner."
+    },
+    {
+      "run_id": 38324804400,
+      "head_sha": "275407f4875c4e2dc155b69ae24e9759bb5adc28",
+      "deterministic": true,
+      "id": "ci-20261013-505-subtype-assurance-inventory",
+      "category": "missing_affected_test",
+      "impact_edge_status": "added",
+      "summary": "The direct-target assurance generator enumerates all reviewed noncreature subtypes, but its consumer pins the obsolete Forest/Gate/Vehicle subset.",
+      "failed_surfaces": [
+        "PR / Python / functional-09",
+        "PR / Windows / functional-09"
+      ],
+      "regressions": [
+        "test_fixed_target_effect_sequences.FixedTargetEffectSequenceCompilerTests.test_corpus_assurance_contract_covers_every_closed_dimension"
+      ],
+      "resolution": "Compare the existing independent sequence dimensions plus the authoritative closed noncreature subtype inventory; keep accepted and rejected case generation unchanged. Add the direct-target and assurance owner paths to this integration consumer impact rule."
+    },
+    {
+      "run_id": 38324804400,
+      "head_sha": "275407f4875c4e2dc155b69ae24e9759bb5adc28",
+      "deterministic": true,
+      "id": "ci-20261013-505-interaction-evidence-completeness",
+      "category": "missing_affected_test",
+      "impact_edge_status": "added",
+      "summary": "Six newly reachable high-risk pairs have no explicit evidence declaration, so the scheduler correctly prioritizes assurance recovery over the fixture harvest.",
+      "failed_surfaces": [
+        "PR / Generated and architecture",
+        "PR / Windows / generated-validation"
+      ],
+      "regressions": [
+        "test_event_card_return.EventCardReturnActionTests.test_original_abduction_retains_attached_death_identity_after_aura_departure_and_replays",
+        "test_typed_land_entry_participation.RevealEntryRuntimeTests.test_original_flamekin_village_private_entry_then_stale_haste_target_replays",
+        "test_copy_objects.EntryCopyContractTests.test_entry_copy_with_unrepresented_target_sibling_rejects_whole_runtime_admission",
+        "test_rules_scheduler.RulesSchedulerTests.test_covered_fail_closed_pressure_does_not_create_false_foreground"
+      ],
+      "resolution": "Retain correctness-first ranking. Add real original Abduction departure/LKI return and Flamekin private-entry/target-revalidation action witnesses with replay, plus a constructed copy/unsupported-target whole-admission boundary. Declare the actual new and existing copied-Aura and Feign/Demonic interactions, then regenerate the reusable matrix and scheduler through registered owners."
+    },
+    {
+      "run_id": 38324804400,
+      "head_sha": "275407f4875c4e2dc155b69ae24e9759bb5adc28",
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "impact_edge_status": "not_applicable",
+      "id": "ci-20261013-505-bare-subtype-resolution-expectation",
+      "summary": "The shared public-set consumer still rejects temporary bare Demon/Devil/Imp/Tiefling and legendary Human selectors that this batch deliberately promotes without a Creature gate.",
+      "failed_surfaces": [
+        "PR / Python / functional-05",
+        "PR / Windows / functional-05"
+      ],
+      "regressions": [
+        "test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_shared_public_set_query_fans_into_layers_and_resolution"
+      ],
+      "resolution": "Assert exact temporary predicates and source exclusion for all supported public sets, preserving keyword-qualified and type-union negative controls. The existing shared-public-battlefield-query-contract impact edge already selects this consumer; no selection widening or production change is needed."
     }
   ],
   "recent_pull_requests": [

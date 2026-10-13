@@ -13,6 +13,34 @@ from quorune.object_query import (
 
 
 class ObjectQueryTests(unittest.TestCase):
+    def test_numeric_public_query_uses_exact_effective_stats_and_preserves_legacy_shapes(self):
+        from dataclasses import replace
+        from quorune.target_numeric import TargetNumericCharacteristic, TargetNumericCharacteristicSpec, TargetNumericComparison
+        numeric = TargetNumericCharacteristicSpec(TargetNumericCharacteristic.POWER, TargetNumericComparison.AT_LEAST, 4)
+        query = ObjectQuerySpec(zones=('battlefield',), types_all=('creature',), numeric_characteristic=numeric)
+        rows = [replace(self.rows[1], zone='battlefield', effective_power=value) for value in (None, 3, 4, 5)]
+        self.assertEqual((4, 5), tuple(row.effective_power for row in query_objects(rows, query)))
+        serialized = query.to_dict()
+        self.assertEqual(query, ObjectQuerySpec.from_dict(serialized))
+        legacy = ObjectQuerySpec(types_all=('creature',)).to_dict()
+        self.assertNotIn('numeric_characteristic', legacy)
+        self.assertEqual(legacy, ObjectQuerySpec.from_dict(legacy).to_dict())
+        malformed = dict(serialized)
+        malformed['numeric_characteristic'] = {**numeric.to_dict(), 'value': True}
+        with self.assertRaises(ObjectQueryError):
+            ObjectQuerySpec.from_dict(malformed)
+
+    def test_numeric_public_query_cannot_implicitly_enter_live_layers_or_quantities(self):
+        from quorune.target_numeric import TargetNumericCharacteristicSpec, TargetNumericCharacteristic, TargetNumericComparison
+        from quorune.characteristic_fragments import CharacteristicQuantitySpec, CharacteristicQuantityScope, CharacteristicFragmentError
+        from quorune.continuous_effects import _matches, CharacteristicState, ContinuousEffectError
+        query = ObjectQuerySpec(zones=('battlefield',), types_all=('creature',), numeric_characteristic=
+            TargetNumericCharacteristicSpec(TargetNumericCharacteristic.POWER, TargetNumericComparison.AT_LEAST, 4))
+        with self.assertRaises(CharacteristicFragmentError):
+            CharacteristicQuantitySpec(scope=CharacteristicQuantityScope.CONTROLLER_ZONE, query=query)
+        with self.assertRaises(ContinuousEffectError):
+            _matches(query, CharacteristicState(name='Boundary', controller='A', card_types={'Creature'}, power=4, toughness=4), {})
+
     def setUp(self):
         self.rows = (
             ObjectQueryResult(

@@ -32,6 +32,7 @@ def _custom_fragments(card: Any) -> tuple[StaticAbilityFragment, ...]:
     characteristics = dict(
         card.annotations.get("object_characteristics")
         or card.annotations.get("token_characteristics")
+        or card.annotations.get("copy_overrides")
         or {}
     )
     raw = characteristics.get("ability_fragments", ())

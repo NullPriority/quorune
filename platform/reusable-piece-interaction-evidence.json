@@ -909,12 +909,12 @@
     },
     {
       "evidence_class": "interaction",
-      "assurance_kind": "pair_derived",
-      "test_id": "test_murmuring_bosk_intrinsic_mana_executes_while_replacement_stays_residual",
-      "piece_ids": ["capability.mana.intrinsic.basic_land_type", "residual.replacement.replacement-applicability", "residual.replacement.self-replacement-and-prevention-ordering"],
-      "capability_ids": ["mana.intrinsic.basic_land_type"],
-      "interaction_order": 3,
-      "assertion": "Murmuring Bosk's exact CR 305.6 Forest ability remains independently executable and replayable while its unsupported self-entry replacement retains both applicability and ordering residuals."
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_murmuring_bosk_intrinsic_mana_executes_with_closed_reveal_entry",
+      "piece_ids": ["capability.mana.intrinsic.basic_land_type", "capability.zone.entry.reveal_hand_or_tapped"],
+      "capability_ids": ["mana.intrinsic.basic_land_type", "zone.entry.reveal_hand_or_tapped"],
+      "interaction_order": 2,
+      "assertion": "Admitted Murmuring Bosk enters tapped without a matching hand reveal, untaps through the canonical tap-state owner, and activates its CR 305.6 Forest ability to add one green mana without a stack item; that activation replays exactly."
     },
     {
       "evidence_class": "interaction",
@@ -9565,6 +9565,123 @@
       ],
       "interaction_order": 2,
       "assertion": "Original Mystic Sanctuary enters tapped with only two other Islands and produces no target trigger, then enters untapped with three and returns its chosen instant to the library top. Original Witchs Cottage similarly returns a creature. Actual Cremate exiles the chosen graveyard card before the pending land trigger resolves, so target revalidation prevents the move. Natural land-play commands, pending load, private library projection and pre-play replay preserve every branch."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_copy_objects.EntryCopyRuntimeTests.test_original_mirrormade_copy_aura_keeps_intrinsic_attachment_choice_before_entry",
+      "piece_ids": [
+        "capability.attachment.aura.simple_object",
+        "capability.zone.entry.fixed_copy"
+      ],
+      "capability_ids": [
+        "attachment.aura.simple_object",
+        "zone.entry.fixed_copy"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Mirrormade captures copied Holy Strength values, retains the intrinsic Aura attachment choice before entry, rejects another principal, and commits reciprocal attachment and modifiers through save/load and exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_event_card_return.EventCardReturnActionTests.test_original_abduction_retains_attached_death_identity_after_aura_departure_and_replays",
+      "piece_ids": [
+        "capability.attachment.aura.simple_object",
+        "capability.zone.return.fixed_event_battlefield"
+      ],
+      "capability_ids": [
+        "attachment.aura.simple_object",
+        "zone.return.fixed_event_battlefield"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Abduction casts onto a legal creature, untaps and controls it, then retains the exact death identity after the Aura leaves; the creature returns under its original owner with a new incarnation and exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_event_card_return.EventCardReturnActionTests.test_original_abduction_retains_attached_death_identity_after_aura_departure_and_replays",
+      "piece_ids": [
+        "capability.attachment.reference.current_or_lki",
+        "capability.zone.return.fixed_event_battlefield"
+      ],
+      "capability_ids": [
+        "attachment.reference.current_or_lki",
+        "zone.return.fixed_event_battlefield"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Abduction discovers the enchanted creature death using retained attachment identity, survives the Aura departure, and returns the original graveyard incarnation under its owner through exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_typed_land_entry_participation.RevealEntryRuntimeTests.test_original_flamekin_village_private_entry_then_stale_haste_target_replays",
+      "piece_ids": [
+        "capability.target.revalidate_resolution",
+        "capability.zone.entry.reveal_hand_or_tapped"
+      ],
+      "capability_ids": [
+        "target.revalidate_resolution",
+        "zone.entry.reveal_hand_or_tapped"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Flamekin Village privately reveals only the matching hand Elemental, rejects another principal, enters untapped, and pays for its targeted Haste activation; a responding Murder removes the target before resolution, so the Haste result does not apply and the full sequence replays."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantRuntimeTests.test_original_death_grants_return_owner_with_entry_counter_or_coupled_stats_and_replay",
+      "piece_ids": [
+        "capability.target.revalidate_resolution",
+        "capability.zone.return.fixed_event_battlefield"
+      ],
+      "capability_ids": [
+        "target.revalidate_resolution",
+        "zone.return.fixed_event_battlefield"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Feign Death and Demonic Gifts grant only the accepted target, reject another principal, and return the retained death incarnation under its owner after actual Murder; entry state and placing-player counter replacement follow that owner and replay exactly."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_copy_objects.EntryCopyContractTests.test_entry_copy_with_unrepresented_target_sibling_rejects_whole_runtime_admission",
+      "piece_ids": [
+        "capability.zone.entry.fixed_copy",
+        "residual.target_or_choice.target-predicate"
+      ],
+      "capability_ids": [
+        "zone.entry.fixed_copy"
+      ],
+      "interaction_order": 2,
+      "assertion": "A constructed intrinsic entry-copy carrier with an unrepresented chosen-name target sibling retains both pieces and rejects whole-program strict and compatible runtime admission; the exact copy prefix does not grant gameplay trust."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_intrinsic_mana_unrepresented_replacement_sibling_rejects_whole_runtime_admission",
+      "piece_ids": [
+        "capability.mana.intrinsic.basic_land_type",
+        "residual.replacement.replacement-applicability"
+      ],
+      "capability_ids": [
+        "mana.intrinsic.basic_land_type"
+      ],
+      "interaction_order": 2,
+      "assertion": "A constructed Forest carrier retains its recognized intrinsic green mana node and an unsupported coin-replacement sibling; strict and compatible whole-program admission reject that residual composition without a hard construction failure."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_intrinsic_mana_unrepresented_replacement_sibling_rejects_whole_runtime_admission",
+      "piece_ids": [
+        "capability.mana.intrinsic.basic_land_type",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ],
+      "capability_ids": [
+        "mana.intrinsic.basic_land_type"
+      ],
+      "interaction_order": 2,
+      "assertion": "A constructed Forest carrier retains its recognized intrinsic green mana node and an unsupported coin-replacement sibling; strict and compatible whole-program admission reject that residual composition without a hard construction failure."
     }
   ]
 }

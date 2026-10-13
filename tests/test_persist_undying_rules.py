@@ -552,7 +552,7 @@ class PersistUndyingRuntimeTests(unittest.TestCase):
                 self.assertNotEqual("battlefield", source.zone)
                 self.assertNotIn(counter, source.counters)
 
-    def test_control_change_uses_trigger_controller_as_placing_player_and_owner_as_controller(self):
+    def test_control_change_uses_returned_owner_as_counter_placing_player(self):
         for offset, (name, mechanic) in enumerate(
             (("Putrid Goblin", "Persist"), ("Young Wolf", "Undying"))
         ):
@@ -582,7 +582,7 @@ class PersistUndyingRuntimeTests(unittest.TestCase):
                     if event.code == "counter.add"
                     and event.details.get("object") == source.ref
                 )
-                self.assertEqual("B", counter_event.actor)
+                self.assertEqual("A", counter_event.actor)
 
     def test_zone_and_counter_replacements_complete_before_return_mutates(self):
         for offset, (name, mechanic, counter) in enumerate(

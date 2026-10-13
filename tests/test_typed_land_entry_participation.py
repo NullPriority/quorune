@@ -54,6 +54,37 @@ def _record(text: str, *, name: str = "Typed Entry Fixture") -> CardRecord:
 
 
 class TypedLandEntryCompilerTests(unittest.TestCase):
+    def test_reveal_entry_has_typed_private_hand_query_and_optional_replacement(self):
+        from quorune.oracle_ir import compile_oracle_card
+        text="As this land enters, you may reveal a Mountain or Forest card from your hand. If you don't, this land enters tapped."
+        ir=compile_oracle_card(_record(text),capability_registry=load_default_capability_registry(),capability_profile='commander_review')
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        node=ir.faces[0].nodes[0];self.assertEqual('replacement_effect',node.kind)
+        self.assertEqual(['forest','mountain'],node.handlers[0]['spec']['query']['subtypes_any'])
+        self.assertIn('zone.entry.reveal_hand_or_tapped',node.capability_dependencies)
+
+    def test_reveal_entry_contract_rejects_open_queries_and_untrusted_owner(self):
+        from quorune.compiler.entry_reveal_templates import entry_reveal_spec
+        from quorune.entry_reveal import EntryRevealSpec
+        from quorune.semantic_runtime.entry_reveal import EntryRevealHandler
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.capabilities import CapabilityRegistry
+        from common import ROOT
+        text="As this land enters, you may reveal a Mountain or Forest card from your hand. If you don't, this land enters tapped."
+        spec=entry_reveal_spec(text,source_name='Typed Entry Fixture');self.assertIsNotNone(spec)
+        descriptor={'handler_id':'replacement.zone.entry-reveal-hand.v1','schema_version':1,'event':'zone.change','spec':spec.to_dict()}
+        self.assertEqual((),EntryRevealHandler().lower(descriptor,object()))
+        for body in (text+' Draw a card.',text.replace('Mountain or Forest','blue creature'),text.replace('your hand','a graveyard')):
+            self.assertIsNone(entry_reveal_spec(body,source_name='Typed Entry Fixture'))
+        malformed=spec.to_dict();malformed['query']['numeric_characteristic']={'characteristic':'power','comparison':'at_least','value':1}
+        with self.assertRaises(ValueError):EntryRevealSpec.from_dict(malformed)
+        for value in ({**descriptor,'unknown':True},{**descriptor,'schema_version':True}):
+            with self.assertRaises(ValueError):EntryRevealHandler().lower(value,object())
+        registry_value=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        next(row for row in registry_value['capabilities'] if row['id']=='zone.entry.reveal_hand_or_tapped').update(status='blocked',blockers=['missing private reveal entry'])
+        registry=CapabilityRegistry(registry_value);registry.mark_evidence_verified('0'*64)
+        self.assertNotEqual('exact',compile_oracle_card(_record(text),capability_registry=registry).status)
+
     @classmethod
     def setUpClass(cls) -> None:
         cls.db = CardDatabase(DB_PATH)
@@ -855,3 +886,180 @@ class TypedLandEntryRuntimeTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class RevealEntryRuntimeTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from common import ROOT
+        from scripts.build_test_database import build_fixture_database
+        from quorune.deck import DeckDefinition,DeckEntry
+        cls.temporary=tempfile.TemporaryDirectory();path=Path(cls.temporary.name)/'reveal-entry.sqlite3'
+        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/reveal-entry-cards.json'],path)
+        cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
+        cls.deck=DeckDefinition('Reveal entry',[DeckEntry('Generic Bound Commander',1,'commander'),DeckEntry('Generic Bound Plains',30)],['Generic Bound Commander'])
+    @classmethod
+    def tearDownClass(cls):cls.db.close();cls.temporary.cleanup()
+    from test_bound_effect_programs import BoundEffectProgramRuntimeTests as _Witnesses
+    session=_Witnesses.session
+    add=_Witnesses.add
+    checkpoint=_Witnesses.checkpoint
+    replay=_Witnesses.replay
+
+    def ready(self,s,source):
+        e=s.engine;e.permissions.invalidate_current();e.state.pending_decision=None;e.state.started=True
+        e.state.active_player='A';e.state.phase='precombat_main';e.state.step='main';e.state.priority_passes=[]
+        e._grant_priority('A');e.pump()
+        return next(row for row in s.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions'] if row.get('card')==source.ref)
+
+    def test_original_game_trail_private_choice_selected_reveal_untapped_entry_and_pending_replay(self):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+        s=self.session(360001);e=s.engine;source=self.add(e,'Game Trail',zone='hand')
+        forest=self.add(e,'Forest',zone='hand');island=self.add(e,'Island',zone='hand')
+        foreign=self.add(e,'Mountain',seat='B',zone='hand')
+        p=compile_best_available_card_program(self.db,self.db.lookup('Game Trail'),semantic_registry=e.semantics,capability_registry=self.registry,capability_profile='commander_review')
+        self.assertTrue(bind_card_program_runtime(p,capability_registry=self.registry,profile='commander_review')['strict_capability_ready'])
+        action=self.ready(s,source);self.checkpoint(s)
+        accepted=s.act('pilot:A',{'action_id':action['id']});self.assertTrue(accepted.ok,accepted.summary)
+        self.assertEqual('replacement.order',s.state.pending_decision.kind);self.assertEqual('hand',e.state.cards[source.object_id].zone)
+        choices=s.packet('pilot:A',full=True)['decision']['ctx']['options']
+        self.assertTrue(any(forest.ref in row['id'] for row in choices));self.assertFalse(any(island.ref in row['id'] or foreign.ref in row['id'] for row in choices))
+        projection=json.dumps(s.projector._snapshot('pilot:D'),sort_keys=True)
+        for card in (forest,island,foreign):self.assertNotIn(card.ref,projection)
+        self.assertNotIn('Reveal Forest',json.dumps(s.packet('pilot:D',full=True),sort_keys=True))
+        resumed=self.replay(s,load=True);choices=resumed.packet('pilot:A',full=True)['decision']['ctx']['options']
+        chosen=next(row['id'] for row in choices if forest.ref in row['id']);before=authoritative_state_hash(resumed.state)
+        for principal,value in [('pilot:C',chosen),('pilot:A','unknown-reveal')]:
+            denied=resumed.act(principal,{'action_id':'choose','replacement':value});self.assertFalse(denied.ok);self.assertEqual(before,authoritative_state_hash(resumed.state))
+        accepted=resumed.act('pilot:A',{'action_id':'choose','replacement':chosen});self.assertTrue(accepted.ok,accepted.summary)
+        land=resumed.state.cards[source.object_id];self.assertEqual('battlefield',land.zone);self.assertFalse(land.tapped)
+        revealed=resumed.state.cards[forest.object_id];self.assertEqual('hand',revealed.zone)
+        self.assertEqual(set('ABCD'),set(revealed.known_to));self.assertEqual(['A'],revealed.revealed_to)
+        projection=json.dumps(resumed.projector._snapshot('pilot:D'),sort_keys=True);self.assertIn(forest.ref,projection)
+        self.assertNotIn(island.ref,projection);self.assertNotIn(foreign.ref,projection);self.replay(resumed,load=True)
+
+    def test_original_flamekin_village_private_entry_then_stale_haste_target_replays(self):
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.record import authoritative_state_hash
+        session = self.session(360009)
+        engine = session.engine
+        source = self.add(engine, 'Flamekin Village', zone='hand')
+        elemental = self.add(engine, 'Fire Elemental', zone='hand')
+        target = self.add(engine, 'Generic Bound Body', ref='village-haste-target')
+        removal = self.add(engine, 'Murder', zone='hand')
+        program = compile_best_available_card_program(self.db, self.db.lookup('Flamekin Village'), semantic_registry=engine.semantics, capability_registry=self.registry, capability_profile='commander_review')
+        self.assertTrue(bind_card_program_runtime(program, capability_registry=self.registry, profile='commander_review')['strict_capability_ready'])
+        action = self.ready(session, source)
+        engine.state.players['A'].mana_pool.update({'R': 1, 'B': 2, 'C': 1})
+        self.checkpoint(session)
+        self.assertTrue(session.act('pilot:A', {'action_id': action['id']}).ok)
+        options = session.packet('pilot:A', full=True)['decision']['ctx']['options']
+        choice = next(row['id'] for row in options if elemental.ref in row['id'])
+        self.assertNotIn(elemental.ref, str(session.packet('pilot:D', full=True)))
+        before = authoritative_state_hash(session.state)
+        denied = session.act('pilot:C', {'action_id': 'choose', 'replacement': choice})
+        self.assertFalse(denied.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self.assertTrue(session.act('pilot:A', {'action_id': 'choose', 'replacement': choice}).ok)
+        self.assertFalse(engine.state.cards[source.object_id].tapped)
+        action = next(row for row in session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions'] if row['id'].startswith('activate:' + source.ref + ':') and 'target_schema' in row)
+        accepted = session.act('pilot:A', {'action_id': action['id'], 'targets': [target.ref], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertTrue(engine.state.cards[source.object_id].tapped)
+        while session.pending_principals()[0] != 'pilot:A':
+            self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
+        action = next(row for row in session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions'] if row.get('card') == removal.ref)
+        accepted = session.act('pilot:A', {'action_id': action['id'], 'targets': [target.ref], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        BoundEffectProgramRuntimeTests.resolve(self, session)
+        self.assertEqual('graveyard', engine.state.cards[target.object_id].zone)
+        self.assertFalse(engine.state.cards[target.object_id].annotations.get('keywords'))
+        self.assertFalse(session.state.stack)
+        self.replay(session, load=True)
+
+    def test_original_game_trail_decline_and_no_match_enter_tapped_without_reveal(self):
+        for matching in (False,True):
+            s=self.session(360002+int(matching));e=s.engine;source=self.add(e,'Game Trail',zone='hand')
+            card=self.add(e,'Forest' if matching else 'Island',zone='hand')
+            action=self.ready(s,source);self.checkpoint(s);accepted=s.act('pilot:A',{'action_id':action['id']});self.assertTrue(accepted.ok,accepted.summary)
+            if matching:
+                options=s.packet('pilot:A',full=True)['decision']['ctx']['options']
+                choice=next(row['id'] for row in options if row['label']=='Enter tapped without revealing a card')
+                accepted=s.act('pilot:A',{'action_id':'choose','replacement':choice});self.assertTrue(accepted.ok,accepted.summary)
+            current=e.state.cards[source.object_id];self.assertEqual('battlefield',current.zone);self.assertTrue(current.tapped)
+            self.assertEqual(['A'],e.state.cards[card.object_id].known_to)
+            self.assertNotIn(card.ref,json.dumps(s.projector._snapshot('pilot:D'),sort_keys=True));self.replay(s,load=True)
+
+    def test_original_secluded_glen_matches_kindred_subtype_without_creature_requirement(self):
+        s=self.session(360004);e=s.engine;source=self.add(e,'Secluded Glen',zone='hand')
+        card=self.add(e,'Bitterblossom',zone='hand');action=self.ready(s,source);self.checkpoint(s)
+        accepted=s.act('pilot:A',{'action_id':action['id']});self.assertTrue(accepted.ok,accepted.summary)
+        options=s.packet('pilot:A',full=True)['decision']['ctx']['options'];choice=next(row['id'] for row in options if card.ref in row['id'])
+        accepted=s.act('pilot:A',{'action_id':'choose','replacement':choice});self.assertTrue(accepted.ok,accepted.summary)
+        self.assertFalse(e.state.cards[source.object_id].tapped);self.replay(s,load=True)
+
+    def test_original_copy_land_applies_copied_reveal_choice_to_copier_controller_and_replays(self):
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests
+        s=self.session(360005);e=s.engine;source=self.add(e,'Copy Land',zone='hand')
+        target=self.add(e,'Game Trail',seat='B');reveal=self.add(e,'Forest',zone='hand')
+        e.state.players['A'].mana_pool.update({'U':1,'C':2});self.ready(s,source);self.checkpoint(s)
+        action=next(row for row in s.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions'] if row.get('card')==source.ref)
+        accepted=s.act('pilot:A',{'action_id':action['id'],'pay':'auto'});self.assertTrue(accepted.ok,accepted.summary)
+        BoundEffectProgramRuntimeTests.resolve(self,s);self.assertEqual('replacement.order',s.state.pending_decision.kind)
+        options=s.packet('pilot:A',full=True)['decision']['ctx']['options'];copy=next(row['id'] for row in options if target.ref in row['id'])
+        accepted=s.act('pilot:A',{'action_id':'choose','replacement':copy});self.assertTrue(accepted.ok,accepted.summary)
+        self.assertEqual('replacement.order',s.state.pending_decision.kind);self.replay(s,load=True)
+        options=s.packet('pilot:A',full=True)['decision']['ctx']['options'];choice=next(row['id'] for row in options if reveal.ref in row['id'])
+        accepted=s.act('pilot:A',{'action_id':'choose','replacement':choice});self.assertTrue(accepted.ok,accepted.summary)
+        BoundEffectProgramRuntimeTests.resolve(self,s)
+        current=e.state.cards[source.object_id];self.assertEqual('battlefield',current.zone);self.assertFalse(current.tapped)
+        self.assertEqual('A',current.controller);self.assertEqual(set('ABCD'),set(e.state.cards[reveal.object_id].known_to))
+        self.assertIn('enchantment',e._effective_card_data(current)['type_line'].casefold());self.replay(s,load=True)
+
+    def test_reveal_does_not_override_independent_tapped_entry_and_reuses_same_hand_card(self):
+        from quorune.semantic_runtime import prepare_zone_change_replacement_batch
+        from quorune.replacement_effects import ReplacementChoiceRequired
+        from quorune.entry_reveal import ENTRY_REVEAL_FIELD
+        s=self.session(360006);e=s.engine;one=self.add(e,'Game Trail',zone='hand',ref='trail-one')
+        two=self.add(e,'Game Trail',zone='hand',ref='trail-two');reveal=self.add(e,'Forest',zone='hand')
+        changes=((one.object_id,'battlefield'),(two.object_id,'battlefield'));selections=[]
+        for _ in range(6):
+            try:
+                prepared=prepare_zone_change_replacement_batch(e,changes,destination_controllers={one.object_id:'A',two.object_id:'A'},
+                    requested_tapped={one.object_id:True,two.object_id:False},selections=selections)
+                break
+            except ReplacementChoiceRequired as choice:
+                selections.append(next(value for value in choice.pending.choice.legal_selections if reveal.ref in value))
+        else:self.fail('Simultaneous reveal choices did not complete')
+        self.assertTrue(prepared[one.object_id].entry_tapped);self.assertFalse(prepared[two.object_id].entry_tapped)
+        for result in prepared.values():self.assertEqual(reveal.ref,result.event.payload[ENTRY_REVEAL_FIELD]['ref'])
+        self.assertEqual(['A'],reveal.known_to)
+        e._move_cards_simultaneously(changes,
+            replacement_selections=tuple(selections),reason='simultaneous reveal entry witness')
+        self.assertEqual('battlefield',e.state.cards[one.object_id].zone)
+        self.assertEqual('battlefield',e.state.cards[two.object_id].zone)
+        self.assertEqual('hand',e.state.cards[reveal.object_id].zone)
+        self.assertEqual(set('ABCD'),set(e.state.cards[reveal.object_id].known_to))
+
+    def test_entering_land_cannot_reveal_itself_and_stale_private_identity_fails_atomically(self):
+        from quorune.effect_runtime.hand_inspection import validate_entry_hand_reveal
+        from quorune.errors import GameRuleError
+        s=self.session(360007);e=s.engine;source=self.add(e,'Murmuring Bosk',zone='hand')
+        action=self.ready(s,source);self.checkpoint(s)
+        accepted=s.act('pilot:A',{'action_id':action['id']});self.assertTrue(accepted.ok,accepted.summary)
+        self.assertEqual('battlefield',e.state.cards[source.object_id].zone);self.assertTrue(e.state.cards[source.object_id].tapped)
+        self.replay(s,load=True)
+        card=self.add(e,'Forest',zone='hand');selection={'object_id':card.object_id,'logical_object_id':card.logical_object_id,
+            'ref':card.ref,'player':'A','oracle_id':card.oracle_id,'name':card.printed_name}
+        self.assertIs(card,validate_entry_hand_reveal(e,selection));before=authoritative_state_hash(e.state)
+        for wrong in ({**selection,'logical_object_id':'stale'},{**selection,'player':'B'},{**selection,'unknown':True}):
+            with self.assertRaises(GameRuleError):validate_entry_hand_reveal(e,wrong)
+            self.assertEqual(before,authoritative_state_hash(e.state))
+
+    def test_reveal_entry_producer_omission_mutant_is_killed(self):
+        with patch('quorune.semantic_runtime.zone_replacements.entry_reveal_replacement_effects',return_value=()):
+            with self.assertRaises(AssertionError):
+                self.test_original_game_trail_private_choice_selected_reveal_untapped_entry_and_pending_replay()

@@ -1,0 +1,485 @@
+{
+  "cards": [
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Haste",
+        "Exert"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}",
+      "name": "Ahn-Crop Crasher",
+      "oracle_id": "5b3ef91a-5804-43cc-a947-f25f33b7b88c",
+      "oracle_text": "Haste (This creature can attack and {T} as soon as it comes under your control.)\nYou may exert this creature as it attacks. When you do, target creature can't block this turn. (An exerted creature won't untap during your next untap step.)",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2017-04-28",
+      "toughness": "2",
+      "type_line": "Creature — Minotaur Warrior"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Rebound"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Ephemerate",
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "oracle_text": "Exile target creature you control, then return it to the battlefield under its owner's control.\nRebound (If you cast this spell from your hand, exile it as it resolves. At the beginning of your next upkeep, you may cast this card from exile without paying its mana cost.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2019-06-14",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Haste",
+        "Exert"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{R}{R}",
+      "name": "Glorybringer",
+      "oracle_id": "b75c3902-633e-4d24-acde-d7a9cc8f466e",
+      "oracle_text": "Flying, haste\nYou may exert this creature as it attacks. When you do, it deals 4 damage to target non-Dragon creature an opponent controls. (An exerted creature won't untap during your next untap step.)",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2025-04-11",
+      "toughness": "4",
+      "type_line": "Creature — Dragon"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Exert"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Gust Walker",
+      "oracle_id": "48bf69ec-0030-44ee-9fbd-6c204b64da7d",
+      "oracle_text": "You may exert this creature as it attacks. When you do, it gets +1/+1 and gains flying until end of turn. (An exerted creature won't untap during your next untap step.)",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2017-04-28",
+      "toughness": "2",
+      "type_line": "Creature — Human Wizard"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Trample",
+        "Exert"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R}",
+      "name": "Nef-Crop Entangler",
+      "oracle_id": "04dc245b-011f-4207-ab5c-1528037200f5",
+      "oracle_text": "Trample (This creature can deal excess combat damage to the player or planeswalker it's attacking.)\nYou may exert this creature as it attacks. When you do, it gets +1/+2 until end of turn. (An exerted creature won't untap during your next untap step.)",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2017-04-28",
+      "toughness": "1",
+      "type_line": "Creature — Human Warrior"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Exert"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{G}",
+      "name": "Watchful Naga",
+      "oracle_id": "21932be9-cdfb-48d9-87c7-3d62eca98150",
+      "oracle_text": "You may exert this creature as it attacks. When you do, draw a card. (An exerted creature won't untap during your next untap step.)",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2017-04-28",
+      "toughness": "2",
+      "type_line": "Creature — Snake Wizard"
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000003581",
+      "name": "Generic Exert Dual Result",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "type_line": "Creature — Human",
+      "oracle_text": "You may exert this creature as it attacks. When you do, draw a card.\nYou may exert this creature as it attacks. When you do, it gets +1/+2 until end of turn.",
+      "power": "2",
+      "toughness": "6",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "All cards in the Amonkhet set that let you exert a creature let you do so as you declare it as an attacking creature, as do some of the cards in the Hour of Devastation set. You can't do so later in combat, and creatures put onto the battlefield attacking can't be exerted. Any abilities that trigger on exerting an attacking creature will resolve before blockers are declared.",
+      "oracle_id": "04dc245b-011f-4207-ab5c-1528037200f5",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an exerted creature is already untapped during your next untap step (most likely because it had vigilance or an effect untapped it), exert's effect preventing it from untapping expires without having done anything.",
+      "oracle_id": "04dc245b-011f-4207-ab5c-1528037200f5",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you gain control of another player's creature until end of turn and exert it, it will untap during that player's untap step.",
+      "oracle_id": "04dc245b-011f-4207-ab5c-1528037200f5",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can't exert a creature unless an effect allows you to do so. Similar effects that \"tap and freeze\" a creature (such as that of Decision Paralysis) don't exert that creature.",
+      "oracle_id": "04dc245b-011f-4207-ab5c-1528037200f5",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Casting the card again due to rebound's delayed triggered ability is optional. If you choose not to cast the card, or if you can't (perhaps because there are no legal targets available), the card will stay exiled. You won't get another chance to cast it on a future turn. If you do cast the card, it's put into its owner's graveyard as normal once it resolves.",
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "published_at": "2019-06-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a spell with rebound that you cast from your hand is countered or doesn't resolve (most likely because its targets have become illegal), none of its effects will happen, including rebound. The spell will be put into its owner's graveyard and you won't get to cast it again on your next turn.",
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "published_at": "2019-06-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a token is exiled this way, it will cease to exist and won't return to the battlefield.",
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "published_at": "2019-06-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once the exiled creature returns, it's considered a new object with no relation to the object that it was. Auras attached to the exiled creature will be put into their owners' graveyards. Equipment attached to the exiled creature will become unattached and remain on the battlefield. Any counters on the exiled creature will cease to exist.",
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "published_at": "2019-06-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "All cards in the Amonkhet set that let you exert a creature let you do so as you declare it as an attacking creature, as do some of the cards in the Hour of Devastation set. You can’t do so later in combat, and creatures put onto the battlefield attacking can’t be exerted. Any abilities that trigger on exerting an attacking creature will resolve before blockers are declared.",
+      "oracle_id": "21932be9-cdfb-48d9-87c7-3d62eca98150",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an exerted creature is already untapped during your next untap step (most likely because it had vigilance or an effect untapped it), exert’s effect preventing it from untapping expires without having done anything.",
+      "oracle_id": "21932be9-cdfb-48d9-87c7-3d62eca98150",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you gain control of another player’s creature until end of turn and exert it, it will untap during that player’s untap step.",
+      "oracle_id": "21932be9-cdfb-48d9-87c7-3d62eca98150",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can’t exert a creature unless an effect allows you to do so. Similar effects that “tap and freeze” a creature (such as that of Decision Paralysis) don’t exert that creature.",
+      "oracle_id": "21932be9-cdfb-48d9-87c7-3d62eca98150",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "All cards in the Amonkhet set that let you exert a creature let you do so as you declare it as an attacking creature, as do some of the cards in the Hour of Devastation set. You can’t do so later in combat, and creatures put onto the battlefield attacking can’t be exerted. Any abilities that trigger on exerting an attacking creature will resolve before blockers are declared.",
+      "oracle_id": "48bf69ec-0030-44ee-9fbd-6c204b64da7d",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an exerted creature is already untapped during your next untap step (most likely because it had vigilance or an effect untapped it), exert’s effect preventing it from untapping expires without having done anything.",
+      "oracle_id": "48bf69ec-0030-44ee-9fbd-6c204b64da7d",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you gain control of another player’s creature until end of turn and exert it, it will untap during that player’s untap step.",
+      "oracle_id": "48bf69ec-0030-44ee-9fbd-6c204b64da7d",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can’t exert a creature unless an effect allows you to do so. Similar effects that “tap and freeze” a creature (such as that of Decision Paralysis) don’t exert that creature.",
+      "oracle_id": "48bf69ec-0030-44ee-9fbd-6c204b64da7d",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "All cards in the Amonkhet set that let you exert a creature let you do so as you declare it as an attacking creature, as do some of the cards in the Hour of Devastation set. You can't do so later in combat, and creatures put onto the battlefield attacking can't be exerted. Any abilities that trigger on exerting an attacking creature will resolve before blockers are declared.",
+      "oracle_id": "5b3ef91a-5804-43cc-a947-f25f33b7b88c",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a creature has a targeted triggered ability that triggers when you exert it, you can exert it even if there isn't a legal target for that triggered ability.",
+      "oracle_id": "5b3ef91a-5804-43cc-a947-f25f33b7b88c",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an exerted creature is already untapped during your next untap step (most likely because it had vigilance or an effect untapped it), exert's effect preventing it from untapping expires without having done anything.",
+      "oracle_id": "5b3ef91a-5804-43cc-a947-f25f33b7b88c",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you gain control of another player's creature until end of turn and exert it, it will untap during that player's untap step.",
+      "oracle_id": "5b3ef91a-5804-43cc-a947-f25f33b7b88c",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can't exert a creature unless an effect allows you to do so. Similar effects that \"tap and freeze\" a creature (such as that of Decision Paralysis) don't exert that creature.",
+      "oracle_id": "5b3ef91a-5804-43cc-a947-f25f33b7b88c",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "All cards in the Amonkhet set that let you exert a creature let you do so as you declare it as an attacking creature, as do some of the cards in the Hour of Devastation set. You can’t do so later in combat, and creatures put onto the battlefield attacking can’t be exerted. Any abilities that trigger on exerting an attacking creature will resolve before blockers are declared.",
+      "oracle_id": "b75c3902-633e-4d24-acde-d7a9cc8f466e",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a creature has a targeted triggered ability that triggers when you exert it, you can exert it even if there isn’t a legal target for that triggered ability.",
+      "oracle_id": "b75c3902-633e-4d24-acde-d7a9cc8f466e",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an exerted creature is already untapped during your next untap step (most likely because it had vigilance or an effect untapped it), exert’s effect preventing it from untapping expires without having done anything.",
+      "oracle_id": "b75c3902-633e-4d24-acde-d7a9cc8f466e",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you gain control of another player’s creature until end of turn and exert it, it will untap during that player’s untap step.",
+      "oracle_id": "b75c3902-633e-4d24-acde-d7a9cc8f466e",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can’t exert a creature unless an effect allows you to do so. Similar effects that “tap and freeze” a creature (such as that of Decision Paralysis) don’t exert that creature.",
+      "oracle_id": "b75c3902-633e-4d24-acde-d7a9cc8f466e",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

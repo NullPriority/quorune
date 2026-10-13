@@ -520,7 +520,7 @@
     {
       "mechanic_id": "cr-605-mana-abilities",
       "path": "mechanics/contracts/mana-abilities.json",
-      "sha256": "c22e8b463a8949a5037caf0c40c0a15e038145c856dfac7926362286003b80b7",
+      "sha256": "0820f17fc7bc8db6c64b34bf054e8c945fb8d2ed6c7460081d9dc9e3e9453a93",
       "version": 4
     },
     {
@@ -592,8 +592,8 @@
     {
       "mechanic_id": "persist",
       "path": "mechanics/contracts/persist.json",
-      "sha256": "595e2220df9ef2619fff3f7ce24df17683168f62faef986bbeabc0ae94e886b3",
-      "version": 1
+      "sha256": "2668d849076cb2ac1f022fd82b688ae123c5c4eb4e897a3586a39ccd50183ba8",
+      "version": 2
     },
     {
       "mechanic_id": "plot",
@@ -826,8 +826,8 @@
     {
       "mechanic_id": "undying",
       "path": "mechanics/contracts/undying.json",
-      "sha256": "0a234eb05536cd042b55d3a82a2e69be0ae2a31fdcbc014bff913768dd760563",
-      "version": 1
+      "sha256": "1680734edfbdb91ed98e3bf90d019449d7c0313d783381ecc54a96117bd6313f",
+      "version": 2
     },
     {
       "mechanic_id": "unleash",
@@ -4218,8 +4218,8 @@
     {
       "category": "additional_rules",
       "contract_path": "mechanics/contracts/persist.json",
-      "contract_sha256": "595e2220df9ef2619fff3f7ce24df17683168f62faef986bbeabc0ae94e886b3",
-      "contract_version": 1,
+      "contract_sha256": "2668d849076cb2ac1f022fd82b688ae123c5c4eb4e897a3586a39ccd50183ba8",
+      "contract_version": 2,
       "coverage_status": "tested",
       "dependencies": [
         "702"
@@ -4245,7 +4245,7 @@
         "test_existing_minus_counter_prevents_persist_trigger",
         "test_repeated_persist_instances_trigger_separately_but_only_one_returns",
         "test_stale_or_departed_graveyard_incarnation_does_not_return",
-        "test_control_change_uses_trigger_controller_as_placing_player_and_owner_as_controller",
+        "test_control_change_uses_returned_owner_as_counter_placing_player",
         "test_zone_and_counter_replacements_complete_before_return_mutates",
         "test_tokens_with_death_return_keywords_do_not_return",
         "test_four_player_simultaneous_deaths_place_triggers_apnap_and_keep_choices_scoped",
@@ -5627,8 +5627,8 @@
     {
       "category": "additional_rules",
       "contract_path": "mechanics/contracts/undying.json",
-      "contract_sha256": "0a234eb05536cd042b55d3a82a2e69be0ae2a31fdcbc014bff913768dd760563",
-      "contract_version": 1,
+      "contract_sha256": "1680734edfbdb91ed98e3bf90d019449d7c0313d783381ecc54a96117bd6313f",
+      "contract_version": 2,
       "coverage_status": "tested",
       "dependencies": [
         "702"
@@ -5653,7 +5653,7 @@
         "test_undying_returns_with_plus_counter",
         "test_existing_plus_counter_prevents_undying_trigger",
         "test_stale_or_departed_graveyard_incarnation_does_not_return",
-        "test_control_change_uses_trigger_controller_as_placing_player_and_owner_as_controller",
+        "test_control_change_uses_returned_owner_as_counter_placing_player",
         "test_zone_and_counter_replacements_complete_before_return_mutates",
         "test_tokens_with_death_return_keywords_do_not_return",
         "test_four_player_simultaneous_deaths_place_triggers_apnap_and_keep_choices_scoped",
@@ -9882,7 +9882,7 @@
     {
       "category": "spells_abilities_effects",
       "contract_path": "mechanics/contracts/mana-abilities.json",
-      "contract_sha256": "c22e8b463a8949a5037caf0c40c0a15e038145c856dfac7926362286003b80b7",
+      "contract_sha256": "0820f17fc7bc8db6c64b34bf054e8c945fb8d2ed6c7460081d9dc9e3e9453a93",
       "contract_version": 4,
       "coverage_status": "partial",
       "dependencies": [],
@@ -9940,7 +9940,7 @@
         "test_mana_classification_survives_zero_output_or_unavailability",
         "test_mana_drain_schedules_exact_next_main_phase_mana",
         "test_mana_producing_spell_is_not_a_mana_ability",
-        "test_murmuring_bosk_intrinsic_mana_executes_while_replacement_stays_residual",
+        "test_murmuring_bosk_intrinsic_mana_executes_with_closed_reveal_entry",
         "test_omitting_mana_result_mutant_is_killed_by_actual_ritual",
         "test_parenthesized_basic_land_reminder_is_not_an_executable_program",
         "test_predefined_token_profiles_enforce_mana_and_impulse_rules",

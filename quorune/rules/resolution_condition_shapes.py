@@ -10,6 +10,7 @@ from ..resolution_conditions import (
     RESOLUTION_CONDITION_OPERATION,
     validate_resolution_condition_instruction,
 )
+from ..continuous_conditions import FixedPublicStateConditionKind
 from .closed_effect_program_shapes import _contains_target_reference
 
 
@@ -45,6 +46,8 @@ def resolution_condition_node_capabilities(
     if len(targeted) > 1 or (target_schema is not None) != bool(targeted):
         return ()
     dependencies = {RESOLUTION_CONDITION_CAPABILITY}
+    if _condition.kind == FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS:
+        dependencies.add('condition.creature.fixed_numeric_exists')
     if wrapper.get('schema_version') == 2:
         from ..resolution_conditions import CAST_FACT_CONDITION_CAPABILITY, CAST_FACT_CONDITION_MECHANIC
         if CAST_FACT_CONDITION_MECHANIC not in mechanics or wrapper['cast_fact'] != '$context.kicked':

@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-"""Fixed resolution-locked public creature-set characteristic grammar."""
+"""Fixed resolution-locked public characteristic-set grammar."""
 
 from dataclasses import replace
 import re
 from typing import Any, Mapping
 
 from ..object_predicate import ObjectQuerySpec
+from ..target_numeric import TargetNumericCharacteristic, TargetNumericCharacteristicSpec, TargetNumericComparison
 from .continuous_templates import controlled_characteristic_until_end_of_turn_effect
 from .fixed_resolution_characteristic_queries import (
     fixed_resolution_characteristic_query_is_closed,
@@ -62,11 +63,22 @@ def _public_query(
             ),
             dict(_PLAYER_TARGET_SCHEMA),
         )
-    parsed = fixed_characteristic_battlefield_query_subject(subject)
+    numeric = re.fullmatch(r'(?P<subject>.+?) with (?P<stat>power|toughness) (?P<amount>[0-9]+) or (?P<comparison>greater|less)', subject, re.IGNORECASE)
+    parsed = fixed_characteristic_battlefield_query_subject(numeric['subject'] if numeric else subject)
     if parsed is None:
         return None
     relation, predicate, exclude_source = parsed
-    if "creature" not in predicate.types_all:
+    if numeric:
+        if 'creature' not in predicate.types_all:
+            return None
+        predicate = replace(predicate, numeric_characteristic=TargetNumericCharacteristicSpec(
+            TargetNumericCharacteristic(numeric['stat'].casefold()),
+            TargetNumericComparison.AT_LEAST if numeric['comparison'].casefold() == 'greater' else TargetNumericComparison.AT_MOST,
+            int(numeric['amount'])))
+    if not (
+        "creature" in predicate.types_all
+        or (not predicate.types_all and (predicate.subtypes_all or predicate.subtypes_any))
+    ):
         return None
     query = predicate
     if relation == "source_controller":
@@ -96,7 +108,7 @@ def fixed_public_characteristic_set_effect_template(
     Mapping[str, Any] | None,
     tuple[str, ...],
 ] | None:
-    """Lower one fixed public creature set and lock it at resolution."""
+    """Lower one closed creature/subtype set and lock it at resolution."""
 
     controlled = controlled_characteristic_until_end_of_turn_effect(oracle_line)
     if controlled is not None:

@@ -67,6 +67,53 @@ def record(oracle_text: str, *, name: str = "Typed Mana Relic") -> CardRecord:
 
 
 class FixedManaModelTests(unittest.TestCase):
+    def test_fixed_mana_result_codecs_reject_unknown_kinds_and_preserve_v1_bytes(self):
+        from quorune.fixed_mana_results import FixedManaResultSpec
+        from quorune.semantic_runtime.mana_abilities import FixedActivatedManaAbilityHandler,FixedManaResultAbilityHandler
+        from quorune.fixed_mana_abilities import fixed_mana_handler_descriptor
+        ability=parse_activated_abilities(card_name='Typed Mana Relic',oracle_text='{T}: Add {G}.')[0]
+        legacy=compile_fixed_activated_mana_ability(ability);self.assertIsNotNone(legacy)
+        value=legacy.to_dict();self.assertNotIn('result',value)
+        self.assertEqual(value,FixedActivatedManaAbilitySpec.from_dict(value).to_dict())
+        descriptor=fixed_mana_handler_descriptor(legacy);self.assertEqual(1,descriptor['schema_version'])
+        result=replace(legacy,result=FixedManaResultSpec('damage_controller',1))
+        typed=fixed_mana_handler_descriptor(result);self.assertEqual(result,FixedManaResultAbilityHandler().lower(typed,object())[0])
+        for malformed in ({'schema_version':1,'kind':'damage_controller','amount':True},
+                          {'schema_version':1,'kind':'skip_actor_untap','amount':1},
+                          {'schema_version':1,'kind':'unknown','amount':0}):
+            with self.assertRaises(ValueError):FixedManaResultSpec.from_dict(malformed)
+        for wrong in ({**typed,'schema_version':1},{**descriptor,'schema_version':2},{**typed,'schema_version':True}):
+            handler=FixedManaResultAbilityHandler() if wrong['handler_id']==typed['handler_id'] else FixedActivatedManaAbilityHandler()
+            with self.assertRaises(ValueError):handler.lower(wrong,object())
+
+    def test_fixed_mana_results_reject_unknown_tails_and_missing_result_capability(self):
+        from quorune.rules.capabilities import CapabilityRegistry
+        from common import ROOT
+        for text in ('{T}: Add {G}. This artifact deals X damage to you.',
+                     '{T}: Add {G}. This artifact deals 1 damage to target player.',
+                     '{T}: Add {G}. This artifact deals 1 damage to you. Draw a card.',
+                     '{T}, Sacrifice this artifact: Add {G}. This artifact deals 1 damage to you.'):
+            self.assertNotEqual('exact',compile_oracle_card(record(text),capability_registry=load_default_capability_registry()).status)
+        data=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        next(c for c in data['capabilities'] if c['id']=='mana.activated.fixed_result').update(status='blocked',blockers=['missing canonical result'])
+        registry=CapabilityRegistry(data);registry.mark_evidence_verified('0'*64)
+        text='{T}: Add {G}. This artifact deals 1 damage to you.'
+        self.assertNotEqual('exact',compile_oracle_card(record(text),capability_registry=registry).status)
+
+    def fixed_rider_node(self,tail,kind):
+        text='{T}: Add {G} or {U}. '+tail
+        ir=compile_oracle_card(record(text),capability_registry=load_default_capability_registry(),capability_profile='commander_review')
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        node=next(node for node in ir.faces[0].nodes if node.kind=='mana_ability')
+        self.assertEqual(2,node.handlers[0]['schema_version'])
+        self.assertEqual(kind,node.handlers[0]['ability']['result']['kind'])
+
+    def test_fixed_mana_damage_rider_has_closed_typed_result_after_production(self):
+        self.fixed_rider_node('This artifact deals 1 damage to you.','damage_controller')
+
+    def test_fixed_mana_next_actor_untap_rider_has_closed_typed_result_after_production(self):
+        self.fixed_rider_node("This artifact doesn't untap during your next untap step.",'skip_actor_untap')
+
     def test_closed_output_grammar_accepts_fixed_modes(self):
         cases = {
             "Add {C}{C}.": [{"C": 2}],
@@ -570,6 +617,138 @@ class FixedManaCompilerTests(unittest.TestCase):
         ):
             with self.assertRaises(AssertionError):
                 assert_exact_modes()
+
+
+class FixedManaResultRuntimeTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from scripts.build_test_database import build_fixture_database
+        from common import ROOT
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition,DeckEntry
+        cls.temporary=tempfile.TemporaryDirectory();path=Path(cls.temporary.name)/'mana-results.sqlite3'
+        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/fixed-mana-result-cards.json'],path)
+        cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
+        cls.deck=DeckDefinition('Mana result',[DeckEntry('Generic Bound Commander',1,'commander'),DeckEntry('Generic Bound Plains',30)],['Generic Bound Commander'])
+    @classmethod
+    def tearDownClass(cls):cls.db.close();cls.temporary.cleanup()
+    from test_bound_effect_programs import BoundEffectProgramRuntimeTests as _Witnesses
+    session=_Witnesses.session
+    add=_Witnesses.add
+    checkpoint=_Witnesses.checkpoint
+    replay=_Witnesses.replay
+
+    def ready(self,s,source,seat='A'):
+        e=s.engine;e.permissions.invalidate_current();e.state.pending_decision=None;e.state.started=True
+        e.state.active_player=seat;e.state.phase='precombat_main';e.state.step='main';e.state.priority_passes=[]
+        e._grant_priority(seat);e.pump()
+        return [row for row in s.packet('pilot:'+seat,full=True)['decision']['ctx']['legal']['actions'] if row.get('source')==source.ref]
+
+    def test_original_pain_land_mana_result_uses_damage_authority_rollback_and_replay(self):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+        s=self.session(359001);e=s.engine;source=self.add(e,'Shivan Reef')
+        p=compile_best_available_card_program(self.db,self.db.lookup('Shivan Reef'),semantic_registry=e.semantics,
+            capability_registry=self.registry,capability_profile='commander_review')
+        self.assertTrue(bind_card_program_runtime(p,capability_registry=self.registry,profile='commander_review')['strict_capability_ready'])
+        actions=self.ready(s,source);action=next(row for row in actions if row['id'].endswith(':ab2'))
+        self.checkpoint(s);before=authoritative_state_hash(e.state);life=e.state.players['A'].life
+        denied=s.act('pilot:C',{'action_id':action['id'],'mana_output':{'U':1}})
+        self.assertFalse(denied.ok);self.assertEqual(before,authoritative_state_hash(e.state))
+        denied=s.act('pilot:A',{'action_id':action['id'],'mana_output':{'G':1}})
+        self.assertFalse(denied.ok);self.assertEqual(before,authoritative_state_hash(e.state))
+        accepted=s.act('pilot:A',{'action_id':action['id'],'mana_output':{'U':1}})
+        self.assertTrue(accepted.ok,accepted.summary);self.assertTrue(source.tapped)
+        self.assertEqual(1,e.state.players['A'].mana_pool['U']);self.assertEqual(life-1,e.state.players['A'].life)
+        self.assertFalse(e.state.stack);self.replay(s,load=True)
+        projection=json.dumps(s.projector._snapshot('pilot:D'),sort_keys=True)
+        self.assertNotIn(source.object_id,projection)
+        for seat in 'ABC':
+            for object_id in e.state.players[seat].zones['hand']:self.assertNotIn(e.state.cards[object_id].ref,projection)
+
+    def test_original_pain_land_colorless_mode_has_no_damage_result_and_replays(self):
+        s=self.session(359005);e=s.engine;source=self.add(e,'Shivan Reef')
+        action=next(row for row in self.ready(s,source) if row['ability']=='ab1');self.checkpoint(s)
+        life=e.state.players['A'].life;accepted=s.act('pilot:A',{'action_id':action['id']})
+        self.assertTrue(accepted.ok,accepted.summary);self.assertEqual(1,e.state.players['A'].mana_pool['C'])
+        self.assertEqual(life,e.state.players['A'].life);self.assertTrue(source.tapped);self.replay(s,load=True)
+
+    def test_original_pain_land_damage_prevention_preserves_mana_and_replays(self):
+        from quorune.damage_prevention_creation import PreventionShieldCreationRequest,PreventionSubjectAllocation,plan_prevention_shield_creation,commit_prevention_shield_creation
+        from quorune.damage_modifier_state import PreventionMode,DamageModifierDuration
+        s=self.session(359003);e=s.engine;source=self.add(e,'Shivan Reef',seat='B')
+        e.change_control(source.object_id,'A',reason='pain land current controller')
+        request=PreventionShieldCreationRequest(source_id='fixture:mana-prevention',controller='A',
+            mode=PreventionMode.AMOUNT,duration=DamageModifierDuration.UNTIL_END_OF_TURN,
+            subjects=(PreventionSubjectAllocation('A',1),),label='Prevent next point')
+        commit_prevention_shield_creation(e,plan_prevention_shield_creation(e,request))
+        action=next(row for row in self.ready(s,source) if row['ability']=='ab2')
+        self.checkpoint(s);life={seat:e.state.players[seat].life for seat in 'ABCD'}
+        accepted=s.act('pilot:A',{'action_id':action['id'],'mana_output':{'R':1}})
+        self.assertTrue(accepted.ok,accepted.summary);self.assertTrue(source.tapped)
+        self.assertEqual(1,e.state.players['A'].mana_pool['R']);self.assertFalse(e.state.damage_prevention_shields)
+        self.assertEqual(life,{seat:e.state.players[seat].life for seat in 'ABCD'});self.replay(s,load=True)
+
+    def test_original_pain_land_auto_payment_applies_result_once_and_replays(self):
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests
+        s=self.session(359004);e=s.engine;source=self.add(e,'Shivan Reef')
+        spell=self.add(e,'Generic Bound Next Untap',zone='hand');target=self.add(e,'Generic Bound Body',seat='B')
+        self.ready(s,source);self.checkpoint(s);life=e.state.players['A'].life
+        action=next(row for row in s.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions'] if row.get('card')==spell.ref)
+        accepted=s.act('pilot:A',{'action_id':action['id'],'targets':[target.ref],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.assertTrue(source.tapped)
+        self.assertEqual(life-1,e.state.players['A'].life);self.assertEqual(0,e.state.players['A'].mana_pool['U'])
+        BoundEffectProgramRuntimeTests.resolve(self,s);self.assertTrue(target.annotations.get('does_not_untap_next'))
+        self.replay(s,load=True)
+
+    def test_original_mogg_mana_result_retains_acting_player_untap_duration_and_replay(self):
+        from quorune.engine import TURN_STEPS
+        from quorune.semantic_runtime.untap_steps import current_untap_step_plan
+        from quorune.untap_step_coordination import commit_untap_step
+        s=self.session(359002);e=s.engine;source=self.add(e,'Mogg Hollows')
+        action=next(row for row in self.ready(s,source) if row['id'].endswith(':ab2'));self.checkpoint(s)
+        accepted=s.act('pilot:A',{'action_id':action['id'],'mana_output':{'G':1}})
+        self.assertTrue(accepted.ok,accepted.summary);self.assertEqual(['A'],source.annotations.get('exert_next_untap_players'))
+        self.assertEqual(1,e.state.players['A'].mana_pool['G']);self.assertTrue(source.tapped);self.replay(s,load=True)
+        e.change_control(source.object_id,'B',reason='fixed mana duration controller boundary')
+        for seat in ('B','A'):
+            e.state.active_player=seat;e.state.phase='beginning';e.state.step='untap';e.state.phase_index=TURN_STEPS.index(('beginning','untap'))
+            commit_untap_step(e,current_untap_step_plan(e,seat),(),selected_optional_ids=())
+            if seat=='B':self.assertFalse(source.tapped);self.assertEqual(['A'],source.annotations['exert_next_untap_players']);source.tapped=True
+        self.assertTrue(source.tapped);self.assertNotIn('exert_next_untap_players',source.annotations)
+
+    def test_fixed_mana_result_omission_mutant_is_killed(self):
+        with mock.patch('quorune.mana_ability_runtime._mana_result_effects',return_value=()):
+            with self.assertRaises(AssertionError):
+                self.test_original_pain_land_mana_result_uses_damage_authority_rollback_and_replay()
+
+    def test_fixed_mana_untap_result_omission_mutant_is_killed(self):
+        with mock.patch('quorune.mana_ability_runtime._mana_result_effects',return_value=()):
+            with self.assertRaises(AssertionError):
+                self.test_original_mogg_mana_result_retains_acting_player_untap_duration_and_replay()
+
+    def test_original_pain_land_pending_prevention_choice_resumes_once_and_replays(self):
+        from quorune.damage_prevention_creation import PreventionShieldCreationRequest,PreventionSubjectAllocation,plan_prevention_shield_creation,commit_prevention_shield_creation
+        from quorune.damage_modifier_state import PreventionMode,DamageModifierDuration
+        s=self.session(359006);e=s.engine;source=self.add(e,'Shivan Reef')
+        for label in ('one','two'):
+            request=PreventionShieldCreationRequest(source_id='fixture:mana-prevention:'+label,controller='A',
+                mode=PreventionMode.AMOUNT,duration=DamageModifierDuration.UNTIL_END_OF_TURN,
+                subjects=(PreventionSubjectAllocation('A',1),),label='Prevent '+label)
+            commit_prevention_shield_creation(e,plan_prevention_shield_creation(e,request))
+        action=next(row for row in self.ready(s,source) if row['ability']=='ab2');self.checkpoint(s)
+        life=e.state.players['A'].life
+        accepted=s.act('pilot:A',{'action_id':action['id'],'mana_output':{'U':1}})
+        self.assertTrue(accepted.ok,accepted.summary);self.assertIn('replacement',s.state.pending_decision.kind)
+        self.assertFalse(e.state.cards[source.object_id].tapped);self.assertEqual(0,e.state.players['A'].mana_pool['U'])
+        resumed=self.replay(s,load=True);decision=resumed.packet('pilot:A',full=True)['decision']
+        chosen=decision['ctx']['options'][0]['id'];before=authoritative_state_hash(resumed.state)
+        denied=resumed.act('pilot:C',{'action_id':'choose','replacement':chosen})
+        self.assertFalse(denied.ok);self.assertEqual(before,authoritative_state_hash(resumed.state))
+        accepted=resumed.act('pilot:A',{'action_id':'choose','replacement':chosen})
+        self.assertTrue(accepted.ok,accepted.summary);self.assertTrue(resumed.state.cards[source.object_id].tapped)
+        self.assertEqual(1,resumed.state.players['A'].mana_pool['U']);self.assertEqual(life,resumed.state.players['A'].life)
+        self.assertEqual(1,len(resumed.state.damage_prevention_shields));self.replay(resumed,load=True)
 
 
 class FixedManaRuntimeTests(unittest.TestCase):

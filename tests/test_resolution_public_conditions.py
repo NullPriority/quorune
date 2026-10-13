@@ -21,6 +21,119 @@ from common import ROOT
 
 
 class ResolutionPublicConditionCompilerTests(unittest.TestCase):
+    def test_fixed_numeric_existence_condition_has_explicit_timing_and_closed_value(self):
+        from test_bound_effect_programs import record
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.compiler.public_state_queries import fixed_public_state_condition
+        from quorune.continuous_conditions import FixedPublicStateConditionSpec
+        registry = load_default_capability_registry()
+        text = 'When this creature enters, if you control a creature with power 4 or greater, draw a card.'
+        ir = compile_oracle_card(record(text, 'Creature — Human'), capability_registry=registry, capability_profile='commander_review')
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        condition = fixed_public_state_condition('you control a creature with power 4 or greater', source_name='Fixture')
+        self.assertEqual(5, condition.schema_version)
+        self.assertEqual(condition, FixedPublicStateConditionSpec.from_dict(condition.to_dict()))
+        raw = json.loads((ROOT / 'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        row = next(c for c in raw['capabilities'] if c['id'] == 'condition.creature.fixed_numeric_exists')
+        row.update(status='blocked', blockers=['Independent numeric-condition dependency mutation'])
+        from quorune.rules.capabilities import CapabilityRegistry
+        altered = CapabilityRegistry(raw)
+        altered.mark_evidence_verified(registry.evidence_fingerprint)
+        self.assertNotEqual('exact', compile_oracle_card(record(text, 'Creature — Human'), capability_registry=altered).status)
+        for value in ('X', '-1', 'four and this creature gets +1/+1'):
+            self.assertIsNone(fixed_public_state_condition('you control a creature with power ' + value + ' or greater', source_name='Fixture'))
+        # No static characteristic condition may read itself through final P/T.
+        static = 'As long as you control a creature with power 4 or greater, this creature gets +1/+1.'
+        self.assertNotEqual('exact', compile_oracle_card(record(static, 'Creature — Human'), capability_registry=registry).status)
+
+    def test_numeric_existence_schema_rejects_malformed_values_and_kills_comparison_mutant(self):
+        from quorune.compiler.public_state_queries import fixed_public_state_condition
+        from quorune.continuous_conditions import FixedPublicStateConditionSpec, FixedPublicStateConditionError
+        condition = fixed_public_state_condition('you control a creature with power 4 or greater', source_name='Fixture')
+        for change in ({'schema_version': 2}, {'amount': True}, {'quantity': {}}, {'predicate': {**condition.predicate.to_dict(), 'controller': '$controller'}}):
+            with self.assertRaises(FixedPublicStateConditionError):
+                FixedPublicStateConditionSpec.from_dict({**condition.to_dict(), **change})
+        from quorune.target_numeric import TargetNumericCharacteristicSpec
+        with patch.object(TargetNumericCharacteristicSpec, 'permits', return_value=True):
+            with self.assertRaises(AssertionError):
+                self.assertFalse(condition.predicate.numeric_characteristic.permits(power=3, toughness=3))
+
+    def test_numeric_existence_unavailable_stats_fail_closed_and_phased_objects_do_not_count(self):
+        from types import SimpleNamespace
+        from quorune.compiler.public_state_queries import fixed_public_state_condition
+        from quorune.continuous_conditions import FixedPublicStateConditionError
+        from quorune.card_programs.runtime import fixed_public_state_condition_matches
+        from quorune.resolution_conditions import ResolutionConditionBinding
+        from quorune.object_query import ObjectQueryResult
+        condition = fixed_public_state_condition('you control a creature with power 4 or greater', source_name='Fixture')
+        candidate = SimpleNamespace(object_id='one')
+        state = SimpleNamespace(players={'A': SimpleNamespace(zones={'battlefield':['one'],'hand':[],'graveyard':[]},life=40,in_game=True)}, cards={'one':candidate},turn_order=['A'],turn_sequence=1,active_player='A')
+        row = ObjectQueryResult(object_id='one',ref='one',printed_name='Fixture',owner='A',controller='A',zone='battlefield',types=('creature',),effective_power=None,effective_toughness=2)
+        with self.assertRaises(FixedPublicStateConditionError):
+            fixed_public_state_condition_matches(state, ResolutionConditionBinding(controller='A'), condition, public_object_resolver=lambda _: row, quantity_resolver=None, require_available=True)
+        self.assertFalse(fixed_public_state_condition_matches(state, ResolutionConditionBinding(controller='A'), condition, public_object_resolver=lambda _: replace(row,effective_power=8,phased_out=True), quantity_resolver=None, require_available=True))
+
+    def test_independent_dual_event_subscription_keeps_each_condition(self):
+        from test_bound_effect_programs import record
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.event_subscriptions import FixedEventSubscriptionSet
+        text = 'When this enchantment enters and whenever you cast a spell with mana value 5 or greater, draw a card.'
+        ir = compile_oracle_card(record(text, 'Enchantment'), capability_registry=load_default_capability_registry())
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        node = next(n for n in ir.faces[0].nodes if n.kind == 'triggered_ability')
+        subscriptions = FixedEventSubscriptionSet.from_condition(node.event_condition)
+        self.assertEqual({'permanent.enter','spell.cast'}, {r.event for r in subscriptions.subscriptions})
+        self.assertEqual(2, len(subscriptions.subscriptions))
+        self.assertIn('fixed_multi_event_subscription', node.runtime_coverage)
+        self.assertIn('trigger.subscription.fixed_multi_event', node.capability_dependencies)
+
+    def test_independent_dual_event_rejects_nested_or_unrepresented_prefixes_and_mutant(self):
+        from test_bound_effect_programs import record
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.compiler import fixed_public_multi_event_bindings as owner
+        registry = load_default_capability_registry()
+        for text in (
+            'When this enchantment enters and whenever a player rewrites history, draw a card.',
+            'When this enchantment enters and whenever you cast a spell and whenever you gain life, draw a card.',
+            'When this creature enters and whenever another creature enters, draw a card.',
+            'When you cycle this card and when this creature dies, draw a card.',
+        ):
+            self.assertNotEqual('exact', compile_oracle_card(record(text, 'Creature — Human'), capability_registry=registry).status)
+        with patch.object(owner, 'fixed_public_multi_event_binding_spec', return_value=None):
+            with self.assertRaises(AssertionError):
+                self.test_independent_dual_event_subscription_keeps_each_condition()
+
+    def test_qualified_zone_event_pair_preserves_each_occurrence_predicate(self):
+        from test_bound_effect_programs import record
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.event_subscriptions import FixedEventSubscriptionSet
+        text = 'Whenever another creature you control enters or dies, draw a card.'
+        ir = compile_oracle_card(record(text, 'Enchantment'), capability_registry=load_default_capability_registry())
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        node = next(n for n in ir.faces[0].nodes if n.kind == 'triggered_ability')
+        subscriptions = FixedEventSubscriptionSet.from_condition(node.event_condition)
+        self.assertEqual({'permanent.enter','creature.dies'}, {r.event for r in subscriptions.subscriptions})
+        for row in subscriptions.subscriptions:
+            condition = str(row.condition)
+            self.assertIn('$source.controller', condition)
+            self.assertIn('$source.ref', condition)
+            self.assertIn('creature', condition)
+
+    def test_qualified_event_pair_unknown_predicate_and_parser_omission_fail_closed(self):
+        from test_bound_effect_programs import record
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.compiler import fixed_public_multi_event_bindings as owner
+        registry = load_default_capability_registry()
+        for text in (
+            'Whenever another creature you control with an unknown quality enters or dies, draw a card.',
+            'Whenever one or more creatures you control enter or die, draw a card.',
+            'Whenever another creature you control enters, dies, or attacks, draw a card.',
+        ):
+            self.assertNotEqual('exact', compile_oracle_card(record(text, 'Enchantment'), capability_registry=registry).status)
+        with patch.object(owner, 'fixed_public_multi_event_binding_spec', return_value=None):
+            with self.assertRaises(AssertionError):
+                self.test_qualified_zone_event_pair_preserves_each_occurrence_predicate()
+
     def test_bare_subtype_condition_retains_permanent_not_creature_domain(self):
         # CR 109.2: a bare subtype denotes battlefield permanents, including Kindred.
         from quorune.compiler.public_state_queries import fixed_public_state_condition
@@ -173,6 +286,154 @@ class ResolutionPublicConditionRuntimeTests(unittest.TestCase):
     def tearDownClass(cls):
         cls.db.close()
         cls.temporary.cleanup()
+
+    def test_original_numeric_entry_condition_uses_current_power_at_both_trigger_boundaries(self):
+        # CR 603.4 checks at occurrence and again at resolution. Counters and
+        # resolution-created buffs contribute to the current effective power.
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+        for mode in ('counter_true', 'foreign_false', 'response_removed'):
+            session = self.session(357201 + ('counter_true', 'foreign_false', 'response_removed').index(mode))
+            engine = session.engine
+            source = self.add(engine, 'Beastbond Outcaster', zone='hand')
+            body = self.add(engine, 'Hill Giant', seat='B' if mode == 'foreign_false' else 'A', ref='numeric-condition-body')
+            if mode == 'counter_true':
+                body.counters['+1/+1'] = 1
+            buff = self.add(engine, 'Giant Growth', zone='hand') if mode == 'response_removed' else None
+            removal = self.add(engine, 'Murder', zone='hand') if mode == 'response_removed' else None
+            program = compile_best_available_card_program(self.db, self.db.lookup('Beastbond Outcaster'), semantic_registry=engine.semantics, capability_registry=self.registry, capability_profile='commander_review')
+            self.assertTrue(bind_card_program_runtime(program, capability_registry=self.registry, profile='commander_review')['strict_capability_ready'])
+            action = self.ready(session, buff or source, {'G': 3, 'B': 2, 'C': 3})
+            self.checkpoint(session)
+            if buff is not None:
+                accepted = session.act('pilot:A', {'action_id': action['id'], 'targets': [body.ref], 'pay': 'auto'})
+                self.assertTrue(accepted.ok, accepted.summary)
+                self.resolve(session)
+                self.assertEqual(6, engine._numeric_stat(body.object_id, 'power'))
+                while session.pending_principals()[0] != 'pilot:A':
+                    self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
+                action = next(a for a in session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions'] if a.get('card') == source.ref)
+            draws = len(session.state.players['A'].zones['hand'])
+            accepted = session.act('pilot:A', {'action_id': action['id'], 'pay': 'auto'})
+            self.assertTrue(accepted.ok, accepted.summary)
+            if removal is not None:
+                for _ in range(8):
+                    if any(item.kind == 'triggered_ability' for item in session.state.stack):
+                        break
+                    self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
+                self.assertTrue(any(item.kind == 'triggered_ability' for item in session.state.stack))
+                while session.pending_principals()[0] != 'pilot:A':
+                    self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
+                response = next(a for a in session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions'] if a.get('card') == removal.ref)
+                accepted = session.act('pilot:A', {'action_id': response['id'], 'targets': [body.ref], 'pay': 'auto'})
+                self.assertTrue(accepted.ok, accepted.summary)
+            self.resolve(session)
+            expected = draws if mode == 'counter_true' else draws - 2 if removal is not None else draws - 1
+            self.assertEqual(expected, len(session.state.players['A'].zones['hand']))
+            projected = json.dumps(session.packet('pilot:D', full=True)['state'])
+            for oid in session.state.players['A'].zones['hand']:
+                if oid not in {source.object_id, buff.object_id if buff else '', removal.object_id if removal else ''}:
+                    self.assertNotIn(session.state.cards[oid].ref, projected)
+            self.replay(session, load=True)
+
+    def test_numeric_resolution_uses_current_stats_and_condition_omission_mutant_is_killed(self):
+        session = self.session(357204)
+        engine = session.engine
+        body = self.add(engine, 'Hill Giant', ref='resolution-number-body')
+        body.counters['+1/+1'] = 1
+        source = self.add(engine, 'Generic Numeric Resolution Draw', zone='hand')
+        action = self.ready(session, source, {'G': 1})
+        self.checkpoint(session)
+        before = len(session.state.players['A'].zones['hand'])
+        accepted = session.act('pilot:A', {'action_id': action['id'], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        self.assertEqual(before, len(session.state.players['A'].zones['hand']))
+        self.replay(session, load=True)
+        source = self.add(engine, 'Generic Numeric Resolution Draw', zone='hand', ref='mutated-numeric-condition')
+        action = self.ready(session, source, {'G': 1})
+        before = len(session.state.players['A'].zones['hand'])
+        accepted = session.act('pilot:A', {'action_id': action['id'], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        with patch.object(engine, '_fixed_public_state_condition_holds', return_value=False):
+            self.resolve(session)
+        with self.assertRaises(AssertionError):
+            self.assertEqual(before, len(session.state.players['A'].zones['hand']))
+
+    def test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay(self):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+        session = self.session(357301)
+        engine = session.engine
+        source = self.add(engine, 'Up the Beanstalk', zone='hand')
+        small = self.add(engine, 'Hill Giant', zone='hand', ref='small-spell')
+        large = self.add(engine, 'Craw Wurm', zone='hand', ref='large-spell')
+        foreign = self.add(engine, "Jace's Ingenuity", seat='B', zone='hand', ref='foreign-large-spell')
+        program = compile_best_available_card_program(self.db, self.db.lookup('Up the Beanstalk'), semantic_registry=engine.semantics, capability_registry=self.registry, capability_profile='commander_review')
+        self.assertTrue(bind_card_program_runtime(program, capability_registry=self.registry, profile='commander_review')['strict_capability_ready'])
+        action = self.ready(session, source, {'G': 5, 'R': 1, 'C': 12})
+        session.state.players['B'].mana_pool.update({'U': 2, 'C': 3})
+        self.checkpoint(session)
+        before = len(session.state.players['A'].zones['hand'])
+        accepted = session.act('pilot:A', {'action_id': action['id'], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        self.assertEqual(before, len(session.state.players['A'].zones['hand']))
+        for card, expected_draw in ((small, 0), (large, 1)):
+            while session.pending_principals()[0] != 'pilot:A':
+                self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
+            action = next(a for a in session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions'] if a.get('card') == card.ref)
+            before = len(session.state.players['A'].zones['hand'])
+            accepted = session.act('pilot:A', {'action_id': action['id'], 'pay': 'auto'})
+            self.assertTrue(accepted.ok, accepted.summary)
+            self.resolve(session)
+            self.assertEqual(before - 1 + expected_draw, len(session.state.players['A'].zones['hand']))
+        while session.pending_principals()[0] != 'pilot:B':
+            self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
+        action = next(a for a in session.packet('pilot:B', full=True)['decision']['ctx']['legal']['actions'] if a.get('card') == foreign.ref)
+        before = len(session.state.players['A'].zones['hand'])
+        accepted = session.act('pilot:B', {'action_id': action['id'], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        self.assertEqual(before, len(session.state.players['A'].zones['hand']))
+        projected = json.dumps(session.packet('pilot:D', full=True)['state'])
+        for oid in session.state.players['A'].zones['hand']:
+            self.assertNotIn(session.state.cards[oid].ref, projected)
+        self.replay(session, load=True)
+
+    def test_qualified_pair_actual_entry_and_death_draw_only_for_source_controller(self):
+        session = self.session(357302)
+        engine = session.engine
+        source = self.add(engine, 'Generic Qualified Entry Death Draw', zone='hand')
+        own = self.add(engine, 'Hill Giant', zone='hand', ref='pair-own')
+        foreign = self.add(engine, 'Generic Bound Body', seat='B', ref='pair-foreign')
+        removal = self.add(engine, 'Murder', zone='hand')
+        action = self.ready(session, source, {'G': 1, 'R': 1, 'B': 2, 'C': 4})
+        self.checkpoint(session)
+        accepted = session.act('pilot:A', {'action_id': action['id'], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        while session.pending_principals()[0] != 'pilot:A':
+            self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
+        action = next(a for a in session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions'] if a.get('card') == own.ref)
+        before = len(session.state.players['A'].zones['hand'])
+        accepted = session.act('pilot:A', {'action_id': action['id'], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        self.assertEqual(before, len(session.state.players['A'].zones['hand']))
+        while session.pending_principals()[0] != 'pilot:A':
+            self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
+        action = next(a for a in session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions'] if a.get('card') == removal.ref)
+        before = len(session.state.players['A'].zones['hand'])
+        accepted = session.act('pilot:A', {'action_id': action['id'], 'targets': [own.ref], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        self.assertEqual(before, len(session.state.players['A'].zones['hand']))
+        self.replay(session, load=True)
+        before = len(session.state.players['A'].zones['hand'])
+        engine.apply_effect({'op': 'destroy', 'card': foreign.ref}, actor='A')
+        self.resolve(session)
+        self.assertEqual(before, len(session.state.players['A'].zones['hand']))
 
     def test_trusted_prefix_changes_condition_before_private_result_and_replay(self):
         session = self.session(4821001)

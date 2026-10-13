@@ -192,6 +192,8 @@ PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
 )
 MULTI_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
     {
+        "independent_dual_event",
+        "qualified_zone_event_pair",
         "source_enters_or_attacks",
         "source_enters_or_dies",
         "source_attacks_or_blocks",
@@ -252,7 +254,8 @@ _ONE_OR_MORE_PUBLIC_EVENT_VARIANTS = frozenset(
 _SCHEDULED_TRIGGER = re.compile(
     r"^At the beginning of "
     r"(?P<schedule>your upkeep|each upkeep|your draw step|your end step|each end step|"
-    r"the end step|combat on your turn|each combat), (?P<body>.+)$",
+    r"the end step|combat on your turn|each combat|your first main phase|your precombat main phase|"
+    r"your second main phase|your postcombat main phase), (?P<body>.+)$",
     re.IGNORECASE,
 )
 _PUBLIC_INTERVENING_IF_TRIGGER = re.compile(
@@ -834,10 +837,16 @@ class FixedCounterTriggerBinding:
             "the end step": ("end_step", False),
             "combat on your turn": ("beginning_combat", True),
             "each combat": ("beginning_combat", False),
+            'your first main phase': ('main',True),
+            'your precombat main phase': ('main',True),
+            'your second main phase': ('main',True),
+            'your postcombat main phase': ('main',True),
         }[self.variant]
         conditions: list[Mapping[str, Any]] = [
             {"field": "step", "op": "eq", "value": step}
         ]
+        if self.variant in {'your first main phase','your precombat main phase','your second main phase','your postcombat main phase'}:
+            conditions.append({'field':'phase','op':'eq','value':'precombat_main' if self.variant in {'your first main phase','your precombat main phase'} else 'postcombat_main'})
         if controller_only:
             conditions.insert(
                 0,
@@ -1190,6 +1199,7 @@ def _event_runtime_coverage(
 ) -> tuple[str, ...]:
     values: list[str] = []
     if current_ability or binding.variant in {QUALIFIED_ZONE_VARIANT, AGGREGATED_ZONE_VARIANT} or binding.variant in {
+        'your first main phase','your precombat main phase','your second main phase','your postcombat main phase',
         *_ABILITY_WORD_PUBLIC_EVENT_VARIANTS,
         *PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS,
         *PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS,
@@ -1307,7 +1317,7 @@ def fixed_counter_event_trigger_node(
         explicit_capabilities=(
             *binding.explicit_capabilities,
             *(
-                (FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY,)
+                (FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY, *(('condition.creature.fixed_numeric_exists',) if binding.public_state_condition.kind is FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS else ()))
                 if binding.public_state_condition is not None
                 else ()
             ),
@@ -1436,7 +1446,7 @@ def fixed_typed_event_effect_trigger_node(
         explicit_capabilities=(
             *binding.explicit_capabilities,
             *(
-                (FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY,)
+                (FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY, *(('condition.creature.fixed_numeric_exists',) if binding.public_state_condition.kind is FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS else ()))
                 if binding.public_state_condition is not None
                 else ()
             ),

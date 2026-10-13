@@ -1,4 +1,5 @@
 from __future__ import annotations
+from ..entry_copy import copiable_oracle_id
 
 """Read-only off-battlefield parent applicability for pinned activation catalogs."""
 
@@ -11,7 +12,7 @@ from .source_speed_designations import current_source_designations
 def nonbattlefield_program_is_applicable(host,card,program):
     if card.zone=='battlefield':return True
     record=host.card_record(card)
-    for parent in host.semantics.runtime_handler_programs_for_oracle(card.oracle_id,active_zone='all',event='characteristics.evaluate'):
+    for parent in host.semantics.runtime_handler_programs_for_oracle(copiable_oracle_id(card),active_zone='all',event='characteristics.evaluate'):
         if not host.semantic_program_is_current_trusted(parent) or not program_matches_face(record,parent,card):continue
         for scope in fragments_from_descriptors(parent.handlers):
             if isinstance(scope,StaticComponentScopeSpec) and program.key in scope.child_semantic_keys and scope.applicability is not None:

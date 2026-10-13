@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 import tempfile
+import json
 import unittest
 from unittest.mock import patch
 
@@ -55,6 +56,16 @@ def record(
 
 
 class FixedDirectTargetCompilerTests(unittest.TestCase):
+    def test_pinned_noncreature_subtype_targets_preserve_bare_domain(self):
+        for subtype in ('equipment','aura','shrine','island','mountain','spacecraft','treasure','room'):
+            spec=direct_permanent_target_spec('target '+subtype)
+            self.assertIsNotNone(spec,subtype)
+            self.assertEqual((subtype,),spec.subtypes_any)
+            self.assertEqual((),spec.types_all);self.assertEqual((),spec.types_any)
+            self.assertEqual(spec,DirectPermanentTargetSpec.from_target_schema(spec.to_target_schema()))
+        for text in ('target fictional-subtype','target creature with Equipment','target Equipment with an unknown mark'):
+            self.assertIsNone(direct_permanent_target_spec(text))
+
     @classmethod
     def setUpClass(cls):
         cls.capabilities = load_default_capability_registry()
@@ -624,3 +635,83 @@ class FixedDirectTargetRuntimeTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class NoncreatureSubtypeTargetRuntimeTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from quorune.deck import DeckDefinition,DeckEntry
+        cls.temporary=tempfile.TemporaryDirectory();path=Path(cls.temporary.name)/'subtype-target.sqlite3'
+        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/noncreature-subtype-targets.json'],path)
+        cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
+        cls.deck=DeckDefinition('Subtype target',[DeckEntry('Generic Bound Commander',1,'commander'),DeckEntry('Generic Bound Plains',30)],['Generic Bound Commander'])
+    @classmethod
+    def tearDownClass(cls):cls.db.close();cls.temporary.cleanup()
+    from test_bound_effect_programs import BoundEffectProgramRuntimeTests as _Witnesses
+    session=_Witnesses.session
+    add=_Witnesses.add
+    ready=_Witnesses.ready
+    checkpoint=_Witnesses.checkpoint
+    replay=_Witnesses.replay
+    resolve=_Witnesses.resolve
+
+    def test_original_acid_web_spider_targets_only_current_equipment_then_optional_destruction_and_replay(self):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+        s=self.session(363001);e=s.engine;source=self.add(e,'Acid Web Spider',zone='hand')
+        target=self.add(e,'Manriki-Gusari',seat='B');nonmatch=self.add(e,'Sol Ring',seat='B')
+        p=compile_best_available_card_program(self.db,self.db.lookup('Acid Web Spider'),semantic_registry=e.semantics,capability_registry=self.registry,capability_profile='commander_review')
+        self.assertTrue(bind_card_program_runtime(p,capability_registry=self.registry,profile='commander_review')['strict_capability_ready'])
+        action=self.ready(s,source,{'G':2,'C':3});self.checkpoint(s)
+        accepted=s.act('pilot:A',{'action_id':action['id'],'pay':'auto'});self.assertTrue(accepted.ok,accepted.summary)
+        decision=self.resolve(s);self.assertEqual('semantic.target',decision.kind)
+        before=e.state.to_dict();denied=s.act('pilot:A',{'action_id':'choose','targets':[nonmatch.ref]})
+        self.assertFalse(denied.ok);self.assertEqual(before,e.state.to_dict())
+        denied=s.act('pilot:C',{'action_id':'choose','targets':[target.ref]});self.assertFalse(denied.ok);self.assertEqual(before,e.state.to_dict())
+        accepted=s.act('pilot:A',{'action_id':'choose','targets':[target.ref]});self.assertTrue(accepted.ok,accepted.summary)
+        decision=self.resolve(s);self.assertEqual('semantic.choice',decision.kind);self.replay(s,load=True)
+        accepted=s.act('pilot:A',{'action_id':'choose','choice':'apply'});self.assertTrue(accepted.ok,accepted.summary);self.resolve(s)
+        self.assertEqual('graveyard',e.state.cards[target.object_id].zone);self.assertEqual('battlefield',e.state.cards[nonmatch.object_id].zone)
+        projection=json.dumps(s.projector._snapshot('pilot:D'),sort_keys=True)
+        for seat in 'ABC':
+            for oid in e.state.players[seat].zones['hand']:self.assertNotIn(e.state.cards[oid].ref,projection)
+        self.replay(s,load=True)
+
+    def test_original_exonerator_aura_target_sacrifices_source_and_replays(self):
+        from quorune.attachments import attach_objects
+        s=self.session(363002);e=s.engine;source=self.add(e,'Haazda Exonerator');source.acquired_control_turn_count=-1
+        target=self.add(e,'Holy Strength',seat='B');body=self.add(e,'Grizzly Bears',seat='B')
+        attach_objects(e.state.cards,target,body,source_timestamp=e._next_zone_timestamp())
+        nonmatch=self.add(e,'Manriki-Gusari',seat='C');action=self.ready(s,source,{})
+        self.checkpoint(s);before=e.state.to_dict();denied=s.act('pilot:A',{'action_id':action['id'],'targets':[nonmatch.ref]})
+        self.assertFalse(denied.ok);self.assertEqual(before,e.state.to_dict())
+        accepted=s.act('pilot:A',{'action_id':action['id'],'targets':[target.ref]});self.assertTrue(accepted.ok,accepted.summary)
+        self.assertEqual('graveyard',e.state.cards[source.object_id].zone);self.resolve(s)
+        self.assertEqual('graveyard',e.state.cards[target.object_id].zone);self.assertEqual('battlefield',e.state.cards[body.object_id].zone)
+        self.replay(s,load=True)
+
+    def test_original_flash_flood_mountain_target_preserves_modal_predicate_and_replay(self):
+        s=self.session(363003);e=s.engine;source=self.add(e,'Flash Flood',zone='hand')
+        island=self.add(e,'Mountain',seat='B');forest=self.add(e,'Forest',seat='B')
+        action=self.ready(s,source,{'U':1});self.checkpoint(s)
+        accepted=s.act('pilot:A',{'action_id':action['id'],'modes':['mode_2'],'targets':{'target_0':[island.ref]},'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(s)
+        self.assertEqual('hand',e.state.cards[island.object_id].zone);self.assertEqual('battlefield',e.state.cards[forest.object_id].zone)
+        self.replay(s,load=True)
+
+    def test_original_spider_selected_equipment_departure_invalidates_trigger_target(self):
+        s=self.session(363004);e=s.engine;source=self.add(e,'Acid Web Spider',zone='hand')
+        target=self.add(e,'Manriki-Gusari',seat='B');bounce=self.add(e,'Disperse',zone='hand')
+        action=self.ready(s,source,{'G':2,'C':4,'U':1});self.checkpoint(s)
+        accepted=s.act('pilot:A',{'action_id':action['id'],'pay':'auto'});self.assertTrue(accepted.ok,accepted.summary)
+        self.resolve(s);accepted=s.act('pilot:A',{'action_id':'choose','targets':[target.ref]});self.assertTrue(accepted.ok,accepted.summary)
+        action=next(row for row in s.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions'] if row.get('card')==bounce.ref)
+        accepted=s.act('pilot:A',{'action_id':action['id'],'targets':[target.ref],'pay':'auto'});self.assertTrue(accepted.ok,accepted.summary)
+        self.resolve(s);self.assertEqual('hand',e.state.cards[target.object_id].zone)
+        self.assertFalse(e.state.stack);self.replay(s,load=True)
+
+    def test_noncreature_subtype_vocabulary_omission_mutant_is_killed(self):
+        from quorune.compiler import direct_target
+        with patch.object(direct_target,'DIRECT_NONCREATURE_SUBTYPES',frozenset({'forest','gate','vehicle'})):
+            with self.assertRaises(AssertionError):
+                self.test_original_acid_web_spider_targets_only_current_equipment_then_optional_destruction_and_replay()

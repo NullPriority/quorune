@@ -216,6 +216,25 @@ survives source departure, and binds donated abilities to their recipient.
 Counter replacements may suspend before the following grant, preserving the
 cursor through save/load. Target incarnation revalidation remains shared.
 
+Explicit temporary quoted activations and triggers use the same ability-bundle
+owner.
+Version seven carries one revalidated creature; version eight snapshots a
+closed public battlefield query through the canonical resolution selector.
+Version nine couples one child fragment to fixed signed stats through the
+canonical multi-layer transaction and its shared timestamp. These forms
+add typed fragments at layer six, pin recipient incarnations, require a
+trusted child program and expire at cleanup. Recipient control changes retain
+the grant while later activations use the current controller. Later entrants
+and departed recipients do not inherit the earlier effect. A departure event
+uses the canonical predeparture fragment snapshot to publish its already
+triggered ability with the departing recipient as source.
+The event-bound battlefield-return instruction emits the existing typed zone
+move with its exact graveyard incarnation, owner controller, tapped entry and
+optional fixed entry counter. Replacement preparation receives the same
+requested tapped state as commit, so the prepared identity remains valid when
+entry counters and tapped entry occur together. The existing Persist/Undying
+owner follows the same entering-controller counter attribution.
+
 The existing counter-unless-payment choice additionally accepts a closed v2
 controller-payment descriptor. It locks the current target's controller for
 the private choice, validates the complete mana vector and current target at
@@ -311,6 +330,13 @@ The canonical tap owner seals object incarnation, controller, characteristics,
 and attack-declaration cause. Explicit simultaneous instructions and costs
 commit their complete group before discovery; the ordinary APNAP owner places
 the resulting abilities. Untap-step triggers remain held until upkeep priority.
+The next-controller-untap instruction emits a typed prohibition intent through
+the canonical tap-state owner. It pins the resolved incarnation and stores one
+object-local marker consumed at its current controller's next represented
+physical untap step. Repeated markers expire together; the skipped untap does
+not remove a stun counter. Fixed-player timing, Exert, multiple future steps,
+and unsupported phasing or skipped-step compositions remain residual.
+
 No-op changes, entering in a tap state, stun-replaced untaps, and rollback do not
 trigger. A real untap cost is distinct from rollback. Fixed event-controller
 life, damage, and Mill results are nontargeted and retain the occurrence's

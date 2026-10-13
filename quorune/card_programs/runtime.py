@@ -1,4 +1,5 @@
 from __future__ import annotations
+from ..entry_copy import copiable_oracle_id
 
 from dataclasses import dataclass, field
 from typing import Any, TYPE_CHECKING, Callable, Mapping, Protocol, Sequence
@@ -101,6 +102,20 @@ class _FixedPublicStateSnapshotResolver:
         source: Any,
         condition: FixedPublicStateConditionSpec,
     ) -> int | None:
+        if condition.kind is FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS:
+            if self.public_object_resolver is None:
+                return None
+            assert condition.predicate is not None
+            rows = tuple(self._public_object(self.state.cards[oid])
+                for oid in self.state.players[source.controller].zones['battlefield'])
+            numeric = condition.predicate.numeric_characteristic
+            assert numeric is not None
+            from ..target_numeric import TargetNumericCharacteristic
+            if any(row is not None and not row.phased_out and 'creature' in row.types
+                    and (row.effective_power if numeric.characteristic is TargetNumericCharacteristic.POWER
+                        else row.effective_toughness) is None for row in rows):
+                return None
+            return sum(object_matches_query(row, condition.predicate) for row in rows if row is not None)
         if condition.kind is FixedPublicStateConditionKind.PUBLIC_FACT_AT_LEAST:
             return self._public_fact_quantity(source, condition)
         if self.quantity_resolver is None or condition.quantity is None:
@@ -461,6 +476,7 @@ def fixed_public_state_condition_matches(
         FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST,
         FixedPublicStateConditionKind.QUERY_COUNT_AT_MOST,
         FixedPublicStateConditionKind.PUBLIC_FACT_AT_LEAST,
+        FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS,
     } and snapshot.condition_quantity is None:
         raise FixedPublicStateConditionError("The public resolution condition is unavailable")
     return condition.matches(snapshot)
@@ -474,7 +490,7 @@ def _applicable_static_programs(
     compatibility_programs = {
         program.key: program
         for program in semantics.runtime_handler_programs_for_oracle(
-            source.oracle_id,
+            copiable_oracle_id(source),
             active_zone="battlefield",
             event="characteristics.evaluate",
         )
@@ -546,7 +562,7 @@ def _continuous_programs_for_source(
             ()
             if copied_components
             else semantics.runtime_handler_programs_for_oracle(
-                source.oracle_id,
+                copiable_oracle_id(source),
                 active_zone="battlefield",
                 event="characteristics.evaluate",
             )

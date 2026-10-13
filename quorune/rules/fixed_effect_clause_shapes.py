@@ -28,6 +28,7 @@ from .linked_exile_return_shapes import linked_exile_return_node_capabilities
 from .fixed_resolution_characteristic_shapes import (
     fixed_resolution_characteristic_set_node_capabilities,
 )
+from .prevention_component_shapes import fixed_prevention_component_capabilities
 from .graveyard_card_targets import (
     targeted_own_graveyard_return_node_capabilities,
 )
@@ -106,6 +107,7 @@ FIXED_EFFECT_CLAUSE_SEQUENCE_CAPABILITY = (
 )
 
 _COMPONENT_RESOLVERS = (
+    fixed_prevention_component_capabilities,
     fixed_extra_turn_node_capabilities,
     whole_hand_discard_node_capabilities,
     fixed_control_node_capabilities,

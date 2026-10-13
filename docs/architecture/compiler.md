@@ -135,6 +135,14 @@ draw-step triggers use the existing fixed step predicate. Fixed "additional
 card" wording lowers to an ordinary draw instruction; the turn's ordinary
 draw precedes trigger placement and the extra draw resolves through the stack.
 Existing public intervening conditions are checked at occurrence and resolution.
+The multi-event compiler also composes an explicit source-entry prefix with
+one independently exact distinct same-zone event prefix. Each subscription
+retains its own source, controller and characteristic predicates; one shared
+result remains one ability. Nested subscriptions, repeated normalized events,
+mixed active zones, and unrepresented prefixes remain residual. Qualified
+public subjects may similarly subscribe to entry and death or departure using
+two independently accepted zone predicates. The canonical predeparture
+snapshot supplies departing characteristics and controller.
 
 ```mermaid
 flowchart LR
@@ -394,7 +402,11 @@ resolution owner to all creatures, creatures opponents or one target player
 control, current attacking or blocking creatures, and source-excluding attacking
 creatures. Both grammars feed one closed query validator. Resolution evaluates
 only cycle-safe current type, subtype, color, supertype, token, controller, and
-public combat-state facts, then locks the matching logical objects. The runtime
+public combat-state facts, then locks the matching logical objects. Bare
+subtype resolution sets include noncreature Kindred members. A fixed power or
+toughness bound on a creature recipient reads exact current effective stats
+at resolution before membership is locked; unknown values do not match.
+The runtime
 sends ability additions through shared layer 6 and power/toughness changes
 through layer 7c over that same locked set. The source leaving or changing
 controller does not end the effect, later entrants do not join it, returned
@@ -497,6 +509,32 @@ references, hidden-zone recipients, and independently inexact bodies remain
 material residuals. Granted fixed source-counter removal costs also remain
 residual until the granted-ability fragment schema can carry that typed cost.
 
+`compiler/temporary_quoted_ability_nodes.py` lowers one explicit quoted
+activated or triggered ability on a direct creature target or closed public battlefield set until
+end of turn. The independently compiled child uses the recipient as its source
+and its controller as the activating player or trigger controller. Death
+triggers use the existing predeparture fragment snapshot. Set recipients are selected at
+resolution and retain their original incarnations. The existing version-seven
+single-recipient bundle remains unchanged; version eight carries the fixed
+public query. Version nine couples fixed signed power/toughness changes and
+one quoted child on a direct creature through one multi-layer timestamp.
+Static quotes, multiple quotes, longer durations,
+external source references and inexact children remain residual.
+
+Intrinsic entry-copy syntax lowers immutable selection and exception values
+through `compiler/entry_copy_templates.py` and the registered
+`semantic_runtime/entry_copy.py` replacement owner. Its nontarget choice
+captures current public copiable values, applies the existing typed copy
+exceptions and runs at the enters-copy replacement priority. Copied intrinsic
+entry producers activate only after that choice. The canonical entry owner
+retains physical Oracle identity while copied program provenance selects the
+copied static, activated and triggered descriptors. Source departure preserves
+the snapshot; zone departure clears the copy. A copied Aura uses the existing
+attachment choice before entry, with a retained replacement result through
+save/load and replay. Unknown quoted exceptions, hidden-zone references,
+recursive intrinsic copy choices and unsupported copied programs remain
+outside the represented composition.
+
 `compiler/conditional_granted_ability_templates.py` wraps one independently
 exact quoted child with the existing closed public-state characteristic
 grammar. It retains fixed coupled keywords and power/toughness modifiers in
@@ -530,6 +568,41 @@ The shared declaration solver selects distinct attacker sets up to current
 capacity while retaining costs and maximum requirement satisfaction. Open
 quantities and independently unsupported siblings remain residual.
 
+Ordered effect programs may include one independently closed all-damage
+prevention shield. Its fixed mode, turn-bound duration and complete typed scope
+must close before the program is trusted. An established direct target remains
+index zero through later modifier, untap and prevention instructions; shield
+creation cannot add a new target. Unknown scope fields, derived amounts,
+additional aftermath and unrepresented target references remain excluded from
+this component contract.
+
+The shared direct-permanent predicate accepts the pinned artifact, enchantment,
+and land subtype vocabulary in bare targets. "Target Equipment," "target
+Aura," and "target Mountain" require that subtype on a current permanent;
+they do not add a creature-type requirement. Existing controller, source
+exclusion, target selection and resolution-incarnation checks remain shared.
+Unknown subtypes and unsupported qualifiers still fail closed, and this
+vocabulary does not imply that every effect or quoted ability using it closes.
+
+Fixed scheduled triggers distinguish the controller's first/precombat main
+phase from second/postcombat main phase with both phase and step predicates.
+They consume the existing normalized boundary event and ordinary APNAP trigger
+placement. Main-phase mana results remain stack-using triggered abilities.
+Current source ability presence and represented intervening conditions retain
+their existing checks. Additional main-phase ordinals and unrepresented
+extra-phase or skipped-phase instructions remain outside this slice.
+
+Intrinsic reveal-or-tapped entry clauses lower through
+`compiler/entry_reveal_templates.py` to a closed hand subtype query. The
+prospective controller sees only matching private hand cards and may decline.
+The canonical replacement owner completes that choice before entry; only the
+chosen card becomes public knowledge. Revealing does not force untapped state,
+so independently applied tapped-entry replacements still apply. Copied entry
+abilities use the same query with the copier's prospective controller. One
+unchanged hand card can satisfy distinct simultaneous reveal choices. Unknown
+qualifiers, paid reveals, and reveal-or-current-battlefield condition compounds
+remain residual.
+
 Printed Enlist compiles separate typed attack-cost and reflexive growth
 components. The shared attack declaration exposes optional donor assignments
 and validates untapped state, control history, haste, source exclusion and
@@ -537,6 +610,17 @@ distinct use. Reflexive effects retain source and donor incarnations and reuse
 the existing live-or-last-known scalar power owner. Multiple printed instances
 remain independent, and unrepresented Enlist-dependent sibling instructions
 retain their residuals.
+
+`compiler/exert_nodes.py` lowers one complete "You may exert this creature as it
+attacks. When you do" paragraph into a typed optional-cost fragment and a
+separate linked result program. The independently closed result body keeps
+its ordinary targets and effects. Self results bind the original source
+incarnation. `combat.attack.exert` depends on the player-locked
+`untap.step.exert_player` duration owner and ordinary trigger placement;
+unknown bodies or missing dependencies keep the paragraph residual. Separate
+paragraphs retain distinct linked identities, and paying one cost cannot
+publish another paragraph's result. Conditional attack permissions and other
+Exert producers require their own typed contracts.
 
 Fixed all-damage prevention shares the existing scope codec for static and
 turn-bound forms. Closed source and recipient predicates include attacking
@@ -636,6 +720,11 @@ counting distinct attacking logical objects. Schema-v3 public facts remain a
   evaluate the shared descriptor at occurrence and again under their locked
   trigger controller at resolution. Descend remains a distinct unsupported
   all-zone permanent-card history domain.
+Schema-five conditions represent one fixed power or toughness comparison for
+a creature currently controlled by the condition player. Event and resolution
+consumers require the explicit numeric-condition capability and read complete
+effective stats. Static characteristic productions, aggregate total power,
+variable thresholds and linked numeric facts remain residual.
 Most-common or tied comparisons, dynamic amounts, top-library, chosen,
 hidden-identity, city blessing, dungeon, initiative, speed, sticker, crime,
 dice, open arithmetic, otherwise branches, per-opponent aggregate, unowned
@@ -775,6 +864,13 @@ operation lowers that descriptor to the canonical zone move intent, which
 skips missing or changed graveyard incarnations and returns to the owner's
 hand. Departure attachment facts retain the dead creature when its Aura later
 leaves. Optional, delayed and independently unsupported results remain residual.
+The corresponding fixed battlefield return uses the same retained graveyard
+incarnation and the existing reanimation operation. It returns under the
+departed card's owner, optionally tapped and with one fixed +1/+1 entry
+counter. Entry counters participate in the canonical replacement transaction;
+the entering permanent's controller places them under CR 122.6a. Quoted
+death abilities use the recipient's departure facts. Other controllers,
+dynamic counters, attachment and transformation riders remain residual.
 
 `rules/target_announcements.py` publishes a sealed public occurrence for each
 newly targeted permanent after an authoritative cast, activation, triggered
@@ -1554,6 +1650,24 @@ activation query and object-incarnation usage journal, while casting and
 activation payment share the same canonical mana-spend context. Origin,
 casting-method, color, mana-value, variable, compound-condition, result-rider,
 and delayed-effect restrictions remain source-spanned residuals.
+A complete fixed source "deals damage to you" clause lowers to ordinary
+nontarget damage bound to the resolving controller. It retains the original
+source attribution, requires the existing positive-amount and player-damage
+capabilities, and does not declare a target or acquire a target-selection
+window. Ordered spell bodies, source entry/upkeep results, and independent tap
+triggers reuse the same leaf. Unknown recipient references and condition tails
+remain residual.
+
+Fixed mana results use a separate version-two handler while ordinary output
+descriptors retain their version-one serialized identity. One complete fixed
+output may be followed by fixed source damage to the activation controller or
+an original-source restriction through that player's next physical untap step.
+The compiler consumes the entire result clause and emits a closed typed value.
+Unknown tails, targeted or conditional results, and source-sacrifice result
+compositions remain residual. Explicit activation and automatic payment consume
+the same selected mode and result. Damage uses the ordinary replacement and
+prevention transaction; the untap duration uses the player-locked canonical
+tap-state owner without publishing an Exert occurrence.
 The parser must consume the complete printed spending-restriction suffix before
 the fixed-output compiler removes it from the mana instruction. Exact historic
 artifact-, creature-, legendary-, and nonartifact-spell wordings retain their

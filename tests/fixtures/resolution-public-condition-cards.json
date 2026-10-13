@@ -11,6 +11,106 @@
     {"oracle_id":"00000000-0000-4000-8100-000000000006","name":"Generic Condition Sacrificed Draw","mana_cost":"{2}","cmc":2,"type_line":"Artifact","oracle_text":"{1}, Sacrifice this artifact: Draw a card. If you control an artifact, you gain 3 life.","colors":[],"color_identity":[],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
     {"oracle_id":"00000000-0000-4000-8100-000000000007","name":"Generic Composed Return Food","mana_cost":"{W}","cmc":1,"type_line":"Sorcery","oracle_text":"Return target creature card from your graveyard to the battlefield. Create a Food token.","colors":["W"],"color_identity":["W"],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
     {"oracle_id":"00000000-0000-4000-8100-000000000008","name":"Generic Condition Faerie Draw","mana_cost":"{B}","cmc":1,"type_line":"Instant","oracle_text":"Target creature gets -1/-1 until end of turn. If you control a Faerie, draw a card.","colors":["B"],"color_identity":["B"],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
-    {"oracle_id":"00000000-0000-4000-8100-000000000009","name":"Generic Condition Kindred Faerie","mana_cost":"{2}","cmc":2,"type_line":"Kindred Enchantment — Faerie","oracle_text":"","colors":[],"color_identity":[],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}}
+    {"oracle_id":"00000000-0000-4000-8100-000000000009","name":"Generic Condition Kindred Faerie","mana_cost":"{2}","cmc":2,"type_line":"Kindred Enchantment — Faerie","oracle_text":"","colors":[],"color_identity":[],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
+    {"oracle_id":"19a32e29-45ec-433e-9cb4-b2c32cac8f80","name":"Beastbond Outcaster","mana_cost":"{2}{G}","type_line":"Creature — Human Druid","oracle_text":"When this creature enters, if you control a creature with power 4 or greater, draw a card.\nPlot {1}{G} (You may pay {1}{G} and exile this card from your hand. Cast it as a sorcery on a later turn without paying its mana cost. Plot only as a sorcery.)","power":"3","toughness":"3","loyalty":null,"defense":null,"colors":["G"],"color_identity":["G"],"keywords":["Plot"],"produced_mana":[],"layout":"normal","released_at":"2024-04-19","faces":[],"cmc":3.0,"legalities":{"alchemy":"not_legal","brawl":"legal","commander":"legal","competitivebrawl":"legal","duel":"legal","future":"legal","gladiator":"legal","historic":"legal","legacy":"legal","modern":"legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"not_legal","paupercommander":"not_legal","penny":"not_legal","pioneer":"legal","predh":"not_legal","premodern":"not_legal","standard":"legal","standardbrawl":"legal","timeless":"legal","tlr":"legal","vintage":"legal"}},
+    {
+      "oracle_id": "5748ebf1-24e3-499d-ab7c-c2cebd462a24",
+      "name": "Giant Growth",
+      "mana_cost": "{G}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Target creature gets +3/+3 until end of turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {"oracle_id":"342199e0-15b6-4824-83da-25caef2592b3","name":"Hill Giant","mana_cost":"{3}{R}","type_line":"Creature — Giant","oracle_text":"","power":"3","toughness":"3","loyalty":null,"defense":null,"colors":["R"],"color_identity":["R"],"keywords":[],"produced_mana":[],"layout":"normal","released_at":"2007-07-13","faces":[],"cmc":4.0,"legalities":{"alchemy":"not_legal","brawl":"not_legal","commander":"legal","competitivebrawl":"not_legal","duel":"legal","future":"not_legal","gladiator":"not_legal","historic":"not_legal","legacy":"legal","modern":"legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"legal","paupercommander":"legal","penny":"legal","pioneer":"not_legal","predh":"legal","premodern":"legal","standard":"not_legal","standardbrawl":"not_legal","timeless":"not_legal","tlr":"not_legal","vintage":"legal"}},
+    {"oracle_id":"00000000-0000-4000-8000-000000004004","name":"Generic Numeric Resolution Draw","mana_cost":"{G}","cmc":1,"type_line":"Instant","oracle_text":"If you control a creature with power 4 or greater, draw a card.","colors":["G"],"color_identity":["G"],"keywords":[],"layout":"normal","legalities":{"commander":"legal"}},
+    {"oracle_id":"050f5733-7c0b-4991-9a6c-7ea12ccf0ca9","name":"Up the Beanstalk","mana_cost":"{1}{G}","type_line":"Enchantment","oracle_text":"When this enchantment enters and whenever you cast a spell with mana value 5 or greater, draw a card.","power":null,"toughness":null,"loyalty":null,"defense":null,"colors":["G"],"color_identity":["G"],"keywords":[],"produced_mana":[],"layout":"normal","released_at":"2023-09-08","faces":[],"cmc":2.0,"legalities":{"alchemy":"not_legal","brawl":"legal","commander":"legal","competitivebrawl":"legal","duel":"legal","future":"banned","gladiator":"legal","historic":"legal","legacy":"legal","modern":"banned","oathbreaker":"legal","oldschool":"not_legal","pauper":"not_legal","paupercommander":"not_legal","penny":"not_legal","pioneer":"legal","predh":"not_legal","premodern":"not_legal","standard":"banned","standardbrawl":"legal","timeless":"legal","tlr":"legal","vintage":"legal"}},
+    {
+      "oracle_id": "6a462a69-3e42-41de-a3aa-a488d9f38d69",
+      "name": "Craw Wurm",
+      "mana_cost": "{4}{G}{G}",
+      "cmc": 6.0,
+      "type_line": "Creature — Wurm",
+      "oracle_text": "",
+      "power": "6",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2009-07-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {"oracle_id":"ce588fd3-642e-4df9-8061-6fcfc6e81270","name":"Jace's Ingenuity","mana_cost":"{3}{U}{U}","type_line":"Instant","oracle_text":"Draw three cards.","power":null,"toughness":null,"loyalty":null,"defense":null,"colors":["U"],"color_identity":["U"],"keywords":[],"produced_mana":[],"layout":"normal","released_at":"2014-07-18","faces":[],"cmc":5.0,"legalities":{"alchemy":"not_legal","brawl":"not_legal","commander":"legal","competitivebrawl":"not_legal","duel":"legal","future":"not_legal","gladiator":"not_legal","historic":"not_legal","legacy":"legal","modern":"legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"not_legal","paupercommander":"not_legal","penny":"legal","pioneer":"legal","predh":"legal","premodern":"not_legal","standard":"not_legal","standardbrawl":"not_legal","timeless":"not_legal","tlr":"not_legal","vintage":"legal"}},
+    {"oracle_id":"00000000-0000-4000-8000-000000004005","name":"Generic Qualified Entry Death Draw","mana_cost":"{G}","cmc":1,"type_line":"Enchantment","oracle_text":"Whenever another creature you control enters or dies, draw a card.","colors":["G"],"color_identity":["G"],"keywords":[],"layout":"normal","legalities":{"commander":"legal"}}
   ]
 }
