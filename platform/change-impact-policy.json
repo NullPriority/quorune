@@ -2838,6 +2838,8 @@
         "quorune/declaration_condition_runtime.py",
         "quorune/declaration_fragments.py",
         "quorune/declaration_restrictions.py",
+        "quorune/semantic_runtime/conditional_continuous.py",
+        "quorune/semantic_runtime/continuous_components.py",
         "quorune/rules/activation/availability.py",
         "quorune/semantic_runtime/ability_fragments.py",
         "quorune/semantic_runtime/activation_restrictions.py",

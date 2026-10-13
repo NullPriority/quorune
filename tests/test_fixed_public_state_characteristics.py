@@ -225,6 +225,81 @@ def source_context(
 
 
 class FixedPublicStateCharacteristicCompilerTests(unittest.TestCase):
+    def test_conditional_stats_and_declaration_result_preserve_one_live_condition(self):
+        from test_qualified_zone_event_queries import query_record
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.declaration_fragments import DeclarationRequirementTemplate, DeclarationRestrictionTemplate
+        from quorune.ability_fragments import ability_fragment_from_dict
+
+        registry = load_default_capability_registry()
+        cases = (
+            ("As long as you have no cards in hand, this creature gets +2/+0 and can't block.", DeclarationRestrictionTemplate),
+            ("As long as there are four or more card types among cards in your graveyard, this creature gets +2/+2, has flying, and attacks each combat if able.", DeclarationRequirementTemplate),
+            ("This creature gets +1/+0 and can't be blocked as long as you control eight or more lands.", DeclarationRestrictionTemplate),
+        )
+        for text, fragment_type in cases:
+            with self.subTest(text=text):
+                ir = compile_oracle_card(query_record(text), capability_registry=registry, capability_profile='commander_review')
+                self.assertEqual('exact', ir.status, ir.material_residuals)
+                node = next(n for n in ir.faces[0].nodes if n.kind == 'static_ability')
+                self.assertEqual(text, node.text)
+                self.assertEqual(1, node.span.line)
+                descriptor = node.handlers[0]
+                self.assertEqual('continuous.declaration.public-state.v1', descriptor['handler_id'])
+                self.assertEqual(6, descriptor['schema_version'])
+                self.assertIsInstance(ability_fragment_from_dict(descriptor['modifier']['add_ability_fragments'][0]), fragment_type)
+                self.assertIn('combat.declaration.typed_components', node.capability_dependencies)
+                self.assertIn('continuous.characteristics.fixed_public_state', node.capability_dependencies)
+
+    def test_conditional_declaration_composition_rejects_open_grammar_and_malformed_descriptors(self):
+        from test_qualified_zone_event_queries import query_record
+        from quorune.compiler.declaration_nodes import conditional_characteristic_declaration_grant
+        from quorune.semantic_runtime.conditional_continuous import ConditionalDeclarationGrantHandler
+
+        text = "As long as you have no cards in hand, this creature gets +2/+0 and can't block."
+        compiled = conditional_characteristic_declaration_grant(text, source_name='Generic Query Observer')
+        self.assertIsNotNone(compiled)
+        handler = ConditionalDeclarationGrantHandler()
+        descriptor = compiled[1]
+        handler.validate(descriptor)
+        for altered in (
+            text + ' Draw a card.',
+            text.replace('+2/+0', '+X/+0'),
+            text.replace("can't block", "can't block unless you pay 1 life"),
+            text.replace('no cards in hand', 'the chosen card in hand'),
+        ):
+            self.assertIsNone(conditional_characteristic_declaration_grant(altered, source_name='Generic Query Observer'))
+        for field, value in (('schema_version', True), ('unknown', True)):
+            with self.assertRaises(SemanticNodeError):
+                handler.validate({**descriptor, field:value})
+        changed = copy.deepcopy(descriptor)
+        changed['modifier']['add_ability_fragments'] *= 2
+        with self.assertRaises(SemanticNodeError):
+            handler.validate(changed)
+        changed = copy.deepcopy(descriptor)
+        changed['modifier']['power'] = True
+        with self.assertRaises(SemanticNodeError):
+            handler.validate(changed)
+        changed = copy.deepcopy(descriptor)
+        changed['modifier']['add_ability_fragments'][0]['scope'] = 'all_creatures'
+        with self.assertRaises((SemanticNodeError, ValueError)):
+            handler.validate(changed)
+        raw = json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        for capability in ('combat.declaration.typed_components', 'continuous.characteristics.fixed_public_state'):
+            altered = copy.deepcopy(raw)
+            next(row for row in altered['capabilities'] if row['id']==capability).update(status='blocked', blockers=['independent declaration dependency withdrawal'])
+            registry = CapabilityRegistry(altered)
+            ir = compile_oracle_card(query_record(text), capability_registry=registry, capability_profile='commander_review')
+            self.assertNotEqual('exact', ir.status)
+
+    def test_conditional_declaration_producer_omission_mutant_is_killed(self):
+        from test_qualified_zone_event_queries import query_record
+        text = "As long as you have no cards in hand, this creature gets +2/+0 and can't block."
+        with mock.patch('quorune.compiler.declaration_nodes.conditional_characteristic_declaration_grant', return_value=None):
+            with self.assertRaises(AssertionError):
+                ir = compile_oracle_card(query_record(text), capability_registry=load_default_capability_registry(), capability_profile='commander_review')
+                self.assertEqual('exact', ir.status, ir.material_residuals)
+
     def test_keyword_qualified_opponent_condition_remains_residual_without_raising(self):
         from quorune.compiler.public_state_queries import fixed_public_state_condition
         self.assertIsNone(fixed_public_state_condition(
@@ -1154,6 +1229,93 @@ class FixedPublicStateCharacteristicCompilerTests(unittest.TestCase):
 
 
 class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
+    def test_original_channeler_condition_controls_required_attack_and_replays(self):
+        from quorune.record import authoritative_state_hash
+        from quorune.turn_step_owner import TURN_STEPS
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+
+        session = self.session(361001)
+        engine = session.engine
+        record = self.db.lookup("Dragon's Rage Channeler")
+        register_generated_programs(
+            self.db, engine.semantics, (record,), trust_level='provisional',
+            capability_registry=self.capabilities, capability_profile='commander_review',
+            promote_exact_runtime_handlers=True, promote_exact_trigger_programs=True,
+            promote_exact_effect_programs=True, promote_exact_capability_declarations=True,
+        )
+        source = CardInstance('public-state:channeler', 'delirium-channeler', record.oracle_id,
+            record.name, 'A', 'A', 'battlefield', acquired_control_turn_count=-1,
+            zone_timestamp=engine._next_zone_timestamp(), known_to=list(engine.seats), revealed_to=list(engine.seats))
+        engine.state.cards[source.object_id] = source
+        engine.state.players['A'].zones['battlefield'].append(source.object_id)
+        program = compile_best_available_card_program(self.db, self.db.lookup("Dragon's Rage Channeler"), semantic_registry=engine.semantics, capability_registry=self.capabilities, capability_profile='commander_review')
+        self.assertTrue(bind_card_program_runtime(program, capability_registry=self.capabilities, profile='commander_review')['strict_capability_ready'])
+        # Four distinct printed types independently establish CR 205.2 and the
+        # original Delirium condition; no descriptor or trust override is used.
+        witnesses = ('Island', 'Sol Ring', 'Veil of Summer', 'Three Visits')
+        cards = []
+        for name in witnesses:
+            record = self.db.lookup(name)
+            card = CardInstance('delirium:' + name, 'delirium-' + name, record.oracle_id, name, 'A', 'A', 'graveyard', known_to=list(engine.seats), revealed_to=list(engine.seats))
+            engine.state.cards[card.object_id] = card
+            engine.state.players['A'].zones['graveyard'].append(card.object_id)
+            cards.append(card)
+        effective = engine._effective_card_data(source)
+        self.assertEqual(('3', '3'), (str(effective['power']), str(effective['toughness'])))
+        self.assertIn('Flying', effective['keywords'])
+        engine.permissions.invalidate_current(); engine.state.pending_decision = None
+        engine.state.priority_player = None; engine.state.priority_passes = []
+        engine.state.started = True; engine.state.active_player = 'A'
+        engine.state.phase = 'combat'; engine.state.step = 'declare_attackers'
+        engine.state.phase_index = TURN_STEPS.index(('combat', 'declare_attackers'))
+        engine._issue_attackers()
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear(); session.decisions.clear()
+        before = authoritative_state_hash(session.state)
+        for principal, attackers in (('pilot:A', {}), ('pilot:C', {source.ref: 'B'})):
+            denied = session.act(principal, {'action_id':'attack', 'attackers':attackers})
+            self.assertFalse(denied.ok)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act('pilot:A', {'action_id':'attack', 'attackers':{source.ref:'B'}})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual('B', session.state.cards[source.object_id].attacking)
+        self.assertTrue(session.state.cards[source.object_id].tapped)
+        public = json.dumps(session.packet('pilot:D', full=True)['state'])
+        self.assertIn(source.ref, public)
+        self.assertNotIn(source.object_id, public)
+        for seat in 'ABC':
+            for object_id in session.state.players[seat].zones['hand']:
+                self.assertNotIn(session.state.cards[object_id].ref, public)
+        with tempfile.TemporaryDirectory() as directory:
+            session.save(directory)
+            replay = replay_record(directory, self.db, verify=True)
+        self.assertTrue(replay['ok'], replay)
+        self.assertEqual(authoritative_state_hash(session.state), replay['final_state_hash'])
+        # Losing one distinct type recomputes both layers; the attack declaration
+        # has already happened and is not retroactively removed.
+        engine.move_card(cards[-1].object_id, 'exile', log=False)
+        current = engine.state.cards[source.object_id]
+        effective = engine._effective_card_data(current)
+        self.assertEqual(('1', '1'), (str(effective['power']), str(effective['toughness'])))
+        self.assertNotIn('Flying', effective['keywords'])
+        self.assertEqual('B', current.attacking)
+        engine.state.combat.attackers.clear(); current.attacking = None; current.tapped = False
+        engine.permissions.invalidate_current(); engine.state.pending_decision = None
+        engine.state.priority_player = None; engine.state.priority_passes = []
+        engine.state.phase = 'combat'; engine.state.step = 'declare_attackers'
+        engine.state.phase_index = TURN_STEPS.index(('combat', 'declare_attackers'))
+        engine._issue_attackers()
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear(); session.decisions.clear()
+        accepted = session.act('pilot:A', {'action_id':'attack', 'attackers':{}})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertIsNone(session.state.cards[source.object_id].attacking)
+        with tempfile.TemporaryDirectory() as directory:
+            session.save(directory)
+            replay = replay_record(directory, self.db, verify=True)
+        self.assertTrue(replay['ok'], replay)
+
     @classmethod
     def setUpClass(cls):
         cls.temporary = tempfile.TemporaryDirectory()

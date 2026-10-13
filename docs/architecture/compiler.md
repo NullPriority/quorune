@@ -394,6 +394,17 @@ constructing their closed quantity descriptor. An unsupported condition keeps
 its source-spanned residual; a successful direct-target predicate does not
 imply that the narrower quantity owner can evaluate it.
 
+`compiler/declaration_nodes.py` composes one independently exact
+recipient-relative declaration requirement or restriction with fixed
+power/toughness and represented keywords behind a closed public-state
+condition. The versioned conditional declaration descriptor retains the same
+source condition and target for layer 6 and layer 7c results. Current
+conditions remove or restore the declaration fragment through ordinary ability
+evaluation; declaration offers and accepted commands use the existing solver.
+Open suffixes, variable modifiers, additional costs and nonrecipient rule
+scopes remain residual. Earlier conditional descriptor schemas retain their
+existing field and fragment contracts.
+
 `compiler/public_state_queries.py`, consumed by
 `compiler/continuous_templates.py`, lowers fixed controlled permanent sets that
 gain supported keywords, or gain fixed power/toughness and supported keywords,

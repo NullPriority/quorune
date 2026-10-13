@@ -1336,6 +1336,7 @@ def default_continuous_effect_component_registry(
         ConditionalDefenderPermissionHandler,
         ConditionalAsUnblockedAssignmentHandler,
         ConditionalBlockCapacityHandler,
+        ConditionalDeclarationGrantHandler,
     )
 
     registry = ContinuousEffectComponentRegistry(
@@ -1356,6 +1357,7 @@ def default_continuous_effect_component_registry(
             ConditionalDefenderPermissionHandler(),
             ConditionalAsUnblockedAssignmentHandler(),
             ConditionalBlockCapacityHandler(),
+            ConditionalDeclarationGrantHandler(),
             AttachedFixedCharacteristicsHandler(),
             FixedCharacteristicSettingsHandler(),
             AttachedControlHandler(),

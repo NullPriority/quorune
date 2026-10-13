@@ -14242,6 +14242,25 @@
     {
       "capability_id": "combat.declaration.typed_components",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_original_channeler_condition_controls_required_attack_and_replays",
+      "official_rule_ids": [
+        "508.1c",
+        "508.1d",
+        "508.1h",
+        "509.1b",
+        "509.1c",
+        "509.1d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Conditional declaration composition preserves one live source condition, exact fixed modifiers and recipient-relative canonical declaration fragments; original action and replay witnesses establish the boundary."
+    },
+    {
+      "capability_id": "combat.declaration.typed_components",
+      "evidence_class": "interaction",
       "test_id": "tests.test_monarch_rules.MonarchRuleTests.test_player_state_declaration_predicates_and_exact_replay",
       "official_rule_ids": ["508.1c", "508.1d", "508.1h", "509.1b", "509.1c", "509.1d"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -14274,6 +14293,25 @@
     {
       "capability_id": "combat.declaration.typed_components",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_original_channeler_condition_controls_required_attack_and_replays",
+      "official_rule_ids": [
+        "508.1c",
+        "508.1d",
+        "508.1h",
+        "509.1b",
+        "509.1c",
+        "509.1d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Conditional declaration composition preserves one live source condition, exact fixed modifiers and recipient-relative canonical declaration fragments; original action and replay witnesses establish the boundary."
+    },
+    {
+      "capability_id": "combat.declaration.typed_components",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_temporary_declaration_restriction_effects.TemporaryDeclarationRestrictionRuntimeTests.test_four_player_projection_exposes_only_public_declaration_facts",
       "official_rule_ids": ["508.1c", "508.1d", "508.1h", "509.1b", "509.1c", "509.1d"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -14286,6 +14324,25 @@
       "official_rule_ids": ["508.1c", "508.1d", "508.1h", "509.1b", "509.1c", "509.1d"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Kill a mutation that removes typed declaration-cost fragments from the shared current ability snapshot."
+    },
+    {
+      "capability_id": "combat.declaration.typed_components",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_conditional_declaration_producer_omission_mutant_is_killed",
+      "official_rule_ids": [
+        "508.1c",
+        "508.1d",
+        "508.1h",
+        "509.1b",
+        "509.1c",
+        "509.1d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Conditional declaration composition preserves one live source condition, exact fixed modifiers and recipient-relative canonical declaration fragments; original action and replay witnesses establish the boundary."
     },
     {
       "capability_id": "combat.declaration.typed_components",
@@ -14318,6 +14375,25 @@
       "official_rule_ids": ["508.1c", "508.1d", "508.1h", "509.1b", "509.1c", "509.1d"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Keep temporary, malformed, dynamic, and unsupported query or attachment declaration grammar residual."
+    },
+    {
+      "capability_id": "combat.declaration.typed_components",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_conditional_declaration_composition_rejects_open_grammar_and_malformed_descriptors",
+      "official_rule_ids": [
+        "508.1c",
+        "508.1d",
+        "508.1h",
+        "509.1b",
+        "509.1c",
+        "509.1d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Conditional declaration composition preserves one live source condition, exact fixed modifiers and recipient-relative canonical declaration fragments; original action and replay witnesses establish the boundary."
     },
     {
       "capability_id": "combat.declaration.typed_components",
@@ -14378,6 +14454,25 @@
     {
       "capability_id": "combat.declaration.typed_components",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_conditional_stats_and_declaration_result_preserve_one_live_condition",
+      "official_rule_ids": [
+        "508.1c",
+        "508.1d",
+        "508.1h",
+        "509.1b",
+        "509.1c",
+        "509.1d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Conditional declaration composition preserves one live source condition, exact fixed modifiers and recipient-relative canonical declaration fragments; original action and replay witnesses establish the boundary."
+    },
+    {
+      "capability_id": "combat.declaration.typed_components",
+      "evidence_class": "positive",
       "test_id": "tests.test_temporary_declaration_restriction_effects.ActivatedTemporaryDeclarationRestrictionCompilerTests.test_spell_triggered_source_and_subtype_contexts_share_owner",
       "official_rule_ids": ["508.1c", "508.1d", "508.1h", "509.1b", "509.1c", "509.1d"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -14410,6 +14505,25 @@
     {
       "capability_id": "combat.declaration.typed_components",
       "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_original_channeler_condition_controls_required_attack_and_replays",
+      "official_rule_ids": [
+        "508.1c",
+        "508.1d",
+        "508.1h",
+        "509.1b",
+        "509.1c",
+        "509.1d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Conditional declaration composition preserves one live source condition, exact fixed modifiers and recipient-relative canonical declaration fragments; original action and replay witnesses establish the boundary."
+    },
+    {
+      "capability_id": "combat.declaration.typed_components",
+      "evidence_class": "privacy",
       "test_id": "tests.test_temporary_declaration_restriction_effects.TemporaryDeclarationRestrictionRuntimeTests.test_four_player_projection_exposes_only_public_declaration_facts",
       "official_rule_ids": ["508.1c", "508.1d", "508.1h", "509.1b", "509.1c", "509.1d"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -14434,6 +14548,25 @@
     {
       "capability_id": "combat.declaration.typed_components",
       "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_original_channeler_condition_controls_required_attack_and_replays",
+      "official_rule_ids": [
+        "508.1c",
+        "508.1d",
+        "508.1h",
+        "509.1b",
+        "509.1c",
+        "509.1d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Conditional declaration composition preserves one live source condition, exact fixed modifiers and recipient-relative canonical declaration fragments; original action and replay witnesses establish the boundary."
+    },
+    {
+      "capability_id": "combat.declaration.typed_components",
+      "evidence_class": "replay",
       "test_id": "tests.test_temporary_declaration_restriction_effects.TemporaryDeclarationRestrictionRuntimeTests.test_cleanup_expiration_is_exactly_replayable",
       "official_rule_ids": ["508.1c", "508.1d", "508.1h", "509.1b", "509.1c", "509.1d"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -14446,6 +14579,25 @@
       "official_rule_ids": ["508.1c", "508.1d", "508.1h", "509.1b", "509.1c", "509.1d"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Round-trip and exactly replay a resolved declaration rule through the shared static-plus-resolved query."
+    },
+    {
+      "capability_id": "combat.declaration.typed_components",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_original_channeler_condition_controls_required_attack_and_replays",
+      "official_rule_ids": [
+        "508.1c",
+        "508.1d",
+        "508.1h",
+        "509.1b",
+        "509.1c",
+        "509.1d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Conditional declaration composition preserves one live source condition, exact fixed modifiers and recipient-relative canonical declaration fragments; original action and replay witnesses establish the boundary."
     },
     {
       "capability_id": "combat.entry.lifecycle.fixed_public",
@@ -18684,6 +18836,29 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_original_channeler_condition_controls_required_attack_and_replays",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Conditional declaration composition preserves one live source condition, exact fixed modifiers and recipient-relative canonical declaration fragments; original action and replay witnesses establish the boundary."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_public_condition_queries_follow_authoritative_history_and_control",
       "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -18790,6 +18965,29 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_original_channeler_condition_controls_required_attack_and_replays",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Conditional declaration composition preserves one live source condition, exact fixed modifiers and recipient-relative canonical declaration fragments; original action and replay witnesses establish the boundary."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_public_condition_queries_follow_authoritative_history_and_control",
       "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -18823,12 +19021,58 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_conditional_declaration_producer_omission_mutant_is_killed",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Conditional declaration composition preserves one live source condition, exact fixed modifiers and recipient-relative canonical declaration fragments; original action and replay witnesses establish the boundary."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "mutation",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_public_fact_conditions_recompute_and_replay",
       "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Force every public-fact quantity to zero and require all fact-gated layer-6 and layer-7c results to disappear."
     },
     {"capability_id":"continuous.characteristics.fixed_public_state","evidence_class":"negative","test_id":"tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierCompilerTests.test_additional_wording_does_not_admit_unrepresented_bonus_or_condition","official_rule_ids":["604.1","611.3a","611.3b","611.3c","613.1f","613.1g","613.4c","613.6","603.6b","603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Variable or multiplied bonuses, unknown conditions and repeated-effect riders remain residual."},
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_conditional_declaration_composition_rejects_open_grammar_and_malformed_descriptors",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Conditional declaration composition preserves one live source condition, exact fixed modifiers and recipient-relative canonical declaration fragments; original action and replay witnesses establish the boundary."
+    },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "negative",
@@ -18892,6 +19136,29 @@
       "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Compile the closed turn, graveyard-card-count, hand-count, life-total, entry-turn, and named-counter grammar over source, attached, and fixed-query targets."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_conditional_stats_and_declaration_result_preserve_one_live_condition",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Conditional declaration composition preserves one live source condition, exact fixed modifiers and recipient-relative canonical declaration fragments; original action and replay witnesses establish the boundary."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -18976,6 +19243,29 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_original_channeler_condition_controls_required_attack_and_replays",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Conditional declaration composition preserves one live source condition, exact fixed modifiers and recipient-relative canonical declaration fragments; original action and replay witnesses establish the boundary."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "privacy",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_public_condition_queries_follow_authoritative_history_and_control",
       "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -19009,6 +19299,29 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_original_channeler_condition_controls_required_attack_and_replays",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Conditional declaration composition preserves one live source condition, exact fixed modifiers and recipient-relative canonical declaration fragments; original action and replay witnesses establish the boundary."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "replay",
       "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_public_condition_queries_follow_authoritative_history_and_control",
       "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -19023,6 +19336,29 @@
       "applicability_note": "Serialize schema-v3 facts plus new entry and attack history and replay the following multiplayer command to the same hash."
     },
     {"capability_id":"continuous.characteristics.fixed_public_state","evidence_class":"rollback","test_id":"tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_taste_adds_live_bonus_to_foreign_creature_and_private_draw_removes_it","official_rule_ids":["604.1","611.3a","611.3b","611.3c","613.1f","613.1g","613.4c","613.6","603.6b","603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Taste for Mayhem is cast on a B-controlled creature by A. Its ordinary +2/+0 and additional +2/+0 stack when A's hand empties during an actual Divination cast, then the private draw removes only the conditional bonus. A foreign creature remains unaffected; unauthorized casting rolls back. Pending save/load and complete pre-aura replay agree, with nonactor projections exposing only hand counts."},
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicRuntimeTests.test_original_channeler_condition_controls_required_attack_and_replays",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Conditional declaration composition preserves one live source condition, exact fixed modifiers and recipient-relative canonical declaration fragments; original action and replay witnesses establish the boundary."
+    },
     {
       "capability_id": "continuous.characteristics.leveler_bands",
       "evidence_class": "interaction",

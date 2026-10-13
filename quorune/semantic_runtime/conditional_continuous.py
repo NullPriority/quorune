@@ -25,6 +25,11 @@ from ..ability_fragments import (
 from ..defender_permission import DefenderAttackPermission, DEFENDER_PERMISSION_CAPABILITY, CONDITIONAL_DEFENDER_PERMISSION_HANDLER
 from ..as_unblocked import AsUnblockedAssignmentPermission, AS_UNBLOCKED_CAPABILITY, CONDITIONAL_AS_UNBLOCKED_HANDLER
 from ..block_capacity_model import BlockCapacitySpec, BLOCK_CAPACITY_CAPABILITY
+from ..declaration_fragments import (
+    DECLARATION_COMPONENT_CAPABILITY_ID,
+    DeclarationRequirementTemplate,
+    DeclarationRestrictionTemplate,
+)
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from .component_registry import exact_fields, nonempty_strings
 from .context import SemanticNodeError
@@ -156,12 +161,12 @@ def _validate_target(
 
 
 def _validate_modifier(
-    value: Any, *, allow_granted_ability: bool = False, allow_defender_permission: bool = False, allow_as_unblocked: bool = False, allow_block_capacity: bool = False,
+    value: Any, *, allow_granted_ability: bool = False, allow_defender_permission: bool = False, allow_as_unblocked: bool = False, allow_block_capacity: bool = False, allow_declaration: bool = False,
 ) -> tuple[tuple[str, ...], int, int, tuple[Mapping[str, Any], ...]]:
     if not isinstance(value, Mapping):
         raise SemanticNodeError("runtime handler modifier must be an object")
     fields = {"add_abilities", "power", "toughness"}
-    if allow_granted_ability or allow_defender_permission or allow_as_unblocked or allow_block_capacity:
+    if allow_granted_ability or allow_defender_permission or allow_as_unblocked or allow_block_capacity or allow_declaration:
         fields.add("add_ability_fragments")
     exact_fields(
         value,
@@ -187,7 +192,7 @@ def _validate_modifier(
         )
     raw_fragments = value.get("add_ability_fragments", [])
     if not isinstance(raw_fragments, list) or (
-        (allow_granted_ability or allow_defender_permission or allow_as_unblocked or allow_block_capacity) and len(raw_fragments) != 1
+        (allow_granted_ability or allow_defender_permission or allow_as_unblocked or allow_block_capacity or allow_declaration) and len(raw_fragments) != 1
     ):
         raise SemanticNodeError("Conditional grants require exactly one fragment")
     fragments = []
@@ -196,9 +201,11 @@ def _validate_modifier(
             parsed = ability_fragment_from_dict(raw) if isinstance(raw, Mapping) else None
         except (TypeError, ValueError) as exc:
             raise SemanticNodeError(str(exc)) from exc
-        expected = (BlockCapacitySpec,) if allow_block_capacity else (AsUnblockedAssignmentPermission,) if allow_as_unblocked else (DefenderAttackPermission,) if allow_defender_permission else (GrantedActivatedAbilitySpec, GrantedTriggeredAbilitySpec)
+        expected = (DeclarationRequirementTemplate, DeclarationRestrictionTemplate) if allow_declaration else (BlockCapacitySpec,) if allow_block_capacity else (AsUnblockedAssignmentPermission,) if allow_as_unblocked else (DefenderAttackPermission,) if allow_defender_permission else (GrantedActivatedAbilitySpec, GrantedTriggeredAbilitySpec)
         if not isinstance(parsed, expected):
             raise SemanticNodeError("Conditional grants require independently compiled typed abilities")
+        if allow_declaration and isinstance(parsed, DeclarationRestrictionTemplate) and parsed.scope not in {'self', 'source_option'}:
+            raise SemanticNodeError('Conditional declaration grants require recipient-relative self scope')
         fragments.append(dict(raw))
     if not abilities and not fragments and power == 0 and toughness == 0:
         raise SemanticNodeError(
@@ -276,6 +283,7 @@ class FixedPublicStateCharacteristicsHandler:
             allow_defender_permission=self.schema_version == 3,
             allow_as_unblocked=self.schema_version == 4,
             allow_block_capacity=self.schema_version == 5,
+            allow_declaration=self.schema_version == 6,
         )
         return FixedPublicStateCharacteristicsNode(
             source_condition=source_condition,
@@ -389,6 +397,19 @@ class FixedPublicStateGrantedAbilityHandler(FixedPublicStateCharacteristicsHandl
     capability_dependencies: tuple[str, ...] = (
         FIXED_PUBLIC_STATE_GRANTED_ABILITY_CAPABILITY_ID,
         "continuous.characteristics.fixed_public_state",
+    )
+
+
+@dataclass(frozen=True, slots=True)
+class ConditionalDeclarationGrantHandler(FixedPublicStateCharacteristicsHandler):
+    """Grant one recipient-relative declaration rule and fixed modifiers."""
+
+    handler_id: str = 'continuous.declaration.public-state.v1'
+    schema_version: int = 6
+    family: str = 'continuous.declaration.public_state'
+    capability_dependencies: tuple[str, ...] = (
+        DECLARATION_COMPONENT_CAPABILITY_ID,
+        'continuous.characteristics.fixed_public_state',
     )
 
 
