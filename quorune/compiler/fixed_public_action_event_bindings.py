@@ -663,9 +663,28 @@ def fixed_public_action_event_binding_spec(
     del card_name
     return (
         _public_attack_spec(material_line)
+        or _public_library_action_spec(material_line)
         or _public_damage_spec(material_line)
         or _public_zone_spec(material_line)
         or _public_cycle_spec(material_line)
+    )
+
+
+def _public_library_action_spec(material_line: str) -> FixedPublicEventBindingSpec | None:
+    match = re.fullmatch(
+        r"Whenever (?P<actor>you|a player|an opponent) "
+        r"(?P<action>scry|scries|surveil|surveils), (?P<body>.+)", material_line, re.I,
+    )
+    if match is None:
+        return None
+    actor = match["actor"].casefold()
+    action = match["action"].casefold()
+    if (actor == "you") != (action in {"scry", "surveil"}):
+        return None
+    event = "player.scried" if action in {"scry", "scries"} else "player.surveilled"
+    return _spec(
+        event, "public_library_action", match["body"], "fixed-library-action-trigger-v1",
+        "trigger-event-normalized-public-action", condition=_actor_condition(actor, field="player"),
     )
 
 

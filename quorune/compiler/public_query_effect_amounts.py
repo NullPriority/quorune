@@ -160,6 +160,15 @@ def _parsed_candidate(
     *,
     source_name: str,
 ) -> tuple[str, str, int, str, bool] | None:
+    library = re.fullmatch(
+        r"Surveil X, where X is (?:equal to )?(?:the number of )?(?P<quantity>.+?)\.?",
+        text, re.I,
+    )
+    if library is not None:
+        return (
+            "surveil", library["quantity"], 1, "Surveil 2.",
+            not text.casefold().startswith("surveil x, where x is the number of "),
+        )
     for index, pattern in enumerate(_LIFE_PATTERNS):
         match = pattern.fullmatch(text)
         if match is not None:
@@ -265,6 +274,8 @@ _AMOUNT_FIELDS = {
     "lose_life_each_opponent": "amount",
     "damage": "amount",
     "draw": "count",
+    "scry": "count",
+    "surveil": "count",
     "create_token": "quantity",
     "place_counters": "amount",
 }
@@ -555,6 +566,7 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
     """Keep scalar admission with its existing fixed shape and target owners."""
     from ..rules.node_capability_shapes import (
         fixed_damage_node_capabilities, fixed_draw_node_capabilities,
+        fixed_scry_node_capabilities,
         fixed_source_characteristics_node_capabilities,
         fixed_target_characteristics_node_capabilities,
     )
@@ -562,6 +574,7 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
     from ..rules.token_creation_capability_shapes import fixed_token_creation_node_capabilities
     from ..rules.counter_placement_capability_shapes import fixed_counter_placement_node_capabilities
     from ..rules.closed_effect_program_shapes import closed_effect_program_node_capabilities
+    from ..rules.surveil_capability_shapes import fixed_surveil_node_capabilities
 
     if not {PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC, SCALAR_AMOUNT_MECHANIC}.intersection(program.coverage):
         return False
@@ -589,6 +602,8 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
         for resolver in (
             fixed_damage_node_capabilities,
             fixed_draw_node_capabilities,
+            fixed_scry_node_capabilities,
+            fixed_surveil_node_capabilities,
             fixed_life_node_capabilities,
             fixed_token_creation_node_capabilities,
             fixed_target_characteristics_node_capabilities,

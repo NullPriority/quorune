@@ -40,8 +40,9 @@ partition of every looked-at card into:
 `ScryArrangement` freezes that response. `commit_scry_arrangement` verifies that
 the physical cards are still the current library top, then commits the complete
 arrangement with one list mutation. The public event reveals only counts; card
-identities and the resulting hidden order remain seat-scoped. Scry 0 and Scry
-with an empty library create no Scry event.
+identities and the resulting hidden order remain seat-scoped. Scry 0 creates
+no choice or event. A positive instruction with an empty library completes
+without a private choice and emits `player.scried` once, after the procedure.
 
 The schema retains the historical `destination: library_bottom` hint and the
 handler accepts the former bottom-subset response for Game Record v3 command
@@ -72,6 +73,13 @@ names only cards whose actual destination is public; retained identities and
 library order stay private. The owner emits `player.surveilled` after the whole
 process, including when a positive instruction finds an empty library, and
 replacement choices resume through the ordinary semantic-intent continuation.
+Surveil 0 creates neither a choice nor an event.
+
+Scry and Surveil counts may be resolved by the existing declared-quantity or
+public-query amount capabilities before preparing the private partition. A
+completed positive procedure can feed a normalized player-action observer;
+controller, opponent, and global predicates retain their scope without
+publishing inspected identities.
 
 ## Fixed library selection
 
@@ -101,10 +109,11 @@ runtime prose interpretation.
 ## Deliberate boundary
 
 The current family excludes simultaneous instructions for multiple players,
-dynamic counts, effects that add cards while Scrying, Scry-trigger compilation,
+unrepresented dynamic counts, effects that add cards while Scrying,
 fateseal, and other non-Scry library ordering. Fixed Surveil separately excludes
-zero, dynamic, optional, cost, targeted, repeated, copied, and granted forms;
+optional, cost, targeted, repeated, copied, and granted forms;
 additional looked-at cards; linked result consumers; and Surveil-event consumer
-grammar. In particular, CR 701.22c requires a future APNAP decision coordinator
+grammar outside the normalized fixed-body observer. In particular, CR 701.22c
+requires a future APNAP decision coordinator
 and simultaneous commit; a normal four-player game in which one player Scrying
 has opponents is not that case.

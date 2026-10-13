@@ -11,6 +11,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Resolve public-query Scry and Surveil counts through the existing private
+  library partitions and compile their completed-action observers. Positive
+  empty-library Scry completes an event; zero creates no event.
+
 - Compile targeted exile until the original source leaves the battlefield,
   retaining actual exile incarnations and immediate owner-controlled return.
   Replacement, Aura-entry, casting-cost, and completed-choice pauses preserve

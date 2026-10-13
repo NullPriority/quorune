@@ -818,6 +818,7 @@ class SemanticChoiceIntentHostMixin:
                 player=intent.player,
                 arrangement=intent.arrangement,
                 reason=intent.reason,
+                requested_count=intent.requested_count,
             )
         except ScryError as exc:
             raise GameRuleError(str(exc)) from exc

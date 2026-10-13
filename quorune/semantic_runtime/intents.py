@@ -790,10 +790,15 @@ class ScryLibraryIntent:
     player: str
     arrangement: ScryArrangement
     reason: str
+    requested_count: int | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.arrangement, ScryArrangement):
             raise TypeError("Scry intents require an immutable arrangement")
+        if self.requested_count is not None and (
+            type(self.requested_count) is not int or self.requested_count <= 0
+        ):
+            raise ValueError("Scry requested count must be a positive integer")
 
 
 @dataclass(frozen=True, slots=True)

@@ -273,7 +273,8 @@
       "test_surveil_rules",
       "test_targeted_destruction_effect_clauses",
       "test_transmute",
-      "test_turn_history_rules"
+      "test_turn_history_rules",
+      "test_variable_library_counts"
     ],
     "functional-09": [
       "test_aerial_blocking",

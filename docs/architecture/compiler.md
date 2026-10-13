@@ -2148,6 +2148,14 @@ unrepresented result owners, and nested modal declarations remain residual.
 Ordinary Cycling explicitly
 declares the existing draw handler dependency beside its activation capability;
 runtime binding still rejects undeclared registered dependencies.
+The same public-query amount boundary supplies a resolved controller Scry or
+Surveil count before the private library partition is prepared. An inline Scry
+definition followed by a fixed draw uses the same declared quantity binding
+and ordered controller sequence. Zero creates
+neither a choice nor a completion event. Positive instructions on an empty
+library still complete and can produce their normalized player-action event.
+Scry and Surveil observer predicates retain controller, opponent, or global
+scope without exposing looked-at identities in the public occurrence.
 
 Printed fixed ordinary-mana Transmute uses the existing activation catalog with
 complete-card admission, a hand-only discard cost, and canonical sorcery timing.

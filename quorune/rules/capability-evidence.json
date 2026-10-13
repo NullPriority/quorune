@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "c2164433893d096e892feb2e176839ce28b0a33997c44fe083216d7bf57594a3",
-  "declaration_source_fingerprint": "41ae00c46f3dcce45dff6ca3b6b951df8dec23aedb2889669a3d1b20a22e6c78",
+  "registry_fingerprint": "592473dcf840337b31c22b46023a099e107a824538306843d9c9c6cafc43a48c",
+  "declaration_source_fingerprint": "c62107caca01d0506c98440756a9c433e0b83a26cdeff1c32dbf67dd1a370733",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -68101,7 +68101,8 @@
         "401.4",
         "701.22",
         "701.22a",
-        "701.22b"
+        "701.22b",
+        "701.22d"
       ],
       "supported_profiles": [
         "traditional",
@@ -68112,13 +68113,32 @@
     },
     {
       "capability_id": "library.scry.fixed_controller",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_variable_library_counts.VariableLibraryCountActionTests.test_original_ugins_insight_uses_greatest_mana_value_then_draws_and_replays",
+      "official_rule_ids": [
+        "401.4",
+        "701.22",
+        "701.22a",
+        "701.22b",
+        "701.22d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Ugin\u2019s Insight resolves greatest controlled permanent mana value before private Scry, then draws three through trusted offered casting, pending save/load and exact replay."
+    },
+    {
+      "capability_id": "library.scry.fixed_controller",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_scry_rules.ScryRuntimeTests.test_four_player_scry_is_private_and_seat_scoped",
       "official_rule_ids": [
         "401.4",
         "701.22",
         "701.22a",
-        "701.22b"
+        "701.22b",
+        "701.22d"
       ],
       "supported_profiles": [
         "traditional",
@@ -68135,7 +68155,8 @@
         "401.4",
         "701.22",
         "701.22a",
-        "701.22b"
+        "701.22b",
+        "701.22d"
       ],
       "supported_profiles": [
         "traditional",
@@ -68152,7 +68173,8 @@
         "401.4",
         "701.22",
         "701.22a",
-        "701.22b"
+        "701.22b",
+        "701.22d"
       ],
       "supported_profiles": [
         "traditional",
@@ -68169,7 +68191,8 @@
         "401.4",
         "701.22",
         "701.22a",
-        "701.22b"
+        "701.22b",
+        "701.22d"
       ],
       "supported_profiles": [
         "traditional",
@@ -68180,13 +68203,50 @@
     },
     {
       "capability_id": "library.scry.fixed_controller",
+      "evidence_class": "negative",
+      "test_id": "tests.test_variable_library_counts.VariableLibraryCountActionTests.test_zero_public_count_creates_no_choice_or_scry_surveil_event",
+      "official_rule_ids": [
+        "401.4",
+        "701.22",
+        "701.22a",
+        "701.22b",
+        "701.22d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Public resolution count feeds canonical private Scry/Surveil partitions; zero has no event, positive empty completes, and observer predicates retain controller/global scope. Original-card action and pre-action replay witnesses are distinct from compiler/model diagnostics."
+    },
+    {
+      "capability_id": "library.scry.fixed_controller",
+      "evidence_class": "negative",
+      "test_id": "tests.test_variable_library_counts.VariableLibraryCountCompilerTests.test_library_amount_result_capabilities_cannot_be_omitted",
+      "official_rule_ids": [
+        "401.4",
+        "701.22",
+        "701.22a",
+        "701.22b",
+        "701.22d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Removing either public quantity or the actual library result capability prevents closed program admission for Scry and Surveil."
+    },
+    {
+      "capability_id": "library.scry.fixed_controller",
       "evidence_class": "positive",
       "test_id": "tests.test_scry_rules.ScryCompilerTests.test_fixed_scry_compiles_capability_closed",
       "official_rule_ids": [
         "401.4",
         "701.22",
         "701.22a",
-        "701.22b"
+        "701.22b",
+        "701.22d"
       ],
       "supported_profiles": [
         "traditional",
@@ -68203,7 +68263,8 @@
         "401.4",
         "701.22",
         "701.22a",
-        "701.22b"
+        "701.22b",
+        "701.22d"
       ],
       "supported_profiles": [
         "traditional",
@@ -68214,13 +68275,50 @@
     },
     {
       "capability_id": "library.scry.fixed_controller",
+      "evidence_class": "positive",
+      "test_id": "tests.test_variable_library_counts.VariableLibraryCountActionTests.test_original_ugins_insight_uses_greatest_mana_value_then_draws_and_replays",
+      "official_rule_ids": [
+        "401.4",
+        "701.22",
+        "701.22a",
+        "701.22b",
+        "701.22d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Ugin\u2019s Insight resolves greatest controlled permanent mana value before private Scry, then draws three through trusted offered casting, pending save/load and exact replay."
+    },
+    {
+      "capability_id": "library.scry.fixed_controller",
+      "evidence_class": "positive",
+      "test_id": "tests.test_variable_library_counts.VariableLibraryCountActionTests.test_positive_scry_on_empty_library_completes_an_event_without_private_choice",
+      "official_rule_ids": [
+        "401.4",
+        "701.22",
+        "701.22a",
+        "701.22b",
+        "701.22d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Public resolution count feeds canonical private Scry/Surveil partitions; zero has no event, positive empty completes, and observer predicates retain controller/global scope. Original-card action and pre-action replay witnesses are distinct from compiler/model diagnostics."
+    },
+    {
+      "capability_id": "library.scry.fixed_controller",
       "evidence_class": "privacy",
       "test_id": "tests.test_scry_rules.ScryRuntimeTests.test_four_player_scry_is_private_and_seat_scoped",
       "official_rule_ids": [
         "401.4",
         "701.22",
         "701.22a",
-        "701.22b"
+        "701.22b",
+        "701.22d"
       ],
       "supported_profiles": [
         "traditional",
@@ -68237,7 +68335,8 @@
         "401.4",
         "701.22",
         "701.22a",
-        "701.22b"
+        "701.22b",
+        "701.22d"
       ],
       "supported_profiles": [
         "traditional",
@@ -68245,6 +68344,42 @@
         "commander_review"
       ],
       "applicability_note": "Replay the exact private partition response to the same authoritative library order and final state hash."
+    },
+    {
+      "capability_id": "library.scry.fixed_controller",
+      "evidence_class": "replay",
+      "test_id": "tests.test_variable_library_counts.VariableLibraryCountActionTests.test_original_ugins_insight_uses_greatest_mana_value_then_draws_and_replays",
+      "official_rule_ids": [
+        "401.4",
+        "701.22",
+        "701.22a",
+        "701.22b",
+        "701.22d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Ugin\u2019s Insight resolves greatest controlled permanent mana value before private Scry, then draws three through trusted offered casting, pending save/load and exact replay."
+    },
+    {
+      "capability_id": "library.scry.fixed_controller",
+      "evidence_class": "replay",
+      "test_id": "tests.test_variable_library_counts.VariableLibraryCountActionTests.test_positive_scry_on_empty_library_completes_an_event_without_private_choice",
+      "official_rule_ids": [
+        "401.4",
+        "701.22",
+        "701.22a",
+        "701.22b",
+        "701.22d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Public resolution count feeds canonical private Scry/Surveil partitions; zero has no event, positive empty completes, and observer predicates retain controller/global scope. Original-card action and pre-action replay witnesses are distinct from compiler/model diagnostics."
     },
     {
       "capability_id": "library.search.fixed_counted",
@@ -69789,6 +69924,44 @@
     },
     {
       "capability_id": "library.surveil.fixed_controller",
+      "evidence_class": "negative",
+      "test_id": "tests.test_variable_library_counts.VariableLibraryCountActionTests.test_zero_public_count_creates_no_choice_or_scry_surveil_event",
+      "official_rule_ids": [
+        "404.3",
+        "701.25",
+        "701.25a",
+        "701.25b",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Public resolution count feeds canonical private Scry/Surveil partitions; zero has no event, positive empty completes, and observer predicates retain controller/global scope. Original-card action and pre-action replay witnesses are distinct from compiler/model diagnostics."
+    },
+    {
+      "capability_id": "library.surveil.fixed_controller",
+      "evidence_class": "negative",
+      "test_id": "tests.test_variable_library_counts.VariableLibraryCountCompilerTests.test_library_amount_result_capabilities_cannot_be_omitted",
+      "official_rule_ids": [
+        "404.3",
+        "701.25",
+        "701.25a",
+        "701.25b",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Removing either public quantity or the actual library result capability prevents closed program admission for Scry and Surveil."
+    },
+    {
+      "capability_id": "library.surveil.fixed_controller",
       "evidence_class": "positive",
       "test_id": "tests.test_surveil_rules.FixedSurveilCompilerTests.test_fixed_surveil_compiles_across_spell_trigger_activation_and_sequence",
       "official_rule_ids": [
@@ -69824,6 +69997,25 @@
         "commander_review"
       ],
       "applicability_note": "Look at as many cards as exist and emit one normalized positive-count Surveil event even when every prescribed library action is impossible."
+    },
+    {
+      "capability_id": "library.surveil.fixed_controller",
+      "evidence_class": "positive",
+      "test_id": "tests.test_variable_library_counts.VariableLibraryCountActionTests.test_original_cerebral_download_surveys_current_artifact_count_then_draws_and_replays",
+      "official_rule_ids": [
+        "404.3",
+        "701.25",
+        "701.25a",
+        "701.25b",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Public resolution count feeds canonical private Scry/Surveil partitions; zero has no event, positive empty completes, and observer predicates retain controller/global scope. Original-card action and pre-action replay witnesses are distinct from compiler/model diagnostics."
     },
     {
       "capability_id": "library.surveil.fixed_controller",
@@ -69881,6 +70073,25 @@
         "commander_review"
       ],
       "applicability_note": "Replay the private partition, simultaneous public movement, retained top ordering, normalized event, and final authoritative state hash exactly."
+    },
+    {
+      "capability_id": "library.surveil.fixed_controller",
+      "evidence_class": "replay",
+      "test_id": "tests.test_variable_library_counts.VariableLibraryCountActionTests.test_original_cerebral_download_surveys_current_artifact_count_then_draws_and_replays",
+      "official_rule_ids": [
+        "404.3",
+        "701.25",
+        "701.25a",
+        "701.25b",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Public resolution count feeds canonical private Scry/Surveil partitions; zero has no event, positive empty completes, and observer predicates retain controller/global scope. Original-card action and pre-action replay witnesses are distinct from compiler/model diagnostics."
     },
     {
       "capability_id": "library.visibility.top.static",
@@ -79544,6 +79755,23 @@
     },
     {
       "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_variable_library_counts.VariableLibraryCountActionTests.test_original_ugins_insight_uses_greatest_mana_value_then_draws_and_replays",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Library counts use the existing declared quantity result slot and fixed Scry/Surveil owners; inline Scry definition followed by fixed draw preserves one quantity binding and printed action order. Unsupported quantities remain residual."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_declared_effect_amounts.DeclaredEffectAmountActionTests.test_real_announced_x_offer_payment_rollback_privacy_and_replay",
       "official_rule_ids": [
@@ -79558,6 +79786,23 @@
         "commander_review"
       ],
       "applicability_note": "Use four real principals, real offers, canonical multiple-X payment, and exact rollback and result assertions."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_variable_library_counts.VariableLibraryCountActionTests.test_real_variable_scry_and_surveil_private_partition_pending_reload_and_replay",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Library counts use the existing declared quantity result slot and fixed Scry/Surveil owners; inline Scry definition followed by fixed draw preserves one quantity binding and printed action order. Unsupported quantities remain residual."
     },
     {
       "capability_id": "quantity_expression.declared_effect_amount",
@@ -79663,6 +79908,23 @@
     },
     {
       "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_variable_library_counts.VariableLibraryCountCompilerTests.test_public_count_scry_and_surveil_share_fixed_partition_and_quantity_closure",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Library counts use the existing declared quantity result slot and fixed Scry/Surveil owners; inline Scry definition followed by fixed draw preserves one quantity binding and printed action order. Unsupported quantities remain residual."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
       "evidence_class": "positive",
       "test_id": "tests.test_declared_effect_amounts.DeclaredEffectAmountActionTests.test_real_positive_cast_results_use_existing_damage_token_and_characteristic_owners",
       "official_rule_ids": [
@@ -79714,6 +79976,40 @@
     },
     {
       "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_variable_library_counts.VariableLibraryCountActionTests.test_original_ugins_insight_uses_greatest_mana_value_then_draws_and_replays",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Library counts use the existing declared quantity result slot and fixed Scry/Surveil owners; inline Scry definition followed by fixed draw preserves one quantity binding and printed action order. Unsupported quantities remain residual."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_variable_library_counts.VariableLibraryCountCompilerTests.test_public_count_scry_and_surveil_share_fixed_partition_and_quantity_closure",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Library counts use the existing declared quantity result slot and fixed Scry/Surveil owners; inline Scry definition followed by fixed draw preserves one quantity binding and printed action order. Unsupported quantities remain residual."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
       "evidence_class": "privacy",
       "test_id": "tests.test_declared_effect_amounts.DeclaredEffectAmountActionTests.test_real_announced_x_offer_payment_rollback_privacy_and_replay",
       "official_rule_ids": [
@@ -79728,6 +80024,23 @@
         "commander_review"
       ],
       "applicability_note": "The acting player sees newly drawn identities while the other three principal projections do not."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_variable_library_counts.VariableLibraryCountActionTests.test_real_variable_scry_and_surveil_private_partition_pending_reload_and_replay",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Library counts use the existing declared quantity result slot and fixed Scry/Surveil owners; inline Scry definition followed by fixed draw preserves one quantity binding and printed action order. Unsupported quantities remain residual."
     },
     {
       "capability_id": "quantity_expression.declared_effect_amount",
@@ -79781,6 +80094,40 @@
       "applicability_note": "A genuine synthetic command record first replays under archived v233 source, then the current real replay path explicitly rejects superseded exact-runtime provenance without reinterpretation."
     },
     {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_variable_library_counts.VariableLibraryCountActionTests.test_original_ugins_insight_uses_greatest_mana_value_then_draws_and_replays",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Library counts use the existing declared quantity result slot and fixed Scry/Surveil owners; inline Scry definition followed by fixed draw preserves one quantity binding and printed action order. Unsupported quantities remain residual."
+    },
+    {
+      "capability_id": "quantity_expression.declared_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_variable_library_counts.VariableLibraryCountActionTests.test_real_variable_scry_and_surveil_private_partition_pending_reload_and_replay",
+      "official_rule_ids": [
+        "107.3a",
+        "107.3b",
+        "601.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Library counts use the existing declared quantity result slot and fixed Scry/Surveil owners; inline Scry definition followed by fixed draw preserves one quantity binding and printed action order. Unsupported quantities remain residual."
+    },
+    {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_query_quoted_ability_grants.FixedQueryQuotedAbilityGrantRuntimeTests.test_query_scaled_grant_revalidates_current_ability_and_replays",
@@ -79792,7 +80139,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -79813,7 +80164,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -79834,7 +80189,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -79855,7 +80214,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -79876,7 +80239,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -79897,7 +80264,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -79918,7 +80289,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -79939,7 +80314,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -79960,7 +80339,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -79981,7 +80364,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80002,7 +80389,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80023,7 +80414,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80044,7 +80439,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80065,7 +80464,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80086,7 +80489,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80094,6 +80501,56 @@
         "commander_review"
       ],
       "applicability_note": "Accepted original Priest of Titania and Wirewood Pride actions count the same foreign noncreature Elf Kindred plus the Priest. Mana production pays its tap price and adds two green mana; the paid targeted spell gives a B-controlled Human +2/+2, preserving costs, public membership and complete pre-activation replay."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_variable_library_counts.VariableLibraryCountActionTests.test_original_ugins_insight_uses_greatest_mana_value_then_draws_and_replays",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Ugin\u2019s Insight resolves greatest controlled permanent mana value before private Scry, then draws three through trusted offered casting, pending save/load and exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_variable_library_counts.VariableLibraryCountActionTests.test_real_variable_scry_and_surveil_private_partition_pending_reload_and_replay",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Public resolution count feeds canonical private Scry/Surveil partitions; zero has no event, positive empty completes, and observer predicates retain controller/global scope. Original-card action and pre-action replay witnesses are distinct from compiler/model diagnostics."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
@@ -80107,7 +80564,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80128,7 +80589,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80149,7 +80614,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80170,7 +80639,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80191,7 +80664,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80212,7 +80689,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80233,7 +80714,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80254,7 +80739,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80275,7 +80764,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80296,7 +80789,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80317,7 +80814,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80338,7 +80839,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80359,7 +80864,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80380,7 +80889,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80401,7 +80914,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80422,7 +80939,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80443,7 +80964,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80464,7 +80989,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80485,7 +81014,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80506,7 +81039,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80527,7 +81064,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80548,7 +81089,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80569,7 +81114,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80577,6 +81126,56 @@
         "commander_review"
       ],
       "applicability_note": "Closed versioned codecs reject Boolean arithmetic, unknown parameters, and nested or unbounded sum operands."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_variable_library_counts.VariableLibraryCountActionTests.test_zero_public_count_creates_no_choice_or_scry_surveil_event",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Public resolution count feeds canonical private Scry/Surveil partitions; zero has no event, positive empty completes, and observer predicates retain controller/global scope. Original-card action and pre-action replay witnesses are distinct from compiler/model diagnostics."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_variable_library_counts.VariableLibraryCountCompilerTests.test_library_amount_result_capabilities_cannot_be_omitted",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Removing either public quantity or the actual library result capability prevents closed program admission for Scry and Surveil."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
@@ -80590,7 +81189,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80611,7 +81214,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80632,7 +81239,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80653,7 +81264,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80674,7 +81289,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80695,7 +81314,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80716,7 +81339,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80737,7 +81364,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80745,6 +81376,56 @@
         "commander_review"
       ],
       "applicability_note": "Bare subtype and represented subtype-union quantities retain only subtype predicates; explicit Creature card-type wording stays constrained and unknown subtypes stay residual."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_variable_library_counts.VariableLibraryCountActionTests.test_original_ugins_insight_uses_greatest_mana_value_then_draws_and_replays",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Ugin\u2019s Insight resolves greatest controlled permanent mana value before private Scry, then draws three through trusted offered casting, pending save/load and exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_variable_library_counts.VariableLibraryCountCompilerTests.test_public_count_scry_and_surveil_share_fixed_partition_and_quantity_closure",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Public resolution count feeds canonical private Scry/Surveil partitions; zero has no event, positive empty completes, and observer predicates retain controller/global scope. Original-card action and pre-action replay witnesses are distinct from compiler/model diagnostics."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
@@ -80758,7 +81439,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80779,7 +81464,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80800,7 +81489,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80821,7 +81514,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80842,7 +81539,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80863,7 +81564,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80884,7 +81589,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80905,7 +81614,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80926,7 +81639,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80947,7 +81664,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80968,7 +81689,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -80989,7 +81714,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -81010,7 +81739,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -81031,7 +81764,11 @@
         "611.2c",
         "613.1d",
         "613.1e",
-        "613.4c"
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
       ],
       "supported_profiles": [
         "traditional",
@@ -81039,6 +81776,56 @@
         "commander_review"
       ],
       "applicability_note": "Accepted original Priest of Titania and Wirewood Pride actions count the same foreign noncreature Elf Kindred plus the Priest. Mana production pays its tap price and adds two green mana; the paid targeted spell gives a B-controlled Human +2/+2, preserving costs, public membership and complete pre-activation replay."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_variable_library_counts.VariableLibraryCountActionTests.test_original_cerebral_download_surveys_current_artifact_count_then_draws_and_replays",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Public resolution count feeds canonical private Scry/Surveil partitions; zero has no event, positive empty completes, and observer predicates retain controller/global scope. Original-card action and pre-action replay witnesses are distinct from compiler/model diagnostics."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_variable_library_counts.VariableLibraryCountActionTests.test_original_ugins_insight_uses_greatest_mana_value_then_draws_and_replays",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Ugin\u2019s Insight resolves greatest controlled permanent mana value before private Scry, then draws three through trusted offered casting, pending save/load and exact replay."
     },
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
@@ -98658,7 +99445,13 @@
         "701.34",
         "702.29",
         "702.37e",
-        "702.168b"
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
       ],
       "supported_profiles": [
         "traditional",
@@ -98689,7 +99482,13 @@
         "701.34",
         "702.29",
         "702.37e",
-        "702.168b"
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
       ],
       "supported_profiles": [
         "traditional",
@@ -98720,7 +99519,13 @@
         "701.34",
         "702.29",
         "702.37e",
-        "702.168b"
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
       ],
       "supported_profiles": [
         "traditional",
@@ -98728,6 +99533,43 @@
         "commander_review"
       ],
       "applicability_note": "Detect the source-self face-up trigger only after the special action and Megamorph counter placement commit."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_variable_library_counts.VariableLibraryCountActionTests.test_actual_library_actions_trigger_only_current_controller_observers_after_completion",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Public resolution count feeds canonical private Scry/Surveil partitions; zero has no event, positive empty completes, and observer predicates retain controller/global scope. Original-card action and pre-action replay witnesses are distinct from compiler/model diagnostics."
     },
     {
       "capability_id": "trigger.event.normalized_public_action",
@@ -98751,7 +99593,13 @@
         "701.34",
         "702.29",
         "702.37e",
-        "702.168b"
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
       ],
       "supported_profiles": [
         "traditional",
@@ -98782,7 +99630,13 @@
         "701.34",
         "702.29",
         "702.37e",
-        "702.168b"
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
       ],
       "supported_profiles": [
         "traditional",
@@ -98790,6 +99644,43 @@
         "commander_review"
       ],
       "applicability_note": "Place the source-self occurrence through ordinary four-player trigger and priority handling."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_variable_library_counts.VariableLibraryCountActionTests.test_actual_library_actions_trigger_only_current_controller_observers_after_completion",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Public resolution count feeds canonical private Scry/Surveil partitions; zero has no event, positive empty completes, and observer predicates retain controller/global scope. Original-card action and pre-action replay witnesses are distinct from compiler/model diagnostics."
     },
     {
       "capability_id": "trigger.event.normalized_public_action",
@@ -98813,7 +99704,13 @@
         "701.34",
         "702.29",
         "702.37e",
-        "702.168b"
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
       ],
       "supported_profiles": [
         "traditional",
@@ -98844,7 +99741,13 @@
         "701.34",
         "702.29",
         "702.37e",
-        "702.168b"
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
       ],
       "supported_profiles": [
         "traditional",
@@ -98875,7 +99778,13 @@
         "701.34",
         "702.29",
         "702.37e",
-        "702.168b"
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
       ],
       "supported_profiles": [
         "traditional",
@@ -98906,7 +99815,13 @@
         "701.34",
         "702.29",
         "702.37e",
-        "702.168b"
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
       ],
       "supported_profiles": [
         "traditional",
@@ -98937,7 +99852,13 @@
         "701.34",
         "702.29",
         "702.37e",
-        "702.168b"
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
       ],
       "supported_profiles": [
         "traditional",
@@ -98968,7 +99889,13 @@
         "701.34",
         "702.29",
         "702.37e",
-        "702.168b"
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
       ],
       "supported_profiles": [
         "traditional",
@@ -98999,7 +99926,13 @@
         "701.34",
         "702.29",
         "702.37e",
-        "702.168b"
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
       ],
       "supported_profiles": [
         "traditional",
@@ -99007,6 +99940,43 @@
         "commander_review"
       ],
       "applicability_note": "Require an exact source-self turned-face-up declaration and immutable source-reference predicate."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "negative",
+      "test_id": "tests.test_variable_library_counts.VariableLibraryCountCompilerTests.test_library_action_observer_predicates_keep_controller_and_global_scope",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Public resolution count feeds canonical private Scry/Surveil partitions; zero has no event, positive empty completes, and observer predicates retain controller/global scope. Original-card action and pre-action replay witnesses are distinct from compiler/model diagnostics."
     },
     {
       "capability_id": "trigger.event.normalized_public_action",
@@ -99030,7 +100000,13 @@
         "701.34",
         "702.29",
         "702.37e",
-        "702.168b"
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
       ],
       "supported_profiles": [
         "traditional",
@@ -99061,7 +100037,13 @@
         "701.34",
         "702.29",
         "702.37e",
-        "702.168b"
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
       ],
       "supported_profiles": [
         "traditional",
@@ -99092,7 +100074,13 @@
         "701.34",
         "702.29",
         "702.37e",
-        "702.168b"
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
       ],
       "supported_profiles": [
         "traditional",
@@ -99123,7 +100111,13 @@
         "701.34",
         "702.29",
         "702.37e",
-        "702.168b"
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
       ],
       "supported_profiles": [
         "traditional",
@@ -99154,7 +100148,13 @@
         "701.34",
         "702.29",
         "702.37e",
-        "702.168b"
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
       ],
       "supported_profiles": [
         "traditional",
@@ -99185,7 +100185,13 @@
         "701.34",
         "702.29",
         "702.37e",
-        "702.168b"
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
       ],
       "supported_profiles": [
         "traditional",
@@ -99193,6 +100199,43 @@
         "commander_review"
       ],
       "applicability_note": "Compile the source-self face-up grammar to one permanent.turned_face_up event and card-reference predicate."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "positive",
+      "test_id": "tests.test_variable_library_counts.VariableLibraryCountActionTests.test_original_library_observers_complete_counter_and_temporary_keyword_results",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Public resolution count feeds canonical private Scry/Surveil partitions; zero has no event, positive empty completes, and observer predicates retain controller/global scope. Original-card action and pre-action replay witnesses are distinct from compiler/model diagnostics."
     },
     {
       "capability_id": "trigger.event.normalized_public_action",
@@ -99216,7 +100259,13 @@
         "701.34",
         "702.29",
         "702.37e",
-        "702.168b"
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
       ],
       "supported_profiles": [
         "traditional",
@@ -99247,7 +100296,13 @@
         "701.34",
         "702.29",
         "702.37e",
-        "702.168b"
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
       ],
       "supported_profiles": [
         "traditional",
@@ -99278,7 +100333,13 @@
         "701.34",
         "702.29",
         "702.37e",
-        "702.168b"
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
       ],
       "supported_profiles": [
         "traditional",
@@ -99309,7 +100370,13 @@
         "701.34",
         "702.29",
         "702.37e",
-        "702.168b"
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
       ],
       "supported_profiles": [
         "traditional",
@@ -99340,7 +100407,13 @@
         "701.34",
         "702.29",
         "702.37e",
-        "702.168b"
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
       ],
       "supported_profiles": [
         "traditional",
@@ -99348,6 +100421,43 @@
         "commander_review"
       ],
       "applicability_note": "Dispatch only public revealed source facts after the face-down identity becomes public to every seat."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_variable_library_counts.VariableLibraryCountActionTests.test_real_variable_scry_and_surveil_private_partition_pending_reload_and_replay",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Public resolution count feeds canonical private Scry/Surveil partitions; zero has no event, positive empty completes, and observer predicates retain controller/global scope. Original-card action and pre-action replay witnesses are distinct from compiler/model diagnostics."
     },
     {
       "capability_id": "trigger.event.normalized_public_action",
@@ -99371,7 +100481,13 @@
         "701.34",
         "702.29",
         "702.37e",
-        "702.168b"
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
       ],
       "supported_profiles": [
         "traditional",
@@ -99402,7 +100518,13 @@
         "701.34",
         "702.29",
         "702.37e",
-        "702.168b"
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
       ],
       "supported_profiles": [
         "traditional",
@@ -99433,7 +100555,13 @@
         "701.34",
         "702.29",
         "702.37e",
-        "702.168b"
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
       ],
       "supported_profiles": [
         "traditional",
@@ -99464,7 +100592,13 @@
         "701.34",
         "702.29",
         "702.37e",
-        "702.168b"
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
       ],
       "supported_profiles": [
         "traditional",
@@ -99472,6 +100606,43 @@
         "commander_review"
       ],
       "applicability_note": "Replay the committed source-pinned occurrence, trigger placement, effect resolution, and final authoritative hash."
+    },
+    {
+      "capability_id": "trigger.event.normalized_public_action",
+      "evidence_class": "replay",
+      "test_id": "tests.test_variable_library_counts.VariableLibraryCountActionTests.test_original_library_observers_complete_counter_and_temporary_keyword_results",
+      "official_rule_ids": [
+        "116.2b",
+        "508.1",
+        "508.1m",
+        "508.3c",
+        "508.3d",
+        "509.1",
+        "509.1h",
+        "602.2",
+        "603.2",
+        "603.2e",
+        "603.3",
+        "701.8a",
+        "701.26a",
+        "701.26b",
+        "701.34",
+        "702.29",
+        "702.37e",
+        "702.168b",
+        "701.22a",
+        "701.22b",
+        "701.22d",
+        "701.25a",
+        "701.25c",
+        "701.25d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Public resolution count feeds canonical private Scry/Surveil partitions; zero has no event, positive empty completes, and observer predicates retain controller/global scope. Original-card action and pre-action replay witnesses are distinct from compiler/model diagnostics."
     },
     {
       "capability_id": "trigger.event.normalized_self_attack",
@@ -119987,5 +121158,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "d90d66f4821af222629d73c3443c4951f524c648004da234a1f22513ddb54286"
+  "fingerprint": "0e53f622f7e20dce91094ef071df2b2f6b1ebaccb521a9490aa2ff9ac6356c11"
 }

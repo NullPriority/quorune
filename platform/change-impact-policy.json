@@ -3804,6 +3804,28 @@
         "test_fixed_affected_player_sacrifices",
         "test_permanent_additional_costs"
       ]
+    },
+    {
+      "id": "library-count-and-completion-contract",
+      "patterns": [
+        "quorune/compiler/declared_effect_amounts.py",
+        "quorune/compiler/public_query_effect_amounts.py",
+        "quorune/compiler/fixed_public_action_event_bindings.py",
+        "quorune/rules/library_scry.py",
+        "quorune/semantic_choices/scry.py",
+        "quorune/semantic_choices/surveil.py",
+        "tests/fixtures/variable-library-count-cards.json"
+      ],
+      "test_modules": [
+        "test_variable_library_counts",
+        "test_declared_effect_amounts",
+        "test_public_query_effect_amounts",
+        "test_scry_rules",
+        "test_surveil_rules",
+        "test_fixed_counter_event_triggers",
+        "test_card_program_trust",
+        "test_game_record_v3"
+      ]
     }
   ],
   "symbol_rules": [

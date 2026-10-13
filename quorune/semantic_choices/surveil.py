@@ -83,9 +83,14 @@ class SurveilChoiceHandler:
                 "Fixed Surveil can affect only the resolving controller"
             )
         count = effect["count"]
-        if type(count) is not int or count <= 0:
+        if type(count) is not int or count < 0:
             raise SemanticChoiceError(
-                "Surveil count must be a positive fixed integer"
+                "Surveil count must be an exact nonnegative integer"
+            )
+        if count == 0:
+            return SemanticChoicePreparation(
+                request=None, continuation_effect=FrozenMap(effect),
+                auto_continue=AutoContinue(reason="Surveil 0 creates no Surveil event"),
             )
         refs = context.query.library_refs(context.actor, top_first=True)[:count]
         if not refs:

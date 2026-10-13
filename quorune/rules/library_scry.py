@@ -39,7 +39,9 @@ class ScryArrangement:
     def __post_init__(self) -> None:
         looked = _refs(self.looked_top_first, field="looked_top_first")
         if not looked:
-            raise ScryError("A Scry arrangement requires looked-at cards")
+            if self.top_top_first or self.bottom_bottom_first or self.legacy_subset_response:
+                raise ScryError("Empty Scry cannot contain partitions or legacy subset ordering")
+            return
         top = _refs(self.top_top_first, field="top_top_first")
         bottom = _refs(
             self.bottom_bottom_first,
@@ -97,6 +99,9 @@ class ScryArrangement:
 
 
 class ScryCommitHost(Protocol):
+    def _dispatch_semantic_event(
+        self, event: str, context: Mapping[str, Any], **kwargs: Any
+    ) -> Any: ...
     state: Any
 
     def _resolve_object(
@@ -125,10 +130,26 @@ def commit_scry_arrangement(
     player: str,
     arrangement: ScryArrangement,
     reason: str,
+    requested_count: int | None = None,
 ) -> tuple[str, ...]:
     """Atomically apply one previously prepared Scry arrangement."""
 
     library = host.state.players[player].zones[_LIBRARY_ZONE]
+    count = len(arrangement.looked_top_first) if requested_count is None else requested_count
+    if type(count) is not int or count <= 0 or count < len(arrangement.looked_top_first):
+        raise ScryError("Scry completion requires its positive requested count")
+    if not arrangement.looked_top_first:
+        if library:
+            raise ScryError("Empty Scry arrangement requires an empty library")
+        host._log(
+            actor, "library.scry", f"{actor} completed Scry without looking at cards.",
+            {"count": 0, "requested_count": count, "bottom_count": 0},
+            visibility=[actor, "analyst"], importance=1, changed_objects=[],
+        )
+        host._dispatch_semantic_event(
+            "player.scried", {"player": player, "count": count, "looked_count": 0}
+        )
+        return ()
     looked_ids = tuple(
         host._resolve_object(
             actor,
@@ -168,6 +189,9 @@ def commit_scry_arrangement(
         visibility=[actor, "analyst"],
         importance=1,
         changed_objects=changed_ids,
+    )
+    host._dispatch_semantic_event(
+        "player.scried", {"player": player, "count": count, "looked_count": len(looked_ids)}
     )
     return arrangement.looked_top_first
 
