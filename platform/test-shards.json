@@ -280,6 +280,7 @@
     "functional-09": [
       "test_aerial_blocking",
       "test_color_set_mana_abilities",
+      "test_controller_sacrifices",
       "test_damage_replacement_model",
       "test_draw_coordinator_iteration",
       "test_draw_reveal_as_drawn",

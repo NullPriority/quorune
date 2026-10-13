@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "dca63221a1cc5657008c2b9aea478a2eb46703a57498193aa7a343eafc4510df",
-  "declaration_source_fingerprint": "3fe599ceeae262d945391319a406e9f17c39031efee7a5dd0bfe034593d111c2",
+  "registry_fingerprint": "28ea847855b31c916beb294cfcea681c207bc4320de4887ba8bf4f20402597a0",
+  "declaration_source_fingerprint": "992c6fa06d05614dbb4d0d967d0cfde13cfc0aca97a1c6f69787c0271f81b4e6",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -18894,6 +18894,101 @@
     {
       "capability_id": "choice.affected_player.fixed_sacrifice",
       "evidence_class": "interaction",
+      "test_id": "tests.test_controller_sacrifices.ControllerSacrificeActionTests.test_original_controller_sacrifice_keeps_choice_across_destination_replacement",
+      "official_rule_ids": [
+        "101.4",
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "701.21",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Perilous Research completes private draws, then a controller-only sacrifice choice. Competing original Dauthi destination replacements suspend before movement, preserve the selected incarnation, reject wrong principals, and complete exact pending reload and pre-cast replay."
+    },
+    {
+      "capability_id": "choice.affected_player.fixed_sacrifice",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_controller_sacrifices.ControllerSacrificeActionTests.test_original_perilous_research_draws_before_controller_sacrifice_choice",
+      "official_rule_ids": [
+        "101.4",
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "701.21",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Controller-only mandatory fixed sacrifice reuses the canonical affected-player choice. Fixed creature subtypes query current battlefield creatures; native cast/entry/upkeep and response witnesses cover source eligibility, opponent exclusion, empty sets, draw order, stale rollback, pending reload and replay."
+    },
+    {
+      "capability_id": "choice.affected_player.fixed_sacrifice",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_controller_sacrifices.ControllerSacrificeActionTests.test_original_puppet_upkeep_uses_current_creature_subtype_and_empty_sets",
+      "official_rule_ids": [
+        "101.4",
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "701.21",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Controller-only mandatory fixed sacrifice reuses the canonical affected-player choice. Fixed creature subtypes query current battlefield creatures; native cast/entry/upkeep and response witnesses cover source eligibility, opponent exclusion, empty sets, draw order, stale rollback, pending reload and replay."
+    },
+    {
+      "capability_id": "choice.affected_player.fixed_sacrifice",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_controller_sacrifices.ControllerSacrificeActionTests.test_original_upkeep_sacrifice_is_current_controller_scoped_and_replays",
+      "official_rule_ids": [
+        "101.4",
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "701.21",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Controller-only mandatory fixed sacrifice reuses the canonical affected-player choice. Fixed creature subtypes query current battlefield creatures; native cast/entry/upkeep and response witnesses cover source eligibility, opponent exclusion, empty sets, draw order, stale rollback, pending reload and replay."
+    },
+    {
+      "capability_id": "choice.affected_player.fixed_sacrifice",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_controller_sacrifices.ControllerSacrificeActionTests.test_subtype_sacrifice_uses_current_type_after_response_and_rejects_stale_choice",
+      "official_rule_ids": [
+        "101.4",
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "701.21",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Controller-only mandatory fixed sacrifice reuses the canonical affected-player choice. Fixed creature subtypes query current battlefield creatures; native cast/entry/upkeep and response witnesses cover source eligibility, opponent exclusion, empty sets, draw order, stale rollback, pending reload and replay."
+    },
+    {
+      "capability_id": "choice.affected_player.fixed_sacrifice",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_affected_player_sacrifices.FixedAffectedPlayerSacrificeRuntimeTests.test_affected_player_sacrifice_uses_zone_replacement_and_replays",
       "official_rule_ids": [
         "101.4",
@@ -18909,6 +19004,44 @@
         "commander_review"
       ],
       "applicability_note": "Collect three opponent choices, suspend their simultaneous sacrifice for the canonical destination-replacement tree, and commit the replaced exile results once."
+    },
+    {
+      "capability_id": "choice.affected_player.fixed_sacrifice",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_controller_sacrifices.ControllerSacrificeActionTests.test_original_entry_sacrifice_can_choose_the_source_or_another_controlled_creature",
+      "official_rule_ids": [
+        "101.4",
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "701.21",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Controller-only mandatory fixed sacrifice reuses the canonical affected-player choice. Fixed creature subtypes query current battlefield creatures; native cast/entry/upkeep and response witnesses cover source eligibility, opponent exclusion, empty sets, draw order, stale rollback, pending reload and replay."
+    },
+    {
+      "capability_id": "choice.affected_player.fixed_sacrifice",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_controller_sacrifices.ControllerSacrificeActionTests.test_original_puppet_upkeep_uses_current_creature_subtype_and_empty_sets",
+      "official_rule_ids": [
+        "101.4",
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "701.21",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Controller-only mandatory fixed sacrifice reuses the canonical affected-player choice. Fixed creature subtypes query current battlefield creatures; native cast/entry/upkeep and response witnesses cover source eligibility, opponent exclusion, empty sets, draw order, stale rollback, pending reload and replay."
     },
     {
       "capability_id": "choice.affected_player.fixed_sacrifice",
@@ -18951,6 +19084,63 @@
     {
       "capability_id": "choice.affected_player.fixed_sacrifice",
       "evidence_class": "negative",
+      "test_id": "tests.test_controller_sacrifices.ControllerSacrificeActionTests.test_original_controller_sacrifice_keeps_choice_across_destination_replacement",
+      "official_rule_ids": [
+        "101.4",
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "701.21",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Perilous Research completes private draws, then a controller-only sacrifice choice. Competing original Dauthi destination replacements suspend before movement, preserve the selected incarnation, reject wrong principals, and complete exact pending reload and pre-cast replay."
+    },
+    {
+      "capability_id": "choice.affected_player.fixed_sacrifice",
+      "evidence_class": "negative",
+      "test_id": "tests.test_controller_sacrifices.ControllerSacrificeActionTests.test_subtype_sacrifice_uses_current_type_after_response_and_rejects_stale_choice",
+      "official_rule_ids": [
+        "101.4",
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "701.21",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Controller-only mandatory fixed sacrifice reuses the canonical affected-player choice. Fixed creature subtypes query current battlefield creatures; native cast/entry/upkeep and response witnesses cover source eligibility, opponent exclusion, empty sets, draw order, stale rollback, pending reload and replay."
+    },
+    {
+      "capability_id": "choice.affected_player.fixed_sacrifice",
+      "evidence_class": "negative",
+      "test_id": "tests.test_controller_sacrifices.ControllerSacrificeCompilerTests.test_mandatory_controller_sacrifice_uses_affected_player_choice",
+      "official_rule_ids": [
+        "101.4",
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "701.21",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Controller-only mandatory fixed sacrifice reuses the canonical affected-player choice. Fixed creature subtypes query current battlefield creatures; native cast/entry/upkeep and response witnesses cover source eligibility, opponent exclusion, empty sets, draw order, stale rollback, pending reload and replay."
+    },
+    {
+      "capability_id": "choice.affected_player.fixed_sacrifice",
+      "evidence_class": "negative",
       "test_id": "tests.test_fixed_affected_player_sacrifices.FixedAffectedPlayerSacrificeCompilerTests.test_unsupported_sacrifice_choices_and_shape_mutations_fail_closed",
       "official_rule_ids": [
         "101.4",
@@ -18966,6 +19156,44 @@
         "commander_review"
       ],
       "applicability_note": "Reject variable, all, greatest-value, combat-state, optional, malformed predicate, changed actor, changed continuation, and unsupported player-relation shapes."
+    },
+    {
+      "capability_id": "choice.affected_player.fixed_sacrifice",
+      "evidence_class": "positive",
+      "test_id": "tests.test_controller_sacrifices.ControllerSacrificeActionTests.test_original_entry_sacrifice_can_choose_the_source_or_another_controlled_creature",
+      "official_rule_ids": [
+        "101.4",
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "701.21",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Controller-only mandatory fixed sacrifice reuses the canonical affected-player choice. Fixed creature subtypes query current battlefield creatures; native cast/entry/upkeep and response witnesses cover source eligibility, opponent exclusion, empty sets, draw order, stale rollback, pending reload and replay."
+    },
+    {
+      "capability_id": "choice.affected_player.fixed_sacrifice",
+      "evidence_class": "positive",
+      "test_id": "tests.test_controller_sacrifices.ControllerSacrificeCompilerTests.test_mandatory_controller_sacrifice_uses_affected_player_choice",
+      "official_rule_ids": [
+        "101.4",
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "701.21",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Controller-only mandatory fixed sacrifice reuses the canonical affected-player choice. Fixed creature subtypes query current battlefield creatures; native cast/entry/upkeep and response witnesses cover source eligibility, opponent exclusion, empty sets, draw order, stale rollback, pending reload and replay."
     },
     {
       "capability_id": "choice.affected_player.fixed_sacrifice",
@@ -18989,6 +19217,25 @@
     {
       "capability_id": "choice.affected_player.fixed_sacrifice",
       "evidence_class": "privacy",
+      "test_id": "tests.test_controller_sacrifices.ControllerSacrificeActionTests.test_original_perilous_research_draws_before_controller_sacrifice_choice",
+      "official_rule_ids": [
+        "101.4",
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "701.21",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Controller-only mandatory fixed sacrifice reuses the canonical affected-player choice. Fixed creature subtypes query current battlefield creatures; native cast/entry/upkeep and response witnesses cover source eligibility, opponent exclusion, empty sets, draw order, stale rollback, pending reload and replay."
+    },
+    {
+      "capability_id": "choice.affected_player.fixed_sacrifice",
+      "evidence_class": "privacy",
       "test_id": "tests.test_fixed_affected_player_sacrifices.FixedAffectedPlayerSacrificeRuntimeTests.test_each_player_sacrifices_in_apnap_order_and_commits_simultaneously",
       "official_rule_ids": [
         "101.4",
@@ -19004,6 +19251,101 @@
         "commander_review"
       ],
       "applicability_note": "Project each public sacrifice task only to its current chooser and expose public refs without physical object identities."
+    },
+    {
+      "capability_id": "choice.affected_player.fixed_sacrifice",
+      "evidence_class": "replay",
+      "test_id": "tests.test_controller_sacrifices.ControllerSacrificeActionTests.test_original_controller_sacrifice_keeps_choice_across_destination_replacement",
+      "official_rule_ids": [
+        "101.4",
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "701.21",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Perilous Research completes private draws, then a controller-only sacrifice choice. Competing original Dauthi destination replacements suspend before movement, preserve the selected incarnation, reject wrong principals, and complete exact pending reload and pre-cast replay."
+    },
+    {
+      "capability_id": "choice.affected_player.fixed_sacrifice",
+      "evidence_class": "replay",
+      "test_id": "tests.test_controller_sacrifices.ControllerSacrificeActionTests.test_original_entry_sacrifice_can_choose_the_source_or_another_controlled_creature",
+      "official_rule_ids": [
+        "101.4",
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "701.21",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Controller-only mandatory fixed sacrifice reuses the canonical affected-player choice. Fixed creature subtypes query current battlefield creatures; native cast/entry/upkeep and response witnesses cover source eligibility, opponent exclusion, empty sets, draw order, stale rollback, pending reload and replay."
+    },
+    {
+      "capability_id": "choice.affected_player.fixed_sacrifice",
+      "evidence_class": "replay",
+      "test_id": "tests.test_controller_sacrifices.ControllerSacrificeActionTests.test_original_perilous_research_draws_before_controller_sacrifice_choice",
+      "official_rule_ids": [
+        "101.4",
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "701.21",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Controller-only mandatory fixed sacrifice reuses the canonical affected-player choice. Fixed creature subtypes query current battlefield creatures; native cast/entry/upkeep and response witnesses cover source eligibility, opponent exclusion, empty sets, draw order, stale rollback, pending reload and replay."
+    },
+    {
+      "capability_id": "choice.affected_player.fixed_sacrifice",
+      "evidence_class": "replay",
+      "test_id": "tests.test_controller_sacrifices.ControllerSacrificeActionTests.test_original_upkeep_sacrifice_is_current_controller_scoped_and_replays",
+      "official_rule_ids": [
+        "101.4",
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "701.21",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Controller-only mandatory fixed sacrifice reuses the canonical affected-player choice. Fixed creature subtypes query current battlefield creatures; native cast/entry/upkeep and response witnesses cover source eligibility, opponent exclusion, empty sets, draw order, stale rollback, pending reload and replay."
+    },
+    {
+      "capability_id": "choice.affected_player.fixed_sacrifice",
+      "evidence_class": "replay",
+      "test_id": "tests.test_controller_sacrifices.ControllerSacrificeActionTests.test_subtype_sacrifice_uses_current_type_after_response_and_rejects_stale_choice",
+      "official_rule_ids": [
+        "101.4",
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "701.21",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Controller-only mandatory fixed sacrifice reuses the canonical affected-player choice. Fixed creature subtypes query current battlefield creatures; native cast/entry/upkeep and response witnesses cover source eligibility, opponent exclusion, empty sets, draw order, stale rollback, pending reload and replay."
     },
     {
       "capability_id": "choice.affected_player.fixed_sacrifice",
@@ -121742,5 +122084,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "7e989f1d508acdf3345fc9f8b45b47715e96fb0d991d18884a4809870fba3eb6"
+  "fingerprint": "30cb41f9fd7af45c157cb76c85b71319c28a58b7801a5126ccfbf7b678283d86"
 }

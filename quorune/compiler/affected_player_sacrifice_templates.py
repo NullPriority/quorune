@@ -10,6 +10,7 @@ import re
 from typing import Any, Mapping
 
 from ..object_predicate import ObjectQuerySpec
+from .creature_subtypes import canonical_creature_subtype_surface
 from ..util import stable_json
 
 
@@ -22,13 +23,14 @@ FIXED_AFFECTED_PLAYER_SACRIFICE_CAPABILITY = (
 _SACRIFICE_MECHANIC = "sacrifice"
 _TARGETS_MECHANIC = "cr-115-targets"
 _INSTRUCTION = re.compile(
-    r"^(?P<subject>target player|target opponent|each player|each opponent) "
-    r"sacrifices (?P<count>a|an|one|two) (?P<object>.+?)\.?$",
+    r"^(?:(?P<subject>target player|target opponent|each player|each opponent|you) )?"
+    r"(?P<verb>sacrifices?) (?P<count>a|an|one|two) (?P<object>.+?)\.?$",
     re.IGNORECASE,
 )
 
 
 class AffectedPlayerSacrificeSubject(str, Enum):
+    CONTROLLER = "controller"
     TARGET_PLAYER = "target_player"
     TARGET_OPPONENT = "target_opponent"
     EACH_PLAYER = "each_player"
@@ -50,6 +52,7 @@ class AffectedPlayerSacrificeSubject(str, Enum):
 
 
 _SUBJECTS = {
+    "you": AffectedPlayerSacrificeSubject.CONTROLLER,
     "target player": AffectedPlayerSacrificeSubject.TARGET_PLAYER,
     "target opponent": AffectedPlayerSacrificeSubject.TARGET_OPPONENT,
     "each player": AffectedPlayerSacrificeSubject.EACH_PLAYER,
@@ -73,7 +76,7 @@ def _predicate(phrase: str, *, count: int) -> ObjectQuerySpec | None:
             "lands": "land",
             "permanents": "permanent",
             "planeswalkers": "planeswalker",
-        }.get(normalized, "")
+        }.get(normalized, normalized if canonical_creature_subtype_surface(normalized) is not None else "")
     if not normalized:
         return None
     if normalized == "permanent":
@@ -122,6 +125,9 @@ def _predicate(phrase: str, *, count: int) -> ObjectQuerySpec | None:
             types_all=("creature",),
             keywords_all=("flying",),
         )
+    subtype = canonical_creature_subtype_surface(normalized)
+    if subtype is not None:
+        return ObjectQuerySpec(zones=("battlefield",), types_all=("creature",), subtypes_all=(subtype,))
     return None
 
 
@@ -155,7 +161,13 @@ def fixed_affected_player_sacrifice_predicate_is_closed(
         predicate = ObjectQuerySpec.from_dict(value)
     except (TypeError, ValueError):
         return False
-    return stable_json(predicate.to_dict()) in _CLOSED_PREDICATES
+    if stable_json(predicate.to_dict()) in _CLOSED_PREDICATES:
+        return True
+    if len(predicate.subtypes_all) != 1:
+        return False
+    subtype = canonical_creature_subtype_surface(predicate.subtypes_all[0])
+    return subtype is not None and predicate == ObjectQuerySpec(
+        zones=("battlefield",), types_all=("creature",), subtypes_all=(subtype,))
 
 
 @dataclass(frozen=True, slots=True)
@@ -167,7 +179,7 @@ class FixedAffectedPlayerSacrificeTemplate:
     def __post_init__(self) -> None:
         if not isinstance(self.subject, AffectedPlayerSacrificeSubject):
             raise ValueError("Affected-player sacrifice subject is malformed")
-        if self.count not in {1, 2}:
+        if type(self.count) is not int or self.count not in {1, 2}:
             raise ValueError("Affected-player sacrifice count is unsupported")
         if not fixed_affected_player_sacrifice_predicate_is_closed(
             self.predicate.to_dict()
@@ -187,6 +199,7 @@ class FixedAffectedPlayerSacrificeTemplate:
     @property
     def effects(self) -> tuple[Mapping[str, Any], ...]:
         players: str | list[str] = {
+            AffectedPlayerSacrificeSubject.CONTROLLER: ["$controller"],
             AffectedPlayerSacrificeSubject.EACH_PLAYER: "all",
             AffectedPlayerSacrificeSubject.EACH_OPPONENT: "opponents",
         }.get(self.subject, ["$target.0"])
@@ -250,13 +263,16 @@ def fixed_affected_player_sacrifice_effect_template(
     match = _INSTRUCTION.fullmatch(normalized)
     if match is None:
         return None
+    subject = (match.group("subject") or "you").casefold()
+    if (subject == "you") != (match.group("verb").casefold() == "sacrifice"):
+        return None
     count_word = match.group("count").casefold()
     count = 2 if count_word == "two" else 1
     predicate = _predicate(match.group("object"), count=count)
     if predicate is None:
         return None
     return FixedAffectedPlayerSacrificeTemplate(
-        subject=_SUBJECTS[match.group("subject").casefold()],
+        subject=_SUBJECTS[subject],
         count=count,
         predicate=predicate,
     )

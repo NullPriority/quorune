@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Compile mandatory controller sacrifices and fixed creature subtype choices
+  through the existing affected-player selection and simultaneous zone owner.
+
 - Compile sole “the other” library remainders through the existing private
   selection partition, including short-library and pending replay behavior.
 

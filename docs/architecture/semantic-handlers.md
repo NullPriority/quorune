@@ -297,6 +297,16 @@ Replacement continuations seal private membership, including logical object
 identity, and reject a changed hand before resuming. This snapshot is not
 published to another principal.
 
+Mandatory “sacrifice a permanent” instructions for the resolving controller
+reuse the same `choose_cards_apnap` owner as fixed player-targeted sacrifices.
+The controller chooses only current eligible permanents they control, including
+the ability source when the instruction permits it. Fixed creature subtype
+predicates inspect current creature types at choice preparation and again at
+commit. Empty sets perform no sacrifice, short sets sacrifice their available
+members, and destination replacements retain the sealed choice before the
+remaining instructions resume. Sacrifice uses its own transition cause and
+does not consume destruction or regeneration effects.
+
 The separate `discard_random_cards` instruction samples a fixed one-to-four
 card subset of each represented current hand without a client selection choice.
 Each player's complete hand is validated before sampling; empty and short hands
