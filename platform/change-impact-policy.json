@@ -1415,6 +1415,7 @@
     {
       "id": "typed-query-self-characteristic-contract",
       "patterns": [
+        "tests/fixtures/self-collection-quantity-cards.json",
         "quorune/compiler/collection_quantity_templates.py",
         "quorune/public_quantity_reductions.py",
         "tests/fixtures/public-collection-quantity-cards.json",

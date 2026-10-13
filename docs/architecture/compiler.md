@@ -9,6 +9,15 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+Self stat modifiers can reuse complete collection values through the existing
+query-characteristic owner. Explicit where-X forms carry a signed coefficient
+for each affected stat. A printed “for each … and each …” form carries two
+independent quantities, while an artifact-or-enchantment card predicate counts
+one card once. All represented queries read the existing layer-5 snapshot;
+the modifier updates in layer 7c as zone membership and source control change.
+Hidden characteristic predicates, linked result values and unrepresented
+collections remain residuals.
+
 Fixed Goad instructions reuse the canonical designation and combat requirement
 owners. Historical single-target descriptors retain their payloads. Expanded
 single creature targets and closed public creature sets use an explicit version

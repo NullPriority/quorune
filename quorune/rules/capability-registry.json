@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 233,
+  "registry_version": 234,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -5948,7 +5948,7 @@
     },
     {
       "id": "continuous.characteristics.query_count_modifier",
-      "version": 3,
+      "version": 4,
       "official_rules": [
         "109.2",
         "109.2a",
@@ -5961,22 +5961,88 @@
         "613.1g",
         "613.4b"
       ],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
-        "summary": "Apply copied typed self modifiers in layers 6 and 7c from closed layer-5 public quantities, including explicit distinct values, mana-value reductions, colored mana symbols, fixed nonnegative arithmetic and two leaf sums. Bare creature-subtype queries include Kindred objects; explicit Creature card-type predicates remain separate.",
-        "inputs": ["active phased-in battlefield source", "copied typed query-characteristic fragment", "controller, opponent, or global public zone relation", "layer-5 object types, subtypes, colors, token state, source attachments, source counters, or raw controller hand size", "per-object or fixed minimum calculation", "fixed power/toughness amount, supported fixed keywords, or both"],
-        "outputs": ["controller-correct and multiplayer-correct live quantity", "cycle-safe layer-5 characteristic predicate", "ordinary layer-6 keyword and layer-7c power/toughness effects", "copiable executable fragment", "hidden-identity-free hand count"],
-        "exclusions": ["Devotion and its modifiers, chosen, named, modified, shared-type, top-library, hidden-identity, inverted existence, and ability-presence counts", "dynamic coefficients, base-setting, type, color, two-object comparison, modal, attached-subject, and quoted-rule carriers outside their existing owners", "negative or open arithmetic, nested sums, power/toughness aggregates, historical-event, combat-state, life, emblem, dungeon, party, and unsupported keyword conditions", "ability-addition or ability-removal applicability outside the shared layer-6 ability-presence query"]
+        "summary": "Apply copied typed self modifiers in layers 6 and 7c from closed layer-5 public quantities, including explicit distinct values, mana-value reductions, colored mana symbols, fixed nonnegative arithmetic and two leaf sums. Bare creature-subtype queries include Kindred objects; explicit Creature card-type predicates remain separate. Existing explicit collection values also lower complete where-X self modifiers, union card predicates and printed each-collection sums without counting a dual-type card twice in one union.",
+        "inputs": [
+          "active phased-in battlefield source",
+          "copied typed query-characteristic fragment",
+          "controller, opponent, or global public zone relation",
+          "layer-5 object types, subtypes, colors, token state, source attachments, source counters, or raw controller hand size",
+          "per-object or fixed minimum calculation",
+          "fixed power/toughness amount, supported fixed keywords, or both"
+        ],
+        "outputs": [
+          "controller-correct and multiplayer-correct live quantity",
+          "cycle-safe layer-5 characteristic predicate",
+          "ordinary layer-6 keyword and layer-7c power/toughness effects",
+          "copiable executable fragment",
+          "hidden-identity-free hand count"
+        ],
+        "exclusions": [
+          "Devotion and its modifiers, chosen, named, modified, shared-type, top-library, hidden-identity, inverted existence, and ability-presence counts",
+          "dynamic coefficients, base-setting, type, color, two-object comparison, modal, attached-subject, and quoted-rule carriers outside their existing owners",
+          "negative or open arithmetic, nested sums, power/toughness aggregates, historical-event, combat-state, life, emblem, dungeon, party, and unsupported keyword conditions",
+          "ability-addition or ability-removal applicability outside the shared layer-6 ability-presence query"
+        ]
       },
       "dependencies": [],
-      "implementation_components": ["quorune.compiler.query_characteristic_templates.query_self_characteristics_handler", "quorune.characteristic_fragments.QueryCharacteristicModifierSpec", "quorune.semantic_runtime.ability_fragments.QueryCharacteristicModifierAbilityFragmentHandler", "quorune.dynamic_characteristics.query_characteristic_count", "quorune.characteristic_evaluation.evaluate_card_characteristics", "quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin", "quorune.continuous_effects.evaluate_continuous_effects", "quorune.public_quantity_reductions.reduce_public_quantity", "quorune.compiler.collection_quantity_templates.collection_quantity", "quorune.compiler.collection_quantity_templates.fixed_quantity_arithmetic"],
-      "positive_tests": ["test_query_characteristic_grammar_compiles_closed_fragments", "test_query_gated_prefix_and_keyword_only_grammar_is_closed", "test_query_quantities_recompute_controller_correct_characteristics"],
-      "negative_tests": ["test_query_characteristic_grammar_keeps_ambiguous_families_residual", "test_query_characteristic_descriptors_fail_closed_without_behavior", "test_query_gated_grammar_rejects_nonquery_and_open_modifiers"],
-      "interaction_tests": ["test_query_counts_use_layer_five_types_and_compose_in_layer_seven_c", "test_query_fragment_copy_uses_current_source_and_controller", "test_query_ability_removal_sibling_withholds_runtime_admission", "test_query_gate_recomputes_layer_six_and_seven_characteristics"],
-      "multiplayer_tests": ["test_query_quantities_recompute_controller_correct_characteristics"],
-      "privacy_tests": ["test_query_hand_count_projects_and_replays_without_hidden_identity"],
-      "replay_tests": ["test_query_hand_count_projects_and_replays_without_hidden_identity"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "implementation_components": [
+        "quorune.compiler.query_characteristic_templates.query_self_characteristics_handler",
+        "quorune.characteristic_fragments.QueryCharacteristicModifierSpec",
+        "quorune.semantic_runtime.ability_fragments.QueryCharacteristicModifierAbilityFragmentHandler",
+        "quorune.dynamic_characteristics.query_characteristic_count",
+        "quorune.characteristic_evaluation.evaluate_card_characteristics",
+        "quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin",
+        "quorune.continuous_effects.evaluate_continuous_effects",
+        "quorune.public_quantity_reductions.reduce_public_quantity",
+        "quorune.compiler.collection_quantity_templates.collection_quantity",
+        "quorune.compiler.collection_quantity_templates.fixed_quantity_arithmetic",
+        "quorune.compiler.query_characteristic_templates._self_collection_quantity"
+      ],
+      "positive_tests": [
+        "test_query_characteristic_grammar_compiles_closed_fragments",
+        "test_query_gated_prefix_and_keyword_only_grammar_is_closed",
+        "test_query_quantities_recompute_controller_correct_characteristics",
+        "test_self_modifiers_compose_existing_collection_values_without_repeating_dual_type_cards"
+      ],
+      "negative_tests": [
+        "test_query_characteristic_grammar_keeps_ambiguous_families_residual",
+        "test_query_characteristic_descriptors_fail_closed_without_behavior",
+        "test_query_gated_grammar_rejects_nonquery_and_open_modifiers",
+        "test_self_collection_quantity_requires_precise_owner_and_complete_producer"
+      ],
+      "interaction_tests": [
+        "test_query_counts_use_layer_five_types_and_compose_in_layer_seven_c",
+        "test_query_fragment_copy_uses_current_source_and_controller",
+        "test_query_ability_removal_sibling_withholds_runtime_admission",
+        "test_query_gate_recomputes_layer_six_and_seven_characteristics",
+        "test_original_self_collection_stats_track_union_sum_and_maximum_with_real_casts"
+      ],
+      "multiplayer_tests": [
+        "test_query_quantities_recompute_controller_correct_characteristics",
+        "test_original_self_collection_stats_track_union_sum_and_maximum_with_real_casts"
+      ],
+      "privacy_tests": [
+        "test_query_hand_count_projects_and_replays_without_hidden_identity",
+        "test_original_self_collection_stats_track_union_sum_and_maximum_with_real_casts"
+      ],
+      "replay_tests": [
+        "test_query_hand_count_projects_and_replays_without_hidden_identity",
+        "test_original_self_collection_stats_track_union_sum_and_maximum_with_real_casts"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "not_applicable",
       "dependency_fail_closed_rationale": "The fragment consumes a closed typed public quantity through the shared layer-5 characteristic boundary and declares each supported keyword consumer independently.",
       "implementation_mutation_status": "killed",

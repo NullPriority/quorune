@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "e3950168325f605820e093a4704b19114824e7bf3c07239326974fddd35bf4e0",
-  "declaration_source_fingerprint": "012d7bd79ad4ee727ac21af9cea6a5ffbdc65842ca12d0774081a77da8cecb7e",
+  "registry_fingerprint": "ea99d1031e61250de0827b39da5d069daf490e29a13d950cc9b38802a18d5c47",
+  "declaration_source_fingerprint": "f7e0fa3e149ff7fcc51d0491ef327cb498f254ccfe94f01afd1654aa69093824",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -35822,6 +35822,29 @@
     {
       "capability_id": "continuous.characteristics.query_count_modifier",
       "evidence_class": "interaction",
+      "test_id": "tests.test_typed_query_self_characteristics.SelfCollectionQuantityRuntimeTests.test_original_self_collection_stats_track_union_sum_and_maximum_with_real_casts",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed self collection modifiers preserve layer-5 union, sum, maximum and controller quantities with actual original cast/replay evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "interaction",
       "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicCompilerTests.test_query_ability_removal_sibling_withholds_runtime_admission",
       "official_rule_ids": [
         "109.2",
@@ -35960,6 +35983,29 @@
     {
       "capability_id": "continuous.characteristics.query_count_modifier",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_typed_query_self_characteristics.SelfCollectionQuantityRuntimeTests.test_original_self_collection_stats_track_union_sum_and_maximum_with_real_casts",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed self collection modifiers preserve layer-5 union, sum, maximum and controller quantities with actual original cast/replay evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicRuntimeTests.test_query_quantities_recompute_controller_correct_characteristics",
       "official_rule_ids": [
         "109.2",
@@ -36048,6 +36094,29 @@
         "commander_review"
       ],
       "applicability_note": "Kill removal of the typed query-characteristic compiler owner by requiring its exact handler at the source span."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicCompilerTests.test_self_collection_quantity_requires_precise_owner_and_complete_producer",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed self collection modifiers preserve layer-5 union, sum, maximum and controller quantities with actual original cast/replay evidence."
     },
     {
       "capability_id": "continuous.characteristics.query_count_modifier",
@@ -36166,6 +36235,29 @@
     },
     {
       "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "negative",
+      "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicCompilerTests.test_self_collection_quantity_requires_precise_owner_and_complete_producer",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed self collection modifiers preserve layer-5 union, sum, maximum and controller quantities with actual original cast/replay evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
       "evidence_class": "positive",
       "test_id": "tests.test_public_query_effect_amounts.PublicCollectionQuantityActionTests.test_trusted_collection_draw_activation_characteristics_privacy_and_replay",
       "official_rule_ids": [
@@ -36259,6 +36351,29 @@
     {
       "capability_id": "continuous.characteristics.query_count_modifier",
       "evidence_class": "positive",
+      "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicCompilerTests.test_self_modifiers_compose_existing_collection_values_without_repeating_dual_type_cards",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed self collection modifiers preserve layer-5 union, sum, maximum and controller quantities with actual original cast/replay evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "positive",
       "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicRuntimeTests.test_query_quantities_recompute_controller_correct_characteristics",
       "official_rule_ids": [
         "109.2",
@@ -36328,6 +36443,29 @@
     {
       "capability_id": "continuous.characteristics.query_count_modifier",
       "evidence_class": "privacy",
+      "test_id": "tests.test_typed_query_self_characteristics.SelfCollectionQuantityRuntimeTests.test_original_self_collection_stats_track_union_sum_and_maximum_with_real_casts",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed self collection modifiers preserve layer-5 union, sum, maximum and controller quantities with actual original cast/replay evidence."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "privacy",
       "test_id": "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicRuntimeTests.test_query_hand_count_projects_and_replays_without_hidden_identity",
       "official_rule_ids": [
         "109.2",
@@ -36393,6 +36531,29 @@
         "commander_review"
       ],
       "applicability_note": "Original Soulless One is fully admitted and cast through an accepted principal action. Its public battlefield and graveyard quantities include foreign noncreature Zombie Kindreds, producing 2 power on the stack and 3/3 after entry. A non-Zombie creature is excluded. Unauthorized casting rolls back; foreign principals see only hand counts. Pending and final save/load and full pre-cast replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.query_count_modifier",
+      "evidence_class": "replay",
+      "test_id": "tests.test_typed_query_self_characteristics.SelfCollectionQuantityRuntimeTests.test_original_self_collection_stats_track_union_sum_and_maximum_with_real_casts",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "604.1",
+        "611.3a",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete fixed self collection modifiers preserve layer-5 union, sum, maximum and controller quantities with actual original cast/replay evidence."
     },
     {
       "capability_id": "continuous.characteristics.query_count_modifier",
@@ -117959,5 +118120,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "61824c6b38b7604ebb6a26265aaccff66e0d0de3d60d712dc193e7d3579f300d"
+  "fingerprint": "c73fda2327b69180dd4e598d69165fe60e853f695b8ead5a5ea1ca6907dd0d9b"
 }

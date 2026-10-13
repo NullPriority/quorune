@@ -24,7 +24,7 @@ from .collection_quantity_templates import collection_quantity, fixed_quantity_a
 
 
 _TRAILING_REMINDER = re.compile(r"\s+\([^()]*\)\.?$")
-_SELF_QUERY_MARKER = re.compile(r" for each |as long as ", re.IGNORECASE)
+_SELF_QUERY_MARKER = re.compile(r" for each |as long as |, where [XY] is ", re.IGNORECASE)
 _DEFINITION_QUERY_MARKER = re.compile(r" equal to ", re.IGNORECASE)
 _COLOR_SYMBOLS = {
     "black": "B",
@@ -602,6 +602,22 @@ def _query_gated_self_characteristics(
     return (quantity, minimum, 0, 0, abilities)
 
 
+def _self_collection_quantity(phrase, *, source_name, value_form):
+    if value_form:
+        return query_characteristic_value(phrase,source_name=source_name)
+    quantity=query_characteristic_quantity(phrase,source_name=source_name)
+    if quantity is not None:return quantity
+    terms=re.split(r' and each ',phrase,flags=re.IGNORECASE)
+    if len(terms)==2:
+        return query_characteristic_value(' plus '.join('the number of '+term for term in terms),source_name=source_name)
+    return public_card_quantity(query_characteristic_quantity(phrase,source_name=source_name,definition_extensions=True),phrase)
+
+
+def _self_quantity_coefficient(value):
+    if value.endswith('0'):return 0
+    return -1 if value.startswith('-') else 1
+
+
 def query_self_characteristics_handler(
     oracle_line: str,
     *,
@@ -618,26 +634,31 @@ def query_self_characteristics_handler(
     if ability_word is not None:
         text = ability_word.group("body").strip()
     subject = _self_subject_pattern(source_name)
+    where = re.fullmatch(
+        rf'{subject} gets (?P<power>[+-](?:X|0))/(?P<toughness>[+-](?:X|0)), where X is (?P<quantity>.+?)\.?',
+        text, re.IGNORECASE,
+    )
     per_object = re.fullmatch(
         rf"{subject} gets (?P<power>[+-]\d+)/(?P<toughness>[+-]\d+) "
         r"for each (?P<quantity>.+?)(?: and has (?P<abilities>.+))?\.?$",
         text,
         re.IGNORECASE,
     )
-    if per_object is not None:
-        quantity = query_characteristic_quantity(
-            per_object.group("quantity"), source_name=source_name
-        )
+    if per_object is not None or where is not None:
+        matched=where or per_object
+        assert matched is not None
+        phrase=matched['quantity']
+        quantity=_self_collection_quantity(phrase,source_name=source_name,value_form=where is not None)
         # Keyword grants combined with a per-object modifier are grammatically
         # fixed, not multiplied. They remain residual until represented as two
         # independently applicable effects.
-        if quantity is None or per_object.group("abilities") is not None:
+        if quantity is None or (per_object is not None and per_object.group("abilities") is not None):
             return None
         fragment = QueryCharacteristicModifierSpec(
             quantity=quantity,
             calculation=PowerToughnessCalculation.PER_MATCHING_OBJECT,
-            power=int(per_object.group("power")),
-            toughness=int(per_object.group("toughness")),
+            power=_self_quantity_coefficient(where['power']) if where is not None else int(per_object.group("power")),
+            toughness=_self_quantity_coefficient(where['toughness']) if where is not None else int(per_object.group("toughness")),
         )
         abilities: tuple[str, ...] = ()
     else:
