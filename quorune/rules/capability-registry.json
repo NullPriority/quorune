@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 231,
+  "registry_version": 232,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -2688,24 +2688,104 @@
     },
     {
       "id": "protection.typed.debt",
-      "version": 2,
-      "official_rules": ["301.5c", "303.4c", "509.1b", "702.16", "702.16a", "702.16b", "702.16c", "702.16d", "702.16e", "702.16f", "702.16j"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 3,
+      "official_rules": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
-        "summary": "Apply the damage, enchanting/equipping/fortifying, blocking, and targeting prohibitions of compiled fixed Protection qualities using current or last-known source characteristics.",
-        "inputs": ["trusted typed protection fragment", "protected permanent characteristics", "source colors, card types, subtypes, supertypes, and mana value", "target, attachment, block, or damage event"],
-        "outputs": ["closed allowed, blocked, or unresolved verdict", "protection prevention effect", "target and declaration filtering", "illegal-attachment state action"],
-        "exclusions": ["state- or history-dependent qualities such as cast-this-turn or counter-bearing sources", "qualities outside the closed fixed characteristic grammar", "effects that remove protection from damage", "effects that redefine a quality dynamically", "untrusted or text-only granted protection"]
+        "summary": "Apply the damage, enchanting/equipping/fortifying, blocking, and targeting prohibitions of compiled fixed Protection qualities using current or last-known source characteristics. The same typed DEBT consumers receive live query grants and temporary closed direct-permanent results.",
+        "inputs": [
+          "trusted typed protection fragment",
+          "protected permanent characteristics",
+          "source colors, card types, subtypes, supertypes, and mana value",
+          "target, attachment, block, or damage event"
+        ],
+        "outputs": [
+          "closed allowed, blocked, or unresolved verdict",
+          "protection prevention effect",
+          "target and declaration filtering",
+          "illegal-attachment state action"
+        ],
+        "exclusions": [
+          "state- or history-dependent qualities such as cast-this-turn or counter-bearing sources",
+          "qualities outside the closed fixed characteristic grammar",
+          "effects that remove protection from damage",
+          "effects that redefine a quality dynamically",
+          "untrusted or text-only granted protection"
+        ]
       },
-      "dependencies": ["attachment.aura.simple_object", "damage.prevention.static_fixed", "target.revalidate_resolution"],
-      "implementation_components": ["quorune.ability_fragments.ProtectionSpec", "quorune.ability_fragments.ProtectionSourcePredicateSpec", "quorune.semantic_runtime.ability_fragments.ProtectionAbilityFragmentHandler", "quorune.compiler.continuous_templates.attached_fixed_characteristics_handler", "quorune.protection.protection_verdict", "quorune.damage_source.DamageSourceSnapshot", "quorune.damage._protection_prevention_effects", "quorune.engine.CommanderEngine._target_row_matches", "quorune.engine.CommanderEngine._can_block", "quorune.engine.CommanderEngine._attachment_is_legal"],
-      "positive_tests": ["test_compiler_closes_fixed_source_quality_predicates", "test_fixed_source_quality_predicates_match_current_characteristics", "test_typed_protection_blocks_target_attachment_and_block_operations", "test_lifelink_counts_only_damage_not_prevented_by_protection"],
-      "negative_tests": ["test_untyped_and_unsupported_protection_fail_closed"],
-      "interaction_tests": ["test_layer_six_granted_protection_uses_typed_fragment"],
-      "multiplayer_tests": ["test_four_player_protection_uses_the_actual_source"],
-      "privacy_tests": ["test_aura_entry_choice_projection_and_replay_are_exact"],
-      "replay_tests": ["test_aura_entry_choice_projection_and_replay_are_exact"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "attachment.aura.simple_object",
+        "damage.prevention.static_fixed",
+        "target.revalidate_resolution"
+      ],
+      "implementation_components": [
+        "quorune.ability_fragments.ProtectionSpec",
+        "quorune.ability_fragments.ProtectionSourcePredicateSpec",
+        "quorune.semantic_runtime.ability_fragments.ProtectionAbilityFragmentHandler",
+        "quorune.compiler.continuous_templates.attached_fixed_characteristics_handler",
+        "quorune.protection.protection_verdict",
+        "quorune.damage_source.DamageSourceSnapshot",
+        "quorune.damage._protection_prevention_effects",
+        "quorune.engine.CommanderEngine._target_row_matches",
+        "quorune.engine.CommanderEngine._can_block",
+        "quorune.engine.CommanderEngine._attachment_is_legal",
+        "quorune.compiler.temporary_target_interactions._fixed_protection_template",
+        "quorune.semantic_runtime.continuous_components.FixedQueryProtectionGrantHandler"
+      ],
+      "positive_tests": [
+        "test_compiler_closes_fixed_source_quality_predicates",
+        "test_fixed_source_quality_predicates_match_current_characteristics",
+        "test_typed_protection_blocks_target_attachment_and_block_operations",
+        "test_lifelink_counts_only_damage_not_prevented_by_protection",
+        "test_fixed_protection_uses_closed_direct_target_and_quality_contracts",
+        "test_public_query_protection_grants_keep_typed_quality_and_reject_unbound_labels"
+      ],
+      "negative_tests": [
+        "test_untyped_and_unsupported_protection_fail_closed",
+        "test_expanded_protection_targets_remain_residual_when_precise_owner_is_unavailable"
+      ],
+      "interaction_tests": [
+        "test_layer_six_granted_protection_uses_typed_fragment",
+        "test_original_absolute_law_live_global_protection_tracks_late_entry_and_source_departure",
+        "test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays"
+      ],
+      "multiplayer_tests": [
+        "test_four_player_protection_uses_the_actual_source",
+        "test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays"
+      ],
+      "privacy_tests": [
+        "test_aura_entry_choice_projection_and_replay_are_exact",
+        "test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays"
+      ],
+      "replay_tests": [
+        "test_aura_entry_choice_projection_and_replay_are_exact",
+        "test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays",
+        "test_original_absolute_law_live_global_protection_tracks_late_entry_and_source_departure"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Uncompiled or malformed protection yields an unresolved verdict; target, block, attachment, and damage consumers fail closed, while unsupported compiler grammar remains residual before runtime mutation.",
       "implementation_mutation_status": "killed",
@@ -5419,7 +5499,7 @@
     },
     {
       "id": "continuous.ability.fixed_query_keyword_grant",
-      "version": 12,
+      "version": 13,
       "official_rules": [
         "604.1",
         "611.3a",
@@ -5436,7 +5516,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Grant one or more selected ordinary keywords, including five fixed basic landwalk variants and Horsemanship, in layer 6 to a live source-controller, source-opponent, or global battlefield set selected by the shared closed public ObjectQuerySpec, optionally coupled to fixed layer-7c power/toughness or exact declaration fragments over that identical query. Global canonical creature-subtype plurals accept optional All and Other; one shared query preserves every controller and source exclusion. Bare canonical creature-subtype queries include noncreature Kindred permanents; explicit creature descriptions retain their creature constraint. Grant already-represented fixed combat or spell-cast keyword trigger fragments with exact label, instance and consumer dependencies.",
+        "summary": "Grant one or more selected ordinary keywords, including five fixed basic landwalk variants and Horsemanship, in layer 6 to a live source-controller, source-opponent, or global battlefield set selected by the shared closed public ObjectQuerySpec, optionally coupled to fixed layer-7c power/toughness or exact declaration fragments over that identical query. Global canonical creature-subtype plurals accept optional All and Other; one shared query preserves every controller and source exclusion. Bare canonical creature-subtype queries include noncreature Kindred permanents; explicit creature descriptions retain their creature constraint. Grant already-represented fixed combat or spell-cast keyword trigger fragments with exact label, instance and consumer dependencies. Dedicated version-two handlers also grant complete fixed typed Protection fragments to live queried sets, optionally with the same fixed stat query.",
         "inputs": [
           "active phased-in battlefield source",
           "source-controller, source-opponent, or global target relation",
@@ -5475,7 +5555,9 @@
         "quorune.semantic_runtime.continuous_components.FixedQueryAbilityGrantHandler",
         "quorune.card_programs.runtime.collect_card_program_continuous_effects",
         "quorune.continuous_effects.evaluate_continuous_effects",
-        "quorune.keyword_abilities.triggered_keyword_grant"
+        "quorune.keyword_abilities.triggered_keyword_grant",
+        "quorune.semantic_runtime.continuous_components.FixedQueryProtectionGrantHandler",
+        "quorune.semantic_runtime.continuous_components.FixedQueryCharacteristicProtectionGrantHandler"
       ],
       "positive_tests": [
         "test_closed_query_grammar_compiles_exact_with_consumer_capabilities",
@@ -5495,7 +5577,9 @@
         "test_bare_subtype_public_queries_do_not_invent_creature_type",
         "test_bare_subtype_keyword_grant_keeps_kindred_permanents_in_scope",
         "test_extended_bare_subtype_queries_preserve_kindred_and_explicit_creature_distinction",
-        "test_live_keyword_trigger_grants_carry_exact_fragment_and_consumer_dependencies"
+        "test_live_keyword_trigger_grants_carry_exact_fragment_and_consumer_dependencies",
+        "test_fixed_protection_uses_closed_direct_target_and_quality_contracts",
+        "test_public_query_protection_grants_keep_typed_quality_and_reject_unbound_labels"
       ],
       "negative_tests": [
         "test_open_or_unsupported_queries_remain_material_residuals",
@@ -5509,7 +5593,8 @@
         "test_semantic_markers_and_unrepresented_labeled_body_stay_residual",
         "test_static_label_dispatch_omission_mutant_is_killed",
         "test_unknown_nouns_and_class_level_context_remain_residual",
-        "test_triggered_keyword_grant_labels_and_fragments_are_exact_and_fail_closed"
+        "test_triggered_keyword_grant_labels_and_fragments_are_exact_and_fail_closed",
+        "test_expanded_protection_targets_remain_residual_when_precise_owner_is_unavailable"
       ],
       "interaction_tests": [
         "test_aura_attachment_and_query_grant_execute_from_one_exact_card",
@@ -5531,7 +5616,9 @@
         "test_original_scion_shroud_rejects_kindred_target_and_accepts_foreign_control",
         "test_original_scion_kindred_scope_tracks_control_phasing_departure_and_reentry",
         "test_original_archangels_grant_independent_exalted_instances_and_replay",
-        "test_original_bria_granted_prowess_locks_recipient_after_source_bounce_and_replays"
+        "test_original_bria_granted_prowess_locks_recipient_after_source_bounce_and_replays",
+        "test_original_absolute_law_live_global_protection_tracks_late_entry_and_source_departure",
+        "test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays"
       ],
       "multiplayer_tests": [
         "test_live_queries_track_global_control_subtype_phase_and_zone_changes",
@@ -5542,13 +5629,15 @@
         "test_actual_atlantis_cast_grants_foreign_merfolk_and_source_exclusion_with_replay",
         "test_original_scion_shroud_rejects_kindred_target_and_accepts_foreign_control",
         "test_original_scion_kindred_scope_tracks_control_phasing_departure_and_reentry",
-        "test_original_bria_granted_prowess_locks_recipient_after_source_bounce_and_replays"
+        "test_original_bria_granted_prowess_locks_recipient_after_source_bounce_and_replays",
+        "test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays"
       ],
       "privacy_tests": [
         "test_projection_and_replay_preserve_grants_without_private_identities",
         "test_actual_elvish_champion_cast_affects_other_controllers_and_current_landwalk_blocks",
         "test_original_scion_shroud_rejects_kindred_target_and_accepts_foreign_control",
-        "test_original_bria_granted_prowess_locks_recipient_after_source_bounce_and_replays"
+        "test_original_bria_granted_prowess_locks_recipient_after_source_bounce_and_replays",
+        "test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays"
       ],
       "replay_tests": [
         "test_counter_multicolor_and_token_queries_use_live_public_state_and_replay",
@@ -5562,7 +5651,9 @@
         "test_original_scion_shroud_rejects_kindred_target_and_accepts_foreign_control",
         "test_original_scion_kindred_scope_tracks_control_phasing_departure_and_reentry",
         "test_original_archangels_grant_independent_exalted_instances_and_replay",
-        "test_granted_prowess_response_bounce_invalidates_old_recipient_and_replays"
+        "test_granted_prowess_response_bounce_invalidates_old_recipient_and_replays",
+        "test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays",
+        "test_original_absolute_law_live_global_protection_tracks_late_entry_and_source_departure"
       ],
       "required_evidence": [
         "positive",
@@ -6751,24 +6842,106 @@
     },
     {
       "id": "continuous.resolution.temporary_target_interactions",
-      "version": 1,
-      "official_rules": ["115.1", "400.7", "608.2b", "608.2d", "608.2h", "611.2a", "611.2c", "611.2d", "613.1f", "613.4c", "702.16"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 2,
+      "official_rules": [
+        "115.1",
+        "400.7",
+        "608.2b",
+        "608.2d",
+        "608.2h",
+        "611.2a",
+        "611.2c",
+        "611.2d",
+        "613.1f",
+        "613.4c",
+        "702.16"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
-        "summary": "Compile one direct-target temporary characteristic instruction with a spell-cost X, a supported keyword list, a resolution choice, a current-target conditional rider, or a fixed unblockable or regeneration tail through the existing typed owners.",
-        "inputs": ["one source-spanned complete instruction", "one canonical direct permanent target", "spell-cost X when present", "current public target characteristics", "resolution controller or current target controller", "fixed typed protection quality or keyword options"],
-        "outputs": ["canonical target revalidation", "principal-scoped scalar choice", "locked-incarnation layer-6 or layer-7c result", "existing declaration-rule or regeneration result", "cleanup expiration and exact replay"],
-        "exclusions": ["variable activated costs and unbound or derived X values", "open conditions, dynamic counts, target changes, multiple targets, and arbitrary duration", "unsupported keyword choices or protection qualities", "must-be-blocked requirements and independent unsupported carrier or sibling grammar"]
+        "summary": "Compile one direct-target temporary characteristic instruction with a spell-cost X, a supported keyword list, a resolution choice, a current-target conditional rider, or a fixed unblockable or regeneration tail through the existing typed owners. Fixed Protection qualities and color-choice results accept the existing closed single direct-permanent query, with current chooser, incarnation lock and ordinary duration.",
+        "inputs": [
+          "one source-spanned complete instruction",
+          "one canonical direct permanent target",
+          "spell-cost X when present",
+          "current public target characteristics",
+          "resolution controller or current target controller",
+          "fixed typed protection quality or keyword options"
+        ],
+        "outputs": [
+          "canonical target revalidation",
+          "principal-scoped scalar choice",
+          "locked-incarnation layer-6 or layer-7c result",
+          "existing declaration-rule or regeneration result",
+          "cleanup expiration and exact replay"
+        ],
+        "exclusions": [
+          "variable activated costs and unbound or derived X values",
+          "open conditions, dynamic counts, target changes, multiple targets, and arbitrary duration",
+          "unsupported keyword choices or protection qualities",
+          "must-be-blocked requirements and independent unsupported carrier or sibling grammar"
+        ]
       },
-      "dependencies": ["continuous.resolution.fixed_characteristics_until_end_of_turn", "target.revalidate_resolution"],
-      "implementation_components": ["quorune.compiler.temporary_target_interactions.temporary_target_interaction_effect_template", "quorune.compiler.temporary_target_interactions.restrict_temporary_interaction_context", "quorune.effect_runtime.temporary_target_interactions.temporary_keyword_operations", "quorune.effect_runtime.temporary_target_interactions.temporary_target_condition_matches", "quorune.rules.temporary_target_interaction_shapes.temporary_target_interaction_node_capabilities", "quorune.rules.temporary_target_interactions.TargetConditionSpec", "quorune.semantic_choices.scalar.ChooseOptionHandler", "quorune.continuous_effect_state.create_resolution_continuous_effect"],
-      "positive_tests": ["test_temporary_interactions_compile_across_contexts", "test_trusted_x_cast_uses_selected_cost_and_expires", "test_trusted_keyword_choice_and_unblockable_activation"],
-      "negative_tests": ["test_temporary_interaction_exclusions_and_shape_mutations", "test_temporary_interaction_dependencies_and_compiler_mutation", "test_stale_target_and_payment_rejection_roll_back"],
-      "interaction_tests": ["test_temporary_protection_uses_debt_and_current_chooser", "test_current_target_conditions_and_regeneration", "test_trusted_keyword_choice_and_unblockable_activation"],
-      "multiplayer_tests": ["test_temporary_protection_uses_debt_and_current_chooser"],
-      "privacy_tests": ["test_temporary_protection_uses_debt_and_current_chooser"],
-      "replay_tests": ["test_temporary_protection_uses_debt_and_current_chooser", "test_trusted_x_cast_uses_selected_cost_and_expires", "test_trusted_keyword_choice_and_unblockable_activation"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "target.revalidate_resolution"
+      ],
+      "implementation_components": [
+        "quorune.compiler.temporary_target_interactions.temporary_target_interaction_effect_template",
+        "quorune.compiler.temporary_target_interactions.restrict_temporary_interaction_context",
+        "quorune.effect_runtime.temporary_target_interactions.temporary_keyword_operations",
+        "quorune.effect_runtime.temporary_target_interactions.temporary_target_condition_matches",
+        "quorune.rules.temporary_target_interaction_shapes.temporary_target_interaction_node_capabilities",
+        "quorune.rules.temporary_target_interactions.TargetConditionSpec",
+        "quorune.semantic_choices.scalar.ChooseOptionHandler",
+        "quorune.continuous_effect_state.create_resolution_continuous_effect"
+      ],
+      "positive_tests": [
+        "test_temporary_interactions_compile_across_contexts",
+        "test_trusted_x_cast_uses_selected_cost_and_expires",
+        "test_trusted_keyword_choice_and_unblockable_activation",
+        "test_fixed_protection_uses_closed_direct_target_and_quality_contracts",
+        "test_public_query_protection_grants_keep_typed_quality_and_reject_unbound_labels"
+      ],
+      "negative_tests": [
+        "test_temporary_interaction_exclusions_and_shape_mutations",
+        "test_temporary_interaction_dependencies_and_compiler_mutation",
+        "test_stale_target_and_payment_rejection_roll_back",
+        "test_expanded_protection_targets_remain_residual_when_precise_owner_is_unavailable"
+      ],
+      "interaction_tests": [
+        "test_temporary_protection_uses_debt_and_current_chooser",
+        "test_current_target_conditions_and_regeneration",
+        "test_trusted_keyword_choice_and_unblockable_activation",
+        "test_original_absolute_law_live_global_protection_tracks_late_entry_and_source_departure",
+        "test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays"
+      ],
+      "multiplayer_tests": [
+        "test_temporary_protection_uses_debt_and_current_chooser",
+        "test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays"
+      ],
+      "privacy_tests": [
+        "test_temporary_protection_uses_debt_and_current_chooser",
+        "test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays"
+      ],
+      "replay_tests": [
+        "test_temporary_protection_uses_debt_and_current_chooser",
+        "test_trusted_x_cast_uses_selected_cost_and_expires",
+        "test_trusted_keyword_choice_and_unblockable_activation",
+        "test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays",
+        "test_original_absolute_law_live_global_protection_tracks_late_entry_and_source_departure"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Blocking the shared characteristic or target owner makes the new node inexact; each keyword, protection, target predicate, declaration rule, and regeneration consumer remains an independent dependency.",
       "implementation_mutation_status": "killed",

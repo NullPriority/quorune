@@ -297,7 +297,7 @@ def fixed_query_keyword_grant_handler(
 
     granted = _attached_granted_abilities(abilities_text)
     if granted is None or any(
-        ability == "Protection" or ability.startswith("Toxic ")
+        ability.startswith("Toxic ")
         for ability in granted[0]
     ):
         return None
@@ -310,8 +310,9 @@ def fixed_query_keyword_grant_handler(
     return (
         "continuous-fixed-query-keyword-grant-v2",
         {
-            "handler_id": "continuous.ability.fixed-query-keyword-grant.v1",
-            "schema_version": 1,
+            "handler_id": ('continuous.ability.fixed-query-protection-grant.v2' if 'Protection' in abilities
+                           else "continuous.ability.fixed-query-keyword-grant.v1"),
+            "schema_version": 2 if 'Protection' in abilities else 1,
             "event": "characteristics.evaluate",
             "condition": {
                 "target_controller": relation,
@@ -366,9 +367,10 @@ def fixed_query_characteristic_grant_handler(
         "continuous-fixed-query-characteristic-grant-v1",
         {
             "handler_id": (
-                "continuous.characteristics.fixed-query-grant.v1"
+                'continuous.characteristics.fixed-query-protection-grant.v2'
+                if keywords[1]['schema_version'] == 2 else "continuous.characteristics.fixed-query-grant.v1"
             ),
-            "schema_version": 1,
+            "schema_version": keywords[1]['schema_version'],
             "event": "characteristics.evaluate",
             "condition": dict(keyword_condition),
             "modifier": {

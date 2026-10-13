@@ -227,7 +227,7 @@ Oracle sentences.
 
 `compiler/temporary_target_interactions.py` composes that same direct-target
 descriptor with signed spell-cost X, supported comma-separated keyword lists,
-fixed color or artifact Protection, a choice of color or two supported keywords,
+closed typed Protection qualities, a choice of color or two supported keywords,
 a closed current-target conditional rider, or a fixed regeneration or
 unblockable tail. It keeps the original fixed leaf-parser boundary intact.
 X requires an X-bearing spell mana cost on the selected face; undefined X,
@@ -237,6 +237,12 @@ color choice reads the target's current controller when the instruction begins.
 Conditional riders evaluate current public characteristics once before creating
 the locked layer-6 or layer-7c effect. The same continuous-effect journal stores
 temporary Protection as a typed fragment, and existing DEBT consumers enforce it.
+Fixed Protection and color choices accept the shared single direct-permanent
+target grammar, retaining its characteristic, control and source-exclusion
+predicates. Live global and queried Protection grants use dedicated version-two
+handlers with complete typed fragments, preserving ordinary keyword-grant
+descriptor versions. Their layer-6 recipient set updates with current public
+state, and a coupled fixed stat grant uses the identical query.
 Open conditions, unsupported qualities or keywords, target-changing and
 multiple-target effects, other durations and must-be-blocked requirements remain
 residual. Existing carrier and independently closed composition owners still

@@ -189,6 +189,32 @@ def _permanent(
 
 
 class FixedQueryKeywordGrantCompilerTests(unittest.TestCase):
+    def test_public_query_protection_grants_keep_typed_quality_and_reject_unbound_labels(self):
+        from quorune.semantic_runtime.continuous_components import (
+            FixedQueryProtectionGrantHandler, FixedQueryCharacteristicProtectionGrantHandler,
+        )
+        from quorune.compiler.continuous_templates import fixed_query_characteristic_grant_handler
+        from quorune.ability_fragments import ProtectionSpec
+        for text in ('All creatures have protection from black.',
+                     'Other Cats you control have protection from Dogs.'):
+            compiled=fixed_query_keyword_grant_handler(text)
+            self.assertIsNotNone(compiled,text)
+            self.assertIn('protection.typed.debt',compiled[2])
+            node=FixedQueryProtectionGrantHandler().validate(compiled[1])
+            self.assertTrue(all(isinstance(f,ProtectionSpec) for f in node.fragments))
+            self.assertEqual(('Protection',),node.abilities)
+            malformed=copy.deepcopy(compiled[1]);malformed['schema_version']=1
+            with self.assertRaises(ValueError):FixedQueryProtectionGrantHandler().validate(malformed)
+            malformed=copy.deepcopy(compiled[1]);malformed['modifier']['add_ability_fragments']*=2
+            with self.assertRaises(ValueError):FixedQueryProtectionGrantHandler().validate(malformed)
+            malformed=copy.deepcopy(compiled[1]);malformed['modifier']['add_ability_fragments']=[]
+            with self.assertRaises(ValueError):FixedQueryProtectionGrantHandler().validate(malformed)
+        self.assertIsNone(fixed_query_keyword_grant_handler('All creatures have protection from the chosen player.'))
+        combined=fixed_query_characteristic_grant_handler('Creatures you control get +1/+1 and have protection from black.')
+        self.assertIsNotNone(combined)
+        node=FixedQueryCharacteristicProtectionGrantHandler().validate(combined[1])
+        self.assertEqual((1,1),(node.power,node.toughness))
+        self.assertEqual('B',node.fragments[0].quality)
     def test_live_keyword_trigger_grants_carry_exact_fragment_and_consumer_dependencies(self):
         from quorune.ability_fragments import ability_fragment_from_dict, CombatKeywordTriggerSpec, SpellCastKeywordTriggerSpec
         from quorune.compiler.continuous_templates import attached_fixed_characteristics_handler

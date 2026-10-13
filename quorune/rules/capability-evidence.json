@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "88131dda51db8c0811f27cf756af153a8f661b4175a648f7aaecc7fbdcf7e7ff",
-  "declaration_source_fingerprint": "f60f13531a80027474d8a0125ac76a28a87c9328b6fbd277f3f1dd6708471bb9",
+  "registry_fingerprint": "a0c6244908fa0fa7ad9f39612ba77996135cd2a2f6ace54089c65d05e81b8c6c",
+  "declaration_source_fingerprint": "765b67dbff783a70106e8fbd9b6597f1b7df0bba86cbf9eb561781530d09ac9c",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -29885,6 +29885,48 @@
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "interaction",
+      "test_id": "tests.test_temporary_target_interactions.PublicProtectionGrantRuntimeTests.test_original_absolute_law_live_global_protection_tracks_late_entry_and_source_departure",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed direct-permanent and live queried protection grants through existing typed DEBT, choice, continuous and incarnation owners."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_temporary_target_interactions.PublicProtectionGrantRuntimeTests.test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed direct-permanent and live queried protection grants through existing typed DEBT, choice, continuous and incarnation owners."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "interaction",
       "test_id": "tests.test_typed_dynamic_characteristics.TypedDynamicCharacteristicRuntimeTests.test_four_player_keyword_grants_are_controller_scoped_and_phase_with_source",
       "official_rule_ids": [
         "604.1",
@@ -30032,6 +30074,27 @@
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_temporary_target_interactions.PublicProtectionGrantRuntimeTests.test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed direct-permanent and live queried protection grants through existing typed DEBT, choice, continuous and incarnation owners."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_typed_dynamic_characteristics.TypedDynamicCharacteristicRuntimeTests.test_four_player_keyword_grants_are_controller_scoped_and_phase_with_source",
       "official_rule_ids": [
         "604.1",
@@ -30133,6 +30196,27 @@
         "commander_review"
       ],
       "applicability_note": "Original global canonical subtype plural grants use one current set across layer-six keywords and fixed stats, all controllers and source exclusion; actual block legality, private commands and replay preserve authority."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_temporary_target_interactions.TemporaryTargetInteractionCompilerTests.test_expanded_protection_targets_remain_residual_when_precise_owner_is_unavailable",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed direct-permanent and live queried protection grants through existing typed DEBT, choice, continuous and incarnation owners."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
@@ -30301,6 +30385,27 @@
         "commander_review"
       ],
       "applicability_note": "Original global canonical subtype plural grants use one current set across layer-six keywords and fixed stats, all controllers and source exclusion; actual block legality, private commands and replay preserve authority."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_temporary_target_interactions.TemporaryTargetInteractionCompilerTests.test_expanded_protection_targets_remain_residual_when_precise_owner_is_unavailable",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed direct-permanent and live queried protection grants through existing typed DEBT, choice, continuous and incarnation owners."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
@@ -30515,6 +30620,27 @@
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_public_query_protection_grants_keep_typed_quality_and_reject_unbound_labels",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed direct-permanent and live queried protection grants through existing typed DEBT, choice, continuous and incarnation owners."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_shared_public_set_query_fans_into_layers_and_resolution",
       "official_rule_ids": [
         "604.1",
@@ -30574,6 +30700,48 @@
         "commander_review"
       ],
       "applicability_note": "Original global canonical subtype plural grants use one current set across layer-six keywords and fixed stats, all controllers and source exclusion; actual block legality, private commands and replay preserve authority."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_target_interactions.PublicProtectionGrantRuntimeTests.test_fixed_nonhuman_protection_spell_preserves_nearby_human_counterexample",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed direct-permanent and live queried protection grants through existing typed DEBT, choice, continuous and incarnation owners."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_target_interactions.TemporaryTargetInteractionCompilerTests.test_fixed_protection_uses_closed_direct_target_and_quality_contracts",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed direct-permanent and live queried protection grants through existing typed DEBT, choice, continuous and incarnation owners."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
@@ -30658,6 +30826,27 @@
         "commander_review"
       ],
       "applicability_note": "Typed live keyword grants retain exact trigger instances, current recipient/controller authority, source and recipient departure boundaries, wrong-principal rollback and exact replay."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_temporary_target_interactions.PublicProtectionGrantRuntimeTests.test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed direct-permanent and live queried protection grants through existing typed DEBT, choice, continuous and incarnation owners."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
@@ -30826,6 +31015,69 @@
         "commander_review"
       ],
       "applicability_note": "Original global canonical subtype plural grants use one current set across layer-six keywords and fixed stats, all controllers and source exclusion; actual block legality, private commands and replay preserve authority."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_temporary_target_interactions.PublicProtectionGrantRuntimeTests.test_fixed_nonhuman_protection_spell_preserves_nearby_human_counterexample",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed direct-permanent and live queried protection grants through existing typed DEBT, choice, continuous and incarnation owners."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_temporary_target_interactions.PublicProtectionGrantRuntimeTests.test_original_absolute_law_live_global_protection_tracks_late_entry_and_source_departure",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed direct-permanent and live queried protection grants through existing typed DEBT, choice, continuous and incarnation owners."
+    },
+    {
+      "capability_id": "continuous.ability.fixed_query_keyword_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_temporary_target_interactions.PublicProtectionGrantRuntimeTests.test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.6",
+        "109.2",
+        "205.3m"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed direct-permanent and live queried protection grants through existing typed DEBT, choice, continuous and incarnation owners."
     },
     {
       "capability_id": "continuous.ability.fixed_query_keyword_grant",
@@ -42473,6 +42725,54 @@
     {
       "capability_id": "continuous.resolution.temporary_target_interactions",
       "evidence_class": "interaction",
+      "test_id": "tests.test_temporary_target_interactions.PublicProtectionGrantRuntimeTests.test_original_absolute_law_live_global_protection_tracks_late_entry_and_source_departure",
+      "official_rule_ids": [
+        "115.1",
+        "400.7",
+        "608.2b",
+        "608.2d",
+        "608.2h",
+        "611.2a",
+        "611.2c",
+        "611.2d",
+        "613.1f",
+        "613.4c",
+        "702.16"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed direct-permanent and live queried protection grants through existing typed DEBT, choice, continuous and incarnation owners."
+    },
+    {
+      "capability_id": "continuous.resolution.temporary_target_interactions",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_temporary_target_interactions.PublicProtectionGrantRuntimeTests.test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays",
+      "official_rule_ids": [
+        "115.1",
+        "400.7",
+        "608.2b",
+        "608.2d",
+        "608.2h",
+        "611.2a",
+        "611.2c",
+        "611.2d",
+        "613.1f",
+        "613.4c",
+        "702.16"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed direct-permanent and live queried protection grants through existing typed DEBT, choice, continuous and incarnation owners."
+    },
+    {
+      "capability_id": "continuous.resolution.temporary_target_interactions",
+      "evidence_class": "interaction",
       "test_id": "tests.test_temporary_target_interactions.TemporaryTargetInteractionRuntimeTests.test_current_target_conditions_and_regeneration",
       "official_rule_ids": [
         "115.1",
@@ -42545,6 +42845,30 @@
     {
       "capability_id": "continuous.resolution.temporary_target_interactions",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_temporary_target_interactions.PublicProtectionGrantRuntimeTests.test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays",
+      "official_rule_ids": [
+        "115.1",
+        "400.7",
+        "608.2b",
+        "608.2d",
+        "608.2h",
+        "611.2a",
+        "611.2c",
+        "611.2d",
+        "613.1f",
+        "613.4c",
+        "702.16"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed direct-permanent and live queried protection grants through existing typed DEBT, choice, continuous and incarnation owners."
+    },
+    {
+      "capability_id": "continuous.resolution.temporary_target_interactions",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_temporary_target_interactions.TemporaryTargetInteractionRuntimeTests.test_temporary_protection_uses_debt_and_current_chooser",
       "official_rule_ids": [
         "115.1",
@@ -42565,6 +42889,30 @@
         "commander_review"
       ],
       "applicability_note": "The chosen color belongs to the recipient controller in a four-player game even when that controller differs from the ability controller."
+    },
+    {
+      "capability_id": "continuous.resolution.temporary_target_interactions",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_temporary_target_interactions.TemporaryTargetInteractionCompilerTests.test_expanded_protection_targets_remain_residual_when_precise_owner_is_unavailable",
+      "official_rule_ids": [
+        "115.1",
+        "400.7",
+        "608.2b",
+        "608.2d",
+        "608.2h",
+        "611.2a",
+        "611.2c",
+        "611.2d",
+        "613.1f",
+        "613.4c",
+        "702.16"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed direct-permanent and live queried protection grants through existing typed DEBT, choice, continuous and incarnation owners."
     },
     {
       "capability_id": "continuous.resolution.temporary_target_interactions",
@@ -42593,6 +42941,30 @@
     {
       "capability_id": "continuous.resolution.temporary_target_interactions",
       "evidence_class": "negative",
+      "test_id": "tests.test_temporary_target_interactions.TemporaryTargetInteractionCompilerTests.test_expanded_protection_targets_remain_residual_when_precise_owner_is_unavailable",
+      "official_rule_ids": [
+        "115.1",
+        "400.7",
+        "608.2b",
+        "608.2d",
+        "608.2h",
+        "611.2a",
+        "611.2c",
+        "611.2d",
+        "613.1f",
+        "613.4c",
+        "702.16"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed direct-permanent and live queried protection grants through existing typed DEBT, choice, continuous and incarnation owners."
+    },
+    {
+      "capability_id": "continuous.resolution.temporary_target_interactions",
+      "evidence_class": "negative",
       "test_id": "tests.test_temporary_target_interactions.TemporaryTargetInteractionCompilerTests.test_temporary_interaction_exclusions_and_shape_mutations",
       "official_rule_ids": [
         "115.1",
@@ -42613,6 +42985,78 @@
         "commander_review"
       ],
       "applicability_note": "Reject undefined or activated X, open conditions and choices, unsupported durations, requirements and changed typed descriptor fields."
+    },
+    {
+      "capability_id": "continuous.resolution.temporary_target_interactions",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_public_query_protection_grants_keep_typed_quality_and_reject_unbound_labels",
+      "official_rule_ids": [
+        "115.1",
+        "400.7",
+        "608.2b",
+        "608.2d",
+        "608.2h",
+        "611.2a",
+        "611.2c",
+        "611.2d",
+        "613.1f",
+        "613.4c",
+        "702.16"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed direct-permanent and live queried protection grants through existing typed DEBT, choice, continuous and incarnation owners."
+    },
+    {
+      "capability_id": "continuous.resolution.temporary_target_interactions",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_target_interactions.PublicProtectionGrantRuntimeTests.test_fixed_nonhuman_protection_spell_preserves_nearby_human_counterexample",
+      "official_rule_ids": [
+        "115.1",
+        "400.7",
+        "608.2b",
+        "608.2d",
+        "608.2h",
+        "611.2a",
+        "611.2c",
+        "611.2d",
+        "613.1f",
+        "613.4c",
+        "702.16"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed direct-permanent and live queried protection grants through existing typed DEBT, choice, continuous and incarnation owners."
+    },
+    {
+      "capability_id": "continuous.resolution.temporary_target_interactions",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_target_interactions.TemporaryTargetInteractionCompilerTests.test_fixed_protection_uses_closed_direct_target_and_quality_contracts",
+      "official_rule_ids": [
+        "115.1",
+        "400.7",
+        "608.2b",
+        "608.2d",
+        "608.2h",
+        "611.2a",
+        "611.2c",
+        "611.2d",
+        "613.1f",
+        "613.4c",
+        "702.16"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed direct-permanent and live queried protection grants through existing typed DEBT, choice, continuous and incarnation owners."
     },
     {
       "capability_id": "continuous.resolution.temporary_target_interactions",
@@ -42665,6 +43109,30 @@
     {
       "capability_id": "continuous.resolution.temporary_target_interactions",
       "evidence_class": "privacy",
+      "test_id": "tests.test_temporary_target_interactions.PublicProtectionGrantRuntimeTests.test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays",
+      "official_rule_ids": [
+        "115.1",
+        "400.7",
+        "608.2b",
+        "608.2d",
+        "608.2h",
+        "611.2a",
+        "611.2c",
+        "611.2d",
+        "613.1f",
+        "613.4c",
+        "702.16"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed direct-permanent and live queried protection grants through existing typed DEBT, choice, continuous and incarnation owners."
+    },
+    {
+      "capability_id": "continuous.resolution.temporary_target_interactions",
+      "evidence_class": "privacy",
       "test_id": "tests.test_temporary_target_interactions.TemporaryTargetInteractionRuntimeTests.test_temporary_protection_uses_debt_and_current_chooser",
       "official_rule_ids": [
         "115.1",
@@ -42685,6 +43153,78 @@
         "commander_review"
       ],
       "applicability_note": "Only the chooser receives the legal decision and another principal cannot consume it."
+    },
+    {
+      "capability_id": "continuous.resolution.temporary_target_interactions",
+      "evidence_class": "replay",
+      "test_id": "tests.test_temporary_target_interactions.PublicProtectionGrantRuntimeTests.test_fixed_nonhuman_protection_spell_preserves_nearby_human_counterexample",
+      "official_rule_ids": [
+        "115.1",
+        "400.7",
+        "608.2b",
+        "608.2d",
+        "608.2h",
+        "611.2a",
+        "611.2c",
+        "611.2d",
+        "613.1f",
+        "613.4c",
+        "702.16"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed direct-permanent and live queried protection grants through existing typed DEBT, choice, continuous and incarnation owners."
+    },
+    {
+      "capability_id": "continuous.resolution.temporary_target_interactions",
+      "evidence_class": "replay",
+      "test_id": "tests.test_temporary_target_interactions.PublicProtectionGrantRuntimeTests.test_original_absolute_law_live_global_protection_tracks_late_entry_and_source_departure",
+      "official_rule_ids": [
+        "115.1",
+        "400.7",
+        "608.2b",
+        "608.2d",
+        "608.2h",
+        "611.2a",
+        "611.2c",
+        "611.2d",
+        "613.1f",
+        "613.4c",
+        "702.16"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed direct-permanent and live queried protection grants through existing typed DEBT, choice, continuous and incarnation owners."
+    },
+    {
+      "capability_id": "continuous.resolution.temporary_target_interactions",
+      "evidence_class": "replay",
+      "test_id": "tests.test_temporary_target_interactions.PublicProtectionGrantRuntimeTests.test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays",
+      "official_rule_ids": [
+        "115.1",
+        "400.7",
+        "608.2b",
+        "608.2d",
+        "608.2h",
+        "611.2a",
+        "611.2c",
+        "611.2d",
+        "613.1f",
+        "613.4c",
+        "702.16"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed direct-permanent and live queried protection grants through existing typed DEBT, choice, continuous and incarnation owners."
     },
     {
       "capability_id": "continuous.resolution.temporary_target_interactions",
@@ -77414,6 +77954,54 @@
     {
       "capability_id": "protection.typed.debt",
       "evidence_class": "interaction",
+      "test_id": "tests.test_temporary_target_interactions.PublicProtectionGrantRuntimeTests.test_original_absolute_law_live_global_protection_tracks_late_entry_and_source_departure",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed direct-permanent and live queried protection grants through existing typed DEBT, choice, continuous and incarnation owners."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_temporary_target_interactions.PublicProtectionGrantRuntimeTests.test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed direct-permanent and live queried protection grants through existing typed DEBT, choice, continuous and incarnation owners."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "interaction",
       "test_id": "tests.test_typed_ability_fragments.TypedProtectionTests.test_layer_six_granted_protection_uses_typed_fragment",
       "official_rule_ids": [
         "301.5c",
@@ -77434,6 +78022,30 @@
         "commander_review"
       ],
       "applicability_note": "Grant an executable fixed subtype Protection predicate through the shared typed layer-6 fragment while retaining rules text only as display provenance."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_temporary_target_interactions.PublicProtectionGrantRuntimeTests.test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed direct-permanent and live queried protection grants through existing typed DEBT, choice, continuous and incarnation owners."
     },
     {
       "capability_id": "protection.typed.debt",
@@ -77485,6 +78097,54 @@
     },
     {
       "capability_id": "protection.typed.debt",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_temporary_target_interactions.TemporaryTargetInteractionCompilerTests.test_expanded_protection_targets_remain_residual_when_precise_owner_is_unavailable",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed direct-permanent and live queried protection grants through existing typed DEBT, choice, continuous and incarnation owners."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "negative",
+      "test_id": "tests.test_temporary_target_interactions.TemporaryTargetInteractionCompilerTests.test_expanded_protection_targets_remain_residual_when_precise_owner_is_unavailable",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed direct-permanent and live queried protection grants through existing typed DEBT, choice, continuous and incarnation owners."
+    },
+    {
+      "capability_id": "protection.typed.debt",
       "evidence_class": "negative",
       "test_id": "tests.test_typed_ability_fragments.TypedProtectionTests.test_untyped_and_unsupported_protection_fail_closed",
       "official_rule_ids": [
@@ -77530,6 +78190,78 @@
         "commander_review"
       ],
       "applicability_note": "Prevent only damage from the matching source and feed the prevented result into canonical lifelink accounting."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_public_query_protection_grants_keep_typed_quality_and_reject_unbound_labels",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed direct-permanent and live queried protection grants through existing typed DEBT, choice, continuous and incarnation owners."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_target_interactions.PublicProtectionGrantRuntimeTests.test_fixed_nonhuman_protection_spell_preserves_nearby_human_counterexample",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed direct-permanent and live queried protection grants through existing typed DEBT, choice, continuous and incarnation owners."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "positive",
+      "test_id": "tests.test_temporary_target_interactions.TemporaryTargetInteractionCompilerTests.test_fixed_protection_uses_closed_direct_target_and_quality_contracts",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed direct-permanent and live queried protection grants through existing typed DEBT, choice, continuous and incarnation owners."
     },
     {
       "capability_id": "protection.typed.debt",
@@ -77629,6 +78361,30 @@
     },
     {
       "capability_id": "protection.typed.debt",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_temporary_target_interactions.PublicProtectionGrantRuntimeTests.test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed direct-permanent and live queried protection grants through existing typed DEBT, choice, continuous and incarnation owners."
+    },
+    {
+      "capability_id": "protection.typed.debt",
       "evidence_class": "replay",
       "test_id": "tests.test_aura_targeting_entry.AuraTargetingEntryEngineTests.test_aura_entry_choice_projection_and_replay_are_exact",
       "official_rule_ids": [
@@ -77650,6 +78406,78 @@
         "commander_review"
       ],
       "applicability_note": "Replay the exact protected-object filtering and selected legal Aura attachment from a pinned continuation."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "replay",
+      "test_id": "tests.test_temporary_target_interactions.PublicProtectionGrantRuntimeTests.test_fixed_nonhuman_protection_spell_preserves_nearby_human_counterexample",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed direct-permanent and live queried protection grants through existing typed DEBT, choice, continuous and incarnation owners."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "replay",
+      "test_id": "tests.test_temporary_target_interactions.PublicProtectionGrantRuntimeTests.test_original_absolute_law_live_global_protection_tracks_late_entry_and_source_departure",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed direct-permanent and live queried protection grants through existing typed DEBT, choice, continuous and incarnation owners."
+    },
+    {
+      "capability_id": "protection.typed.debt",
+      "evidence_class": "replay",
+      "test_id": "tests.test_temporary_target_interactions.PublicProtectionGrantRuntimeTests.test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays",
+      "official_rule_ids": [
+        "301.5c",
+        "303.4c",
+        "509.1b",
+        "702.16",
+        "702.16a",
+        "702.16b",
+        "702.16c",
+        "702.16d",
+        "702.16e",
+        "702.16f",
+        "702.16j"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed direct-permanent and live queried protection grants through existing typed DEBT, choice, continuous and incarnation owners."
     },
     {
       "capability_id": "quantity_expression.declared_effect_amount",
@@ -116941,5 +117769,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "e0b4365a1c850e6405c7127f5fa0bdb481f853d58a4642bf2bda40bc098781fa"
+  "fingerprint": "3b6223909512f32720e4b26ede5617bc9a29819a061fa8f10c81226b60210c29"
 }
