@@ -27,6 +27,7 @@ def affected_player_choice_covered_mechanics(supplied: set[str]) -> set[str]:
         (FIXED_CONTROLLER_DISCARD_CAPABILITY, {FIXED_CONTROLLER_DISCARD_MECHANIC}),
         (FIXED_CONTEXT_PLAYER_DISCARD_CAPABILITY, {FIXED_CONTEXT_PLAYER_DISCARD_MECHANIC}),
         ('zone.discard.whole_hand', {'whole-hand-discard', 'cr-402-hand'}),
+        ('zone.discard.fixed_random', {'fixed-random-discard', 'cr-402-hand'}),
         (FIXED_HAND_INSPECTION_CAPABILITY, {FIXED_HAND_INSPECTION_MECHANIC, 'cr-402-hand'}),
         (FIXED_AFFECTED_PLAYER_SACRIFICE_CAPABILITY, {FIXED_AFFECTED_PLAYER_SACRIFICE_MECHANIC, 'sacrifice'}),
     ):

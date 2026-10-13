@@ -31,6 +31,10 @@ def binding_effect_template(binding, body: str, *, card_name: str, effect_templa
     discard = damage_player_discard_result(binding, body)
     if discard is not None:
         return discard
+    from ..random_discard import damage_player_random_discard_result
+    random_discard = damage_player_random_discard_result(binding, body)
+    if random_discard is not None:
+        return random_discard
     specialized = fixed_source_combat_growth_effect_template(body, event=binding.event.value, variant=binding.variant)
     if specialized[0] is not None:return specialized,True
     if binding.variant in {'source_attacks','this_creature_blocks','this_creature_becomes_blocked','source_public_tap_state_transition'}:

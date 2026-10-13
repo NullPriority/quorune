@@ -19,8 +19,11 @@ class SemanticSourceContext:
     card_ref: str | None = None
     duration_history: SourceContinuitySnapshot | None = None
     duration_resolution_timestamp: int | None = None
+    instruction_pointer: int = 0
 
     def __post_init__(self) -> None:
+        if type(self.instruction_pointer) is not int or self.instruction_pointer < 0:
+            raise SemanticNodeError("Semantic instruction pointer must be a nonnegative integer")
         if self.duration_history is not None and not isinstance(self.duration_history, SourceContinuitySnapshot):
             raise SemanticNodeError("Duration source history must be a retained typed snapshot")
         if (self.duration_resolution_timestamp is not None
@@ -54,6 +57,7 @@ class SemanticSourceContext:
 def semantic_source_context(
     item: Any,
     cards: Mapping[str, Any],
+    *, instruction_pointer: int = 0,
 ) -> SemanticSourceContext:
     """Bind one stack item to trusted physical/logical source identity."""
 
@@ -66,6 +70,7 @@ def semantic_source_context(
     ) or (source.logical_object_id if source is not None else None)
     return SemanticSourceContext(
         stack_ref=item.ref,
+        instruction_pointer=instruction_pointer,
         object_id=source.object_id if source is not None else None,
         logical_object_id=logical_object_id,
         card_ref=source.ref if source is not None else None,

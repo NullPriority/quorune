@@ -1,5 +1,6 @@
 from __future__ import annotations
 from ..whole_hand_discard_model import DiscardWholeHandsIntent
+from ..random_discard import RandomDiscardIntent
 from .control_intents import ControlIntent
 from .domain_intent import DomainEffectIntent
 from .zone_move_intent import ZoneMoveIntent, _freeze_replacement_selections
@@ -1598,6 +1599,7 @@ SemanticIntent: TypeAlias = (
     | ProliferateIntent
     | DomainEffectIntent
     | DiscardWholeHandsIntent
+    | RandomDiscardIntent
 )
 ResultShape: TypeAlias = Literal["single", "by_player"]
 

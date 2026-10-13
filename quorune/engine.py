@@ -4105,7 +4105,7 @@ class CommanderEngine(
                     default_reason=item.label,
                     seats=self.seats,
                     active_seats=self.active_seats,
-                    apnap_order=self.apnap_order(), source=semantic_source_context(item, self.state.cards),
+                    apnap_order=self.apnap_order(), source=semantic_source_context(item, self.state.cards, instruction_pointer=instruction_pointer + index),
                 )
             except SemanticNodeError as exc:
                 raise GameRuleError(str(exc)) from exc

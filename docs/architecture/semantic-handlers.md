@@ -297,6 +297,18 @@ Replacement continuations seal private membership, including logical object
 identity, and reject a changed hand before resuming. This snapshot is not
 published to another principal.
 
+The separate `discard_random_cards` instruction samples a fixed one-to-four
+card subset of each represented current hand without a client selection choice.
+Each player's complete hand is validated before sampling; empty and short hands
+discard only their available cards. The seed, stack identity, instruction cursor
+and affected seat define a deterministic uniform sample. One simultaneous
+discard transaction owns destinations and events. Replacement continuations
+seal every hand incarnation and reject changed membership before sampling the
+same subset again. Controller apply-or-decline wrappers retain their ordinary
+private choice, and damage-player results require a player-only event binding.
+Random costs, filtered and variable counts, and linked discard consequences
+remain outside this family.
+
 Fixed controller and each-player draw tails reuse ordinary draw effects;
 independent controller quantities read the public collection or current-turn
 history after the discard. The scalar history vocabulary includes cards

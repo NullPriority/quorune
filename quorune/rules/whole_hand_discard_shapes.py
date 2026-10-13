@@ -5,6 +5,12 @@ from __future__ import annotations
 from ..whole_hand_discard_model import WHOLE_HAND_DISCARD_CAPABILITY,WHOLE_HAND_DISCARD_OPERATION,WHOLE_HAND_DISCARD_MECHANIC
 
 
+def unchosen_hand_discard_node_capabilities(**kwargs):
+    """Route whole-hand and random-subset instructions to their separate owners."""
+    from ..random_discard import random_discard_node_capabilities
+    return whole_hand_discard_node_capabilities(**kwargs) or random_discard_node_capabilities(**kwargs)
+
+
 def whole_hand_discard_node_capabilities(*,effects,target_schema,mechanic_ids,**kwargs):
     del kwargs
     if len(effects)!=1 or WHOLE_HAND_DISCARD_MECHANIC not in mechanic_ids:

@@ -108,6 +108,10 @@ def issue_replacement_order_choice(
     hand_inputs=whole_hand_input_snapshot(host,effect,actor=item.controller)
     if hand_inputs is not None:
         sealed_effect['_whole_hand_input_snapshot']=hand_inputs
+    from .random_discard import random_discard_input_snapshot
+    random_hand_inputs = random_discard_input_snapshot(host, effect, actor=item.controller)
+    if random_hand_inputs is not None:
+        sealed_effect['_random_discard_input_snapshot'] = random_hand_inputs
     named_inputs = named_counter_input_snapshot(host, effect, actor=item.controller)
     if named_inputs is not None:
         sealed_effect["_named_counter_input_snapshot"] = named_inputs
@@ -492,6 +496,11 @@ def _resume_semantic_replacement(
     hand_current=whole_hand_input_snapshot(host,current_effect,actor=item.controller)
     if hand_current is not None and hand_current!=hand_snapshot:
         raise error_type('Whole-hand membership changed before replacement resume')
+    from .random_discard import random_discard_input_snapshot
+    random_hand_snapshot = current_effect.pop('_random_discard_input_snapshot', None)
+    random_hand_current = random_discard_input_snapshot(host, current_effect, actor=item.controller)
+    if random_hand_current is not None and random_hand_current != random_hand_snapshot:
+        raise error_type('Random-discard membership changed before replacement resume')
     snapshot=current_effect.pop('_named_counter_input_snapshot',None)
     current=named_counter_input_snapshot(host,current_effect,actor=item.controller)
     if current is not None and current!=snapshot:

@@ -7204,6 +7204,20 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/random_discard.py",
+      "layer": "rules",
+      "owning_subsystem": "zones_and_object_identity",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/read_ahead.py",
       "layer": "domain",
       "owning_subsystem": "keyword_abilities",
@@ -11811,6 +11825,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_runtime/random_discard.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_runtime/regeneration_handlers.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
@@ -13197,5 +13226,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "a7f3393657f07dac225121102a641f33d446072260246017645214ef3e8b84b6"
+  "fingerprint": "dd3cf1d2a1e7b5047cf6cc63534c28168c23d527c6ca7786642a2d1eebf72b7c"
 }

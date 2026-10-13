@@ -1,4 +1,5 @@
 from __future__ import annotations
+from ..random_discard import random_discard_effect_template
 from .counter_resolution_effect_templates import counter_resolution_effect_template
 from .public_quantity_mana_effects import public_quantity_mana_effect_template
 from .fixed_resolution_mana import fixed_resolution_mana_effect_template
@@ -134,7 +135,7 @@ def _source_context_resolution_template(
     if permission is not None:return permission
     hand_entry=fixed_draw_then_hand_entry_template(text)
     if hand_entry is not None:return hand_entry
-    discard = whole_hand_discard_effect_template(text) or whole_hand_discard_draw_sequence_template(text) or whole_hand_discard_public_draw_sequence(text,source_name=card_name)
+    discard = random_discard_effect_template(text) or whole_hand_discard_effect_template(text) or whole_hand_discard_draw_sequence_template(text) or whole_hand_discard_public_draw_sequence(text,source_name=card_name)
     if discard is not None:
         return discard
     mana = fixed_resolution_mana_effect_template(text) or public_quantity_mana_effect_template(text, source_name=card_name)

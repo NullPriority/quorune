@@ -66120,6 +66120,446 @@
       "applicability_note": "Replace a represented card's proposed zone destination through the affected-object ordering boundary before committing the move."
     },
     {
+      "capability_id": "zone.discard.fixed_random",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_random_discard.RandomDiscardActionTests.test_random_discard_replacement_pending_selection_reload_rollback_and_replay",
+      "official_rule_ids": [
+        "101.4",
+        "402.1",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Trusted native cast, entry and combat triggers preserve random subset, source/recipient scope and printed order. Private apply/decline and replacement continuations persist selection across rollback, save/load and pre-action replay."
+    },
+    {
+      "capability_id": "zone.discard.fixed_random",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_random_discard.RandomDiscardActionTests.test_real_optional_random_discard_apply_decline_and_pending_reload",
+      "official_rule_ids": [
+        "101.4",
+        "402.1",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Trusted native cast, entry and combat triggers preserve random subset, source/recipient scope and printed order. Private apply/decline and replacement continuations persist selection across rollback, save/load and pre-action replay."
+    },
+    {
+      "capability_id": "zone.discard.fixed_random",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_random_discard.RandomDiscardActionTests.test_real_random_discard_batches_apnap_hands_and_clamps_empty_short_hands",
+      "official_rule_ids": [
+        "101.4",
+        "402.1",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Randomly select up to a fixed one-to-four cards from each represented current hand and commit one simultaneous canonical discard batch. Sampling binds the authoritative stack identity; replacement resumption requires the same complete hand identities."
+    },
+    {
+      "capability_id": "zone.discard.fixed_random",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_random_discard.RandomDiscardActionTests.test_two_random_instructions_keep_distinct_persisted_sampling_keys",
+      "official_rule_ids": [
+        "101.4",
+        "402.1",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Trusted native cast, entry and combat triggers preserve random subset, source/recipient scope and printed order. Private apply/decline and replacement continuations persist selection across rollback, save/load and pre-action replay."
+    },
+    {
+      "capability_id": "zone.discard.fixed_random",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_random_discard.RandomDiscardActionTests.test_original_entry_and_combat_random_discard_keep_source_and_recipient",
+      "official_rule_ids": [
+        "101.4",
+        "402.1",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Trusted native cast, entry and combat triggers preserve random subset, source/recipient scope and printed order. Private apply/decline and replacement continuations persist selection across rollback, save/load and pre-action replay."
+    },
+    {
+      "capability_id": "zone.discard.fixed_random",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_random_discard.RandomDiscardActionTests.test_real_random_discard_batches_apnap_hands_and_clamps_empty_short_hands",
+      "official_rule_ids": [
+        "101.4",
+        "402.1",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Randomly select up to a fixed one-to-four cards from each represented current hand and commit one simultaneous canonical discard batch. Sampling binds the authoritative stack identity; replacement resumption requires the same complete hand identities."
+    },
+    {
+      "capability_id": "zone.discard.fixed_random",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_random_discard.RandomDiscardCompilerTests.test_random_subset_is_deterministic_distinct_and_fails_on_unknown_membership",
+      "official_rule_ids": [
+        "101.4",
+        "402.1",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Randomly select up to a fixed one-to-four cards from each represented current hand and commit one simultaneous canonical discard batch. Sampling binds the authoritative stack identity; replacement resumption requires the same complete hand identities."
+    },
+    {
+      "capability_id": "zone.discard.fixed_random",
+      "evidence_class": "negative",
+      "test_id": "tests.test_random_discard.RandomDiscardActionTests.test_random_discard_replacement_pending_selection_reload_rollback_and_replay",
+      "official_rule_ids": [
+        "101.4",
+        "402.1",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Trusted native cast, entry and combat triggers preserve random subset, source/recipient scope and printed order. Private apply/decline and replacement continuations persist selection across rollback, save/load and pre-action replay."
+    },
+    {
+      "capability_id": "zone.discard.fixed_random",
+      "evidence_class": "negative",
+      "test_id": "tests.test_random_discard.RandomDiscardCompilerTests.test_fixed_random_discard_closes_target_controller_and_apnap_sets",
+      "official_rule_ids": [
+        "101.4",
+        "402.1",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Randomly select up to a fixed one-to-four cards from each represented current hand and commit one simultaneous canonical discard batch. Sampling binds the authoritative stack identity; replacement resumption requires the same complete hand identities."
+    },
+    {
+      "capability_id": "zone.discard.fixed_random",
+      "evidence_class": "negative",
+      "test_id": "tests.test_random_discard.RandomDiscardCompilerTests.test_random_subset_is_deterministic_distinct_and_fails_on_unknown_membership",
+      "official_rule_ids": [
+        "101.4",
+        "402.1",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Randomly select up to a fixed one-to-four cards from each represented current hand and commit one simultaneous canonical discard batch. Sampling binds the authoritative stack identity; replacement resumption requires the same complete hand identities."
+    },
+    {
+      "capability_id": "zone.discard.fixed_random",
+      "evidence_class": "positive",
+      "test_id": "tests.test_random_discard.RandomDiscardActionTests.test_original_entry_and_combat_random_discard_keep_source_and_recipient",
+      "official_rule_ids": [
+        "101.4",
+        "402.1",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Trusted native cast, entry and combat triggers preserve random subset, source/recipient scope and printed order. Private apply/decline and replacement continuations persist selection across rollback, save/load and pre-action replay."
+    },
+    {
+      "capability_id": "zone.discard.fixed_random",
+      "evidence_class": "positive",
+      "test_id": "tests.test_random_discard.RandomDiscardActionTests.test_original_goblin_lore_draws_before_random_discard_and_replays",
+      "official_rule_ids": [
+        "101.4",
+        "402.1",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Trusted native cast, entry and combat triggers preserve random subset, source/recipient scope and printed order. Private apply/decline and replacement continuations persist selection across rollback, save/load and pre-action replay."
+    },
+    {
+      "capability_id": "zone.discard.fixed_random",
+      "evidence_class": "positive",
+      "test_id": "tests.test_random_discard.RandomDiscardActionTests.test_original_hymn_trusted_target_rollback_private_survivors_and_replay",
+      "official_rule_ids": [
+        "101.4",
+        "402.1",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Randomly select up to a fixed one-to-four cards from each represented current hand and commit one simultaneous canonical discard batch. Sampling binds the authoritative stack identity; replacement resumption requires the same complete hand identities."
+    },
+    {
+      "capability_id": "zone.discard.fixed_random",
+      "evidence_class": "positive",
+      "test_id": "tests.test_random_discard.RandomDiscardCompilerTests.test_fixed_random_discard_closes_target_controller_and_apnap_sets",
+      "official_rule_ids": [
+        "101.4",
+        "402.1",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Randomly select up to a fixed one-to-four cards from each represented current hand and commit one simultaneous canonical discard batch. Sampling binds the authoritative stack identity; replacement resumption requires the same complete hand identities."
+    },
+    {
+      "capability_id": "zone.discard.fixed_random",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_random_discard.RandomDiscardActionTests.test_original_hymn_trusted_target_rollback_private_survivors_and_replay",
+      "official_rule_ids": [
+        "101.4",
+        "402.1",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Randomly select up to a fixed one-to-four cards from each represented current hand and commit one simultaneous canonical discard batch. Sampling binds the authoritative stack identity; replacement resumption requires the same complete hand identities."
+    },
+    {
+      "capability_id": "zone.discard.fixed_random",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_random_discard.RandomDiscardActionTests.test_random_discard_replacement_pending_selection_reload_rollback_and_replay",
+      "official_rule_ids": [
+        "101.4",
+        "402.1",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Trusted native cast, entry and combat triggers preserve random subset, source/recipient scope and printed order. Private apply/decline and replacement continuations persist selection across rollback, save/load and pre-action replay."
+    },
+    {
+      "capability_id": "zone.discard.fixed_random",
+      "evidence_class": "replay",
+      "test_id": "tests.test_random_discard.RandomDiscardActionTests.test_original_entry_and_combat_random_discard_keep_source_and_recipient",
+      "official_rule_ids": [
+        "101.4",
+        "402.1",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Trusted native cast, entry and combat triggers preserve random subset, source/recipient scope and printed order. Private apply/decline and replacement continuations persist selection across rollback, save/load and pre-action replay."
+    },
+    {
+      "capability_id": "zone.discard.fixed_random",
+      "evidence_class": "replay",
+      "test_id": "tests.test_random_discard.RandomDiscardActionTests.test_original_hymn_trusted_target_rollback_private_survivors_and_replay",
+      "official_rule_ids": [
+        "101.4",
+        "402.1",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Randomly select up to a fixed one-to-four cards from each represented current hand and commit one simultaneous canonical discard batch. Sampling binds the authoritative stack identity; replacement resumption requires the same complete hand identities."
+    },
+    {
+      "capability_id": "zone.discard.fixed_random",
+      "evidence_class": "replay",
+      "test_id": "tests.test_random_discard.RandomDiscardActionTests.test_random_discard_replacement_pending_selection_reload_rollback_and_replay",
+      "official_rule_ids": [
+        "101.4",
+        "402.1",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Trusted native cast, entry and combat triggers preserve random subset, source/recipient scope and printed order. Private apply/decline and replacement continuations persist selection across rollback, save/load and pre-action replay."
+    },
+    {
+      "capability_id": "zone.discard.fixed_random",
+      "evidence_class": "replay",
+      "test_id": "tests.test_random_discard.RandomDiscardActionTests.test_real_optional_random_discard_apply_decline_and_pending_reload",
+      "official_rule_ids": [
+        "101.4",
+        "402.1",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Trusted native cast, entry and combat triggers preserve random subset, source/recipient scope and printed order. Private apply/decline and replacement continuations persist selection across rollback, save/load and pre-action replay."
+    },
+    {
+      "capability_id": "zone.discard.fixed_random",
+      "evidence_class": "replay",
+      "test_id": "tests.test_random_discard.RandomDiscardActionTests.test_real_random_discard_batches_apnap_hands_and_clamps_empty_short_hands",
+      "official_rule_ids": [
+        "101.4",
+        "402.1",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Randomly select up to a fixed one-to-four cards from each represented current hand and commit one simultaneous canonical discard batch. Sampling binds the authoritative stack identity; replacement resumption requires the same complete hand identities."
+    },
+    {
+      "capability_id": "zone.discard.fixed_random",
+      "evidence_class": "replay",
+      "test_id": "tests.test_random_discard.RandomDiscardActionTests.test_two_random_instructions_keep_distinct_persisted_sampling_keys",
+      "official_rule_ids": [
+        "101.4",
+        "402.1",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Trusted native cast, entry and combat triggers preserve random subset, source/recipient scope and printed order. Private apply/decline and replacement continuations persist selection across rollback, save/load and pre-action replay."
+    },
+    {
       "capability_id": "zone.discard.typed_cause",
       "evidence_class": "interaction",
       "test_id": "tests.test_madness_rules.MadnessRuntimeTests.test_simultaneous_madness_triggers_batch_in_apnap_order",

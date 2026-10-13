@@ -2,7 +2,7 @@ from __future__ import annotations
 from .counter_placement_capability_shapes import counter_placement_covered_mechanics
 from .control_capability_shapes import fixed_control_node_capabilities
 from .extra_turn_shapes import fixed_extra_turn_node_capabilities
-from .whole_hand_discard_shapes import whole_hand_discard_node_capabilities
+from .whole_hand_discard_shapes import unchosen_hand_discard_node_capabilities
 from .connive_capability_shapes import fixed_connive_node_capabilities
 from .goad_capability_shapes import fixed_goad_node_capabilities
 from .exploit_capability_shapes import exploit_instruction_node_capabilities
@@ -1062,7 +1062,7 @@ def _targeted_effect_capabilities(
     dependencies: set[str] = set()
     for resolver in (
         fixed_extra_turn_node_capabilities,
-        whole_hand_discard_node_capabilities,
+        unchosen_hand_discard_node_capabilities,
         fixed_connive_node_capabilities, fixed_goad_node_capabilities, exploit_instruction_node_capabilities,
         fixed_control_node_capabilities,
         fixed_attachment_action_node_capabilities,

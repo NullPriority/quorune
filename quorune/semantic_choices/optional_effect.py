@@ -34,6 +34,15 @@ def _represented_effect(
         )
     if operation == OPTIONAL_EFFECT_OPERATION:
         raise SemanticChoiceError("Optional effects cannot nest")
+    if operation == "discard_random_cards":
+        from ..random_discard import random_discard_node_capabilities
+        restored = {**effect, "actor": "$controller", "players": ["$controller"]}
+        if (effect.get("actor") != actor or not isinstance(effect.get("players"), (list, tuple))
+                or list(effect["players"]) != [actor]
+                or not random_discard_node_capabilities(effects=(restored,), target_schema=None,
+                    mechanic_ids=("fixed-random-discard", "cr-402-hand"))):
+            raise SemanticChoiceError("Optional controller random discard instruction is malformed")
+        return
     if operation == "choose_cards_apnap":
         from ..rules.affected_player_discard_capability_shapes import fixed_affected_player_discard_node_capabilities
         restored={**effect,'actor':'$controller','players':['$controller']}

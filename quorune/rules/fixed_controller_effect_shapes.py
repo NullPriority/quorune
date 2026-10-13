@@ -168,6 +168,10 @@ def fixed_controller_effect_sequence_node_capabilities(
                 target_schema=None,
                 mechanic_ids=("scry",),
             )
+        elif operation == "discard_random_cards":
+            from ..random_discard import random_discard_node_capabilities
+            required = random_discard_node_capabilities(
+                effects=(effect,), target_schema=None, mechanic_ids=('fixed-random-discard',))
         else:
             return ()
         if not required:

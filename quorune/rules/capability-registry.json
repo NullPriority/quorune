@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 239,
+  "registry_version": 240,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -238,6 +238,103 @@
     }
   ],
   "capabilities": [
+    {
+      "id": "zone.discard.fixed_random",
+      "version": 1,
+      "official_rules": [
+        "101.4",
+        "402.1",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.9b",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Randomly select up to a fixed one-to-four cards from each represented current hand and commit one simultaneous canonical discard batch. Sampling binds the authoritative stack identity; replacement resumption requires the same complete hand identities.",
+        "inputs": [
+          "one source-spanned fixed random discard instruction",
+          "resolving controller and active affected-player set",
+          "authoritative hidden hand membership",
+          "persisted stack identity and seed"
+        ],
+        "outputs": [
+          "unbiased distinct random subset per affected hand",
+          "one replacement-aware discard batch",
+          "no client hand-selection decision",
+          "principal-correct surviving hidden hands and exact replay"
+        ],
+        "exclusions": [
+          "random discard costs",
+          "variable or filtered random counts",
+          "linked discard results or independently unsupported siblings"
+        ]
+      },
+      "dependencies": [
+        "zone.change.destination_replacement",
+        "zone.discard.typed_cause"
+      ],
+      "implementation_components": [
+        "quorune.random_discard.random_discard_effect_template",
+        "quorune.random_discard.random_discard_node_capabilities",
+        "quorune.random_discard.resolve_random_discard",
+        "quorune.semantic_runtime.random_discard.RandomDiscardHandler",
+        "quorune.semantic_runtime.random_discard.execute_random_discard",
+        "quorune.random_discard.damage_player_random_discard_result"
+      ],
+      "positive_tests": [
+        "test_fixed_random_discard_closes_target_controller_and_apnap_sets",
+        "test_original_hymn_trusted_target_rollback_private_survivors_and_replay",
+        "test_original_entry_and_combat_random_discard_keep_source_and_recipient",
+        "test_original_goblin_lore_draws_before_random_discard_and_replays"
+      ],
+      "negative_tests": [
+        "test_fixed_random_discard_closes_target_controller_and_apnap_sets",
+        "test_random_subset_is_deterministic_distinct_and_fails_on_unknown_membership",
+        "test_random_discard_replacement_pending_selection_reload_rollback_and_replay"
+      ],
+      "interaction_tests": [
+        "test_real_random_discard_batches_apnap_hands_and_clamps_empty_short_hands",
+        "test_random_discard_replacement_pending_selection_reload_rollback_and_replay",
+        "test_real_optional_random_discard_apply_decline_and_pending_reload",
+        "test_two_random_instructions_keep_distinct_persisted_sampling_keys"
+      ],
+      "multiplayer_tests": [
+        "test_real_random_discard_batches_apnap_hands_and_clamps_empty_short_hands",
+        "test_original_entry_and_combat_random_discard_keep_source_and_recipient"
+      ],
+      "privacy_tests": [
+        "test_original_hymn_trusted_target_rollback_private_survivors_and_replay",
+        "test_random_discard_replacement_pending_selection_reload_rollback_and_replay"
+      ],
+      "replay_tests": [
+        "test_original_hymn_trusted_target_rollback_private_survivors_and_replay",
+        "test_real_random_discard_batches_apnap_hands_and_clamps_empty_short_hands",
+        "test_random_discard_replacement_pending_selection_reload_rollback_and_replay",
+        "test_original_entry_and_combat_random_discard_keep_source_and_recipient",
+        "test_real_optional_random_discard_apply_decline_and_pending_reload",
+        "test_two_random_instructions_keep_distinct_persisted_sampling_keys"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "The random result declares canonical discard cause and replacement ownership beside each actual target dependency.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "A fixed seed witness distinguishes uniform sampling from selecting the first hand members, and removing the compiler production restores a material residual.",
+      "blockers": [],
+      "status": "trusted"
+    },
     {
       "id": "zone.entry.fixed_copy",
       "version": 1,

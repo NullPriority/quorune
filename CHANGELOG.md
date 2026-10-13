@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Resolve fixed random discard effects through deterministic private hand
+  sampling, canonical simultaneous discards, and replacement-safe replay.
+
 - Resolve public-query Scry and Surveil counts through the existing private
   library partitions and compile their completed-action observers. Positive
   empty-library Scry completes an event; zero creates no event.
