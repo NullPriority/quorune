@@ -14,6 +14,35 @@ LINKED_EXILE_RETURN_OPERATION = "linked_exile_return"
 LINKED_RETURN_OPERATION = "return_linked_exiled_objects"
 
 
+@dataclass(frozen=True, slots=True)
+class ExiledObjectIdentity:
+    """The actual exile incarnation retained by a returning instruction."""
+
+    object_id: str
+    ref: str
+    logical_object_id: str
+
+    def __post_init__(self) -> None:
+        if any(type(value) is not str or not value for value in
+               (self.object_id, self.ref, self.logical_object_id)):
+            raise ValueError('Linked exile identity is malformed')
+
+    def to_dict(self) -> dict[str, str]:
+        return {'object_id': self.object_id, 'ref': self.ref,
+                'logical_object_id': self.logical_object_id}
+
+    @classmethod
+    def from_dict(cls, value: Mapping[str, Any]) -> 'ExiledObjectIdentity':
+        if not isinstance(value, Mapping) or set(value) != {'object_id', 'ref', 'logical_object_id'}:
+            raise ValueError('Linked exile identity is malformed')
+        return cls(**value)
+
+    def matches_exiled_card(self, card: Any) -> bool:
+        return bool(card is not None and card.object_id == self.object_id
+            and card.ref == self.ref and card.logical_object_id == self.logical_object_id
+            and card.zone == 'exile' and not card.is_token and not card.is_spell_copy)
+
+
 def validate_linked_instruction(effect: Mapping[str, Any]) -> None:
     """Validate one phase before mutable state is made available."""
     if not isinstance(effect, Mapping):

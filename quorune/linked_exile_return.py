@@ -11,7 +11,7 @@ from .continuous_effect_state import (
 )
 from .entry_counter_model import EffectEntryCounter
 from .errors import GameRuleError
-from .linked_exile_return_model import LinkedExileReturnSpec, LINKED_RETURN_OPERATION
+from .linked_exile_return_model import ExiledObjectIdentity, LinkedExileReturnSpec, LINKED_RETURN_OPERATION
 from .trigger_processing import schedule_delayed_trigger
 from .zone_transitions import ZoneTransitionOwner
 
@@ -48,24 +48,15 @@ def _eligible_exiled(host: LinkedExileReturnHost, objects: Any) -> tuple[Any, ..
     result = []
     seen = set()
     for identity in objects:
-        if (
-            not isinstance(identity, Mapping)
-            or set(identity) != {"object_id", "ref", "logical_object_id"}
-            or any(type(value) is not str or not value for value in identity.values())
-        ):
-            raise GameRuleError("Linked exile identity is malformed")
-        if identity["object_id"] in seen:
+        try:
+            retained = ExiledObjectIdentity.from_dict(identity)
+        except ValueError as exc:
+            raise GameRuleError(str(exc)) from exc
+        if retained.object_id in seen:
             raise GameRuleError("Linked exile identities must be unique")
-        seen.add(identity["object_id"])
-        card = host.state.cards.get(identity["object_id"])
-        if (
-            card is not None
-            and card.ref == identity["ref"]
-            and card.logical_object_id == identity["logical_object_id"]
-            and card.zone == "exile"
-            and not card.is_token
-            and not card.is_spell_copy
-        ):
+        seen.add(retained.object_id)
+        card = host.state.cards.get(retained.object_id)
+        if retained.matches_exiled_card(card):
             result.append(card)
     return tuple(result)
 

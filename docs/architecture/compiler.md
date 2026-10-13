@@ -242,6 +242,15 @@ optional immediate fixed keyword grant. Exiled tokens cannot return. Conditional
 outcomes, transformed or face-down returns, source-departure banishment,
 attachment restoration, and unsupported riders remain residual.
 
+`compiler/conditional_exile_templates.py` separately recognizes the source-
+departure form in CR 610.3. Its immutable binding data retain the original
+source and the actual exiled incarnations; the return boundary collects one
+simultaneous owner-controlled movement through the canonical zone owner.
+Recognition and this zone-boundary contract do not admit printed gameplay.
+Source-departure hooks, durable binding ownership, and enclosing command and
+resolution continuations remain required before this grammar is executable.
+Separate entry and leave triggers remain a linked-ability contract under CR 607.
+
 `compiler/fixed_target_effect_sequences.py` owns the closed cross-sentence
 target-threading grammar. It is the only compiler authority for represented
 fixed counter plus until-end-of-turn characteristic sequences: one clause

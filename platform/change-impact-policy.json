@@ -3764,6 +3764,24 @@
         "test_typed_activated_ability_catalog",
         "test_activating_abilities_rules"
       ]
+    },
+    {
+      "id": "conditional-source-exile-data-contract",
+      "patterns": [
+        "quorune/conditional_exile_model.py",
+        "quorune/conditional_exile_return.py",
+        "quorune/compiler/conditional_exile_templates.py",
+        "quorune/linked_exile_return_model.py",
+        "quorune/linked_exile_return.py"
+      ],
+      "test_modules": [
+        "test_conditional_exile",
+        "test_linked_exile_return",
+        "test_linked_abilities",
+        "test_single_object_zone_transition",
+        "test_card_program_trust",
+        "test_game_record_v3"
+      ]
     }
   ],
   "symbol_rules": [

@@ -670,6 +670,8 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/commander_zones.py",
         "quorune/public_zone_moves.py",
         "quorune/linked_exile_return.py",
+        "quorune/conditional_exile_model.py",
+        "quorune/conditional_exile_return.py",
     }:
         return "zones_and_object_identity"
     if relative == "quorune/permanent_designations.py":

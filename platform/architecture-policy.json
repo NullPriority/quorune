@@ -236,7 +236,9 @@
     "quorune/zone_transition_model.py",
     "quorune/zone_transitions.py",
     "quorune/object_query.py",
-    "quorune/transmute.py"
+    "quorune/transmute.py",
+    "quorune/conditional_exile_return.py",
+    "quorune/conditional_exile_model.py"
   ],
   "protected_future_prefixes": [
     "quorune/domain/",
@@ -428,7 +430,8 @@
       ,"quorune/zone_transition_model.py": "typed read-only zone-transition host protocol, plan, and departure snapshot definitions"
       ,"quorune/dynamic_characteristics.py": "typed read-only dynamic-characteristic evaluation over public battlefield and owner graveyard state"
       ,"quorune/self_cast_reductions.py": "typed read-only self spell-cost reduction metrics over public objects and canonical current-turn facts"
-      ,"quorune/characteristic_evaluation_host.py": "typed read-only effective-characteristic integration over authoritative public state"
+      ,"quorune/characteristic_evaluation_host.py": "typed read-only effective-characteristic integration over authoritative public state",
+      "quorune/conditional_exile_return.py": "typed CR 610.3 committed-departure return selection over retained source and actual exile incarnations; movement stays in the canonical simultaneous zone owner"
     },
     "model_definition": "quorune/model.py"
   },
