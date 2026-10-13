@@ -18,6 +18,14 @@ def supported_trigger_limit_event(event: str) -> bool:
         and event.removesuffix(".self") not in UNSUPPORTED_LIMITED_TRIGGER_EVENTS)
 
 
+def supported_trigger_limit_subscriptions(event: str, condition: Mapping[str, Any] | None) -> bool:
+    from .event_subscriptions import FixedEventSubscriptionSet
+    if not supported_trigger_limit_event(event):
+        return False
+    subscriptions=FixedEventSubscriptionSet.from_condition(condition)
+    return subscriptions is None or all(supported_trigger_limit_event(child.event) for child in subscriptions.subscriptions)
+
+
 @dataclass(frozen=True, slots=True)
 class TriggerLimitSpec:
     schema_version: int = 1
@@ -43,7 +51,7 @@ def validate_program_trigger_limit(program: Any) -> None:
     if program.trigger_limit is None:
         return
     TriggerLimitSpec.from_dict(program.trigger_limit)
-    if program.active_zone != "battlefield" or not supported_trigger_limit_event(program.event):
+    if program.active_zone != "battlefield" or not supported_trigger_limit_subscriptions(program.event,program.event_condition):
         raise ValueError("Trigger limits require a supported nondeparture battlefield event")
     if TRIGGER_ONCE_PER_TURN_CAPABILITY not in program.capability_dependencies:
         raise ValueError("Trigger limits require their usage capability dependency")

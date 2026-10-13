@@ -6,7 +6,7 @@ from dataclasses import replace
 import re
 from typing import Any, Callable, Mapping
 
-from ..rules.trigger_limits import TriggerLimitSpec, TRIGGER_ONCE_PER_TURN_CAPABILITY, supported_trigger_limit_event
+from ..rules.trigger_limits import TriggerLimitSpec, TRIGGER_ONCE_PER_TURN_CAPABILITY, supported_trigger_limit_subscriptions
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from .dependency_gate import dependency_gate
 from .ir_model import OracleNode, append_residual
@@ -23,7 +23,7 @@ def limited_trigger_node(*, line: str, material_line: str, compile_inner: Callab
     private_residuals = []
     inner_arguments.update(line=match["body"], material_line=match["body"], residuals=private_residuals)
     node = compile_inner(**inner_arguments)
-    if node is None or not node.exact or node.kind != "triggered_ability" or node.active_zone != "battlefield" or not supported_trigger_limit_event(node.event):
+    if node is None or not node.exact or node.kind != "triggered_ability" or node.active_zone != "battlefield" or not supported_trigger_limit_subscriptions(node.event,node.event_condition):
         return None
     gate = dependency_gate(mechanics=node.mechanics, effects=node.effects, target_schema=node.target_schema,
         trusted_mechanics=arguments["trusted_mechanics"], capability_registry=arguments["capability_registry"],

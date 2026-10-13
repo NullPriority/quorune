@@ -6014,14 +6014,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v360-explicit-object-reference-efficiency",
-      "compiler_version": "oracle-ir-v360",
+      "transition_id": "oracle-ir-v361-source-specific-dual-event-correction",
+      "compiler_version": "oracle-ir-v361",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
       "expected_complete_card_gain": null,
-      "non_harvest_reason": "Measured efficiency correction resolves explicit public identities before characteristic-name fallback and reuses a verified test-fixture registry; no Oracle grammar or card-support harvest is added."
+      "non_harvest_reason": "Confirmed correctness correction retains source-specific child event identities in independent dual-event subscriptions and enforces the existing nondeparture usage-limit boundary across every child. No card-support harvest or new grammar is added."
     },
 
     "forecast_corrections": [

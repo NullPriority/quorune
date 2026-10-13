@@ -21,6 +21,115 @@ from common import ROOT
 
 
 class ResolutionPublicConditionCompilerTests(unittest.TestCase):
+    def test_dual_departure_usage_limit_remains_outside_supported_nondeparture_contract(self):
+        from test_bound_effect_programs import record
+        from quorune.oracle_ir import compile_oracle_card
+        registry=load_default_capability_registry()
+        for text in (
+            'When this creature enters and when this creature dies, draw a card. This ability triggers only once each turn.',
+            'When this artifact enters and when you sacrifice it, draw a card. This ability triggers only once each turn.',
+        ):
+            ir=compile_oracle_card(record(text,'Creature — Human'),capability_registry=registry,capability_profile='commander_review')
+            self.assertNotEqual('exact',ir.status,text)
+        from quorune.rules.trigger_limits import validate_program_trigger_limit,TRIGGER_ONCE_PER_TURN_CAPABILITY
+        from types import SimpleNamespace
+        for event in ('creature.dies','creature.dies.self','permanent.sacrificed','permanent.sacrificed.self'):
+            program=SimpleNamespace(event='permanent.enter',active_zone='battlefield',trigger_limit={'schema_version':1,'kind':'once_per_turn'},
+                capability_dependencies=(TRIGGER_ONCE_PER_TURN_CAPABILITY,),event_condition={'event_subscriptions':[
+                    {'event':'permanent.enter','condition':None},{'event':event,'condition':None}]})
+            with self.assertRaisesRegex(ValueError,'nondeparture'):validate_program_trigger_limit(program)
+
+    def test_independent_children_preserve_standalone_source_global_and_departure_meaning(self):
+        from test_bound_effect_programs import record
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.compiler.fixed_counter_trigger_nodes import fixed_counter_trigger_binding,_public_state_source_self_trigger_binding
+        from quorune.trigger_discovery import semantic_event_matches
+        from quorune.model import CardInstance
+        from types import SimpleNamespace
+        source=CardInstance(object_id='observer',ref='observer',oracle_id='fixture:source',printed_name='Fixture',
+            owner='A',controller='A',zone='battlefield')
+        host=SimpleNamespace(active_seats=tuple('ABCD'),state=SimpleNamespace(cards={},active_player='C'))
+        registry=load_default_capability_registry()
+        profiles=(
+            ('Whenever this creature deals combat damage to a player','damage.dealt',{'target_kind':'player','combat':True}),
+            ('Whenever this creature deals damage to an opponent','damage.dealt',{'target_kind':'player','target':'B','player':'B','combat':False}),
+            ('Whenever this creature attacks','creature.attacks',{}),
+            ('Whenever this creature blocks','creature.blocks',{}),
+            ('Whenever this creature becomes blocked','creature.becomes_blocked',{}),
+            ('When this creature dies','creature.dies',{'previous_controller':'A','types':['creature']}),
+            ('When you sacrifice this creature','permanent.sacrificed',{'previous_controller':'A','types':['creature']}),
+            ('When this creature is turned face up','permanent.turned_face_up',{}),
+        )
+        for prefix,event,facts in profiles:
+            with self.subTest(prefix=prefix):
+                child=fixed_counter_trigger_binding(prefix+', draw a card.',card_name='Fixture') or _public_state_source_self_trigger_binding(prefix+', draw a card.',card_name='Fixture')
+                ir=compile_oracle_card(record('When this creature enters and '+prefix.casefold()+', draw a card.','Creature — Human'),
+                    capability_registry=registry,capability_profile='commander_review')
+                self.assertEqual('exact',ir.status,ir.to_dict())
+                node=next(n for n in ir.faces[0].nodes if n.kind=='triggered_ability')
+                child_program=SimpleNamespace(event=child.event.value,event_condition=child.event_condition,active_zone=child.active_zone)
+                composed=SimpleNamespace(event=node.event,event_condition=node.event_condition,active_zone=node.active_zone)
+                for ref,expected in (('observer',True),('friendly',False),('opponent',False),('same-name',False)):
+                    context={**facts,'card':ref,'controller':'B' if ref=='opponent' else 'A'}
+                    standalone=semantic_event_matches(host,child_program,source,event,context)
+                    combined=semantic_event_matches(host,composed,source,event,context)
+                    self.assertEqual(expected,standalone,context)
+                    self.assertEqual(standalone,combined,context)
+        for prefix in ('Whenever a player casts a spell','Whenever you cast a Spirit spell'):
+            child=fixed_counter_trigger_binding(prefix+', draw a card.',card_name='Fixture')
+            ir=compile_oracle_card(record('When this creature enters and '+prefix.casefold()+', draw a card.','Creature — Human'),capability_registry=registry)
+            self.assertEqual('exact',ir.status)
+            node=next(n for n in ir.faces[0].nodes if n.kind=='triggered_ability')
+            for controller in 'AB':
+                context={'card':'unrelated-spell','controller':controller,'subtypes':['spirit'],'types':['creature'],'mana_value':2}
+                expected=prefix.startswith('Whenever a player') or controller=='A'
+                self.assertEqual(expected,semantic_event_matches(host,SimpleNamespace(event=child.event.value,
+                    event_condition=child.event_condition,active_zone=child.active_zone),source,'spell.cast',context))
+                self.assertEqual(expected,semantic_event_matches(host,SimpleNamespace(event=node.event,
+                    event_condition=node.event_condition,active_zone=node.active_zone),source,'spell.cast',context))
+        prefix='Whenever this creature is dealt damage'
+        child=fixed_counter_trigger_binding(prefix+', draw a card.',card_name='Fixture')
+        ir=compile_oracle_card(record('When this creature enters and '+prefix.casefold()+', draw a card.','Creature — Human'),capability_registry=registry)
+        self.assertEqual('exact',ir.status)
+        node=next(n for n in ir.faces[0].nodes if n.kind=='triggered_ability')
+        for target in ('observer','friendly','opponent'):
+            context={'card':'unrelated-damage-source','target':target,'combat':False,'target_kind':'permanent'}
+            expected=target=='observer'
+            for event,condition,zone in ((child.event.value,child.event_condition,child.active_zone),(node.event,node.event_condition,node.active_zone)):
+                self.assertEqual(expected,semantic_event_matches(host,SimpleNamespace(event=event,event_condition=condition,active_zone=zone),
+                    source,'damage.dealt',context))
+
+    def test_independent_damage_child_keeps_source_identity_in_event_and_predicate(self):
+        from test_bound_effect_programs import record
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.compiler.fixed_counter_trigger_nodes import fixed_counter_trigger_binding
+        from quorune.rules.event_subscriptions import FixedEventSubscriptionSet
+        from quorune.trigger_discovery import semantic_event_matches
+        from types import SimpleNamespace
+        registry=load_default_capability_registry()
+        body='draw a card.'
+        child=fixed_counter_trigger_binding('Whenever this creature deals combat damage to a player, '+body,card_name='Fixture')
+        self.assertEqual('damage.dealt.self',child.event.value)
+        combined=compile_oracle_card(record('When this creature enters and whenever this creature deals combat damage to a player, '+body,
+            'Creature — Human'),capability_registry=registry,capability_profile='commander_review')
+        self.assertEqual('exact',combined.status,combined.to_dict())
+        node=next(n for n in combined.faces[0].nodes if n.kind=='triggered_ability')
+        subscriptions=FixedEventSubscriptionSet.from_condition(node.event_condition)
+        self.assertEqual(2,len(subscriptions.subscriptions))
+        host=SimpleNamespace(active_seats=tuple('ABCD'),state=SimpleNamespace(cards={},active_player='A'))
+        from quorune.model import CardInstance
+        source=CardInstance(object_id='source',ref='actual-source',oracle_id='fixture:dual-source',
+            printed_name='Fixture',owner='A',controller='A',zone='battlefield')
+        standalone=SimpleNamespace(event=child.event.value,event_condition=child.event_condition,active_zone=child.active_zone)
+        program=SimpleNamespace(event=node.event,event_condition=node.event_condition,active_zone=node.active_zone)
+        cases=(('actual-source',True,'player',True),('friendly-other',True,'player',False),
+               ('opponent-other',True,'player',False),('same-name-other',True,'player',False),
+               ('actual-source',False,'player',False),('actual-source',True,'permanent',False))
+        for card,combat,target_kind,expected in cases:
+            context={'card':card,'combat':combat,'target_kind':target_kind,'source_controller':'A' if card!='opponent-other' else 'B'}
+            self.assertEqual(expected,semantic_event_matches(host,standalone,source,'damage.dealt',context),context)
+            self.assertEqual(expected,semantic_event_matches(host,program,source,'damage.dealt',context),context)
+
     def test_fixed_numeric_existence_condition_has_explicit_timing_and_closed_value(self):
         from test_bound_effect_programs import record
         from quorune.oracle_ir import compile_oracle_card
@@ -82,7 +191,7 @@ class ResolutionPublicConditionCompilerTests(unittest.TestCase):
         self.assertEqual('exact', ir.status, ir.material_residuals)
         node = next(n for n in ir.faces[0].nodes if n.kind == 'triggered_ability')
         subscriptions = FixedEventSubscriptionSet.from_condition(node.event_condition)
-        self.assertEqual({'permanent.enter','spell.cast'}, {r.event for r in subscriptions.subscriptions})
+        self.assertEqual({'permanent.enter','spell.cast'}, {r.event.removesuffix('.self') for r in subscriptions.subscriptions})
         self.assertEqual(2, len(subscriptions.subscriptions))
         self.assertIn('fixed_multi_event_subscription', node.runtime_coverage)
         self.assertIn('trigger.subscription.fixed_multi_event', node.capability_dependencies)
@@ -255,6 +364,171 @@ class ResolutionPublicConditionCompilerTests(unittest.TestCase):
         with self.assertRaisesRegex(FixedPublicStateConditionError, "unavailable"):
             fixed_public_state_condition_matches(state, binding, condition,
                 public_object_resolver=None, quantity_resolver=None, require_available=True)
+
+
+class IndependentDualSourceEventRuntimeTests(unittest.TestCase):
+    from test_bound_effect_programs import BoundEffectProgramRuntimeTests as _Actions
+    add=_Actions.add
+    ready=_Actions.ready
+    checkpoint=_Actions.checkpoint
+    resolve=_Actions.resolve
+    replay=_Actions.replay
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary=tempfile.TemporaryDirectory();path=Path(cls.temporary.name)/'dual-source.sqlite3'
+        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',
+                                ROOT/'tests/fixtures/independent-dual-source-events.json'],path)
+        cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
+        cls.deck=DeckDefinition('Generic Dual Source Deck',[DeckEntry('Generic Bound Commander',1,'commander'),
+            DeckEntry('Generic Bound Plains',30)],['Generic Bound Commander'])
+
+    @classmethod
+    def tearDownClass(cls):cls.db.close();cls.temporary.cleanup()
+
+    def session(self,seed):
+        from quorune.semantics import SemanticRegistry
+        session=self._Actions.session(self,seed);engine=session.engine
+        engine.semantics=SemanticRegistry(include_builtin_packs=False)
+        from quorune.oracle_ir import register_generated_programs
+        register_generated_programs(self.db,engine.semantics,tuple(self.db.iter_cards()),trust_level='provisional',
+            capability_registry=self.registry,capability_profile='commander_review',promote_exact_runtime_handlers=True,
+            promote_exact_trigger_programs=True,promote_exact_effect_programs=True,promote_exact_capability_declarations=True)
+        return session
+
+    def cast_observer(self,session):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+        engine=session.engine;source=self.add(engine,'Generic Dual Source Observer',zone='hand',ref='first-source')
+        action=self.ready(session,source,{'U':1,'R':1})
+        program=compile_best_available_card_program(self.db,self.db.lookup(source.printed_name),semantic_registry=engine.semantics,
+            capability_registry=self.registry,capability_profile='commander_review')
+        self.assertTrue(bind_card_program_runtime(program,capability_registry=self.registry,
+            profile='commander_review')['strict_capability_ready'])
+        before_hand=len(engine.state.players['A'].zones['hand']);self.checkpoint(session)
+        accepted=session.act('pilot:A',{'action_id':action['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        self.assertEqual(before_hand,len(engine.state.players['A'].zones['hand']))
+        self.assertEqual(1,sum(event.code=='stack.trigger' and event.details.get('source')==source.ref for event in engine.state.events))
+        self.replay(session)
+        return engine.state.cards[source.object_id]
+
+    def finish_combat(self,session,*,pending_reload=False):
+        reloaded=False
+        for _ in range(80):
+            engine=session.engine;decision=engine.state.pending_decision
+            if not engine.state.stack and (engine.state.phase=='postcombat_main' or engine.state.step=='end_combat'):return session
+            if pending_reload and not reloaded and any(item.context.get('event')=='damage.dealt' for item in engine.state.stack):
+                session=self.replay(session,load=True);reloaded=True;continue
+            self.assertIsNotNone(decision)
+            if decision.kind=='priority':response={'action_id':'pass'}
+            elif decision.kind=='combat.blockers':response={'action_id':'block','blocks':{}}
+            elif decision.kind=='trigger.order':
+                batch=engine.state.pending_trigger_batches[0]
+                response={'action_id':'order','triggers':[item.ref for item in batch.items]}
+            else:self.fail('Unexpected dual-source combat decision '+decision.kind)
+            result=session.act(session.pending_principals()[0],response)
+            self.assertTrue(result.ok,result.summary)
+        self.fail('Dual-source combat did not finish')
+
+    def test_trusted_dual_event_draws_only_for_each_actual_source_in_real_combat(self):
+        from quorune.model import CombatState
+        for index,mode in enumerate(('source','friendly','opponent','same_name')):
+            with self.subTest(mode=mode):
+                session=self.session(390001+index);engine=session.engine
+                source=self.cast_observer(session)
+                other=self.add(engine,'Generic Dual Source Observer' if mode=='same_name' else 'Generic Bound Body',
+                    seat='B' if mode=='opponent' else 'A',ref='second-object')
+                other.acquired_control_turn_count=-1
+                attacker=source if mode=='source' else other
+                active=attacker.controller;defender='C'
+                engine.permissions.invalidate_current();engine.state.pending_decision=None
+                engine.state.priority_player=None;engine.state.priority_passes=[]
+                engine.state.active_player=active;engine.state.phase='combat';engine.state.step='declare_attackers'
+                engine.state.phase_index=5;engine.state.combat=CombatState();engine._issue_attackers()
+                self.checkpoint(session);hands={seat:len(engine.state.players[seat].zones['hand']) for seat in 'ABCD'}
+                before=authoritative_state_hash(session.state)
+                rejected=session.act('pilot:D',{'action_id':'attack','attackers':{attacker.ref:defender}})
+                self.assertFalse(rejected.ok);self.assertEqual(before,authoritative_state_hash(session.state))
+                accepted=session.act('pilot:'+active,{'action_id':'attack','attackers':{attacker.ref:defender}})
+                self.assertTrue(accepted.ok,accepted.summary)
+                session=self.finish_combat(session,pending_reload=mode in {'source','same_name'});engine=session.engine
+                expected=1 if mode in {'source','same_name'} else 0
+                self.assertEqual(hands['A']+expected,len(engine.state.players['A'].zones['hand']),mode)
+                triggers=[event for event in engine.state.events if event.code=='stack.trigger' and event.details.get('source')==source.ref]
+                self.assertEqual(1+int(mode=='source'),len(triggers),mode)
+                for seat in 'BCD':self.assertEqual(hands[seat],len(engine.state.players[seat].zones['hand']))
+                self.replay(session,load=True)
+
+    def test_dual_event_noncombat_damage_is_excluded_through_real_activation(self):
+        session=self.session(390010);engine=session.engine
+        source=self.cast_observer(session)
+        action=self.ready(session,source,{'R':1})
+        self.checkpoint(session);hand_before=len(engine.state.players['A'].zones['hand'])
+        accepted=session.act('pilot:A',{'action_id':action['id'],'targets':['B'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        self.assertEqual(hand_before,len(engine.state.players['A'].zones['hand']))
+        self.replay(session)
+
+    def test_multiple_source_wound_observers_draw_once_each_after_actual_combat_in_apnap_order(self):
+        from quorune.model import CombatState
+        session=self.session(390011);engine=session.engine
+        first=self.add(engine,'Generic Dual Wound Observer',ref='wound-A')
+        second=self.add(engine,'Generic Dual Wound Observer',seat='B',ref='wound-B')
+        third=self.add(engine,'Generic Dual Wound Observer',seat='C',ref='wound-C')
+        first.acquired_control_turn_count=-1
+        engine.permissions.invalidate_current();engine.state.pending_decision=None
+        engine.state.active_player='A';engine.state.started=True;engine.state.phase='combat'
+        engine.state.step='declare_attackers';engine.state.phase_index=5;engine.state.combat=CombatState()
+        engine._issue_attackers();self.checkpoint(session)
+        before={seat:len(engine.state.players[seat].zones['hand']) for seat in 'ABCD'}
+        accepted=session.act('pilot:A',{'action_id':'attack','attackers':{first.ref:'B'}})
+        self.assertTrue(accepted.ok,accepted.summary)
+        for _ in range(40):
+            decision=engine.state.pending_decision
+            if decision.kind=='combat.blockers':
+                accepted=session.act('pilot:B',{'action_id':'block','blocks':{second.ref:first.ref}})
+            else:accepted=session.act(session.pending_principals()[0],{'action_id':'pass'})
+            self.assertTrue(accepted.ok,accepted.summary)
+            if len(engine.state.stack)==2 and all(item.context.get('event')=='damage.dealt' for item in engine.state.stack):break
+        self.assertEqual(['A','B'],[item.controller for item in engine.state.stack])
+        self.assertEqual([first.object_id,second.object_id],[item.source_object_id for item in engine.state.stack])
+        resumed=self.replay(session,load=True);resumed=self.finish_combat(resumed);engine=resumed.engine
+        for seat in 'ABCD':self.assertEqual(before[seat]+int(seat in 'AB'),len(engine.state.players[seat].zones['hand']))
+        private_draws=[event for event in engine.state.events if event.code=='card.draw.private']
+        for event in private_draws:
+            owner=event.actor
+            for seat in set('ABCD')-{owner}:
+                packet=json.dumps(resumed.packet('pilot:'+seat,full=True))
+                for ref in event.details['objects']:self.assertNotIn(ref,packet)
+        self.replay(resumed)
+
+    def test_created_dual_source_trigger_survives_real_ability_removal_response_and_replays(self):
+        from quorune.model import CombatState
+        session=self.session(390012);engine=session.engine;source=self.cast_observer(session)
+        removal=self.add(engine,'Snakeform',zone='hand',ref='source-ability-removal')
+        self.add(engine,'Island',ref='removal-island')
+        self.add(engine,'Generic Bound Plains',ref='removal-plains-one')
+        self.add(engine,'Generic Bound Plains',ref='removal-plains-two')
+        engine.permissions.invalidate_current();engine.state.pending_decision=None
+        engine.state.active_player='A';engine.state.phase='combat';engine.state.step='declare_attackers'
+        engine.state.phase_index=5;engine.state.combat=CombatState();engine._issue_attackers();self.checkpoint(session)
+        before=len(engine.state.players['A'].zones['hand'])
+        accepted=session.act('pilot:A',{'action_id':'attack','attackers':{source.ref:'B'}})
+        self.assertTrue(accepted.ok,accepted.summary)
+        for _ in range(40):
+            if any(item.context.get('event')=='damage.dealt' for item in engine.state.stack):break
+            accepted=session.act(session.pending_principals()[0],{'action_id':'pass'})
+            self.assertTrue(accepted.ok,accepted.summary)
+        self.assertEqual(1,len(engine.state.stack))
+        action=next(row for row in session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions'] if row.get('card')==removal.ref)
+        accepted=session.act('pilot:A',{'action_id':action['id'],'targets':[source.ref],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        resumed=self.replay(session,load=True);resumed=self.finish_combat(resumed)
+        self.assertEqual(before+1,len(resumed.state.players['A'].zones['hand']))
+        self.assertEqual(1,resumed.engine._numeric_stat(source.object_id,'power'))
+        self.assertFalse(resumed.engine._effective_ability_fragments(resumed.state.cards[source.object_id]))
+        self.replay(resumed)
 
 
 class ResolutionPublicConditionRuntimeTests(unittest.TestCase):

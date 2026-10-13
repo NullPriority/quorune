@@ -11,6 +11,11 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Preserve each source-specific child event when compiling an independent dual
+  trigger, preventing unrelated damage from producing a source's result.
+  Usage limits inspect every subscription and keep departure branches outside
+  the supported nondeparture contract.
+
 - Preserve noncreature Kindred permanents in bare-subtype public queries,
   including static keyword and modifier grants. Explicit creature descriptions
   retain their type restriction, and shroud offers and command validation agree.

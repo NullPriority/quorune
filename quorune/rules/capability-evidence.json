@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "c23d80e07e30059e205093b9e113b20f1d2dc2a2ca9e933f28e4fdddc2bf941c",
-  "declaration_source_fingerprint": "39cc1ac5f2059b81e7e64d8dad8f4730db3ef90f4e7c50acab626a58b3b69a88",
+  "registry_fingerprint": "b13c71716a6e23a83aa0f893791233f67d22d6fd29f3027db2fbed09bf6b7bb9",
+  "declaration_source_fingerprint": "fc241c009b123a496742798b2f1c93814a707cfd6a6a0114f8a9a80e91d4ef80",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -106945,7 +106945,10 @@
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -106961,7 +106964,10 @@
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -106977,7 +106983,10 @@
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -106989,11 +106998,71 @@
     {
       "capability_id": "trigger.subscription.fixed_multi_event",
       "evidence_class": "interaction",
+      "test_id": "tests.test_resolution_public_conditions.IndependentDualSourceEventRuntimeTests.test_created_dual_source_trigger_survives_real_ability_removal_response_and_replays",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent composition preserves each child source-specific event identity together with its existing predicate; global and controller-wide children retain their scope."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_resolution_public_conditions.IndependentDualSourceEventRuntimeTests.test_multiple_source_wound_observers_draw_once_each_after_actual_combat_in_apnap_order",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent composition preserves each child source-specific event identity together with its existing predicate; global and controller-wide children retain their scope."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_resolution_public_conditions.IndependentDualSourceEventRuntimeTests.test_trusted_dual_event_draws_only_for_each_actual_source_in_real_combat",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent composition preserves each child source-specific event identity together with its existing predicate; global and controller-wide children retain their scope."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "interaction",
       "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay",
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -107009,7 +107078,10 @@
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -107025,7 +107097,10 @@
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -107037,11 +107112,33 @@
     {
       "capability_id": "trigger.subscription.fixed_multi_event",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_resolution_public_conditions.IndependentDualSourceEventRuntimeTests.test_multiple_source_wound_observers_draw_once_each_after_actual_combat_in_apnap_order",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent composition preserves each child source-specific event identity together with its existing predicate; global and controller-wide children retain their scope."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay",
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -107057,7 +107154,10 @@
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -107073,7 +107173,10 @@
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -107089,7 +107192,10 @@
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -107105,7 +107211,10 @@
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -107121,7 +107230,10 @@
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -107133,11 +107245,33 @@
     {
       "capability_id": "trigger.subscription.fixed_multi_event",
       "evidence_class": "negative",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionCompilerTests.test_independent_damage_child_keeps_source_identity_in_event_and_predicate",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent composition preserves each child source-specific event identity together with its existing predicate; global and controller-wide children retain their scope."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "negative",
       "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionCompilerTests.test_independent_dual_event_rejects_nested_or_unrepresented_prefixes_and_mutant",
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -107153,7 +107287,10 @@
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -107169,7 +107306,10 @@
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -107185,7 +107325,10 @@
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -107201,7 +107344,10 @@
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -107217,7 +107363,10 @@
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -107233,7 +107382,10 @@
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -107245,11 +107397,52 @@
     {
       "capability_id": "trigger.subscription.fixed_multi_event",
       "evidence_class": "positive",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionCompilerTests.test_independent_children_preserve_standalone_source_global_and_departure_meaning",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent composition preserves each child source-specific event identity together with its existing predicate; global and controller-wide children retain their scope."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "positive",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionCompilerTests.test_independent_damage_child_keeps_source_identity_in_event_and_predicate",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent composition preserves each child source-specific event identity together with its existing predicate; global and controller-wide children retain their scope."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "positive",
       "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionCompilerTests.test_independent_dual_event_subscription_keeps_each_condition",
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -107265,7 +107458,10 @@
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -107281,7 +107477,10 @@
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -107297,7 +107496,10 @@
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -107313,7 +107515,10 @@
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -107325,11 +107530,33 @@
     {
       "capability_id": "trigger.subscription.fixed_multi_event",
       "evidence_class": "privacy",
+      "test_id": "tests.test_resolution_public_conditions.IndependentDualSourceEventRuntimeTests.test_multiple_source_wound_observers_draw_once_each_after_actual_combat_in_apnap_order",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent composition preserves each child source-specific event identity together with its existing predicate; global and controller-wide children retain their scope."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "privacy",
       "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay",
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -107345,7 +107572,10 @@
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -107361,7 +107591,10 @@
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -107377,7 +107610,10 @@
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -107389,11 +107625,52 @@
     {
       "capability_id": "trigger.subscription.fixed_multi_event",
       "evidence_class": "replay",
+      "test_id": "tests.test_resolution_public_conditions.IndependentDualSourceEventRuntimeTests.test_created_dual_source_trigger_survives_real_ability_removal_response_and_replays",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent composition preserves each child source-specific event identity together with its existing predicate; global and controller-wide children retain their scope."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "replay",
+      "test_id": "tests.test_resolution_public_conditions.IndependentDualSourceEventRuntimeTests.test_trusted_dual_event_draws_only_for_each_actual_source_in_real_combat",
+      "official_rule_ids": [
+        "603.2",
+        "603.3",
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent composition preserves each child source-specific event identity together with its existing predicate; global and controller-wide children retain their scope."
+    },
+    {
+      "capability_id": "trigger.subscription.fixed_multi_event",
+      "evidence_class": "replay",
       "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionRuntimeTests.test_original_beanstalk_entry_and_own_large_spell_keep_distinct_subscriptions_and_replay",
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -107409,7 +107686,10 @@
       "official_rule_ids": [
         "603.2",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7",
+        "603.10a"
       ],
       "supported_profiles": [
         "traditional",
@@ -107564,6 +107844,24 @@
     },
     {
       "capability_id": "trigger.usage.once_per_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionCompilerTests.test_dual_departure_usage_limit_remains_outside_supported_nondeparture_contract",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A composed subscription is eligible only when every child event is nondeparture; a permitted primary event cannot mask an unsupported departure branch."
+    },
+    {
+      "capability_id": "trigger.usage.once_per_turn",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_limited_event_triggers.LimitedEventTriggerRuntimeTests.test_actual_counter_events_draw_once_and_replay",
       "official_rule_ids": [
@@ -107651,6 +107949,24 @@
         "commander_review"
       ],
       "applicability_note": "Both source-self and external sacrifice-departure combinations remain residual at whole-card admission."
+    },
+    {
+      "capability_id": "trigger.usage.once_per_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_resolution_public_conditions.ResolutionPublicConditionCompilerTests.test_dual_departure_usage_limit_remains_outside_supported_nondeparture_contract",
+      "official_rule_ids": [
+        "400.7",
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A composed subscription is eligible only when every child event is nondeparture; a permitted primary event cannot mask an unsupported departure branch."
     },
     {
       "capability_id": "trigger.usage.once_per_turn",
@@ -118367,5 +118683,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "4408883caecdb4ff98a2b9add2af091b511648748cbd0e2183640792e1bb1bcf"
+  "fingerprint": "be062b0e56be9ceeeed4969baa65f5f91613f56de0d438974c9702a8c32438b6"
 }
