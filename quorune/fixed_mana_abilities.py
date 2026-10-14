@@ -50,6 +50,11 @@ class FixedManaAbilityError(ValueError):
     """A fixed-output mana descriptor is malformed or unsupported."""
 
 
+def _selected_mana_choice_is_closed(choice):
+    return (choice.kind=='sacrifice_one' and choice.count==1 and choice.fixed_zone_change_cost() is not None
+        or choice.kind=='tap' and choice.fixed_tap_cost() is not None)
+
+
 FIXED_MANA_HANDLER_CAPABILITIES = (
     "mana.activated.fixed_output",
     "mana.activated.restricted_fixed_output",
@@ -168,9 +173,8 @@ class FixedActivatedManaAbilitySpec:
         if not self.choices:return
         from .abilities import CostChoice
         if (not isinstance(self.choices,tuple) or len(self.choices)!=1 or not isinstance(self.choices[0],CostChoice)
-                or self.choices[0].kind!='sacrifice_one' or self.choices[0].count!=1
-                or self.choices[0].fixed_zone_change_cost() is None or self.result is not None):
-            raise FixedManaAbilityError('Selected fixed mana requires one closed sacrifice cost and no result rider')
+                or not _selected_mana_choice_is_closed(self.choices[0]) or self.result is not None):
+            raise FixedManaAbilityError('Selected fixed mana requires one closed sacrifice or tap cost and no result rider')
 
     def __post_init__(self) -> None:
         self._validate_choices()
@@ -575,8 +579,7 @@ def compile_fixed_activated_mana_ability(
         or ability.exile_source
         or ability.energy_payment
         or ability.loyalty_delta is not None
-        or (ability.choices and (len(ability.choices)!=1 or ability.choices[0].kind!='sacrifice_one'
-            or ability.choices[0].count!=1 or ability.choices[0].fixed_zone_change_cost() is None))
+        or (ability.choices and (len(ability.choices)!=1 or not _selected_mana_choice_is_closed(ability.choices[0])))
         or ability.uncompiled_costs
         or ability.sorcery_speed
         or ability.generic_reduction_per_legendary_creature

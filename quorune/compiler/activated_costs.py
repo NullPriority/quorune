@@ -55,7 +55,7 @@ def activated_ability_cost_capabilities(
         for choice in ability.choices
     ):
         additional.append("activation.selected_zone_change.fixed")
-    if not ability.mana_ability and any(
+    if any(
         choice.fixed_tap_cost() is not None for choice in ability.choices
     ):
         additional.append("activation.selected_tap.fixed")

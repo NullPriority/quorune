@@ -89,8 +89,8 @@ class FixedManaResultAbilityHandler(FixedActivatedManaAbilityHandler):
 class FixedManaSelectedCostAbilityHandler(FixedActivatedManaAbilityHandler):
     handler_id: str=FIXED_MANA_SELECTED_COST_HANDLER_ID
     schema_version: int=3
-    capability_dependencies: tuple[str,...]=(*FIXED_MANA_HANDLER_CAPABILITIES,'activation.selected_zone_change.fixed')
-    rule_references: tuple[str,...]=('602.2b','605.1a','605.3b','701.17')
+    capability_dependencies: tuple[str,...]=(*FIXED_MANA_HANDLER_CAPABILITIES,'activation.selected_zone_change.fixed','activation.selected_tap.fixed')
+    rule_references: tuple[str,...]=('302.6','602.2b','605.1a','605.3b','701.21a')
 
 
 @lru_cache(maxsize=1)

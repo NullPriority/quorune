@@ -44,6 +44,34 @@ def scalar_record(text: str, *, type_line: str = "Creature — Goblin") -> CardR
 
 
 class ScalarEffectAmountCompilerTests(unittest.TestCase):
+    def test_selected_tap_mana_dependency_and_malformed_choice_fail_closed(self):
+        import json
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.semantic_runtime.mana_abilities import FixedManaSelectedCostAbilityHandler
+        text='Tap three untapped Elves you control: Add {G}{G}{G}.'
+        ir=self.compile(text);descriptor=ir.faces[0].nodes[0].handlers[0]
+        handler=FixedManaSelectedCostAbilityHandler();spec=handler.validate(descriptor)
+        self.assertEqual(3,spec.choices[0].count)
+        for cap in ('activation.selected_tap.fixed','mana.activated.fixed_output'):
+            raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+            next(row for row in raw['capabilities'] if row['id']==cap).update(status='blocked',blockers=['tapmanacostauthoritywithdrawn'])
+            self.assertNotEqual('exact',compile_oracle_card(scalar_record(text),capability_registry=CapabilityRegistry(raw)).status)
+        with mock.patch('quorune.compiler.activated_mana_nodes.fixed_activated_tap_cost',side_effect=lambda ability:ability):
+            self.assertNotEqual('exact',self.compile(text).status)
+        for body in ('Tap X untapped creatures you control: Add {G}.','Tap an untapped creature: Add {G}.',
+            'Tap an untapped creature you control: Add {G}. This creature deals 1 damage to you.'):
+            self.assertNotEqual('exact',self.compile(body).status)
+
+    def test_fixed_mana_selected_tap_retains_query_count_and_source_exclusion(self):
+        for text,count,another in (('Tap three untapped Elves you control: Add {G}{G}{G}.',3,False),
+            ('{T}, Tap an untapped creature you control: Add one mana of any color.',1,True)):
+            ir=self.compile(text)
+            self.assertEqual('exact',ir.status,ir.material_residuals)
+            node=ir.faces[0].nodes[0];choice=node.handlers[0]['ability']['choices'][0]
+            self.assertEqual(3,node.handlers[0]['schema_version'])
+            self.assertEqual(count,choice['count']);self.assertEqual(another,choice['another'])
+            self.assertIn('activation.selected_tap.fixed',node.capability_dependencies)
+
     def test_selected_mana_sacrifice_codec_capabilities_and_result_boundaries_fail_closed(self):
         import json
         from quorune.fixed_mana_abilities import FixedActivatedManaAbilitySpec

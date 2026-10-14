@@ -2957,6 +2957,52 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
 
 
 class AdditionalConditionalModifierRuntimeTests(unittest.TestCase):
+    def test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay(self):
+        session=self.session(3633101);engine=session.engine
+        source=self.add(engine,'Heritage Druid',zone='hand',ref='tap-mana-heritage')
+        bodies=[self.add(engine,'Generic Selected Tap Elf',ref='tap-mana-elf-'+str(i)) for i in range(2)]
+        foreign=self.add(engine,'Generic Selected Tap Elf',seat='B',ref='tap-mana-foreign-elf')
+        green_spell=self.add(engine,'Generic Conditional Green Qualifier',zone='hand',ref='tap-mana-pay-green')
+        self.assert_whole_admission(source.printed_name)
+        offered=self.ready(session,source,{'G':1})
+        self.checkpoint(session)
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'pay':'auto'});self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        while session.state.priority_player!='A':self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        offered=next(row for row in actions if row['id'].startswith('activate:'+source.ref+':'))
+        before=session.state.to_dict()
+        for refs in ([source.ref,bodies[0].ref,bodies[0].ref],[source.ref,bodies[0].ref,foreign.ref],[source.ref,bodies[0].ref]):
+            self.assertFalse(session.act('pilot:A',{'action_id':offered['id'],'cost_cards':refs}).ok);self.assertEqual(before,session.state.to_dict())
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'cost_cards':[source.ref,*[body.ref for body in bodies]]})
+        self.assertTrue(accepted.ok,accepted.summary);self.assertFalse(session.state.stack)
+        self.assertEqual(3,session.state.players['A'].mana_pool['G'])
+        self.assertTrue(all(session.state.cards[c.object_id].tapped for c in (source,*bodies)))
+        self.assertFalse(session.state.cards[foreign.object_id].tapped)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        cast=next(row for row in actions if row.get('card')==green_spell.ref)
+        accepted=session.act('pilot:A',{'action_id':cast['id'],'pay':'auto'});self.assertTrue(accepted.ok,accepted.summary)
+        self.replay(session,load=True);self.resolve(session);self.replay(session)
+        session=self.session(3633102);engine=session.engine
+        source=self.add(engine,'Loam Dryad',ref='tap-mana-dryad')
+        body=self.add(engine,'Generic Selected Tap Elf',ref='tap-mana-fresh-selected')
+        fresh_source=self.add(engine,'Loam Dryad',ref='tap-mana-fresh-source')
+        self.assert_whole_admission(source.printed_name)
+        offered=self.ready(session,source,{})
+        fresh_source.acquired_control_turn_count=session.state.players['A'].turns_begun
+        engine.permissions.invalidate_current();session.state.pending_decision=None;engine._grant_priority('A');engine.pump()
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        self.assertFalse(any(row['id'].startswith('activate:'+fresh_source.ref+':') for row in actions))
+        offered=next(row for row in actions if row['id'].startswith('activate:'+source.ref+':'))
+        self.checkpoint(session);before=session.state.to_dict()
+        self.assertFalse(session.act('pilot:A',{'action_id':offered['id'],'cost_cards':[source.ref],'mana_output':{'G':1}}).ok)
+        self.assertEqual(before,session.state.to_dict())
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'cost_cards':[body.ref],'mana_output':{'G':1}})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.assertTrue(session.state.cards[source.object_id].tapped);self.assertTrue(session.state.cards[body.object_id].tapped)
+        self.assertEqual(1,session.state.players['A'].mana_pool['G']);self.assertFalse(session.state.stack)
+        self.replay(session,load=True)
+        for seat in 'BCD':self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+
     def test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays(self):
         session=self.session(3633001);engine=session.engine
         source=self.add(engine,'Phyrexian Altar',zone='hand',ref='selected-mana-altar')

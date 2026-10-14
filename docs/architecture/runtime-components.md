@@ -118,11 +118,14 @@ for that membership, and additional unrepresented state qualifiers remain
 excluded. The ordinary counter transaction and state-based counter cancellation
 retain ownership of placement consequences.
 
-Fixed activated mana version 3 carries one canonical selected sacrifice cost
+Fixed activated mana version 3 carries one canonical selected sacrifice or tap cost
 alongside its closed fixed output modes. The compiler requests the selected
 zone-change capability and the mana owner separately. Offers and accepted
 commands use the existing typed activation transaction to validate and pay the
 controlled object cost before adding the chosen mana once, without a stack item.
+Selected tap costs retain fixed counts and current typed queries. A combined
+source `{T}` cost excludes the source from the selected group; summoning sickness
+limits the source tap symbol but does not prevent paying a selected-creature tap.
 Legacy versions retain their output and result-rider schemas. Multiple selected
 costs, discard or exile costs, and selected-cost result riders remain excluded.
 

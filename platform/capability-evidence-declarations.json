@@ -2192,6 +2192,24 @@
     },
     {
       "capability_id": "activation.selected_tap.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "602.2",
+        "602.2b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalHeritageDruidactualcast then tapsitselfplus2selectedElves forGGG withoutstack; wrongcount/duplicate/foreignchoices rollback, producedmana paysrealspell. OriginalLoamDryadT+selectedtaprequiresdistinctsource/body, freshsourceT unavailable while freshselectedbody pays. Pendingload, privacy andfullreplay agree."
+    },
+    {
+      "capability_id": "activation.selected_tap.fixed",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_combined_tap_activation_costs.CombinedTapCostRuntimeTests.test_actual_evangel_requires_distinct_taps_and_allows_new_selected_creature",
       "official_rule_ids": [
@@ -2228,6 +2246,24 @@
     },
     {
       "capability_id": "activation.selected_tap.fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "602.2",
+        "602.2b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalHeritageDruidactualcast then tapsitselfplus2selectedElves forGGG withoutstack; wrongcount/duplicate/foreignchoices rollback, producedmana paysrealspell. OriginalLoamDryadT+selectedtaprequiresdistinctsource/body, freshsourceT unavailable while freshselectedbody pays. Pendingload, privacy andfullreplay agree."
+    },
+    {
+      "capability_id": "activation.selected_tap.fixed",
       "evidence_class": "mutation",
       "test_id": "tests.test_combined_tap_activation_costs.CombinedTapCostRuntimeTests.test_omitted_source_tap_mutant_is_killed_by_actual_evangel_activation",
       "official_rule_ids": [
@@ -2261,6 +2297,24 @@
         "commander_review"
       ],
       "applicability_note": "Remove the shared fixed tap-cost compiler production and require the exact source-spanned witness to kill the survivor."
+    },
+    {
+      "capability_id": "activation.selected_tap.fixed",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_selected_tap_mana_dependency_and_malformed_choice_fail_closed",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "602.2",
+        "602.2b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typedselectedtapquery/count/sourceexclusion closesfixedmanaV3; missingtap/manaauthority, openqualifiedcounts/targetscope andriderreject, omittedtapcostcompiler makesclause residual. V3retainsprioronesacrificecost andV1/V2schemas."
     },
     {
       "capability_id": "activation.selected_tap.fixed",
@@ -2318,6 +2372,42 @@
     },
     {
       "capability_id": "activation.selected_tap.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "602.2",
+        "602.2b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalHeritageDruidactualcast then tapsitselfplus2selectedElves forGGG withoutstack; wrongcount/duplicate/foreignchoices rollback, producedmana paysrealspell. OriginalLoamDryadT+selectedtaprequiresdistinctsource/body, freshsourceT unavailable while freshselectedbody pays. Pendingload, privacy andfullreplay agree."
+    },
+    {
+      "capability_id": "activation.selected_tap.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_selected_tap_mana_dependency_and_malformed_choice_fail_closed",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "602.2",
+        "602.2b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typedselectedtapquery/count/sourceexclusion closesfixedmanaV3; missingtap/manaauthority, openqualifiedcounts/targetscope andriderreject, omittedtapcostcompiler makesclause residual. V3retainsprioronesacrificecost andV1/V2schemas."
+    },
+    {
+      "capability_id": "activation.selected_tap.fixed",
       "evidence_class": "positive",
       "test_id": "tests.test_combined_tap_activation_costs.CombinedTapCostCompilerTests.test_source_and_selected_tap_cost_excludes_same_source",
       "official_rule_ids": [
@@ -2372,6 +2462,60 @@
     },
     {
       "capability_id": "activation.selected_tap.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "602.2",
+        "602.2b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalHeritageDruidactualcast then tapsitselfplus2selectedElves forGGG withoutstack; wrongcount/duplicate/foreignchoices rollback, producedmana paysrealspell. OriginalLoamDryadT+selectedtaprequiresdistinctsource/body, freshsourceT unavailable while freshselectedbody pays. Pendingload, privacy andfullreplay agree."
+    },
+    {
+      "capability_id": "activation.selected_tap.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_fixed_mana_selected_tap_retains_query_count_and_source_exclusion",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "602.2",
+        "602.2b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typedselectedtapquery/count/sourceexclusion closesfixedmanaV3; missingtap/manaauthority, openqualifiedcounts/targetscope andriderreject, omittedtapcostcompiler makesclause residual. V3retainsprioronesacrificecost andV1/V2schemas."
+    },
+    {
+      "capability_id": "activation.selected_tap.fixed",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "602.2",
+        "602.2b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalHeritageDruidactualcast then tapsitselfplus2selectedElves forGGG withoutstack; wrongcount/duplicate/foreignchoices rollback, producedmana paysrealspell. OriginalLoamDryadT+selectedtaprequiresdistinctsource/body, freshsourceT unavailable while freshselectedbody pays. Pendingload, privacy andfullreplay agree."
+    },
+    {
+      "capability_id": "activation.selected_tap.fixed",
       "evidence_class": "replay",
       "test_id": "tests.test_combined_tap_activation_costs.CombinedTapCostRuntimeTests.test_actual_evangel_requires_distinct_taps_and_allows_new_selected_creature",
       "official_rule_ids": [
@@ -2405,6 +2549,24 @@
         "commander_review"
       ],
       "applicability_note": "Replay the selected tap payment, stack object, and private draw result to the exact authoritative state hash."
+    },
+    {
+      "capability_id": "activation.selected_tap.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "602.2",
+        "602.2b",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalHeritageDruidactualcast then tapsitselfplus2selectedElves forGGG withoutstack; wrongcount/duplicate/foreignchoices rollback, producedmana paysrealspell. OriginalLoamDryadT+selectedtaprequiresdistinctsource/body, freshsourceT unavailable while freshselectedbody pays. Pendingload, privacy andfullreplay agree."
     },
     {
       "capability_id": "activation.selected_tap.fixed",
@@ -45669,6 +45831,25 @@
     {
       "capability_id": "mana.activated.fixed_output",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalHeritageDruidactualcast then tapsitselfplus2selectedElves forGGG withoutstack; wrongcount/duplicate/foreignchoices rollback, producedmana paysrealspell. OriginalLoamDryadT+selectedtaprequiresdistinctsource/body, freshsourceT unavailable while freshselectedbody pays. Pendingload, privacy andfullreplay agree."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
       "official_rule_ids": [
         "106.1",
@@ -45692,6 +45873,25 @@
       "official_rule_ids": ["106.1", "106.4", "605.1a", "605.2", "605.3a", "605.3b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Expose a permanent's typed mana activation only to its current controller in a four-player game."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalHeritageDruidactualcast then tapsitselfplus2selectedElves forGGG withoutstack; wrongcount/duplicate/foreignchoices rollback, producedmana paysrealspell. OriginalLoamDryadT+selectedtaprequiresdistinctsource/body, freshsourceT unavailable while freshselectedbody pays. Pendingload, privacy andfullreplay agree."
     },
     {
       "capability_id": "mana.activated.fixed_output",
@@ -45738,6 +45938,25 @@
         "commander_review"
       ],
       "applicability_note": "Version3fixedmana descriptorretainsonecanonical selectedsacrifice choice andclosedoutputmodes. V1/V2ridersretained; wrongversion/bool/count/array/fields/unknowncost reject, missingselectedcostauthority blockswholeadmissionandcostcompileromissionkilled."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_selected_tap_mana_dependency_and_malformed_choice_fail_closed",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typedselectedtapquery/count/sourceexclusion closesfixedmanaV3; missingtap/manaauthority, openqualifiedcounts/targetscope andriderreject, omittedtapcostcompiler makesclause residual. V3retainsprioronesacrificecost andV1/V2schemas."
     },
     {
       "capability_id": "mana.activated.fixed_output",
@@ -45790,6 +46009,25 @@
     {
       "capability_id": "mana.activated.fixed_output",
       "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalHeritageDruidactualcast then tapsitselfplus2selectedElves forGGG withoutstack; wrongcount/duplicate/foreignchoices rollback, producedmana paysrealspell. OriginalLoamDryadT+selectedtaprequiresdistinctsource/body, freshsourceT unavailable while freshselectedbody pays. Pendingload, privacy andfullreplay agree."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "negative",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
       "official_rule_ids": [
         "106.1",
@@ -45824,6 +46062,25 @@
         "commander_review"
       ],
       "applicability_note": "Version3fixedmana descriptorretainsonecanonical selectedsacrifice choice andclosedoutputmodes. V1/V2ridersretained; wrongversion/bool/count/array/fields/unknowncost reject, missingselectedcostauthority blockswholeadmissionandcostcompileromissionkilled."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "negative",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_selected_tap_mana_dependency_and_malformed_choice_fail_closed",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typedselectedtapquery/count/sourceexclusion closesfixedmanaV3; missingtap/manaauthority, openqualifiedcounts/targetscope andriderreject, omittedtapcostcompiler makesclause residual. V3retainsprioronesacrificecost andV1/V2schemas."
     },
     {
       "capability_id": "mana.activated.fixed_output",
@@ -45868,6 +46125,25 @@
     {
       "capability_id": "mana.activated.fixed_output",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalHeritageDruidactualcast then tapsitselfplus2selectedElves forGGG withoutstack; wrongcount/duplicate/foreignchoices rollback, producedmana paysrealspell. OriginalLoamDryadT+selectedtaprequiresdistinctsource/body, freshsourceT unavailable while freshselectedbody pays. Pendingload, privacy andfullreplay agree."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
       "official_rule_ids": [
         "106.1",
@@ -45905,11 +46181,49 @@
     },
     {
       "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_fixed_mana_selected_tap_retains_query_count_and_source_exclusion",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typedselectedtapquery/count/sourceexclusion closesfixedmanaV3; missingtap/manaauthority, openqualifiedcounts/targetscope andriderreject, omittedtapcostcompiler makesclause residual. V3retainsprioronesacrificecost andV1/V2schemas."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_mana_abilities.FixedManaRuntimeTests.test_compiled_fixed_output_projection_exposes_no_hidden_cards",
       "official_rule_ids": ["106.1", "106.4", "605.1a", "605.2", "605.3a", "605.3b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Project the public mana source and legal action without exposing an opposing hand object."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalHeritageDruidactualcast then tapsitselfplus2selectedElves forGGG withoutstack; wrongcount/duplicate/foreignchoices rollback, producedmana paysrealspell. OriginalLoamDryadT+selectedtaprequiresdistinctsource/body, freshsourceT unavailable while freshselectedbody pays. Pendingload, privacy andfullreplay agree."
     },
     {
       "capability_id": "mana.activated.fixed_output",
@@ -45945,6 +46259,25 @@
       "official_rule_ids": ["106.1", "106.4", "605.1a", "605.2", "605.3a", "605.3b"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the exact activation command and typed fixed mana result from the initial checkpoint."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalHeritageDruidactualcast then tapsitselfplus2selectedElves forGGG withoutstack; wrongcount/duplicate/foreignchoices rollback, producedmana paysrealspell. OriginalLoamDryadT+selectedtaprequiresdistinctsource/body, freshsourceT unavailable while freshselectedbody pays. Pendingload, privacy andfullreplay agree."
     },
     {
       "capability_id": "mana.activated.fixed_output",

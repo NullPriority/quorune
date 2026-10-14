@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 270,
+  "registry_version": 271,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -2007,7 +2007,7 @@
     },
     {
       "id": "activation.selected_tap.fixed",
-      "version": 2,
+      "version": 3,
       "official_rules": [
         "205.1a",
         "205.1b",
@@ -2056,29 +2056,38 @@
         "quorune.tap_state.set_permanent_tapped"
       ],
       "positive_tests": [
+        "test_fixed_mana_selected_tap_retains_query_count_and_source_exclusion",
         "test_fixed_type_and_subtype_tap_costs_compile_source_spanned",
         "test_offer_commit_and_replay_share_current_untapped_wizard_query",
+        "test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
         "test_source_and_selected_tap_cost_excludes_same_source"
       ],
       "negative_tests": [
-        "test_tap_cost_grammar_rejects_qualified_and_open_variants",
         "test_multiple_tap_cost_rejects_duplicate_and_stale_selection_atomically",
-        "test_new_source_is_unavailable_even_with_new_eligible_selected_creature"
+        "test_new_source_is_unavailable_even_with_new_eligible_selected_creature",
+        "test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
+        "test_selected_tap_mana_dependency_and_malformed_choice_fail_closed",
+        "test_tap_cost_grammar_rejects_qualified_and_open_variants"
       ],
       "interaction_tests": [
-        "test_offer_commit_and_replay_share_current_untapped_wizard_query",
-        "test_multiple_tap_cost_rejects_duplicate_and_stale_selection_atomically",
         "test_actual_evangel_requires_distinct_taps_and_allows_new_selected_creature",
-        "test_cost_tap_events_observe_complete_source_and_selected_group"
+        "test_cost_tap_events_observe_complete_source_and_selected_group",
+        "test_multiple_tap_cost_rejects_duplicate_and_stale_selection_atomically",
+        "test_offer_commit_and_replay_share_current_untapped_wizard_query",
+        "test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay"
       ],
       "multiplayer_tests": [
+        "test_actual_evangel_requires_distinct_taps_and_allows_new_selected_creature",
         "test_offer_commit_and_replay_share_current_untapped_wizard_query",
-        "test_actual_evangel_requires_distinct_taps_and_allows_new_selected_creature"
+        "test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay"
       ],
-      "privacy_tests": [],
+      "privacy_tests": [
+        "test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay"
+      ],
       "replay_tests": [
+        "test_actual_evangel_requires_distinct_taps_and_allows_new_selected_creature",
         "test_offer_commit_and_replay_share_current_untapped_wizard_query",
-        "test_actual_evangel_requires_distinct_taps_and_allows_new_selected_creature"
+        "test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay"
       ],
       "required_evidence": [
         "positive",
@@ -10072,7 +10081,7 @@
     },
     {
       "id": "mana.activated.fixed_output",
-      "version": 2,
+      "version": 3,
       "official_rules": [
         "106.1",
         "106.4",
@@ -10124,8 +10133,10 @@
         "test_compiled_fixed_output_can_pay_during_casting",
         "test_compiled_fixed_output_offer_and_activation_share_modes",
         "test_fixed_mana_sacrifice_choice_retains_typed_cost_and_modes",
+        "test_fixed_mana_selected_tap_retains_query_count_and_source_exclusion",
         "test_fixed_mandatory_costs_commit_through_canonical_owners",
         "test_fixed_output_compiler_lowers_source_spanned_cardprogram",
+        "test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
         "test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays"
       ],
       "negative_tests": [
@@ -10134,25 +10145,31 @@
         "test_fixed_output_compiler_rejects_library_movement_costs_and_effects",
         "test_invalid_compiled_mana_mode_rolls_back",
         "test_invalid_mode_rolls_back_fixed_mandatory_costs",
+        "test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
         "test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
         "test_parenthesized_basic_land_reminder_is_not_an_executable_program",
-        "test_selected_mana_sacrifice_codec_capabilities_and_result_boundaries_fail_closed"
+        "test_selected_mana_sacrifice_codec_capabilities_and_result_boundaries_fail_closed",
+        "test_selected_tap_mana_dependency_and_malformed_choice_fail_closed"
       ],
       "interaction_tests": [
         "test_compiled_fixed_output_creature_respects_haste_cost_dependency",
+        "test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
         "test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays"
       ],
       "multiplayer_tests": [
         "test_compiled_fixed_output_is_controller_scoped_in_four_player_game",
+        "test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
         "test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays"
       ],
       "privacy_tests": [
         "test_compiled_fixed_output_projection_exposes_no_hidden_cards",
+        "test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
         "test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays"
       ],
       "replay_tests": [
         "test_compiled_alternative_output_is_advertised_accepted_and_replayed",
         "test_compiled_fixed_output_activation_replays_exactly",
+        "test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
         "test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays"
       ],
       "required_evidence": [

@@ -278,7 +278,8 @@
         "test_typed_activated_ability_catalog",
         "test_scalar_effect_amounts",
         "test_fixed_public_state_characteristics",
-        "test_fixed_activated_zone_change_costs"
+        "test_fixed_activated_zone_change_costs",
+        "test_fixed_activation_tap_costs"
       ],
       "browser_focuses": [
         "mana-action"
@@ -559,7 +560,8 @@
       "test_modules": [
         "test_scalar_effect_amounts",
         "test_fixed_public_state_characteristics",
-        "test_fixed_activated_zone_change_costs"
+        "test_fixed_activated_zone_change_costs",
+        "test_fixed_activation_tap_costs"
       ]
     },
     {
@@ -626,7 +628,8 @@
       "test_modules": [
         "test_scalar_effect_amounts",
         "test_fixed_public_state_characteristics",
-        "test_fixed_activated_zone_change_costs"
+        "test_fixed_activated_zone_change_costs",
+        "test_fixed_activation_tap_costs"
       ]
     },
     {
@@ -1773,7 +1776,8 @@
         "test_rules_scheduler",
         "test_scalar_effect_amounts",
         "test_fixed_public_state_characteristics",
-        "test_fixed_activated_zone_change_costs"
+        "test_fixed_activated_zone_change_costs",
+        "test_fixed_activation_tap_costs"
       ],
       "test_suites": [
         "casting-costs-mana",
@@ -1888,7 +1892,8 @@
         "test_fixed_token_production",
         "test_scalar_effect_amounts",
         "test_fixed_public_state_characteristics",
-        "test_fixed_activated_zone_change_costs"
+        "test_fixed_activated_zone_change_costs",
+        "test_fixed_activation_tap_costs"
       ]
     },
     {
@@ -3259,7 +3264,8 @@
       "test_modules": [
         "test_scalar_effect_amounts",
         "test_fixed_public_state_characteristics",
-        "test_fixed_activated_zone_change_costs"
+        "test_fixed_activated_zone_change_costs",
+        "test_fixed_activation_tap_costs"
       ]
     },
     {

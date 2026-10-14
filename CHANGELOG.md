@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Produce fixed mana through typed selected tap costs, preserving fixed counts,
+  source exclusion and the distinction between source and selected-creature tapping.
+
 - Produce fixed mana through one typed selected sacrifice cost, sharing
   activation legality, atomic payment and chosen output with ordinary mana abilities.
 

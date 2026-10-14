@@ -10616,6 +10616,21 @@
       ],
       "interaction_order": 2,
       "assertion": "OriginalPhyrexianAltar actualcast andtypedselectedsacrificeactivation commitsowncreaturesacrificeonce thenchosenblackmanawithoutstack. Foreignprincipal/foreignbody/wrongtype reject; generatedmanapaysactualspell withprivacy,pendingloadandfullreplay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay",
+      "piece_ids": [
+        "capability.activation.selected_tap.fixed",
+        "capability.mana.activated.fixed_output"
+      ],
+      "capability_ids": [
+        "activation.selected_tap.fixed",
+        "mana.activated.fixed_output"
+      ],
+      "interaction_order": 2,
+      "assertion": "ActualHeritageDruidcastandtypedselected3Elvestap producesGGGthenpaysrealspell. OriginalLoamDryadTplusselectedtap excludesreuseofsource andretainsT-summoningsicknesswhilefreshselectedcreaturecanpay. Duplicate/foreign/wrongcount rollback andpending/fullreplay agree."
     }
   ]
 }
