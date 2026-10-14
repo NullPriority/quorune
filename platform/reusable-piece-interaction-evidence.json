@@ -10661,6 +10661,48 @@
       ],
       "interaction_order": 2,
       "assertion": "ActualforeignlandmanaTchangesoriginalCopperhoofbonuswhileownlandTdoesnot. ActualHeritage3selectedcreaturetap feedscompleteconstructedBFtappedcountdraw3, excludinguntappedbody, withprivateprojectionandpending/fullreplay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_event_recipient_promotions_preserve_original_residual_admission_boundaries",
+      "piece_ids": [
+        "capability.counter.producer.fixed_event_object",
+        "residual.replacement.replacement-applicability"
+      ],
+      "capability_ids": [
+        "counter.producer.fixed_event_object"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Securitron Squadron retains its exact entering-token counter recipient beside unsupported Squad replacement and ordering. Canonical whole CardProgram binding rejects unresolved trust."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_event_recipient_promotions_preserve_original_residual_admission_boundaries",
+      "piece_ids": [
+        "capability.counter.producer.fixed_event_object",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ],
+      "capability_ids": [
+        "counter.producer.fixed_event_object"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Securitron Squadron retains its exact entering-token counter recipient beside unsupported Squad replacement and ordering. Canonical whole CardProgram binding rejects unresolved trust."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_event_recipient_promotions_preserve_original_residual_admission_boundaries",
+      "piece_ids": [
+        "capability.zone.mill.event_recipient",
+        "residual.target_or_choice.conditional-effect"
+      ],
+      "capability_ids": [
+        "zone.mill.event_recipient"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Merfolk Windrobber retains its exact event-player mill result beside the unrepresented graveyard-conditioned sacrifice activation. Canonical whole CardProgram binding rejects unresolved trust."
     }
   ]
 }

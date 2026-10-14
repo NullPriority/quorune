@@ -329,6 +329,20 @@
       "deck_files": [],
       "fixture_files": [],
       "rationale": "The bounded dictionary iterates these original cards from classified-interaction-assurance-cards.json to assert whole-program rejection of their exact unresolved composition boundaries."
+    },
+    {
+      "source": "tests/test_high_risk_interaction_assurance.py",
+      "symbol": "HighRiskInteractionAssuranceTests.test_event_recipient_promotions_preserve_original_residual_admission_boundaries",
+      "card_names": [
+        "Merfolk Windrobber",
+        "Securitron Squadron"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/batched-support-assurance-cards.json"
+      ],
+      "rationale": "The bounded original-card dictionary checks whole-program rejection of the unsupported Squad replacement and graveyard-conditioned activation beside newly supported event-recipient counter and mill leaves."
     }
   ],
   "full_database_only": []
