@@ -80,6 +80,9 @@ public-query amount capabilities before preparing the private partition. A
 completed positive procedure can feed a normalized player-action observer;
 controller, opponent, and global predicates retain their scope without
 publishing inspected identities.
+Whole-program admission also accepts a simple fixed draw observer beside a
+represented Surveil instruction. An observer whose draw count depends on cards
+put into a graveyard “this way” remains outside this fixed-body grammar.
 
 ## Fixed library selection
 

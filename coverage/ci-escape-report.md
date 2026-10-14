@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "32eaffe88c3aeffc696aba80c3f098de88a82304ae8dad4a1375d67a8c07fe88"
+verified: "9f78325c685de7091db56d1ead0ae115df45dc9bb4097c232a084313b56e9b46"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -15,8 +15,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 - Observation window: 2026-08-25T03:52:06Z through 2026-08-25T20:56:41Z
 - Observed population: tracked recent pull requests (n=4)
-- Escapes: 97
-- Deterministic escapes: 90
+- Escapes: 98
+- Deterministic escapes: 91
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: null
@@ -29,6 +29,7 @@ This report classifies observed deterministic failures that escaped the local qu
 
 | ID | Run | Category | Impact edge | Resolution |
 |---|---:|---|---|---|
+| `ci-20261014-pr508-surveil-integration` | [38486561263](https://github.com/NullPriority/quorune/actions/runs/38486561263) | `source_correctness` | `not_applicable` | Exact unchanged-source reproduction confirms a stale integration exclusion. Assert simple Surveil/draw observer whole-program strict binding positively, and retain a linked this-way graveyard-count observer as the unsupported boundary. The library completion impact edge already selected both consumer modules. Gameplay source is unchanged; successful content-bound corpus and frontier owners are reused through canonical generation. |
 | `ci-20261013-pr508-static-protection-expectations` | [38478187352](https://github.com/NullPriority/quorune/actions/runs/38478187352) | `source_correctness` | `not_applicable` | Assert the promoted whole-program red quality and preserve a deliberate unresolved chosen-player quality as the negative boundary. The static Protection impact edge already selects this exact integration module. |
 | `ci-20261013-pr508-interaction-consumers` | [38478187352](https://github.com/NullPriority/quorune/actions/runs/38478187352) | `source_correctness` | `not_applicable` | Add actual original Aura/exile, target-loss and Hexproof/controller-sacrifice actions with replay plus constructed strictly admitted Equipment controls. Unrepresented original Equipment and target/conditional siblings remain rejected through canonical whole-card binding. Declare exact supported pairs separately from fail-closed pairs; canonical fixtures serve every CI consumer. Isolate only unrelated exit debt in synthetic ranking inputs; the production assurance gate and all ranking assertions remain intact. |
 | `ci-20261013-pr508-collection-aliases` | [38478187352](https://github.com/NullPriority/quorune/actions/runs/38478187352) | `source_correctness` | `not_applicable` | Five new family test modules import helper modules instead of binding TestCase classes as globals. The existing shard partition validator now statically rejects the demonstrated imported TestCase alias and accepts module imports and ordinary helper classes before any matrix launches. Every primary collection has unique IDs; no tests or checks are removed. |

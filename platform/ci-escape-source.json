@@ -10,6 +10,26 @@
   "repository": "NullPriority/quorune",
   "escapes": [
     {
+      "id": "ci-20261014-pr508-surveil-integration",
+      "run_id": 38486561263,
+      "head_sha": "c59f483292fe90242b0c8ac8321a1dcbd13737b9",
+      "category": "source_correctness",
+      "deterministic": true,
+      "summary": "The normalized fixed-body Surveil observer was represented, but an older whole-CardProgram integration negative still expected Surveil plus a simple draw observer to remain unresolved. Ubuntu and Windows functional-08 failed the same assertion; all other substantive jobs passed.",
+      "failed_surfaces": [
+        "PR / Python / functional-08",
+        "PR / Windows / functional-08",
+        "PR / Windows Certification",
+        "PR / Certification"
+      ],
+      "regressions": [
+        "test_surveil_rules.FixedSurveilRuntimeTests.test_residual_surveil_pairs_remain_fail_closed_at_cardprogram_boundary",
+        "test_surveil_rules.FixedSurveilRuntimeTests.test_promoted_surveil_event_consumer_pair_is_capability_closed"
+      ],
+      "impact_edge_status": "not_applicable",
+      "resolution": "Exact unchanged-source reproduction confirms a stale integration exclusion. Assert simple Surveil/draw observer whole-program strict binding positively, and retain a linked this-way graveyard-count observer as the unsupported boundary. The library completion impact edge already selected both consumer modules. Gameplay source is unchanged; successful content-bound corpus and frontier owners are reused through canonical generation."
+    },
+    {
       "id": "ci-20261013-pr508-static-protection-expectations",
       "run_id": 38478187352,
       "head_sha": "f3d140fad245401e2438b56b4c8b9d162d2340dc",

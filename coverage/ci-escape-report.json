@@ -4,6 +4,26 @@
       "category": "source_correctness",
       "deterministic": true,
       "failed_surfaces": [
+        "PR / Python / functional-08",
+        "PR / Windows / functional-08",
+        "PR / Windows Certification",
+        "PR / Certification"
+      ],
+      "head_sha": "c59f483292fe90242b0c8ac8321a1dcbd13737b9",
+      "id": "ci-20261014-pr508-surveil-integration",
+      "impact_edge_status": "not_applicable",
+      "regressions": [
+        "test_surveil_rules.FixedSurveilRuntimeTests.test_residual_surveil_pairs_remain_fail_closed_at_cardprogram_boundary",
+        "test_surveil_rules.FixedSurveilRuntimeTests.test_promoted_surveil_event_consumer_pair_is_capability_closed"
+      ],
+      "resolution": "Exact unchanged-source reproduction confirms a stale integration exclusion. Assert simple Surveil/draw observer whole-program strict binding positively, and retain a linked this-way graveyard-count observer as the unsupported boundary. The library completion impact edge already selected both consumer modules. Gameplay source is unchanged; successful content-bound corpus and frontier owners are reused through canonical generation.",
+      "run_id": 38486561263,
+      "summary": "The normalized fixed-body Surveil observer was represented, but an older whole-CardProgram integration negative still expected Surveil plus a simple draw observer to remain unresolved. Ubuntu and Windows functional-08 failed the same assertion; all other substantive jobs passed."
+    },
+    {
+      "category": "source_correctness",
+      "deterministic": true,
+      "failed_surfaces": [
         "PR / Python / functional-05",
         "PR / Windows / functional-05"
       ],
@@ -1796,7 +1816,7 @@
   ],
   "repository": "NullPriority/quorune",
   "schema_version": 2,
-  "source_fingerprint": "32eaffe88c3aeffc696aba80c3f098de88a82304ae8dad4a1375d67a8c07fe88",
+  "source_fingerprint": "9f78325c685de7091db56d1ead0ae115df45dc9bb4097c232a084313b56e9b46",
   "summary": {
     "average_critical_path_seconds": 181.25,
     "average_pushes_per_merged_pr": null,
@@ -1807,12 +1827,12 @@
       "generated_artifact_drift": 10,
       "infrastructure": 1,
       "missing_affected_test": 44,
-      "source_correctness": 27,
+      "source_correctness": 28,
       "windows_compatibility": 1
     },
     "current_missing_impact_edges": [],
-    "deterministic_escape_count": 90,
-    "escape_count": 97,
+    "deterministic_escape_count": 91,
+    "escape_count": 98,
     "eventual_final_head_certification_pass_rate": 1.0,
     "eventual_final_head_certification_sample_size": 4,
     "first_eligible_head_certification_pass_rate": null,
