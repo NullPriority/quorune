@@ -14,6 +14,9 @@ maintenance: "hand-maintained"
 - Preserve independent library-selection card slots and qualified card types,
   and reject unrepresented qualifiers that previously became subtype names.
 
+- Normalize fixed optional "you may have" results through existing effect
+  owners, preserving early target selection and resolution-time acceptance.
+
 - Observe cards entering a graveyard from anywhere through destination facts
   and surviving observers, with closed type, color and graveyard-owner predicates.
 

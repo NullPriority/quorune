@@ -951,7 +951,11 @@ independently exact atomic effect. It preserves the nested effect's target
 schema and mechanic dependencies, adds only the generic controller choice,
 and is shared by spell, normalized-trigger, activated, and bounded sequence
 contexts. Existing specialized optional owners retain precedence and semantic
-identity. Optional costs, permissions, replacements, pay-or-have wording,
+identity. Finite `You may have` clauses with an explicit source or target subject
+and deal, gain, get, or lose normalize to that same independently closed atomic
+body. Targets are chosen before the resolution-time apply-or-decline choice;
+target reentry cannot substitute a new incarnation. Optional costs, permissions,
+replacements, pay wording, unbound event pronouns,
 modal or repeated choices, linked or conditional results, multiple effects in
 one optional body, and bodies without an independently exact typed owner remain
 source-spanned residuals.

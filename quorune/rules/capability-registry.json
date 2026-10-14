@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 276,
+  "registry_version": 277,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -16136,7 +16136,7 @@
     },
     {
       "id": "effect.choice.optional_fixed",
-      "version": 2,
+      "version": 3,
       "official_rules": [
         "109.5",
         "608.2c",
@@ -16149,7 +16149,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Compile and resolve one exact leading 'you may' around one independently represented atomic effect by issuing the resolving controller a choice before the ordinary typed effect resumes. Fixed controller draw-then-discard sequences are one optional acceptance followed by ordered mandatory instructions, including when the draw is replaced or prevented.",
+        "summary": "Compile and resolve one exact leading 'you may' around one independently represented atomic effect by issuing the resolving controller a choice before the ordinary typed effect resumes. Fixed controller draw-then-discard sequences are one optional acceptance followed by ordered mandatory instructions, including when the draw is replaced or prevented. Finite you may have this-source or target-subject deal/gain/get/lose clauses normalize to that same independently closed action; target selection still precedes resolution-time optional acceptance.",
         "inputs": [
           "one source-spanned atomic resolution instruction",
           "the exact leading words you may",
@@ -16165,7 +16165,7 @@
         ],
         "exclusions": [
           "optional costs, casting permissions, replacements, and static permissions",
-          "may pay, may choose, may have, and player-relative choice wording",
+          "may pay, may choose, unbound event pronouns, and player-relative choice wording",
           "if-you-do linkages outside the represented fixed controller draw/discard pair; if-you-do-not, reflexive, delayed, modal, repeated, and conditional continuations",
           "nested optional choices and multiple effects outside the represented fixed controller draw/discard pair or independently owned linked exile/return",
           "bodies without an independently exact capability-closed owner"
@@ -16181,34 +16181,54 @@
         "quorune.rules.optional_draw_discard.optional_draw_discard_is_closed"
       ],
       "positive_tests": [
-        "test_spell_trigger_and_activation_share_optional_effect_lowering",
-        "test_optional_clause_preserves_mandatory_sequence_sibling",
-        "test_optional_choice_apply_and_decline_resume_exact_effect",
+        "test_fixed_optional_draw_discard_compiles_original_order",
         "test_main_phase_cast_trigger_optionally_returns_source",
-        "test_fixed_optional_draw_discard_compiles_original_order"
+        "test_optional_choice_apply_and_decline_resume_exact_effect",
+        "test_optional_clause_preserves_mandatory_sequence_sibling",
+        "test_optional_have_clause_preserves_target_and_source_result",
+        "test_original_optional_have_modifier_targets_before_resolution_and_replays",
+        "test_original_optional_have_source_damage_preserves_recipient_set_and_replays",
+        "test_original_optional_have_target_blink_prevents_new_incarnation_substitution",
+        "test_spell_trigger_and_activation_share_optional_effect_lowering"
       ],
       "negative_tests": [
+        "test_linked_dynamic_random_and_other_player_variants_stay_residual",
         "test_optional_effect_exclusions_remain_material",
         "test_optional_effect_shape_and_handler_mutants_fail_closed",
-        "test_linked_dynamic_random_and_other_player_variants_stay_residual"
+        "test_optional_have_omission_dependency_and_open_result_fail_closed",
+        "test_original_optional_have_modifier_targets_before_resolution_and_replays",
+        "test_original_optional_have_source_damage_preserves_recipient_set_and_replays",
+        "test_original_optional_have_target_blink_prevents_new_incarnation_substitution"
       ],
       "interaction_tests": [
-        "test_optional_effect_choice_is_controller_scoped_atomic_private_and_replays",
-        "test_main_phase_cast_trigger_optionally_returns_source",
+        "test_accepting_prevented_draw_still_discards_after_real_prior_draw",
         "test_actual_academy_decline_consumes_limit_without_draw_or_discard",
-        "test_accepting_prevented_draw_still_discards_after_real_prior_draw"
+        "test_main_phase_cast_trigger_optionally_returns_source",
+        "test_optional_effect_choice_is_controller_scoped_atomic_private_and_replays",
+        "test_original_optional_have_modifier_targets_before_resolution_and_replays",
+        "test_original_optional_have_source_damage_preserves_recipient_set_and_replays",
+        "test_original_optional_have_target_blink_prevents_new_incarnation_substitution"
       ],
       "multiplayer_tests": [
+        "test_actual_koi_acceptance_draws_before_private_discard_and_saves_replays",
         "test_optional_effect_choice_is_controller_scoped_atomic_private_and_replays",
-        "test_actual_koi_acceptance_draws_before_private_discard_and_saves_replays"
+        "test_original_optional_have_modifier_targets_before_resolution_and_replays",
+        "test_original_optional_have_source_damage_preserves_recipient_set_and_replays",
+        "test_original_optional_have_target_blink_prevents_new_incarnation_substitution"
       ],
       "privacy_tests": [
+        "test_actual_koi_acceptance_draws_before_private_discard_and_saves_replays",
         "test_optional_effect_choice_is_controller_scoped_atomic_private_and_replays",
-        "test_actual_koi_acceptance_draws_before_private_discard_and_saves_replays"
+        "test_original_optional_have_modifier_targets_before_resolution_and_replays",
+        "test_original_optional_have_source_damage_preserves_recipient_set_and_replays",
+        "test_original_optional_have_target_blink_prevents_new_incarnation_substitution"
       ],
       "replay_tests": [
+        "test_actual_koi_acceptance_draws_before_private_discard_and_saves_replays",
         "test_optional_effect_choice_is_controller_scoped_atomic_private_and_replays",
-        "test_actual_koi_acceptance_draws_before_private_discard_and_saves_replays"
+        "test_original_optional_have_modifier_targets_before_resolution_and_replays",
+        "test_original_optional_have_source_damage_preserves_recipient_set_and_replays",
+        "test_original_optional_have_target_blink_prevents_new_incarnation_substitution"
       ],
       "required_evidence": [
         "positive",

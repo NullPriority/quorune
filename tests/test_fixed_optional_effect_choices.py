@@ -111,6 +111,47 @@ class FixedOptionalEffectCompilerTests(unittest.TestCase):
             capability_profile="commander_review",
         )
 
+    def test_optional_have_clause_preserves_target_and_source_result(self):
+        for text, operation in (
+            ("Whenever you cast an enchantment spell, you may have target creature get -2/-2 until end of turn.", "modify_stats_until_end_of_turn"),
+            ("Whenever a player casts a Kithkin spell, you may have target player lose 1 life.", "lose_life"),
+            ("Whenever a Dinosaur you control enters, you may have this creature deal 1 damage to each creature.", "damage_fixed_set"),
+        ):
+            with self.subTest(text=text):
+                ir = self.compile(text, type_line="Creature — Wizard")
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                self.assertEqual(OPTIONAL_EFFECT_OPERATION, node.effects[0]["op"])
+                self.assertEqual(operation, node.effects[0]["effects"][0]["op"])
+                self.assertIn(FIXED_OPTIONAL_EFFECT_CAPABILITY, node.capability_dependencies)
+
+    def test_optional_have_omission_dependency_and_open_result_fail_closed(self):
+        import json
+        from common import ROOT
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.compiler import optional_effect_templates
+
+        text = "Whenever you cast an enchantment spell, you may have target creature get -2/-2 until end of turn."
+        with mock.patch.object(optional_effect_templates, "_OPTIONAL_HAVE_RESULT") as parser:
+            parser.fullmatch.return_value = None
+            self.assertNotEqual("exact", self.compile(text, type_line="Creature — Wizard").status)
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
+        cap = next(row for row in raw["capabilities"] if row["id"] == FIXED_OPTIONAL_EFFECT_CAPABILITY)
+        cap.update(status="blocked", blockers=["withdrawn optional-result owner"])
+        registry = CapabilityRegistry(raw)
+        registry.mark_evidence_verified("0" * 64)
+        self.assertNotEqual("exact", compile_oracle_card(optional_record(text, type_line="Creature — Wizard"),
+            capability_registry=registry, capability_profile="commander_review").status)
+        for body in (
+            "you may have target creature get -X/-X until end of turn.",
+            "you may have target creature get -2/-2 until end of turn. If you do, draw a card.",
+            "you may have the chosen creature get -2/-2 until end of turn.",
+            "you may have it deal 1 damage to target player.",
+        ):
+            with self.subTest(body=body):
+                self.assertNotEqual("exact", self.compile("Whenever you cast an enchantment spell, " + body,
+                    type_line="Creature — Wizard").status)
+
     def test_spell_trigger_and_activation_share_optional_effect_lowering(self):
         fixtures = (
             (
@@ -358,7 +399,7 @@ class FixedOptionalEffectCompilerTests(unittest.TestCase):
         fixtures = (
             "You may pay {X}. If you do, draw a card.",
             "You may choose target creature.",
-            "You may have target creature gain flying until end of turn.",
+            "You may have the chosen creature gain flying until end of turn.",
             "You may destroy target artifact if you control a Wizard.",
             "You may destroy target artifact and you may draw a card.",
             "You may destroy target artifact. If you do, draw a card.",

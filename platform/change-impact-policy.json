@@ -2656,6 +2656,7 @@
         "test_fixed_counter_zone_triggers",
         "test_fixed_effect_clause_sequences",
         "test_fixed_optional_effect_choices",
+        "test_fixed_public_state_characteristics",
         "test_optional_draw_choices"
       ]
     },
