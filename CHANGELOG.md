@@ -14,6 +14,9 @@ maintenance: "hand-maintained"
 - Preserve independent library-selection card slots and qualified card types,
   and reject unrepresented qualifiers that previously became subtype names.
 
+- Compile fixed mana-value limits on owned graveyard returns through the
+  existing target predicate and resolution revalidation owners.
+
 - Compose source-action pronoun modifiers with the existing typed keyword and
   public-characteristic scalar owners, preserving the source incarnation.
 

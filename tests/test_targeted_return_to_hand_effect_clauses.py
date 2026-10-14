@@ -13,6 +13,7 @@ from quorune.compiler.return_to_hand_templates import (
     ReturnToHandTarget,
     TargetedReturnToHandEffectTemplate,
     targeted_return_to_hand_effect_template,
+    targeted_own_graveyard_return_to_hand_effect_template,
 )
 from quorune.compiler.self_return_templates import (
     FIXED_SELF_RETURN_MECHANIC,
@@ -46,7 +47,161 @@ def focused_card_database(directory: str) -> CardDatabase:
     return CardDatabase(database)
 
 
+class NumericOwnedGraveyardReturnRuntimeTests(unittest.TestCase):
+    from test_bound_effect_programs import BoundEffectProgramRuntimeTests as _Witnesses
+    session = _Witnesses.session
+    add = _Witnesses.add
+    ready = _Witnesses.ready
+    checkpoint = _Witnesses.checkpoint
+    resolve = _Witnesses.resolve
+    replay = _Witnesses.replay
+    register_fixture_cards_on_add = True
+
+    @classmethod
+    def setUpClass(cls):
+        from quorune.deck import DeckDefinition, DeckEntry
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / 'numeric-return.sqlite3'
+        build_fixture_database([ROOT / 'tests/fixtures/bound-effect-program-cards.json',
+            ROOT / 'tests/fixtures/targeted-return-to-hand-cards.json'], path)
+        cls.db = CardDatabase(path)
+        cls.capabilities = cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition('Numeric return', [DeckEntry('Generic Bound Commander', 1, 'commander'),
+            DeckEntry('Generic Bound Plains', 30)], ['Generic Bound Commander'])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    def test_original_numeric_graveyard_returns_share_target_legality_and_replay(self):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.record import authoritative_state_hash
+        for name, mana, cast_source in (
+            ('Leonin Squire', {'W': 1, 'C': 1}, True),
+            ('Auriok Salvagers', {'W': 1, 'C': 1}, False),
+        ):
+            with self.subTest(name=name):
+                session = self.session(311020 + int(cast_source))
+                engine = session.engine
+                source = self.add(engine, name, zone='hand' if cast_source else 'battlefield')
+                legal = self.add(engine, 'Sol Ring', zone='graveyard', ref='numeric-return-legal')
+                too_large = self.add(engine, 'Mind Stone', zone='graveyard', ref='numeric-return-large')
+                foreign = self.add(engine, 'Sol Ring', seat='B', zone='graveyard', ref='numeric-return-foreign')
+                nonartifact = self.add(engine, 'Generic Bound Body', zone='graveyard', ref='numeric-return-wrong-kind')
+                program = compile_best_available_card_program(self.db, self.db.lookup(name),
+                    semantic_registry=engine.semantics, capability_registry=self.registry, capability_profile='commander_review')
+                self.assertTrue(bind_card_program_runtime(program, capability_registry=self.registry,
+                    profile='commander_review')['strict_capability_ready'])
+                offered = self.ready(session, source, mana)
+                self.checkpoint(session)
+                if cast_source:
+                    accepted = session.act('pilot:A', {'action_id': offered['id'], 'pay': 'auto'})
+                    self.assertTrue(accepted.ok, accepted.summary)
+                    decision = self.resolve(session)
+                    self.assertEqual('semantic.target', decision.kind)
+                    action_id = 'choose'
+                else:
+                    action_id = offered['id']
+                for principal, ref in (('pilot:A', too_large.ref), ('pilot:A', foreign.ref),
+                    ('pilot:A', nonartifact.ref), ('pilot:D', legal.ref)):
+                    before = authoritative_state_hash(session.state)
+                    denied = session.act(principal, {'action_id': action_id, 'targets': [ref], 'pay': 'auto'})
+                    self.assertFalse(denied.ok)
+                    self.assertEqual(before, authoritative_state_hash(session.state))
+                accepted = session.act('pilot:A', {'action_id': action_id, 'targets': [legal.ref], 'pay': 'auto'})
+                self.assertTrue(accepted.ok, accepted.summary)
+                session = self.replay(session, load=True)
+                self.resolve(session)
+                engine = session.engine
+                self.assertEqual('hand', engine.state.cards[legal.object_id].zone)
+                for card in (too_large, foreign, nonartifact):
+                    self.assertEqual('graveyard', engine.state.cards[card.object_id].zone)
+                self.assertEqual(0, sum(engine.state.players['A'].mana_pool.values()))
+                projected = session.projector._snapshot('pilot:D')
+                import json
+                self.assertIn(legal.ref, [row['id'] for row in projected['players']['A']['known_hand']])
+                rendered = json.dumps(projected, sort_keys=True)
+                for seat in 'ABC':
+                    for object_id in engine.state.players[seat].zones['hand']:
+                        if object_id != legal.object_id:
+                            self.assertNotIn(engine.state.cards[object_id].ref, rendered)
+                self.replay(session)
+
+
+    def test_original_salvagers_target_exiled_in_response_is_not_returned(self):
+        session = self.session(311022)
+        engine = session.engine
+        source = self.add(engine, 'Auriok Salvagers')
+        legal = self.add(engine, 'Sol Ring', zone='graveyard', ref='numeric-return-stale')
+        crypt = self.add(engine, "Purify the Grave", seat='B', zone='hand', ref='numeric-return-response')
+        offered = self.ready(session, source, {'W': 1, 'C': 1})
+        engine.state.players['B'].mana_pool['W'] = 1
+        self.checkpoint(session)
+        accepted = session.act('pilot:A', {'action_id': offered['id'], 'targets': [legal.ref], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        for _ in range(8):
+            if session.pending_principals()[0] == 'pilot:B':
+                break
+            accepted = session.act(session.pending_principals()[0], {'action_id': 'pass'})
+            self.assertTrue(accepted.ok, accepted.summary)
+        actions = session.packet('pilot:B', full=True)['decision']['ctx']['legal']['actions']
+        offered = next(a for a in actions if a['id'].startswith('cast:') and a.get('card') == crypt.ref)
+        accepted = session.act('pilot:B', {'action_id': offered['id'], 'targets': [legal.ref], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        session = self.replay(session, load=True)
+        self.resolve(session)
+        self.assertIsNone(session.state.pending_decision if session.state.pending_decision.kind != 'priority' else None,
+            repr(session.state.pending_decision))
+        self.assertEqual('exile', session.state.cards[legal.object_id].zone)
+        self.assertEqual('graveyard', session.state.cards[crypt.object_id].zone)
+        self.assertEqual(0, sum(session.state.players['A'].mana_pool.values()))
+        self.replay(session)
+
+
 class TargetedReturnToHandTemplateTests(unittest.TestCase):
+    def test_numeric_owned_graveyard_return_preserves_kind_and_bound(self):
+        from quorune.rules.graveyard_card_targets import OwnGraveyardCardTargetSpec
+        for quality, expected in (
+            ('artifact', ['artifact']),
+            ('creature', ['creature']),
+            ('permanent', ['artifact', 'battle', 'creature', 'enchantment', 'land', 'planeswalker']),
+            ('nonland permanent', ['artifact', 'battle', 'creature', 'enchantment', 'land', 'planeswalker']),
+        ):
+            with self.subTest(quality=quality):
+                template = targeted_own_graveyard_return_to_hand_effect_template(
+                    'Return target ' + quality + ' card with mana value 3 or less from your graveyard to your hand.')
+                self.assertIsNotNone(template)
+                schema = template.target_schema
+                self.assertEqual(expected, schema['types_any'])
+                self.assertEqual(3, schema['mana_value_max'])
+                self.assertEqual('you', schema['owner_relation'])
+                if quality == 'nonland permanent':
+                    self.assertEqual(['land'], schema['types_none'])
+                self.assertEqual(schema, OwnGraveyardCardTargetSpec.from_target_schema(schema).to_target_schema())
+        from test_targeted_graveyard_return_effect_clauses import card_record
+        from quorune.rules.capabilities import CapabilityRegistry
+        import json
+        text = 'Return target artifact card with mana value 1 or less from your graveyard to your hand.'
+        registry = load_default_capability_registry()
+        self.assertEqual('exact', compile_oracle_card(card_record(text), capability_registry=registry).status)
+        with patch.object(OwnGraveyardCardTargetSpec, 'from_target_schema', side_effect=ValueError('numeric target owner withdrawn')):
+            self.assertNotEqual('exact', compile_oracle_card(card_record(text), capability_registry=registry).status)
+        raw = json.loads((ROOT / 'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        next(row for row in raw['capabilities'] if row['id'] == 'card.return.own_graveyard_to_owner_hand').update(
+            status='blocked', blockers=['graveyard return authority withdrawn'])
+        self.assertNotEqual('exact', compile_oracle_card(card_record(text),
+            capability_registry=CapabilityRegistry(raw)).status)
+        for text in (
+            'Return target creature card with mana value X or less from your graveyard to your hand.',
+            'Return target creature card with mana value 3 or greater from your graveyard to your hand.',
+            'Return target creature card with power 3 or less from your graveyard to your hand.',
+            'Return target chosen card with mana value 3 or less from your graveyard to your hand.',
+            'Return target artifact card with mana value 21 or less from your graveyard to your hand.',
+        ):
+            self.assertIsNone(targeted_own_graveyard_return_to_hand_effect_template(text))
+
     def test_targeted_return_template_is_immutable_and_copy_isolated(self):
         template = TargetedReturnToHandEffectTemplate(
             ReturnToHandTarget.CREATURE

@@ -211,16 +211,29 @@ def targeted_own_graveyard_return_to_hand_effect_template(
             GraveyardCardTargetKind(match.group("target").casefold())
         )
     expanded = re.fullmatch(
-        r"return target (?P<target>.+?) card from your graveyard to your "
+        r"return target (?P<target>.+?) card"
+        r"(?: with mana value (?P<maximum>[0-9]+) or less)? from your graveyard to your "
         r"hand\.?",
         text.strip(),
         re.IGNORECASE,
     )
     if expanded is None:
         return None
-    target_spec = _own_graveyard_characteristic_target(
-        expanded.group("target")
-    )
+    description = expanded.group("target")
+    simple = next((kind for kind in GraveyardCardTargetKind
+        if kind.value.casefold() == description.casefold() + ' card'), None)
+    target_spec = (OwnGraveyardCardTargetSpec(simple) if simple is not None
+        else _own_graveyard_characteristic_target(description))
+    if target_spec is not None and expanded.group("maximum") is not None:
+        if simple is GraveyardCardTargetKind.NONLAND_PERMANENT_CARD:
+            target_spec = OwnGraveyardCardTargetSpec(
+                GraveyardCardTargetKind.PERMANENT_CARD, types_none=('land',))
+        schema = target_spec.to_target_schema()
+        schema['mana_value_max'] = int(expanded.group("maximum"))
+        try:
+            target_spec = OwnGraveyardCardTargetSpec.from_target_schema(schema)
+        except (TypeError, ValueError):
+            return None
     return (
         TargetedOwnGraveyardReturnToHandEffectTemplate(target_spec)
         if target_spec is not None

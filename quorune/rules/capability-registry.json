@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 281,
+  "registry_version": 282,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -11653,24 +11653,115 @@
     },
     {
       "id": "card.return.own_graveyard_to_owner_hand",
-      "version": 2,
-      "official_rules": ["108.3", "109.5", "115.1", "115.1a", "115.1b", "400.2", "400.3", "400.7", "608.2b", "608.2c"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 3,
+      "official_rules": [
+        "108.3",
+        "109.5",
+        "115.1",
+        "115.1a",
+        "115.1b",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Compile and execute one mandatory, optional, fixed-homogeneous, or closed-sequence instruction returning target cards matching a fixed public characteristic predicate from the resolving controller's graveyard to their owners' hands through target revalidation and the canonical replacement-aware zone-change owner.",
-        "inputs": ["one source-spanned own-graveyard return clause", "one or more public physical card objects owned by the resolving controller", "closed card-type, type-intersection or union, subtype, supertype, color, or color-cardinality predicate", "physical and logical object identity", "represented destination-replacement selections"],
-        "outputs": ["owner-relative public graveyard target", "resolution-time target revalidation", "requested owner-hand zone event", "new logical object identity", "replacement-aware final destination", "seat-projected hidden-zone knowledge", "public typed result journal"],
-        "exclusions": ["cards in another player's graveyard", "graveyard-to-battlefield reanimation", "top- or bottom-of-library destinations", "mass, optional, modal, conditional, linked-result, cost, self-return, or compound clauses and target sets outside the separately capability-closed optional, sequence, and fixed homogeneous target-set owners", "mana-value, name, counter, combat, ability-presence, history, dynamic, linked, source-relative, or hidden card predicates", "return to a controller's hand", "unrepresented zone-change replacement effects"]
+        "inputs": [
+          "one source-spanned own-graveyard return clause",
+          "one or more public physical card objects owned by the resolving controller",
+          "closed card-type, type-intersection or union, subtype, supertype, color, or color-cardinality predicate",
+          "physical and logical object identity",
+          "represented destination-replacement selections"
+        ],
+        "outputs": [
+          "owner-relative public graveyard target",
+          "resolution-time target revalidation",
+          "requested owner-hand zone event",
+          "new logical object identity",
+          "replacement-aware final destination",
+          "seat-projected hidden-zone knowledge",
+          "public typed result journal"
+        ],
+        "exclusions": [
+          "cards in another player's graveyard",
+          "graveyard-to-battlefield reanimation",
+          "top- or bottom-of-library destinations",
+          "mass, optional, modal, conditional, linked-result, cost, self-return, or compound clauses and target sets outside the separately capability-closed optional, sequence, and fixed homogeneous target-set owners",
+          "mana-value, name, counter, combat, ability-presence, history, dynamic, linked, source-relative, or hidden card predicates",
+          "return to a controller's hand",
+          "unrepresented zone-change replacement effects"
+        ]
       },
-      "dependencies": ["target.revalidate_resolution", "zone.change.destination_replacement"],
-      "implementation_components": ["quorune.rules.graveyard_card_targets.OwnGraveyardCardTargetSpec", "quorune.compiler.return_to_hand_templates.TargetedOwnGraveyardReturnToHandEffectTemplate", "quorune.compiler.return_to_hand_templates._own_graveyard_characteristic_target", "quorune.rules.graveyard_card_targets.targeted_own_graveyard_return_node_capabilities", "quorune.semantic_runtime.return_to_hand_handlers.ReturnGraveyardCardToOwnerHandHandler", "quorune.rules.single_object_zone_transition.prepare_single_object_zone_transition", "quorune.rules.single_object_zone_transition.validate_single_object_zone_transition_plan", "quorune.rules.single_object_zone_transition.commit_prevalidated_single_object_zone_transition", "quorune.return_to_hand.prepare_graveyard_card_return_to_owner_hand", "quorune.return_to_hand.commit_graveyard_card_return_to_owner_hand"],
-      "positive_tests": ["test_spell_trigger_and_activated_contexts_share_graveyard_return_lowering", "test_characteristic_target_spec_is_canonical_and_round_trips", "test_characteristic_target_offer_commit_and_replay", "test_own_graveyard_card_returns_to_hand_with_new_identity", "test_compiled_regrowth_is_owner_scoped_private_and_replays"],
-      "negative_tests": ["test_unsupported_graveyard_return_variants_remain_material_residuals", "test_graveyard_return_shape_mutants_fail_closed", "test_opponent_noncard_and_stale_graveyard_objects_fail_before_mutation"],
-      "interaction_tests": ["test_destination_replacement_preserves_graveyard_return_result", "test_compiled_regrowth_is_owner_scoped_private_and_replays", "test_characteristic_target_offer_commit_and_replay"],
-      "multiplayer_tests": ["test_compiled_regrowth_is_owner_scoped_private_and_replays", "test_characteristic_target_offer_commit_and_replay"],
-      "privacy_tests": ["test_compiled_regrowth_is_owner_scoped_private_and_replays", "test_characteristic_target_offer_commit_and_replay"],
-      "replay_tests": ["test_compiled_regrowth_is_owner_scoped_private_and_replays", "test_characteristic_target_offer_commit_and_replay"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "target.revalidate_resolution",
+        "zone.change.destination_replacement"
+      ],
+      "implementation_components": [
+        "quorune.rules.graveyard_card_targets.OwnGraveyardCardTargetSpec",
+        "quorune.compiler.return_to_hand_templates.TargetedOwnGraveyardReturnToHandEffectTemplate",
+        "quorune.compiler.return_to_hand_templates._own_graveyard_characteristic_target",
+        "quorune.rules.graveyard_card_targets.targeted_own_graveyard_return_node_capabilities",
+        "quorune.semantic_runtime.return_to_hand_handlers.ReturnGraveyardCardToOwnerHandHandler",
+        "quorune.rules.single_object_zone_transition.prepare_single_object_zone_transition",
+        "quorune.rules.single_object_zone_transition.validate_single_object_zone_transition_plan",
+        "quorune.rules.single_object_zone_transition.commit_prevalidated_single_object_zone_transition",
+        "quorune.return_to_hand.prepare_graveyard_card_return_to_owner_hand",
+        "quorune.return_to_hand.commit_graveyard_card_return_to_owner_hand"
+      ],
+      "positive_tests": [
+        "test_spell_trigger_and_activated_contexts_share_graveyard_return_lowering",
+        "test_characteristic_target_spec_is_canonical_and_round_trips",
+        "test_characteristic_target_offer_commit_and_replay",
+        "test_own_graveyard_card_returns_to_hand_with_new_identity",
+        "test_compiled_regrowth_is_owner_scoped_private_and_replays",
+        "test_numeric_owned_graveyard_return_preserves_kind_and_bound",
+        "test_original_numeric_graveyard_returns_share_target_legality_and_replay"
+      ],
+      "negative_tests": [
+        "test_unsupported_graveyard_return_variants_remain_material_residuals",
+        "test_graveyard_return_shape_mutants_fail_closed",
+        "test_opponent_noncard_and_stale_graveyard_objects_fail_before_mutation",
+        "test_numeric_owned_graveyard_return_preserves_kind_and_bound"
+      ],
+      "interaction_tests": [
+        "test_destination_replacement_preserves_graveyard_return_result",
+        "test_compiled_regrowth_is_owner_scoped_private_and_replays",
+        "test_characteristic_target_offer_commit_and_replay",
+        "test_original_numeric_graveyard_returns_share_target_legality_and_replay",
+        "test_original_salvagers_target_exiled_in_response_is_not_returned"
+      ],
+      "multiplayer_tests": [
+        "test_compiled_regrowth_is_owner_scoped_private_and_replays",
+        "test_characteristic_target_offer_commit_and_replay",
+        "test_original_numeric_graveyard_returns_share_target_legality_and_replay",
+        "test_original_salvagers_target_exiled_in_response_is_not_returned"
+      ],
+      "privacy_tests": [
+        "test_compiled_regrowth_is_owner_scoped_private_and_replays",
+        "test_characteristic_target_offer_commit_and_replay",
+        "test_original_numeric_graveyard_returns_share_target_legality_and_replay"
+      ],
+      "replay_tests": [
+        "test_compiled_regrowth_is_owner_scoped_private_and_replays",
+        "test_characteristic_target_offer_commit_and_replay",
+        "test_original_numeric_graveyard_returns_share_target_legality_and_replay",
+        "test_original_salvagers_target_exiled_in_response_is_not_returned"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "The closed compiler shape requires both resolution-time target revalidation and the replacement-aware destination owner; blocking either dependency prevents trusted CardProgram closure.",
       "implementation_mutation_status": "killed",

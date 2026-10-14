@@ -5034,6 +5034,52 @@
     },
     {
       "capability_id": "card.return.own_graveyard_to_owner_hand",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_targeted_return_to_hand_effect_clauses.NumericOwnedGraveyardReturnRuntimeTests.test_original_numeric_graveyard_returns_share_target_legality_and_replay",
+      "official_rule_ids": [
+        "108.3",
+        "109.5",
+        "115.1",
+        "115.1a",
+        "115.1b",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed mana-value upper bounds refine canonical owned-graveyard target predicates. Original Leonin Squire cast and Auriok Salvagers activation reject foreign, wrong-kind and over-limit targets without state/payment; Purify the Grave response prevents stale-target return. Costs, retained public knowledge, unrelated private hands and pending save/load/full replay are asserted."
+    },
+    {
+      "capability_id": "card.return.own_graveyard_to_owner_hand",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_targeted_return_to_hand_effect_clauses.NumericOwnedGraveyardReturnRuntimeTests.test_original_salvagers_target_exiled_in_response_is_not_returned",
+      "official_rule_ids": [
+        "108.3",
+        "109.5",
+        "115.1",
+        "115.1a",
+        "115.1b",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed mana-value upper bounds refine canonical owned-graveyard target predicates. Original Leonin Squire cast and Auriok Salvagers activation reject foreign, wrong-kind and over-limit targets without state/payment; Purify the Grave response prevents stale-target return. Costs, retained public knowledge, unrelated private hands and pending save/load/full replay are asserted."
+    },
+    {
+      "capability_id": "card.return.own_graveyard_to_owner_hand",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_graveyard_return_rules.GraveyardReturnRuleTests.test_characteristic_target_offer_commit_and_replay",
       "official_rule_ids": ["108.3", "109.5", "115.1", "115.1a", "115.1b", "400.2", "400.3", "400.7", "608.2b", "608.2c"],
@@ -5047,6 +5093,52 @@
       "official_rule_ids": ["108.3", "109.5", "115.1", "115.1a", "115.1b", "400.2", "400.3", "400.7", "608.2b", "608.2c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Advertise and resolve only the acting seat's graveyard cards in a four-player game while rejecting another seat's public graveyard card."
+    },
+    {
+      "capability_id": "card.return.own_graveyard_to_owner_hand",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_targeted_return_to_hand_effect_clauses.NumericOwnedGraveyardReturnRuntimeTests.test_original_numeric_graveyard_returns_share_target_legality_and_replay",
+      "official_rule_ids": [
+        "108.3",
+        "109.5",
+        "115.1",
+        "115.1a",
+        "115.1b",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed mana-value upper bounds refine canonical owned-graveyard target predicates. Original Leonin Squire cast and Auriok Salvagers activation reject foreign, wrong-kind and over-limit targets without state/payment; Purify the Grave response prevents stale-target return. Costs, retained public knowledge, unrelated private hands and pending save/load/full replay are asserted."
+    },
+    {
+      "capability_id": "card.return.own_graveyard_to_owner_hand",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_targeted_return_to_hand_effect_clauses.NumericOwnedGraveyardReturnRuntimeTests.test_original_salvagers_target_exiled_in_response_is_not_returned",
+      "official_rule_ids": [
+        "108.3",
+        "109.5",
+        "115.1",
+        "115.1a",
+        "115.1b",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed mana-value upper bounds refine canonical owned-graveyard target predicates. Original Leonin Squire cast and Auriok Salvagers activation reject foreign, wrong-kind and over-limit targets without state/payment; Purify the Grave response prevents stale-target return. Costs, retained public knowledge, unrelated private hands and pending save/load/full replay are asserted."
     },
     {
       "capability_id": "card.return.own_graveyard_to_owner_hand",
@@ -5066,6 +5158,29 @@
     },
     {
       "capability_id": "card.return.own_graveyard_to_owner_hand",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_targeted_return_to_hand_effect_clauses.TargetedReturnToHandTemplateTests.test_numeric_owned_graveyard_return_preserves_kind_and_bound",
+      "official_rule_ids": [
+        "108.3",
+        "109.5",
+        "115.1",
+        "115.1a",
+        "115.1b",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed mana-value upper bounds refine canonical owned-graveyard target predicates. Original Leonin Squire cast and Auriok Salvagers activation reject foreign, wrong-kind and over-limit targets without state/payment; Purify the Grave response prevents stale-target return. Costs, retained public knowledge, unrelated private hands and pending save/load/full replay are asserted."
+    },
+    {
+      "capability_id": "card.return.own_graveyard_to_owner_hand",
       "evidence_class": "negative",
       "test_id": "tests.test_graveyard_return_rules.GraveyardReturnRuleTests.test_opponent_noncard_and_stale_graveyard_objects_fail_before_mutation",
       "official_rule_ids": ["108.3", "109.5", "115.1", "115.1a", "115.1b", "400.2", "400.3", "400.7", "608.2b", "608.2c"],
@@ -5079,6 +5194,29 @@
       "official_rule_ids": ["108.3", "109.5", "115.1", "115.1a", "115.1b", "400.2", "400.3", "400.7", "608.2b", "608.2c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Keep optional, qualified, opponent-graveyard, reanimation, aggregate, and compound variants outside the closed grammar."
+    },
+    {
+      "capability_id": "card.return.own_graveyard_to_owner_hand",
+      "evidence_class": "negative",
+      "test_id": "tests.test_targeted_return_to_hand_effect_clauses.TargetedReturnToHandTemplateTests.test_numeric_owned_graveyard_return_preserves_kind_and_bound",
+      "official_rule_ids": [
+        "108.3",
+        "109.5",
+        "115.1",
+        "115.1a",
+        "115.1b",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed mana-value upper bounds refine canonical owned-graveyard target predicates. Original Leonin Squire cast and Auriok Salvagers activation reject foreign, wrong-kind and over-limit targets without state/payment; Purify the Grave response prevents stale-target return. Costs, retained public knowledge, unrelated private hands and pending save/load/full replay are asserted."
     },
     {
       "capability_id": "card.return.own_graveyard_to_owner_hand",
@@ -5114,6 +5252,52 @@
     },
     {
       "capability_id": "card.return.own_graveyard_to_owner_hand",
+      "evidence_class": "positive",
+      "test_id": "tests.test_targeted_return_to_hand_effect_clauses.NumericOwnedGraveyardReturnRuntimeTests.test_original_numeric_graveyard_returns_share_target_legality_and_replay",
+      "official_rule_ids": [
+        "108.3",
+        "109.5",
+        "115.1",
+        "115.1a",
+        "115.1b",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed mana-value upper bounds refine canonical owned-graveyard target predicates. Original Leonin Squire cast and Auriok Salvagers activation reject foreign, wrong-kind and over-limit targets without state/payment; Purify the Grave response prevents stale-target return. Costs, retained public knowledge, unrelated private hands and pending save/load/full replay are asserted."
+    },
+    {
+      "capability_id": "card.return.own_graveyard_to_owner_hand",
+      "evidence_class": "positive",
+      "test_id": "tests.test_targeted_return_to_hand_effect_clauses.TargetedReturnToHandTemplateTests.test_numeric_owned_graveyard_return_preserves_kind_and_bound",
+      "official_rule_ids": [
+        "108.3",
+        "109.5",
+        "115.1",
+        "115.1a",
+        "115.1b",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed mana-value upper bounds refine canonical owned-graveyard target predicates. Original Leonin Squire cast and Auriok Salvagers activation reject foreign, wrong-kind and over-limit targets without state/payment; Purify the Grave response prevents stale-target return. Costs, retained public knowledge, unrelated private hands and pending save/load/full replay are asserted."
+    },
+    {
+      "capability_id": "card.return.own_graveyard_to_owner_hand",
       "evidence_class": "privacy",
       "test_id": "tests.test_graveyard_return_rules.GraveyardReturnRuleTests.test_characteristic_target_offer_commit_and_replay",
       "official_rule_ids": ["108.3", "109.5", "115.1", "115.1a", "115.1b", "400.2", "400.3", "400.7", "608.2b", "608.2c"],
@@ -5127,6 +5311,29 @@
       "official_rule_ids": ["108.3", "109.5", "115.1", "115.1a", "115.1b", "400.2", "400.3", "400.7", "608.2b", "608.2c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Project the returned card in its owner's hand while withholding that seat's private hand zone and unrelated private references from opponents."
+    },
+    {
+      "capability_id": "card.return.own_graveyard_to_owner_hand",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_targeted_return_to_hand_effect_clauses.NumericOwnedGraveyardReturnRuntimeTests.test_original_numeric_graveyard_returns_share_target_legality_and_replay",
+      "official_rule_ids": [
+        "108.3",
+        "109.5",
+        "115.1",
+        "115.1a",
+        "115.1b",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed mana-value upper bounds refine canonical owned-graveyard target predicates. Original Leonin Squire cast and Auriok Salvagers activation reject foreign, wrong-kind and over-limit targets without state/payment; Purify the Grave response prevents stale-target return. Costs, retained public knowledge, unrelated private hands and pending save/load/full replay are asserted."
     },
     {
       "capability_id": "card.return.own_graveyard_to_owner_hand",
@@ -5146,6 +5353,52 @@
     },
     {
       "capability_id": "card.return.own_graveyard_to_owner_hand",
+      "evidence_class": "replay",
+      "test_id": "tests.test_targeted_return_to_hand_effect_clauses.NumericOwnedGraveyardReturnRuntimeTests.test_original_numeric_graveyard_returns_share_target_legality_and_replay",
+      "official_rule_ids": [
+        "108.3",
+        "109.5",
+        "115.1",
+        "115.1a",
+        "115.1b",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed mana-value upper bounds refine canonical owned-graveyard target predicates. Original Leonin Squire cast and Auriok Salvagers activation reject foreign, wrong-kind and over-limit targets without state/payment; Purify the Grave response prevents stale-target return. Costs, retained public knowledge, unrelated private hands and pending save/load/full replay are asserted."
+    },
+    {
+      "capability_id": "card.return.own_graveyard_to_owner_hand",
+      "evidence_class": "replay",
+      "test_id": "tests.test_targeted_return_to_hand_effect_clauses.NumericOwnedGraveyardReturnRuntimeTests.test_original_salvagers_target_exiled_in_response_is_not_returned",
+      "official_rule_ids": [
+        "108.3",
+        "109.5",
+        "115.1",
+        "115.1a",
+        "115.1b",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed mana-value upper bounds refine canonical owned-graveyard target predicates. Original Leonin Squire cast and Auriok Salvagers activation reject foreign, wrong-kind and over-limit targets without state/payment; Purify the Grave response prevents stale-target return. Costs, retained public knowledge, unrelated private hands and pending save/load/full replay are asserted."
+    },
+    {
+      "capability_id": "card.return.own_graveyard_to_owner_hand",
       "evidence_class": "rollback",
       "test_id": "tests.test_graveyard_return_rules.GraveyardReturnRuleTests.test_characteristic_target_offer_commit_and_replay",
       "official_rule_ids": ["108.3", "109.5", "115.1", "115.1a", "115.1b", "400.2", "400.3", "400.7", "608.2b", "608.2c"],
@@ -5159,6 +5412,29 @@
       "official_rule_ids": ["108.3", "109.5", "115.1", "115.1a", "115.1b", "400.2", "400.3", "400.7", "608.2b", "608.2c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Preserve the authoritative state hash when origin, ownership, object kind, or logical identity validation fails."
+    },
+    {
+      "capability_id": "card.return.own_graveyard_to_owner_hand",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_targeted_return_to_hand_effect_clauses.NumericOwnedGraveyardReturnRuntimeTests.test_original_numeric_graveyard_returns_share_target_legality_and_replay",
+      "official_rule_ids": [
+        "108.3",
+        "109.5",
+        "115.1",
+        "115.1a",
+        "115.1b",
+        "400.2",
+        "400.3",
+        "400.7",
+        "608.2b",
+        "608.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed mana-value upper bounds refine canonical owned-graveyard target predicates. Original Leonin Squire cast and Auriok Salvagers activation reject foreign, wrong-kind and over-limit targets without state/payment; Purify the Grave response prevents stale-target return. Costs, retained public knowledge, unrelated private hands and pending save/load/full replay are asserted."
     },
     {
       "capability_id": "card_form.day_night",
