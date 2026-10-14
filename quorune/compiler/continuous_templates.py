@@ -1418,14 +1418,12 @@ def fixed_public_state_characteristics_handler(
         return None
     source_condition, body = parsed
     if re.match(r"^it\b", body, re.IGNORECASE):
-        if (
-            source_condition.kind
-            is FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY
-        ):
-            assert source_condition.predicate is not None
+        attached=next((leaf for leaf in source_condition.leaf_conditions() if leaf.kind is FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY),None)
+        if attached is not None:
+            assert attached.predicate is not None
             attached_subject = (
                 "Enchanted land"
-                if "land" in source_condition.predicate.types_all
+                if "land" in attached.predicate.types_all
                 else "Enchanted creature"
             )
             body = re.sub(

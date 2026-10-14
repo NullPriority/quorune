@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 254,
+  "registry_version": 255,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -6386,7 +6386,7 @@
     },
     {
       "id": "continuous.characteristics.fixed_public_state",
-      "version": 14,
+      "version": 15,
       "official_rules": [
         "604.1",
         "611.3a",
@@ -6405,7 +6405,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Apply fixed supported keywords and power/toughness modifiers in layers 6 and 7c while one closed authoritative public scalar, object, cycle-safe query, sealed history, distinct graveyard characteristic, hand, starting-life, player-counter, or designation condition is true. Compose one recipient-relative declaration requirement or restriction with fixed characteristics behind that same current public condition. Conditional typed keyword composition retains complete keyword labels, fragments and consumer capabilities behind the shared live public-state condition. A closed public-state wrapper gates the existing total-cost modifier at the shared offered and accepted casting boundary, preserving live source and spell scope. Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost.",
+        "summary": "Apply fixed supported keywords and power/toughness modifiers in layers 6 and 7c while one closed authoritative public scalar, object, cycle-safe query, sealed history, distinct graveyard characteristic, hand, starting-life, player-counter, or designation condition is true. Compose one recipient-relative declaration requirement or restriction with fixed characteristics behind that same current public condition. Conditional typed keyword composition retains complete keyword labels, fragments and consumer capabilities behind the shared live public-state condition. A closed public-state wrapper gates the existing total-cost modifier at the shared offered and accepted casting boundary, preserving live source and spell scope. Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost. Versioned flat all/any compositions retain each closed leaf and current source-bound snapshot, including distinct query quantities and status producer dependencies.",
         "inputs": [
           "active phased-in battlefield source",
           "source controller turn, life, public hand, graveyard, current or sealed turn-history, opponent poison, monarch, and starting-life facts",
@@ -6456,7 +6456,9 @@
         "quorune.compiler.casting_activation_metadata_templates.static_self_zone_cast_permission_handler",
         "quorune.semantic_runtime.casting_activation_metadata.PublicStateSelfZoneCastPermissionHandler",
         "quorune.semantic_runtime.casting_activation_metadata.compiled_self_zone_cast_permission",
-        "quorune.continuous_conditions.OwnerRelativeConditionSource"
+        "quorune.continuous_conditions.OwnerRelativeConditionSource",
+        "quorune.compiler.boolean_public_conditions.compose_public_conditions",
+        "quorune.card_programs.runtime._FixedPublicStateSnapshotResolver.snapshot"
       ],
       "positive_tests": [
         "test_closed_public_state_grammar_compiles_capability_closed",
@@ -6479,7 +6481,9 @@
         "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
         "test_self_graveyard_permission_preserves_general_public_condition",
         "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
-        "test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay"
+        "test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay",
+        "test_boolean_public_conditions_keep_independent_leaf_snapshots_and_operators",
+        "test_original_blood_baron_boolean_life_condition_ends_after_actual_life_gain_and_replays"
       ],
       "negative_tests": [
         "test_unrepresented_conditions_and_bodies_remain_residual",
@@ -6497,7 +6501,10 @@
         "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
         "test_self_graveyard_public_permission_schema_and_unknown_scope_fail_closed",
         "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
-        "test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay"
+        "test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay",
+        "test_boolean_condition_truth_query_snapshots_and_malformed_inputs_are_distinct",
+        "test_boolean_composition_preserves_attachment_numeric_trigger_and_status_boundaries",
+        "test_original_blood_baron_boolean_life_condition_ends_after_actual_life_gain_and_replays"
       ],
       "interaction_tests": [
         "test_live_public_object_state_and_layer_five_queries_recompute",
@@ -6516,7 +6523,8 @@
         "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay",
         "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
         "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
-        "test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay"
+        "test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay",
+        "test_original_blood_baron_boolean_life_condition_ends_after_actual_life_gain_and_replays"
       ],
       "multiplayer_tests": [
         "test_turn_gated_attachment_and_anthem_compose",
@@ -6525,7 +6533,8 @@
         "test_original_channeler_condition_controls_required_attack_and_replays",
         "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
         "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
-        "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay"
+        "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
+        "test_original_blood_baron_boolean_life_condition_ends_after_actual_life_gain_and_replays"
       ],
       "privacy_tests": [
         "test_hand_count_condition_projects_and_replays_without_hidden_identity",
@@ -6535,7 +6544,8 @@
         "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
         "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay",
         "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
-        "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay"
+        "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
+        "test_original_blood_baron_boolean_life_condition_ends_after_actual_life_gain_and_replays"
       ],
       "replay_tests": [
         "test_hand_count_condition_projects_and_replays_without_hidden_identity",
@@ -6550,7 +6560,8 @@
         "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay",
         "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
         "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
-        "test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay"
+        "test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay",
+        "test_original_blood_baron_boolean_life_condition_ends_after_actual_life_gain_and_replays"
       ],
       "required_evidence": [
         "positive",
@@ -11660,24 +11671,103 @@
     },
     {
       "id": "trigger.condition.fixed_public_state",
-      "version": 3,
-      "official_rules": ["109.5", "603.4", "608.2a"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 4,
+      "official_rules": [
+        "109.5",
+        "603.4",
+        "608.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
-        "summary": "Evaluate one closed public-state intervening-if descriptor both when its normalized event occurs and when the resulting triggered ability would resolve, using the trigger controller locked at creation.",
-        "inputs": ["one source-spanned intervening-if clause", "one existing fixed public-state condition descriptor", "one exact normalized event binding", "one current typed source ability at occurrence time"],
-        "outputs": ["no trigger when the condition is false at occurrence time", "ordinary APNAP placement when true", "condition revalidation before resolution", "trigger-controller-relative public queries after source control changes or departure", "exact checkpoint and replay"],
-        "exclusions": ["reflexive, delayed, first-time, once-per-turn, chosen, secret, hidden-zone, and otherwise unrepresented conditions", "conditions outside the closed public-state descriptor", "otherwise branches and linked results", "event bindings or effect bodies without independent exact owners", "same-layer and cycle-sensitive characteristic queries outside the shared layer-5 boundary"]
+        "summary": "Evaluate one closed public-state intervening-if descriptor both when its normalized event occurs and when the resulting triggered ability would resolve, using the trigger controller locked at creation. Versioned flat all/any compositions retain each closed leaf and current source-bound snapshot, including distinct query quantities and status producer dependencies.",
+        "inputs": [
+          "one source-spanned intervening-if clause",
+          "one existing fixed public-state condition descriptor",
+          "one exact normalized event binding",
+          "one current typed source ability at occurrence time"
+        ],
+        "outputs": [
+          "no trigger when the condition is false at occurrence time",
+          "ordinary APNAP placement when true",
+          "condition revalidation before resolution",
+          "trigger-controller-relative public queries after source control changes or departure",
+          "exact checkpoint and replay"
+        ],
+        "exclusions": [
+          "reflexive, delayed, first-time, once-per-turn, chosen, secret, hidden-zone, and otherwise unrepresented conditions",
+          "conditions outside the closed public-state descriptor",
+          "otherwise branches and linked results",
+          "event bindings or effect bodies without independent exact owners",
+          "same-layer and cycle-sensitive characteristic queries outside the shared layer-5 boundary"
+        ]
       },
-      "dependencies": ["state_query.permanent.public_state_predicate"],
-      "implementation_components": ["quorune.continuous_conditions.FixedPublicStateConditionSpec", "quorune.compiler.public_state_fact_queries.fixed_public_fact_condition", "quorune.compiler.public_state_queries.fixed_public_state_condition", "quorune.compiler.fixed_counter_trigger_nodes.FixedCounterTriggerBinding", "quorune.card_programs.runtime.fixed_public_state_condition_matches", "quorune.turn_history.current_turn_history_events", "quorune.zone_trigger_processing.dispatch_zone_change_occurrence", "quorune.trigger_discovery.semantic_event_condition_matches", "quorune.trigger_discovery.semantic_intervening_condition_matches"],
-      "positive_tests": ["test_public_state_intervening_if_contract_matrix", "test_intervening_public_facts_preserve_numeric_and_subtype_meaning", "test_shared_history_conditions_compile_with_exact_thresholds", "test_history_facts_use_sealed_actor_and_target_not_current_objects"],
-      "negative_tests": ["test_public_state_intervening_if_contract_matrix", "test_public_state_intervening_if_dependency_and_parser_fail_closed", "test_unrepresented_history_conditions_remain_residual", "test_absent_history_is_unavailable_not_known_empty", "test_no_qualifying_entry_history_draws_nothing"],
-      "interaction_tests": ["test_public_state_intervening_condition_rechecks_locked_controller_and_replays", "test_source_state_intervening_condition_and_current_ability_fail_closed", "test_public_entry_threshold_replays_actions_and_full_draw", "test_public_death_threshold_counts_causing_event_before_trigger", "test_public_attack_subtype_threshold_executes_compiled_consequence"],
-      "multiplayer_tests": ["test_public_state_intervening_condition_rechecks_locked_controller_and_replays"],
-      "privacy_tests": ["test_public_state_intervening_condition_rechecks_locked_controller_and_replays"],
-      "replay_tests": ["test_public_state_intervening_condition_rechecks_locked_controller_and_replays", "test_public_entry_threshold_replays_actions_and_full_draw"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "state_query.permanent.public_state_predicate"
+      ],
+      "implementation_components": [
+        "quorune.continuous_conditions.FixedPublicStateConditionSpec",
+        "quorune.compiler.public_state_fact_queries.fixed_public_fact_condition",
+        "quorune.compiler.public_state_queries.fixed_public_state_condition",
+        "quorune.compiler.fixed_counter_trigger_nodes.FixedCounterTriggerBinding",
+        "quorune.card_programs.runtime.fixed_public_state_condition_matches",
+        "quorune.turn_history.current_turn_history_events",
+        "quorune.zone_trigger_processing.dispatch_zone_change_occurrence",
+        "quorune.trigger_discovery.semantic_event_condition_matches",
+        "quorune.trigger_discovery.semantic_intervening_condition_matches",
+        "quorune.compiler.boolean_public_conditions.compose_public_conditions",
+        "quorune.card_programs.runtime._FixedPublicStateSnapshotResolver.snapshot"
+      ],
+      "positive_tests": [
+        "test_public_state_intervening_if_contract_matrix",
+        "test_intervening_public_facts_preserve_numeric_and_subtype_meaning",
+        "test_shared_history_conditions_compile_with_exact_thresholds",
+        "test_history_facts_use_sealed_actor_and_target_not_current_objects",
+        "test_boolean_public_conditions_keep_independent_leaf_snapshots_and_operators",
+        "test_boolean_intervening_condition_rechecks_after_actual_attack_response_and_replays"
+      ],
+      "negative_tests": [
+        "test_public_state_intervening_if_contract_matrix",
+        "test_public_state_intervening_if_dependency_and_parser_fail_closed",
+        "test_unrepresented_history_conditions_remain_residual",
+        "test_absent_history_is_unavailable_not_known_empty",
+        "test_no_qualifying_entry_history_draws_nothing",
+        "test_boolean_condition_truth_query_snapshots_and_malformed_inputs_are_distinct",
+        "test_boolean_composition_preserves_attachment_numeric_trigger_and_status_boundaries",
+        "test_boolean_intervening_condition_rechecks_after_actual_attack_response_and_replays"
+      ],
+      "interaction_tests": [
+        "test_public_state_intervening_condition_rechecks_locked_controller_and_replays",
+        "test_source_state_intervening_condition_and_current_ability_fail_closed",
+        "test_public_entry_threshold_replays_actions_and_full_draw",
+        "test_public_death_threshold_counts_causing_event_before_trigger",
+        "test_public_attack_subtype_threshold_executes_compiled_consequence",
+        "test_boolean_intervening_condition_rechecks_after_actual_attack_response_and_replays"
+      ],
+      "multiplayer_tests": [
+        "test_public_state_intervening_condition_rechecks_locked_controller_and_replays",
+        "test_boolean_intervening_condition_rechecks_after_actual_attack_response_and_replays"
+      ],
+      "privacy_tests": [
+        "test_public_state_intervening_condition_rechecks_locked_controller_and_replays",
+        "test_boolean_intervening_condition_rechecks_after_actual_attack_response_and_replays"
+      ],
+      "replay_tests": [
+        "test_public_state_intervening_condition_rechecks_locked_controller_and_replays",
+        "test_public_entry_threshold_replays_actions_and_full_draw",
+        "test_boolean_intervening_condition_rechecks_after_actual_attack_response_and_replays"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Blocking the condition capability or its shared public-state dependency leaves the source-spanned trigger material and untrusted.",
       "implementation_mutation_status": "killed",

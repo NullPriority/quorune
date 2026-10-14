@@ -29,8 +29,9 @@ def conditional_typed_keyword_handler(text: str, *, source_name: str):
     body = _TRAILING_REMINDER.sub('', body.strip()).rstrip('.')
     if re.match(r'^it\b', body, re.I):
         subject = 'This creature'
-        if source_condition.kind is FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY:
-            subject = ('Enchanted land' if 'land' in source_condition.predicate.types_all
+        attached=next((leaf for leaf in source_condition.leaf_conditions() if leaf.kind is FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY),None)
+        if attached is not None:
+            subject = ('Enchanted land' if 'land' in attached.predicate.types_all
                 else 'Enchanted creature')
         body = re.sub(r'^it\b', subject, body, count=1, flags=re.I)
     match = re.fullmatch(r'(?P<prefix>.+?)(?P<verb>has|have) (?P<abilities>.+)', body, re.I)

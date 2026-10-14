@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Compose closed public-state conditions with shared Boolean snapshots,
+  retaining leaf query identities, status dependencies and trigger rechecks.
+
 - Resolve opponent-count quantities from the current public roster, including
   changes caused by a player's departure before the instruction resolves.
 

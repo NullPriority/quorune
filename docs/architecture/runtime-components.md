@@ -410,6 +410,14 @@ controller and current roster at the instruction boundary; a departed player
 does not remain in a count captured when the spell was announced. The same
 quantity supports fixed arithmetic and independently exact result owners.
 
+Public-state condition schema 6 composes two through four flat typed leaves
+with `all` or `any`. The snapshot owner captures each leaf separately from the
+same source and public state, preserving distinct query quantities and status
+facts. Static consumers retain their layer-timing exclusions for every leaf.
+Intervening-if triggers evaluate the whole condition at occurrence and again
+at resolution. Legacy condition codecs remain unchanged; missing snapshots,
+unknown leaves and unsupported nested or mixed conditions fail closed.
+
 Devotion has a distinct versioned quantity reduction through `devotion.py`.
 Under CR 700.5a it reads current mana costs after copy, control and text effects,
 before later characteristic changes. One hybrid symbol contributes once to a

@@ -47,6 +47,8 @@ FIXED_PUBLIC_STATE_INTERVENING_COVERAGE = (
 
 
 class FixedPublicStateConditionKind(StrEnum):
+    ALL = 'all'
+    ANY = 'any'
     CONTROLLER_TURN = "controller_turn"
     OTHER_TURN = "other_turn"
     CONTROLLER_GRAVEYARD_CARD_COUNT_AT_LEAST = (
@@ -148,8 +150,21 @@ class FixedPublicStateConditionSnapshot:
     attached_query_matches: bool | None = None
     condition_quantity: int | None = None
     controller_speed: int = 0
+    term_snapshots: tuple['FixedPublicStateConditionSnapshot', ...] = ()
 
     def __post_init__(self) -> None:
+        if not isinstance(self.term_snapshots,(list,tuple)):
+            raise FixedPublicStateConditionError('Boolean leaf snapshots must be an array')
+        object.__setattr__(self,'term_snapshots',tuple(self.term_snapshots))
+        if self.term_snapshots:
+            snapshots=tuple(self.term_snapshots)
+            if not 2<=len(snapshots)<=4 or any(not isinstance(child,FixedPublicStateConditionSnapshot) or child.term_snapshots for child in snapshots):
+                raise FixedPublicStateConditionError('Boolean conditions require two through four flat typed snapshots')
+            fields=('source_controller','active_player','turn_sequence','controller_life','opponent_life_totals',
+                'controller_hand_count','controller_graveyard_card_count','source_counters')
+            if any(any(getattr(child,field)!=getattr(self,field) for field in fields) for child in snapshots):
+                raise FixedPublicStateConditionError('Boolean leaf snapshots must share one current source and public state')
+            object.__setattr__(self,'term_snapshots',snapshots)
         if type(self.source_controller) is not str or not self.source_controller:
             raise FixedPublicStateConditionError(
                 "A public-state condition requires a source controller"
@@ -296,8 +311,27 @@ class FixedPublicStateConditionSpec:
     fact: FixedPublicStateFact | None = None
     fact_parameter: str | None = None
     schema_version: int = 1
+    terms: tuple['FixedPublicStateConditionSpec', ...] = ()
+
+    def leaf_conditions(self):
+        return self.terms if self.terms else (self,)
+
+    def _validate_boolean(self):
+        terms=tuple(self.terms)
+        if (type(self.schema_version) is not int or self.schema_version!=6
+                or self.kind not in {FixedPublicStateConditionKind.ALL,FixedPublicStateConditionKind.ANY}
+                or not 2<=len(terms)<=4 or any(not isinstance(term,FixedPublicStateConditionSpec) or term.terms for term in terms)
+                or any(value is not None for value in (self.amount,self.counter_name,self.predicate,self.quantity,self.fact,self.fact_parameter))):
+            raise FixedPublicStateConditionError('Boolean conditions require a versioned flat composition of closed leaves')
+        object.__setattr__(self,'terms',terms)
 
     def __post_init__(self) -> None:
+        if not isinstance(self.terms,(list,tuple)):
+            raise FixedPublicStateConditionError('Boolean condition leaves must be an array')
+        object.__setattr__(self,'terms',tuple(self.terms))
+        if self.schema_version==6 or self.terms or self.kind in {FixedPublicStateConditionKind.ALL,FixedPublicStateConditionKind.ANY}:
+            self._validate_boolean()
+            return
         if not isinstance(self.kind, FixedPublicStateConditionKind):
             raise FixedPublicStateConditionError(
                 "Unsupported fixed public-state condition kind"
@@ -441,7 +475,9 @@ class FixedPublicStateConditionSpec:
             "amount": self.amount,
             "counter_name": self.counter_name,
         }
-        if self.schema_version in {2, 5}:
+        if self.schema_version==6:
+            value['terms']=[term.to_dict() for term in self.terms]
+        elif self.schema_version in {2, 5}:
             value.update(
                 {
                     "predicate": (
@@ -479,10 +515,12 @@ class FixedPublicStateConditionSpec:
         }
         current_fields = legacy_fields | {"predicate", "quantity"}
         fact_fields = current_fields | {"fact", "fact_parameter"}
+        boolean_fields=legacy_fields|{'terms'}
         if not isinstance(value, Mapping) or frozenset(value) not in {
             frozenset(legacy_fields),
             frozenset(current_fields),
             frozenset(fact_fields),
+            frozenset(boolean_fields),
         }:
             raise FixedPublicStateConditionError(
                 "Fixed public-state conditions have a closed schema"
@@ -494,6 +532,11 @@ class FixedPublicStateConditionSpec:
                 "Unsupported fixed public-state condition kind"
             ) from exc
         try:
+            if (value.get('schema_version')==6)!=('terms' in value):
+                raise FixedPublicStateConditionError('Boolean condition fields must match their version')
+            raw_terms=value.get('terms',())
+            if not isinstance(raw_terms,(list,tuple)) or any(not isinstance(term,Mapping) or term.get('schema_version')==6 for term in raw_terms):
+                raise FixedPublicStateConditionError('Boolean conditions require flat typed leaves')
             predicate = (
                 ObjectQuerySpec.from_dict(value["predicate"])
                 if value.get("predicate") is not None
@@ -518,6 +561,7 @@ class FixedPublicStateConditionSpec:
                 quantity=quantity,
                 fact=fact,
                 fact_parameter=value.get("fact_parameter"),
+                terms=tuple(cls.from_dict(term) for term in raw_terms),
             )
         except (
             CharacteristicFragmentError,
@@ -532,6 +576,11 @@ class FixedPublicStateConditionSpec:
             raise FixedPublicStateConditionError(
                 "Fixed public-state matching requires a typed snapshot"
             )
+        if self.terms:
+            if len(snapshot.term_snapshots)!=len(self.terms):
+                raise FixedPublicStateConditionError('Boolean matching requires each leaf snapshot')
+            values=tuple(term.matches(child) for term,child in zip(self.terms,snapshot.term_snapshots))
+            return all(values) if self.kind is FixedPublicStateConditionKind.ALL else any(values)
         if self.kind is FixedPublicStateConditionKind.CONTROLLER_TURN:
             return snapshot.active_player == snapshot.source_controller
         if self.kind is FixedPublicStateConditionKind.OTHER_TURN:

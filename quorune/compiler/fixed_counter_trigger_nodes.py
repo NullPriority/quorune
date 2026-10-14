@@ -695,7 +695,10 @@ class FixedCounterTriggerBinding:
 
     @property
     def explicit_capabilities(self) -> tuple[str, ...]:
-        return (*self.public_capabilities, *(("trigger.event.spell_cast_creature_target",)
+        from ..characteristic_fragments import characteristic_quantity_capabilities
+        condition_capabilities=characteristic_quantity_capabilities(
+            self.public_state_condition.to_dict() if self.public_state_condition is not None else {})
+        return (*self.public_capabilities,*condition_capabilities, *(("trigger.event.spell_cast_creature_target",)
             if self.spell_subject is not None and self.spell_subject.targets_creature else ()))
 
     @property
@@ -1100,11 +1103,11 @@ def fixed_counter_trigger_binding(
         )
         if condition is None:
             return None
-        if condition.kind in {
+        if any(leaf.kind in {
             FixedPublicStateConditionKind.SOURCE_ENTERED_THIS_TURN,
             FixedPublicStateConditionKind.SOURCE_COUNTER_AT_LEAST,
             FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY,
-        }:
+        } for leaf in condition.leaf_conditions()):
             return None
         base = fixed_counter_trigger_binding(
             f"{intervening.group('prefix')}, {intervening.group('body')}",

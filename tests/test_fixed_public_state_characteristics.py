@@ -225,6 +225,80 @@ def source_context(
 
 
 class FixedPublicStateCharacteristicCompilerTests(unittest.TestCase):
+    def test_boolean_composition_preserves_attachment_numeric_trigger_and_status_boundaries(self):
+        from quorune.compiler.public_state_queries import fixed_public_state_parts
+        from quorune.compiler.fixed_counter_trigger_nodes import fixed_counter_trigger_binding
+        from test_qualified_zone_event_queries import query_record
+        registry=load_default_capability_registry()
+        text='As long as you have no cards in hand and enchanted creature is a Human, it gets +1/+1.'
+        ir=compile_oracle_card(query_record(text),capability_registry=registry)
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        self.assertEqual('attached',ir.faces[0].nodes[0].handlers[0]['target']['kind'])
+        ambiguous='As long as this Equipment is untapped and enchanted creature is a Human, it gets +1/+1.'
+        self.assertIsNone(fixed_public_state_parts(ambiguous,source_name='Generic Query Observer'))
+        trigger='When this creature enters, if this creature has a charge counter on it and you have no cards in hand, draw a card.'
+        self.assertIsNone(fixed_counter_trigger_binding(trigger,card_name='Generic Query Observer'))
+        text="As long as you're the monarch and you have no cards in hand, this creature has flying."
+        ir=compile_oracle_card(query_record(text),capability_registry=registry)
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        self.assertIn('variant.monarch.designate',ir.faces[0].nodes[0].capability_dependencies)
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        changed=copy.deepcopy(raw)
+        next(row for row in changed['capabilities'] if row['id']=='variant.monarch.designate').update(status='blocked',blockers=['compound monarch producer withdrawn'])
+        self.assertNotEqual('exact',compile_oracle_card(query_record(text),capability_registry=CapabilityRegistry(changed)).status)
+        with mock.patch('quorune.compiler.public_state_queries.compose_public_conditions',return_value=None):
+            self.assertNotEqual('exact',compile_oracle_card(query_record(text),capability_registry=registry).status)
+
+    def test_boolean_condition_truth_query_snapshots_and_malformed_inputs_are_distinct(self):
+        from quorune.compiler.public_state_queries import fixed_public_state_condition
+        from quorune.card_programs.runtime import _FixedPublicStateSnapshotResolver
+        from types import SimpleNamespace
+        both=fixed_public_state_condition('you have 30 or more life and you have no cards in hand',source_name='Generic Source')
+        either=fixed_public_state_condition('you have 30 or more life or you have no cards in hand',source_name='Generic Source')
+        for life,hand in ((20,1),(20,0),(40,1),(40,0)):
+            base=source_context(controller_life=life,hand_count=hand).public_state
+            snapshot=replace(base,term_snapshots=(base,base))
+            self.assertEqual(life>=30 and hand==0,both.matches(snapshot))
+            self.assertEqual(life>=30 or hand==0,either.matches(snapshot))
+        with self.assertRaises(FixedPublicStateConditionError):both.matches(base)
+        with self.assertRaises(FixedPublicStateConditionError):replace(base,term_snapshots=(base,replace(base,source_controller='B')))
+        payload=both.to_dict()
+        for field,value in (('schema_version',True),('terms',[]),('terms',[payload,payload]),('unknown',True)):
+            with self.assertRaises(FixedPublicStateConditionError):FixedPublicStateConditionSpec.from_dict({**payload,field:value})
+        for text in ('you have 30 or more life and the top card of your library is blue',
+                     'you have no cards in hand and your turn or you have 30 or more life'):
+            self.assertIsNone(fixed_public_state_condition(text,source_name='Generic Source'))
+        queries=fixed_public_state_condition('you control three or more creatures and you control four or more artifacts',source_name='Generic Source')
+        self.assertIsNotNone(queries)
+        state=SimpleNamespace(players={'A':SimpleNamespace(zones={'hand':[],'graveyard':[]},life=40)},turn_order=['A'],active_player='A',cards={})
+        source=SimpleNamespace(controller='A',ref='SOURCE',object_id='source',counters={})
+        resolver=_FixedPublicStateSnapshotResolver(state,public_object_resolver=None,quantity_resolver=lambda source,q:3 if q.query.types_all==('creature',) else 1)
+        snapshot=resolver.snapshot(source,queries)
+        self.assertEqual((3,1),tuple(child.condition_quantity for child in snapshot.term_snapshots))
+        self.assertFalse(queries.matches(snapshot))
+        from quorune.semantic_runtime.fixed_characteristic_settings import validate_setting_condition
+        with self.assertRaises(SemanticNodeError):validate_setting_condition(queries.to_dict())
+        from test_qualified_zone_event_queries import query_record
+        text='As long as you have 30 or more life and you control a creature with power 4 or greater, this creature gets +1/+1.'
+        self.assertNotEqual('exact',compile_oracle_card(query_record(text),capability_registry=load_default_capability_registry()).status)
+
+    def test_boolean_public_conditions_keep_independent_leaf_snapshots_and_operators(self):
+        from test_qualified_zone_event_queries import query_record
+        cases=(
+            ('As long as you have 30 or more life and an opponent has 10 or less life, this creature gets +6/+6 and has flying.','all'),
+            ('As long as you have 30 or more life or you have no cards in hand, this creature gets +1/+1.','any'),
+        )
+        for text,kind in cases:
+            with self.subTest(text=text):
+                ir=compile_oracle_card(query_record(text),capability_registry=load_default_capability_registry())
+                self.assertEqual('exact',ir.status,ir.material_residuals)
+                node=ir.faces[0].nodes[0];self.assertEqual(text,node.text)
+                condition=FixedPublicStateConditionSpec.from_dict(node.handlers[0]['source_condition'])
+                self.assertEqual(kind,condition.kind.value)
+                self.assertEqual(6,condition.schema_version)
+                self.assertEqual(2,len(condition.terms))
+                self.assertEqual(condition,FixedPublicStateConditionSpec.from_dict(condition.to_dict()))
+
     def test_conditional_typed_keyword_schema_dependencies_and_omission_fail_closed(self):
         from test_qualified_zone_event_queries import query_record
         from quorune.compiler.conditional_granted_ability_templates import conditional_typed_keyword_handler
@@ -2883,6 +2957,69 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
 
 
 class AdditionalConditionalModifierRuntimeTests(unittest.TestCase):
+    def test_boolean_intervening_condition_rechecks_after_actual_attack_response_and_replays(self):
+        from quorune.model import CombatState
+        session=self.session(3631502);engine=session.engine
+        source=self.add(engine,'Generic Boolean Attack Observer',ref='boolean-attack-source')
+        response=self.add(engine,'Generic Boolean Life Response',zone='hand',ref='boolean-attack-response')
+        session.state.players['B'].life=10
+        self.assert_whole_admission(source.printed_name)
+        engine.permissions.invalidate_current();session.state.pending_decision=None
+        session.state.started=True;session.state.active_player='A';session.state.phase='combat'
+        session.state.step='declare_attackers';session.state.phase_index=5;session.state.combat=CombatState()
+        engine.pump();self.checkpoint(session)
+        accepted=session.act('pilot:A',{'action_id':'attack','attackers':{source.ref:'B'}})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.assertTrue(any(item.kind=='triggered_ability' for item in session.state.stack))
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        cast=next(row for row in actions if row.get('card')==response.ref)
+        before=len(session.state.players['A'].zones['hand'])
+        accepted=session.act('pilot:A',{'action_id':cast['id'],'targets':['B'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.replay(session,load=True);self.resolve(session)
+        self.assertEqual(12,session.state.players['B'].life)
+        self.assertEqual(before-1,len(session.state.players['A'].zones['hand']))
+        for seat in 'BCD':
+            self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+        self.replay(session)
+
+    def test_original_blood_baron_boolean_life_condition_ends_after_actual_life_gain_and_replays(self):
+        session=self.session(3631501);engine=session.engine
+        source=self.add(engine,'Blood Baron of Vizkopa',zone='hand',ref='boolean-blood-baron')
+        life_spell=self.add(engine,'Stream of Life',zone='hand',ref='boolean-life-gain-spell')
+        green=self.add(engine,'Generic Boolean Green Source',ref='boolean-life-gain-land')
+        session.state.players['B'].life=10
+        self.assert_whole_admission(source.printed_name)
+        self.assert_whole_admission(life_spell.printed_name)
+        offered=self.ready(session,source,{'C':5,'W':1,'B':1})
+        self.checkpoint(session)
+        before=session.state.to_dict()
+        self.assertFalse(session.act('pilot:D',{'action_id':offered['id'],'pay':'auto'}).ok)
+        self.assertEqual(before,session.state.to_dict())
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        self.assertEqual(10,engine._numeric_stat(source.object_id,'power'))
+        self.assertIn('Flying',engine._effective_card_data(session.state.cards[source.object_id])['keywords'])
+        while session.state.priority_player!='A':
+            result=session.act(session.pending_principals()[0],{'action_id':'pass'})
+            self.assertTrue(result.ok,result.summary)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        mana=next(row for row in actions if row['id'].startswith('activate:'+green.ref+':'))
+        self.assertTrue(session.act('pilot:A',{'action_id':mana['id']}).ok)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        cast=next(row for row in actions if row.get('card')==life_spell.ref)
+        accepted=session.act('pilot:A',{'action_id':cast['id'],'targets':['B'],'x':2,'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.replay(session,load=True);self.resolve(session)
+        self.assertEqual(12,session.state.players['B'].life)
+        self.assertEqual(4,engine._numeric_stat(source.object_id,'power'))
+        keywords=engine._effective_card_data(session.state.cards[source.object_id])['keywords']
+        self.assertNotIn('Flying',keywords)
+        self.assertIn('Lifelink',keywords)
+        for seat in 'BCD':
+            self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+        self.replay(session)
+
     def test_original_tyranid_opponent_quantity_resolves_after_actual_concession_and_replays(self):
         session=self.session(3631401);engine=session.engine
         spell=self.add(engine,'Tyranid Invasion',zone='hand',ref='public-opponent-tokens')

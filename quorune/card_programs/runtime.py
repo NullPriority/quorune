@@ -1,7 +1,7 @@
 from __future__ import annotations
 from ..entry_copy import copiable_oracle_id
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Any, TYPE_CHECKING, Callable, Mapping, Protocol, Sequence
 
 from ..attachments import attached_object_identity
@@ -322,6 +322,9 @@ class _FixedPublicStateSnapshotResolver:
         source: Any,
         condition: FixedPublicStateConditionSpec,
     ) -> FixedPublicStateConditionSnapshot:
+        if condition.terms:
+            snapshots=tuple(self.snapshot(source,leaf) for leaf in condition.terms)
+            return replace(snapshots[0],term_snapshots=snapshots)
         controller = self.state.players[source.controller]
         kind = condition.kind
         turn_sequence = max(0, int(getattr(self.state, "turn_sequence", 0)))

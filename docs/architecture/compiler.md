@@ -708,6 +708,14 @@ counter relation. Static and effect consumers declare the public player-count
 producer separately; team formats and unrepresented opponent predicates retain
 their existing support boundaries.
 
+Boolean public conditions retain complete atomic parsing before splitting
+an `and` or `or` composition. Each leaf must independently compile, and the
+versioned condition keeps its operator and producer dependencies. Ambiguous
+attachment pronouns, mixed operators and numeric characteristic predicates
+without a cycle-safe timing owner remain residual. Existing unsupported
+intervening-if source-counter and attached conditions remain excluded inside
+a composition as well.
+
 Fixed static declaration composition reuses the declaration requirement and
 restriction parsers rather than adding a combat validator. A source-local line
 may contain either one exact fragment or one of the closed two-fragment

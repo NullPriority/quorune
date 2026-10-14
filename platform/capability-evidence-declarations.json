@@ -22156,6 +22156,29 @@
       ],
       "applicability_note": "Constant live public characteristic settings through shared layer and action owners."
     },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_blood_baron_boolean_life_condition_ends_after_actual_life_gain_and_replays",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Blood Baron is strictly compiled and cast with both life thresholds satisfied. A real Stream of Life raises the final qualifying opponent above ten, removes only the coupled bonus/flying, and preserves printed lifelink. Wrong-principal rollback, private projection, pending save/load and complete pre-action replay agree."
+    },
     {"capability_id":"continuous.characteristics.fixed_public_state","evidence_class":"interaction","test_id":"tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_jetmir_additional_thresholds_stack_and_recompute_after_real_bounce","official_rule_ids":["604.1","611.3a","611.3b","611.3c","613.1f","613.1g","613.4c","613.6","603.6b","603.10"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Jetmir's independent fixed bonuses stack at six and nine controlled creatures. An actual Unsummon lowers the count across each threshold, removes only the newly inapplicable bonus and keyword, and preserves earlier vigilance and complete pre-cast replay."},
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -22412,6 +22435,29 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_blood_baron_boolean_life_condition_ends_after_actual_life_gain_and_replays",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Blood Baron is strictly compiled and cast with both life thresholds satisfied. A real Stream of Life raises the final qualifying opponent above ten, removes only the coupled bonus/flying, and preserves printed lifelink. Wrong-principal rollback, private projection, pending save/load and complete pre-action replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
       "official_rule_ids": [
         "604.1",
@@ -22593,6 +22639,29 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_blood_baron_boolean_life_condition_ends_after_actual_life_gain_and_replays",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Blood Baron is strictly compiled and cast with both life thresholds satisfied. A real Stream of Life raises the final qualifying opponent above ten, removes only the coupled bonus/flying, and preserves printed lifelink. Wrong-principal rollback, private projection, pending save/load and complete pre-action replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
       "official_rule_ids": [
         "604.1",
@@ -22704,6 +22773,52 @@
         "commander_review"
       ],
       "applicability_note": "Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_boolean_composition_preserves_attachment_numeric_trigger_and_status_boundaries",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent all/any truth matrices, distinct query snapshots, codec coherence, dependency withdrawal and compiler omission preserve each Boolean leaf; ambiguous pronouns and existing numeric/intervening-if exclusions remain fail closed."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_boolean_condition_truth_query_snapshots_and_malformed_inputs_are_distinct",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent all/any truth matrices, distinct query snapshots, codec coherence, dependency withdrawal and compiler omission preserve each Boolean leaf; ambiguous pronouns and existing numeric/intervening-if exclusions remain fail closed."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -22856,6 +22971,29 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_blood_baron_boolean_life_condition_ends_after_actual_life_gain_and_replays",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Blood Baron is strictly compiled and cast with both life thresholds satisfied. A real Stream of Life raises the final qualifying opponent above ten, removes only the coupled bonus/flying, and preserves printed lifelink. Wrong-principal rollback, private projection, pending save/load and complete pre-action replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
       "official_rule_ids": [
         "604.1",
@@ -22967,6 +23105,29 @@
         "commander_review"
       ],
       "applicability_note": "Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_boolean_public_conditions_keep_independent_leaf_snapshots_and_operators",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent all/any truth matrices, distinct query snapshots, codec coherence, dependency withdrawal and compiler omission preserve each Boolean leaf; ambiguous pronouns and existing numeric/intervening-if exclusions remain fail closed."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -23119,6 +23280,29 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_blood_baron_boolean_life_condition_ends_after_actual_life_gain_and_replays",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Blood Baron is strictly compiled and cast with both life thresholds satisfied. A real Stream of Life raises the final qualifying opponent above ten, removes only the coupled bonus/flying, and preserves printed lifelink. Wrong-principal rollback, private projection, pending save/load and complete pre-action replay agree."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "privacy",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
       "official_rule_ids": [
         "604.1",
@@ -23255,6 +23439,29 @@
       "official_rule_ids": ["604.1", "611.3a", "611.3b", "611.3c", "613.1f", "613.1g", "613.4c", "613.6", "603.6b", "603.10"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Use only public counts and effective graveyard characteristics while keeping every hidden hand identity out of opponent projection."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_blood_baron_boolean_life_condition_ends_after_actual_life_gain_and_replays",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Blood Baron is strictly compiled and cast with both life thresholds satisfied. A real Stream of Life raises the final qualifying opponent above ten, removes only the coupled bonus/flying, and preserves printed lifelink. Wrong-principal rollback, private projection, pending save/load and complete pre-action replay agree."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -57921,6 +58128,22 @@
     {
       "capability_id": "trigger.condition.fixed_public_state",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_boolean_intervening_condition_rechecks_after_actual_attack_response_and_replays",
+      "official_rule_ids": [
+        "109.5",
+        "603.4",
+        "608.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A constructed complete printed Boolean intervening-if observer attacks through the native command and creates its trigger while both leaves hold. A real life-gain response makes a leaf false before resolution, suppressing the draw; pending save/load, private projection and full pre-action replay agree."
+    },
+    {
+      "capability_id": "trigger.condition.fixed_public_state",
+      "evidence_class": "interaction",
       "test_id": "tests.test_public_history_condition_closure.PublicHistoryTrustedActionTests.test_trusted_return_then_entry_draw_uses_previous_controller_and_exact_replay",
       "official_rule_ids": [
         "109.5",
@@ -57941,6 +58164,22 @@
       "official_rule_ids": ["109.5", "603.4", "608.2a"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Keep the trigger controller fixed through source control change and source departure in a four-player game."
+    },
+    {
+      "capability_id": "trigger.condition.fixed_public_state",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_boolean_intervening_condition_rechecks_after_actual_attack_response_and_replays",
+      "official_rule_ids": [
+        "109.5",
+        "603.4",
+        "608.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A constructed complete printed Boolean intervening-if observer attacks through the native command and creates its trigger while both leaves hold. A real life-gain response makes a leaf false before resolution, suppressing the draw; pending save/load, private projection and full pre-action replay agree."
     },
     {
       "capability_id": "trigger.condition.fixed_public_state",
@@ -57977,6 +58216,54 @@
     {
       "capability_id": "trigger.condition.fixed_public_state",
       "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_boolean_intervening_condition_rechecks_after_actual_attack_response_and_replays",
+      "official_rule_ids": [
+        "109.5",
+        "603.4",
+        "608.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A constructed complete printed Boolean intervening-if observer attacks through the native command and creates its trigger while both leaves hold. A real life-gain response makes a leaf false before resolution, suppressing the draw; pending save/load, private projection and full pre-action replay agree."
+    },
+    {
+      "capability_id": "trigger.condition.fixed_public_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_boolean_composition_preserves_attachment_numeric_trigger_and_status_boundaries",
+      "official_rule_ids": [
+        "109.5",
+        "603.4",
+        "608.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent all/any truth matrices, distinct query snapshots, codec coherence, dependency withdrawal and compiler omission preserve each Boolean leaf; ambiguous pronouns and existing numeric/intervening-if exclusions remain fail closed."
+    },
+    {
+      "capability_id": "trigger.condition.fixed_public_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_boolean_condition_truth_query_snapshots_and_malformed_inputs_are_distinct",
+      "official_rule_ids": [
+        "109.5",
+        "603.4",
+        "608.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent all/any truth matrices, distinct query snapshots, codec coherence, dependency withdrawal and compiler omission preserve each Boolean leaf; ambiguous pronouns and existing numeric/intervening-if exclusions remain fail closed."
+    },
+    {
+      "capability_id": "trigger.condition.fixed_public_state",
+      "evidence_class": "negative",
       "test_id": "tests.test_public_history_condition_closure.PublicHistoryConditionCompilerTests.test_unrepresented_history_conditions_remain_residual",
       "official_rule_ids": [
         "109.5",
@@ -57997,6 +58284,38 @@
       "official_rule_ids": ["109.5", "603.4", "608.2a"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Compile closed step, source-zone, attack, query, history, and public-status intervening-if conditions through the shared typed descriptor and normalized event owner."
+    },
+    {
+      "capability_id": "trigger.condition.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_boolean_intervening_condition_rechecks_after_actual_attack_response_and_replays",
+      "official_rule_ids": [
+        "109.5",
+        "603.4",
+        "608.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A constructed complete printed Boolean intervening-if observer attacks through the native command and creates its trigger while both leaves hold. A real life-gain response makes a leaf false before resolution, suppressing the draw; pending save/load, private projection and full pre-action replay agree."
+    },
+    {
+      "capability_id": "trigger.condition.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_boolean_public_conditions_keep_independent_leaf_snapshots_and_operators",
+      "official_rule_ids": [
+        "109.5",
+        "603.4",
+        "608.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Independent all/any truth matrices, distinct query snapshots, codec coherence, dependency withdrawal and compiler omission preserve each Boolean leaf; ambiguous pronouns and existing numeric/intervening-if exclusions remain fail closed."
     },
     {
       "capability_id": "trigger.condition.fixed_public_state",
@@ -58025,6 +58344,22 @@
     {
       "capability_id": "trigger.condition.fixed_public_state",
       "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_boolean_intervening_condition_rechecks_after_actual_attack_response_and_replays",
+      "official_rule_ids": [
+        "109.5",
+        "603.4",
+        "608.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A constructed complete printed Boolean intervening-if observer attacks through the native command and creates its trigger while both leaves hold. A real life-gain response makes a leaf false before resolution, suppressing the draw; pending save/load, private projection and full pre-action replay agree."
+    },
+    {
+      "capability_id": "trigger.condition.fixed_public_state",
+      "evidence_class": "privacy",
       "test_id": "tests.test_public_history_condition_closure.PublicHistoryTrustedActionTests.test_actual_opponent_loss_draw_is_private_and_own_loss_does_not_qualify",
       "official_rule_ids": [
         "109.5",
@@ -58045,6 +58380,22 @@
       "official_rule_ids": ["109.5", "603.4", "608.2a"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Checkpoint a trigger after source departure and replay the second condition check and effect result exactly."
+    },
+    {
+      "capability_id": "trigger.condition.fixed_public_state",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_boolean_intervening_condition_rechecks_after_actual_attack_response_and_replays",
+      "official_rule_ids": [
+        "109.5",
+        "603.4",
+        "608.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A constructed complete printed Boolean intervening-if observer attacks through the native command and creates its trigger while both leaves hold. A real life-gain response makes a leaf false before resolution, suppressing the draw; pending save/load, private projection and full pre-action replay agree."
     },
     {
       "capability_id": "trigger.condition.fixed_public_state",

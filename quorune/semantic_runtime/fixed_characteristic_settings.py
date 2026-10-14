@@ -23,17 +23,18 @@ FIXED_SETTING_CAPABILITY = "continuous.characteristics.fixed_public_setting"
 
 def validate_setting_condition(condition: Mapping[str, Any]) -> FixedPublicStateConditionSpec:
     parsed = FixedPublicStateConditionSpec.from_dict(condition)
-    if parsed.kind in {
-        FixedPublicStateConditionKind.SOURCE_MATCHES_QUERY,
-        FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY,
-        FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS,
-    }:
-        raise SemanticNodeError('Conditional type settings require non-characteristic public facts')
-    if parsed.quantity is not None:
-        if parsed.quantity.query.zones != ('graveyard',) or parsed.quantity.query.keywords_all:
-            raise SemanticNodeError('Conditional setting quantities require public graveyard objects')
-        if parsed.quantity.reduction is not CharacteristicQuantityReduction.OBJECT_COUNT:
-            raise SemanticNodeError('Conditional settings require a fixed object-count condition')
+    for leaf in parsed.leaf_conditions():
+        if leaf.kind in {
+            FixedPublicStateConditionKind.SOURCE_MATCHES_QUERY,
+            FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY,
+            FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS,
+        }:
+            raise SemanticNodeError('Conditional type settings require non-characteristic public facts')
+        if leaf.quantity is not None:
+            if leaf.quantity.query is None or leaf.quantity.query.zones != ('graveyard',) or leaf.quantity.query.keywords_all:
+                raise SemanticNodeError('Conditional setting quantities require public graveyard objects')
+            if leaf.quantity.reduction is not CharacteristicQuantityReduction.OBJECT_COUNT:
+                raise SemanticNodeError('Conditional settings require a fixed object-count condition')
     return parsed
 
 

@@ -1032,6 +1032,7 @@
     {
       "id": "fixed-public-state-characteristic-contract",
       "patterns": [
+        "quorune/compiler/boolean_public_conditions.py",
         "quorune/devotion.py",
         "quorune/compiler/devotion_templates.py",
         "tests/fixtures/additional-conditional-modifier-cards.json",
@@ -1923,6 +1924,7 @@
     {
       "id": "fixed-casting-surface-contract",
       "patterns": [
+        "quorune/compiler/boolean_public_conditions.py",
         "quorune/devotion.py",
         "quorune/compiler/devotion_templates.py",
         "quorune/compiler/casting_activation_metadata_templates.py",
