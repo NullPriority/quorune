@@ -11,6 +11,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Compile qualified player-damage batch triggers with subtype and public
+  characteristic predicates, one trigger per observer and damaged player.
+  Captured trigger sources use deterministic ordering across checkpoint replay.
+
 - Compile conditional source type and base-stat settings through existing
   characteristic layers while preserving current conditions and source identity.
 

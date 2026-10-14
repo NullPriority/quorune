@@ -41,6 +41,7 @@ from .public_state_queries import fixed_public_state_condition
 from .qualified_zone_event_bindings import QUALIFIED_ZONE_VARIANT, qualified_public_zone_event_binding_spec, public_binding_from_spec
 from .aggregated_zone_event_bindings import AGGREGATED_ZONE_VARIANT, aggregated_public_zone_event_binding_spec
 from .counter_placement_event_bindings import COUNTER_EVENT_VARIANTS
+from .fixed_public_action_event_bindings import QUALIFIED_DAMAGE_BATCH_VARIANT
 from .tap_state_event_bindings import (
     TAP_STATE_EVENT_VARIANT, TAP_STATE_EVENT_VARIANTS,
     public_trigger_binding_spec, tap_state_bound_result,
@@ -132,6 +133,7 @@ _ABILITY_WORD_PUBLIC_EVENT_VARIANTS = frozenset(
 )
 PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
     {
+        QUALIFIED_DAMAGE_BATCH_VARIANT,
         TAP_STATE_EVENT_VARIANT,
         "source_" + TAP_STATE_EVENT_VARIANT,
         "controller_attack_batch",
@@ -233,9 +235,11 @@ _ALL_PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
         *MULTI_EVENT_BINDING_CLOSURE_VARIANTS,
     }
 )
-_NONCOUNTER_PUBLIC_EVENT_VARIANTS = _ALL_PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS - TAP_STATE_EVENT_VARIANTS - COUNTER_EVENT_VARIANTS
+_NONCOUNTER_PUBLIC_EVENT_VARIANTS = (_ALL_PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS
+    - TAP_STATE_EVENT_VARIANTS - COUNTER_EVENT_VARIANTS - {QUALIFIED_DAMAGE_BATCH_VARIANT})
 _ONE_OR_MORE_PUBLIC_EVENT_VARIANTS = frozenset(
     {
+        QUALIFIED_DAMAGE_BATCH_VARIANT,
         AGGREGATED_ZONE_VARIANT,
         "controller_attack_batch",
         "controller_attack_batch_at_least_2",

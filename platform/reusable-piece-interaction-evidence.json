@@ -4,6 +4,36 @@
     {
       "evidence_class": "interaction",
       "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_original_squirrel_damage_batch_coalesces_per_player_and_replays",
+      "piece_ids": [
+        "capability.trigger.event.qualified_damage_batch",
+        "capability.zone.draw.library_to_hand"
+      ],
+      "capability_ids": [
+        "trigger.event.qualified_damage_batch",
+        "zone.draw.library_to_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "Two Squirrels dealing simultaneous damage to one player produce one complete draw per original Keeper of Fables and Odd Acorn Gang observer; splitting that damage between players produces two draws per observer. A Human damaging another player does not qualify. Strict original whole-program binding, offered and accepted casts/attacks, wrong-principal rollback, pending trigger-order save/load, private draw projection and complete command replay preserve these outcomes. Canonical explicit source ordering keeps pending identities independent of checkpoint dictionary insertion order."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_original_squirrel_damage_batch_coalesces_per_player_and_replays",
+      "piece_ids": [
+        "capability.counter.producer.fixed_event_trigger",
+        "capability.trigger.event.qualified_damage_batch"
+      ],
+      "capability_ids": [
+        "counter.producer.fixed_event_trigger",
+        "trigger.event.qualified_damage_batch"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original The Thing, Ben Grimm places two +1/+1 counters per damaged player from the same native Hero/Squirrel combat batch, rather than once per damaging object. Its own incarnation remains the counter subject. Strict original whole-program binding, offered and accepted casts/attacks, wrong-principal rollback, pending trigger-order save/load, private draw projection and complete command replay preserve these outcomes. Canonical explicit source ordering keeps pending identities independent of checkpoint dictionary insertion order."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
       "test_id": "test_actual_graveyard_wonder_tracks_owner_land_source_departure_and_replay",
       "piece_ids": [
         "capability.continuous.ability.graveyard_static_grant",

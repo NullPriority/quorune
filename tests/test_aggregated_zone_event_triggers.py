@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 from pathlib import Path
+from copy import deepcopy
+from types import SimpleNamespace
+import json
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -15,9 +18,75 @@ from scripts.build_test_database import build_fixture_database
 from test_qualified_zone_event_queries import query_record
 import test_bound_effect_programs as witnesses
 import test_counter_placement_events as counter_witnesses
+import test_resolution_public_conditions as combat_witnesses
 
 
 class AggregatedZoneTriggerCompilerTests(unittest.TestCase):
+    def test_explicit_trigger_sources_use_canonical_order_independent_of_card_dict_insertion(self):
+        from quorune.trigger_discovery import _ordered_event_sources
+        first = SimpleNamespace(zone_timestamp=1, object_id='b', logical_object_id='b@1')
+        second = SimpleNamespace(zone_timestamp=2, object_id='a', logical_object_id='a@0')
+        tie = SimpleNamespace(zone_timestamp=1, object_id='a', logical_object_id='a@1')
+        host = SimpleNamespace(_semantic_event_sources=lambda: [second, first, tie])
+        expected = [tie, first, second]
+        self.assertEqual(expected, _ordered_event_sources(host, None))
+        for sources in ([second, first, tie], [first, tie, second], [tie, second, first]):
+            self.assertEqual(expected, _ordered_event_sources(host, sources))
+            self.assertEqual(3, len(sources))
+
+    def test_qualified_damage_batch_keeps_subtype_and_per_player_aggregation(self):
+        text = 'Whenever one or more Faeries you control deal combat damage to a player, draw a card.'
+        ir = compile_oracle_card(query_record(text), capability_registry=load_default_capability_registry())
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        node = ir.faces[0].nodes[0]
+        self.assertEqual('damage.dealt', node.event)
+        self.assertIn('one_or_more_event_batch', node.runtime_coverage)
+        self.assertIn('current_ability_fragment_required', node.runtime_coverage)
+        self.assertIn('source_subtypes', json.dumps(node.event_condition))
+        self.assertIn('faerie', json.dumps(node.event_condition))
+        self.assertEqual(text, node.text)
+
+    def test_qualified_damage_batch_rejects_unknown_snapshot_fields_and_keeps_predicate_contrasts(self):
+        from quorune.compiler.fixed_counter_trigger_nodes import fixed_counter_trigger_binding
+        from quorune.compiler.fixed_public_action_event_bindings import _qualified_damage_batch_spec
+        from quorune.trigger_discovery import semantic_event_matches
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.model import CardInstance
+        source = CardInstance(object_id='observer', ref='OBSERVER', oracle_id='fixture:batch-observer',
+            printed_name='Generic Batch Observer', owner='A', controller='A', zone='battlefield')
+        host = SimpleNamespace(active_seats=tuple('ABCD'), state=SimpleNamespace(cards={}, active_player='A'))
+        text = 'Whenever one or more Faeries you control deal combat damage to a player, draw a card.'
+        binding = fixed_counter_trigger_binding(text)
+        program = SimpleNamespace(event=binding.event.value, active_zone='battlefield', event_condition=binding.public_condition)
+        event = {'source_controller':'A', 'source_types':['creature'], 'source_subtypes':['faerie'],
+                 'source_colors':['U'], 'source_zone':'battlefield', 'target_kind':'player', 'player':'B', 'combat':True}
+        self.assertTrue(semantic_event_matches(host, program, source, 'damage.dealt', event))
+        for change in ({'source_controller':'C'}, {'source_subtypes':['human']}, {'combat':False},
+                       {'target_kind':'permanent'}, {'source_zone':'stack'}):
+            self.assertFalse(semantic_event_matches(host, program, source, 'damage.dealt', {**event, **change}), change)
+        self.assertTrue(semantic_event_matches(host, program, source, 'damage.dealt',
+            {**event, 'source_types':['enchantment','kindred']}))
+        for subject in ('creature tokens', 'nontoken Faeries', 'face-down creatures',
+                        'creatures with +1/+1 counters on them', 'creatures with power 4 or greater'):
+            self.assertIsNone(_qualified_damage_batch_spec(
+                f'Whenever one or more {subject} you control deal combat damage to a player, draw a card.'))
+        with patch('quorune.compiler.fixed_public_action_event_bindings._qualified_damage_batch_spec', return_value=None):
+            with self.assertRaises(AssertionError):self.test_qualified_damage_batch_keeps_subtype_and_per_player_aggregation()
+        raw = json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        for cap in ('trigger.event.qualified_damage_batch', 'trigger.event.normalized_damage'):
+            changed = deepcopy(raw)
+            next(r for r in changed['capabilities'] if r['id']==cap).update(status='blocked', blockers=['qualified damage test'])
+            self.assertNotEqual('exact', compile_oracle_card(query_record(text), capability_registry=CapabilityRegistry(changed)).status)
+
+    def test_qualified_damage_batch_preserves_closed_source_counter_consequence(self):
+        text = 'Whenever one or more Heroes you control deal damage to a player, put two +1/+1 counters on this creature.'
+        ir = compile_oracle_card(query_record(text), capability_registry=load_default_capability_registry())
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        node = ir.faces[0].nodes[0]
+        self.assertIn('one_or_more_event_batch', node.runtime_coverage)
+        self.assertEqual('place_counters', node.effects[0]['op'])
+        self.assertEqual('$source.zone_object', node.effects[0]['card'])
+        self.assertEqual(2, node.effects[0]['amount'])
     def test_aggregate_query_preserves_source_span_and_batch_coverage(self):
         for text in (
             'Whenever one or more creatures you control with mana value 3 or less enter, draw a card.',
@@ -51,10 +120,64 @@ class AggregatedZoneTriggerCompilerTests(unittest.TestCase):
 
 
 class AggregatedZoneTriggerRuntimeTests(unittest.TestCase):
+    finish_combat = combat_witnesses.IndependentDualSourceEventRuntimeTests.finish_combat
+
+    def test_actual_original_squirrel_damage_batch_coalesces_per_player_and_replays(self):
+        from quorune.model import CombatState
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        for index, defenders in enumerate((('B', 'B'), ('B', 'C'))):
+            with self.subTest(defenders=defenders):
+                session = self.session(305100 + index); engine = session.engine
+                sources = [self.add(engine, name, zone='hand', ref='keeper-' + str(n))
+                    for n, name in enumerate(('Keeper of Fables', 'The Odd Acorn Gang'))]
+                squirrels = [self.add(engine, 'Generic Damage Batch Squirrel', ref='batch-squirrel-' + str(n)) for n in range(2)]
+                human = self.add(engine, 'Generic Damage Batch Human', ref='batch-human')
+                counter_source = self.add(engine, 'The Thing, Ben Grimm', ref='hero-counter-observer')
+                program = compile_best_available_card_program(self.db, self.db.lookup(counter_source.printed_name),
+                    semantic_registry=engine.semantics, capability_registry=self.registry, capability_profile='commander_review')
+                self.assertTrue(bind_card_program_runtime(program, capability_registry=self.registry,
+                    profile='commander_review')['strict_capability_ready'])
+                for body in [*squirrels, human]:body.acquired_control_turn_count = -1
+                for n in range(10):self.add(engine, 'Generic Bound Plains', ref='keeper-land-' + str(n))
+                self.add(engine, 'Swamp', ref='acorn-black-mana')
+                self.add(engine, 'Generic Damage Green Source', ref='acorn-green-mana')
+                self.ready(session, sources[0], {'G': 3, 'C': 6});self.checkpoint(session)
+                for source in sources:
+                    program = compile_best_available_card_program(self.db, self.db.lookup(source.printed_name),
+                        semantic_registry=engine.semantics, capability_registry=self.registry, capability_profile='commander_review')
+                    self.assertTrue(bind_card_program_runtime(program, capability_registry=self.registry,
+                        profile='commander_review')['strict_capability_ready'])
+                    action = next(a for a in session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions'] if a.get('card')==source.ref)
+                    self.assertTrue(session.act('pilot:A', {'action_id':action['id'], 'pay':'auto'}).ok)
+                    self.resolve(session)
+                engine.permissions.invalidate_current();engine.state.pending_decision=None
+                engine.state.priority_player=None;engine.state.priority_passes=[]
+                engine.state.phase='combat';engine.state.step='declare_attackers';engine.state.phase_index=5
+                engine.state.combat=CombatState();engine._issue_attackers()
+                self.checkpoint(session)
+                hand_size = len(session.state.players['A'].zones['hand'])
+                before = authoritative_state_hash(session.state)
+                attackers = {squirrels[n].ref:defenders[n] for n in range(2)}
+                attackers[human.ref] = 'D'
+                self.assertFalse(session.act('pilot:C', {'action_id':'attack', 'attackers':attackers}).ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+                self.assertTrue(session.act('pilot:A', {'action_id':'attack', 'attackers':attackers}).ok)
+                resumed = self.finish_combat(session, pending_reload=index == 0)
+                self.assertEqual(hand_size + 2 * len(set(defenders)), len(resumed.state.players['A'].zones['hand']))
+                for source in sources:
+                    count = sum(event.code=='stack.trigger' and event.details.get('source')==source.ref for event in resumed.state.events)
+                    self.assertEqual(len(set(defenders)), count)
+                self.assertEqual(2 * len(set(defenders)), resumed.state.cards[counter_source.object_id].counters.get('+1/+1', 0))
+                for seat in 'BCD':
+                    packet = str(resumed.packet('pilot:' + seat, full=True))
+                    for key in resumed.state.players['A'].zones['hand']:self.assertNotIn(resumed.state.cards[key].ref, packet)
+                self.replay(resumed, load=False)
     @classmethod
     def setUpClass(cls):
         cls.temporary=tempfile.TemporaryDirectory();path=Path(cls.temporary.name)/'aggregate.sqlite3'
-        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/aggregated-zone-event-triggers.json'],path)
+        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/aggregated-zone-event-triggers.json',
+            ROOT/'tests/fixtures/conditional-exile-cards.json'],path)
         cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
         cls.deck=DeckDefinition('Aggregate zone',[DeckEntry('Generic Bound Commander',1,'commander'),DeckEntry('Generic Bound Plains',30)],['Generic Bound Commander'])
     @classmethod

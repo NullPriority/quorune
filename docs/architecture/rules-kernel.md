@@ -9,6 +9,12 @@ maintenance: "hand-maintained"
 
 # Rules kernel
 
+Normalized event discovery orders both live and explicitly captured source
+lists by zone timestamp and stable object identity. Checkpoint hydration cannot
+change pending trigger identities through dictionary insertion order. APNAP
+placement still groups by controller, and each controller chooses the order of
+their simultaneous triggers through the ordinary trigger-order capability.
+
 Fixed mana-producing spells and ordinary entry or loyalty abilities resolve
 through the existing stack and mana-pool owner. Mana production does not make
 a spell, an entry trigger or a loyalty ability a mana ability. Additional

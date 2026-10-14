@@ -2490,6 +2490,8 @@
     {
       "id": "aggregate-zone-event-query-contract",
       "patterns": [
+        "quorune/compiler/fixed_public_action_event_bindings.py",
+        "quorune/trigger_discovery.py",
         "quorune/compiler/aggregated_zone_event_bindings.py",
         "quorune/compiler/fixed_counter_trigger_nodes.py",
         "tests/fixtures/aggregated-zone-event-triggers.json"

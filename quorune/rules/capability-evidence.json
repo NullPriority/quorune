@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "103be0e6e5154a88cafeb916ccfdcac49b07c4b09020e21f5ac0025a919f4bc2",
-  "declaration_source_fingerprint": "0ed4b13d0066b2cc7fed4cb56f4f2a25a593d4750b8079a4b168e0bf3fd61149",
+  "registry_fingerprint": "eb377964a7e0060ba0e6334cbd471a32887f82480db171e9b37020d316cc7fef",
+  "declaration_source_fingerprint": "97dc70d5db3732067649ef7603223a32b0f7a8e6e4723a23609ed38d5519bc1b",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -103591,6 +103591,150 @@
       "applicability_note": "Replay the countered-spell transition, normalized event ordering, trigger journal inputs, and final state hash exactly."
     },
     {
+      "capability_id": "trigger.event.qualified_damage_batch",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerRuntimeTests.test_actual_original_squirrel_damage_batch_coalesces_per_player_and_replays",
+      "official_rule_ids": [
+        "109.2",
+        "603.2c",
+        "603.3b",
+        "510.2",
+        "700.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified native source snapshots coalesce simultaneous damage once per observer and damaged player while preserving printed predicates."
+    },
+    {
+      "capability_id": "trigger.event.qualified_damage_batch",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerRuntimeTests.test_actual_original_squirrel_damage_batch_coalesces_per_player_and_replays",
+      "official_rule_ids": [
+        "109.2",
+        "603.2c",
+        "603.3b",
+        "510.2",
+        "700.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified native source snapshots coalesce simultaneous damage once per observer and damaged player while preserving printed predicates."
+    },
+    {
+      "capability_id": "trigger.event.qualified_damage_batch",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerCompilerTests.test_qualified_damage_batch_rejects_unknown_snapshot_fields_and_keeps_predicate_contrasts",
+      "official_rule_ids": [
+        "109.2",
+        "603.2c",
+        "603.3b",
+        "510.2",
+        "700.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified native source snapshots coalesce simultaneous damage once per observer and damaged player while preserving printed predicates."
+    },
+    {
+      "capability_id": "trigger.event.qualified_damage_batch",
+      "evidence_class": "negative",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerCompilerTests.test_qualified_damage_batch_rejects_unknown_snapshot_fields_and_keeps_predicate_contrasts",
+      "official_rule_ids": [
+        "109.2",
+        "603.2c",
+        "603.3b",
+        "510.2",
+        "700.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified native source snapshots coalesce simultaneous damage once per observer and damaged player while preserving printed predicates."
+    },
+    {
+      "capability_id": "trigger.event.qualified_damage_batch",
+      "evidence_class": "positive",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerCompilerTests.test_qualified_damage_batch_keeps_subtype_and_per_player_aggregation",
+      "official_rule_ids": [
+        "109.2",
+        "603.2c",
+        "603.3b",
+        "510.2",
+        "700.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified native source snapshots coalesce simultaneous damage once per observer and damaged player while preserving printed predicates."
+    },
+    {
+      "capability_id": "trigger.event.qualified_damage_batch",
+      "evidence_class": "positive",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerRuntimeTests.test_actual_original_squirrel_damage_batch_coalesces_per_player_and_replays",
+      "official_rule_ids": [
+        "109.2",
+        "603.2c",
+        "603.3b",
+        "510.2",
+        "700.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified native source snapshots coalesce simultaneous damage once per observer and damaged player while preserving printed predicates."
+    },
+    {
+      "capability_id": "trigger.event.qualified_damage_batch",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerRuntimeTests.test_actual_original_squirrel_damage_batch_coalesces_per_player_and_replays",
+      "official_rule_ids": [
+        "109.2",
+        "603.2c",
+        "603.3b",
+        "510.2",
+        "700.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified native source snapshots coalesce simultaneous damage once per observer and damaged player while preserving printed predicates."
+    },
+    {
+      "capability_id": "trigger.event.qualified_damage_batch",
+      "evidence_class": "replay",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerRuntimeTests.test_actual_original_squirrel_damage_batch_coalesces_per_player_and_replays",
+      "official_rule_ids": [
+        "109.2",
+        "603.2c",
+        "603.3b",
+        "510.2",
+        "700.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified native source snapshots coalesce simultaneous damage once per observer and damaged player while preserving printed predicates."
+    },
+    {
       "capability_id": "trigger.event.qualified_zone_change",
       "evidence_class": "interaction",
       "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerRuntimeTests.test_actual_token_batch_triggers_once_and_limiter_rejects_later_batch",
@@ -122678,5 +122822,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "8f11abfbaa49ad091b445db0162c1c1f2730e2ac69d7fa8810372dd6fdf23b73"
+  "fingerprint": "bf0370f6e72ebd9fa478d804cb429ea39dd2b66f2e5edda5f031d5fa3aa5ebcd"
 }

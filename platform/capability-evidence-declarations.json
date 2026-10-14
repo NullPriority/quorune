@@ -60065,6 +60065,150 @@
       "applicability_note": "Replay the countered-spell transition, normalized event ordering, trigger journal inputs, and final state hash exactly."
     },
     {
+      "capability_id": "trigger.event.qualified_damage_batch",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerRuntimeTests.test_actual_original_squirrel_damage_batch_coalesces_per_player_and_replays",
+      "official_rule_ids": [
+        "109.2",
+        "603.2c",
+        "603.3b",
+        "510.2",
+        "700.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified native source snapshots coalesce simultaneous damage once per observer and damaged player while preserving printed predicates."
+    },
+    {
+      "capability_id": "trigger.event.qualified_damage_batch",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerRuntimeTests.test_actual_original_squirrel_damage_batch_coalesces_per_player_and_replays",
+      "official_rule_ids": [
+        "109.2",
+        "603.2c",
+        "603.3b",
+        "510.2",
+        "700.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified native source snapshots coalesce simultaneous damage once per observer and damaged player while preserving printed predicates."
+    },
+    {
+      "capability_id": "trigger.event.qualified_damage_batch",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerCompilerTests.test_qualified_damage_batch_rejects_unknown_snapshot_fields_and_keeps_predicate_contrasts",
+      "official_rule_ids": [
+        "109.2",
+        "603.2c",
+        "603.3b",
+        "510.2",
+        "700.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified native source snapshots coalesce simultaneous damage once per observer and damaged player while preserving printed predicates."
+    },
+    {
+      "capability_id": "trigger.event.qualified_damage_batch",
+      "evidence_class": "negative",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerCompilerTests.test_qualified_damage_batch_rejects_unknown_snapshot_fields_and_keeps_predicate_contrasts",
+      "official_rule_ids": [
+        "109.2",
+        "603.2c",
+        "603.3b",
+        "510.2",
+        "700.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified native source snapshots coalesce simultaneous damage once per observer and damaged player while preserving printed predicates."
+    },
+    {
+      "capability_id": "trigger.event.qualified_damage_batch",
+      "evidence_class": "positive",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerCompilerTests.test_qualified_damage_batch_keeps_subtype_and_per_player_aggregation",
+      "official_rule_ids": [
+        "109.2",
+        "603.2c",
+        "603.3b",
+        "510.2",
+        "700.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified native source snapshots coalesce simultaneous damage once per observer and damaged player while preserving printed predicates."
+    },
+    {
+      "capability_id": "trigger.event.qualified_damage_batch",
+      "evidence_class": "positive",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerRuntimeTests.test_actual_original_squirrel_damage_batch_coalesces_per_player_and_replays",
+      "official_rule_ids": [
+        "109.2",
+        "603.2c",
+        "603.3b",
+        "510.2",
+        "700.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified native source snapshots coalesce simultaneous damage once per observer and damaged player while preserving printed predicates."
+    },
+    {
+      "capability_id": "trigger.event.qualified_damage_batch",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerRuntimeTests.test_actual_original_squirrel_damage_batch_coalesces_per_player_and_replays",
+      "official_rule_ids": [
+        "109.2",
+        "603.2c",
+        "603.3b",
+        "510.2",
+        "700.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified native source snapshots coalesce simultaneous damage once per observer and damaged player while preserving printed predicates."
+    },
+    {
+      "capability_id": "trigger.event.qualified_damage_batch",
+      "evidence_class": "replay",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerRuntimeTests.test_actual_original_squirrel_damage_batch_coalesces_per_player_and_replays",
+      "official_rule_ids": [
+        "109.2",
+        "603.2c",
+        "603.3b",
+        "510.2",
+        "700.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Qualified native source snapshots coalesce simultaneous damage once per observer and damaged player while preserving printed predicates."
+    },
+    {
       "capability_id": "trigger.event.qualified_zone_change",
       "evidence_class": "interaction",
       "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerRuntimeTests.test_actual_token_batch_triggers_once_and_limiter_rejects_later_batch",

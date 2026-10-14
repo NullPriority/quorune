@@ -529,6 +529,14 @@ Nonbasic lands with the named basic land subtype satisfy land conditions.
 Hidden conditions, quoted procedures, fixed stat changes and unrepresented
 siblings remain outside this graveyard grant contract.
 
+Qualified “one or more” player-damage triggers compile native source type,
+subtype, color and supertype predicates alongside controller, source-zone and
+combat restrictions. Bare subtype subjects retain their permanent domain.
+One simultaneous damage batch coalesces once per observer and damaged player;
+closed draw and source-counter bodies retain their existing result owners.
+Unsupported numeric, token, face-down and counter predicates remain residual
+until the normalized source snapshot represents those distinctions.
+
 `compiler/source_counter_anthems.py` extends the existing live static anthem
 owner with fixed signed power/toughness coefficients per named counter on the
 source. The creature recipient query remains independently closed and live;

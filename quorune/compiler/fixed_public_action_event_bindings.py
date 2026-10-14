@@ -91,6 +91,12 @@ _PUBLIC_DAMAGE_BATCH_TRIGGER = re.compile(
     r"control deal combat damage to a player, (?P<body>.+)$",
     re.IGNORECASE,
 )
+QUALIFIED_DAMAGE_BATCH_VARIANT = 'one_or_more_qualified_damage_player'
+QUALIFIED_DAMAGE_BATCH_CAPABILITY = 'trigger.event.qualified_damage_batch'
+_QUALIFIED_DAMAGE_BATCH = re.compile(
+    r'^Whenever one or more (?P<subject>.+?) you control deal(?P<combat> combat)? damage '
+    r'to (?P<recipient>a player|an opponent), (?P<body>.+)$', re.I,
+)
 _SOURCE_EXTENDED_DAMAGE_TRIGGER = re.compile(
     r"^Whenever this creature deals combat damage to a player or "
     r"(?P<recipient>planeswalker|battle), (?P<body>.+)$",
@@ -501,6 +507,57 @@ def _public_zone_spec(
     )
 
 
+def _qualified_damage_batch_spec(text: str):
+    match = _QUALIFIED_DAMAGE_BATCH.fullmatch(text)
+    if match is None:
+        return None
+    from .public_state_queries import fixed_characteristic_battlefield_query_subject
+    from ..object_predicate import ObjectQuerySpec
+    parsed = fixed_characteristic_battlefield_query_subject(match['subject'] + ' you control')
+    if parsed is None or parsed[0] != 'source_controller' or parsed[2]:
+        return None
+    query = parsed[1]
+    projected = ObjectQuerySpec(zones=('battlefield',), types_all=query.types_all,
+        types_any=query.types_any, excluded_types=query.excluded_types,
+        subtypes_all=query.subtypes_all, subtypes_any=query.subtypes_any,
+        excluded_subtypes=query.excluded_subtypes, colors_all=query.colors_all,
+        colors_any=query.colors_any, colorless=query.colorless, supertypes_all=query.supertypes_all)
+    if query != projected:
+        return None
+    conditions = [
+        {'field':'source_controller','op':'eq','value':'$source.controller'},
+        {'field':'source_zone','op':'eq','value':'battlefield'},
+        {'field':'target_kind','op':'eq','value':'player'},
+    ]
+    if match['combat']:
+        conditions.append({'field':'combat','op':'truthy','value':True})
+    if match['recipient'].casefold() == 'an opponent':
+        conditions.append({'field':'player','op':'ne','value':'$source.controller'})
+    for field, values, operation, excluded in (
+        ('source_types',query.types_all,'contains_all',False),
+        ('source_types',query.types_any,'contains_any',False),
+        ('source_types',query.excluded_types,'contains_any',True),
+        ('source_subtypes',query.subtypes_all,'contains_all',False),
+        ('source_subtypes',query.subtypes_any,'contains_any',False),
+        ('source_subtypes',query.excluded_subtypes,'contains_any',True),
+        ('source_colors',query.colors_all,'contains_all',False),
+        ('source_colors',query.colors_any,'contains_any',False),
+        ('source_supertypes',query.supertypes_all,'contains_all',False),
+    ):
+        if values:
+            if operation == 'contains_all':
+                conditions.extend({'field':field,'op':'contains_any','value':[value]} for value in values)
+                continue
+            value = {'field':field,'op':operation,'value':list(values)}
+            conditions.append({'not':value} if excluded else value)
+    if query.colorless is not None:
+        value = {'field':'source_colors','op':'eq','value':[]}
+        conditions.append(value if query.colorless else {'not':value})
+    return _spec('damage.dealt', QUALIFIED_DAMAGE_BATCH_VARIANT, match['body'],
+        'fixed-counter-public-damage-trigger-v1', 'trigger-event-normalized-damage',
+        condition=_all_conditions(*conditions), capabilities=(QUALIFIED_DAMAGE_BATCH_CAPABILITY,))
+
+
 def _public_damage_spec(
     material_line: str,
 ) -> FixedPublicEventBindingSpec | None:
@@ -539,6 +596,9 @@ def _public_damage_spec(
                 {"field": "combat", "op": "truthy", "value": True},
             ),
         )
+    qualified = _qualified_damage_batch_spec(material_line)
+    if qualified is not None:
+        return qualified
     extended = _SOURCE_EXTENDED_DAMAGE_TRIGGER.fullmatch(material_line)
     if extended is not None:
         recipient = extended.group("recipient").casefold()
