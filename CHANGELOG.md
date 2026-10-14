@@ -14,6 +14,9 @@ maintenance: "hand-maintained"
 - Preserve independent library-selection card slots and qualified card types,
   and reject unrepresented qualifiers that previously became subtype names.
 
+- Compile singular qualified damage subscriptions with sealed source predicates,
+  keeping their per-source multiplicity distinct from one-or-more batches.
+
 - Compile fixed mana-value limits on owned graveyard returns through the
   existing target predicate and resolution revalidation owners.
 

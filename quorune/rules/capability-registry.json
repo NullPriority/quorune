@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 282,
+  "registry_version": 283,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -21340,6 +21340,83 @@
         "Complete original Role definitions, native timestamp ordering and result/replay evidence are pending."
       ],
       "status": "implemented"
+    },
+    {
+      "id": "trigger.event.qualified_damage_singular",
+      "version": 1,
+      "official_rules": [
+        "109.2",
+        "603.2",
+        "603.2c",
+        "603.3b",
+        "510.2",
+        "700.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Each singular source-qualified committed damage occurrence retains sealed public source predicates and recipient restrictions without one-or-more aggregation.",
+        "inputs": [
+          "sealed effective source characteristics and controller",
+          "committed combat/player recipient occurrence",
+          "current observer ability"
+        ],
+        "outputs": [
+          "one trigger per qualifying source/recipient occurrence"
+        ],
+        "exclusions": [
+          "one-or-more aggregation",
+          "token/state/ability/text-dependent qualifiers",
+          "unknown characteristic fields"
+        ]
+      },
+      "dependencies": [
+        "trigger.event.normalized_damage",
+        "trigger.placement.apnap"
+      ],
+      "implementation_components": [
+        "quorune.compiler.fixed_public_action_event_bindings._qualified_damage_singular_spec",
+        "quorune.trigger_discovery.dispatch_semantic_event",
+        "quorune.damage.commit_prepared_damage_batch"
+      ],
+      "positive_tests": [
+        "test_singular_qualified_damage_keeps_each_source_occurrence"
+      ],
+      "negative_tests": [
+        "test_singular_qualified_damage_predicates_and_omission_fail_closed"
+      ],
+      "interaction_tests": [
+        "test_original_ezio_singular_damage_draws_for_each_assassin_and_replays",
+        "test_original_kraken_observers_keep_separate_triggers_and_create_complete_tokens"
+      ],
+      "multiplayer_tests": [
+        "test_original_ezio_singular_damage_draws_for_each_assassin_and_replays",
+        "test_original_kraken_observers_keep_separate_triggers_and_create_complete_tokens"
+      ],
+      "privacy_tests": [
+        "test_original_ezio_singular_damage_draws_for_each_assassin_and_replays"
+      ],
+      "replay_tests": [
+        "test_original_ezio_singular_damage_draws_for_each_assassin_and_replays",
+        "test_original_kraken_observers_keep_separate_triggers_and_create_complete_tokens"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Withdrawing singular-damage authority prevents exact admission; no one-or-more fallback may widen it.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting singular production or changing source subtype/combat/controller/recipient rejects the exact distinguishing predicate contract.",
+      "blockers": [],
+      "status": "trusted"
     }
   ]
 }

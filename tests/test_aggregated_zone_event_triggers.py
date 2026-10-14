@@ -22,6 +22,48 @@ import test_resolution_public_conditions as combat_witnesses
 
 
 class AggregatedZoneTriggerCompilerTests(unittest.TestCase):
+    def test_singular_qualified_damage_keeps_each_source_occurrence(self):
+        registry = load_default_capability_registry()
+        for subject in ('an Assassin', 'a legendary creature', 'a black creature', 'a red or green creature',
+            'a Goblin or Orc', 'a Kraken, Leviathan, Octopus, or Serpent'):
+            text = 'Whenever ' + subject + ' you control deals combat damage to a player, draw a card.'
+            with self.subTest(subject=subject):
+                ir = compile_oracle_card(query_record(text), capability_registry=registry)
+                self.assertEqual('exact', ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                self.assertEqual('damage.dealt', node.event)
+                self.assertNotIn('one_or_more_event_batch', node.runtime_coverage)
+                self.assertIn('current_ability_fragment_required', node.runtime_coverage)
+                self.assertEqual(text, node.text)
+
+    def test_singular_qualified_damage_predicates_and_omission_fail_closed(self):
+        from quorune.compiler.fixed_counter_trigger_nodes import fixed_counter_trigger_binding
+        from quorune.compiler.fixed_public_action_event_bindings import _qualified_damage_singular_spec
+        from quorune.trigger_discovery import semantic_event_matches
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.model import CardInstance
+        source = CardInstance(object_id='observer', ref='observer', oracle_id='fixture:singular',
+            printed_name='Generic Singular Observer', owner='A', controller='A', zone='battlefield')
+        host = SimpleNamespace(active_seats=tuple('ABCD'), state=SimpleNamespace(cards={}, active_player='A'))
+        text = 'Whenever an Assassin you control deals combat damage to an opponent, draw a card.'
+        binding = fixed_counter_trigger_binding(text)
+        program = SimpleNamespace(event=binding.event.value, active_zone='battlefield', event_condition=binding.public_condition)
+        event = {'source_controller': 'A', 'source_types': ['creature'], 'source_subtypes': ['assassin'],
+            'source_colors': ['B'], 'source_zone': 'battlefield', 'target_kind': 'player', 'player': 'B', 'combat': True}
+        self.assertTrue(semantic_event_matches(host, program, source, 'damage.dealt', event))
+        for change in ({'source_controller': 'C'}, {'source_subtypes': ['human']}, {'combat': False},
+            {'target_kind': 'permanent'}, {'source_zone': 'stack'}, {'player': 'A'}):
+            self.assertFalse(semantic_event_matches(host, program, source, 'damage.dealt', {**event, **change}), change)
+        for subject in ('chosen creature', 'modified creature', 'creature with flying', 'double-faced creature'):
+            self.assertIsNone(_qualified_damage_singular_spec(
+                'Whenever a ' + subject + ' you control deals combat damage to a player, draw a card.'))
+        raw = json.loads((ROOT / 'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        next(row for row in raw['capabilities'] if row['id'] == 'trigger.event.qualified_damage_singular').update(
+            status='blocked', blockers=['singular damage authority withdrawn'])
+        self.assertNotEqual('exact', compile_oracle_card(query_record(text), capability_registry=CapabilityRegistry(raw)).status)
+        with patch('quorune.compiler.fixed_public_action_event_bindings._qualified_damage_singular_spec', return_value=None):
+            self.assertNotEqual('exact', compile_oracle_card(query_record(text), capability_registry=load_default_capability_registry()).status)
+
     def test_explicit_trigger_sources_use_canonical_order_independent_of_card_dict_insertion(self):
         from quorune.trigger_discovery import _ordered_event_sources
         first = SimpleNamespace(zone_timestamp=1, object_id='b', logical_object_id='b@1')
@@ -121,6 +163,128 @@ class AggregatedZoneTriggerCompilerTests(unittest.TestCase):
 
 class AggregatedZoneTriggerRuntimeTests(unittest.TestCase):
     finish_combat = combat_witnesses.IndependentDualSourceEventRuntimeTests.finish_combat
+
+    def test_original_ezio_singular_damage_draws_for_each_assassin_and_replays(self):
+        from quorune.model import CombatState
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        for index, (defenders, remove_ability) in enumerate(((('B', 'B'), False), (('B', 'C'), False), (('B', 'B'), True))):
+            with self.subTest(defenders=defenders, remove_ability=remove_ability):
+                session = self.session(311030 + index)
+                engine = session.engine
+                source = self.add(engine, 'Ezio, Blade of Vengeance', zone='hand')
+                removal = self.add(engine, 'Snakeform', zone='hand')
+                assassins = [self.add(engine, 'Assassin Initiate', ref='singular-assassin-' + str(n)) for n in range(2)]
+                wrong = self.add(engine, 'Generic Bound Body', ref='singular-wrong-subtype')
+                offered = self.ready(session, source, {'B': 1, 'U': 2, 'C': 5})
+                self.checkpoint(session)
+                accepted = session.act('pilot:A', {'action_id': offered['id'], 'pay': 'auto'})
+                self.assertTrue(accepted.ok, accepted.summary)
+                self.resolve(session)
+                if remove_ability:
+                    actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+                    offered = next(a for a in actions if a.get('card') == removal.ref)
+                    self.checkpoint(session)
+                    accepted = session.act('pilot:A', {'action_id': offered['id'], 'targets': [source.ref], 'pay': 'auto'})
+                    self.assertTrue(accepted.ok, accepted.summary)
+                    self.resolve(session)
+                    self.replay(session)
+                program = compile_best_available_card_program(self.db, self.db.lookup(source.printed_name),
+                    semantic_registry=engine.semantics, capability_registry=self.registry, capability_profile='commander_review')
+                self.assertTrue(bind_card_program_runtime(program, capability_registry=self.registry,
+                    profile='commander_review')['strict_capability_ready'])
+                for card in [*assassins, wrong]:
+                    card.acquired_control_turn_count = -1
+                engine.permissions.invalidate_current()
+                engine.state.pending_decision = None
+                engine.state.priority_player = None
+                engine.state.priority_passes = []
+                engine.state.phase = 'combat'
+                engine.state.step = 'declare_attackers'
+                engine.state.phase_index = 5
+                engine.state.combat = CombatState()
+                engine._issue_attackers()
+                self.checkpoint(session)
+                hand_size = len(engine.state.players['A'].zones['hand'])
+                attackers = {card.ref: defenders[n] for n, card in enumerate(assassins)}
+                attackers[wrong.ref] = 'D'
+                before = authoritative_state_hash(session.state)
+                denied = session.act('pilot:C', {'action_id': 'attack', 'attackers': attackers})
+                self.assertFalse(denied.ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+                accepted = session.act('pilot:A', {'action_id': 'attack', 'attackers': attackers})
+                self.assertTrue(accepted.ok, accepted.summary)
+                session = self.finish_combat(session, pending_reload=True)
+                self.assertEqual(hand_size + (0 if remove_ability else 2), len(session.state.players['A'].zones['hand']))
+                self.assertEqual(0 if remove_ability else 2, sum(event.code == 'stack.trigger' and event.details.get('source') == source.ref
+                    for event in session.state.events))
+                for seat in 'BCD':
+                    packet = str(session.packet('pilot:' + seat, full=True))
+                    for oid in session.state.players['A'].zones['hand']:
+                        self.assertNotIn(session.state.cards[oid].ref, packet)
+                self.replay(session)
+
+
+
+    def test_original_kraken_observers_keep_separate_triggers_and_create_complete_tokens(self):
+        from quorune.model import CombatState
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+        session = self.session(311033)
+        engine = session.engine
+        first = self.add(engine, 'Spawning Kraken', zone='hand', ref='singular-kraken-A')
+        second = self.add(engine, 'Spawning Kraken', ref='singular-kraken-other')
+        for source in (first, second):
+            program = compile_best_available_card_program(self.db, self.db.lookup(source.printed_name),
+                semantic_registry=engine.semantics, capability_registry=self.registry, capability_profile='commander_review')
+            self.assertTrue(bind_card_program_runtime(program, capability_registry=self.registry,
+                profile='commander_review')['strict_capability_ready'])
+        offered = self.ready(session, first, {'U': 1, 'C': 5})
+        self.checkpoint(session)
+        accepted = session.act('pilot:A', {'action_id': offered['id'], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        for source in (first, second):
+            source.acquired_control_turn_count = -1
+        engine.permissions.invalidate_current()
+        engine.state.pending_decision = None
+        engine.state.priority_player = None
+        engine.state.priority_passes = []
+        engine.state.phase = 'combat'
+        engine.state.step = 'declare_attackers'
+        engine.state.phase_index = 5
+        engine.state.combat = CombatState()
+        engine._issue_attackers()
+        self.checkpoint(session)
+        accepted = session.act('pilot:A', {'action_id': 'attack', 'attackers': {first.ref: 'B'}})
+        self.assertTrue(accepted.ok, accepted.summary)
+        for _ in range(40):
+            decision = session.state.pending_decision
+            if decision.kind == 'combat.blockers':
+                accepted = session.act('pilot:B', {'action_id': 'block', 'blocks': {}})
+            elif decision.kind == 'trigger.order':
+                self.assertEqual(['A'], list(decision.actors))
+                self.order_triggers(session)
+                continue
+            else:
+                accepted = session.act(session.pending_principals()[0], {'action_id': 'pass'})
+            self.assertTrue(accepted.ok, accepted.summary)
+            if len(engine.state.stack) == 2 and all(item.context.get('event') == 'damage.dealt' for item in engine.state.stack):
+                break
+        self.assertEqual(['A', 'A'], [item.controller for item in engine.state.stack])
+        self.assertEqual({first.object_id, second.object_id}, {item.source_object_id for item in engine.state.stack})
+        session = self.replay(session, load=True)
+        session = self.finish_combat(session)
+        engine = session.engine
+        for seat in 'AB':
+            tokens = [card for card in engine.state.cards.values() if card.is_token and card.zone == 'battlefield' and card.controller == seat]
+            self.assertEqual(2 if seat == 'A' else 0, len(tokens))
+            if not tokens:
+                continue
+            token = tokens[0]
+            self.assertEqual((9, 9), (engine._numeric_stat(token.object_id, 'power'), engine._numeric_stat(token.object_id, 'toughness')))
+            self.assertIn('Kraken', engine._effective_card_data(token)['type_line'])
+        self.replay(session)
 
     def test_actual_original_squirrel_damage_batch_coalesces_per_player_and_replays(self):
         from quorune.model import CombatState

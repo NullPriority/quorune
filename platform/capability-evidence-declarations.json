@@ -73119,6 +73119,253 @@
       "applicability_note": "Qualified native source snapshots coalesce simultaneous damage once per observer and damaged player while preserving printed predicates."
     },
     {
+      "capability_id": "trigger.event.qualified_damage_singular",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerRuntimeTests.test_original_ezio_singular_damage_draws_for_each_assassin_and_replays",
+      "official_rule_ids": [
+        "109.2",
+        "603.2",
+        "603.2c",
+        "603.3b",
+        "510.2",
+        "700.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Singular qualified damage preserves sealed source and player/combat restrictions, current observer ability and one occurrence per matching source. Original Ezio cast then actual simultaneous Assassin combat against one or two recipients yields two complete private draws, rejecting wrong-subtype attackers and unauthorized commands; pending reload and replay start before actual actions."
+    },
+    {
+      "capability_id": "trigger.event.qualified_damage_singular",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerRuntimeTests.test_original_kraken_observers_keep_separate_triggers_and_create_complete_tokens",
+      "official_rule_ids": [
+        "109.2",
+        "603.2",
+        "603.2c",
+        "603.3b",
+        "510.2",
+        "700.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two original Spawning Kraken observers retain separate printed ability identities after one qualifying actual Kraken player-damage occurrence. The common controller orders both triggers; both resolve to complete9/9Kraken tokens. Pending save/load and full replay begin before cast and combat. This is a same-controller multiplicity witness; cross-controller APNAP remains the existing shared placement contract."
+    },
+    {
+      "capability_id": "trigger.event.qualified_damage_singular",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerRuntimeTests.test_original_ezio_singular_damage_draws_for_each_assassin_and_replays",
+      "official_rule_ids": [
+        "109.2",
+        "603.2",
+        "603.2c",
+        "603.3b",
+        "510.2",
+        "700.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Singular qualified damage preserves sealed source and player/combat restrictions, current observer ability and one occurrence per matching source. Original Ezio cast then actual simultaneous Assassin combat against one or two recipients yields two complete private draws, rejecting wrong-subtype attackers and unauthorized commands; pending reload and replay start before actual actions."
+    },
+    {
+      "capability_id": "trigger.event.qualified_damage_singular",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerRuntimeTests.test_original_kraken_observers_keep_separate_triggers_and_create_complete_tokens",
+      "official_rule_ids": [
+        "109.2",
+        "603.2",
+        "603.2c",
+        "603.3b",
+        "510.2",
+        "700.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two original Spawning Kraken observers retain separate printed ability identities after one qualifying actual Kraken player-damage occurrence. The common controller orders both triggers; both resolve to complete9/9Kraken tokens. Pending save/load and full replay begin before cast and combat. This is a same-controller multiplicity witness; cross-controller APNAP remains the existing shared placement contract."
+    },
+    {
+      "capability_id": "trigger.event.qualified_damage_singular",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerCompilerTests.test_singular_qualified_damage_predicates_and_omission_fail_closed",
+      "official_rule_ids": [
+        "109.2",
+        "603.2",
+        "603.2c",
+        "603.3b",
+        "510.2",
+        "700.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Singular qualified damage preserves sealed source and player/combat restrictions, current observer ability and one occurrence per matching source. Original Ezio cast then actual simultaneous Assassin combat against one or two recipients yields two complete private draws, rejecting wrong-subtype attackers and unauthorized commands; pending reload and replay start before actual actions."
+    },
+    {
+      "capability_id": "trigger.event.qualified_damage_singular",
+      "evidence_class": "negative",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerCompilerTests.test_singular_qualified_damage_predicates_and_omission_fail_closed",
+      "official_rule_ids": [
+        "109.2",
+        "603.2",
+        "603.2c",
+        "603.3b",
+        "510.2",
+        "700.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Singular qualified damage preserves sealed source and player/combat restrictions, current observer ability and one occurrence per matching source. Original Ezio cast then actual simultaneous Assassin combat against one or two recipients yields two complete private draws, rejecting wrong-subtype attackers and unauthorized commands; pending reload and replay start before actual actions."
+    },
+    {
+      "capability_id": "trigger.event.qualified_damage_singular",
+      "evidence_class": "positive",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerCompilerTests.test_singular_qualified_damage_keeps_each_source_occurrence",
+      "official_rule_ids": [
+        "109.2",
+        "603.2",
+        "603.2c",
+        "603.3b",
+        "510.2",
+        "700.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Singular qualified damage preserves sealed source and player/combat restrictions, current observer ability and one occurrence per matching source. Original Ezio cast then actual simultaneous Assassin combat against one or two recipients yields two complete private draws, rejecting wrong-subtype attackers and unauthorized commands; pending reload and replay start before actual actions."
+    },
+    {
+      "capability_id": "trigger.event.qualified_damage_singular",
+      "evidence_class": "positive",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerRuntimeTests.test_original_ezio_singular_damage_draws_for_each_assassin_and_replays",
+      "official_rule_ids": [
+        "109.2",
+        "603.2",
+        "603.2c",
+        "603.3b",
+        "510.2",
+        "700.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Singular qualified damage preserves sealed source and player/combat restrictions, current observer ability and one occurrence per matching source. Original Ezio cast then actual simultaneous Assassin combat against one or two recipients yields two complete private draws, rejecting wrong-subtype attackers and unauthorized commands; pending reload and replay start before actual actions."
+    },
+    {
+      "capability_id": "trigger.event.qualified_damage_singular",
+      "evidence_class": "positive",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerRuntimeTests.test_original_kraken_observers_keep_separate_triggers_and_create_complete_tokens",
+      "official_rule_ids": [
+        "109.2",
+        "603.2",
+        "603.2c",
+        "603.3b",
+        "510.2",
+        "700.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two original Spawning Kraken observers retain separate printed ability identities after one qualifying actual Kraken player-damage occurrence. The common controller orders both triggers; both resolve to complete9/9Kraken tokens. Pending save/load and full replay begin before cast and combat. This is a same-controller multiplicity witness; cross-controller APNAP remains the existing shared placement contract."
+    },
+    {
+      "capability_id": "trigger.event.qualified_damage_singular",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerRuntimeTests.test_original_ezio_singular_damage_draws_for_each_assassin_and_replays",
+      "official_rule_ids": [
+        "109.2",
+        "603.2",
+        "603.2c",
+        "603.3b",
+        "510.2",
+        "700.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Singular qualified damage preserves sealed source and player/combat restrictions, current observer ability and one occurrence per matching source. Original Ezio cast then actual simultaneous Assassin combat against one or two recipients yields two complete private draws, rejecting wrong-subtype attackers and unauthorized commands; pending reload and replay start before actual actions."
+    },
+    {
+      "capability_id": "trigger.event.qualified_damage_singular",
+      "evidence_class": "replay",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerRuntimeTests.test_original_ezio_singular_damage_draws_for_each_assassin_and_replays",
+      "official_rule_ids": [
+        "109.2",
+        "603.2",
+        "603.2c",
+        "603.3b",
+        "510.2",
+        "700.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Singular qualified damage preserves sealed source and player/combat restrictions, current observer ability and one occurrence per matching source. Original Ezio cast then actual simultaneous Assassin combat against one or two recipients yields two complete private draws, rejecting wrong-subtype attackers and unauthorized commands; pending reload and replay start before actual actions."
+    },
+    {
+      "capability_id": "trigger.event.qualified_damage_singular",
+      "evidence_class": "replay",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerRuntimeTests.test_original_kraken_observers_keep_separate_triggers_and_create_complete_tokens",
+      "official_rule_ids": [
+        "109.2",
+        "603.2",
+        "603.2c",
+        "603.3b",
+        "510.2",
+        "700.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two original Spawning Kraken observers retain separate printed ability identities after one qualifying actual Kraken player-damage occurrence. The common controller orders both triggers; both resolve to complete9/9Kraken tokens. Pending save/load and full replay begin before cast and combat. This is a same-controller multiplicity witness; cross-controller APNAP remains the existing shared placement contract."
+    },
+    {
+      "capability_id": "trigger.event.qualified_damage_singular",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerRuntimeTests.test_original_ezio_singular_damage_draws_for_each_assassin_and_replays",
+      "official_rule_ids": [
+        "109.2",
+        "603.2",
+        "603.2c",
+        "603.3b",
+        "510.2",
+        "700.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Singular qualified damage preserves sealed source and player/combat restrictions, current observer ability and one occurrence per matching source. Original Ezio cast then actual simultaneous Assassin combat against one or two recipients yields two complete private draws, rejecting wrong-subtype attackers and unauthorized commands; pending reload and replay start before actual actions."
+    },
+    {
       "capability_id": "trigger.event.qualified_zone_change",
       "evidence_class": "interaction",
       "test_id": "tests.test_aggregated_zone_event_triggers.AggregatedZoneTriggerRuntimeTests.test_actual_token_batch_triggers_once_and_limiter_rejects_later_batch",

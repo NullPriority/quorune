@@ -2371,6 +2371,12 @@ one-or-more attack, combat-damage, token-entry, and graveyard-departure
 batches. These predicates consume only the existing attack, damage, Cycling,
 and cause-preserving zone occurrences. First-time, once-per-turn, aggregate
 sacrifice, source-token damage, chosen and modified forms remain residual.
+Singular source-qualified damage subjects reuse the sealed type, subtype union,
+supertype, and color predicates of the batch owner. Each qualifying source and
+player recipient yields its own trigger; the one-or-more descriptor alone
+coalesces that committed batch. Both retain combat and opponent restrictions
+and current observer ability checks. Unsupported source state, token, chosen,
+and ability-dependent qualifiers remain residual.
 Repeatable sacrifice and discard subscriptions also compose with independently
 exact counter-placement bodies. "Another" excludes the current source reference;
 sacrifice predicates consume pre-event custody and characteristics, while typed

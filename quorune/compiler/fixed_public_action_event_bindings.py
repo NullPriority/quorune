@@ -93,8 +93,14 @@ _PUBLIC_DAMAGE_BATCH_TRIGGER = re.compile(
 )
 QUALIFIED_DAMAGE_BATCH_VARIANT = 'one_or_more_qualified_damage_player'
 QUALIFIED_DAMAGE_BATCH_CAPABILITY = 'trigger.event.qualified_damage_batch'
+QUALIFIED_DAMAGE_SINGULAR_VARIANT = 'singular_qualified_damage_player'
+QUALIFIED_DAMAGE_SINGULAR_CAPABILITY = 'trigger.event.qualified_damage_singular'
 _QUALIFIED_DAMAGE_BATCH = re.compile(
     r'^Whenever one or more (?P<subject>.+?) you control deal(?P<combat> combat)? damage '
+    r'to (?P<recipient>a player|an opponent), (?P<body>.+)$', re.I,
+)
+_QUALIFIED_DAMAGE_SINGULAR = re.compile(
+    r'^Whenever (?:a|an) (?P<subject>.+?) you control deals(?P<combat> combat)? damage '
     r'to (?P<recipient>a player|an opponent), (?P<body>.+)$', re.I,
 )
 _SOURCE_EXTENDED_DAMAGE_TRIGGER = re.compile(
@@ -507,13 +513,20 @@ def _public_zone_spec(
     )
 
 
-def _qualified_damage_batch_spec(text: str):
-    match = _QUALIFIED_DAMAGE_BATCH.fullmatch(text)
-    if match is None:
-        return None
+def _qualified_damage_match_spec(match, *, singular: bool):
     from .public_state_queries import fixed_characteristic_battlefield_query_subject
     from ..object_predicate import ObjectQuerySpec
-    parsed = fixed_characteristic_battlefield_query_subject(match['subject'] + ' you control')
+    subject = match['subject']
+    if singular:
+        if subject.endswith('creature'):
+            subject += 's'
+        else:
+            from ..creature_subtypes import canonical_creature_subtype
+            terms = tuple(part.strip() for part in re.split(r',?\s+or\s+|,\s*', subject, flags=re.I))
+            if not terms or any(canonical_creature_subtype(term) is None for term in terms):
+                return None
+            subject = ' or '.join(canonical_creature_subtype(term) for term in terms) + ' creatures'
+    parsed = fixed_characteristic_battlefield_query_subject(subject + ' you control')
     if parsed is None or parsed[0] != 'source_controller' or parsed[2]:
         return None
     query = parsed[1]
@@ -553,9 +566,19 @@ def _qualified_damage_batch_spec(text: str):
     if query.colorless is not None:
         value = {'field':'source_colors','op':'eq','value':[]}
         conditions.append(value if query.colorless else {'not':value})
-    return _spec('damage.dealt', QUALIFIED_DAMAGE_BATCH_VARIANT, match['body'],
+    return _spec('damage.dealt', QUALIFIED_DAMAGE_SINGULAR_VARIANT if singular else QUALIFIED_DAMAGE_BATCH_VARIANT, match['body'],
         'fixed-counter-public-damage-trigger-v1', 'trigger-event-normalized-damage',
-        condition=_all_conditions(*conditions), capabilities=(QUALIFIED_DAMAGE_BATCH_CAPABILITY,))
+        condition=_all_conditions(*conditions), capabilities=(QUALIFIED_DAMAGE_SINGULAR_CAPABILITY if singular else QUALIFIED_DAMAGE_BATCH_CAPABILITY,))
+
+
+def _qualified_damage_batch_spec(text: str):
+    match = _QUALIFIED_DAMAGE_BATCH.fullmatch(text)
+    return _qualified_damage_match_spec(match, singular=False) if match is not None else None
+
+
+def _qualified_damage_singular_spec(text: str):
+    match = _QUALIFIED_DAMAGE_SINGULAR.fullmatch(text)
+    return _qualified_damage_match_spec(match, singular=True) if match is not None else None
 
 
 def _public_damage_spec(
@@ -596,7 +619,7 @@ def _public_damage_spec(
                 {"field": "combat", "op": "truthy", "value": True},
             ),
         )
-    qualified = _qualified_damage_batch_spec(material_line)
+    qualified = _qualified_damage_singular_spec(material_line) or _qualified_damage_batch_spec(material_line)
     if qualified is not None:
         return qualified
     extended = _SOURCE_EXTENDED_DAMAGE_TRIGGER.fullmatch(material_line)
