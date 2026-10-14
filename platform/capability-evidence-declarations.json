@@ -29401,6 +29401,54 @@
     },
     {
       "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_source_pronoun_results.SourcePronounRuntimeTests.test_original_rioters_attack_uses_resolution_power_and_ignores_returned_incarnation",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.5",
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-self action pronouns compose only independently closed characteristic and scalar leaves. Original casting/combat witnesses preserve source incarnation, resolution-time greatest power, keyword-only source effects, unauthorized rollback, hidden hands and pending save/load/full replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_source_pronoun_results.SourcePronounRuntimeTests.test_original_root_spider_block_adds_first_strike_to_only_source_and_replays",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.5",
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-self action pronouns compose only independently closed characteristic and scalar leaves. Original casting/combat witnesses preserve source incarnation, resolution-time greatest power, keyword-only source effects, unauthorized rollback, hidden hands and pending save/load/full replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_artifact_animation_uses_one_multilayer_timestamp_and_replays",
       "official_rule_ids": ["205.1a", "205.1b", "208.5", "611.2a", "611.2c", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b", "613.4c"],
@@ -29409,6 +29457,54 @@
     },
     {"capability_id":"continuous.resolution.fixed_source_characteristics_until_end_of_turn","evidence_class":"multiplayer","test_id":"tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_trusted_land_animation_offer_payment_multilayer_result_and_replay","official_rule_ids":["205.1a", "205.1b","208.5","611.2a","611.2c","613.1d","613.1e","613.1f","613.1g","613.4b","613.4c"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"A genuinely trusted four-player land activation pays its ordinary cost and resolves through the shared characteristic owner."},
     {"capability_id":"continuous.resolution.fixed_source_characteristics_until_end_of_turn","evidence_class":"multiplayer","test_id":"tests.test_fixed_source_characteristic_effects.TemporarySourceKeywordRuntimeTests.test_original_duo_temporary_forestwalk_changes_real_block_offers_and_commands","official_rule_ids":["205.1a","205.1b","208.5","611.2a","611.2c","613.1d","613.1e","613.1f","613.1g","613.4b","613.4c"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Tattermunge Duo observes an actual green Flash spell cast during combat; its temporary Forestwalk uses the defending player's current nonbasic Forest subtype. Block offers and accepted/rejected commands agree in both controller arrangements, unauthorized and forbidden blocks roll back, and the pre-attack cast/block command sequence survives pending save/load and replays exactly."},
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_source_pronoun_results.SourcePronounRuntimeTests.test_original_rioters_attack_uses_resolution_power_and_ignores_returned_incarnation",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.5",
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-self action pronouns compose only independently closed characteristic and scalar leaves. Original casting/combat witnesses preserve source incarnation, resolution-time greatest power, keyword-only source effects, unauthorized rollback, hidden hands and pending save/load/full replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_source_pronoun_results.SourcePronounRuntimeTests.test_original_root_spider_block_adds_first_strike_to_only_source_and_replays",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.5",
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-self action pronouns compose only independently closed characteristic and scalar leaves. Original casting/combat witnesses preserve source incarnation, resolution-time greatest power, keyword-only source effects, unauthorized rollback, hidden hands and pending save/load/full replay."
+    },
     {"capability_id":"continuous.resolution.fixed_source_characteristics_until_end_of_turn","evidence_class":"mutation","test_id":"tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicCompilerTests.test_fixed_animation_type_retention_mutant_is_killed","official_rule_ids":["205.1a", "205.1b","208.5","611.2a","611.2c","613.1d","613.1e","613.1f","613.1g","613.4b","613.4c"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"An executable mutation replacing retained types is killed by the independent layer-result contract."},
     {
       "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
@@ -29425,6 +29521,30 @@
       "official_rule_ids": ["205.1a", "205.1b", "208.5", "611.2a", "611.2c", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b", "613.4c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Kill the exact unconditional subtype-clear mutation without deriving expected subtype preservation from the implementation under test."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_source_pronoun_results.SourcePronounCompilerTests.test_self_action_characteristics_reuse_closed_keyword_and_scalar_leaves",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.5",
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-self action pronouns compose only independently closed characteristic and scalar leaves. Original casting/combat witnesses preserve source incarnation, resolution-time greatest power, keyword-only source effects, unauthorized rollback, hidden hands and pending save/load/full replay."
     },
     {
       "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
@@ -29470,6 +29590,30 @@
     {"capability_id":"continuous.resolution.fixed_source_characteristics_until_end_of_turn","evidence_class":"negative","test_id":"tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_fixed_animation_dependency_blocking_and_current_target_revalidation","official_rule_ids":["205.1a", "205.1b","208.5","611.2a","611.2c","613.1d","613.1e","613.1f","613.1g","613.4b","613.4c"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Blocking the shared source capability withholds fixed v2 results; canonical current-target revalidation prevents departed targets from receiving a characteristic journal."},
     {
       "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "negative",
+      "test_id": "tests.test_source_pronoun_results.SourcePronounCompilerTests.test_self_action_characteristics_reuse_closed_keyword_and_scalar_leaves",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.5",
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-self action pronouns compose only independently closed characteristic and scalar leaves. Original casting/combat witnesses preserve source incarnation, resolution-time greatest power, keyword-only source effects, unauthorized rollback, hidden hands and pending save/load/full replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_source_characteristic_effects.AnimationSubtypeActionTests.test_trusted_unspecified_animation_preserves_elf_query_counters_and_replay",
       "official_rule_ids": ["205.1a", "205.1b", "208.5", "611.2a", "611.2c", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b", "613.4c"],
@@ -29496,6 +29640,78 @@
     },
     {
       "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_source_pronoun_results.SourcePronounCompilerTests.test_self_action_characteristics_reuse_closed_keyword_and_scalar_leaves",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.5",
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-self action pronouns compose only independently closed characteristic and scalar leaves. Original casting/combat witnesses preserve source incarnation, resolution-time greatest power, keyword-only source effects, unauthorized rollback, hidden hands and pending save/load/full replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_source_pronoun_results.SourcePronounRuntimeTests.test_original_rioters_attack_uses_resolution_power_and_ignores_returned_incarnation",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.5",
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-self action pronouns compose only independently closed characteristic and scalar leaves. Original casting/combat witnesses preserve source incarnation, resolution-time greatest power, keyword-only source effects, unauthorized rollback, hidden hands and pending save/load/full replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "positive",
+      "test_id": "tests.test_source_pronoun_results.SourcePronounRuntimeTests.test_original_root_spider_block_adds_first_strike_to_only_source_and_replays",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.5",
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-self action pronouns compose only independently closed characteristic and scalar leaves. Original casting/combat witnesses preserve source incarnation, resolution-time greatest power, keyword-only source effects, unauthorized rollback, hidden hands and pending save/load/full replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_artifact_animation_uses_one_multilayer_timestamp_and_replays",
       "official_rule_ids": ["205.1a", "205.1b", "208.5", "611.2a", "611.2c", "613.1d", "613.1e", "613.1f", "613.1g", "613.4b", "613.4c"],
@@ -29504,6 +29720,30 @@
     },
     {"capability_id":"continuous.resolution.fixed_source_characteristics_until_end_of_turn","evidence_class":"privacy","test_id":"tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_trusted_land_animation_offer_payment_multilayer_result_and_replay","official_rule_ids":["205.1a", "205.1b","208.5","611.2a","611.2c","613.1d","613.1e","613.1f","613.1g","613.4b","613.4c"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Only the acting seat receives the activation decision; no public projection exposes the authoritative continuous-effect journal or opposing hidden references."},
     {"capability_id":"continuous.resolution.fixed_source_characteristics_until_end_of_turn","evidence_class":"privacy","test_id":"tests.test_fixed_source_characteristic_effects.TemporarySourceKeywordRuntimeTests.test_original_duo_temporary_forestwalk_changes_real_block_offers_and_commands","official_rule_ids":["205.1a","205.1b","208.5","611.2a","611.2c","613.1d","613.1e","613.1f","613.1g","613.4b","613.4c"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Tattermunge Duo observes an actual green Flash spell cast during combat; its temporary Forestwalk uses the defending player's current nonbasic Forest subtype. Block offers and accepted/rejected commands agree in both controller arrangements, unauthorized and forbidden blocks roll back, and the pre-attack cast/block command sequence survives pending save/load and replays exactly."},
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_source_pronoun_results.SourcePronounRuntimeTests.test_original_rioters_attack_uses_resolution_power_and_ignores_returned_incarnation",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.5",
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-self action pronouns compose only independently closed characteristic and scalar leaves. Original casting/combat witnesses preserve source incarnation, resolution-time greatest power, keyword-only source effects, unauthorized rollback, hidden hands and pending save/load/full replay."
+    },
     {
       "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
       "evidence_class": "replay",
@@ -29530,8 +29770,104 @@
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "A real registered activation commits payment and resolves a zero source quantity as a no-op, preserving save/load and exact replay."
     },
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_source_pronoun_results.SourcePronounRuntimeTests.test_original_rioters_attack_uses_resolution_power_and_ignores_returned_incarnation",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.5",
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-self action pronouns compose only independently closed characteristic and scalar leaves. Original casting/combat witnesses preserve source incarnation, resolution-time greatest power, keyword-only source effects, unauthorized rollback, hidden hands and pending save/load/full replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "replay",
+      "test_id": "tests.test_source_pronoun_results.SourcePronounRuntimeTests.test_original_root_spider_block_adds_first_strike_to_only_source_and_replays",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.5",
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-self action pronouns compose only independently closed characteristic and scalar leaves. Original casting/combat witnesses preserve source incarnation, resolution-time greatest power, keyword-only source effects, unauthorized rollback, hidden hands and pending save/load/full replay."
+    },
     {"capability_id":"continuous.resolution.fixed_source_characteristics_until_end_of_turn","evidence_class":"rollback","test_id":"tests.test_fixed_source_characteristic_effects.FixedSourceCharacteristicRuntimeTests.test_fixed_animation_source_incarnation_and_malformed_rollback","official_rule_ids":["205.1a", "205.1b","208.5","611.2a","611.2c","613.1d","613.1e","613.1f","613.1g","613.4b","613.4c"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"A returned new source incarnation receives no effect from the old activation; malformed nonboolean retention changes no authoritative state."},
     {"capability_id":"continuous.resolution.fixed_source_characteristics_until_end_of_turn","evidence_class":"rollback","test_id":"tests.test_fixed_source_characteristic_effects.TemporarySourceKeywordRuntimeTests.test_original_duo_temporary_forestwalk_changes_real_block_offers_and_commands","official_rule_ids":["205.1a","205.1b","208.5","611.2a","611.2c","613.1d","613.1e","613.1f","613.1g","613.4b","613.4c"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Original Tattermunge Duo observes an actual green Flash spell cast during combat; its temporary Forestwalk uses the defending player's current nonbasic Forest subtype. Block offers and accepted/rejected commands agree in both controller arrangements, unauthorized and forbidden blocks roll back, and the pre-attack cast/block command sequence survives pending save/load and replays exactly."},
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_source_pronoun_results.SourcePronounRuntimeTests.test_original_rioters_attack_uses_resolution_power_and_ignores_returned_incarnation",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.5",
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-self action pronouns compose only independently closed characteristic and scalar leaves. Original casting/combat witnesses preserve source incarnation, resolution-time greatest power, keyword-only source effects, unauthorized rollback, hidden hands and pending save/load/full replay."
+    },
+    {
+      "capability_id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_source_pronoun_results.SourcePronounRuntimeTests.test_original_root_spider_block_adds_first_strike_to_only_source_and_replays",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "208.5",
+        "611.2a",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.1g",
+        "613.4b",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-self action pronouns compose only independently closed characteristic and scalar leaves. Original casting/combat witnesses preserve source incarnation, resolution-time greatest power, keyword-only source effects, unauthorized rollback, hidden hands and pending save/load/full replay."
+    },
     {
       "capability_id": "continuous.resolution.fixed_target_characteristic_set",
       "evidence_class": "interaction",

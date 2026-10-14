@@ -2300,6 +2300,11 @@ Ordinary program registration validates the same scalar projection and the
 unchanged fixed effect and target shape before promoting a spell or activation.
 It requires the quantity capability and the full original dependency closure;
 a scalar descriptor alone cannot grant trust.
+Source attacks, blocks, and becomes-blocked results may use a source pronoun
+with a complete fixed keyword/modifier body or an independently closed public
+characteristic scalar. The child result retains its original source span and
+full capability closure; target, created-token, and event-object pronouns do
+not become source references.
 Source-self results lower through the existing source-characteristic operation
 and logical-object-aware source reference. A departed or re-entered source
 cannot receive the old ability's modifier. A valid quantity resolving to zero

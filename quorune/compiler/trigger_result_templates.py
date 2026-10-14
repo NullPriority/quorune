@@ -65,7 +65,7 @@ def binding_effect_template(binding, body: str, *, card_name: str, effect_templa
     if binding.event.value.endswith('.self') or binding.variant in {'source_attacks','this_creature_blocks','this_creature_becomes_blocked','source_public_tap_state_transition','source_dealt_damage'}:
         from .source_self_effect_templates import normalized_source_result_body, pin_source_result_incarnation
         normalized=normalized_source_result_body(body)
-        if normalized is not None and not body.casefold().startswith(('it gets','him gets','her gets')):
+        if normalized is not None:
             value=effect_template(normalized,card_name=card_name)
             if value[0] is not None:return pin_source_result_incarnation(value),True
     from .scheduled_player_triggers import scheduled_player_result

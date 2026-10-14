@@ -14,6 +14,9 @@ maintenance: "hand-maintained"
 - Preserve independent library-selection card slots and qualified card types,
   and reject unrepresented qualifiers that previously became subtype names.
 
+- Compose source-action pronoun modifiers with the existing typed keyword and
+  public-characteristic scalar owners, preserving the source incarnation.
+
 - Capture state-based public facts through the existing rules owner and
   evaluate Role uniqueness for explicit controller, attachment and ordered timestamps.
 
