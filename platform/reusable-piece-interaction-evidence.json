@@ -10526,6 +10526,21 @@
       ],
       "interaction_order": 2,
       "assertion": "Original Sphere ofLaw actualcast then redBolt andbluewholeconstructed damage showmatchingcolor reduction, foreignrecipient exclusion, andactualDisenchantsource departure beforea finalredBolt. Existing damage/prevention owner, wrongprincipalrollback, privateprojection andpending/fullreplay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay",
+      "piece_ids": [
+        "capability.life.change.effect",
+        "capability.resolution.event_player.fixed_result"
+      ],
+      "capability_ids": [
+        "life.change.effect",
+        "resolution.event_player.fixed_result"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual PollutedBonds foreignlandplay uses enteringcontroller; CampaignVengeance twoactualattackers towardBandC preserveeach sealeddefender through ordering andcomplete distinctloss/gain consequences. Wrongprincipalrollback andpending/fullpreactionreplay agree."
     }
   ]
 }

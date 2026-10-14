@@ -16,7 +16,7 @@ def fixed_event_player_result_node_capabilities(*,effects,target_schema,mechanic
     for effect in effects:
         if effect.get('op') not in layouts:return ()
         field,fields,capability=layouts[effect['op']]
-        if (set(effect)!=fields or effect.get('player') not in {'$controller','$context.player','$context.target','$context.defending_player','$context.previous_controller'}
+        if (set(effect)!=fields or effect.get('player') not in {'$controller','$context.player','$context.target','$context.defending_player','$context.previous_controller','$context.controller'}
                 or type(effect.get(field)) is not int or effect[field]<=0
                 or effect['op']=='draw' and effect['private'] is not True):return ()
         capabilities.add(capability)
@@ -37,7 +37,8 @@ def is_closed_fixed_event_player_result_program(program):
 def _event_player_reference_is_closed(program,player):
     if player=='$controller':return True
     if player=='$context.player':return program.event in {'spell.cast','card.drawn','player.scried','player.surveilled'}
-    if player=='$context.previous_controller':return program.event=='card.discarded'
+    if player=='$context.previous_controller':return program.event in {'card.discarded','creature.dies'}
+    if player=='$context.controller':return program.event in {'land.enter','creature.enter','permanent.enter','artifact.enter','enchantment.enter'}
     from ..compiler.event_player_results import _damage_guarantees_player
     if player=='$context.target':return program.event in {'damage.dealt','damage.dealt.self'} and _damage_guarantees_player(program.event_condition)
-    return program.event=='creature.attacks' and program.event_condition=={'field':'card','op':'eq','value':'$source.ref'}
+    return program.event=='creature.attacks' and 'trigger-event-normalized-public-action' in program.coverage and 'one_or_more_event_batch' not in program.coverage

@@ -44,6 +44,28 @@ def scalar_record(text: str, *, type_line: str = "Creature — Goblin") -> CardR
 
 
 class ScalarEffectAmountCompilerTests(unittest.TestCase):
+    def test_event_controller_and_individual_attack_recipient_results_preserve_fields(self):
+        from dataclasses import replace
+        from quorune.oracle_ir import generated_programs
+        from quorune.rules.event_player_result_shapes import is_closed_fixed_event_player_result_program
+        cases=(
+            ('Whenever a land an opponent controls enters, that player loses 2 life and you gain 2 life.','$context.controller'),
+            ('Whenever a creature you control attacks, defending player loses 1 life and you gain 1 life.','$context.defending_player'),
+            ('Whenever a creature dies, that creature\'s controller gains 1 life.','$context.previous_controller'),
+        )
+        for text,player in cases:
+            ir=self.compile(text)
+            self.assertEqual('exact',ir.status,ir.material_residuals)
+            self.assertEqual(player,ir.faces[0].nodes[0].effects[0]['player'])
+            self.assertIsNone(ir.faces[0].nodes[0].target_schema)
+            program=generated_programs(type('NoRulings',(),{'rulings':lambda self,record:()})(),scalar_record(text),
+                capability_registry=self.registry,capability_profile='commander_review',trust_level='trusted')[0]
+            self.assertTrue(is_closed_fixed_event_player_result_program(program))
+            self.assertFalse(is_closed_fixed_event_player_result_program(replace(program,event='spell.countered')))
+        for text in ('Whenever one or more creatures you control attack, defending player loses 1 life.',
+            'Whenever a creature enters, that creature\'s controller gains X life.'):
+            self.assertNotEqual('exact',self.compile(text).status)
+
     def test_colored_fixed_prevention_schema_dependencies_and_omission_fail_closed(self):
         import json
         from quorune.semantic_runtime.damage_replacements import FixedDamagePreventionV2Handler
@@ -140,7 +162,7 @@ class ScalarEffectAmountCompilerTests(unittest.TestCase):
             self.assertNotEqual('exact',compile_oracle_card(scalar_record(text),capability_registry=CapabilityRegistry(raw)).status)
         for altered in (
             'Whenever this creature deals damage, that player loses 1 life.',
-            'Whenever a creature attacks, defending player loses 1 life.',
+            'Whenever one or more creatures attack, defending player loses 1 life.',
             text+' Exile that card.',
         ):
             self.assertNotEqual('exact',self.compile(altered).status)

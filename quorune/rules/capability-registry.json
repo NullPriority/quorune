@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 264,
+  "registry_version": 265,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -240,7 +240,7 @@
   "capabilities": [
     {
       "id": "resolution.event_player.fixed_result",
-      "version": 2,
+      "version": 3,
       "official_rules": [
         "113.7a",
         "120.3a",
@@ -256,7 +256,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "One or two ordered complete fixed draw/life instructions for explicitly identified event player or controller.",
+        "summary": "One or two complete fixed draw/life instructions for explicitly identified event player/controller, including sealed zone controller and individual attacker defender.",
         "inputs": [
           "complete independent event binding",
           "typed event player reference",
@@ -294,32 +294,40 @@
       "blockers": [],
       "status": "trusted",
       "positive_tests": [
+        "test_event_controller_and_individual_attack_recipient_results_preserve_fields",
         "test_event_player_fixed_sequence_retains_each_recipient_and_printed_order",
         "test_fixed_event_player_draw_and_life_results_are_untargeted_and_bound",
         "test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
-        "test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay"
+        "test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay",
+        "test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay"
       ],
       "negative_tests": [
+        "test_event_controller_and_individual_attack_recipient_results_preserve_fields",
         "test_event_player_fixed_sequence_rejects_partial_and_unknown_recipient_clauses",
         "test_fixed_event_player_result_partial_domain_dependency_and_omission_fail_closed",
         "test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
-        "test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay"
+        "test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay",
+        "test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay"
       ],
       "interaction_tests": [
         "test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
-        "test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay"
+        "test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay",
+        "test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay"
       ],
       "multiplayer_tests": [
         "test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
-        "test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay"
+        "test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay",
+        "test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay"
       ],
       "privacy_tests": [
         "test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
-        "test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay"
+        "test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay",
+        "test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay"
       ],
       "replay_tests": [
         "test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
-        "test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay"
+        "test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay",
+        "test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay"
       ]
     },
     {

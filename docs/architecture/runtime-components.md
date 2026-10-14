@@ -71,7 +71,9 @@ Fixed event-addressed draw and life results use the same public occurrence
 boundary with a separate `resolution.event_player.fixed_result` dependency.
 Spell casts, draws and public scry/surveil events supply their player field;
 discard occurrences supply `previous_controller`. Damage must guarantee a
-player recipient and source attacks supply their defending player. Program
+player recipient and individual source or public attacks supply their defending
+player. Entry events supply the entering `controller`; death events supply
+`previous_controller`. Aggregate attack events do not supply a unique defender. Program
 promotion checks the event against each context reference. One or two complete
 fixed leaves preserve printed order and require an explicit subject per clause;
 `you` retains the resolving trigger controller. Optional, variable and linked

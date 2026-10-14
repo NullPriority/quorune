@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Preserve entering and departing object controllers and individual attack
+  defenders when binding fixed event-player consequences.
+
 - Prevent a fixed amount from each matching colored-source damage event using
   the shared typed source snapshot predicate.
 

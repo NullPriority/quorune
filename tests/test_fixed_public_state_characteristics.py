@@ -2957,6 +2957,46 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
 
 
 class AdditionalConditionalModifierRuntimeTests(unittest.TestCase):
+    def test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay(self):
+        session=self.session(3632501);engine=session.engine
+        observer=self.add(engine,'Polluted Bonds',seat='B',ref='event-controller-bonds')
+        self.assert_whole_admission(observer.printed_name)
+        setup=self.add(engine,'Generic Boolean Life Response',zone='hand',ref='event-controller-setup')
+        self.ready(session,setup,{})
+        land=next(session.state.cards[oid] for oid in session.state.players['A'].zones['hand'] if 'Land' in engine.card_record(session.state.cards[oid]).type_line)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        offered=next(row for row in actions if row['id'].startswith('play-land:') and row.get('card')==land.ref)
+        life={seat:session.state.players[seat].life for seat in 'ABCD'}
+        self.checkpoint(session);before=session.state.to_dict()
+        self.assertFalse(session.act('pilot:C',{'action_id':offered['id']}).ok);self.assertEqual(before,session.state.to_dict())
+        accepted=session.act('pilot:A',{'action_id':offered['id']});self.assertTrue(accepted.ok,accepted.summary)
+        self.replay(session,load=True);self.resolve(session)
+        self.assertEqual(life['A']-2,session.state.players['A'].life);self.assertEqual(life['B']+2,session.state.players['B'].life)
+        for seat in 'CD':self.assertEqual(life[seat],session.state.players[seat].life)
+        self.replay(session)
+        from quorune.model import CombatState
+        session=self.session(3632502);engine=session.engine
+        self.add(engine,'Campaign of Vengeance',ref='event-controller-campaign')
+        attackers=[self.add(engine,'Generic Bound Body',ref='event-controller-attacker-'+str(i)) for i in range(2)]
+        self.assert_whole_admission('Campaign of Vengeance')
+        engine.permissions.invalidate_current();session.state.pending_decision=None;session.state.started=True
+        session.state.active_player='A';session.state.phase='combat';session.state.step='declare_attackers'
+        session.state.phase_index=5;session.state.priority_player=None;session.state.priority_passes=[];session.state.combat=CombatState()
+        engine.pump();self.checkpoint(session)
+        life={seat:session.state.players[seat].life for seat in 'ABCD'}
+        accepted=session.act('pilot:A',{'action_id':'attack','attackers':{attackers[0].ref:'B',attackers[1].ref:'C'}})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.assertEqual('trigger.order',session.state.pending_decision.kind)
+        pending=[item for batch in session.state.pending_trigger_batches for item in batch.items]
+        self.assertEqual(2,len(pending))
+        self.replay(session,load=True)
+        accepted=session.act('pilot:A',{'action_id':'order','triggers':[item.ref for item in reversed(pending)]})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        self.assertEqual(life['A']+2,session.state.players['A'].life)
+        self.assertEqual(life['B']-1,session.state.players['B'].life);self.assertEqual(life['C']-1,session.state.players['C'].life)
+        self.assertEqual(life['D'],session.state.players['D'].life)
+        self.replay(session)
+
     def test_original_colored_sphere_prevention_actual_damage_contrasts_and_departure_replay(self):
         session=self.session(3632401);engine=session.engine
         sphere=self.add(engine,'Sphere of Law',zone='hand',ref='colored-prevention-sphere')

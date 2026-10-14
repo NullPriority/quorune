@@ -17,9 +17,11 @@ def _damage_guarantees_player(condition):
 def _event_player(binding,subject):
     if subject=='you':return '$controller'
     if subject=='defending player':
-        if binding.event.value=='creature.attacks' and binding.variant=='source_attacks':player='$context.defending_player'
+        if binding.event.value=='creature.attacks' and (binding.variant=='source_attacks' or binding.variant.startswith('public_attack_')):player='$context.defending_player'
         else:return None
     elif binding.event.value=='card.discarded':player='$context.previous_controller'
+    elif binding.event.value in {'land.enter','creature.enter','permanent.enter','artifact.enter','enchantment.enter'}:player='$context.controller'
+    elif binding.event.value=='creature.dies':player='$context.previous_controller'
     elif binding.event.value in {'spell.cast','card.drawn','player.scried','player.surveilled'}:
         player='$context.player'
     elif binding.event.value in {'damage.dealt','damage.dealt.self'} and _damage_guarantees_player(binding.event_condition):
@@ -29,7 +31,7 @@ def _event_player(binding,subject):
 
 
 def _fixed_event_player_clause(binding,body,*,effect_template,card_name):
-    match=re.fullmatch(r'(?P<subject>that player|they|defending player|you) (?P<verb>draws?|loses?|gains?) (?P<body>.+)',body,re.I)
+    match=re.fullmatch(r"(?P<subject>that player|they|defending player|that creature['’]s controller|you) (?P<verb>draws?|loses?|gains?) (?P<body>.+)",body,re.I)
     if match is None:return None
     player=_event_player(binding,match['subject'].casefold())
     if player is None:return None

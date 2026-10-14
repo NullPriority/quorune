@@ -54828,6 +54828,26 @@
     },
     {
       "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay",
+      "official_rule_ids": [
+        "113.7a",
+        "120.3a",
+        "121.2",
+        "603.2",
+        "603.3d",
+        "608.2c",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original PollutedBonds observesactualforeignlandplay usingsealed enteringcontroller forloss/gain. Original CampaignVengeance twoactualattackers towarddifferentdefenders createstwotriggers withseparatelifeconsequences; wrongprincipalrollback, pendingordering/load andfullreplay agree."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
       "official_rule_ids": [
@@ -54865,6 +54885,26 @@
         "commander_review"
       ],
       "applicability_note": "Original Forced Fruition observes a foreign caster and drawsseven for thatcasterprivately; originalLilianaCaress observes realMindRotdiscard2 and causestwodistinctlife2losses todiscarder. Complete consequences, wrongprincipalrollback, pendingload andfullreplay agree."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay",
+      "official_rule_ids": [
+        "113.7a",
+        "120.3a",
+        "121.2",
+        "603.2",
+        "603.3d",
+        "608.2c",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original PollutedBonds observesactualforeignlandplay usingsealed enteringcontroller forloss/gain. Original CampaignVengeance twoactualattackers towarddifferentdefenders createstwotriggers withseparatelifeconsequences; wrongprincipalrollback, pendingordering/load andfullreplay agree."
     },
     {
       "capability_id": "resolution.event_player.fixed_result",
@@ -54925,6 +54965,46 @@
         "commander_review"
       ],
       "applicability_note": "Original Forced Fruition observes a foreign caster and drawsseven for thatcasterprivately; originalLilianaCaress observes realMindRotdiscard2 and causestwodistinctlife2losses todiscarder. Complete consequences, wrongprincipalrollback, pendingload andfullreplay agree."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay",
+      "official_rule_ids": [
+        "113.7a",
+        "120.3a",
+        "121.2",
+        "603.2",
+        "603.3d",
+        "608.2c",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original PollutedBonds observesactualforeignlandplay usingsealed enteringcontroller forloss/gain. Original CampaignVengeance twoactualattackers towarddifferentdefenders createstwotriggers withseparatelifeconsequences; wrongprincipalrollback, pendingordering/load andfullreplay agree."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "negative",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_event_controller_and_individual_attack_recipient_results_preserve_fields",
+      "official_rule_ids": [
+        "113.7a",
+        "120.3a",
+        "121.2",
+        "603.2",
+        "603.3d",
+        "608.2c",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Entrycurrentcontroller/deathpreviouscontroller andindividualattackdefender preserved. Programmutation to unsupportedevent, aggregateattackambiguousdefender andvariable resultreject while wholeprogramadmission remainsstrict."
     },
     {
       "capability_id": "resolution.event_player.fixed_result",
@@ -55009,6 +55089,46 @@
     {
       "capability_id": "resolution.event_player.fixed_result",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay",
+      "official_rule_ids": [
+        "113.7a",
+        "120.3a",
+        "121.2",
+        "603.2",
+        "603.3d",
+        "608.2c",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original PollutedBonds observesactualforeignlandplay usingsealed enteringcontroller forloss/gain. Original CampaignVengeance twoactualattackers towarddifferentdefenders createstwotriggers withseparatelifeconsequences; wrongprincipalrollback, pendingordering/load andfullreplay agree."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_event_controller_and_individual_attack_recipient_results_preserve_fields",
+      "official_rule_ids": [
+        "113.7a",
+        "120.3a",
+        "121.2",
+        "603.2",
+        "603.3d",
+        "608.2c",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Entrycurrentcontroller/deathpreviouscontroller andindividualattackdefender preserved. Programmutation to unsupportedevent, aggregateattackambiguousdefender andvariable resultreject while wholeprogramadmission remainsstrict."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "positive",
       "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_event_player_fixed_sequence_retains_each_recipient_and_printed_order",
       "official_rule_ids": [
         "113.7a",
@@ -55088,6 +55208,26 @@
     },
     {
       "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay",
+      "official_rule_ids": [
+        "113.7a",
+        "120.3a",
+        "121.2",
+        "603.2",
+        "603.3d",
+        "608.2c",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original PollutedBonds observesactualforeignlandplay usingsealed enteringcontroller forloss/gain. Original CampaignVengeance twoactualattackers towarddifferentdefenders createstwotriggers withseparatelifeconsequences; wrongprincipalrollback, pendingordering/load andfullreplay agree."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
       "official_rule_ids": [
@@ -55125,6 +55265,26 @@
         "commander_review"
       ],
       "applicability_note": "Original Forced Fruition observes a foreign caster and drawsseven for thatcasterprivately; originalLilianaCaress observes realMindRotdiscard2 and causestwodistinctlife2losses todiscarder. Complete consequences, wrongprincipalrollback, pendingload andfullreplay agree."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay",
+      "official_rule_ids": [
+        "113.7a",
+        "120.3a",
+        "121.2",
+        "603.2",
+        "603.3d",
+        "608.2c",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original PollutedBonds observesactualforeignlandplay usingsealed enteringcontroller forloss/gain. Original CampaignVengeance twoactualattackers towarddifferentdefenders createstwotriggers withseparatelifeconsequences; wrongprincipalrollback, pendingordering/load andfullreplay agree."
     },
     {
       "capability_id": "stack.counter.controller_payment",
