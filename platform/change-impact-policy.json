@@ -1646,6 +1646,8 @@
     {
       "id": "static-characteristic-setting-contract",
       "patterns": [
+        "quorune/card_programs/runtime.py",
+        "quorune/characteristic_evaluation_host.py",
         "quorune/compiler/fixed_characteristic_settings.py",
         "quorune/compiler/public_state_queries.py",
         "quorune/semantic_runtime/fixed_characteristic_effects.py",

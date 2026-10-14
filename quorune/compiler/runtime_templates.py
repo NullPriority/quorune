@@ -492,7 +492,7 @@ def _constant_static_characteristic_template(text, *, source_name, source_is_cla
     if attached is not None:
         return StaticRuntimeTemplate(compiled=attached, kind="static_ability", event="characteristics.evaluate",
             dependency_reason="Generic attached characteristics require a trusted continuous-effect capability")
-    setting = None if source_is_class else fixed_characteristic_setting_handler(text)
+    setting = None if source_is_class else fixed_characteristic_setting_handler(text, source_name=source_name)
     if setting is not None:
         return StaticRuntimeTemplate(compiled=setting, kind="static_ability", event="characteristics.evaluate",
             dependency_reason="Fixed public characteristic settings require closed layer and subject capabilities")

@@ -5,7 +5,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping
 
-from ..continuous_effect_model import ContinuousEffectOrigin, ContinuousEffectRelation
+from ..continuous_effect_model import ContinuousEffectOrigin, ContinuousEffectRelation, ContinuousObjectIdentity
+from ..continuous_conditions import FixedPublicStateConditionSpec, FixedPublicStateConditionKind
+from ..characteristic_fragments import CharacteristicQuantityReduction
 from ..object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
 from .attached_continuous import _attached_characteristics_node, _has_characteristic_modifier
 from .fixed_characteristic_effects import fixed_characteristic_effects
@@ -15,7 +17,24 @@ from .continuous_components import ContinuousEffectSourceContext, _fixed_query_e
 
 
 FIXED_SETTING_HANDLER_ID = "continuous.characteristics.fixed-public-setting.v1"
+CONDITIONAL_SETTING_HANDLER_ID = "continuous.characteristics.fixed-public-setting.v2"
 FIXED_SETTING_CAPABILITY = "continuous.characteristics.fixed_public_setting"
+
+
+def validate_setting_condition(condition: Mapping[str, Any]) -> FixedPublicStateConditionSpec:
+    parsed = FixedPublicStateConditionSpec.from_dict(condition)
+    if parsed.kind in {
+        FixedPublicStateConditionKind.SOURCE_MATCHES_QUERY,
+        FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY,
+        FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS,
+    }:
+        raise SemanticNodeError('Conditional type settings require non-characteristic public facts')
+    if parsed.quantity is not None:
+        if parsed.quantity.query.zones != ('graveyard',) or parsed.quantity.query.keywords_all:
+            raise SemanticNodeError('Conditional setting quantities require public graveyard objects')
+        if parsed.quantity.reduction is not CharacteristicQuantityReduction.OBJECT_COUNT:
+            raise SemanticNodeError('Conditional settings require a fixed object-count condition')
+    return parsed
 
 
 @dataclass(frozen=True, slots=True)
@@ -28,12 +47,19 @@ class FixedCharacteristicSettingsHandler:
     capability_dependencies: tuple[str, ...] = (FIXED_SETTING_CAPABILITY,)
 
     def validate(self, descriptor: Mapping[str, Any]):
-        exact_fields(descriptor, {"handler_id", "schema_version", "event", "target", "modifier"}, field="fixed characteristic setting")
-        if descriptor["handler_id"] != self.handler_id or type(descriptor["schema_version"]) is not int or descriptor["schema_version"] != self.schema_version or descriptor["event"] != self.event:
+        version = descriptor.get('schema_version')
+        fields = {"handler_id", "schema_version", "event", "target", "modifier"}
+        if version == 2:
+            fields.add('source_condition')
+        exact_fields(descriptor, fields, field="fixed characteristic setting")
+        if descriptor["handler_id"] != self.handler_id or type(version) is not int or version != self.schema_version or descriptor["event"] != self.event:
             raise SemanticNodeError("Fixed characteristic setting identity changed")
+        condition = descriptor.get('source_condition')
+        if condition is not None:
+            validate_setting_condition(condition)
         target = descriptor["target"]
         exact_fields(target, {"kind", "controller", "predicate", "exclude_source"}, field="fixed setting target")
-        if target["kind"] not in {"attached", "fixed_query"} or type(target["exclude_source"]) is not bool:
+        if target["kind"] not in ({"attached", "fixed_query", "source"} if version == 2 else {"attached", "fixed_query"}) or type(target["exclude_source"]) is not bool:
             raise SemanticNodeError("Fixed settings require an attachment or public battlefield query")
         predicate = ObjectQuerySpec.from_dict(target["predicate"])
         if predicate.zones not in {(), ("battlefield",)} or predicate.owner is not None or predicate.controller is not None or predicate.excluded_controllers or predicate.known_to_actor is not None or predicate.exclude_ref is not None:
@@ -54,7 +80,10 @@ class FixedCharacteristicSettingsHandler:
             raise SemanticNodeError("Fixed setting supertypes are outside the reviewed grammar")
         if predicate.state_predicate is not None and predicate.state_predicate != PermanentStatePredicateSpec(counter_name='+1/+1',minimum_counter_count=1):
             raise SemanticNodeError("Fixed settings support only the named positive counter qualification")
-        if target["kind"] == "attached":
+        if target['kind'] == 'source':
+            if target['controller'] is not None or target['exclude_source'] or predicate != ObjectQuerySpec(zones=('battlefield',)):
+                raise SemanticNodeError('Source settings cannot widen the logical source predicate')
+        elif target["kind"] == "attached":
             if target["controller"] is not None or target["exclude_source"]:
                 raise SemanticNodeError("Attached settings cannot carry source-controller predicates")
             if predicate != ObjectQuerySpec(zones=('battlefield',),types_all=predicate.types_all) or len(predicate.types_all)>1 or not set(predicate.types_all)<={'artifact','battle','creature','enchantment','land','planeswalker'}:
@@ -83,11 +112,31 @@ class FixedCharacteristicSettingsHandler:
 
     def lower(self, descriptor: Mapping[str, Any], context: ContinuousEffectSourceContext):
         target, predicate, node = self.validate(descriptor)
+        condition = descriptor.get('source_condition')
+        if condition is not None:
+            if context.public_state is None:
+                raise SemanticNodeError('Conditional settings require current public facts')
+            if not FixedPublicStateConditionSpec.from_dict(condition).matches(context.public_state):
+                return ()
         common = {"source_id": context.source_object_id, "timestamp": context.source_timestamp, "origin": ContinuousEffectOrigin.STATIC_ABILITY}
-        if target["kind"] == "attached":
+        if target['kind'] == 'source':
+            if not context.source_logical_object_id:
+                raise SemanticNodeError('Source settings require logical incarnation')
+            common.update(relation=ContinuousEffectRelation.SOURCE_OBJECT,
+                related_object=ContinuousObjectIdentity(context.source_object_id, context.source_logical_object_id), applies=predicate)
+        elif target["kind"] == "attached":
             if context.attached_object is None:
                 return ()
             common.update(relation=ContinuousEffectRelation.SOURCE_ATTACHED_TO_OBJECT, related_object=context.attached_object, applies=predicate)
         else:
             common["applies"] = _fixed_query_effect_predicate(predicate, target_controller=target["controller"], exclude_source=target["exclude_source"], context=context)
         return fixed_characteristic_effects(node, context, common=common)
+
+
+@dataclass(frozen=True, slots=True)
+class ConditionalCharacteristicSettingsHandler(FixedCharacteristicSettingsHandler):
+    handler_id: str = CONDITIONAL_SETTING_HANDLER_ID
+    schema_version: int = 2
+    capability_dependencies: tuple[str, ...] = (
+        FIXED_SETTING_CAPABILITY, 'continuous.characteristics.fixed_public_state',
+    )

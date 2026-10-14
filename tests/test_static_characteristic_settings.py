@@ -17,13 +17,92 @@ from quorune.deck import DeckDefinition, DeckEntry
 from quorune.oracle_ir import compile_oracle_card
 from quorune.record import authoritative_state_hash
 from quorune.rules.capabilities import CapabilityRegistry, load_default_capability_registry
-from quorune.semantic_runtime.fixed_characteristic_settings import FixedCharacteristicSettingsHandler
+from quorune.semantic_runtime.fixed_characteristic_settings import FixedCharacteristicSettingsHandler, ConditionalCharacteristicSettingsHandler
 from scripts.build_test_database import build_fixture_database
 from test_qualified_zone_event_queries import query_record
 import test_bound_effect_programs as witnesses
 
 
 class StaticSettingCompilerTests(unittest.TestCase):
+    def test_conditional_source_setting_preserves_public_condition_and_layer_contract(self):
+        from test_qualified_zone_event_queries import query_record
+        text = "During your turn, this creature has base power and toughness 5/2."
+        ir = compile_oracle_card(query_record(text), capability_registry=load_default_capability_registry())
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        node = ir.faces[0].nodes[0]
+        self.assertEqual(text, node.text)
+        descriptor = node.handlers[0]
+        self.assertEqual('source', descriptor['target']['kind'])
+        self.assertEqual('controller_turn', descriptor['source_condition']['kind'])
+        self.assertEqual((5, 2), (descriptor['modifier']['base_power'], descriptor['modifier']['base_toughness']))
+
+    def test_conditional_source_settings_keep_layers_live_and_source_incarnation_exact(self):
+        from quorune.continuous_conditions import FixedPublicStateConditionSnapshot
+        from quorune.continuous_effects import CharacteristicState, evaluate_continuous_effects
+        from quorune.continuous_effect_model import ContinuousEffect, ContinuousOperation, ContinuousEffectOrigin, Layer
+        from quorune.semantic_runtime.continuous_components import ContinuousEffectSourceContext
+
+        cases = (
+            ('During your turn, this creature is a Bear with base power and toughness 4/2.',
+             {'Bear', 'Equipment'}, {'Artifact', 'Creature'}, 4, 2),
+            ('During turns other than yours, this artifact is a 2/3 Gargoyle artifact creature with flying.',
+             {'Gargoyle', 'Equipment'}, {'Artifact', 'Creature'}, 2, 3),
+        )
+        for index, (text, subtypes, types, power, toughness) in enumerate(cases):
+            with self.subTest(text=text):
+                descriptor = fixed_characteristic_setting_handler(text, source_name='Generic Setting Source')[1]
+                public = FixedPublicStateConditionSnapshot(source_controller='A', active_player='A' if index == 0 else 'B',
+                    controller_hand_count=2, controller_graveyard_card_count=0, controller_life=40,
+                    opponent_life_totals=(40, 40, 40), turn_sequence=1,
+                    source_entered_battlefield_turn_sequence=0, source_counters=())
+                context = ContinuousEffectSourceContext(source_object_id='source', source_ref='SOURCE',
+                    source_controller='A', source_timestamp=1, source_logical_object_id='source@0',
+                    component_id='conditional-setting', public_state=public)
+                handler = ConditionalCharacteristicSettingsHandler()
+                effects = handler.lower(descriptor, context) + (ContinuousEffect(
+                    effect_id='counter', source_id='source', layer=Layer.POWER_TOUGHNESS, sublayer='7c',
+                    timestamp=0, operations=(ContinuousOperation('modify_power_toughness', [1, 1]),),
+                    origin=ContinuousEffectOrigin.OBJECT),)
+                base = CharacteristicState(name='Source', controller='A', card_types={'Artifact', 'Creature'},
+                    subtypes={'Human', 'Equipment'}, power=1, toughness=1)
+                evaluation = {'object_id': 'source', 'logical_object_id': 'source@0', 'zone': 'battlefield', 'owner': 'A'}
+                result = evaluate_continuous_effects(deepcopy(base), effects, context=evaluation).characteristics
+                self.assertEqual({s.casefold() for s in subtypes}, {s.casefold() for s in result['subtypes']})
+                self.assertEqual(types, set(result['card_types']))
+                self.assertEqual((power + 1, toughness + 1), (result['power'], result['toughness']))
+                self.assertEqual((), handler.lower(descriptor, replace(context, public_state=replace(
+                    public, active_player='B' if index == 0 else 'A'))))
+                stale = evaluate_continuous_effects(deepcopy(base), effects,
+                    context={**evaluation, 'logical_object_id': 'source@2'}).characteristics
+                self.assertEqual((2, 2), (stale['power'], stale['toughness']))
+                malformed = deepcopy(descriptor); malformed['target']['exclude_source'] = True
+                with self.assertRaises(ValueError):handler.validate(malformed)
+                with self.assertRaises(ValueError):handler.lower(descriptor, replace(context, public_state=None))
+        for text in (
+            'As long as you control three or more artifacts, this artifact is a 5/5 creature.',
+            'During your turn, this creature has base power and toughness X/X.',
+            'During your turn, this creature is a creature with base power and toughness equal to your life total.',
+        ):
+            self.assertIsNone(fixed_characteristic_setting_handler(text, source_name='Generic Setting Source'))
+
+    def test_conditional_setting_grammar_schema_and_dependency_mutants_fail_closed(self):
+        text = 'During your turn, this creature has base power and toughness 5/2.'
+        compiled = fixed_characteristic_setting_handler(text, source_name='Generic Setting Source')
+        descriptor = compiled[1]
+        handler = ConditionalCharacteristicSettingsHandler()
+        for field, value in (('source_condition', {'kind': 'unknown'}), ('schema_version', True),
+                             ('schema_version', 1)):
+            malformed = deepcopy(descriptor); malformed[field] = value
+            with self.assertRaises(ValueError):handler.validate(malformed)
+        registry = load_default_capability_registry()
+        raw = json.loads((ROOT / 'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        for cap in ('continuous.characteristics.fixed_public_setting', 'continuous.characteristics.fixed_public_state'):
+            blocked = deepcopy(raw)
+            next(row for row in blocked['capabilities'] if row['id'] == cap).update(status='blocked', blockers=['setting boundary'])
+            ir = compile_oracle_card(query_record(text), capability_registry=CapabilityRegistry(blocked))
+            self.assertNotEqual('exact', ir.status)
+        with patch('quorune.compiler.runtime_templates.fixed_characteristic_setting_handler', return_value=None):
+            self.assertNotEqual('exact', compile_oracle_card(query_record(text), capability_registry=registry).status)
     def test_global_permanent_subject_has_no_fictitious_card_type(self):
         from quorune.compiler.public_state_queries import fixed_characteristic_battlefield_query_subject
         for text in ('All permanents','Other permanents','permanents you control'):
@@ -104,11 +183,85 @@ class StaticSettingCompilerTests(unittest.TestCase):
 
 
 class StaticSettingRuntimeTests(unittest.TestCase):
+    def test_original_doc_ock_graveyard_count_gates_setting_at_earlier_layers(self):
+        from quorune.continuous_effect_model import Layer
+        session = self.session(285110); engine = session.engine
+        source = self.add(engine, 'Doc Ock, Sinister Scientist', ref='graveyard-setting-source')
+        other = self.add(engine, 'Doc Ock, Sinister Scientist', seat='B', ref='same-name-other-source')
+        for number in range(8):self.add(engine, 'Generic Bound Plains', zone='graveyard', ref='setting-grave-' + str(number))
+        engine.state.active_player = 'A'
+        full = engine._effective_card_data(source)
+        self.assertEqual((8, 8), tuple(engine._numeric_stat(source.object_id, f) for f in ('power', 'toughness')))
+        self.assertNotEqual((8, 8), tuple(engine._numeric_stat(other.object_id, f) for f in ('power', 'toughness')))
+        # The same setting condition can be collected at a type-only boundary
+        # without recursively evaluating battlefield characteristic predicates.
+        data = engine._effective_card_data(source, maximum_layer=Layer.TYPE)
+        self.assertEqual(full['type_line'], data['type_line'])
+        source.phased_out = True
+        self.assertNotEqual((8, 8), tuple(engine._numeric_stat(source.object_id, f) for f in ('power', 'toughness')))
+        source.phased_out = False
+        self.assertEqual((8, 8), tuple(engine._numeric_stat(source.object_id, f) for f in ('power', 'toughness')))
+
+    def test_actual_original_conditional_settings_cast_turn_control_counters_and_replay(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+
+        cases = (
+            ('Snowmelt Stag', {'U': 1, 'C': 3}, (5, 2), (2, 5)),
+            ('Circle of the Moon Druid', {'G': 1, 'C': 2}, (4, 2), (2, 4)),
+            ('Warden of the Wall', {'C': 3}, (None, None), (2, 3)),
+        )
+        for index, (name, mana, own_stats, other_stats) in enumerate(cases):
+            with self.subTest(name=name):
+                session = self.session(285100 + index); engine = session.engine
+                source = self.add(engine, name, zone='hand', ref='original-conditional-setting')
+                counter = self.add(engine, 'Generic Setting Counter Spell', zone='hand', ref='conditional-setting-counter')
+                snake = self.add(engine, 'Snakeform', zone='hand', ref='conditional-setting-removal')
+                for number in range(5):self.add(engine, 'Forest', ref='conditional-counter-mana-' + str(number))
+                private = self.add(engine, 'Generic Bound Growth', seat='C', zone='hand', ref='private-setting-hand')
+                program = compile_best_available_card_program(self.db, self.db.lookup(name), semantic_registry=engine.semantics,
+                    capability_registry=self.registry, capability_profile='commander_review')
+                self.assertTrue(bind_card_program_runtime(program, capability_registry=self.registry,
+                    profile='commander_review')['strict_capability_ready'])
+                action = self.ready(session, source, mana); self.checkpoint(session)
+                before = authoritative_state_hash(session.state)
+                self.assertFalse(session.act('pilot:C', {'action_id': action['id'], 'pay': 'auto'}).ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+                accepted = session.act('pilot:A', {'action_id': action['id'], 'pay': 'auto'})
+                self.assertTrue(accepted.ok, accepted.summary); self.resolve(session)
+                session = self.replay(session, load=True); engine = session.engine
+                body = session.state.cards[source.object_id]
+                def stats():
+                    data = engine._effective_card_data(body)
+                    if 'creature' not in engine._type_parts(data['type_line'])[0]:
+                        return (None, None)
+                    return tuple(engine._numeric_stat(body.object_id, field) for field in ('power', 'toughness'))
+                self.assertEqual(own_stats, stats())
+                for seat in 'ABD':self.assertNotIn(private.ref, json.dumps(session.packet('pilot:' + seat, full=True)))
+                # A read-only condition contrast; restore before recording actions.
+                engine.state.active_player = 'B'
+                self.assertEqual(other_stats, stats())
+                engine.state.active_player = 'A'
+                self.assertEqual(own_stats, stats())
+                if index < 2:
+                    actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+                    action = next(row for row in actions if row.get('card') == counter.ref)
+                    accepted = session.act('pilot:A', {'action_id': action['id'], 'targets': [body.ref], 'pay': 'auto'})
+                    self.assertTrue(accepted.ok, accepted.summary); self.resolve(session)
+                    self.assertEqual(tuple(v + 1 for v in own_stats), stats())
+                    actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+                    action = next(row for row in actions if row.get('card') == snake.ref)
+                    accepted = session.act('pilot:A', {'action_id': action['id'], 'targets': [body.ref], 'pay': 'auto'})
+                    self.assertTrue(accepted.ok, accepted.summary); self.resolve(session)
+                    self.assertEqual((2, 2), stats())
+                    self.assertEqual({'snake'}, engine._type_parts(engine._effective_card_data(body)['type_line'])[1])
+                self.replay(session, load=True)
     @classmethod
     def setUpClass(cls):
         cls.temporary=tempfile.TemporaryDirectory();path=Path(cls.temporary.name)/'settings.sqlite3'
         build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',
-            ROOT/'tests/fixtures/static-characteristic-setting-cards.json'],path)
+            ROOT/'tests/fixtures/static-characteristic-setting-cards.json',
+            ROOT/'tests/fixtures/conditional-exile-cards.json',ROOT/'tests/fixtures/scryfall-exact-lists.json'],path)
         cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
         cls.deck=DeckDefinition('Static setting witness',[DeckEntry('Generic Bound Commander',1,'commander'),
             DeckEntry('Generic Bound Plains',30)],['Generic Bound Commander'])

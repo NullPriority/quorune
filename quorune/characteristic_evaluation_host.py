@@ -622,6 +622,12 @@ class CharacteristicEvaluationHostMixin:
                         or maximum_layer >= Layer.ABILITY
                         else None
                     ),
+                    # The conditional setting codec admits only public graveyard
+                    # counts, so this resolver is safe at the earlier-layer boundary.
+                    setting_quantity_resolver=partial(
+                        query_characteristic_count, self,
+                        _enforce_static_component_applicability=_enforce_static_component_applicability,
+                    ),
                     static_component_resolver=(
                         (
                             lambda source: static_component_key_map.get(

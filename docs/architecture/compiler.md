@@ -510,6 +510,16 @@ subtype. Explicit creature sets retain their creature type constraint.
 Static keyword and fixed modifier consumers use that same predicate; a
 modifier does not define power or toughness for a noncreature permanent.
 
+`compiler/fixed_characteristic_settings.py` also lowers constant settings for
+the source object behind a closed public scalar or graveyard-count condition.
+The version-two setting descriptor retains the condition and source logical
+incarnation; existing version-one public and attached descriptors retain their
+decoder and handler identity. Type, color, ability, base-stat and fixed modifier
+operations reuse the ordinary layer owner. Conditions remain live, and base
+stats do not erase counters or later modifiers. Battlefield characteristic-
+dependent conditions, dynamic settings and quoted siblings remain residual
+until their dependency and composition contracts are represented.
+
 `compiler/source_counter_anthems.py` extends the existing live static anthem
 owner with fixed signed power/toughness coefficients per named counter on the
 source. The creature recipient query remains independently closed and live;

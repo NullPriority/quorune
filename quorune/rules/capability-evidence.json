@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "01e2afde95439dddda60b1362bfb164ef5fc0ad32927d104853c02b102200b35",
-  "declaration_source_fingerprint": "f03cde01401fbf589a3d1b1afef61a4b7d0a16225f72397e0a31a3afaf1f6d31",
+  "registry_fingerprint": "416bda175dc3092a20018ab8399396d7cc4acad48d132484f2c561b24486e9ba",
+  "declaration_source_fingerprint": "7b5e8bf0d54d8f9a309635c46fe6dc5a75849d5da2bbe4494489582fa5bd1385",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -35016,6 +35016,32 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_setting",
       "evidence_class": "interaction",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingCompilerTests.test_conditional_source_settings_keep_layers_live_and_source_incarnation_exact",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed conditional fixed settings retain layer order, logical source identity, live scalar/graveyard facts and current ability applicability."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "interaction",
       "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_deep_freeze_keeps_original_types_and_own_defender",
       "official_rule_ids": [
         "205.1a",
@@ -35064,6 +35090,58 @@
         "commander_review"
       ],
       "applicability_note": "Constant live public characteristic settings through shared layer and action owners."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_original_conditional_settings_cast_turn_control_counters_and_replay",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed conditional fixed settings retain layer order, logical source identity, live scalar/graveyard facts and current ability applicability."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_original_doc_ock_graveyard_count_gates_setting_at_earlier_layers",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed conditional fixed settings retain layer order, logical source identity, live scalar/graveyard facts and current ability applicability."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_setting",
@@ -35197,6 +35275,32 @@
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_original_conditional_settings_cast_turn_control_counters_and_replay",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed conditional fixed settings retain layer order, logical source identity, live scalar/graveyard facts and current ability applicability."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
       "evidence_class": "mutation",
       "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_static_setting_mutant_is_killed",
       "official_rule_ids": [
@@ -35220,6 +35324,32 @@
         "commander_review"
       ],
       "applicability_note": "Constant live public characteristic settings through shared layer and action owners."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "negative",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingCompilerTests.test_conditional_setting_grammar_schema_and_dependency_mutants_fail_closed",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed conditional fixed settings retain layer order, logical source identity, live scalar/graveyard facts and current ability applicability."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_setting",
@@ -35302,6 +35432,32 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_setting",
       "evidence_class": "positive",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingCompilerTests.test_conditional_source_setting_preserves_public_condition_and_layer_contract",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed conditional fixed settings retain layer order, logical source identity, live scalar/graveyard facts and current ability applicability."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "positive",
       "test_id": "tests.test_static_characteristic_settings.StaticSettingCompilerTests.test_static_settings_preserve_exact_types_colors_and_source_spans",
       "official_rule_ids": [
         "205.1a",
@@ -35353,6 +35509,32 @@
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_original_conditional_settings_cast_turn_control_counters_and_replay",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed conditional fixed settings retain layer order, logical source identity, live scalar/graveyard facts and current ability applicability."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
       "evidence_class": "privacy",
       "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_ensoul_offer_animation_counters_source_departure_and_replay",
       "official_rule_ids": [
@@ -35376,6 +35558,32 @@
         "commander_review"
       ],
       "applicability_note": "Constant live public characteristic settings through shared layer and action owners."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_original_conditional_settings_cast_turn_control_counters_and_replay",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed conditional fixed settings retain layer order, logical source identity, live scalar/graveyard facts and current ability applicability."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_setting",
@@ -35428,6 +35636,32 @@
         "commander_review"
       ],
       "applicability_note": "Constant live public characteristic settings through shared layer and action owners."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_setting",
+      "evidence_class": "replay",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_original_conditional_settings_cast_turn_control_counters_and_replay",
+      "official_rule_ids": [
+        "205.1a",
+        "205.1b",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "613.6",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Closed conditional fixed settings retain layer order, logical source identity, live scalar/graveyard facts and current ability applicability."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_setting",
@@ -122292,5 +122526,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "b1c97006ebf7f30322692664db1d8f086957a816edfd93910a77a30c8918b654"
+  "fingerprint": "26e211131aed49c244813ce43b6c92b20b2b5739d4697b260b5ba8f035298c6d"
 }

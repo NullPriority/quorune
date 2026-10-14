@@ -581,6 +581,30 @@ def _continuous_programs_for_source(
     return tuple(programs[key] for key in sorted(programs))
 
 
+def _component_public_state_snapshot(
+    source, descriptor, *, maximum_layer, public_state_resolver, setting_state_resolver,
+):
+    """Keep early-layer settings separate from characteristic query conditions."""
+    handler_id = descriptor.get('handler_id')
+    is_setting = handler_id == 'continuous.characteristics.fixed-public-setting.v2'
+    if is_setting:
+        raw_condition = descriptor.get('source_condition')
+        return (False, None if raw_condition is None else setting_state_resolver.snapshot(
+            source, FixedPublicStateConditionSpec.from_dict(raw_condition)))
+    is_conditional = handler_id in (
+        FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID,
+        FIXED_PUBLIC_STATE_GRANTED_ABILITY_HANDLER_ID,
+        CONDITIONAL_DEFENDER_PERMISSION_HANDLER, CONDITIONAL_AS_UNBLOCKED_HANDLER,
+        'continuous.block-capacity.public-state.v1', 'continuous.declaration.public-state.v1',
+    )
+    if is_conditional and maximum_layer is not None and maximum_layer < Layer.ABILITY:
+        # These components emit only layers 6/7; their query conditions must
+        # not recurse through the layer-5 characteristic boundary.
+        return True, None
+    return False, (public_state_resolver.snapshot(source,
+        FixedPublicStateConditionSpec.from_dict(descriptor['source_condition'])) if is_conditional else None)
+
+
 def collect_card_program_continuous_effects(
     state: ContinuousRuntimeState,
     semantics: "SemanticRegistry",
@@ -591,6 +615,7 @@ def collect_card_program_continuous_effects(
     public_object_resolver: Callable[[Any], ObjectQueryResult] | None = None,
     quantity_resolver: Callable[[Any, CharacteristicQuantitySpec], int]
     | None = None,
+    setting_quantity_resolver: Callable[[Any, CharacteristicQuantitySpec], int] | None = None,
     static_component_resolver: Callable[[Any], Sequence[str]] | None = None,
 ) -> tuple[ContinuousEffect, ...]:
     registry = default_continuous_effect_component_registry()
@@ -604,6 +629,10 @@ def collect_card_program_continuous_effects(
         state=state,
         public_object_resolver=public_object_resolver,
         quantity_resolver=quantity_resolver,
+    )
+    setting_state_resolver = _FixedPublicStateSnapshotResolver(
+        state=state, public_object_resolver=None,
+        quantity_resolver=setting_quantity_resolver or quantity_resolver,
     )
 
     for seat in state.turn_order:
@@ -635,33 +664,11 @@ def collect_card_program_continuous_effects(
                         descriptor.get("handler_id") or ""
                     ) not in registered_handler_ids:
                         continue
-                    public_state = None
-                    is_fixed_public_state = descriptor.get("handler_id") in (
-                        FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID,
-                        FIXED_PUBLIC_STATE_GRANTED_ABILITY_HANDLER_ID,
-                        CONDITIONAL_DEFENDER_PERMISSION_HANDLER,
-                        CONDITIONAL_AS_UNBLOCKED_HANDLER,
-                        'continuous.block-capacity.public-state.v1',
-                        'continuous.declaration.public-state.v1',
-                    )
-                    if (
-                        is_fixed_public_state
-                        and maximum_layer is not None
-                        and maximum_layer < Layer.ABILITY
-                    ):
-                        # This component can only emit layer-6 and layer-7c
-                        # effects. Skipping its condition snapshot at the
-                        # layer-5 query boundary prevents count predicates from
-                        # recursively collecting the effect they gate.
+                    skip, public_state = _component_public_state_snapshot(source, descriptor,
+                        maximum_layer=maximum_layer, public_state_resolver=public_state_resolver,
+                        setting_state_resolver=setting_state_resolver)
+                    if skip:
                         continue
-                    if is_fixed_public_state:
-                        condition = FixedPublicStateConditionSpec.from_dict(
-                            descriptor["source_condition"]
-                        )
-                        public_state = public_state_resolver.snapshot(
-                            source,
-                            condition,
-                        )
                     resolved_quantity = None
                     modifier = descriptor.get("modifier")
                     raw_quantity = (

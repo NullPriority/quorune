@@ -1359,7 +1359,7 @@ def default_continuous_effect_component_registry(
 ) -> ContinuousEffectComponentRegistry:
     from .chosen_characteristics import ChosenCharacteristicsHandler
     from .attached_continuous import AttachedFixedCharacteristicsHandler
-    from .fixed_characteristic_settings import FixedCharacteristicSettingsHandler
+    from .fixed_characteristic_settings import FixedCharacteristicSettingsHandler, ConditionalCharacteristicSettingsHandler
     from .attached_control import AttachedControlHandler
     from .conditional_continuous import (
         FixedPublicStateCharacteristicsHandler,
@@ -1393,6 +1393,7 @@ def default_continuous_effect_component_registry(
             ConditionalDeclarationGrantHandler(),
             AttachedFixedCharacteristicsHandler(),
             FixedCharacteristicSettingsHandler(),
+            ConditionalCharacteristicSettingsHandler(),
             AttachedControlHandler(),
         )
     )

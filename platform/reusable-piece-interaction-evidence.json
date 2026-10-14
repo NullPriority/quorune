@@ -4,6 +4,36 @@
     {
       "evidence_class": "interaction",
       "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_original_conditional_settings_cast_turn_control_counters_and_replay",
+      "piece_ids": [
+        "capability.continuous.characteristics.fixed_public_setting",
+        "capability.continuous.characteristics.fixed_public_state"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.fixed_public_setting",
+        "continuous.characteristics.fixed_public_state"
+      ],
+      "interaction_order": 2,
+      "assertion": "Live turn conditions apply the original Snowmelt Stag, Circle of the Moon Druid and Warden setting only while their source controller relation holds. Strict original registration, actual authorized casts, wrong-principal rollback, private projection and exact pre-action replay preserve the full consequences."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_original_conditional_settings_cast_turn_control_counters_and_replay",
+      "piece_ids": [
+        "capability.continuous.characteristics.fixed_public_setting",
+        "capability.counter.producer.fixed_effect"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.fixed_public_setting",
+        "counter.producer.fixed_effect"
+      ],
+      "interaction_order": 2,
+      "assertion": "A separately cast exact counter spell places a +1/+1 counter on the original creature after its base-stat setting, and the complete numeric stats include the counter before a Snakeform response removes the source ability. Strict original registration, actual authorized casts, wrong-principal rollback, private projection and exact pre-action replay preserve the full consequences."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
       "test_id": "test_printed_typed_aura_control_and_attachment_loss_replay",
       "piece_ids": ["capability.attachment.aura.typed_restriction", "capability.continuous.control.fixed_resolution"],
       "capability_ids": ["attachment.aura.typed_restriction", "continuous.control.fixed_resolution"],

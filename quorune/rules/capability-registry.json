@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 242,
+  "registry_version": 243,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -6429,7 +6429,7 @@
     },
     {
       "id": "continuous.characteristics.fixed_public_setting",
-      "version": 1,
+      "version": 2,
       "official_rules": [
         "205.1a",
         "205.1b",
@@ -6451,7 +6451,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Apply source-bound constant type, color, keyword and base-stat settings to current public battlefield subjects through the existing layer owner.",
+        "summary": "Apply source-bound constant type, color, keyword and base-stat settings to current public battlefield subjects, including independently closed scalar and public graveyard-count conditions.",
         "inputs": [
           "source-spanned closed setting",
           "current public predicate or reciprocal attachment",
@@ -6470,7 +6470,8 @@
           "Basic land type replacement",
           "Quoted grants",
           "Unrepresented condition and sibling bodies",
-          "General dependency discovery"
+          "General dependency discovery",
+          "Battlefield characteristic-dependent conditions for type-changing settings"
         ]
       },
       "dependencies": [
@@ -6481,27 +6482,35 @@
         "quorune.compiler.fixed_characteristic_settings.fixed_characteristic_setting_handler",
         "quorune.semantic_runtime.fixed_characteristic_settings.FixedCharacteristicSettingsHandler",
         "quorune.semantic_runtime.fixed_characteristic_effects.fixed_characteristic_effects",
-        "quorune.continuous_effects.evaluate_continuous_effects"
+        "quorune.continuous_effects.evaluate_continuous_effects",
+        "quorune.semantic_runtime.fixed_characteristic_settings.ConditionalCharacteristicSettingsHandler"
       ],
       "positive_tests": [
         "test_static_settings_preserve_exact_types_colors_and_source_spans",
-        "test_actual_ensoul_offer_animation_counters_source_departure_and_replay"
+        "test_actual_ensoul_offer_animation_counters_source_departure_and_replay",
+        "test_conditional_source_setting_preserves_public_condition_and_layer_contract",
+        "test_actual_original_conditional_settings_cast_turn_control_counters_and_replay"
       ],
       "negative_tests": [
-        "test_static_setting_unsupported_grammar_and_malformed_descriptors_fail_closed"
+        "test_static_setting_unsupported_grammar_and_malformed_descriptors_fail_closed",
+        "test_conditional_setting_grammar_schema_and_dependency_mutants_fail_closed"
       ],
       "interaction_tests": [
-        "test_static_setting_source_removal_and_ability_order_use_current_layers"
+        "test_static_setting_source_removal_and_ability_order_use_current_layers",
+        "test_conditional_source_settings_keep_layers_live_and_source_incarnation_exact",
+        "test_original_doc_ock_graveyard_count_gates_setting_at_earlier_layers"
       ],
       "multiplayer_tests": [
         "test_actual_kudo_changes_other_creatures_across_controllers_with_replay"
       ],
       "privacy_tests": [
-        "test_actual_ensoul_offer_animation_counters_source_departure_and_replay"
+        "test_actual_ensoul_offer_animation_counters_source_departure_and_replay",
+        "test_actual_original_conditional_settings_cast_turn_control_counters_and_replay"
       ],
       "replay_tests": [
         "test_actual_ensoul_offer_animation_counters_source_departure_and_replay",
-        "test_actual_kudo_changes_other_creatures_across_controllers_with_replay"
+        "test_actual_kudo_changes_other_creatures_across_controllers_with_replay",
+        "test_actual_original_conditional_settings_cast_turn_control_counters_and_replay"
       ],
       "required_evidence": [
         "positive",
