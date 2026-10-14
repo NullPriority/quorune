@@ -8,7 +8,7 @@ import unittest
 import uuid
 from unittest.mock import patch
 
-from common import keep_all, load_assets, make_session
+from common import ROOT, keep_all, load_assets, make_session
 from quorune.carddb import CardRecord
 from quorune.compiler.fixed_library_selection_templates import (
     FIXED_LIBRARY_SELECTION_CAPABILITY,
@@ -31,6 +31,13 @@ from quorune.rules.capabilities import (
 from quorune.rules.library_selection_capability_shapes import (
     fixed_library_selection_node_capabilities,
 )
+from quorune.card_programs import bind_card_program_runtime
+from quorune.card_programs.adapters import compile_best_available_card_program
+from quorune.carddb import CardDatabase
+from quorune.deck import DeckDefinition, DeckEntry
+from quorune.semantics import SemanticRegistry
+from scripts.build_test_database import build_fixture_database
+import test_bound_effect_programs as bound_witnesses
 from quorune.semantic_runtime import LibrarySelectionIntent
 from quorune.semantics import SemanticProgram
 
@@ -83,7 +90,163 @@ def nested_effects(value):
     return found
 
 
+class LibrarySelectionPredicateNativeTests(unittest.TestCase):
+    register_fixture_cards_on_add = True
+    add = bound_witnesses.BoundEffectProgramRuntimeTests.add
+    ready = bound_witnesses.BoundEffectProgramRuntimeTests.ready
+    checkpoint = bound_witnesses.BoundEffectProgramRuntimeTests.checkpoint
+    resolve = bound_witnesses.BoundEffectProgramRuntimeTests.resolve
+    replay = bound_witnesses.BoundEffectProgramRuntimeTests.replay
+    session = bound_witnesses.BoundEffectProgramRuntimeTests.session
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name)/'library-predicate.sqlite3'
+        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',
+            ROOT/'tests/fixtures/library-selection-predicate-cards.json'], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition('Library predicate witness', [DeckEntry('Generic Bound Commander', 1, 'commander'),
+            DeckEntry('Generic Bound Plains', 10)], ['Generic Bound Commander'])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    def test_original_relentless_pursuit_offers_and_commits_both_independent_slots(self):
+        session = self.session(3640701)
+        engine = session.engine
+        for oid in tuple(session.state.players['A'].zones['library']):
+            engine.move_card(oid, 'outside', log=False)
+        creature = self.add(engine, 'Generic Bound Body', zone='library', ref='slot-creature')
+        land = self.add(engine, 'Generic Bound Plains', zone='library', ref='slot-land')
+        other_creature = self.add(engine, 'Generic Bound Body', zone='library', ref='slot-other-creature')
+        instant = self.add(engine, 'Generic Bound Growth', zone='library', ref='slot-instant')
+        spell = self.add(engine, 'Relentless Pursuit', zone='hand', ref='original-slot-pursuit')
+        program = compile_best_available_card_program(self.db, self.db.lookup(spell.printed_name),
+            semantic_registry=SemanticRegistry(), capability_registry=self.registry, capability_profile='commander_review')
+        self.assertTrue(bind_card_program_runtime(program, capability_registry=self.registry,
+            profile='commander_review')['strict_capability_ready'])
+        action = self.ready(session, spell, {'G': 3, 'C': 3})
+        self.checkpoint(session)
+        self.assertTrue(session.act('pilot:A', {'action_id': action['id'], 'pay': 'auto'}).ok)
+        self.assertEqual('semantic.choice', self.resolve(session).kind)
+        self.replay(session, load=True)
+        before = session.state.to_dict()
+        for principal, selected, remainder in (
+            ('pilot:B', [creature.ref, land.ref], [other_creature.ref, instant.ref]),
+            ('pilot:A', [creature.ref, other_creature.ref], [land.ref, instant.ref]),
+            ('pilot:A', [creature.ref, creature.ref], [land.ref, other_creature.ref, instant.ref]),
+        ):
+            self.assertFalse(session.act(principal, {'action_id': 'choose',
+                'cards': {'hand': selected, 'graveyard': remainder}}).ok)
+            self.assertEqual(before, session.state.to_dict())
+        self.assertTrue(session.act('pilot:A', {'action_id': 'choose',
+            'cards': {'hand': [creature.ref, land.ref], 'graveyard': [other_creature.ref, instant.ref]}}).ok)
+        self.assertIsNone(self.resolve(session))
+        for card in (creature, land):
+            self.assertEqual('hand', session.state.cards[card.object_id].zone)
+        for card in (other_creature, instant):
+            self.assertEqual('graveyard', session.state.cards[card.object_id].zone)
+        for seat in 'BCD':
+            self.assertNotIn('hand', session.packet('pilot:'+seat, full=True)['state']['players']['A'])
+        self.replay(session, load=True)
+
+    def test_original_frontier_seeker_selects_mount_creature_and_keeps_private_remainder(self):
+        session = self.session(3640702)
+        engine = session.engine
+        for oid in tuple(session.state.players['A'].zones['library']):
+            engine.move_card(oid, 'outside', log=False)
+        mount = self.add(engine, 'Trained Arynx', zone='library', ref='qualified-library-mount')
+        creature = self.add(engine, 'Generic Bound Body', zone='library', ref='qualified-library-nonmount')
+        land = self.add(engine, 'Generic Bound Plains', zone='library', ref='qualified-library-plains')
+        instant = self.add(engine, 'Generic Bound Growth', zone='library', ref='qualified-library-instant')
+        other = self.add(engine, 'Generic Bound Body', zone='library', ref='qualified-library-other')
+        source = self.add(engine, 'Frontier Seeker', zone='hand', ref='original-frontier-seeker')
+        program = compile_best_available_card_program(self.db, self.db.lookup(source.printed_name),
+            semantic_registry=SemanticRegistry(), capability_registry=self.registry, capability_profile='commander_review')
+        self.assertTrue(bind_card_program_runtime(program, capability_registry=self.registry,
+            profile='commander_review')['strict_capability_ready'])
+        action = self.ready(session, source, {'W': 3, 'C': 3})
+        self.checkpoint(session)
+        self.assertTrue(session.act('pilot:A', {'action_id': action['id'], 'pay': 'auto'}).ok)
+        self.assertEqual('semantic.choice', self.resolve(session).kind)
+        for seat in 'BCD':
+            packet = json.dumps(session.packet('pilot:'+seat, full=True))
+            for card in (mount, creature, land, instant, other):
+                self.assertNotIn(card.ref, packet)
+        self.replay(session, load=True)
+        before = session.state.to_dict()
+        for principal, selected in (('pilot:B', mount.ref), ('pilot:A', creature.ref), ('pilot:A', instant.ref)):
+            self.assertFalse(session.act(principal, {'action_id': 'choose', 'cards': [selected]}).ok)
+            self.assertEqual(before, session.state.to_dict())
+        self.assertTrue(session.act('pilot:A', {'action_id': 'choose', 'cards': [mount.ref]}).ok)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual('hand', session.state.cards[mount.object_id].zone)
+        self.assertEqual({card.object_id for card in (creature, land, instant, other)},
+            set(session.state.players['A'].zones['library']))
+        self.replay(session, load=True)
+
+
 class FixedLibrarySelectionCompilerTests(unittest.TestCase):
+    def test_card_qualifiers_and_optional_slots_preserve_independent_meaning(self):
+        for phrase, expected in (
+            ('nonland', {'excluded_types': ['land']}),
+            ('artifact creature', {'types_all': ['artifact', 'creature']}),
+            ('Mount creature', {'types_any': ['creature'], 'subtypes_any': ['mount']}),
+            ('non-Saga permanent', {'excluded_subtypes': ['saga']}),
+        ):
+            with self.subTest(phrase=phrase):
+                template = fixed_library_selection_effect_template(
+                    'Look at the top three cards of your library. You may reveal a '+phrase+
+                    ' card from among them and put it into your hand. Put the rest on the bottom of your library in any order.')
+                self.assertIsNotNone(template)
+                predicate = template.predicate_groups[0][0]
+                for field, values in expected.items():
+                    self.assertEqual(values, predicate[field])
+                self.assertTrue(fixed_library_selection_node_capabilities(
+                    effects=template.compiled()[1], target_schema=None, mechanic_ids=template.compiled()[3]))
+        template = fixed_library_selection_effect_template(
+            'Reveal the top four cards of your library. You may put a creature card and/or a land card '
+            'from among them into your hand. Put the rest into your graveyard.')
+        self.assertEqual('optional_slots', template.selection_policy)
+        self.assertEqual(2, template.maximum)
+        self.assertEqual(2, len(template.predicate_groups))
+        self.assertEqual(['creature'], template.predicate_groups[0][0]['types_any'])
+        self.assertEqual(['land'], template.predicate_groups[1][0]['types_any'])
+
+    def test_unknown_library_qualifiers_fail_closed_and_real_subtypes_remain_literal(self):
+        for phrase in ('double-faced', 'creature with flying', 'card with the chosen name', 'invented magic qualifier'):
+            with self.subTest(phrase=phrase):
+                self.assertIsNone(fixed_library_selection_effect_template(
+                    'Look at the top three cards of your library. You may reveal a '+phrase+
+                    ' card from among them and put it into your hand. Put the rest on the bottom of your library in any order.'))
+        for phrase, subtype in (('Elf', 'elf'), ('Tyvar', 'tyvar'), ('Lesson', 'lesson'), ('Time Lord', 'time lord')):
+            template = fixed_library_selection_effect_template(
+                'Look at the top three cards of your library. You may reveal a '+phrase+
+                ' card from among them and put it into your hand. Put the rest on the bottom of your library in any order.')
+            self.assertEqual([subtype], template.predicate_groups[0][0]['subtypes_any'])
+
+    def test_slot_priority_and_unrepresented_subtype_descriptor_mutants_are_killed(self):
+        import copy
+        from quorune.compiler import fixed_library_selection_templates as templates
+        text = ('Reveal the top four cards of your library. You may put a creature card and/or '
+            'a land card from among them into your hand. Put the rest into your graveyard.')
+        def assert_two_slots():
+            self.assertEqual('optional_slots', fixed_library_selection_effect_template(text).selection_policy)
+        assert_two_slots()
+        with patch.object(templates, '_optional_slots_shape', return_value=None):
+            with self.assertRaises(AssertionError):
+                assert_two_slots()
+        effect = fixed_library_selection_effect_template(text).compiled()[1][0]
+        bad = copy.deepcopy(effect)
+        bad['predicate_groups'][0][0]['types_any'] = []
+        bad['predicate_groups'][0][0]['subtypes_any'] = ['creature card']
+        self.assertFalse(fixed_library_selection_node_capabilities(effects=(bad,), target_schema=None,
+            mechanic_ids=(FIXED_LIBRARY_SELECTION_MECHANIC,)))
+
     @classmethod
     def setUpClass(cls) -> None:
         cls.capabilities = load_default_capability_registry()
@@ -212,6 +375,12 @@ class FixedLibrarySelectionCompilerTests(unittest.TestCase):
         )
         predicate = dict(subtype_effects[0]["predicate_groups"][0][0])
         predicate["excluded_subtypes"] = ["elf"]
+        represented = dict(subtype_effects[0])
+        represented["predicate_groups"] = [[dict(predicate)]]
+        self.assertEqual((FIXED_LIBRARY_SELECTION_CAPABILITY,),
+            fixed_library_selection_node_capabilities(effects=(represented,),
+                target_schema=target, mechanic_ids=mechanics))
+        predicate["excluded_subtypes"] = ["unrepresented subtype"]
         mutated = dict(subtype_effects[0])
         mutated["predicate_groups"] = [[predicate]]
         self.assertEqual(

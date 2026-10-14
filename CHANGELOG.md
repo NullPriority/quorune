@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Preserve independent library-selection card slots and qualified card types,
+  and reject unrepresented qualifiers that previously became subtype names.
+
 - Register added public-characteristic fixture cards per session instead of
   compiling unused fixture records, preserving existing action and replay checks.
 

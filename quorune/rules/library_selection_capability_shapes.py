@@ -5,6 +5,7 @@ from collections.abc import Iterable, Mapping, Sequence
 from ..compiler.fixed_library_selection_templates import (
     FIXED_LIBRARY_SELECTION_CAPABILITY,
     FIXED_LIBRARY_SELECTION_MECHANIC,
+    LIBRARY_SELECTION_SUBTYPES,
 )
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 
@@ -42,11 +43,15 @@ def _characteristic_predicate(value: object) -> bool:
         and spec.owner is None
         and spec.controller is None
         and not spec.excluded_controllers
-        and not spec.types_all
+        and set((*spec.types_all, *spec.types_any, *spec.excluded_types)).issubset(
+            {'artifact', 'battle', 'creature', 'enchantment', 'instant', 'kindred', 'land', 'planeswalker', 'sorcery'})
         and not spec.subtypes_all
-        and not spec.excluded_subtypes
+        and set((*spec.subtypes_any, *spec.excluded_subtypes)).issubset(LIBRARY_SELECTION_SUBTYPES)
         and not spec.colors_all
         and not spec.keywords_all
+        and not spec.keywords_none
+        and spec.numeric_characteristic is None
+        and set(spec.supertypes_all).issubset({'basic', 'legendary', 'snow'})
         and spec.token is None
         and spec.tapped is None
         and not spec.include_phased_out
@@ -55,7 +60,8 @@ def _characteristic_predicate(value: object) -> bool:
         and spec.state_predicate is None
         and spec.minimum_color_count is None
         and bool(
-            spec.types_any
+            spec.types_all
+            or spec.types_any
             or spec.excluded_types
             or spec.subtypes_any
             or spec.supertypes_all
