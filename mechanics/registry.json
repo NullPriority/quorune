@@ -688,8 +688,8 @@
     {
       "mechanic_id": "scry",
       "path": "mechanics/contracts/scry.json",
-      "sha256": "02ae98bb85788b86944de7efc7604c021885d89935642394f80db52394044606",
-      "version": 1
+      "sha256": "222d97a52350e5fe22d391ef7daf8248deb8c703c691903b15c868574fa11d62",
+      "version": 2
     },
     {
       "mechanic_id": "shadow",
@@ -778,8 +778,8 @@
     {
       "mechanic_id": "surveil",
       "path": "mechanics/contracts/surveil.json",
-      "sha256": "3d065f1fa2a51995a1a0afa99657eb0153371e84addb14f15e0072b2117538ba",
-      "version": 1
+      "sha256": "6a1571567dc515167ddd72a00390b611c75821a2b5d95c6c098c8b8c898bf166",
+      "version": 2
     },
     {
       "mechanic_id": "suspend",
@@ -7080,8 +7080,8 @@
     {
       "category": "additional_rules",
       "contract_path": "mechanics/contracts/scry.json",
-      "contract_sha256": "02ae98bb85788b86944de7efc7604c021885d89935642394f80db52394044606",
-      "contract_version": 1,
+      "contract_sha256": "222d97a52350e5fe22d391ef7daf8248deb8c703c691903b15c868574fa11d62",
+      "contract_version": 2,
       "coverage_status": "partial",
       "dependencies": [
         "701"
@@ -7091,9 +7091,9 @@
       "kind": "keyword_action",
       "known_blockers": [
         "multiple players instructed to Scry simultaneously require an APNAP decision coordinator and simultaneous commit",
-        "dynamic and variable Scry counts remain residual",
+        "unrepresented dynamic and variable Scry counts remain residual",
         "effects that add cards while Scrying remain residual",
-        "Scry-trigger compilation remains residual",
+        "Scry-event consumer grammar beyond represented normalized fixed-body observers remains residual",
         "Surveil, fateseal, and non-Scry library ordering are separate capabilities"
       ],
       "mechanic_id": "scry",
@@ -7106,11 +7106,12 @@
         "test_fixed_scry_shape_is_closed",
         "test_scry_capability_gate_mutant_is_killed",
         "test_scry_orders_top_and_bottom_and_replays_exactly",
-        "test_scry_zero_and_empty_library_create_no_event",
+        "test_scry_zero_has_no_event_and_positive_empty_library_completes_event",
         "test_scry_response_and_stale_library_fail_before_mutation",
         "test_scry_more_than_library_uses_every_card",
         "test_four_player_scry_is_private_and_seat_scoped",
-        "test_legacy_subset_response_preserves_historical_behavior"
+        "test_legacy_subset_response_preserves_historical_behavior",
+        "test_actual_library_actions_trigger_only_current_controller_observers_after_completion"
       ],
       "trust_level": "untrusted"
     },
@@ -7185,8 +7186,8 @@
     {
       "category": "additional_rules",
       "contract_path": "mechanics/contracts/surveil.json",
-      "contract_sha256": "3d065f1fa2a51995a1a0afa99657eb0153371e84addb14f15e0072b2117538ba",
-      "contract_version": 1,
+      "contract_sha256": "6a1571567dc515167ddd72a00390b611c75821a2b5d95c6c098c8b8c898bf166",
+      "contract_version": 2,
       "coverage_status": "tested",
       "dependencies": [
         "701"
@@ -7195,10 +7196,10 @@
       "implementation_version": "typed-fixed-controller-surveil-v1",
       "kind": "keyword_action",
       "known_blockers": [
-        "Surveil 0 and dynamic, variable, optional, cost, target-player, each-player, repeated, copied, or granted forms remain residual",
+        "Unrepresented dynamic, variable, optional, cost, target-player, each-player, repeated, copied, or granted forms remain residual; printed fixed Surveil 0 remains residual",
         "effects that add looked-at cards under CR 701.25b need a typed additive inspection boundary",
         "linked cards-put-into-graveyard or cards-left-on-top consumers need typed actual-result bindings",
-        "Surveil-event consumer grammar beyond the emitted normalized event remains residual",
+        "Surveil-event consumer grammar beyond represented normalized fixed-body observers remains residual",
         "graveyard-order-sensitive interactions outside the represented simultaneous ordering remain excluded"
       ],
       "mechanic_id": "surveil",

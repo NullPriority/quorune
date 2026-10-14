@@ -7,6 +7,7 @@ from functools import lru_cache
 from typing import Any, Mapping
 
 from ..abilities import ActivatedAbility
+from ..card_programs.admission import REQUIRES_COMPLETE_CARD_PROGRAM_FIELD
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
 
@@ -33,9 +34,12 @@ class ActivatedAbilityCatalogHandler:
     capability_dependencies: tuple[str, ...] = ()
 
     def validate(self, descriptor: Mapping[str, Any]) -> ActivatedAbility:
+        required = {REQUIRES_COMPLETE_CARD_PROGRAM_FIELD} if REQUIRES_COMPLETE_CARD_PROGRAM_FIELD in descriptor else set()
+        if required and descriptor[REQUIRES_COMPLETE_CARD_PROGRAM_FIELD] is not True:
+            raise SemanticNodeError('Complete-card activation admission must be true')
         exact_fields(
             descriptor,
-            {"handler_id", "schema_version", "event", "ability"},
+            {"handler_id", "schema_version", "event", "ability"} | required,
             field="activated ability catalog handler",
         )
         if descriptor["handler_id"] != self.handler_id:
@@ -85,12 +89,14 @@ def default_activated_ability_catalog_registry(
 
 def activated_ability_catalog_descriptor(
     ability: ActivatedAbility,
+    *, requires_complete_card_program: bool = False,
 ) -> dict[str, Any]:
     return {
         "handler_id": ACTIVATED_ABILITY_CATALOG_HANDLER_ID,
         "schema_version": 1,
         "event": "activate",
         "ability": ability.to_dict(),
+        **({REQUIRES_COMPLETE_CARD_PROGRAM_FIELD: True} if requires_complete_card_program else {}),
     }
 
 

@@ -7,6 +7,7 @@ from ..errors import GameRuleError
 from ..rules.hand_inspection import FIXED_HAND_INSPECTION_OPERATION
 from ..counter_state import player_counter_snapshot
 from ..model import StackItem
+from ..connive import connive_discard_characteristic_ids, bind_connive_instruction
 from ..object_query import object_query_result
 from ..replacement.immutable import FrozenMap, thaw_value
 from ..semantic_runtime.draw_restrictions import current_draw_permission
@@ -590,6 +591,15 @@ class SemanticChoiceCoordinationMixin:
                 )
             ),
             current_turn_sequence=self.state.turn_sequence,
+            committed_discard_ids=(
+                tuple(event.object_incarnation for event in self._current_turn_history('card_discarded')
+                      if event.actor == actor and event.object_incarnation)
+                if choice_effect.get('op') == 'connive' else ()
+            ),
+            defined_discard_characteristic_ids=(
+                connive_discard_characteristic_ids(self, actor, choice_effect)
+                if choice_effect.get('op') == 'connive' else ()
+            ),
             resolution_condition_facts=condition_facts,
         )
     def _semantic_choice_context(
@@ -639,6 +649,10 @@ class SemanticChoiceCoordinationMixin:
         instruction_pointer: int,
     ) -> None:
         registry = default_semantic_choice_registry()
+        try:
+            effect = bind_connive_instruction(self, item, effect)
+        except (ValueError, TypeError, KeyError) as exc:
+            raise GameRuleError(str(exc)) from exc
         handler = registry.handler_for_operation(str(effect.get("op") or ""))
         seat = str(effect.get("player") or item.controller)
         try:

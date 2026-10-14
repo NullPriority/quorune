@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
-  "contract_version": 1,
+  "contract_version": 2,
   "mechanic_id": "scry",
   "official_name": "Scry",
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
-  "rule_references": ["401.4", "701.22", "701.22a", "701.22b", "701.22c"],
+  "rule_references": ["401.4", "701.22", "701.22a", "701.22b", "701.22c", "701.22d"],
   "glossary_references": ["scry"],
   "dependencies": ["library"],
   "coverage_status": "partial",
@@ -35,14 +35,13 @@
     {"name": "Opt", "oracle_id": "713332c1-5bd8-400f-bfff-c1ca0697a043"}
   ],
   "rulings": [],
-  "test_ids": ["test_fixed_scry_compiles_capability_closed", "test_fixed_scry_shape_is_closed", "test_scry_capability_gate_mutant_is_killed", "test_scry_orders_top_and_bottom_and_replays_exactly", "test_scry_zero_and_empty_library_create_no_event", "test_scry_response_and_stale_library_fail_before_mutation", "test_scry_more_than_library_uses_every_card", "test_four_player_scry_is_private_and_seat_scoped", "test_legacy_subset_response_preserves_historical_behavior"],
+  "test_ids": ["test_fixed_scry_compiles_capability_closed", "test_fixed_scry_shape_is_closed", "test_scry_capability_gate_mutant_is_killed", "test_scry_orders_top_and_bottom_and_replays_exactly", "test_scry_zero_has_no_event_and_positive_empty_library_completes_event", "test_scry_response_and_stale_library_fail_before_mutation", "test_scry_more_than_library_uses_every_card", "test_four_player_scry_is_private_and_seat_scoped", "test_legacy_subset_response_preserves_historical_behavior", "test_actual_library_actions_trigger_only_current_controller_observers_after_completion"],
   "implementation": {
     "component": "ScryChoiceHandler, LibraryPartitionChoice, ScryArrangement, ScryLibraryIntent, and commit_scry_arrangement",
     "version": "typed-fixed-controller-scry-v1",
     "capability_ids": ["library.scry.fixed_controller"],
-    "supported_slice": "One positive fixed-count Scry instruction for its controller, including Scry 0 and a library shorter than the instruction count."
+    "supported_slice": "One resolved controller Scry count through the private partition: zero creates no event; positive empty-library instructions complete their action and can trigger represented normalized player observers. Public counts require the separate typed quantity capability."
   },
-  "known_blockers": ["multiple players instructed to Scry simultaneously require an APNAP decision coordinator and simultaneous commit", "dynamic and variable Scry counts remain residual", "effects that add cards while Scrying remain residual", "Scry-trigger compilation remains residual", "Surveil, fateseal, and non-Scry library ordering are separate capabilities"],
+  "known_blockers": ["multiple players instructed to Scry simultaneously require an APNAP decision coordinator and simultaneous commit", "unrepresented dynamic and variable Scry counts remain residual", "effects that add cards while Scrying remain residual", "Scry-event consumer grammar beyond represented normalized fixed-body observers remains residual", "Surveil, fateseal, and non-Scry library ordering are separate capabilities"],
   "review_status": "reviewed"
 }
-

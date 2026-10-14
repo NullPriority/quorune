@@ -128,6 +128,25 @@ class ZoneTransitionOwner:
             zones=zones,
         )
 
+    def remember_conditional_exile(self, binding: Any) -> None:
+        """Persist a created CR610.3 instruction on its original source."""
+        from .conditional_exile_model import (
+            CONDITIONAL_EXILE_BINDINGS, ConditionalExileBinding,
+            conditional_source_remains, source_conditional_bindings,
+        )
+        if not isinstance(binding, ConditionalExileBinding) or not conditional_source_remains(binding.source, self.state.cards):
+            raise GameRuleError('Conditional exile storage requires its current battlefield source')
+        source = self.state.cards[binding.source.object_id]
+        try:
+            previous = source_conditional_bindings(source)
+        except ValueError as exc:
+            raise GameRuleError(str(exc)) from exc
+        if any(value.binding_id == binding.binding_id for value in previous):
+            raise GameRuleError('Conditional exile instruction has already been stored')
+        if any(not identity.matches_exiled_card(self.state.cards.get(identity.object_id)) for identity in binding.objects):
+            raise GameRuleError('Conditional exile storage requires actual exiled incarnations')
+        source.annotations[CONDITIONAL_EXILE_BINDINGS] = [value.to_dict() for value in (*previous, binding)]
+
     def remove_from_zone(self, card: CardInstance) -> None:
         if card.zone == "stack":
             return
@@ -423,6 +442,7 @@ class ZoneTransitionOwner:
         *,
         semantic_events: bool,
     ) -> ZoneDepartureSnapshot:
+        from .conditional_exile_model import source_conditional_bindings
         attachments = tuple(
             self.state.cards[attachment_id].ref
             for attachment_id in card.attachments
@@ -440,10 +460,13 @@ class ZoneTransitionOwner:
         )
         if card.zone == "battlefield":
             capture_explore_source_departure(self.host, card)
+            from .connive import capture_connive_source_departure
+            capture_connive_source_departure(self.host, card)
         return ZoneDepartureSnapshot(
             origin=card.zone,
             controller=card.controller,
             logical_object_id=card.logical_object_id,
+            conditional_returns=source_conditional_bindings(card) if card.zone == 'battlefield' else (),
             characteristics=characteristics,
             counters=dict(card.counters) if semantic_events else None,
             attachments=attachments,
@@ -696,6 +719,8 @@ class ZoneTransitionOwner:
             from .counter_placement_events import dispatch_counter_event_trees
             dispatch_counter_event_trees(self.host, (plan.prepared_replacement,), reason=reason,trigger_batch=trigger_batch)
             enqueue_trigger_batch(self.host,trigger_batch)
+            from .conditional_exile_return import return_from_departure_snapshots
+            return_from_departure_snapshots(self.host, ((card, departure),))
 
     def _log_prevented_token(
         self,
@@ -876,19 +901,14 @@ class ZoneTransitionOwner:
         tapped: bool | None = None,
         destination_controllers: Mapping[str, str] | None = None,
         effect_entry_counters: Mapping[str, Sequence[EffectEntryCounter]] | None = None,
+        aura_target_refs: Mapping[str, str] | None = None,
         replacement_selections: Sequence[str | None | Mapping[str, Any]] = (),
         transition_kinds: Mapping[str, ZoneTransitionKind] | None = None,
     ) -> list[CardInstance]:
         kinds = normalized_transition_kind_map(changes, transition_kinds)
         controllers = dict(destination_controllers or {})
-        change_ids = {object_id for object_id, _destination in changes}
-        if set(controllers) - change_ids or any(
-            type(value) is not str or value not in self.host.active_seats
-            for value in controllers.values()
-        ):
-            raise GameRuleError(
-                "Simultaneous zone-move destination controllers are invalid"
-            )
+        aura_targets = dict(aura_target_refs or {})
+        self._validate_simultaneous_controllers(changes,controllers,aura_targets)
         entry_characteristics = {
             object_id: capture_prospective_entry_characteristics(
                 self.host,
@@ -927,6 +947,9 @@ class ZoneTransitionOwner:
             transition_kinds=kinds,
             error_type=GameRuleError,
         )
+        changes = self._preflight_simultaneous_auras(changes,prepared,entry_characteristics,controllers,aura_targets,log)
+        if not changes:return []
+        prepared={object_id:prepared[object_id] for object_id,_destination in changes}
         snapshots = tuple(
             self._simultaneous_departure(
                 self.state.cards[object_id],
@@ -944,6 +967,7 @@ class ZoneTransitionOwner:
                 destination,
                 zone_timestamp=destination_timestamp,
                 controller=controllers.get(object_id),
+                aura_target_ref=aura_targets.get(object_id),
                 tapped=tapped,
                 reason=reason,
                 log=log,
@@ -1009,7 +1033,31 @@ class ZoneTransitionOwner:
                 trigger_batch=trigger_batch,
             )
         enqueue_trigger_batch(self.host, trigger_batch)
+        from .conditional_exile_return import return_from_departure_snapshots
+        return_from_departure_snapshots(self.host, snapshots)
         return [card for card, _departure in snapshots]
+
+    def _validate_simultaneous_controllers(self, changes, controllers, aura_targets):
+        change_ids = {object_id for object_id, _destination in changes}
+        if set(controllers) - change_ids or any(
+            type(value) is not str or value not in self.host.active_seats for value in controllers.values()):
+            raise GameRuleError('Simultaneous zone-move destination controllers are invalid')
+        if set(aura_targets) - change_ids or any(type(value) is not str or not value for value in aura_targets.values()):
+            raise GameRuleError('Simultaneous Aura entry selections are invalid')
+
+    def _preflight_simultaneous_auras(self, changes, prepared, characteristics, controllers, targets, log):
+        """Resolve attachment choices before any member of a batch moves."""
+        admitted=[]
+        for object_id, destination in changes:
+            replacement = prepared[object_id]
+            plan=preflight_aura_zone_move(self.host, self.state.cards[object_id],
+                destination=replacement.destination, requested_destination=destination,
+                destination_type_line=str(characteristics.get(object_id, {}).get('type_line') or ''),
+                enter_face=None, enchant_spec=None, controller=controllers.get(object_id),
+                target_ref=targets.get(object_id), resolving_as_spell=False,
+                origin=self.state.cards[object_id].zone, log=log, error_type=GameRuleError)
+            if not plan.remain_in_origin:admitted.append((object_id,destination))
+        return tuple(admitted)
 
     def _simultaneous_departure(
         self,
@@ -1017,12 +1065,14 @@ class ZoneTransitionOwner:
         *,
         source_snapshot: DepartureTriggerSnapshot,
     ) -> tuple[CardInstance, ZoneDepartureSnapshot]:
+        from .conditional_exile_model import source_conditional_bindings
         return (
             card,
             ZoneDepartureSnapshot(
                 origin=card.zone,
                 controller=card.controller,
                 logical_object_id=card.logical_object_id,
+                conditional_returns=source_conditional_bindings(card) if card.zone == 'battlefield' else (),
                 characteristics=copy.deepcopy(self.host._effective_card_data(card)),
                 counters=dict(card.counters),
                 attachments=tuple(

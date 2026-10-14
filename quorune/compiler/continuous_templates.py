@@ -19,6 +19,7 @@ from ..characteristic_fragments import (
 from ..keyword_abilities import (
     FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES,
     FIXED_CHARACTERISTIC_KEYWORDS,
+    triggered_keyword_grant,
 )
 from .creature_subtypes import CREATURE_SUBTYPES, canonical_creature_subtype
 from .fixed_resolution_characteristic_queries import (
@@ -296,7 +297,7 @@ def fixed_query_keyword_grant_handler(
 
     granted = _attached_granted_abilities(abilities_text)
     if granted is None or any(
-        ability == "Protection" or ability.startswith("Toxic ")
+        ability.startswith("Toxic ")
         for ability in granted[0]
     ):
         return None
@@ -309,8 +310,9 @@ def fixed_query_keyword_grant_handler(
     return (
         "continuous-fixed-query-keyword-grant-v2",
         {
-            "handler_id": "continuous.ability.fixed-query-keyword-grant.v1",
-            "schema_version": 1,
+            "handler_id": ('continuous.ability.fixed-query-protection-grant.v2' if 'Protection' in abilities
+                           else "continuous.ability.fixed-query-keyword-grant.v1"),
+            "schema_version": 2 if 'Protection' in abilities else 1,
             "event": "characteristics.evaluate",
             "condition": {
                 "target_controller": relation,
@@ -365,9 +367,10 @@ def fixed_query_characteristic_grant_handler(
         "continuous-fixed-query-characteristic-grant-v1",
         {
             "handler_id": (
-                "continuous.characteristics.fixed-query-grant.v1"
+                'continuous.characteristics.fixed-query-protection-grant.v2'
+                if keywords[1]['schema_version'] == 2 else "continuous.characteristics.fixed-query-grant.v1"
             ),
-            "schema_version": 1,
+            "schema_version": keywords[1]['schema_version'],
             "event": "characteristics.evaluate",
             "condition": dict(keyword_condition),
             "modifier": {
@@ -552,6 +555,12 @@ def _attached_granted_abilities(
             granted_abilities.extend(ordinary)
             fragments.extend(_toxic_ability_fragments(ordinary))
             continue
+        triggered = triggered_keyword_grant(term)
+        if triggered is not None:
+            label, fragment, _capability = triggered
+            granted_abilities.append(label)
+            fragments.append(fragment)
+            continue
         ward = fixed_ward_spec(term)
         if ward is None or ward.generic_cost is None:
             return None
@@ -574,6 +583,8 @@ def _attached_ability_capabilities(
             capabilities.add("damage.result.toxic")
         elif ability.startswith("Ward {"):
             capabilities.add("trigger.keyword.ward.fixed_generic")
+        elif (triggered := triggered_keyword_grant(ability)) is not None:
+            capabilities.add(triggered[2])
         else:
             capabilities.update(
                 FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES.get(ability, ())
@@ -1554,6 +1565,10 @@ def controlled_characteristic_until_end_of_turn_effect(
     ):
         return None
     modifier = descriptor["modifier"]
+    if modifier.get("add_ability_fragments"):
+        # This legacy resolution-set codec carries ordinary keyword labels only.
+        # A typed quality or trigger must not be silently discarded here.
+        return None
     keywords = tuple(modifier["add_abilities"])
     mechanics = tuple(
         sorted(

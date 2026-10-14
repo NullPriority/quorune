@@ -50,29 +50,62 @@
       "rule_id": "701.25c",
       "rule_text_sha256": "0302f1b28c2f8685ca76a4d9bd239866f09f716362610f48c9a70034b7d1b9cd",
       "classification": "behavioral",
-      "status": "blocked",
-      "assertion_kind": "unsupported_fail_closed",
+      "status": "passing",
+      "assertion_kind": "executable_engine",
       "reviewed": true,
-      "implementation_components": ["quorune.compiler.surveil_templates.fixed_surveil_effect_template", "quorune.semantic_choices.surveil.SurveilChoiceHandler"],
-      "executable_test_ids": ["tests.test_surveil_rules.FixedSurveilCompilerTests.test_dynamic_targeted_linked_and_event_consumer_surveil_remain_residual", "tests.test_surveil_rules.FixedSurveilRuntimeTests.test_surveil_short_and_empty_library_emit_exact_events"],
-      "required_scenarios": ["positive", "negative"],
-      "covered_scenarios": ["positive", "negative"],
-      "blockers": ["Surveil 0 remains a precise compiler residual rather than an executable no-event instruction"],
-      "notes": ["Every represented instruction has a positive count; a positive instruction still emits a Surveil event when the library is empty."]
+      "implementation_components": [
+        "quorune.compiler.surveil_templates.fixed_surveil_effect_template",
+        "quorune.semantic_choices.surveil.SurveilChoiceHandler"
+      ],
+      "executable_test_ids": [
+        "tests.test_surveil_rules.FixedSurveilCompilerTests.test_dynamic_targeted_linked_and_event_consumer_surveil_remain_residual",
+        "tests.test_surveil_rules.FixedSurveilRuntimeTests.test_surveil_short_and_empty_library_emit_exact_events",
+        "tests.test_variable_library_counts.VariableLibraryCountActionTests.test_zero_public_count_creates_no_choice_or_scry_surveil_event"
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative"
+      ],
+      "covered_scenarios": [
+        "positive",
+        "negative"
+      ],
+      "blockers": [],
+      "notes": [
+        "A resolved typed count of zero performs no Surveil action or event; printed fixed Surveil 0 remains a bounded grammar exclusion. Positive instructions complete even on an empty library."
+      ]
     },
     {
       "rule_id": "701.25d",
       "rule_text_sha256": "09f53e9572287a7ab4c9de411b32a34115aa2b6e646bba2dc508d6b98df8b494",
       "classification": "behavioral",
-      "status": "blocked",
-      "assertion_kind": "unsupported_fail_closed",
+      "status": "passing",
+      "assertion_kind": "executable_engine",
       "reviewed": true,
-      "implementation_components": ["quorune.rules.library_surveillance.commit_surveil_arrangement", "quorune.trigger_discovery.dispatch_semantic_event"],
-      "executable_test_ids": ["tests.test_surveil_rules.FixedSurveilRuntimeTests.test_surveil_short_and_empty_library_emit_exact_events", "tests.test_surveil_rules.FixedSurveilCompilerTests.test_dynamic_targeted_linked_and_event_consumer_surveil_remain_residual", "tests.test_surveil_rules.FixedSurveilRuntimeTests.test_residual_surveil_pairs_remain_fail_closed_at_cardprogram_boundary"],
-      "required_scenarios": ["positive", "negative", "interaction"],
-      "covered_scenarios": ["positive", "negative", "interaction"],
-      "blockers": ["compiler grammar for abilities that trigger whenever a player surveils remains unsupported"],
-      "notes": ["The action emits player.surveilled only after selected moves and retained-top ordering finish, including when a positive instruction cannot look at any cards; unsupported event consumers remain outside trusted CardPrograms."]
+      "implementation_components": [
+        "quorune.rules.library_surveillance.commit_surveil_arrangement",
+        "quorune.trigger_discovery.dispatch_semantic_event"
+      ],
+      "executable_test_ids": [
+        "tests.test_surveil_rules.FixedSurveilRuntimeTests.test_surveil_short_and_empty_library_emit_exact_events",
+        "tests.test_surveil_rules.FixedSurveilCompilerTests.test_dynamic_targeted_linked_and_event_consumer_surveil_remain_residual",
+        "tests.test_surveil_rules.FixedSurveilRuntimeTests.test_residual_surveil_pairs_remain_fail_closed_at_cardprogram_boundary",
+        "tests.test_variable_library_counts.VariableLibraryCountActionTests.test_actual_library_actions_trigger_only_current_controller_observers_after_completion"
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative",
+        "interaction"
+      ],
+      "covered_scenarios": [
+        "positive",
+        "negative",
+        "interaction"
+      ],
+      "blockers": [],
+      "notes": [
+        "Positive Surveil completes its normalized player event after the entire procedure, including an empty library. Represented controller observers preserve scope; unrepresented linked bodies remain residual."
+      ]
     }
   ]
 }

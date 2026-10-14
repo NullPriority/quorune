@@ -52760,13 +52760,14 @@
       ],
       "effective_date": "2026-08-07",
       "executable_test_ids": [
-        "tests.test_scry_rules.ScryRuntimeTests.test_scry_zero_and_empty_library_create_no_event"
+        "tests.test_scry_rules.ScryRuntimeTests.test_scry_zero_has_no_event_and_positive_empty_library_completes_event",
+        "tests.test_variable_library_counts.VariableLibraryCountActionTests.test_zero_public_count_creates_no_choice_or_scry_surveil_event"
       ],
       "implementation_components": [
         "quorune.semantic_choices.scry.ScryChoiceHandler"
       ],
       "notes": [
-        "Scry 0 auto-continues without a Scry event or player task; an empty library likewise creates no physical choice."
+        "Scry 0 auto-continues without an event or player task. Positive empty-library completion is separately covered by 701.22d."
       ],
       "required_scenarios": [
         "positive",
@@ -52825,23 +52826,42 @@
       "status": "blocked"
     },
     {
-      "assertion_kind": "inventory_only",
-      "blockers": [
-        "semantic_review_not_completed"
-      ],
+      "assertion_kind": "executable_engine",
+      "blockers": [],
       "case_id": "cr-701.22d",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay"
+      ],
       "dependency_rule_ids": [
         "701.22"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_variable_library_counts.VariableLibraryCountActionTests.test_positive_scry_on_empty_library_completes_an_event_without_private_choice",
+        "tests.test_variable_library_counts.VariableLibraryCountActionTests.test_actual_library_actions_trigger_only_current_controller_observers_after_completion"
+      ],
+      "implementation_components": [
+        "quorune.semantic_choices.scry.ScryChoiceHandler",
+        "quorune.rules.library_scry.commit_scry_arrangement",
+        "quorune.trigger_discovery.dispatch_semantic_event"
+      ],
+      "notes": [
+        "A completed positive Scry instruction emits player.scried after the entire procedure, including an empty library; zero emits no action. Controller observers exclude another player's completed procedure."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay"
+      ],
+      "reviewed": true,
       "rule_id": "701.22d",
       "rule_text_sha256": "ae9390235aa64de4ff777050f7112310c63c7602e2607c0cd359b9cdb659a874",
       "schema_version": 1,
@@ -52850,7 +52870,7 @@
         "end_line": 3466,
         "start_line": 3465
       },
-      "status": "unreviewed"
+      "status": "passing"
     },
     {
       "assertion_kind": "inventory_only",
@@ -53507,10 +53527,8 @@
       "status": "blocked"
     },
     {
-      "assertion_kind": "unsupported_fail_closed",
-      "blockers": [
-        "Surveil 0 remains a precise compiler residual rather than an executable no-event instruction"
-      ],
+      "assertion_kind": "executable_engine",
+      "blockers": [],
       "case_id": "cr-701.25c",
       "case_version": 1,
       "classification": "behavioral",
@@ -53524,14 +53542,15 @@
       "effective_date": "2026-08-07",
       "executable_test_ids": [
         "tests.test_surveil_rules.FixedSurveilCompilerTests.test_dynamic_targeted_linked_and_event_consumer_surveil_remain_residual",
-        "tests.test_surveil_rules.FixedSurveilRuntimeTests.test_surveil_short_and_empty_library_emit_exact_events"
+        "tests.test_surveil_rules.FixedSurveilRuntimeTests.test_surveil_short_and_empty_library_emit_exact_events",
+        "tests.test_variable_library_counts.VariableLibraryCountActionTests.test_zero_public_count_creates_no_choice_or_scry_surveil_event"
       ],
       "implementation_components": [
         "quorune.compiler.surveil_templates.fixed_surveil_effect_template",
         "quorune.semantic_choices.surveil.SurveilChoiceHandler"
       ],
       "notes": [
-        "Every represented instruction has a positive count; a positive instruction still emits a Surveil event when the library is empty."
+        "A resolved typed count of zero performs no Surveil action or event; printed fixed Surveil 0 remains a bounded grammar exclusion. Positive instructions complete even on an empty library."
       ],
       "required_scenarios": [
         "positive",
@@ -53546,13 +53565,11 @@
         "end_line": 3519,
         "start_line": 3518
       },
-      "status": "blocked"
+      "status": "passing"
     },
     {
-      "assertion_kind": "unsupported_fail_closed",
-      "blockers": [
-        "compiler grammar for abilities that trigger whenever a player surveils remains unsupported"
-      ],
+      "assertion_kind": "executable_engine",
+      "blockers": [],
       "case_id": "cr-701.25d",
       "case_version": 1,
       "classification": "behavioral",
@@ -53568,14 +53585,15 @@
       "executable_test_ids": [
         "tests.test_surveil_rules.FixedSurveilRuntimeTests.test_surveil_short_and_empty_library_emit_exact_events",
         "tests.test_surveil_rules.FixedSurveilCompilerTests.test_dynamic_targeted_linked_and_event_consumer_surveil_remain_residual",
-        "tests.test_surveil_rules.FixedSurveilRuntimeTests.test_residual_surveil_pairs_remain_fail_closed_at_cardprogram_boundary"
+        "tests.test_surveil_rules.FixedSurveilRuntimeTests.test_residual_surveil_pairs_remain_fail_closed_at_cardprogram_boundary",
+        "tests.test_variable_library_counts.VariableLibraryCountActionTests.test_actual_library_actions_trigger_only_current_controller_observers_after_completion"
       ],
       "implementation_components": [
         "quorune.rules.library_surveillance.commit_surveil_arrangement",
         "quorune.trigger_discovery.dispatch_semantic_event"
       ],
       "notes": [
-        "The action emits player.surveilled only after selected moves and retained-top ordering finish, including when a positive instruction cannot look at any cards; unsupported event consumers remain outside trusted CardPrograms."
+        "Positive Surveil completes its normalized player event after the entire procedure, including an empty library. Represented controller observers preserve scope; unrepresented linked bodies remain residual."
       ],
       "required_scenarios": [
         "positive",
@@ -53591,7 +53609,7 @@
         "end_line": 3521,
         "start_line": 3520
       },
-      "status": "blocked"
+      "status": "passing"
     },
     {
       "assertion_kind": "static_traceability",

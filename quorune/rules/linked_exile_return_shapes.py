@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any, Iterable, Mapping, Sequence
 
-from ..linked_exile_return_model import LINKED_EXILE_RETURN_CAPABILITY, LINKED_EXILE_RETURN_MECHANIC, LINKED_EXILE_RETURN_OPERATION, LinkedExileReturnSpec
+from ..linked_exile_return_model import CONDITIONAL_EXILE_CAPABILITY, LINKED_EXILE_RETURN_CAPABILITY, LINKED_EXILE_RETURN_MECHANIC, LINKED_EXILE_RETURN_OPERATION, LinkedExileReturnSpec
 from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES
 from ..targets import TargetGroup
 
@@ -29,4 +29,4 @@ def linked_exile_return_node_capabilities(*, effects: Sequence[Mapping[str, Any]
                 return ()
     except (TypeError, ValueError):
         return ()
-    return tuple(sorted({LINKED_EXILE_RETURN_CAPABILITY, *(capability for keyword in spec.keywords for capability in FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES[keyword])}))
+    return tuple(sorted({LINKED_EXILE_RETURN_CAPABILITY, *((CONDITIONAL_EXILE_CAPABILITY,) if spec.timing=='source_departure' else ()), *(capability for keyword in spec.keywords for capability in FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES[keyword])}))

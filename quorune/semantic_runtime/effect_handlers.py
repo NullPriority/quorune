@@ -55,6 +55,10 @@ class DomainEffectHandler:
                 "Semantic programs cannot supply authoritative runtime source context"
             )
         runtime_effect = dict(effect)
+        if operation == 'goad' and effect.get('schema_version') == 2:
+            from ..goad_instruction import validate_fixed_goad
+            try:validate_fixed_goad(effect)
+            except (ValueError,TypeError,KeyError) as exc:raise SemanticNodeError(str(exc)) from exc
         if operation == LINKED_EXILE_RETURN_OPERATION:
             try:
                 validate_linked_instruction(effect)

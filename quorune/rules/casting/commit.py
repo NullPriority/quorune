@@ -1366,6 +1366,15 @@ def commit_cast(
     proposal: CastProposal,
     response: Mapping[str, Any],
 ) -> None:
+    from ...conditional_exile_return import commit_cast_with_conditional_returns
+    commit_cast_with_conditional_returns(host,proposal,response)
+
+
+def _commit_cast_costs_and_stack(
+    host: CastCommitHost,
+    proposal: CastProposal,
+    response: Mapping[str, Any],
+) -> bool:
     """Commit one revalidated cast proposal through authoritative owners."""
 
     card, record, program = _revalidate_source(host, proposal)
@@ -1441,12 +1450,7 @@ def commit_cast(
     )
     collect_ward_occurrences(host, item)
     host.state.players[proposal.seat].yield_policy = YieldPolicy()
-    if bool(details.get("during_resolution")):
-        return
-    if host._stabilize():
-        return
-    host.state.priority_player = proposal.seat
-    host.state.priority_passes = []
+    return bool(details.get('during_resolution'))
 
 
 __all__ = ["CastCommitHost", "commit_cast"]

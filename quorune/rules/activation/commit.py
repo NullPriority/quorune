@@ -583,7 +583,7 @@ def _activation_stack_item(
     paid_objects: Sequence[str],
     attachment_snapshot: SourceAttachmentSnapshot | None,
     special_cost_context: tuple[str, Mapping[str, Any]] | None,
-    encore_source_context: Mapping[str, Any] | None,
+    source_activation_context: Mapping[str, Any] | None,
 ) -> StackItem:
     details = dict(thaw_json(proposal.details))
     snapshots = [
@@ -619,7 +619,7 @@ def _activation_stack_item(
                 else {}
             ),
             **dict(details.get("builtin_context") or {}),
-            **dict(encore_source_context or {}),
+            **dict(source_activation_context or {}),
             "target_groups": thaw_json(proposal.target_groups),
             "target_snapshots": thaw_json(proposal.target_snapshots),
             "targets_revalidated": False,
@@ -732,6 +732,15 @@ def commit_activation(
     proposal: ActivationProposal,
     response: Mapping[str, Any],
 ) -> None:
+    from ...conditional_exile_return import commit_activation_with_conditional_returns
+    commit_activation_with_conditional_returns(host,proposal,response)
+
+
+def _commit_activation_costs_and_stack(
+    host: ActivationCommitHost,
+    proposal: ActivationProposal,
+    response: Mapping[str, Any],
+) -> bool | None:
     """Commit one revalidated activation proposal through typed state owners."""
 
     source, ability, mana_option = _revalidate_activation(host, proposal)
@@ -749,6 +758,8 @@ def commit_activation(
         source,
         program,
     )
+    from ...transmute import capture_transmute_discard
+    transmute_context = capture_transmute_discard(host, program, source)
     attachment_snapshot = _source_attachment_snapshot(host, source, program)
     if not ability.mana_ability:
         clear_mana_undo_stack(host.state.players[proposal.seat].stats)
@@ -787,7 +798,9 @@ def commit_activation(
     from ...public_quantity_mana_runtime import capture_mana_source_information
     mana_source_information = capture_mana_source_information(host, proposal.seat, source, ability)
     origin = _commit_source_cost(host, source, ability, response)
-    encore_source_context = None
+    from ...transmute import finalize_transmute_discard
+    finalize_transmute_discard(host, source, transmute_context)
+    source_activation_context = dict(transmute_context) or None
     if program is not None and any(
         effect.get("op") == ENCORE_EFFECT_OPERATION
         for effect in program.effects
@@ -795,7 +808,7 @@ def commit_activation(
         from ...token_creation import token_copy_snapshot
 
         source_logical_object_id = source.logical_object_id
-        encore_source_context = {
+        source_activation_context = {
             "encore_source_zone": source.zone,
             "encore_copy_snapshot": token_copy_snapshot(host, source),
         }
@@ -812,7 +825,7 @@ def commit_activation(
             source_was_snow=source_was_snow,
             source_information=mana_source_information,
         )
-        return
+        return True
     item = _activation_stack_item(
         host,
         proposal,
@@ -823,7 +836,7 @@ def commit_activation(
         paid_objects,
         attachment_snapshot,
         special_cost_context,
-        encore_source_context,
+        source_activation_context,
     )
     begin_ninjutsu_reveal(host, source, item)
     if duration_tracked:
@@ -870,11 +883,7 @@ def commit_activation(
         changed_players=[proposal.seat],
     )
     _dispatch_cycling_event(host, proposal, item, cycling_snapshot)
-    if host._stabilize():
-        return
-    host.state.priority_player = proposal.seat
-    host.state.priority_passes = []
-    host.state.players[proposal.seat].yield_policy = YieldPolicy()
+    return False
 
 
 __all__ = ["ActivationCommitHost", "commit_activation"]

@@ -1,8 +1,8 @@
 from __future__ import annotations
+from .fixed_instruction_program_closure import is_closed_fixed_instruction_program
 from ..rules.control_capability_shapes import fixed_control_node_capabilities
 from ..rules.scheduled_player_shapes import is_closed_scheduled_player_program
 from ..rules.affected_player_discard_capability_shapes import is_closed_fixed_bound_discard_program
-from ..rules.extra_turn_shapes import is_closed_fixed_extra_turn_program
 from ..rules.public_zone_move_capability_shapes import fixed_owner_zone_move_node_capabilities
 from ..rules.target_characteristic_sets import is_closed_target_characteristic_set_program
 
@@ -128,6 +128,7 @@ from ..rules.closed_effect_program_shapes import (
 from ..rules.echo_capability_shapes import fixed_mana_echo_node_capabilities
 from ..rules.public_quantity_mana_shapes import is_closed_public_quantity_mana_program
 from ..rules.whole_hand_discard_shapes import is_closed_whole_hand_discard_program
+from ..transmute import is_closed_transmute_program
 from ..rules.as_unblocked_effect import is_closed_optional_as_unblocked_program
 from ..semantics import SemanticProgram, SemanticRegistry
 from ..util import stable_json
@@ -1270,8 +1271,9 @@ def _is_closed_fixed_owner_zone_move_program(program: SemanticProgram) -> bool:
 
 def _closed_effect_recognizers():
     return (
+        is_closed_transmute_program,
         _is_closed_fixed_owner_zone_move_program,
-        is_closed_fixed_extra_turn_program,
+        is_closed_fixed_instruction_program,
         is_closed_fixed_bound_discard_program,
         is_closed_reanimation_effect_program,
         is_closed_public_quantity_mana_program, is_closed_whole_hand_discard_program, _is_closed_fixed_control_program, is_closed_scheduled_player_program, is_closed_target_characteristic_set_program,
@@ -1362,12 +1364,8 @@ def _is_closed_effect_program(program: SemanticProgram) -> bool:
 
     if is_closed_permanent_additional_cost_program(program):
         return True
-    from ..rules.linked_exile_return_shapes import linked_exile_return_node_capabilities
-    from ..rules.resolution_condition_shapes import resolution_condition_node_capabilities
-    if _node_capabilities_close_program(program, resolution_condition_node_capabilities):
-        return True
-    if _node_capabilities_close_program(program, linked_exile_return_node_capabilities):
-        return True
+    from .nonleaf_effect_closure import nonleaf_effect_program_is_closed
+    if nonleaf_effect_program_is_closed(program):return True
     if is_closed_composed_spell_effect_program(
         program,
         component_recognizers=_closed_effect_recognizers(),

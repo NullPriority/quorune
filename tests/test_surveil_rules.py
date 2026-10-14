@@ -134,7 +134,7 @@ class FixedSurveilCompilerTests(unittest.TestCase):
             "Surveil X.",
             "Target player surveils 2.",
             "Surveil 2, then draw a card for each card put into your graveyard this way.",
-            "Whenever you surveil, draw a card.",
+            "Whenever you surveil, draw a card for each card put into your graveyard this way.",
         )
         for index, text in enumerate(variants):
             with self.subTest(text=text):
@@ -151,6 +151,9 @@ class FixedSurveilCompilerTests(unittest.TestCase):
                 ir = self.compile(record)
                 self.assertNotEqual("exact", ir.status)
                 self.assertTrue(ir.material_residuals)
+        supported = replace(self.base, oracle_id="fixture:represented-surveil-observer",
+            oracle_text="Whenever you surveil, draw a card.", type_line="Enchantment")
+        self.assertEqual("exact", self.compile(supported).status)
 
     def test_surveil_shape_dependency_and_compiler_mutants_fail_closed(self):
         valid = ({"op": "surveil", "player": "$controller", "count": 2},)
@@ -588,8 +591,8 @@ class FixedSurveilRuntimeTests(unittest.TestCase):
                 "Surveil 2.\nUp to two target players each draw a card.",
             ),
             (
-                "event-consumer",
-                "Surveil 2.\nWhenever you surveil, draw a card.",
+                "linked-event-consumer",
+                "Surveil 2.\nWhenever you surveil, draw a card for each card put into your graveyard this way.",
             ),
         )
         base = base_surveil_record()
@@ -652,6 +655,28 @@ class FixedSurveilRuntimeTests(unittest.TestCase):
         self.assertFalse(program.residuals)
         operations = [effect["op"] for ability in program.abilities for effect in ability.effects]
         self.assertEqual(["surveil", "apply_if_public_condition"], operations)
+
+    def test_promoted_surveil_event_consumer_pair_is_capability_closed(self):
+        from quorune.card_programs import bind_card_program_runtime
+
+        record = replace(base_surveil_record(),
+            oracle_id="fixture:promoted-surveil-event-consumer",
+            name="Promoted Surveil Event Consumer",
+            oracle_text="Surveil 2.\nWhenever you surveil, draw a card.")
+        ir = compile_oracle_card(record, capability_registry=self.capabilities,
+            capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        program = compile_best_available_card_program(self.db, record,
+            semantic_registry=SemanticRegistry(), capability_registry=self.capabilities,
+            capability_profile="commander_review")
+        self.assertEqual("capability_closed", program.trust_closure["trust_basis"])
+        self.assertFalse(program.residuals)
+        self.assertTrue(bind_card_program_runtime(program, capability_registry=self.capabilities,
+            profile="commander_review")["strict_capability_ready"])
+        observer = next(ability for ability in program.abilities if ability.event == "player.surveilled")
+        self.assertEqual("$controller", observer.effects[0]["player"])
+        self.assertEqual("draw", observer.effects[0]["op"])
+        self.assertEqual(1, observer.effects[0]["count"])
 
     def test_surveil_runtime_validation_mutant_is_killed(self):
         def stale_rejection(seed: int) -> None:

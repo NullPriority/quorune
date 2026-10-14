@@ -11,6 +11,12 @@ from ..compiler.affected_player_sacrifice_templates import (
 )
 
 
+def is_closed_affected_player_sacrifice_program(program: Any) -> bool:
+    required=fixed_affected_player_sacrifice_node_capabilities(effects=program.effects,
+        target_schema=program.target_schema,mechanic_ids=program.coverage)
+    return bool(required) and set(required).issubset(program.capability_dependencies)
+
+
 def fixed_affected_player_sacrifice_node_capabilities(
     *,
     effects: Sequence[Mapping[str, Any]],
@@ -43,6 +49,7 @@ def fixed_affected_player_sacrifice_node_capabilities(
         or effect.get("op") != "choose_cards_apnap"
         or effect.get("actor") != "$controller"
         or effect.get("zone") != "battlefield"
+        or type(effect.get("count")) is not int
         or effect.get("count") not in {1, 2}
         or effect.get("then") != "sacrifice"
         or type(effect.get("prompt")) is not str
@@ -79,10 +86,11 @@ def fixed_affected_player_sacrifice_node_capabilities(
         ):
             return ()
         dependencies.add("target.revalidate_resolution")
-    elif target_schema is not None or effect.get("players") not in {
+    elif target_schema is not None or effect.get("players") not in (
         "all",
         "opponents",
-    }:
+        ["$controller"],
+    ):
         return ()
     return tuple(sorted(dependencies))
 

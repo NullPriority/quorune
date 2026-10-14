@@ -38,6 +38,8 @@ from .apnap_commit import APNAP_COMMIT_CHOICE_HANDLERS
 from .madness import MADNESS_CHOICE_HANDLERS
 from .attacking_tokens import ATTACKING_TOKEN_CHOICE_HANDLERS
 from .hand_inspection import HAND_INSPECTION_CHOICE_HANDLERS
+from .connive import FixedConniveChoiceHandler
+from .exploit import ExploitChoiceHandler
 
 
 @lru_cache(maxsize=1)
@@ -73,5 +75,7 @@ def default_semantic_choice_registry() -> SemanticChoiceRegistry:
             *MADNESS_CHOICE_HANDLERS,
             *ATTACKING_TOKEN_CHOICE_HANDLERS,
             *HAND_INSPECTION_CHOICE_HANDLERS,
+            FixedConniveChoiceHandler(),
+            ExploitChoiceHandler(),
         )
     ).freeze()

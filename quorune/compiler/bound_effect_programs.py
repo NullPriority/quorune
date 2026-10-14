@@ -137,6 +137,12 @@ def _single_target_reference(text: str, compile_component: ComponentCompiler):
                 break
             normalized = clause[:reference.start()] + generic_subject + clause[reference.end():]
             component = compile_component(normalized)
+            if component[0] is None and (
+                schema.get("types_any") == ["creature"]
+                or "creature" in schema.get("types_all", [])
+            ):
+                creature_clause = clause[:reference.start()] + "target creature" + clause[reference.end():]
+                component = compile_component(creature_clause)
             if (
                 component[0] is None or component[2] is None
                 or not _public_single_target(component[2])

@@ -172,6 +172,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
     ) or relative in {
         "quorune/activation_mana_cost.py",
         "quorune/whole_hand_discard.py",
+        "quorune/random_discard.py",
         "quorune/public_quantity_mana_model.py",
         "quorune/public_quantity_mana_abilities.py",
         "quorune/public_quantity_mana_runtime.py",
@@ -212,6 +213,8 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/combat_evasion_engine_adapter.py",
         "quorune/commander.py",
         "quorune/commander_zones.py",
+        "quorune/connive.py",
+        "quorune/goad_instruction.py",
         "quorune/convoke.py",
         "quorune/cast_timing.py",
         "quorune/cast_lifecycles.py",
@@ -443,6 +446,7 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/class_levels.py",
         "quorune/crew.py",
         "quorune/cycling_abilities.py",
+        "quorune/transmute.py",
         "quorune/station.py",
     }:
         return "activated_abilities"
@@ -450,9 +454,13 @@ def _owner(relative: str, layer: str) -> str:
         return "graveyard_actions"
     if relative == "quorune/self_zone_move.py":
         return "zones_and_object_identity"
+    if relative == "quorune/connive.py":
+        return "semantic_choices"
+    if relative == "quorune/goad_instruction.py":
+        return "combat_declaration"
     if relative in {"quorune/hand_entry_queries.py", "quorune/hand_entry_move.py"}:
         return "zones_and_object_identity"
-    if relative in {"quorune/whole_hand_discard.py", "quorune/whole_hand_discard_model.py"}:
+    if relative in {"quorune/whole_hand_discard.py", "quorune/whole_hand_discard_model.py", "quorune/random_discard.py"}:
         return "zones_and_object_identity"
     if relative in {
         "quorune/impulse_access.py",
@@ -663,6 +671,8 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/commander_zones.py",
         "quorune/public_zone_moves.py",
         "quorune/linked_exile_return.py",
+        "quorune/conditional_exile_model.py",
+        "quorune/conditional_exile_return.py",
     }:
         return "zones_and_object_identity"
     if relative == "quorune/permanent_designations.py":
@@ -869,9 +879,11 @@ def build_classifications() -> dict[str, Any]:
                             "compiled_activated_abilities.py",
                             "crew.py",
                             "cycling_abilities.py",
+                            "transmute.py",
                             "fixed_mana_abilities.py",
                             "public_quantity_mana",
                             "whole_hand_discard",
+                            "random_discard.py",
                             "intrinsic_basic_land_mana.py",
                             "impulse_access_model.py",
                             "mana_ability_runtime.py",

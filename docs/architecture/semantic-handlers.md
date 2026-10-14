@@ -9,6 +9,34 @@ maintenance: "hand-maintained"
 
 # Typed semantic handlers
 
+Intrinsic Exploit uses a public zero-or-one creature choice issued to the
+locked entry-trigger controller. The typed sacrifice intent retains both
+incarnations and delegates to the canonical replacement-aware zone owner.
+Its committed sacrifice history distinguishes a completed sacrifice from an
+ordinary departure. The host captures the current trigger-source snapshot
+before sacrifice, so sacrificing the exploiting creature itself can produce
+its separate Exploit result trigger. A source that departed before this
+instruction cannot supply that result ability. Replacement redirection
+preserves the sacrifice occurrence even when the selected creature does not
+die. Saved replacement choices retain the exact intent identity.
+Qualified external observers and linked exploited-characteristic results
+remain residuals.
+
+Fixed single-object Connive lowers to a versioned instruction under CR 701.50.
+Its current controller draws, then privately chooses the mandatory number of
+discards. A departing source retains its last controller and incarnation;
+returning the physical card creates a separate object. Fixed Connive N uses the
+same ordered phases. Zero performs no action and publishes no Connive event.
+The canonical discard journal determines which selected incarnations actually
+committed, including public replacement redirection. CR 701.9c excludes
+unrevealed hidden redirected cards from characteristic-dependent nonland
+counting. Counter placement uses the existing replacement-aware owner and
+requires the retained permanent incarnation. Completion publishes only after
+draw, discard and counter continuations finish, including impossible actions.
+Private candidate ordering is deterministic across checkpoint serialization.
+Variable counts, simultaneous connivers, Connive replacements and unrepresented
+listeners or reflexive results remain residuals.
+
 The existing optional-effect choice also represents fixed controller draw
 followed by “If you do, discard” instructions. Decline performs neither action.
 Acceptance resumes the draw and then the mandatory private discard through
@@ -268,6 +296,28 @@ Empty hands require no subset choice and do not skip an independent draw.
 Replacement continuations seal private membership, including logical object
 identity, and reject a changed hand before resuming. This snapshot is not
 published to another principal.
+
+Mandatory “sacrifice a permanent” instructions for the resolving controller
+reuse the same `choose_cards_apnap` owner as fixed player-targeted sacrifices.
+The controller chooses only current eligible permanents they control, including
+the ability source when the instruction permits it. Fixed creature subtype
+predicates inspect current creature types at choice preparation and again at
+commit. Empty sets perform no sacrifice, short sets sacrifice their available
+members, and destination replacements retain the sealed choice before the
+remaining instructions resume. Sacrifice uses its own transition cause and
+does not consume destruction or regeneration effects.
+
+The separate `discard_random_cards` instruction samples a fixed one-to-four
+card subset of each represented current hand without a client selection choice.
+Each player's complete hand is validated before sampling; empty and short hands
+discard only their available cards. The seed, stack identity, instruction cursor
+and affected seat define a deterministic uniform sample. One simultaneous
+discard transaction owns destinations and events. Replacement continuations
+seal every hand incarnation and reject changed membership before sampling the
+same subset again. Controller apply-or-decline wrappers retain their ordinary
+private choice, and damage-player results require a player-only event binding.
+Random costs, filtered and variable counts, and linked discard consequences
+remain outside this family.
 
 Fixed controller and each-player draw tails reuse ordinary draw effects;
 independent controller quantities read the public collection or current-turn

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "contract_version": 1,
+  "contract_version": 2,
   "mechanic_id": "surveil",
   "official_name": "Surveil",
   "effective_date": "2026-08-07",
@@ -39,8 +39,8 @@
     "component": "SurveilChoiceHandler, LibraryPartitionChoice, OrderedLibraryPartition, SurveilArrangement, SurveilLibraryIntent, commit_surveil_arrangement, and the canonical zone-transition owner",
     "version": "typed-fixed-controller-surveil-v1",
     "capability_ids": ["library.surveil.fixed_controller"],
-    "supported_slice": "One mandatory positive fixed-count Surveil instruction for its controller with no linked result consumer or additional looked-at cards."
+    "supported_slice": "One resolved controller Surveil count through the canonical private partition, including zero without an event and positive empty-library completion; represented normalized action observers use separate event and result capabilities."
   },
-  "known_blockers": ["Surveil 0 and dynamic, variable, optional, cost, target-player, each-player, repeated, copied, or granted forms remain residual", "effects that add looked-at cards under CR 701.25b need a typed additive inspection boundary", "linked cards-put-into-graveyard or cards-left-on-top consumers need typed actual-result bindings", "Surveil-event consumer grammar beyond the emitted normalized event remains residual", "graveyard-order-sensitive interactions outside the represented simultaneous ordering remain excluded"],
+  "known_blockers": ["Unrepresented dynamic, variable, optional, cost, target-player, each-player, repeated, copied, or granted forms remain residual; printed fixed Surveil 0 remains residual", "effects that add looked-at cards under CR 701.25b need a typed additive inspection boundary", "linked cards-put-into-graveyard or cards-left-on-top consumers need typed actual-result bindings", "Surveil-event consumer grammar beyond represented normalized fixed-body observers remains residual", "graveyard-order-sensitive interactions outside the represented simultaneous ordering remain excluded"],
   "review_status": "reviewed"
 }

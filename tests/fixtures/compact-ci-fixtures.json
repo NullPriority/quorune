@@ -31,7 +31,9 @@
     "tests/fixtures/complex-activation-mana-cards.json",
     "tests/fixtures/composition-assurance-cards.json",
     "tests/fixtures/conditional-entry-library-targets.json",
+    "tests/fixtures/conditional-exile-cards.json",
     "tests/fixtures/controller-damage-cards.json",
+    "tests/fixtures/controller-sacrifice-cards.json",
     "tests/fixtures/copied-self-entry-counter-cards.json",
     "tests/fixtures/counted-activation-costs.json",
     "tests/fixtures/counted-library-search-cards.json",
@@ -62,6 +64,7 @@
     "tests/fixtures/fixed-effect-clause-sequence-cards.json",
     "tests/fixtures/fixed-evasion-grants.json",
     "tests/fixtures/fixed-extra-turn-cards.json",
+    "tests/fixtures/fixed-keyword-event-effect-cards.json",
     "tests/fixtures/fixed-life-cumulative-upkeep-cards.json",
     "tests/fixtures/fixed-mana-result-cards.json",
     "tests/fixtures/fixed-next-turn-draw-cards.json",
@@ -85,6 +88,7 @@
     "tests/fixtures/kicked-spell-conditions.json",
     "tests/fixtures/kindred-subtype-quantities.json",
     "tests/fixtures/leveler-bands-cards.json",
+    "tests/fixtures/library-other-remainder-cards.json",
     "tests/fixtures/library-search-qualifier-cards.json",
     "tests/fixtures/limited-event-triggers.json",
     "tests/fixtures/main-phase-trigger-cards.json",
@@ -114,6 +118,7 @@
     "tests/fixtures/query-gated-self-characteristics-cards.json",
     "tests/fixtures/query-power-toughness-definition-cards.json",
     "tests/fixtures/query-scaled-counter-cards.json",
+    "tests/fixtures/random-discard-cards.json",
     "tests/fixtures/read-ahead-saga-cards.json",
     "tests/fixtures/repeatable-object-action-triggers.json",
     "tests/fixtures/resolution-public-condition-cards.json",
@@ -145,12 +150,14 @@
     "tests/fixtures/token-copy-recipe-cards.json",
     "tests/fixtures/token-entry-boundary-cards.json",
     "tests/fixtures/toughness-assignment-cards.json",
+    "tests/fixtures/transmute-cards.json",
     "tests/fixtures/typecycling-cards.json",
     "tests/fixtures/typed-grant-carrier-cards.json",
     "tests/fixtures/typed-land-entry-cards.json",
     "tests/fixtures/typed-token-ability-program-cards.json",
     "tests/fixtures/umbra-armor-cards.json",
     "tests/fixtures/vanishing-cards.json",
+    "tests/fixtures/variable-library-count-cards.json",
     "tests/fixtures/whole-hand-discard-cards.json"
   ],
   "dynamic_requirements": [
@@ -305,6 +312,23 @@
       "deck_files": [],
       "fixture_files": [],
       "rationale": "Actual resolution numeric/bare-subtype gameplay witnesses iterate these precise registered fixture identities."
+    },
+
+    {
+      "source": "tests/test_high_risk_interaction_assurance.py",
+      "symbol": "HighRiskInteractionAssuranceTests.test_original_batched_scope_expansions_keep_unrepresented_compositions_untrusted",
+      "card_names": [
+        "Aang's Iceberg",
+        "Assimilation Aegis",
+        "Bilbo's Ring",
+        "Gelatinous Cube",
+        "Perilous Snare",
+        "Tibalt, the Fiend-Blooded"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "The bounded dictionary iterates these original cards from classified-interaction-assurance-cards.json to assert whole-program rejection of their exact unresolved composition boundaries."
     }
   ],
   "full_database_only": []

@@ -1,9 +1,11 @@
 from __future__ import annotations
 from ..whole_hand_discard_model import DiscardWholeHandsIntent
+from ..random_discard import RandomDiscardIntent
 from .control_intents import ControlIntent
 from .domain_intent import DomainEffectIntent
 from .zone_move_intent import ZoneMoveIntent, _freeze_replacement_selections
 from .counter_movement_intent import MoveCountersIntent
+from .connive_intent import ConniveCompletedIntent
 
 from dataclasses import dataclass, field
 from typing import Any, Literal, Mapping, TypeAlias
@@ -789,10 +791,15 @@ class ScryLibraryIntent:
     player: str
     arrangement: ScryArrangement
     reason: str
+    requested_count: int | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.arrangement, ScryArrangement):
             raise TypeError("Scry intents require an immutable arrangement")
+        if self.requested_count is not None and (
+            type(self.requested_count) is not int or self.requested_count <= 0
+        ):
+            raise ValueError("Scry requested count must be a positive integer")
 
 
 @dataclass(frozen=True, slots=True)
@@ -1555,6 +1562,7 @@ SemanticIntent: TypeAlias = (
     | BecomeMonstrousIntent
     | BecomeRenownedIntent
     | RecordChoiceIntent
+    | ConniveCompletedIntent
     | ZoneMoveIntent
     | MoveObjectsSimultaneouslyIntent
     | MadnessChoiceIntent
@@ -1591,6 +1599,7 @@ SemanticIntent: TypeAlias = (
     | ProliferateIntent
     | DomainEffectIntent
     | DiscardWholeHandsIntent
+    | RandomDiscardIntent
 )
 ResultShape: TypeAlias = Literal["single", "by_player"]
 

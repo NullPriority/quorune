@@ -33,6 +33,12 @@ def _clauses(text: str) -> tuple[str, str] | None:
 def fixed_controller_effect_clause(
     text: str,
 ) -> tuple[Mapping[str, Any], tuple[str, ...]] | None:
+    from ..random_discard import random_discard_effect_template
+    random_discard = random_discard_effect_template(text)
+    if random_discard is not None:
+        if random_discard[2] is None and random_discard[1][0]['players'] == ['$controller']:
+            return random_discard[1][0], random_discard[3]
+        return None
     draw = fixed_draw_effect_template(text)
     if draw is not None:
         _template, effects, target_schema, mechanics = draw

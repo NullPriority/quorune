@@ -642,6 +642,7 @@ def collect_card_program_continuous_effects(
                         CONDITIONAL_DEFENDER_PERMISSION_HANDLER,
                         CONDITIONAL_AS_UNBLOCKED_HANDLER,
                         'continuous.block-capacity.public-state.v1',
+                        'continuous.declaration.public-state.v1',
                     )
                     if (
                         is_fixed_public_state

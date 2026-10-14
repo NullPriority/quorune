@@ -418,6 +418,10 @@ class HiddenSearchOwnerMixin:
                 if isinstance(mana_value, Mapping)
                 else {"equal": mana_value}
             )
+            if 'equal' in constraint and constraint['equal'] is None:
+                # CR701.23c: an undefined quality permits searching, but no
+                # card can be found. It must not become an unrestricted query.
+                return False
             if (
                 constraint.get("equal") is not None
                 and row.mana_value != float(constraint["equal"])

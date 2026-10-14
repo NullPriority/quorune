@@ -70,13 +70,23 @@ class ScryChoiceHandler:
                 "Scry count must be an exact nonnegative integer"
             )
         refs = context.query.library_refs(context.actor, top_first=True)[:count]
-        if count == 0 or not refs:
+        if count == 0:
             return SemanticChoicePreparation(
                 request=None,
                 continuation_effect=FrozenMap(effect),
                 auto_continue=AutoContinue(
-                    reason="Scry 0 or an empty library creates no Scry event"
+                    reason="Scry 0 creates no Scry event"
                 ),
+            )
+        if not refs:
+            return SemanticChoicePreparation(
+                request=None, continuation_effect=FrozenMap(effect),
+                auto_continue=AutoContinue(reason="Positive Scry completes with an empty library"),
+                preparation_intents=(ScryLibraryIntent(
+                    actor=context.actor, player=context.actor,
+                    arrangement=ScryArrangement((), (), ()),
+                    requested_count=count, reason=context.stack_label,
+                ),),
             )
         rows = []
         for ref in refs:
@@ -149,6 +159,7 @@ class ScryChoiceHandler:
                     actor=actor,
                     player=actor,
                     arrangement=arrangement,
+                    requested_count=continuation.effect["count"],
                     reason=str(continuation.effect["_stack_label"]),
                 ),
             )

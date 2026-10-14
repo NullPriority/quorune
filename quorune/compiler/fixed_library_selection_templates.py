@@ -43,7 +43,7 @@ _START = re.compile(
     re.IGNORECASE,
 )
 _REMAINDER = re.compile(
-    r"(?P<then>then )?(?:put )?the rest(?: of the cards)? "
+    r"(?P<then>then )?(?:put )?the (?P<remainder>rest(?: of the cards)?|other) "
     r"(?P<destination>into your graveyard|on the bottom of your library"
     r"(?: in (?P<order>any|a random) order)?)\.?$",
     re.IGNORECASE,
@@ -200,6 +200,8 @@ def _selection_shape(
         if 0 < count <= look_count:
             return "fixed_any", count, count, (), False
         return None
+    if look_count == 2 and re.fullmatch(r"put one into your hand(?:\.| and)?", text, re.I):
+        return "fixed_any", 1, 1, (), False
 
     patterns = (
         (
@@ -366,6 +368,10 @@ def fixed_library_selection_effect_template(
     if shape is None:
         return None
     policy, minimum, maximum, groups, selected_reveal = shape
+    if (remainder.group("remainder").casefold() == "other"
+            and (policy != "fixed_any" or minimum != maximum
+                 or fixed_number(start.group("count")) - maximum != 1)):
+        return None
     destination_text = remainder.group("destination").casefold()
     destination = (
         "graveyard"

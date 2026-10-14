@@ -144,6 +144,46 @@ def validate_semantic_program_fixture_identities(
     return checked
 
 
+def validate_imported_test_case_aliases(tests_root: Path = TESTS) -> None:
+    """Imported TestCase globals are collected again by unittest's module loader."""
+    trees = {}
+    for path in sorted(tests_root.glob("test_*.py")):
+        try:
+            trees[path.stem] = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+        except (OSError, UnicodeDecodeError, SyntaxError) as exc:
+            raise TestShardError(f"Unable to inspect test module {path}") from exc
+    test_classes = {
+        name: {
+            node.name for node in tree.body if isinstance(node, ast.ClassDef)
+            and any(
+                isinstance(base, ast.Attribute) and base.attr == "TestCase"
+                or isinstance(base, ast.Name) and base.id == "TestCase"
+                for base in node.bases
+            )
+            and any(
+                isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef))
+                and child.name.startswith("test_") for child in node.body
+            )
+        }
+        for name, tree in trees.items()
+    }
+    failures = []
+    for name, tree in trees.items():
+        for node in tree.body:
+            if not isinstance(node, ast.ImportFrom) or not node.module:
+                continue
+            imported_module = node.module.removeprefix("tests.")
+            imported_classes = test_classes.get(imported_module, set())
+            for alias in node.names:
+                if alias.name in imported_classes:
+                    failures.append(f"{name}:{node.lineno}:{alias.asname or alias.name}")
+    if failures:
+        raise TestShardError(
+            "Imported helper TestCase classes duplicate collection; import the module instead: "
+            + ", ".join(failures)
+        )
+
+
 def validate_partition(
     manifest: Mapping,
     *,
@@ -178,6 +218,7 @@ def validate_partition(
             )
         )
     validate_semantic_program_fixture_identities(tests_root)
+    validate_imported_test_case_aliases(tests_root)
     return {
         "primary_shards": len(primary),
         "test_modules": len(actual),

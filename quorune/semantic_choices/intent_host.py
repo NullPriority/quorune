@@ -1,6 +1,8 @@
 from __future__ import annotations
 from ..semantic_runtime.life_batch_intent import LifeLossBatchIntent
 from ..semantic_runtime.control_intents import GainControlIntent, GainControlSetIntent
+from ..semantic_runtime.connive_intent import ConniveCompletedIntent
+from ..semantic_runtime.exploit_intent import ExploitSacrificeIntent
 
 import copy
 import random
@@ -441,6 +443,22 @@ class SemanticChoiceIntentHostMixin:
             details,
         )
 
+    def complete_connive_intent(self, intent: ConniveCompletedIntent) -> None:
+        retained = intent.conniver
+        current = self.state.cards.get(retained.object_id)
+        details = {
+            'player': retained.controller, 'controller': retained.controller,
+            'conniver': retained.ref, 'conniver_object_id': retained.object_id,
+            'conniver_logical_object_id': retained.logical_object_id,
+            'count': intent.count, 'nonlands_discarded': intent.nonlands_discarded,
+            'reason': intent.reason,
+        }
+        self._log(intent.actor, 'connive.complete', f'{retained.ref} connived for {retained.controller}.', details,
+                  importance=2, changed_players=[retained.controller],
+                  changed_objects=([retained.object_id] if current is not None
+                                   and current.logical_object_id == retained.logical_object_id else []))
+        self._dispatch_semantic_event('permanent.connives', details)
+
     def move_object_intent(self, intent: ZoneMoveIntent) -> str:
         try:
             card = self._resolve_object(
@@ -508,6 +526,31 @@ class SemanticChoiceIntentHostMixin:
             prepared_replacement=prepared_replacement,
             transition_kind=intent.transition_kind,
         )
+        return card.ref
+
+    def exploit_sacrifice_intent(self,intent: ExploitSacrificeIntent):
+        from ..zone_trigger_processing import capture_departure_trigger_sources
+        from ..zone_trigger_events import ZoneTransitionKind
+        card=self._resolve_object(intent.actor,intent.object_refs[0],zones={'battlefield'},controlled_only=True)
+        if card.logical_object_id!=intent.sacrificed_identity or card.phased_out:
+            raise GameRuleError('Exploit selected sacrifice incarnation changed')
+        if 'creature' not in self._type_parts(str(self._effective_card_data(card)['type_line']))[0]:
+            raise GameRuleError('Exploit can sacrifice only a creature')
+        snapshot=capture_departure_trigger_sources(self,semantic_events=True,origin='battlefield')
+        source=next((candidate for candidate in snapshot.sources if candidate.ref==intent.source_ref
+                     and candidate.logical_object_id==intent.source_identity),None)
+        self._move_cards_simultaneously([(card.object_id,'graveyard')],reason=intent.reason,log=False,
+            replacement_selections=intent.replacement_selections,transition_kinds={card.object_id:ZoneTransitionKind.SACRIFICE})
+        committed=any(event.object_incarnation==intent.sacrificed_identity for event in self._current_turn_history('permanent_sacrificed'))
+        if committed and source is not None:
+            from ..zone_trigger_events import sealed_public_characteristic_facts
+            details={'card':source.ref,'controller':source.controller,'player':intent.actor,
+                'exploiter_logical_object_id':intent.source_identity,'exploited_card':card.ref,
+                'exploited_logical_object_id':intent.sacrificed_identity,
+                'exploited_characteristics':sealed_public_characteristic_facts(snapshot.source_characteristics.get(card.object_id,{}))}
+            self._log(intent.actor,'exploit.complete',f'{source.ref} exploited {card.ref}.',details,importance=2)
+            self._dispatch_semantic_event('creature.exploits',details,sources=snapshot.sources,
+                source_zones=snapshot.source_zones,source_characteristics=snapshot.source_characteristics)
         return card.ref
 
     def move_objects_simultaneously_intent(
@@ -775,6 +818,7 @@ class SemanticChoiceIntentHostMixin:
                 player=intent.player,
                 arrangement=intent.arrangement,
                 reason=intent.reason,
+                requested_count=intent.requested_count,
             )
         except ScryError as exc:
             raise GameRuleError(str(exc)) from exc

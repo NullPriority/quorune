@@ -11,6 +11,28 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Compile mandatory controller sacrifices and fixed creature subtype choices
+  through the existing affected-player selection and simultaneous zone owner.
+
+- Compile sole “the other” library remainders through the existing private
+  selection partition, including short-library and pending replay behavior.
+
+- Resolve fixed random discard effects through deterministic private hand
+  sampling, canonical simultaneous discards, and replacement-safe replay.
+
+- Resolve public-query Scry and Surveil counts through the existing private
+  library partitions and compile their completed-action observers. Positive
+  empty-library Scry completes an event; zero creates no event.
+
+- Compile targeted exile until the original source leaves the battlefield,
+  retaining actual exile incarnations and immediate owner-controlled return.
+  Replacement, Aura-entry, casting-cost, and completed-choice pauses preserve
+  the already committed movement and ordinary command replay.
+
+- Compile printed fixed-mana Transmute through hand-only sorcery activation and
+  the existing private library-search owner, retaining the discarded source's
+  mana value across cost replacement, save/load, and replay.
+
 - Preserve each source-specific child event when compiling an independent dual
   trigger, preventing unrelated damage from producing a source's result.
   Usage limits inspect every subscription and keep departure branches outside

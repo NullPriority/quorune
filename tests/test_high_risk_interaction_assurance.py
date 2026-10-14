@@ -85,6 +85,46 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
                 self.assertFalse(binding['strict_capability_ready'])
                 self.assertTrue(binding['blockers'])
 
+    def test_original_batched_scope_expansions_keep_unrepresented_compositions_untrusted(self):
+        from high_risk_interaction_support import _observed_piece_ids
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.compiler.unlock_frontier import analyze_card_unlocks
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.capabilities import load_default_capability_registry
+        from quorune.semantics import SemanticRegistry
+
+        expected={
+            'Assimilation Aegis':('capability.attachment.equip.fixed_mana',
+                'capability.zone.exile_until_source_departure.fixed','capability.zone.linked_exile_return.fixed'),
+            "Bilbo's Ring":('capability.attachment.equip.fixed_restricted',
+                'capability.continuous.characteristics.fixed_public_state'),
+            'Tibalt, the Fiend-Blooded':('capability.zone.discard.fixed_random',
+                'residual.target_or_choice.target-predicate'),
+            "Aang's Iceberg":('capability.zone.exile_until_source_departure.fixed',
+                'capability.zone.linked_exile_return.fixed','residual.target_or_choice.conditional-effect'),
+            'Gelatinous Cube':('capability.zone.exile_until_source_departure.fixed',
+                'residual.target_or_choice.target-predicate'),
+            'Perilous Snare':('capability.zone.exile_until_source_departure.fixed',
+                'residual.target_or_choice.target-predicate'),
+        }
+        registry=load_default_capability_registry()
+        for name,pieces in expected.items():
+            with self.subTest(name=name):
+                card=self.db.lookup(name)
+                ir=compile_oracle_card(card,capability_registry=registry,capability_profile='commander_review')
+                program=compile_best_available_card_program(self.db,card,semantic_registry=SemanticRegistry(),
+                    capability_registry=registry,capability_profile='commander_review')
+                row=analyze_card_unlocks(ir,program=program,program_error=None,capabilities=registry,
+                    profile='commander_review')
+                self.assertLessEqual(set(pieces),_observed_piece_ids(row))
+                self.assertTrue(ir.material_residuals)
+                self.assertIsNone(row['hard_construction_failure'])
+                binding=bind_card_program_runtime(program,capability_registry=registry,profile='commander_review')
+                self.assertFalse(binding['strict_capability_ready'])
+                self.assertFalse(binding['compatible_ready'])
+                self.assertIn('trust_basis:unresolved',binding['blockers'])
+
     def test_named_source_promotions_keep_replacement_and_prevention_siblings_fail_closed(self):
         from high_risk_interaction_support import _observed_piece_ids
         from quorune.card_programs import bind_card_program_runtime

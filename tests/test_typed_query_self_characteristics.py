@@ -224,6 +224,35 @@ def query_fragment(
 
 
 class TypedQuerySelfCharacteristicCompilerTests(unittest.TestCase):
+    def test_self_modifiers_compose_existing_collection_values_without_repeating_dual_type_cards(self):
+        cases=(
+            ('This creature gets +1/+0 for each artifact and/or enchantment card in your graveyard.',1,0),
+            ('This creature gets +1/+1 for each land you control and each land card in your graveyard.',1,1),
+            ('This creature gets +X/+0, where X is the greatest mana value among other artifacts you control.',1,0),
+        )
+        for index,(text,power,toughness) in enumerate(cases):
+            lowered=query_self_characteristics_handler(text,source_name='Query Source')
+            self.assertIsNotNone(lowered,text)
+            fragment=lowered[1]['fragment']['value']
+            self.assertEqual((power,toughness),(fragment['power'],fragment['toughness']))
+            self.assertFalse(self.compile(permanent(text,suffix=388100+index),trust_level='provisional').residuals)
+        for text in ('This creature gets +X/+X, where X is the chosen creature\'s power.',
+                     'This creature gets +1/+1 for each land you control and each card revealed this way.'):
+            self.assertIsNone(query_self_characteristics_handler(text,source_name='Query Source'))
+
+    def test_self_collection_quantity_requires_precise_owner_and_complete_producer(self):
+        from copy import deepcopy
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.capabilities import CapabilityRegistry
+        card=permanent('This creature gets +1/+1 for each creature you control and each creature card in your graveyard.',
+                       suffix=388110)
+        self.assertEqual('exact',compile_oracle_card(card,capability_registry=self.capabilities).status)
+        raw=json.loads((Path(__file__).parents[1]/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        for row in raw['capabilities']:
+            if row['id']==QUERY_CAPABILITY:row['status']='blocked';row['blockers']=['fixture dependency withdrawal']
+        self.assertNotEqual('exact',compile_oracle_card(card,capability_registry=CapabilityRegistry(raw)).status)
+        with mock.patch('quorune.compiler.query_characteristic_templates._self_collection_quantity',return_value=None):
+            self.assertNotEqual('exact',compile_oracle_card(card,capability_registry=self.capabilities).status)
     def setUp(self):
         self.capabilities = load_default_capability_registry()
 
@@ -475,6 +504,77 @@ class TypedQuerySelfCharacteristicCompilerTests(unittest.TestCase):
         )
         self.assertFalse(binding["strict_capability_ready"])
         self.assertFalse(binding["compatible_ready"])
+
+
+class SelfCollectionQuantityRuntimeTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition,DeckEntry
+        from scripts.build_test_database import build_fixture_database
+        cls.temporary=tempfile.TemporaryDirectory();root=Path(__file__).parents[1]
+        path=Path(cls.temporary.name)/'self-quantity.sqlite3'
+        build_fixture_database([root/'tests/fixtures/bound-effect-program-cards.json',
+                                root/'tests/fixtures/self-collection-quantity-cards.json'],path)
+        cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
+        cls.deck=DeckDefinition('Generic Quantity Deck',[DeckEntry('Generic Bound Commander',1,'commander'),
+            DeckEntry('Generic Bound Plains',30)],['Generic Bound Commander'])
+
+    @classmethod
+    def tearDownClass(cls):cls.db.close();cls.temporary.cleanup()
+
+    from test_bound_effect_programs import BoundEffectProgramRuntimeTests as _Actions
+    add=_Actions.add
+    ready=_Actions.ready
+    checkpoint=_Actions.checkpoint
+    resolve=_Actions.resolve
+    replay=_Actions.replay
+
+    def session(self,seed):
+        from quorune.semantics import SemanticRegistry
+        session=self._Actions.session(self,seed);engine=session.engine
+        engine.semantics=SemanticRegistry(include_builtin_packs=False)
+        register_generated_programs(self.db,engine.semantics,tuple(self.db.iter_cards()),trust_level='provisional',
+            capability_registry=self.registry,capability_profile='commander_review',promote_exact_runtime_handlers=True,
+            promote_exact_trigger_programs=True,promote_exact_effect_programs=True,promote_exact_capability_declarations=True)
+        return session
+
+    def test_original_self_collection_stats_track_union_sum_and_maximum_with_real_casts(self):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        cases=(('Runaway Trash-Bot',{'C':3},388101),('Moon-Vigil Adherents',{'G':2,'C':2},388102),
+               ('Emissary Escort',{'U':1,'C':1},388103))
+        for name,mana,seed in cases:
+            with self.subTest(name=name):
+                session=self.session(seed);engine=session.engine
+                source=self.add(engine,name,zone='hand')
+                dual=self.add(engine,'Generic Artifact Enchantment',zone='graveyard',ref='one-dual-card')
+                ownbody=self.add(engine,'Generic Bound Body')
+                own_dead=self.add(engine,'Generic Bound Body',zone='graveyard',ref='dead-creature')
+                artifact=self.add(engine,'Darksteel Ingot')
+                foreign=self.add(engine,'Generic Bound Body',seat='B',ref='foreign-counted-never')
+                action=self.ready(session,source,mana)
+                program=compile_best_available_card_program(self.db,self.db.lookup(name),semantic_registry=engine.semantics,
+                    capability_registry=self.registry,capability_profile='commander_review')
+                self.assertTrue(bind_card_program_runtime(program,capability_registry=self.registry,profile='commander_review')['strict_capability_ready'])
+                self.checkpoint(session)
+                accepted=session.act('pilot:A',{'action_id':action['id'],'pay':'auto'})
+                self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+                current=engine.state.cards[source.object_id];base=self.db.lookup(name)
+                expected=1 if name=='Runaway Trash-Bot' else 3
+                self.assertEqual(int(base.power)+expected,engine._numeric_stat(current.object_id,'power'))
+                self.assertEqual(int(base.toughness)+(expected if name=='Moon-Vigil Adherents' else 0),engine._numeric_stat(current.object_id,'toughness'))
+                self.replay(session)
+                if name=='Runaway Trash-Bot':
+                    engine.move_card(dual.object_id,'exile',reason='fixture live union decrement')
+                    self.assertEqual(int(base.power),engine._numeric_stat(current.object_id,'power'))
+                elif name=='Moon-Vigil Adherents':
+                    engine.move_card(ownbody.object_id,'graveyard',reason='fixture sum moves between terms')
+                    self.assertEqual(int(base.power)+3,engine._numeric_stat(current.object_id,'power'))
+                    engine.change_control(current.object_id,'B',reason='fixture quantity controller')
+                    self.assertEqual(int(base.power)+2,engine._numeric_stat(current.object_id,'power'))
+                else:
+                    engine.move_card(artifact.object_id,'graveyard',reason='fixture maximum removed')
+                    self.assertEqual(int(base.power),engine._numeric_stat(current.object_id,'power'))
 
 
 class TypedQuerySelfCharacteristicRuntimeTests(unittest.TestCase):

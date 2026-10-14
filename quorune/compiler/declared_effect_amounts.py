@@ -25,6 +25,11 @@ _DEFINITION = re.compile(
     r"(?P<body>.+?), where X is (?:equal to )?(?P<quantity>.+?)\.?$",
     re.IGNORECASE,
 )
+_LIBRARY_DEFINITION = re.compile(
+    r"(?P<body>Scry X), where X is (?:equal to )?(?P<quantity>.+?)"
+    r", then (?P<suffix>draw (?:a|one|two|three|four|five|\d+) cards?)\.?$",
+    re.IGNORECASE,
+)
 _X = re.compile(r"\bX\b")
 _RESULT_FIELDS = {
     "damage": ("amount",), "damage_fixed_set": ("amount",),
@@ -61,12 +66,15 @@ def declared_effect_amount_template(
     if type(cast_x_available) is not bool or type(forbid_public_x) is not bool:
         return None
     normalized = text.strip()
-    definition = _DEFINITION.fullmatch(normalized)
+    library_definition = _LIBRARY_DEFINITION.fullmatch(normalized)
+    definition = library_definition or _DEFINITION.fullmatch(normalized)
     quantity = None
     if definition is not None:
         if forbid_public_x:
             return None
         body = definition["body"]
+        if library_definition is not None and library_definition["suffix"]:
+            body += ", then " + library_definition["suffix"]
         # This definition belongs to one instruction, not arbitrary statements.
         if "." in body or len(re.findall(r"\bwhere X\b", normalized, re.I)) != 1:
             return None

@@ -361,6 +361,10 @@ class FixedCounterTriggerEvent(str, Enum):
     PERMANENT_UNTAPPED = "permanent.untap"
     COUNTER_PLACED = 'counter.put'
     SINGLE_COUNTER_PLACED = 'counter.single_put'
+    CREATURE_EXPLOITS = 'creature.exploits'
+    SOURCE_EXPLOITS = 'creature.exploits.self'
+    PLAYER_SCRIED = 'player.scried'
+    PLAYER_SURVEILLED = 'player.surveilled'
 
 
 class FixedCounterZoneController(str, Enum):

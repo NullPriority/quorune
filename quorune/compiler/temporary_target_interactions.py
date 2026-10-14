@@ -25,6 +25,7 @@ from .fixed_target_effect_sequences import (
     fixed_target_characteristics_effect_template,
 )
 from .ir_model import OracleNode, OracleResidual, append_residual
+from .direct_target import direct_permanent_target_spec
 
 
 TEMPORARY_TARGET_INTERACTION_MECHANIC = "temporary-target-interaction"
@@ -103,17 +104,17 @@ def _fixed_protection_template(
     text: str,
 ) -> TemporaryTargetInteractionTemplate | None:
     match = re.fullmatch(
-        r"(?P<subject>target creature(?: you control)?) gains protection "
-        r"from (?P<quality>white|blue|black|red|green|artifacts) until "
+        r"(?P<subject>(?:another )?target .+?) gains protection "
+        r"from (?P<quality>.+?) until "
         r"end of turn\.?",
         text,
         re.IGNORECASE,
     )
     if match is None:
         return None
-    relation = _target_relation(match.group("subject"))
+    target = direct_permanent_target_spec(match.group("subject"))
     fragment = _protection_fragment(match.group("quality"))
-    if relation is None or fragment is None:
+    if target is None or fragment is None:
         return None
     return TemporaryTargetInteractionTemplate(
         _effects=(
@@ -124,7 +125,7 @@ def _fixed_protection_template(
                 "ability_fragment": fragment,
             },
         ),
-        _target_schema=_target_schema(relation),
+        _target_schema=target.to_target_schema(),
         _mechanics=(
             TEMPORARY_TARGET_INTERACTION_MECHANIC,
             "cr-115-targets",
@@ -138,7 +139,7 @@ def _chosen_protection_template(
     text: str,
 ) -> TemporaryTargetInteractionTemplate | None:
     match = re.fullmatch(
-        r"(?P<subject>target creature(?: you control)?) gains protection "
+        r"(?P<subject>(?:another )?target .+?) gains protection "
         r"from the color of (?P<chooser>your|its controller's) choice "
         r"until end of turn\.?",
         text,
@@ -146,8 +147,8 @@ def _chosen_protection_template(
     )
     if match is None:
         return None
-    relation = _target_relation(match.group("subject"))
-    if relation is None:
+    target = direct_permanent_target_spec(match.group("subject"))
+    if target is None:
         return None
     fragments = {
         symbol: _protection_fragment(word)
@@ -182,7 +183,7 @@ def _chosen_protection_template(
                 },
             },
         ),
-        _target_schema=_target_schema(relation),
+        _target_schema=target.to_target_schema(),
         _mechanics=(
             TEMPORARY_TARGET_INTERACTION_MECHANIC,
             "cr-115-targets",

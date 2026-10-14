@@ -61,6 +61,45 @@ def record(text: str, *, type_line="Instant", mana_cost="{G}") -> CardRecord:
 
 
 class TemporaryTargetInteractionCompilerTests(unittest.TestCase):
+    def test_fixed_protection_uses_closed_direct_target_and_quality_contracts(self):
+        from quorune.compiler.direct_target import direct_permanent_target_spec
+        from quorune.ability_fragments import ability_fragment_from_dict,ProtectionSpec
+        for subject,quality in (
+            ('Target permanent you control','white'),('Target green creature','black'),
+            ('Another target creature you control','creatures'),('Target creature','everything'),
+            ('Target artifact creature','non-Human creatures'),
+        ):
+            text=f'{subject} gains protection from {quality} until end of turn.'
+            template=temporary_target_interaction_effect_template(text)
+            self.assertIsNotNone(template,text)
+            compiled=template.compiled()
+            self.assertEqual(direct_permanent_target_spec(subject).to_target_schema(),compiled[2])
+            fragment=ability_fragment_from_dict(compiled[1][0]['ability_fragment'])
+            self.assertIsInstance(fragment,ProtectionSpec)
+            self.assertIn('protection.typed.debt',temporary_target_interaction_node_capabilities(
+                effects=compiled[1],target_schema=compiled[2],mechanic_ids=compiled[3]))
+        for text in (
+            'Target creature gains protection from opponents until end of turn.',
+            'Target creature gains protection from the chosen player until end of turn.',
+            'Target creature gains protection from blue until your next turn.',
+            'Target creature gains protection from blue until end of turn, then draw a card.',
+        ):
+            self.assertIsNone(temporary_target_interaction_effect_template(text),text)
+
+    def test_expanded_protection_targets_remain_residual_when_precise_owner_is_unavailable(self):
+        text='Target permanent you control gains protection from white until end of turn.'
+        ir=self.compile(text)
+        self.assertEqual('exact',ir.status,ir.to_dict())
+        raw=json.loads(REGISTRY_PATH.read_text(encoding='utf-8'))
+        for row in raw['capabilities']:
+            if row['id']=='protection.typed.debt':row['status']='blocked';row['blockers']=['fixture dependency withdrawal']
+        self.assertNotEqual('exact',self.compile(text,registry=CapabilityRegistry(raw)).status)
+        with patch('quorune.compiler.temporary_target_interactions._fixed_protection_template',return_value=None):
+            self.assertNotEqual('exact',self.compile(text).status)
+        compiled=temporary_target_interaction_effect_template(text).compiled()
+        malformed=deepcopy(compiled[1][0]);malformed['ability_fragment']['value']['quality']='unrepresented'
+        self.assertEqual((),temporary_target_interaction_node_capabilities(effects=(malformed,),
+            target_schema=compiled[2],mechanic_ids=compiled[3]))
     @classmethod
     def setUpClass(cls):
         cls.registry = load_default_capability_registry()
@@ -195,6 +234,123 @@ class TemporaryTargetInteractionCompilerTests(unittest.TestCase):
         from common import without_direct_resolution_compiler
         with without_direct_resolution_compiler("temporary_target_interaction_effect_template"):
             self.assertNotEqual("exact", self.compile(text).status)
+
+
+class PublicProtectionGrantRuntimeTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from quorune.deck import DeckDefinition,DeckEntry
+        cls.temporary=tempfile.TemporaryDirectory()
+        path=Path(cls.temporary.name)/'public-protection.sqlite3'
+        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',
+                                ROOT/'tests/fixtures/public-protection-grant-cards.json',FIXTURE_PATH],path)
+        cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
+        cls.deck=DeckDefinition('Generic Protection Deck',[DeckEntry('Generic Bound Commander',1,'commander'),
+            DeckEntry('Generic Bound Plains',30)],['Generic Bound Commander'])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close();cls.temporary.cleanup()
+
+    from test_bound_effect_programs import BoundEffectProgramRuntimeTests as _Actions
+    add=_Actions.add
+    ready=_Actions.ready
+    checkpoint=_Actions.checkpoint
+    resolve=_Actions.resolve
+    replay=_Actions.replay
+
+    def session(self,seed):
+        from quorune.semantics import SemanticRegistry
+        session=self._Actions.session(self,seed)
+        session.engine.semantics=SemanticRegistry(include_builtin_packs=False)
+        register_generated_programs(self.db,session.engine.semantics,tuple(self.db.iter_cards()),
+            trust_level='provisional',capability_registry=self.registry,capability_profile='commander_review',
+            promote_exact_runtime_handlers=True,promote_exact_trigger_programs=True,
+            promote_exact_effect_programs=True,promote_exact_capability_declarations=True)
+        return session
+
+    def test_original_alseid_sacrifice_grants_chosen_protection_to_enchantment_and_replays(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        session=self.session(387001);engine=session.engine
+        source=self.add(engine,"Alseid of Life's Bounty")
+        target=self.add(engine,'Absolute Grace')
+        foreign=self.add(engine,'Absolute Grace',seat='B',ref='foreign-enchantment')
+        red=self.add(engine,'Generic Temporary Red Body',seat='B')
+        action=self.ready(session,source,{'C':1})
+        self.assertIn(target.ref,action['target_schema']['legal_refs'])
+        self.assertNotIn(foreign.ref,action['target_schema']['legal_refs'])
+        program=compile_best_available_card_program(self.db,self.db.lookup(source.printed_name),
+            semantic_registry=engine.semantics,capability_registry=self.registry,capability_profile='commander_review')
+        self.assertTrue(bind_card_program_runtime(program,capability_registry=self.registry,
+            profile='commander_review')['strict_capability_ready'])
+        original=source.logical_object_id
+        self.checkpoint(session);before=authoritative_state_hash(session.state)
+        rejected=session.act('pilot:A',{'action_id':action['id'],'targets':[foreign.ref],'pay':'auto'})
+        self.assertFalse(rejected.ok);self.assertEqual(before,authoritative_state_hash(session.state))
+        accepted=session.act('pilot:A',{'action_id':action['id'],'targets':[target.ref],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);decision=self.resolve(session)
+        self.assertEqual('graveyard',engine.state.cards[source.object_id].zone)
+        self.assertEqual('semantic.choice',decision.kind)
+        self.assertEqual(['A'],list(decision.actors))
+        self.assertTrue(any(event.object_incarnation==original for event in engine._current_turn_history('permanent_sacrificed')))
+        loaded=self.replay(session,load=True);before=authoritative_state_hash(loaded.state)
+        rejected=loaded.act('pilot:B',{'action_id':'choose','choice':'R'})
+        self.assertFalse(rejected.ok);self.assertEqual(before,authoritative_state_hash(loaded.state))
+        accepted=loaded.act('pilot:A',{'action_id':'choose','choice':'R'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        current=loaded.state.cards[target.object_id]
+        self.assertEqual(ProtectionVerdict.BLOCKED,protection_verdict_for_ref(loaded.engine,
+            loaded.engine._effective_card_data(current),red.ref))
+        self.replay(loaded)
+        expire_end_of_turn_continuous_effects(loaded.state)
+        self.assertEqual(ProtectionVerdict.ALLOWED,protection_verdict_for_ref(loaded.engine,
+            loaded.engine._effective_card_data(current),red.ref))
+
+    def test_original_absolute_law_live_global_protection_tracks_late_entry_and_source_departure(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        session=self.session(387002);engine=session.engine
+        source=self.add(engine,'Absolute Law',zone='hand')
+        body=self.add(engine,'Generic Bound Body',seat='B')
+        red=self.add(engine,'Generic Temporary Red Body',seat='C')
+        action=self.ready(session,source,{'W':1,'C':1})
+        program=compile_best_available_card_program(self.db,self.db.lookup(source.printed_name),
+            semantic_registry=engine.semantics,capability_registry=self.registry,capability_profile='commander_review')
+        self.assertTrue(bind_card_program_runtime(program,capability_registry=self.registry,
+            profile='commander_review')['strict_capability_ready'])
+        self.checkpoint(session)
+        accepted=session.act('pilot:A',{'action_id':action['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        self.assertEqual(ProtectionVerdict.BLOCKED,protection_verdict_for_ref(engine,engine._effective_card_data(body),red.ref))
+        self.replay(session)
+        later=self.add(engine,'Generic Bound Body',seat='D',ref='late-protection-body')
+        self.assertEqual(ProtectionVerdict.BLOCKED,protection_verdict_for_ref(engine,engine._effective_card_data(later),red.ref))
+        engine.move_card(source.object_id,'graveyard',reason='fixture live source departure')
+        self.assertEqual(ProtectionVerdict.ALLOWED,protection_verdict_for_ref(engine,engine._effective_card_data(body),red.ref))
+        self.assertEqual(ProtectionVerdict.ALLOWED,protection_verdict_for_ref(engine,engine._effective_card_data(later),red.ref))
+
+    def test_fixed_nonhuman_protection_spell_preserves_nearby_human_counterexample(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        session=self.session(387003);engine=session.engine
+        source=self.add(engine,'Generic Nonhuman Protection',zone='hand')
+        target=self.add(engine,'Generic Bound Body')
+        human=self.add(engine,'Generic Bound Body',seat='B',ref='human-source')
+        spirit=self.add(engine,"Alseid of Life's Bounty",seat='C',ref='spirit-source')
+        action=self.ready(session,source,{'W':1})
+        program=compile_best_available_card_program(self.db,self.db.lookup(source.printed_name),
+            semantic_registry=engine.semantics,capability_registry=self.registry,capability_profile='commander_review')
+        self.assertTrue(bind_card_program_runtime(program,capability_registry=self.registry,
+            profile='commander_review')['strict_capability_ready'])
+        self.checkpoint(session)
+        accepted=session.act('pilot:A',{'action_id':action['id'],'targets':[target.ref],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        self.assertEqual(ProtectionVerdict.BLOCKED,protection_verdict_for_ref(engine,engine._effective_card_data(target),spirit.ref))
+        self.assertEqual(ProtectionVerdict.ALLOWED,protection_verdict_for_ref(engine,engine._effective_card_data(target),human.ref))
+        self.assertFalse(engine._can_block(target,spirit)[0])
+        self.assertTrue(engine._can_block(target,human)[0])
+        self.replay(session)
 
 
 class TemporaryTargetInteractionRuntimeTests(unittest.TestCase):

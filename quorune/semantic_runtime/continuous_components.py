@@ -20,7 +20,8 @@ from ..continuous_effects import (
     ContinuousOperation,
     Layer,
 )
-from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
+from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS, triggered_keyword_grant
+from ..ability_fragments import ProtectionSpec
 from ..mana import BASIC_LAND_MANA
 from ..leveler_bands import (
     LEVELER_BANDS_CAPABILITY_ID,
@@ -948,20 +949,34 @@ class FixedQueryKeywordGrantHandler:
             raise SemanticNodeError(
                 "fixed query keyword grant fragments are malformed"
             ) from exc
-        if any(
-            not isinstance(fragment, WardSpec)
-            or fragment.generic_cost is None
+        expected_triggered = tuple(
+            triggered[1] for ability in abilities
+            if (triggered := triggered_keyword_grant(ability)) is not None
+        )
+        actual_triggered = tuple(
+            ability_fragment_to_dict(fragment) for fragment in fragments
+            if not isinstance(fragment, (WardSpec, ProtectionSpec))
+        )
+        if actual_triggered != expected_triggered or any(
+            isinstance(fragment, WardSpec) and fragment.generic_cost is None
             for fragment in fragments
         ):
-            raise SemanticNodeError(
-                "fixed query keyword grants accept only fixed-generic Ward fragments"
-            )
+            raise SemanticNodeError('Keyword grant fragments must exactly match their typed keyword labels')
         ward_labels = tuple(
-            f"Ward {{{fragment.generic_cost}}}" for fragment in fragments
+            f"Ward {{{fragment.generic_cost}}}" for fragment in fragments if isinstance(fragment, WardSpec)
         )
         ordinary = tuple(
-            ability for ability in abilities if not ability.startswith("Ward {")
+            ability for ability in abilities if ability != 'Protection'
+            and not ability.startswith("Ward {") and triggered_keyword_grant(ability) is None
         )
+        protection = tuple(fragment for fragment in fragments if isinstance(fragment, ProtectionSpec))
+        if protection:
+            if descriptor['schema_version'] != 2 or abilities != ('Protection',) or len(protection) != len(fragments):
+                raise SemanticNodeError('Query protection requires its complete typed version-two modifier')
+            if len({str(ability_fragment_to_dict(fragment)) for fragment in protection}) != len(protection):
+                raise SemanticNodeError('Query protection fragments must be distinct')
+        elif 'Protection' in abilities or descriptor['schema_version'] == 2:
+            raise SemanticNodeError('Query protection has no complete typed fragment')
         if (
             not abilities
             or len(set(abilities)) != len(abilities)
@@ -1062,7 +1077,7 @@ class FixedQueryCharacteristicGrantHandler:
         )
         if descriptor["handler_id"] != self.handler_id:
             raise SemanticNodeError("Runtime handler ID does not match registry")
-        if descriptor["schema_version"] != self.schema_version:
+        if type(descriptor['schema_version']) is not int or descriptor["schema_version"] != self.schema_version:
             raise SemanticNodeError(
                 f"Unsupported {self.handler_id} schema version"
             )
@@ -1084,10 +1099,11 @@ class FixedQueryCharacteristicGrantHandler:
             raise SemanticNodeError(
                 "fixed query characteristic grants have a closed modifier schema"
             )
-        keyword_node = FixedQueryKeywordGrantHandler().validate(
+        keyword_handler = FixedQueryProtectionGrantHandler() if self.schema_version == 2 else FixedQueryKeywordGrantHandler()
+        keyword_node = keyword_handler.validate(
             {
-                "handler_id": _FIXED_QUERY_KEYWORD_GRANT_HANDLER_ID,
-                "schema_version": 1,
+                "handler_id": keyword_handler.handler_id,
+                "schema_version": keyword_handler.schema_version,
                 "event": self.event,
                 "condition": descriptor["condition"],
                 "modifier": {
@@ -1181,6 +1197,21 @@ class FixedQueryCharacteristicGrantHandler:
                 **common,
             ),
         )
+
+
+@dataclass(frozen=True, slots=True)
+class FixedQueryProtectionGrantHandler(FixedQueryKeywordGrantHandler):
+    handler_id: str = 'continuous.ability.fixed-query-protection-grant.v2'
+    schema_version: int = 2
+    capability_dependencies: tuple[str, ...] = ('continuous.ability.fixed_query_keyword_grant', 'protection.typed.debt')
+
+
+@dataclass(frozen=True, slots=True)
+class FixedQueryCharacteristicProtectionGrantHandler(FixedQueryCharacteristicGrantHandler):
+    handler_id: str = 'continuous.characteristics.fixed-query-protection-grant.v2'
+    schema_version: int = 2
+    capability_dependencies: tuple[str, ...] = ('continuous.ability.fixed_query_keyword_grant',
+                                               'continuous.power_toughness.fixed_anthem', 'protection.typed.debt')
 
 
 @dataclass(frozen=True, slots=True)
@@ -1336,6 +1367,7 @@ def default_continuous_effect_component_registry(
         ConditionalDefenderPermissionHandler,
         ConditionalAsUnblockedAssignmentHandler,
         ConditionalBlockCapacityHandler,
+        ConditionalDeclarationGrantHandler,
     )
 
     registry = ContinuousEffectComponentRegistry(
@@ -1350,12 +1382,15 @@ def default_continuous_effect_component_registry(
             FixedQueryAbilityGrantHandler(),
             FixedQueryKeywordGrantHandler(),
             FixedQueryCharacteristicGrantHandler(),
+            FixedQueryProtectionGrantHandler(),
+            FixedQueryCharacteristicProtectionGrantHandler(),
             LevelerBandsHandler(),
             FixedPublicStateCharacteristicsHandler(),
             FixedPublicStateGrantedAbilityHandler(),
             ConditionalDefenderPermissionHandler(),
             ConditionalAsUnblockedAssignmentHandler(),
             ConditionalBlockCapacityHandler(),
+            ConditionalDeclarationGrantHandler(),
             AttachedFixedCharacteristicsHandler(),
             FixedCharacteristicSettingsHandler(),
             AttachedControlHandler(),

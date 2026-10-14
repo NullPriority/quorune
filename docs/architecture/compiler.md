@@ -9,6 +9,40 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+Intrinsic Exploit lowers to one entry trigger with an optional creature
+sacrifice. The separately printed “When this creature exploits a creature”
+ability subscribes to the committed source-incarnation occurrence and composes
+its existing typed result grammar. Their source spans and program identities
+remain separate, including when the resulting ability targets a player.
+
+Self stat modifiers can reuse complete collection values through the existing
+query-characteristic owner. Explicit where-X forms carry a signed coefficient
+for each affected stat. A printed “for each … and each …” form carries two
+independent quantities, while an artifact-or-enchantment card predicate counts
+one card once. All represented queries read the existing layer-5 snapshot;
+the modifier updates in layer 7c as zone membership and source control change.
+Hidden characteristic predicates, linked result values and unrepresented
+collections remain residuals.
+
+Fixed Goad instructions reuse the canonical designation and combat requirement
+owners. Historical single-target descriptors retain their payloads. Expanded
+single creature targets and closed public creature sets use an explicit version
+that selects the current phased-in set at resolution. Target-player sets retain
+the selected player's identity. A later bound clause may goad the existing
+creature target while preserving its original target schema and incarnation.
+Optional fixed Goad uses the ordinary apply-or-decline continuation. The
+goader remains the resolving controller, and source departure does not shorten
+the designation's next-turn duration. Continuous “is goaded” text, linked result
+sets, variable target cardinalities and other durations remain residuals.
+
+Fixed Connive accepts a complete single-object instruction with a represented
+integer count. Explicit self references require a permanent source; source
+pronouns require a closed source event binding. Target creature instructions
+retain the canonical target and bind its current controller at resolution.
+The precise Connive shape excludes internal continuation fields, open result
+tails and ambiguous event-object pronouns. Its capability closes through the
+existing draw, typed discard, destination replacement and counter owners.
+
 `compiler/fixed_resolution_mana.py` lowers complete fixed symbol bundles into
 the existing mana effect, one instruction per represented color or colorless
 quantity. A represented spending restriction remains attached to every unit.
@@ -208,6 +242,34 @@ optional immediate fixed keyword grant. Exiled tokens cannot return. Conditional
 outcomes, transformed or face-down returns, source-departure banishment,
 attachment restoration, and unsupported riders remain residual.
 
+`compiler/conditional_exile_templates.py` separately recognizes the source-
+departure form in CR 610.3. Its immutable binding data retain the original
+source and the actual exiled incarnations; the return boundary collects one
+simultaneous owner-controlled movement through the canonical zone owner.
+The compiler emits a paired linked instruction with a versioned conditional
+departure timing. Its initial movement requires the original source to remain
+on the battlefield; it stores only actual exile outcomes. If that initial
+movement itself removes the source, the return occurs immediately afterward.
+Created instructions are stored on the original source incarnation and captured
+before its zone reset. Single and simultaneous departures use those retained
+instructions. A return entry choice resumes the return movement rather than
+repeating the source departure; native activation cost and state-based departure
+choices preserve their enclosing transaction. Aura attachment subjects are
+chosen before simultaneous movement. The conditional capability admits the
+closed targeted source-departure form with the ordinary target, replacement,
+APNAP, Aura-entry, and retained-completion dependencies. Other specified events,
+return zones, unsupported riders, and unrepresented target sets remain residual.
+After a choice's movement commits, a conditional return pause retains the
+already-computed remaining completion as closed typed data. Resumption validates
+the original parent frame and continues those remaining intents and effects;
+it does not recompute a consumed sacrifice or discard choice. Preparation uses
+the same boundary for retained automatic effects and prepared requests. Casting
+cost returns preserve the paid cost and parent spell before priority resumes.
+Retired exile incarnations and earlier source lifetimes do not reattach when a
+physical card reenters. Multiple original sources retain distinct instructions;
+simultaneous specified departures collect one owner-controlled return batch.
+Separate entry and leave triggers remain a linked-ability contract under CR 607.
+
 `compiler/fixed_target_effect_sequences.py` owns the closed cross-sentence
 target-threading grammar. It is the only compiler authority for represented
 fixed counter plus until-end-of-turn characteristic sequences: one clause
@@ -223,7 +285,7 @@ Oracle sentences.
 
 `compiler/temporary_target_interactions.py` composes that same direct-target
 descriptor with signed spell-cost X, supported comma-separated keyword lists,
-fixed color or artifact Protection, a choice of color or two supported keywords,
+closed typed Protection qualities, a choice of color or two supported keywords,
 a closed current-target conditional rider, or a fixed regeneration or
 unblockable tail. It keeps the original fixed leaf-parser boundary intact.
 X requires an X-bearing spell mana cost on the selected face; undefined X,
@@ -233,6 +295,12 @@ color choice reads the target's current controller when the instruction begins.
 Conditional riders evaluate current public characteristics once before creating
 the locked layer-6 or layer-7c effect. The same continuous-effect journal stores
 temporary Protection as a typed fragment, and existing DEBT consumers enforce it.
+Fixed Protection and color choices accept the shared single direct-permanent
+target grammar, retaining its characteristic, control and source-exclusion
+predicates. Live global and queried Protection grants use dedicated version-two
+handlers with complete typed fragments, preserving ordinary keyword-grant
+descriptor versions. Their layer-6 recipient set updates with current public
+state, and a coupled fixed stat grant uses the identical query.
 Open conditions, unsupported qualities or keywords, target-changing and
 multiple-target effects, other durations and must-be-blocked requirements remain
 residual. Existing carrier and independently closed composition owners still
@@ -398,10 +466,26 @@ constructing their closed quantity descriptor. An unsupported condition keeps
 its source-spanned residual; a successful direct-target predicate does not
 imply that the narrower quantity owner can evaluate it.
 
+`compiler/declaration_nodes.py` composes one independently exact
+recipient-relative declaration requirement or restriction with fixed
+power/toughness and represented keywords behind a closed public-state
+condition. The versioned conditional declaration descriptor retains the same
+source condition and target for layer 6 and layer 7c results. Current
+conditions remove or restore the declaration fragment through ordinary ability
+evaluation; declaration offers and accepted commands use the existing solver.
+Open suffixes, variable modifiers, additional costs and nonrecipient rule
+scopes remain residual. Earlier conditional descriptor schemas retain their
+existing field and fragment contracts.
+
 `compiler/public_state_queries.py`, consumed by
 `compiler/continuous_templates.py`, lowers fixed controlled permanent sets that
 gain supported keywords, or gain fixed power/toughness and supported keywords,
-until end of turn. `compiler/fixed_public_characteristic_sets.py` extends that
+until end of turn. The legacy label-based set codec accepts only ordinary
+keyword labels;
+Protection qualities and triggered fragments require a separately represented
+temporary-set descriptor and are never discarded during this lowering. Static
+live grants and direct temporary Protection retain their typed fragments.
+`compiler/fixed_public_characteristic_sets.py` extends the same
 resolution owner to all creatures, creatures opponents or one target player
 control, current attacking or blocking creatures, and source-excluding attacking
 creatures. Both grammars feed one closed query validator. Resolution evaluates
@@ -756,8 +840,14 @@ composition boundary. Two through four mandatory components may share one
 player subject or reuse one explicitly established player or battlefield target
 through “it,” “that player,” “that creature,” or “that permanent.” It retains
 the original target qualifiers and source exclusion, verifies reference-domain
-compatibility, and emits the existing effects in printed order. Separate
-explicit target occurrences never become one target merely because their
+compatibility, and emits the existing effects in printed order. Pronoun
+normalization uses a generic permanent reference before restoring the
+original target schema, so a creature-bound prevention instruction retains its
+closed prevention scope instead of switching to an incompatible leaf shape.
+If that generic leaf rejects the instruction and the original target requires a
+creature, a creature form may use its already closed leaf before the original
+target schema is restored. A noncreature target cannot use that retry.
+Separate explicit target occurrences never become one target merely because their
 schemas match. The bound-reference capability checks every component against
 its typed owner; execution, replacement choices, private affected-player
 choices, and checkpoint continuations remain in their existing owners. Owner
@@ -1277,6 +1367,16 @@ public-state condition grammar consumed by continuous characteristics, typed
 queried ability grants, resolution-locked characteristic sets, and untap-step
 participation. It accepts only battlefield sets representable by one immutable
 `ObjectQuerySpec` over a source-controller, source-opponent, or global relation.
+
+Live query and attachment keyword grants may carry fixed typed combat and
+spell-cast trigger fragments for already-represented keywords. The shared
+keyword codec binds each label to its exact fragment and consumer capability;
+the runtime rejects missing, duplicated or mismatched fragments. Separate
+grant sources retain separate trigger instances. Granted Prowess contributes
+only instances beyond current printed Prowess programs, locks the recipient's
+incarnation and trigger controller at the cast event, and uses the existing
+ordered stack and temporary-characteristic owners. Later loss of the grant
+does not remove an already-created trigger.
 Closed predicates cover card-type unions, pinned creature-subtype conjunctions
 and unions, the defined Outlaw group, color and multicolor cardinality,
 supertype, token identity, a named +1/+1 counter, attacking, blocking, tapped,
@@ -1377,7 +1477,9 @@ residuals.
 resolution body for every promoted standalone or sequenced fixed-target node,
 then requires the source grammar, emitted effects, target relation, closed
 capability shape, and declared capability closure to agree. The normal pinned
-compiler census derives grammatical shapes and representative identities from
+corpus includes the fixed source Exploit result as a composing carrier; its
+inner target effect retains the same independent grammar and shape checks.
+The compiler census derives grammatical shapes and representative identities from
 the complete corpus; it does not maintain a card list. Its synthetic contract
 also covers every accepted keyword, spell/trigger/activation context,
 two-/three-clause and target-/counter-first sequence, controller relation, and
@@ -2059,6 +2161,26 @@ unrepresented result owners, and nested modal declarations remain residual.
 Ordinary Cycling explicitly
 declares the existing draw handler dependency beside its activation capability;
 runtime binding still rejects undeclared registered dependencies.
+The same public-query amount boundary supplies a resolved controller Scry or
+Surveil count before the private library partition is prepared. An inline Scry
+definition followed by a fixed draw uses the same declared quantity binding
+and ordered controller sequence. Zero creates
+neither a choice nor a completion event. Positive instructions on an empty
+library still complete and can produce their normalized player-action event.
+Scry and Surveil observer predicates retain controller, opponent, or global
+scope without exposing looked-at identities in the public occurrence.
+
+Printed fixed ordinary-mana Transmute uses the existing activation catalog with
+complete-card admission, a hand-only discard cost, and canonical sorcery timing.
+The activation owner captures the source incarnation and mana value before the
+discard transition. Resolution reads that retained information and delegates
+the equal-value private library search, public result reveal, hand movement,
+fail-to-find choice, and shuffle to the existing search owner. Source departure
+or a public discard replacement does not change the retained search value. An
+unrevealed discard redirected into a hidden zone leaves its characteristics
+undefined; the canonical search permits looking and shuffling while finding no
+card with that undefined quality. Variable,
+hybrid, Phyrexian, snow, nonmana, and granted Transmute remain residual.
 
 `compiler/effect_template_composition.py` routes reviewed atomic effects into
 closed clause/program composition and gives query-derived amounts one shared

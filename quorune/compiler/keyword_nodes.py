@@ -66,6 +66,7 @@ from .echo_nodes import fixed_mana_echo_node
 from .crew_nodes import ordinary_crew_keyword_node
 from .station_nodes import ordinary_station_keyword_node
 from .unearth_nodes import ordinary_unearth_keyword_node
+from .transmute_nodes import fixed_transmute_keyword_node
 from .combat_entry_activation_nodes import (
     fixed_encore_keyword_node,
     fixed_ninjutsu_keyword_node,
@@ -437,6 +438,7 @@ def closed_special_keyword_node(
         ordinary_affinity_keyword_node,
         ordinary_crew_keyword_node,
         ordinary_station_keyword_node,
+        fixed_transmute_keyword_node,
         typecycling_keyword_node,
         ordinary_cycling_keyword_node,
         fixed_mana_cumulative_upkeep_node,

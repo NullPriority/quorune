@@ -113,6 +113,10 @@ class SemanticChoiceQuery(
 
     def drawn_this_turn(self, seat: str) -> tuple[str, ...]: ...
 
+    def committed_discard_incarnations(self) -> tuple[str, ...]: ...
+
+    def defined_discard_characteristic_incarnations(self) -> tuple[str, ...]: ...
+
     def opponent_cast_colors_this_turn(self, seat: str) -> tuple[str, ...]: ...
 
     def resolution_condition_matches(self, condition: Mapping[str, Any]) -> bool: ...
@@ -156,6 +160,8 @@ class SnapshotSemanticChoiceQuery:
     materialized_damage_source_candidates: tuple[str, ...] | None = None
     materialized_token_creation_preview: tuple[FrozenMap, ...] = ()
     current_turn_sequence: int = 0
+    committed_discard_ids: tuple[str, ...] = ()
+    defined_discard_characteristic_ids: tuple[str, ...] = ()
     resolution_condition_facts: FrozenMap = field(default_factory=FrozenMap)
 
     def __post_init__(self) -> None:
@@ -357,6 +363,12 @@ class SnapshotSemanticChoiceQuery:
 
     def choice_candidate_refs(self) -> tuple[str, ...]:
         return self.materialized_choice_candidates
+
+    def committed_discard_incarnations(self) -> tuple[str, ...]:
+        return self.committed_discard_ids
+
+    def defined_discard_characteristic_incarnations(self) -> tuple[str, ...]:
+        return self.defined_discard_characteristic_ids
 
     def damage_source_candidate_refs(self) -> tuple[str, ...]:
         return tuple(self.materialized_damage_source_candidates or ())

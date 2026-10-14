@@ -1,10 +1,13 @@
 from __future__ import annotations
 from .life_batch_intent import LifeLossBatchIntent
 from .counter_movement_intent import MoveCountersIntent
+from .exploit_intent import ExploitSacrificeIntent
 from .life_execution import LIFE_INTENT_TYPES,execute_life_intent
 from .control_intents import GainControlIntent, GainControlSetIntent
 from ..whole_hand_discard_model import DiscardWholeHandsIntent
 from .whole_hand_discard import execute_whole_hand_discard
+from ..random_discard import RandomDiscardIntent
+from .random_discard import execute_random_discard
 
 from dataclasses import dataclass
 from typing import Any, Mapping, Protocol
@@ -57,6 +60,7 @@ from .intents import (
     IntentPlan,
     EliminatePlayersIntent,
     ExploreCompletedIntent,
+    ConniveCompletedIntent,
     ExilePermanentIntent,
     ExilePublicGraveyardCardIntent,
     GrantZoneObjectKeywordIntent,
@@ -144,7 +148,10 @@ class SemanticIntentSink(
         intent: ExploreCompletedIntent,
     ) -> None: ...
 
+    def complete_connive_intent(self, intent: ConniveCompletedIntent) -> None: ...
+
     def move_object_intent(self, intent: ZoneMoveIntent) -> str: ...
+    def exploit_sacrifice_intent(self,intent: ExploitSacrificeIntent) -> str: ...
 
     def move_objects_simultaneously_intent(
         self,
@@ -473,10 +480,11 @@ def _execute_permanent_object_intent(
     )
 
 
-RecordingIntent = RecordChoiceIntent | ExploreCompletedIntent | InspectHandIntent
+RecordingIntent = RecordChoiceIntent | ExploreCompletedIntent | ConniveCompletedIntent | InspectHandIntent
 RECORDING_INTENT_TYPES = (
     RecordChoiceIntent,
     ExploreCompletedIntent,
+    ConniveCompletedIntent,
     InspectHandIntent,
 )
 
@@ -490,6 +498,9 @@ def _execute_recording_intent(
         return intent.actor, None
     if isinstance(intent, InspectHandIntent):
         return intent.player, sink.inspect_hand_intent(intent)
+    if isinstance(intent, ConniveCompletedIntent):
+        sink.complete_connive_intent(intent)
+        return intent.conniver.ref, None
     sink.complete_explore_intent(intent)
     return intent.explorer_ref, None
 
@@ -574,8 +585,8 @@ def _execute_counter_placement_intent(
     return "player_counters", sink.place_player_counters_intent(intent)
 
 
-PlayerIntent = BecomeMonarchIntent | MillCardsIntent | ImpulseAccessIntent | DiscardWholeHandsIntent
-PLAYER_INTENT_TYPES = (BecomeMonarchIntent, MillCardsIntent, ImpulseAccessIntent, DiscardWholeHandsIntent)
+PlayerIntent = BecomeMonarchIntent | MillCardsIntent | ImpulseAccessIntent | DiscardWholeHandsIntent | RandomDiscardIntent
+PLAYER_INTENT_TYPES = (BecomeMonarchIntent, MillCardsIntent, ImpulseAccessIntent, DiscardWholeHandsIntent, RandomDiscardIntent)
 TapStateIntent = (
     SetPermanentTappedIntent
     | ProhibitNextUntapIntent
@@ -594,6 +605,8 @@ def _execute_player_intent(
     sink: SemanticIntentSink,
     intent: PlayerIntent,
 ) -> tuple[str, object]:
+    if isinstance(intent, RandomDiscardIntent):
+        return intent.actor, execute_random_discard(sink, intent)
     if isinstance(intent, DiscardWholeHandsIntent):
         return intent.actor, execute_whole_hand_discard(sink, intent)
     if isinstance(intent, BecomeMonarchIntent):
@@ -754,6 +767,10 @@ def execute_intent_plan(sink: SemanticIntentSink, plan: IntentPlan) -> object:
         if isinstance(intent, SelfZoneMoveIntent):
             result = resolve_self_zone_move(sink, intent)
             results.append((intent.card_ref, result))
+            continue
+        if isinstance(intent,ExploitSacrificeIntent):
+            result=sink.exploit_sacrifice_intent(intent)
+            results.append((intent.actor,result))
             continue
         if isinstance(intent, MoveObjectsSimultaneouslyIntent):
             result = sink.move_objects_simultaneously_intent(intent)

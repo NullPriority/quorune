@@ -170,8 +170,12 @@ class FixedHandInspectionCompilerTests(unittest.TestCase):
             with self.subTest(text=text):
                 self.assertIsNone(fixed_hand_inspection_effect_template(text))
                 ir = self.compile(text)
-                self.assertNotEqual("exact", ir.status)
-                self.assertTrue(ir.material_residuals)
+                if text == "Target opponent discards a card at random.":
+                    self.assertEqual("exact",ir.status,ir.material_residuals)
+                    self.assertEqual("discard_random_cards",ir.faces[0].nodes[0].effects[0]["op"])
+                else:
+                    self.assertNotEqual("exact", ir.status)
+                    self.assertTrue(ir.material_residuals)
 
         template = fixed_hand_inspection_effect_template(self.base.oracle_text)
         self.assertIsNotNone(template)

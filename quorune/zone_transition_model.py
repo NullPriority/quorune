@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Any, Mapping, Protocol, Sequence
+from .conditional_exile_model import ConditionalExileBinding
 
 from .model import CardInstance, GameState
 from .life_state import PreparedLifePayment
@@ -104,6 +105,7 @@ class ZoneDepartureSnapshot:
     copy_snapshot: Mapping[str, Any] | None = None
     cast_option: str | None = None
     counters: Mapping[str, int] | None = None
+    conditional_returns: tuple[ConditionalExileBinding, ...] = ()
 
     @classmethod
     def from_event_sources(

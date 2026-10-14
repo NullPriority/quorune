@@ -1,4 +1,5 @@
 from __future__ import annotations
+from ..random_discard import random_discard_effect_template
 from .counter_resolution_effect_templates import counter_resolution_effect_template
 from .public_quantity_mana_effects import public_quantity_mana_effect_template
 from .fixed_resolution_mana import fixed_resolution_mana_effect_template
@@ -8,6 +9,8 @@ from .hand_entry_templates import fixed_draw_then_hand_entry_template
 from .defender_permission_templates import temporary_defender_permission_template
 from .as_unblocked_templates import temporary_as_unblocked_template
 from .toughness_assignment_templates import temporary_toughness_assignment_template
+from .connive_templates import fixed_connive_effect_template
+from .goad_templates import fixed_goad_effect_template
 
 from typing import Any, Mapping, Sequence
 
@@ -22,6 +25,7 @@ from .affected_player_sacrifice_templates import (
 from .fixed_attachment_templates import fixed_source_attachment_effect_template
 from .fixed_control_templates import fixed_control_effect_template, fixed_control_set_effect_template
 from .linked_exile_return_templates import linked_exile_return_effect_template
+from .conditional_exile_templates import conditional_source_exile_template
 from .amass_templates import fixed_amass_effect_template
 from .bolster_templates import fixed_bolster_effect_template
 from .counter_placement_templates import (
@@ -117,6 +121,10 @@ def _source_context_resolution_template(
     text: str, *, card_name: str, source_is_permanent: bool | None,
     source_card_types: Sequence[str],
 ) -> CompiledEffectTemplate | None:
+    goad = fixed_goad_effect_template(text)
+    if goad is not None:return goad
+    connive = fixed_connive_effect_template(text, source_name=card_name, source_is_permanent=source_is_permanent)
+    if connive is not None:return connive
     extra_turn = fixed_extra_turn_effect_template(text)
     if extra_turn is not None:return extra_turn
     toughness=temporary_toughness_assignment_template(text)
@@ -127,7 +135,7 @@ def _source_context_resolution_template(
     if permission is not None:return permission
     hand_entry=fixed_draw_then_hand_entry_template(text)
     if hand_entry is not None:return hand_entry
-    discard = whole_hand_discard_effect_template(text) or whole_hand_discard_draw_sequence_template(text) or whole_hand_discard_public_draw_sequence(text,source_name=card_name)
+    discard = random_discard_effect_template(text) or whole_hand_discard_effect_template(text) or whole_hand_discard_draw_sequence_template(text) or whole_hand_discard_public_draw_sequence(text,source_name=card_name)
     if discard is not None:
         return discard
     mana = fixed_resolution_mana_effect_template(text) or public_quantity_mana_effect_template(text, source_name=card_name)
@@ -139,6 +147,8 @@ def _source_context_resolution_template(
     ) or fixed_control_set_effect_template(text)
     if control is not None:
         return control.compiled()
+    conditional=conditional_source_exile_template(text,card_name=card_name,source_is_permanent=source_is_permanent)
+    if conditional is not None:return conditional.compiled()
     return linked_exile_return_effect_template(text, card_name=card_name, source_is_permanent=source_is_permanent)
 
 

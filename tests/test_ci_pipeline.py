@@ -57,6 +57,15 @@ from scripts.verify_main_broad_ci import (
 
 
 class CiPipelineTests(unittest.TestCase):
+    def test_pre_corpus_checks_exploit_target_carrier_before_census(self):
+        from scripts.quick_gate import build_plan
+        for source in ('quorune/compiler/keyword_event_effect_nodes.py',
+                       'quorune/compiler/target_effect_corpus_assurance.py'):
+            plan=build_plan((source,),phase='pre-corpus')
+            step=next(row for row in plan['steps'] if row.name=='exploit-target-corpus-carrier-contract')
+            self.assertIn('test_fixed_keyword_event_effects.py',step.command)
+            self.assertIn('test_exploit_target_result_is_accepted_by_corpus_assurance_and_rejects_changed_effect',step.command)
+
     def test_stale_corpus_fails_plan_before_matrix_without_weakening_final_checks(self):
         workflow = (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
         plan = workflow.split("\n  plan:\n", 1)[1].split("\n  python:\n", 1)[0]

@@ -56,6 +56,27 @@ def record(text, type_line="Instant"):
 
 
 class BoundEffectProgramCompilerTests(unittest.TestCase):
+    def test_bound_creature_prevention_pronouns_preserve_closed_scope_shape(self):
+        for text in (
+            'Untap target creature. Prevent all damage that would be dealt to it this turn.',
+            'Target creature gains flying until end of turn. Prevent all damage that would be dealt to that creature this turn.',
+            'Put a +1/+1 counter on target creature. It gains flying until end of turn. Prevent all combat damage that would be dealt to it this turn.',
+        ):
+            ir=self.compile(text)
+            self.assertEqual('exact',ir.status,ir.material_residuals)
+            node=ir.faces[0].nodes[0]
+            self.assertIn(CAPABILITY,node.capability_dependencies)
+            self.assertIn('damage.prevention.persistent_amount',node.capability_dependencies)
+            prevention=node.effects[-1]
+            self.assertEqual('*',prevention['subject'])
+            self.assertEqual('$target.0',prevention['scope']['target_ref'])
+        for text in ('Tap target creature an opponent controls. Goad it.',
+                     'Put a +1/+1 counter on target creature. Goad it.'):
+            ir=self.compile(text)
+            self.assertEqual('exact',ir.status,ir.material_residuals)
+            self.assertEqual('$target.0',ir.faces[0].nodes[0].effects[-1]['card'])
+        self.assertNotEqual('exact',self.compile('Untap target artifact. Goad it.').status)
+
     @classmethod
     def setUpClass(cls):
         cls.registry = load_default_capability_registry()
@@ -204,6 +225,40 @@ class BoundEffectProgramCompilerTests(unittest.TestCase):
 
 
 class BoundEffectProgramRuntimeTests(unittest.TestCase):
+    def test_original_djeru_resolve_untaps_then_prevents_damage_and_replays(self):
+        session=self.session(608202);engine=session.engine
+        spell=self.add(engine,"Djeru's Resolve",zone='hand',ref='original-bound-prevention')
+        target=self.add(engine,'Generic Bound Body',ref='original-prevention-target');target.tapped=True
+        bolt=self.add(engine,'Lightning Bolt',seat='B',zone='hand',ref='original-prevention-bolt')
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+        program=compile_best_available_card_program(self.db,self.db.lookup("Djeru's Resolve"),
+            semantic_registry=engine.semantics,capability_registry=self.registry,capability_profile='commander_review')
+        self.assertTrue(bind_card_program_runtime(program,capability_registry=self.registry,
+            profile='commander_review')['strict_capability_ready'])
+        for ability in engine.semantics.programs_for_oracle(spell.oracle_id):
+            if ability.ability_id in {'spell:front','ability:ab2'}:
+                self.assertTrue(engine.semantic_program_is_current_trusted(ability))
+        engine.permissions.invalidate_current();engine.state.pending_decision=None
+        engine.state.active_player='A';engine.state.started=True;engine.state.phase='precombat_main';engine.state.step='main'
+        engine.state.players['A'].mana_pool['W']=1;engine.state.players['B'].mana_pool['R']=1
+        engine._grant_priority('A');engine.pump()
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        offered=next(row for row in actions if row.get('card')==spell.ref and row['id'].startswith('cast:'))
+        self.checkpoint(session)
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'targets':[target.ref],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        self.assertFalse(session.state.cards[target.object_id].tapped)
+        while session.state.priority_player!='B':
+            result=session.act(session.pending_principals()[0],{'action_id':'pass'});self.assertTrue(result.ok,result.summary)
+        actions=session.packet('pilot:B',full=True)['decision']['ctx']['legal']['actions']
+        action=next(row for row in actions if row.get('card')==bolt.ref)
+        result=session.act('pilot:B',{'action_id':action['id'],'targets':[target.ref],'pay':'auto'})
+        self.assertTrue(result.ok,result.summary);self.resolve(session)
+        self.assertEqual(0,session.state.cards[target.object_id].marked_damage)
+        self.assertEqual('battlefield',session.state.cards[target.object_id].zone)
+        self.replay(session,load=True)
+
     def test_original_frost_lynx_entry_uses_opponent_target_next_untap_and_replay(self):
         from quorune.card_programs.adapters import compile_best_available_card_program
         from quorune.card_programs import bind_card_program_runtime
@@ -296,7 +351,8 @@ class BoundEffectProgramRuntimeTests(unittest.TestCase):
     def setUpClass(cls):
         cls.temporary = tempfile.TemporaryDirectory()
         path = Path(cls.temporary.name) / "bound-effects.sqlite3"
-        build_fixture_database([FIXTURE], path)
+        build_fixture_database([FIXTURE,ROOT/'tests/fixtures/prevention-composition-cards.json',
+            ROOT/'tests/fixtures/damage-result-cards.json'], path)
         cls.db = CardDatabase(path)
         cls.registry = load_default_capability_registry()
         cls.deck = DeckDefinition("Generic Bound Deck", [

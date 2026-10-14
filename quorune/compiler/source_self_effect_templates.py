@@ -11,6 +11,7 @@ from .creature_power_damage_templates import (
 )
 from .damage_templates import source_pronoun_damage_effect_template
 from .explore_templates import single_explore_effect_template
+from .connive_templates import fixed_connive_effect_template
 from .declared_effect_amounts import declared_effect_amount_template
 
 
@@ -53,6 +54,10 @@ def source_self_contextual_effect_template(
     compile_effect: Any = None,
 ) -> tuple[Any, ...] | None:
     """Delegate one source-bound body to its closed typed leaf owner."""
+
+    connive = fixed_connive_effect_template(text, source_name=card_name, source_is_permanent=True,
+                                           allow_source_pronoun=True)
+    if connive is not None:return connive
 
     normalized=normalized_source_result_body(text)
     if normalized is not None and compile_effect is not None:

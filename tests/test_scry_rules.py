@@ -249,7 +249,7 @@ class ScryRuntimeTests(unittest.TestCase):
             replay = replay_record(record, self.db, verify=True)
         self.assertTrue(replay["ok"], replay)
 
-    def test_scry_zero_and_empty_library_create_no_event(self):
+    def test_scry_zero_has_no_event_and_positive_empty_library_completes_event(self):
         zero = self.session(73002)
         self.begin_scry(zero, count=0, expect_decision=False)
         self.assertIsNone(zero.state.pending_decision)
@@ -263,7 +263,7 @@ class ScryRuntimeTests(unittest.TestCase):
             engine.move_card(object_id, "graveyard", log=False)
         self.begin_scry(empty, count=3, expect_decision=False)
         self.assertIsNone(empty.state.pending_decision)
-        self.assertFalse(
+        self.assertTrue(
             any(event.code == "library.scry" for event in empty.state.events)
         )
 

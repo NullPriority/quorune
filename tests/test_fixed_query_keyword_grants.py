@@ -189,6 +189,82 @@ def _permanent(
 
 
 class FixedQueryKeywordGrantCompilerTests(unittest.TestCase):
+    def test_public_query_protection_grants_keep_typed_quality_and_reject_unbound_labels(self):
+        from quorune.semantic_runtime.continuous_components import (
+            FixedQueryProtectionGrantHandler, FixedQueryCharacteristicProtectionGrantHandler,
+        )
+        from quorune.compiler.continuous_templates import fixed_query_characteristic_grant_handler
+        from quorune.ability_fragments import ProtectionSpec
+        for text in ('All creatures have protection from black.',
+                     'Other Cats you control have protection from Dogs.'):
+            compiled=fixed_query_keyword_grant_handler(text)
+            self.assertIsNotNone(compiled,text)
+            self.assertIn('protection.typed.debt',compiled[2])
+            node=FixedQueryProtectionGrantHandler().validate(compiled[1])
+            self.assertTrue(all(isinstance(f,ProtectionSpec) for f in node.fragments))
+            self.assertEqual(('Protection',),node.abilities)
+            malformed=copy.deepcopy(compiled[1]);malformed['schema_version']=1
+            with self.assertRaises(ValueError):FixedQueryProtectionGrantHandler().validate(malformed)
+            malformed=copy.deepcopy(compiled[1]);malformed['modifier']['add_ability_fragments']*=2
+            with self.assertRaises(ValueError):FixedQueryProtectionGrantHandler().validate(malformed)
+            malformed=copy.deepcopy(compiled[1]);malformed['modifier']['add_ability_fragments']=[]
+            with self.assertRaises(ValueError):FixedQueryProtectionGrantHandler().validate(malformed)
+        self.assertIsNone(fixed_query_keyword_grant_handler('All creatures have protection from the chosen player.'))
+        combined=fixed_query_characteristic_grant_handler('Creatures you control get +1/+1 and have protection from black.')
+        self.assertIsNotNone(combined)
+        node=FixedQueryCharacteristicProtectionGrantHandler().validate(combined[1])
+        self.assertEqual((1,1),(node.power,node.toughness))
+        self.assertEqual('B',node.fragments[0].quality)
+    def test_live_keyword_trigger_grants_carry_exact_fragment_and_consumer_dependencies(self):
+        from quorune.ability_fragments import ability_fragment_from_dict, CombatKeywordTriggerSpec, SpellCastKeywordTriggerSpec
+        from quorune.compiler.continuous_templates import attached_fixed_characteristics_handler
+
+        cases = (
+            ('Other creatures you control have exalted.', 'Exalted', CombatKeywordTriggerSpec, 'combat.trigger.exalted'),
+            ('Creatures you control have prowess.', 'Prowess', SpellCastKeywordTriggerSpec, 'trigger.keyword.prowess'),
+            ('All Sliver creatures have flanking.', 'Flanking', CombatKeywordTriggerSpec, 'combat.trigger.flanking'),
+            ('Creature tokens you control have training.', 'Training', CombatKeywordTriggerSpec, 'counter.producer.training'),
+        )
+        for text, label, kind, capability in cases:
+            with self.subTest(text=text):
+                compiled = fixed_query_keyword_grant_handler(text)
+                self.assertIsNotNone(compiled)
+                descriptor = compiled[1]
+                self.assertEqual([label], descriptor['modifier']['add_abilities'])
+                self.assertIsInstance(ability_fragment_from_dict(descriptor['modifier']['add_ability_fragments'][0]), kind)
+                self.assertIn(capability, compiled[2])
+                default_continuous_effect_component_registry().validate(descriptor)
+        attached = attached_fixed_characteristics_handler('Enchanted creature gets +1/+1 and has flanking.')
+        self.assertIsNotNone(attached)
+        self.assertIn('combat.trigger.flanking', attached[2])
+        default_continuous_effect_component_registry().validate(attached[1])
+
+    def test_triggered_keyword_grant_labels_and_fragments_are_exact_and_fail_closed(self):
+        from quorune.keyword_abilities import triggered_keyword_grant
+        from quorune.semantic_runtime.continuous_components import FixedQueryKeywordGrantHandler
+
+        descriptor = fixed_query_keyword_grant_handler('Creatures you control have prowess.')[1]
+        handler = FixedQueryKeywordGrantHandler()
+        handler.validate(descriptor)
+        for text in ('Creatures you control have prowess 2.', 'Creatures you control have unknown keyword.',
+                     'Creatures you control have prowess and prowess.', 'Creatures you control have bushido X.'):
+            self.assertIsNone(fixed_query_keyword_grant_handler(text))
+        self.assertIsNone(triggered_keyword_grant('Bushido 0'))
+        self.assertIsNone(triggered_keyword_grant('Bushido -1'))
+        for mutation in ('omitted','mismatched','duplicate','unknown'):
+            changed = copy.deepcopy(descriptor)
+            if mutation=='omitted':changed['modifier']['add_ability_fragments']=[]
+            elif mutation=='mismatched':changed['modifier']['add_ability_fragments']=[triggered_keyword_grant('Exalted')[1]]
+            elif mutation=='duplicate':changed['modifier']['add_ability_fragments']*=2
+            else:changed['modifier']['add_ability_fragments'][0]['unknown']=True
+            with self.subTest(mutation=mutation), self.assertRaises(SemanticNodeError):
+                handler.validate(changed)
+
+    def test_triggered_keyword_grant_codec_omission_mutant_is_killed(self):
+        with mock.patch('quorune.compiler.continuous_templates.triggered_keyword_grant',return_value=None):
+            with self.assertRaises(AssertionError):
+                self.assertIsNotNone(fixed_query_keyword_grant_handler('Creatures you control have prowess.'))
+
     def test_resolution_public_stat_filter_uses_one_fixed_numeric_owner(self):
         parsed = fixed_public_characteristic_set_effect_template(
             'Other creatures you control with power 4 or greater gain trample and haste until end of turn.')
@@ -1000,14 +1076,29 @@ class FixedQueryKeywordGrantCompilerTests(unittest.TestCase):
         self.assertIn("Flying", evaluated.characteristics["abilities"])
 
     def test_open_or_unsupported_queries_remain_material_residuals(self):
+        for index, text in enumerate((
+            "Creatures you control have protection from red.",
+            "Creatures you control get +1/+1 and have protection from red.",
+        )):
+            program = self.compile(_permanent(
+                text, suffix=119_002_000 + index,
+                name=f"Typed Protection Grant {index}",
+            ))
+            self.assertEqual((), program.residuals)
+            descriptor = next(
+                descriptor for ability in program.abilities
+                for descriptor in ability.handlers
+                if descriptor["handler_id"].endswith("protection-grant.v2")
+            )
+            self.assertEqual("R", descriptor["modifier"]["add_ability_fragments"][0]["value"]["quality"])
         unsupported = (
             "Attacking tapped creatures you control have flying.",
             "Attacking creatures you control with a +1/+1 counter on them "
             "have trample.",
-            "Creatures you control have protection from red.",
+            "Creatures you control have protection from the chosen player.",
             "Other Rats you control have toxic 1.",
             "Artifact permanents you control have flying.",
-            "Creatures you control get +1/+1 and have protection from red.",
+            "Creatures you control get +1/+1 and have protection from the chosen player.",
             "Creatures you control have haste until end of turn.",
         )
         for index, text in enumerate(unsupported):
@@ -2355,6 +2446,151 @@ class FixedQueryKeywordGrantRuntimeTests(unittest.TestCase):
             session.save(record_dir)
             replay = replay_record(record_dir, self.db, verify=True)
         self.assertTrue(replay["ok"], replay)
+
+
+class TriggeredKeywordGrantRuntimeTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from scripts.build_test_database import build_fixture_database
+        from quorune.deck import DeckDefinition, DeckEntry
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name)/'triggered-keyword-grants.sqlite3'
+        root = Path(__file__).resolve().parents[1]
+        build_fixture_database([root/'tests/fixtures/bound-effect-program-cards.json',root/'tests/fixtures/fixed-query-keyword-grant-cards.json'], path)
+        cls.db = __import__('quorune.carddb', fromlist=['CardDatabase']).CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition('Triggered grant fixture', [DeckEntry('Generic Bound Commander',1,'commander'), DeckEntry('Generic Bound Plains',30)], ['Generic Bound Commander'])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close(); cls.temporary.cleanup()
+
+    from test_bound_effect_programs import BoundEffectProgramRuntimeTests as _Witnesses
+    session = _Witnesses.session
+    add = _Witnesses.add
+    checkpoint = _Witnesses.checkpoint
+    ready = _Witnesses.ready
+    resolve = _Witnesses.resolve
+    replay = _Witnesses.replay
+
+    def test_original_bria_granted_prowess_locks_recipient_after_source_bounce_and_replays(self):
+        from quorune.record import authoritative_state_hash
+        from quorune.ability_fragments import SpellCastKeywordTriggerSpec, SpellCastKeywordTriggerKind
+        session=self.session(362002);engine=session.engine
+        source=self.add(engine,'Bria, Riptide Rogue',ref='bria-source')
+        recipient=self.add(engine,'Generic Bound Body',ref='bria-recipient')
+        foreign=self.add(engine,'Generic Bound Body',seat='B',ref='bria-foreign')
+        spell=self.add(engine,'Disperse',zone='hand')
+        base=self.db.lookup('Generic Bound Body')
+        action=self.ready(session,spell,{'U':1,'C':1})
+        self.assertTrue(any(isinstance(f,SpellCastKeywordTriggerSpec) and f.kind is SpellCastKeywordTriggerKind.PROWESS for f in engine._effective_ability_fragments(recipient)))
+        self.assertFalse(any(isinstance(f,SpellCastKeywordTriggerSpec) and f.kind is SpellCastKeywordTriggerKind.PROWESS for f in engine._effective_ability_fragments(foreign)))
+        self.checkpoint(session);before=authoritative_state_hash(session.state)
+        denied=session.act('pilot:C',{'action_id':action['id'],'targets':[source.ref],'pay':'auto'})
+        self.assertFalse(denied.ok);self.assertEqual(before,authoritative_state_hash(session.state))
+        accepted=session.act('pilot:A',{'action_id':action['id'],'targets':[source.ref],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        # Original Disperse resolves after its cast triggers. The ongoing grant
+        # ends with Bria, while the already-created fixed Prowess result remains.
+        if session.state.pending_decision.kind=='trigger.order':
+            refs=[item.ref for item in session.state.pending_trigger_batches[0].items]
+            accepted=session.act('pilot:A',{'action_id':'order','triggers':refs})
+            self.assertTrue(accepted.ok,accepted.summary)
+        for _ in range(8):
+            decision=self.resolve(session)
+            if decision is None:break
+            self.assertEqual('semantic.target',decision.kind)
+            accepted=session.act('pilot:A',{'action_id':'choose','targets':[recipient.ref]})
+            self.assertTrue(accepted.ok,accepted.summary)
+        self.assertFalse(session.state.stack)
+        current=session.state.cards[recipient.object_id]
+        self.assertEqual('hand',session.state.cards[source.object_id].zone)
+        self.assertEqual((int(base.power)+1,int(base.toughness)+1),(engine._numeric_stat(current.object_id,'power'),engine._numeric_stat(current.object_id,'toughness')))
+        self.assertFalse(any(isinstance(f,SpellCastKeywordTriggerSpec) for f in engine._effective_ability_fragments(current)))
+        public=json.dumps(session.packet('pilot:D',full=True)['state'])
+        self.assertNotIn(current.object_id,public)
+        for seat in 'ABC':
+            for object_id in session.state.players[seat].zones['hand']:
+                if object_id!=source.object_id:self.assertNotIn(session.state.cards[object_id].ref,public)
+        self.replay(session,load=True)
+
+    def test_granted_prowess_response_bounce_invalidates_old_recipient_and_replays(self):
+        session=self.session(362003);engine=session.engine
+        source=self.add(engine,'Bria, Riptide Rogue',ref='response-bria')
+        recipient=self.add(engine,'Generic Bound Body',ref='old-prowess-recipient')
+        first=self.add(engine,'Disperse',zone='hand',ref='first-grant-disperse')
+        response=self.add(engine,'Disperse',seat='B',zone='hand',ref='response-grant-disperse')
+        action=self.ready(session,first,{'U':1,'C':1});engine.state.players['B'].mana_pool.update({'U':1,'C':1})
+        self.checkpoint(session)
+        accepted=session.act('pilot:A',{'action_id':action['id'],'targets':[source.ref],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        refs=[item.ref for item in session.state.pending_trigger_batches[0].items]
+        accepted=session.act('pilot:A',{'action_id':'order','triggers':refs})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.assertTrue(any(item.context.get('granted_prowess_instance') is not None for item in session.state.stack))
+        while session.state.pending_decision.kind!='priority':
+            self.assertEqual('semantic.target',session.state.pending_decision.kind)
+            chosen=session.act('pilot:A',{'action_id':'choose','targets':[source.ref]})
+            self.assertTrue(chosen.ok,chosen.summary)
+        while session.pending_principals()[0]!='pilot:B':
+            passed=session.act(session.pending_principals()[0],{'action_id':'pass'})
+            self.assertTrue(passed.ok,passed.summary)
+        action=next(row for row in session.packet('pilot:B',full=True)['decision']['ctx']['legal']['actions'] if row.get('card')==response.ref)
+        accepted=session.act('pilot:B',{'action_id':action['id'],'targets':[recipient.ref],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        for _ in range(8):
+            decision=self.resolve(session)
+            if decision is None:break
+            self.assertEqual('semantic.target',decision.kind)
+            accepted=session.act('pilot:A',{'action_id':'choose','targets':[source.ref]})
+            self.assertTrue(accepted.ok,accepted.summary)
+        self.assertFalse(session.state.stack)
+        current=session.state.cards[recipient.object_id]
+        self.assertEqual('hand',current.zone)
+        self.assertEqual({},current.annotations)
+        self.replay(session,load=True)
+
+    def test_original_archangels_grant_independent_exalted_instances_and_replay(self):
+        from quorune.turn_step_owner import TURN_STEPS
+        from quorune.ability_fragments import CombatKeywordTriggerSpec, CombatKeywordTriggerKind
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.record import authoritative_state_hash
+        session = self.session(362001); engine = session.engine
+        first = self.add(engine, 'Sublime Archangel', ref='archangel-one')
+        second = self.add(engine, 'Sublime Archangel', ref='archangel-two')
+        recipient = self.add(engine, 'Generic Bound Body', ref='exalted-recipient')
+        recipient.acquired_control_turn_count = -1
+        base_record = self.db.lookup('Generic Bound Body')
+        expected_stats = (int(base_record.power)+6, int(base_record.toughness)+6)
+        program = compile_best_available_card_program(self.db,self.db.lookup('Sublime Archangel'),semantic_registry=engine.semantics,capability_registry=self.registry,capability_profile='commander_review')
+        self.assertTrue(bind_card_program_runtime(program,capability_registry=self.registry,profile='commander_review')['strict_capability_ready'])
+        fragments = engine._effective_ability_fragments(recipient)
+        self.assertEqual(2, sum(isinstance(f,CombatKeywordTriggerSpec) and f.kind is CombatKeywordTriggerKind.EXALTED for f in fragments))
+        engine.permissions.invalidate_current(); engine.state.pending_decision=None; engine.state.priority_player=None; engine.state.priority_passes=[]
+        engine.state.started=True;engine.state.active_player='A';engine.state.phase='combat';engine.state.step='declare_attackers'
+        engine.state.phase_index=TURN_STEPS.index(('combat','declare_attackers'));engine._issue_attackers()
+        self.checkpoint(session);before=authoritative_state_hash(session.state)
+        denied=session.act('pilot:C',{'action_id':'attack','attackers':{recipient.ref:'B'}})
+        self.assertFalse(denied.ok);self.assertEqual(before,authoritative_state_hash(session.state))
+        accepted=session.act('pilot:A',{'action_id':'attack','attackers':{recipient.ref:'B'}})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.assertEqual('trigger.order',session.state.pending_decision.kind)
+        triggers=[item.ref for item in session.state.pending_trigger_batches[0].items]
+        # Each Archangel has printed Exalted and receives the other's grant;
+        # the ordinary body independently receives both grants.
+        self.assertEqual(6,len(triggers))
+        accepted=session.act('pilot:A',{'action_id':'order','triggers':triggers})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.resolve(session)
+        current=session.state.cards[recipient.object_id]
+        self.assertEqual(expected_stats,(engine._numeric_stat(current.object_id,'power'),engine._numeric_stat(current.object_id,'toughness')))
+        self.replay(session,load=True)
+
+    def test_granted_prowess_runtime_omission_mutant_is_killed(self):
+        with mock.patch('quorune.trigger_discovery._granted_prowess_trigger_items',return_value=()):
+            with self.assertRaises(AssertionError):
+                self.test_original_bria_granted_prowess_locks_recipient_after_source_bounce_and_replays()
 
 
 class SourceCounterAnthemRuntimeTests(unittest.TestCase):

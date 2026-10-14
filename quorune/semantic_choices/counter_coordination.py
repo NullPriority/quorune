@@ -233,14 +233,14 @@ def continue_semantic_completion(
                 )
             intent = with_replacement_selections(intent, selections)
         try:
-            execute_intent_plan(
-                host,
-                IntentPlan(
-                    operation=str(continuation.effect.get("op") or ""),
-                    handler_id=continuation.handler_id,
-                    intents=(intent,),
-                ),
-            )
+            from ..conditional_exile_return import defer_conditional_cost_returns
+            with defer_conditional_cost_returns() as waiting:
+                execute_intent_plan(host,IntentPlan(operation=str(continuation.effect.get('op') or ''),
+                    handler_id=continuation.handler_id,intents=(intent,)))
+            if waiting:
+                from .completed_choice import encode_remaining_completion,finish_choice_intent_returns
+                saved=encode_remaining_completion(continuation,actor,response,completion,index+1)
+                if finish_choice_intent_returns(host,waiting,saved):return False
         except ReplacementChoiceRequired as required:
             if isinstance(intent, PlaceCountersIntent):
                 _issue_counter_replacement_choice(

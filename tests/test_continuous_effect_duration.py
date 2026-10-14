@@ -779,6 +779,7 @@ class ContinuousEffectModelTests(unittest.TestCase):
             "Target creature you control gains flying until end of turn.",
             "Creatures you control get +X/+X until end of turn.",
             "Creatures you control gain protection from red until end of turn.",
+            "Creatures you control gain prowess until end of turn.",
             "Creatures you control gain \"{T}: Add {G}.\" until end of turn.",
             "Creatures you control become artifacts until end of turn.",
             "Creatures you control gain flying until your next turn.",

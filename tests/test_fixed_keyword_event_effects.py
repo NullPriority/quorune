@@ -94,7 +94,213 @@ def focused_database(directory: str) -> CardDatabase:
     return CardDatabase(database)
 
 
+class ExploitRuntimeTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from quorune.deck import DeckDefinition,DeckEntry
+        cls.temporary=tempfile.TemporaryDirectory();path=Path(cls.temporary.name)/'exploit.sqlite3'
+        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',
+                                ROOT/'tests/fixtures/exploit-cards.json'],path)
+        cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
+        cls.deck=DeckDefinition('Generic Exploit Deck',[DeckEntry('Generic Bound Commander',1,'commander'),
+            DeckEntry('Generic Bound Plains',30)],['Generic Bound Commander'])
+
+    @classmethod
+    def tearDownClass(cls):cls.db.close();cls.temporary.cleanup()
+
+    from test_bound_effect_programs import BoundEffectProgramRuntimeTests as _Actions
+    add=_Actions.add
+    ready=_Actions.ready
+    checkpoint=_Actions.checkpoint
+    resolve=_Actions.resolve
+    replay=_Actions.replay
+
+    def session(self,seed):
+        from quorune.semantics import SemanticRegistry
+        session=self._Actions.session(self,seed);engine=session.engine
+        engine.semantics=SemanticRegistry(include_builtin_packs=False)
+        register_generated_programs(self.db,engine.semantics,tuple(self.db.iter_cards()),trust_level='provisional',
+            capability_registry=self.registry,capability_profile='commander_review',promote_exact_runtime_handlers=True,
+            promote_exact_trigger_programs=True,promote_exact_effect_programs=True,promote_exact_capability_declarations=True)
+        return session
+
+    def test_original_fell_stinger_self_sacrifice_creates_separate_targeted_draw_loss_and_replays(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        session=self.session(389001);engine=session.engine
+        source=self.add(engine,'Fell Stinger',zone='hand')
+        action=self.ready(session,source,{'B':1,'C':2})
+        p=compile_best_available_card_program(self.db,self.db.lookup('Fell Stinger'),semantic_registry=engine.semantics,
+            capability_registry=self.registry,capability_profile='commander_review')
+        self.assertTrue(bind_card_program_runtime(p,capability_registry=self.registry,profile='commander_review')['strict_capability_ready'])
+        self.checkpoint(session)
+        accepted=session.act('pilot:A',{'action_id':action['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);decision=self.resolve(session)
+        self.assertEqual('semantic.choice',decision.kind)
+        self.assertIn(source.ref,session.packet('pilot:A',full=True)['decision']['legal_actions'][0]['choice_schema']['legal_refs'])
+        before=authoritative_state_hash(session.state)
+        rejected=session.act('pilot:B',{'action_id':'choose','cards':[source.ref]})
+        self.assertFalse(rejected.ok);self.assertEqual(before,authoritative_state_hash(session.state))
+        resumed=self.replay(session,load=True)
+        accepted=resumed.act('pilot:A',{'action_id':'choose','cards':[source.ref]})
+        self.assertTrue(accepted.ok,accepted.summary);engine=resumed.engine
+        self.assertEqual('graveyard',engine.state.cards[source.object_id].zone)
+        self.assertTrue(any(event.kind=='permanent_sacrificed' for event in engine._current_turn_history('permanent_sacrificed')))
+        self.assertEqual('semantic.target',engine.state.pending_decision.kind)
+        before_hand=len(engine.state.players['B'].zones['hand']);before_life=engine.state.players['B'].life
+        accepted=resumed.act('pilot:A',{'action_id':'choose','targets':['B']})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(resumed)
+        self.assertEqual(before_hand+2,len(engine.state.players['B'].zones['hand']))
+        self.assertEqual(before_life-2,engine.state.players['B'].life)
+        for seat in 'ACD':self.assertNotIn('hand',resumed.packet('pilot:'+seat,full=True)['state']['players']['B'])
+        self.replay(resumed)
+
+    def test_original_exploit_decline_source_bounce_and_redirected_sacrifice_distinguish_bonus(self):
+        for seed,mode in ((389002,'decline'),(389003,'source_bounce'),(389004,'redirect')):
+            with self.subTest(mode=mode):
+                session=self.session(seed);engine=session.engine
+                source=self.add(engine,'Fell Stinger',zone='hand')
+                victim=self.add(engine,'Generic Bound Body',ref='exploit-victim')
+                bounce=self.add(engine,'Disperse',seat='B',zone='hand',ref='exploit-bounce')
+                if mode=='redirect':
+                    for index in range(2):self.add(engine,'Dauthi Voidwalker',seat='B',ref=f'exploit-voidwalker-{index}')
+                action=self.ready(session,source,{'B':1,'C':2})
+                accepted=session.act('pilot:A',{'action_id':action['id'],'pay':'auto'})
+                self.assertTrue(accepted.ok,accepted.summary)
+                # Stop in priority after the real creature spell has resolved,
+                # before the queued intrinsic Exploit trigger resolves.
+                for _ in range(10):
+                    if engine.state.cards[source.object_id].zone=='battlefield':break
+                    accepted=session.act(session.pending_principals()[0],{'action_id':'pass'})
+                    self.assertTrue(accepted.ok,accepted.summary)
+                self.assertEqual('battlefield',engine.state.cards[source.object_id].zone)
+                if mode=='source_bounce':
+                    engine.state.players['B'].mana_pool.update({'U':1,'C':1})
+                    while engine.state.pending_decision.actors!=['B']:
+                        accepted=session.act(session.pending_principals()[0],{'action_id':'pass'})
+                        self.assertTrue(accepted.ok,accepted.summary)
+                    action=next(row for row in session.packet('pilot:B',full=True)['decision']['ctx']['legal']['actions'] if row.get('card')==bounce.ref)
+                    self.checkpoint(session)
+                    accepted=session.act('pilot:B',{'action_id':action['id'],'targets':[source.ref],'pay':'auto'})
+                    self.assertTrue(accepted.ok,accepted.summary)
+                else:self.checkpoint(session)
+                decision=self.resolve(session);self.assertEqual('semantic.choice',decision.kind)
+                selected=[] if mode=='decline' else [victim.ref]
+                accepted=session.act('pilot:A',{'action_id':'choose','cards':selected})
+                self.assertTrue(accepted.ok,accepted.summary)
+                if mode=='redirect':
+                    self.assertEqual('replacement.order',engine.state.pending_decision.kind)
+                    self.assertEqual('exploit_sacrifice',engine.state.pending_decision.continuation['semantic_intent_kind'])
+                    self.assertEqual('battlefield',engine.state.cards[victim.object_id].zone)
+                    resumed=self.replay(session,load=True)
+                    while resumed.state.pending_decision.kind=='replacement.order':
+                        packet=resumed.packet('pilot:A',full=True)['decision']
+                        selected=packet['ctx']['options'][0]['id']
+                        accepted=resumed.act('pilot:A',{'action_id':'choose','choices':{'replacement':selected}})
+                        self.assertTrue(accepted.ok,accepted.summary)
+                    engine=resumed.engine
+                    self.assertEqual('exile',engine.state.cards[victim.object_id].zone)
+                    self.assertEqual('semantic.target',engine.state.pending_decision.kind)
+                    accepted=resumed.act('pilot:A',{'action_id':'choose','targets':['C']})
+                    self.assertTrue(accepted.ok,accepted.summary);self.resolve(resumed)
+                    self.assertEqual(1,sum(event.code=='exploit.complete' for event in engine.state.events))
+                    self.replay(resumed)
+                else:
+                    self.assertFalse(any(event.code=='exploit.complete' for event in engine.state.events))
+                    self.assertEqual('battlefield' if mode=='decline' else 'graveyard',engine.state.cards[victim.object_id].zone)
+                    self.replay(session)
+
+    def test_exploit_sacrifice_chooser_is_locked_while_result_controller_is_current(self):
+        session=self.session(389005);engine=session.engine
+        source=self.add(engine,'Fell Stinger',zone='hand')
+        victim=self.add(engine,'Generic Bound Body',ref='locked-controller-victim')
+        action=self.ready(session,source,{'B':1,'C':2})
+        accepted=session.act('pilot:A',{'action_id':action['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        for _ in range(10):
+            if engine.state.cards[source.object_id].zone=='battlefield':break
+            accepted=session.act(session.pending_principals()[0],{'action_id':'pass'})
+            self.assertTrue(accepted.ok,accepted.summary)
+        engine.change_control(source.object_id,'B',reason='fixture current exploit source controller')
+        self.checkpoint(session)
+        decision=self.resolve(session);self.assertEqual(['A'],list(decision.actors))
+        legal=session.packet('pilot:A',full=True)['decision']['legal_actions'][0]['choice_schema']['legal_refs']
+        self.assertIn(victim.ref,legal);self.assertNotIn(source.ref,legal)
+        accepted=session.act('pilot:A',{'action_id':'choose','cards':[victim.ref]})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.assertEqual(['B'],list(engine.state.pending_decision.actors))
+        self.assertEqual('semantic.target',engine.state.pending_decision.kind)
+        accepted=session.act('pilot:B',{'action_id':'choose','targets':['D']})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        self.replay(session)
+
+
 class FixedKeywordEventEffectCompilerTests(unittest.TestCase):
+    def test_exploit_instruction_rejects_unknown_fields_and_closed_owner_withdrawal(self):
+        from quorune.rules.exploit_capability_shapes import exploit_instruction_node_capabilities,EXPLOIT_CAPABILITY
+        from quorune.carddb import CardRecord
+        effect={'op':'exploit','player':'$controller','source':'$source'}
+        self.assertEqual((EXPLOIT_CAPABILITY,),exploit_instruction_node_capabilities(effects=(effect,),target_schema=None,mechanic_ids=('exploit',)))
+        for bad in ({**effect,'extra':True},{**effect,'player':'$source.controller'},{**effect,'source':'$target.0'}):
+            self.assertEqual((),exploit_instruction_node_capabilities(effects=(bad,),target_schema=None,mechanic_ids=('exploit',)))
+        from quorune.compiler.keyword_event_effect_nodes import fixed_keyword_event_effect_spec
+        self.assertIsNotNone(fixed_keyword_event_effect_spec('Exploit'))
+        self.assertIsNone(fixed_keyword_event_effect_spec('Exploit 2'))
+        card=CardRecord(oracle_id='00000000-0000-4000-8000-000000000694',name='Generic Exploiter',mana_cost='{B}',mana_value=1,
+            type_line='Creature — Zombie',oracle_text='Exploit',power='2',toughness='2',loyalty=None,defense=None,
+            colors=('B',),color_identity=('B',),keywords=('Exploit',),produced_mana=(),layout='normal',released_at='2026-01-01',
+            legalities={'commander':'legal'},faces=(),raw={})
+        registry=load_default_capability_registry()
+        self.assertEqual('exact',compile_oracle_card(card,capability_registry=registry).status)
+        raw=json.loads(REGISTRY_PATH.read_text(encoding='utf-8'))
+        for row in raw['capabilities']:
+            if row['id']==EXPLOIT_CAPABILITY:row['status']='blocked';row['blockers']=['fixture dependency withdrawal']
+        self.assertNotEqual('exact',compile_oracle_card(card,capability_registry=CapabilityRegistry(raw)).status)
+        with patch('quorune.compiler.keyword_event_effect_nodes.fixed_keyword_event_effect_spec',return_value=None):
+            self.assertNotEqual('exact',compile_oracle_card(card,capability_registry=registry).status)
+        from quorune.semantic_runtime.exploit_intent import ExploitSacrificeIntent,validate_exploit_identity
+        from quorune.zone_trigger_events import ZoneTransitionKind
+        from quorune.semantic_choices.model import SemanticChoiceError
+        intent=ExploitSacrificeIntent(actor='A',object_refs=('victim',),expected_zones=('battlefield',),destination='graveyard',
+            reason='Exploit',transition_kind=ZoneTransitionKind.SACRIFICE,controlled_only=True,
+            source_ref='source',source_identity='source@1',sacrificed_identity='victim@2')
+        kind,identity=semantic_intent_identity(intent)
+        self.assertEqual('exploit_sacrifice',kind)
+        self.assertEqual(identity,validate_semantic_intent_identity(kind,identity))
+        for bad in ({**identity,'extra':True},{**identity,'source_identity':False}):
+            with self.assertRaises(SemanticChoiceError):validate_semantic_intent_identity(kind,bad)
+    def test_exploit_has_separate_source_spanned_entry_and_sacrifice_result_nodes(self):
+        from quorune.carddb import CardRecord
+        card=CardRecord(oracle_id='00000000-0000-4000-8000-000000000693',name='Generic Exploiter',mana_cost='{B}',mana_value=1,
+            type_line='Creature — Zombie',oracle_text='Exploit\nWhen this creature exploits a creature, draw two cards.',
+            power='2',toughness='2',loyalty=None,defense=None,colors=('B',),color_identity=('B',),keywords=('Exploit',),
+            produced_mana=(),layout='normal',released_at='2026-01-01',legalities={'commander':'legal'},faces=(),raw={})
+        registry=load_default_capability_registry()
+        ir=compile_oracle_card(card,capability_registry=registry,capability_profile='commander_review')
+        self.assertEqual('exact',ir.status,ir.to_dict())
+        nodes=ir.faces[0].nodes
+        self.assertEqual(['permanent.enter.self','creature.exploits.self'],[node.event for node in nodes])
+        self.assertEqual({'op':'exploit','player':'$controller','source':'$source'},nodes[0].effects[0])
+        self.assertEqual([1,2],[node.span.line for node in nodes])
+
+    def test_exploit_target_result_is_accepted_by_corpus_assurance_and_rejects_changed_effect(self):
+        from quorune.carddb import CardRecord
+        from quorune.compiler.target_effect_corpus_assurance import TargetEffectCorpusCollector,TargetEffectAssuranceError
+        card=CardRecord(oracle_id='fixture:exploit-target-assurance',name='Generic Exploiter',
+            mana_cost='{B}',mana_value=1,type_line='Creature — Zombie',
+            oracle_text='Exploit\nWhen this creature exploits a creature, target creature gets -3/-3 until end of turn.',
+            power='2',toughness='2',loyalty=None,defense=None,colors=('B',),color_identity=('B',),
+            keywords=('Exploit',),produced_mana=(),layout='normal',released_at='2026-01-01',
+            legalities={'commander':'legal'},faces=(),raw={})
+        registry=load_default_capability_registry()
+        ir=compile_oracle_card(card,capability_registry=registry,capability_profile='commander_review')
+        self.assertEqual('exact',ir.status)
+        TargetEffectCorpusCollector().observe(card,ir)
+        node=ir.faces[0].nodes[1]
+        changed=replace(node,effects=({**node.effects[0],'power':-2},))
+        mutated=replace(ir,faces=(replace(ir.faces[0],nodes=(ir.faces[0].nodes[0],changed)),))
+        with self.assertRaises(TargetEffectAssuranceError):TargetEffectCorpusCollector().observe(card,mutated)
+
     @classmethod
     def setUpClass(cls) -> None:
         cls.temporary = tempfile.TemporaryDirectory()

@@ -1048,6 +1048,11 @@ def fixed_public_event_binding_spec(
 ) -> FixedPublicEventBindingSpec | None:
     """Parse one bounded public occurrence without compiling its effect body."""
 
+    exploit=re.fullmatch(r'(?:When|Whenever) (?P<source>.+?) exploits a creature, (?P<body>.+)',material_line,re.I)
+    if exploit is not None and _source_subject(exploit['source'],card_name=card_name):
+        return _spec('creature.exploits.self','source_exploits',exploit['body'],
+            'fixed-source-exploit-result-v1','fixed-exploit-result',capabilities=('trigger.keyword.exploit.creature_sacrifice',))
+
     return (
         _class_level_spec(material_line)
         or _public_spell_action_spec(material_line, card_name=card_name)

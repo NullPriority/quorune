@@ -176,14 +176,14 @@ def continue_semantic_preparation(
                 )
             intent = with_replacement_selections(intent, selections)
         try:
-            committed_results[index]=execute_intent_plan(
-                host,
-                IntentPlan(
-                    operation=str(continuation.effect.get("op") or ""),
-                    handler_id=continuation.handler_id,
-                    intents=(intent,),
-                ),
-            )
+            from ..conditional_exile_return import defer_conditional_cost_returns
+            with defer_conditional_cost_returns() as waiting:
+                committed_results[index]=execute_intent_plan(host,IntentPlan(
+                    operation=str(continuation.effect.get('op') or ''),handler_id=continuation.handler_id,intents=(intent,)))
+            if waiting:
+                from .completed_choice import encode_preparation_after_commit,finish_choice_intent_returns
+                saved=encode_preparation_after_commit(continuation,actor,preparation,intents[index+1:],committed_results)
+                if finish_choice_intent_returns(host,waiting,saved):return False
         except ReplacementChoiceRequired as required:
             semantic_intent_identity(intent)
             _issue_preparation_replacement_choice(

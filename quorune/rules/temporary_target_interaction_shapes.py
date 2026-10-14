@@ -42,11 +42,7 @@ def _protection_fragment(value: object) -> bool:
         return False
     try:
         fragment = ability_fragment_from_dict(value)
-        return (
-            isinstance(fragment, ProtectionSpec) and fragment.schema_version == 1
-            and (fragment.quality_kind.value == "color" or
-                 (fragment.quality_kind.value == "card_type" and fragment.quality == "artifact"))
-        )
+        return isinstance(fragment, ProtectionSpec)
     except (TypeError, ValueError):
         return False
 
