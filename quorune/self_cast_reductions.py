@@ -499,7 +499,8 @@ class SelfSpellCostReductionSpec:
 class SelfCastReductionHost(Protocol):
     state: Any
 
-    def _effective_card_data(self, card: Any) -> Mapping[str, Any]: ...
+    def _effective_card_data(self, card: Any, *, maximum_layer: Any | None = None,
+        _enforce_static_component_applicability: bool = True) -> Mapping[str, Any]: ...
 
     def _type_parts(self, type_line: str) -> tuple[set[str], set[str], set[str]]: ...
 
@@ -657,16 +658,8 @@ def _turn_value(
 
 
 def _devotion(host: SelfCastReductionHost, seat: str, color: str) -> int:
-    amount = 0
-    for object_id in host.state.players[seat].zones["battlefield"]:
-        card = host.state.cards.get(object_id)
-        if card is None or card.controller != seat or card.phased_out:
-            continue
-        mana_cost = str(host._effective_card_data(card).get("mana_cost") or "")
-        for symbol in re.findall(r"\{([^}]+)\}", mana_cost.upper()):
-            if color in symbol.split("/"):
-                amount += 1
-    return amount
+    from .devotion import current_devotion
+    return current_devotion(host,seat,(color,))
 
 
 def _domain(host: SelfCastReductionHost, seat: str) -> int:

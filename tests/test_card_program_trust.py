@@ -321,6 +321,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "participation.untap_step.static",
                 "permission.action.static",
                 "permission.cast.self-zone",
+                "state_query.devotion.fixed_increase",
                 "replacement.counter.quantity",
                 "replacement.damage.quantity",
                 "replacement.damage.redirection.static",

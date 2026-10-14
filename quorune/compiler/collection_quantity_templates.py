@@ -11,6 +11,14 @@ from ..object_predicate import ObjectQuerySpec
 
 
 def collection_quantity(value: str, *, compile_count) -> CharacteristicQuantitySpec | None:
+    devotion = re.fullmatch(r'your devotion to (?P<first>white|blue|black|red|green)(?: and (?P<second>white|blue|black|red|green))?', value, re.I)
+    if devotion is not None:
+        colors={'white':'W','blue':'U','black':'B','red':'R','green':'G'}
+        selected=tuple(sorted(colors[color.casefold()] for color in (devotion['first'],devotion['second']) if color))
+        if len(set(selected))!=len(selected):return None
+        return CharacteristicQuantitySpec(scope=CharacteristicQuantityScope.CONTROLLER_ZONE,
+            query=ObjectQuerySpec(zones=('battlefield',)),schema_version=2,
+            reduction=CharacteristicQuantityReduction.DEVOTION,mana_colors=selected)
     symbol = re.fullmatch(
         r"(?P<color>white|blue|black|red|green) mana symbols in the mana costs of (?P<objects>.+)",
         value, re.IGNORECASE,

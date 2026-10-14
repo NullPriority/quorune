@@ -7,6 +7,7 @@ from ..public_quantity_mana_abilities import (
     public_quantity_mana_handler_descriptor,
 )
 from ..public_quantity_mana_model import PUBLIC_QUANTITY_MANA_CAPABILITY
+from ..characteristic_fragments import characteristic_quantity_capabilities
 from .public_quantity_mana import public_quantity_mana_template
 from .activated_costs import activated_ability_cost, activated_ability_cost_capabilities
 from .dependency_gate import explicit_capabilities_gate
@@ -20,7 +21,8 @@ def public_quantity_activated_mana_node(ability,node_id,line,span,capability_reg
     spec=compile_public_quantity_activated_mana_ability(ability,output)
     if spec is None:
         return ability,None
-    capabilities=(PUBLIC_QUANTITY_MANA_CAPABILITY,*activated_ability_cost_capabilities(ability))
+    capabilities=(PUBLIC_QUANTITY_MANA_CAPABILITY,*activated_ability_cost_capabilities(ability),
+        *characteristic_quantity_capabilities(output.amount))
     gate=explicit_capabilities_gate(capabilities,capability_registry=capability_registry,capability_profile=capability_profile)
     residual_ids=(append_residual(residuals,kind='dependency_contract',text=line,span=span,
         reason='Public quantity activated mana lacks trusted capability closure',blockers=gate.blockers),) if gate.blockers else ()

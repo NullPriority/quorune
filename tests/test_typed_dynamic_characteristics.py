@@ -88,6 +88,84 @@ def _permanent(text: str, *, suffix: int, name: str) -> CardRecord:
 
 
 class PublicCollectionReductionTests(unittest.TestCase):
+    def test_devotion_dependency_is_required_by_characteristic_effect_and_mana_consumers(self):
+        import copy,json
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.devotion import DEVOTION_CAPABILITY
+        registry=load_default_capability_registry()
+        raw=json.loads((Path(__file__).parents[1]/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        cases=(
+            ("Generic Source's toughness is equal to your devotion to white.",'Creature — Human'),
+            ('Target creature gets +X/+X until end of turn, where X is your devotion to green.','Instant'),
+            ('You gain life equal to your devotion to green.','Sorcery'),
+            ('{T}: Add an amount of {G} equal to your devotion to green.','Artifact'),
+            ('Your devotion to each color and each combination of colors is increased by one.','Artifact'),
+            ('This spell costs {X} less to cast, where X is your devotion to blue.','Artifact'),
+        )
+        for index,(text,kind) in enumerate(cases):
+            with self.subTest(text=text):
+                record=replace(_permanent(text,suffix=363120001+index,name='Generic Source'),type_line=kind)
+                ir=compile_oracle_card(record,capability_registry=registry,capability_profile='commander_review')
+                self.assertEqual('exact',ir.status,ir.material_residuals)
+                program=compile_card_program(_NoRulingsDatabase(),record,capability_registry=registry,capability_profile='commander_review',trust_level='trusted')
+                self.assertTrue(bind_card_program_runtime(program,capability_registry=registry,profile='commander_review')['strict_capability_ready'])
+                self.assertTrue(any(DEVOTION_CAPABILITY in node.capability_dependencies for node in ir.faces[0].nodes))
+                changed=copy.deepcopy(raw)
+                next(row for row in changed['capabilities'] if row['id']==DEVOTION_CAPABILITY).update(status='blocked',blockers=['devotion dependency withdrawal'])
+                self.assertNotEqual('exact',compile_oracle_card(record,capability_registry=CapabilityRegistry(changed)).status)
+        spell=replace(_permanent('Your devotion to each color and each combination of colors is increased by one.',
+            suffix=363120009,name='Generic Spell Devotion Boundary'),type_line='Instant')
+        self.assertNotEqual('exact',compile_oracle_card(spell,capability_registry=registry).status)
+
+    def test_devotion_descriptor_domain_dependencies_and_wrong_symbol_mutation_fail_closed(self):
+        from quorune.devotion import FixedDevotionIncreaseHandler, current_devotion
+        from quorune.compiler.devotion_templates import fixed_devotion_increase_handler
+        from quorune.object_predicate import ObjectQuerySpec
+        handler=FixedDevotionIncreaseHandler()
+        descriptor=fixed_devotion_increase_handler('Your devotion to each color and each combination of colors is increased by one.')[1]
+        self.assertEqual(1,handler.validate(descriptor))
+        for field,value in (('amount',True),('schema_version',True),('unknown',True)):
+            with self.assertRaises(SemanticNodeError):handler.validate({**descriptor,field:value})
+        quantity=query_characteristic_value('your devotion to white and blue',source_name='Generic Source').to_dict()
+        for field,value in (('mana_colors',['W','W']),('mana_colors',[]),('scope','all_zones'),('exclude_source',True),('query',ObjectQuerySpec(zones=('graveyard',)).to_dict())):
+            with self.assertRaises(CharacteristicFragmentError):CharacteristicQuantitySpec.from_dict({**quantity,field:value})
+        for text in ('your devotion to white and white','your devotion to colorless','your devotion to the chosen color'):
+            self.assertIsNone(query_characteristic_value(text,source_name='Generic Source'))
+        host,values,layers=self.host([('Artifact',2,[],'battlefield',False,False)])
+        values['0']['mana_cost']='{W/U}'
+        self.assertEqual(1,current_devotion(host,'A',('U','W'),include_modifiers=False))
+        with mock.patch('quorune.devotion.reduce_public_quantity',return_value=2):
+            with self.assertRaises(AssertionError):self.assertEqual(1,current_devotion(host,'A',('U','W'),include_modifiers=False))
+        values['0']['mana_cost']='{Q}'
+        with self.assertRaises(ValueError):current_devotion(host,'A',('U','W'),include_modifiers=False)
+
+    def test_devotion_union_uses_precharacteristic_mana_cost_and_counts_hybrid_once(self):
+        host, values, layers = self.host([
+            ('Artifact',8,[], 'battlefield',False,False),
+            ('Creature',2,['R'], 'battlefield',False,False),
+            ('Creature',2,['U'], 'battlefield',False,True),
+        ])
+        values['0']['mana_cost']='{2}{R/U}{2/R}{R/P}{U/B}'
+        values['1']['mana_cost']='{G}'
+        values['2']['mana_cost']='{U}{U}'
+        host.card_record=lambda card:None
+        original=host._effective_card_data
+        host._effective_card_data=lambda card,**kwargs: (original(card,**kwargs) if kwargs['maximum_layer'] is Layer.TEXT
+            else {**original(card,**kwargs),'mana_cost':'{R}{R}{U}{U}{U}'})
+        quantity=query_characteristic_value('your devotion to red and blue',source_name='Generic Source')
+        self.assertIsNotNone(quantity)
+        self.assertEqual('devotion',quantity.reduction.value)
+        self.assertEqual(4,query_characteristic_count(host,SimpleNamespace(controller='A',ref='SOURCE'),quantity))
+        self.assertTrue(all(layer is Layer.TEXT for layer in layers))
+        self.assertEqual(quantity,CharacteristicQuantitySpec.from_dict(quantity.to_dict()))
+        host.state.cards['0'].controller='B'
+        self.assertEqual(0,query_characteristic_count(host,SimpleNamespace(controller='A',ref='SOURCE'),quantity))
+        host.state.cards['0'].controller='A';host.state.cards['0'].zone='graveyard'
+        self.assertEqual(0,query_characteristic_count(host,SimpleNamespace(controller='A',ref='SOURCE'),quantity))
+        host.state.cards['0'].zone='battlefield';values['0']['mana_cost']='{U}{U}'
+        self.assertEqual(2,query_characteristic_count(host,SimpleNamespace(controller='A',ref='SOURCE'),quantity))
+
     """Independent CR 202.3/205.2/305.6/613 layer-safe expectation table."""
 
     def host(self, rows):
@@ -246,7 +324,7 @@ class PublicCollectionReductionTests(unittest.TestCase):
         self.assertIsNotNone(quantity)
         self.assertEqual(3, query_characteristic_count(host, SimpleNamespace(controller="A", ref="SOURCE"), quantity))
         self.assertTrue(all(layer is Layer.COLOR for layer in layers))
-        self.assertIsNone(query_characteristic_value("your devotion to red", source_name="Generic Source"))
+        self.assertIsNotNone(query_characteristic_value("your devotion to red", source_name="Generic Source"))
         self.assertIsNone(query_characteristic_quantity("red mana symbols in the mana costs of cards in your hand", source_name="Generic Source"))
 
     def test_extended_quantity_codecs_reject_forged_parameters_and_nested_sums(self):

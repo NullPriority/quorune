@@ -2423,6 +2423,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/devotion_templates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/direct_target.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -5606,6 +5621,20 @@
       "file": "quorune/destruction_sets.py",
       "layer": "rules",
       "owning_subsystem": "destruction",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/devotion.py",
+      "layer": "rules",
+      "owning_subsystem": "continuous_effects",
       "allowed_dependency_layers": [
         "domain",
         "rules",
@@ -13226,5 +13255,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "dd3cf1d2a1e7b5047cf6cc63534c28168c23d527c6ca7786642a2d1eebf72b7c"
+  "fingerprint": "cc2c19aa2eecbefe68115e4f71115a0763338830cec826324769ca60762b50f5"
 }

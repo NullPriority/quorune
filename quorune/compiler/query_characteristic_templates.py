@@ -366,6 +366,8 @@ def query_characteristic_value(value: str, *, source_name: str) -> Characteristi
 
 
 def _unadjusted_characteristic_value(text: str, *, source_name: str) -> CharacteristicQuantitySpec | None:
+    if text.casefold().startswith('your devotion to '):
+        return query_characteristic_quantity(text,source_name=source_name,definition_extensions=True)
     added = additive_quantity(text, compile_value=lambda base: _unadjusted_characteristic_value(base, source_name=source_name))
     if added is not None:
         return added

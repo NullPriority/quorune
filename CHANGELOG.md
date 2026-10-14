@@ -11,6 +11,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Evaluate devotion through one copy/control/text snapshot and typed live
+  increases, preserving hybrid union counts across characteristics, effects,
+  mana production and casting costs.
+
 - Compile singular each-object stat and keyword grants with the shared live
   battlefield query, preserving subtype unions and source exclusions.
 

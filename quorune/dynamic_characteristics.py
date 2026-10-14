@@ -10,6 +10,7 @@ from .characteristic_fragments import (
     PowerToughnessCalculation,
     CharacteristicQuantityScope,
     CharacteristicQuantitySpec,
+    CharacteristicQuantityReduction,
 )
 from .continuous_effects import Layer
 from .object_query import object_matches_query, object_query_result
@@ -48,6 +49,11 @@ def query_characteristic_count(
         return sum(query_characteristic_count(host, source, term,
                    _enforce_static_component_applicability=_enforce_static_component_applicability)
                    for term in quantity.terms) * quantity.multiplier + quantity.offset
+    if quantity.reduction is CharacteristicQuantityReduction.DEVOTION:
+        from .devotion import current_devotion
+        return current_devotion(host,source.controller,quantity.mana_colors,
+            include_modifiers=_enforce_static_component_applicability,
+            _enforce_static_component_applicability=_enforce_static_component_applicability) * quantity.multiplier + quantity.offset
     if quantity.scope is CharacteristicQuantityScope.SOURCE_COUNTER:
         assert quantity.counter_name is not None
         raw = source.counters.get(quantity.counter_name, 0)
@@ -112,7 +118,7 @@ def query_characteristic_count(
             continue
         effective = host._effective_card_data(
             candidate,
-            maximum_layer=Layer.COLOR,
+            maximum_layer=Layer.TEXT if quantity.reduction is CharacteristicQuantityReduction.DEVOTION else Layer.COLOR,
             _enforce_static_component_applicability=(
                 _enforce_static_component_applicability
             ),

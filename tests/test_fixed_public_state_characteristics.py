@@ -2883,6 +2883,120 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
 
 
 class AdditionalConditionalModifierRuntimeTests(unittest.TestCase):
+    def test_original_karametra_acolyte_mana_uses_devotion_and_current_modifier_with_replay(self):
+        session=self.session(3631205);engine=session.engine
+        source=self.add(engine,"Karametra's Acolyte",ref='devotion-mana-acolyte')
+        self.add(engine,'Generic Devotion Amplifier',ref='devotion-mana-amplifier')
+        self.add(engine,'Generic Devotion Green Hybrid',ref='devotion-mana-hybrid')
+        self.add(engine,'Generic Devotion Green Hybrid',seat='B',ref='devotion-mana-foreign')
+        self.assert_whole_admission(source.printed_name)
+        offered=self.ready(session,source,{})
+        self.checkpoint(session)
+        before=session.state.to_dict()
+        self.assertFalse(session.act('pilot:C',{'action_id':offered['id']}).ok)
+        self.assertEqual(before,session.state.to_dict())
+        accepted=session.act('pilot:A',{'action_id':offered['id']})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.assertEqual(3,session.state.players['A'].mana_pool['G'])
+        self.assertTrue(session.state.cards[source.object_id].tapped)
+        self.replay(session,load=True)
+
+    def test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays(self):
+        session=self.session(3631204);engine=session.engine
+        source=self.add(engine,'Generic Devotion Cost Spell',zone='hand',ref='devotion-cost-spell')
+        amplifier=self.add(engine,'Generic Devotion Amplifier',ref='devotion-cost-amplifier')
+        self.add(engine,'Generic Devotion Hybrid',ref='devotion-cost-hybrid')
+        bounce=self.add(engine,'Generic Devotion Creature Bounce',zone='hand',ref='devotion-cost-modifier-bounce')
+        self.assert_whole_admission(source.printed_name)
+        offered=self.ready(session,source,{'C':3,'U':1})
+        self.checkpoint(session)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        cast=next(row for row in actions if row.get('card')==bounce.ref)
+        self.assertTrue(session.act('pilot:A',{'action_id':cast['id'],'targets':[amplifier.ref],'pay':'auto'}).ok)
+        self.resolve(session)
+        while session.state.priority_player!='A':
+            result=session.act(session.pending_principals()[0],{'action_id':'pass'})
+            self.assertTrue(result.ok,result.summary)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        self.assertFalse(any(row.get('card')==source.ref for row in actions))
+        before=session.state.to_dict()
+        self.assertFalse(session.act('pilot:A',{'action_id':offered['id'],'pay':'auto'}).ok)
+        self.assertEqual(before,session.state.to_dict())
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        recast=next(row for row in actions if row.get('card')==amplifier.ref)
+        self.assertTrue(session.act('pilot:A',{'action_id':recast['id'],'pay':'auto'}).ok)
+        self.resolve(session)
+        while session.state.priority_player!='A':
+            result=session.act(session.pending_principals()[0],{'action_id':'pass'})
+            self.assertTrue(result.ok,result.summary)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        cast=next(row for row in actions if row.get('card')==source.ref)
+        before=len(session.state.players['A'].zones['hand'])
+        accepted=session.act('pilot:A',{'action_id':cast['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        self.assertEqual('graveyard',session.state.cards[source.object_id].zone)
+        self.assertEqual(before,len(session.state.players['A'].zones['hand']))
+        for seat in 'BCD':
+            self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+        self.replay(session,load=True)
+
+    def test_original_daxos_devotion_cast_uses_live_modifier_ability_and_departure_with_replay(self):
+        from quorune.devotion import current_devotion
+        for remove_ability in (False,True):
+            with self.subTest(remove_ability=remove_ability):
+                session=self.session(3631201+int(remove_ability));engine=session.engine
+                daxos=self.add(engine,'Daxos, Blessed by the Sun',zone='hand',ref='devotion-daxos')
+                amplifier=self.add(engine,'Generic Devotion Amplifier',ref='devotion-amplifier')
+                hybrid=self.add(engine,'Generic Devotion Hybrid',ref='devotion-hybrid')
+                self.add(engine,'Generic Devotion Hybrid',seat='B',ref='devotion-foreign-hybrid')
+                removal=self.add(engine,'Snakeform' if remove_ability else 'Generic Devotion Creature Bounce',zone='hand',ref='devotion-modifier-ending')
+                island=self.add(engine,'Generic Conditional Keyword Island',ref='devotion-removal-island')
+                bounce=self.add(engine,'Generic Devotion Artifact Bounce',zone='hand',ref='devotion-hybrid-bounce')
+                self.assert_whole_admission(daxos.printed_name)
+                offered=self.ready(session,daxos,{'W':4})
+                self.checkpoint(session)
+                before=session.state.to_dict()
+                self.assertFalse(session.act('pilot:D',{'action_id':offered['id'],'pay':'auto'}).ok)
+                self.assertEqual(before,session.state.to_dict())
+                accepted=session.act('pilot:A',{'action_id':offered['id'],'pay':'auto'})
+                self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+                self.assertEqual(4,current_devotion(engine,'A',('W',)))
+                self.assertEqual(4,engine._numeric_stat(daxos.object_id,'toughness'))
+                self.assertEqual(2,engine._numeric_stat(daxos.object_id,'power'))
+                for spell,target,expected in ((removal,amplifier,3),(bounce,hybrid,2)):
+                    while session.state.priority_player!='A':
+                        result=session.act(session.pending_principals()[0],{'action_id':'pass'})
+                        self.assertTrue(result.ok,result.summary)
+                    actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+                    if remove_ability and spell is removal:
+                        mana=next(row for row in actions if row['id'].startswith('activate:'+island.ref+':'))
+                        self.assertTrue(session.act('pilot:A',{'action_id':mana['id']}).ok)
+                        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+                    cast=next(row for row in actions if row.get('card')==spell.ref)
+                    accepted=session.act('pilot:A',{'action_id':cast['id'],'targets':[target.ref],'pay':'auto'})
+                    self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+                    self.assertEqual(expected,current_devotion(engine,'A',('W',)))
+                    self.assertEqual(expected,engine._numeric_stat(daxos.object_id,'toughness'))
+                for seat in 'BCD':
+                    self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+                self.replay(session,load=remove_ability)
+
+    def test_original_nylea_disciple_devotion_life_gain_resolves_after_actual_cast_and_replays(self):
+        session=self.session(3631203);engine=session.engine
+        source=self.add(engine,"Nylea's Disciple",zone='hand',ref='devotion-disciple')
+        self.add(engine,'Generic Devotion Amplifier',ref='devotion-life-amplifier')
+        self.add(engine,'Generic Devotion Green Hybrid',ref='devotion-green-hybrid')
+        self.add(engine,'Generic Devotion Green Hybrid',seat='C',ref='devotion-foreign-green')
+        self.assert_whole_admission(source.printed_name)
+        offered=self.ready(session,source,{'G':2,'C':2})
+        life=session.state.players['A'].life
+        self.checkpoint(session)
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        self.assertEqual(life+4,session.state.players['A'].life)
+        self.assertEqual('battlefield',session.state.cards[source.object_id].zone)
+        self.replay(session,load=True)
+
     def test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays(self):
         session=self.session(3631101)
         engine=session.engine

@@ -399,9 +399,18 @@ counts. It reads current copy/type/color data only through layer 5. Exactly two
 leaf quantities may be added without conflating them with a union; fixed
 positive multipliers and nonnegative offsets remain explicit. Paired all-zone
 power/toughness definitions retain independent field offsets. Legacy count and
-definition payloads retain their existing codecs. Devotion and its modifiers,
-hidden characteristic reads, power/toughness aggregates and open or nested
+definition payloads retain their existing codecs. Hidden characteristic reads,
+power/toughness aggregates and open or nested
 arithmetic remain unsupported rather than using an incorrect boundary.
+
+Devotion has a distinct versioned quantity reduction through `devotion.py`.
+Under CR 700.5a it reads current mana costs after copy, control and text effects,
+before later characteristic changes. One hybrid symbol contributes once to a
+two-color union. Typed fixed static increases use the existing current ability
+component map and cease after ability removal, phasing or source departure.
+Characteristic definitions, resolution amounts, mana production and self cast-
+cost reductions share this owner. Every newly compiled consumer declares the
+devotion capability separately from its result capability.
 
 `continuous.attached.fixed-characteristics.v1` keeps one reciprocal live
 attachment relation while lowering its closed operations into layers 4, 5, 6,

@@ -688,6 +688,13 @@ Fixed live-set stat and keyword composition accepts singular “each ... gets
 query, subtype union, source exclusion and layer owners. Unknown subjects,
 variable results and unsupported siblings retain their existing residuals.
 
+The public quantity compiler recognizes single-color and two-distinct-color
+devotion through a dedicated versioned reduction. It retains the CR 700.5a
+timing boundary instead of treating devotion as an ordinary color or object
+count. Fixed static increases lower to typed current components; existing
+quantity consumers declare the devotion producer dependency at admission.
+Unknown colors, unsupported increases and unrepresented siblings remain residual.
+
 Fixed static declaration composition reuses the declaration requirement and
 restriction parsers rather than adding a combat validator. A source-local line
 may contain either one exact fragment or one of the closed two-fragment

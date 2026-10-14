@@ -254,6 +254,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/destruction_replacement_planning.py",
         "quorune/state_based_replacement_coordination.py",
         "quorune/dynamic_characteristics.py",
+        "quorune/devotion.py",
         "quorune/engine.py",
         "quorune/entry_counter_coordination.py",
         "quorune/entry_copy.py",
@@ -553,6 +554,7 @@ def _owner(relative: str, layer: str) -> str:
     if relative in {
         "quorune/declaration_rule_effects.py",
         "quorune/dynamic_characteristics.py",
+        "quorune/devotion.py",
         "quorune/characteristic_evaluation_host.py",
         "quorune/public_quantity_reductions.py",
         "quorune/control_effects.py",

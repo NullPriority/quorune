@@ -1032,6 +1032,8 @@
     {
       "id": "fixed-public-state-characteristic-contract",
       "patterns": [
+        "quorune/devotion.py",
+        "quorune/compiler/devotion_templates.py",
         "tests/fixtures/additional-conditional-modifier-cards.json",
         "quorune/card_programs/runtime.py",
         "quorune/characteristic_fragments.py",
@@ -1912,6 +1914,8 @@
     {
       "id": "fixed-casting-surface-contract",
       "patterns": [
+        "quorune/devotion.py",
+        "quorune/compiler/devotion_templates.py",
         "quorune/compiler/casting_activation_metadata_templates.py",
         "quorune/semantic_runtime/casting_activation_metadata.py",
         "quorune/continuous_conditions.py",
