@@ -193,7 +193,7 @@ def _source_permanent_participation_template(
         text,
         source_name=source_name or "",
     )
-    spell_cost_reduction = static_fixed_spell_cost_reduction_handler(text)
+    spell_cost_reduction = static_fixed_spell_cost_reduction_handler(text, source_name=source_name or 'source')
     if spell_cost_reduction is not None:
         template_id = spell_cost_reduction[0]
         return StaticRuntimeTemplate(
@@ -208,7 +208,7 @@ def _source_permanent_participation_template(
                 "static_ability",
                 *(
                     (CURRENT_ABILITY_FRAGMENT_COVERAGE,)
-                    if template_id == "public-fixed-spell-cost-modifier-v1"
+                    if template_id in {"public-fixed-spell-cost-modifier-v1", "public-conditional-spell-cost-modifier-v1"}
                     else ()
                 ),
             ),

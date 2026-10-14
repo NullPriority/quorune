@@ -81,6 +81,63 @@ def _record(text: str, suffix: int) -> CardRecord:
 
 
 class FixedSpellCostReductionCompilerTests(unittest.TestCase):
+    def test_conditional_spell_cost_schema_and_dependencies_fail_closed(self):
+        import copy
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.semantic_runtime.cast_costs import ConditionalSpellCostModifierHandler
+        text = 'As long as this artifact is tapped, creature spells you cast cost {2} less to cast.'
+        compiled = static_fixed_spell_cost_reduction_handler(text)
+        self.assertIsNotNone(compiled)
+        descriptor = compiled[1]
+        handler = ConditionalSpellCostModifierHandler()
+        handler.validate(descriptor)
+        for field, value in (('schema_version', True), ('unknown', True)):
+            with self.assertRaises(SemanticNodeError):
+                handler.validate({**descriptor, field:value})
+        for altered in (
+            text.replace('this artifact is tapped', 'the top card of your library is blue'),
+            text.replace('{2}', '{X}'), text.replace('creature spells', 'spells of the chosen type'),
+            text+' Draw a card.',
+            text.replace('creature spells', 'As long as you have no cards in hand, creature spells'),
+        ):
+            self.assertIsNone(static_fixed_spell_cost_reduction_handler(altered))
+        raw = json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        for capability in (FIXED_SPELL_COST_REDUCTION_CAPABILITY_ID, 'continuous.characteristics.fixed_public_state'):
+            altered = copy.deepcopy(raw)
+            next(row for row in altered['capabilities'] if row['id']==capability).update(status='blocked', blockers=['conditional cost dependency withdrawal'])
+            self.assertNotEqual('exact', compile_oracle_card(_record(text,363080004), capability_registry=CapabilityRegistry(altered)).status)
+        with mock.patch('quorune.compiler.public_state_queries.fixed_public_state_parts', return_value=None):
+            self.assertIsNone(static_fixed_spell_cost_reduction_handler(text))
+
+    def test_conditional_spell_cost_keeps_public_condition_and_existing_modifier(self):
+        from quorune.card_programs import compile_card_program, bind_card_program_runtime
+        from quorune.semantic_runtime.cast_costs import default_cast_cost_component_registry
+        legacy = static_fixed_spell_cost_reduction_handler('During your turn, spells you cast cost {1} less to cast.')
+        self.assertIsNotNone(legacy)
+        self.assertEqual(FIXED_SPELL_COST_REDUCTION_HANDLER_ID, legacy[1]['handler_id'])
+        self.assertNotIn('source_condition', legacy[1])
+        cases = (
+            ('As long as this artifact is tapped, creature spells you cast cost {2} less to cast.', 'source_matches_query'),
+            ('Noncreature spells you cast cost {1} less to cast as long as there are three or more Lesson cards in your graveyard.', 'query_count_at_least'),
+            ('As long as you have no cards in hand, spells your opponents cast cost {1} more to cast.', 'controller_hand_count_at_most'),
+        )
+        for index, (text, condition_kind) in enumerate(cases):
+            with self.subTest(text=text):
+                card = _record(text, 363080001+index)
+                ir = compile_oracle_card(card, capability_registry=self.capabilities, capability_profile='commander_review')
+                self.assertEqual('exact', ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                self.assertEqual(text, node.text)
+                descriptor = node.handlers[0]
+                self.assertEqual('modification.cast-cost.public-state.v1', descriptor['handler_id'])
+                self.assertEqual(condition_kind, descriptor['source_condition']['kind'])
+                self.assertIn('current_ability_fragment_required', node.runtime_coverage)
+                default_cast_cost_component_registry().validate(descriptor)
+                program = compile_card_program(type('NoRulings', (), {'rulings':lambda self, record:()})(), card,
+                    capability_registry=self.capabilities, capability_profile='commander_review', trust_level='trusted')
+                self.assertTrue(bind_card_program_runtime(program, capability_registry=self.capabilities,
+                    profile='commander_review')['strict_capability_ready'])
+
     @classmethod
     def setUpClass(cls):
         cls.capabilities = load_default_capability_registry()

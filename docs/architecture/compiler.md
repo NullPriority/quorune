@@ -665,6 +665,12 @@ fragments and consumer capabilities. The versioned conditional keyword
 descriptor shares the existing layer-6/7c lowering. Unknown keyword parameters,
 toxic query grants, hidden conditions, and unsupported siblings remain residual.
 
+Closed public-state predicates may also gate an independently compiled spell-
+cost modifier. The conditional cost descriptor retains the existing spell
+predicate, controller scope, total-cost adjustment and current-ability coverage.
+Named sources remain data in the compiled condition. Hidden, nested or unknown
+conditions and unsupported cost bodies remain residual.
+
 Fixed static declaration composition reuses the declaration requirement and
 restriction parsers rather than adding a combat validator. A source-local line
 may contain either one exact fragment or one of the closed two-fragment

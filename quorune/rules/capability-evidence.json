@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "13f05a9f95cfb05f2d9e0dac106d1ab7991ecc6e3c4ae801b1b97c51258946ab",
-  "declaration_source_fingerprint": "0e2eb562ffceabed67fcc4476138dd447664c7a56f94d4db654d6b2d737e474f",
+  "registry_fingerprint": "5f3eaf323a834e7a9a68be99546ac0d3e88454c6bd57a745241c02f5200d2a40",
+  "declaration_source_fingerprint": "1b6baf8fd6adc211b6bb8029c81efde854b36c538699d2e0fd33e902f57b77a4",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -12466,6 +12466,21 @@
     {
       "capability_id": "casting.cost.modifier.fixed_query",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A closed public-state wrapper gates the existing total-cost modifier at the shared offered and accepted casting boundary, preserving live source and spell scope."
+    },
+    {
+      "capability_id": "casting.cost.modifier.fixed_query",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_aura_reducer_uses_bestow_spell_characteristics",
       "official_rule_ids": [
         "601.2f",
@@ -12571,6 +12586,21 @@
     {
       "capability_id": "casting.cost.modifier.fixed_query",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A closed public-state wrapper gates the existing total-cost modifier at the shared offered and accepted casting boundary, preserving live source and spell scope."
+    },
+    {
+      "capability_id": "casting.cost.modifier.fixed_query",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_reduced_cast_is_seat_scoped_and_replays",
       "official_rule_ids": [
         "601.2f",
@@ -12616,6 +12646,36 @@
     {
       "capability_id": "casting.cost.modifier.fixed_query",
       "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A closed public-state wrapper gates the existing total-cost modifier at the shared offered and accepted casting boundary, preserving live source and spell scope."
+    },
+    {
+      "capability_id": "casting.cost.modifier.fixed_query",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_conditional_spell_cost_schema_and_dependencies_fail_closed",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A closed public-state wrapper gates the existing total-cost modifier at the shared offered and accepted casting boundary, preserving live source and spell scope."
+    },
+    {
+      "capability_id": "casting.cost.modifier.fixed_query",
+      "evidence_class": "negative",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_unsupported_spell_reduction_grammar_remains_residual",
       "official_rule_ids": [
         "601.2f",
@@ -12657,6 +12717,36 @@
         "commander_review"
       ],
       "applicability_note": "Compile fixed public caster, characteristic, turn, ordinal, origin, increase, and reduction facts into one closed typed modifier."
+    },
+    {
+      "capability_id": "casting.cost.modifier.fixed_query",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A closed public-state wrapper gates the existing total-cost modifier at the shared offered and accepted casting boundary, preserving live source and spell scope."
+    },
+    {
+      "capability_id": "casting.cost.modifier.fixed_query",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_conditional_spell_cost_keeps_public_condition_and_existing_modifier",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A closed public-state wrapper gates the existing total-cost modifier at the shared offered and accepted casting boundary, preserving live source and spell scope."
     },
     {
       "capability_id": "casting.cost.modifier.fixed_query",
@@ -12736,6 +12826,21 @@
     {
       "capability_id": "casting.cost.modifier.fixed_query",
       "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A closed public-state wrapper gates the existing total-cost modifier at the shared offered and accepted casting boundary, preserving live source and spell scope."
+    },
+    {
+      "capability_id": "casting.cost.modifier.fixed_query",
+      "evidence_class": "privacy",
       "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionRuntimeTests.test_reduced_cast_is_seat_scoped_and_replays",
       "official_rule_ids": [
         "601.2f",
@@ -12762,6 +12867,21 @@
         "commander_review"
       ],
       "applicability_note": "Replay the opponent-scoped total, payment, stack transition, and authoritative state exactly."
+    },
+    {
+      "capability_id": "casting.cost.modifier.fixed_query",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
+      "official_rule_ids": [
+        "601.2f",
+        "601.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A closed public-state wrapper gates the existing total-cost modifier at the shared offered and accepted casting boundary, preserving live source and spell scope."
     },
     {
       "capability_id": "casting.cost.modifier.fixed_query",
@@ -36163,6 +36283,29 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A closed public-state wrapper gates the existing total-cost modifier at the shared offered and accepted casting boundary, preserving live source and spell scope."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay",
       "official_rule_ids": [
         "604.1",
@@ -36439,6 +36582,29 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A closed public-state wrapper gates the existing total-cost modifier at the shared offered and accepted casting boundary, preserving live source and spell scope."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_taste_adds_live_bonus_to_foreign_creature_and_private_draw_removes_it",
       "official_rule_ids": [
         "604.1",
@@ -36692,6 +36858,29 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A closed public-state wrapper gates the existing total-cost modifier at the shared offered and accepted casting boundary, preserving live source and spell scope."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay",
       "official_rule_ids": [
         "604.1",
@@ -36853,6 +37042,29 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "negative",
+      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_conditional_spell_cost_schema_and_dependencies_fail_closed",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A closed public-state wrapper gates the existing total-cost modifier at the shared offered and accepted casting boundary, preserving live source and spell scope."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "negative",
       "test_id": "tests.test_history_entry_characteristics.HistoryEntrySealingOwnerTests.test_pre_history_characteristic_sealing_mutant_is_killed",
       "official_rule_ids": [
         "604.1",
@@ -36918,6 +37130,29 @@
         "commander_review"
       ],
       "applicability_note": "Conditional typed keyword composition retains complete keyword labels, fragments and consumer capabilities behind the shared live public-state condition."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A closed public-state wrapper gates the existing total-cost modifier at the shared offered and accepted casting boundary, preserving live source and spell scope."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -37152,6 +37387,29 @@
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_conditional_spell_cost_keeps_public_condition_and_existing_modifier",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A closed public-state wrapper gates the existing total-cost modifier at the shared offered and accepted casting boundary, preserving live source and spell scope."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "positive",
       "test_id": "tests.test_history_entry_characteristics.HistoryEntryCharacteristicReproduction.test_two_simultaneous_copies_use_post_event_history_characteristics",
       "official_rule_ids": [
         "604.1",
@@ -37194,6 +37452,29 @@
         "commander_review"
       ],
       "applicability_note": "Conditional typed keyword composition retains complete keyword labels, fragments and consumer capabilities behind the shared live public-state condition."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A closed public-state wrapper gates the existing total-cost modifier at the shared offered and accepted casting boundary, preserving live source and spell scope."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -37355,6 +37636,29 @@
         "commander_review"
       ],
       "applicability_note": "Conditional typed keyword composition retains complete keyword labels, fragments and consumer capabilities behind the shared live public-state condition."
+    },
+    {
+      "capability_id": "continuous.characteristics.fixed_public_state",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
+      "official_rule_ids": [
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1f",
+        "613.1g",
+        "613.4c",
+        "613.6",
+        "603.6b",
+        "603.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "A closed public-state wrapper gates the existing total-cost modifier at the shared offered and accepted casting boundary, preserving live source and spell scope."
     },
     {
       "capability_id": "continuous.characteristics.fixed_public_state",
@@ -123394,5 +123698,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "572f0445b3478d31a6789c3edd96201adb86040d0f60fb714f694c100edcef68"
+  "fingerprint": "30047bfa77fc0a5408025d8d51da5682b9582ffc43db3a41391940a3422f26ca"
 }

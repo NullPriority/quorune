@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 247,
+  "registry_version": 248,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -2016,24 +2016,104 @@
     },
     {
       "id": "casting.cost.modifier.fixed_query",
-      "version": 3,
-      "official_rules": ["601.2f", "601.2h"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 4,
+      "official_rules": [
+        "601.2f",
+        "601.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
-        "summary": "Apply one fixed generic, colored, or public-value increase or reduction from a current battlefield static ability across a closed public caster, spell-characteristic, turn, ordinal, and origin-zone predicate.",
-        "inputs": ["one source-spanned fixed or public-value mana-vector modifier", "one phased-in battlefield source with current layer-6 ability presence", "the selected spell's cycle-safe current cast characteristics", "source-controller, source-opponent, or all-player scope", "optional current-turn, first-or-second-cast, graveyard, exile, or nonhand-origin facts", "optional cycle-safe public object, source-counter, party, color, or history multiplier"],
-        "outputs": ["one typed public cost modifier", "CR-ordered generic or colored increases before reductions", "stacked modifiers from independently applicable sources", "the same authoritative offer and committed total", "deterministic cost journals"],
-        "exclusions": ["target-relative, chosen, named, secret, or linked predicates", "power, toughness, greatest-value, distinct card-type or mana-value, and other cycle-sensitive quantities", "floors, caps, Trinisphere-style minimums, cost-setting effects, and arbitrary payment changes", "next-spell journals and ordinals beyond first or second", "alternative or additional costs outside their typed owners", "copied, granted, or text-changed modifiers outside current static-component propagation"]
+        "summary": "Apply one fixed generic, colored, or public-value increase or reduction from a current battlefield static ability across a closed public caster, spell-characteristic, turn, ordinal, and origin-zone predicate. A closed public-state wrapper gates the existing total-cost modifier at the shared offered and accepted casting boundary, preserving live source and spell scope.",
+        "inputs": [
+          "one source-spanned fixed or public-value mana-vector modifier",
+          "one phased-in battlefield source with current layer-6 ability presence",
+          "the selected spell's cycle-safe current cast characteristics",
+          "source-controller, source-opponent, or all-player scope",
+          "optional current-turn, first-or-second-cast, graveyard, exile, or nonhand-origin facts",
+          "optional cycle-safe public object, source-counter, party, color, or history multiplier"
+        ],
+        "outputs": [
+          "one typed public cost modifier",
+          "CR-ordered generic or colored increases before reductions",
+          "stacked modifiers from independently applicable sources",
+          "the same authoritative offer and committed total",
+          "deterministic cost journals"
+        ],
+        "exclusions": [
+          "target-relative, chosen, named, secret, or linked predicates",
+          "power, toughness, greatest-value, distinct card-type or mana-value, and other cycle-sensitive quantities",
+          "floors, caps, Trinisphere-style minimums, cost-setting effects, and arbitrary payment changes",
+          "next-spell journals and ordinals beyond first or second",
+          "alternative or additional costs outside their typed owners",
+          "copied, granted, or text-changed modifiers outside current static-component propagation"
+        ]
       },
       "dependencies": [],
-      "implementation_components": ["quorune.cast_cost_modifiers.PublicCastCostModifierSpec", "quorune.cast_cost_modifiers.PublicCastCostModifierV2Spec", "quorune.compiler.cast_cost_modifier_templates.static_fixed_spell_cost_reduction_handler", "quorune.compiler.public_cast_cost_modifiers.public_cast_cost_modifier_template", "quorune.compiler.public_cast_cost_modifiers.public_cast_cost_modifier_v2_template", "quorune.semantic_runtime.cast_costs.FixedSpellCostReductionHandler", "quorune.semantic_runtime.cast_costs.active_fixed_spell_cost_reductions", "quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin._effective_static_component_key_map", "quorune.rules.casting.static_modifiers.apply_fixed_generic_increases", "quorune.rules.casting.costs._static_generic_reduction", "quorune.rules.casting.costs._apply_static_reductions"],
-      "positive_tests": ["test_fixed_spell_reducers_compile_typed_query_descriptors", "test_public_static_modifiers_compile_closed_schema", "test_runtime_cost_reductions_stack_and_floor_generic", "test_public_cast_cost_closure_compiles_selected_grammar"],
-      "negative_tests": ["test_unsupported_spell_reduction_grammar_remains_residual", "test_public_static_modifier_near_misses_remain_residual", "test_stale_reducer_program_is_ignored"],
-      "interaction_tests": ["test_public_static_modifiers_share_offer_commit_and_current_ability", "test_public_static_modifier_turn_origin_and_ordinal_predicates", "test_reduction_applies_to_kicker_total_before_payment", "test_fixed_query_reduction_applies_before_convoke_payment", "test_aura_reducer_uses_bestow_spell_characteristics", "test_colorless_reducer_uses_devoid_spell_characteristics", "test_public_cast_cost_vectors_counts_and_replay_share_total_cost_owner", "test_public_cast_tax_uses_caster_turn_and_current_source"],
-      "multiplayer_tests": ["test_public_static_modifiers_scope_opponents_and_replay"],
-      "privacy_tests": ["test_public_static_modifiers_scope_opponents_and_replay"],
-      "replay_tests": ["test_public_static_modifiers_scope_opponents_and_replay", "test_public_cast_cost_vectors_counts_and_replay_share_total_cost_owner"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "implementation_components": [
+        "quorune.cast_cost_modifiers.PublicCastCostModifierSpec",
+        "quorune.cast_cost_modifiers.PublicCastCostModifierV2Spec",
+        "quorune.compiler.cast_cost_modifier_templates.static_fixed_spell_cost_reduction_handler",
+        "quorune.compiler.public_cast_cost_modifiers.public_cast_cost_modifier_template",
+        "quorune.compiler.public_cast_cost_modifiers.public_cast_cost_modifier_v2_template",
+        "quorune.semantic_runtime.cast_costs.FixedSpellCostReductionHandler",
+        "quorune.semantic_runtime.cast_costs.active_fixed_spell_cost_reductions",
+        "quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin._effective_static_component_key_map",
+        "quorune.rules.casting.static_modifiers.apply_fixed_generic_increases",
+        "quorune.rules.casting.costs._static_generic_reduction",
+        "quorune.rules.casting.costs._apply_static_reductions",
+        "quorune.semantic_runtime.cast_costs.ConditionalSpellCostModifierHandler"
+      ],
+      "positive_tests": [
+        "test_fixed_spell_reducers_compile_typed_query_descriptors",
+        "test_public_static_modifiers_compile_closed_schema",
+        "test_runtime_cost_reductions_stack_and_floor_generic",
+        "test_public_cast_cost_closure_compiles_selected_grammar",
+        "test_conditional_spell_cost_keeps_public_condition_and_existing_modifier",
+        "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay"
+      ],
+      "negative_tests": [
+        "test_unsupported_spell_reduction_grammar_remains_residual",
+        "test_public_static_modifier_near_misses_remain_residual",
+        "test_stale_reducer_program_is_ignored",
+        "test_conditional_spell_cost_schema_and_dependencies_fail_closed",
+        "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay"
+      ],
+      "interaction_tests": [
+        "test_public_static_modifiers_share_offer_commit_and_current_ability",
+        "test_public_static_modifier_turn_origin_and_ordinal_predicates",
+        "test_reduction_applies_to_kicker_total_before_payment",
+        "test_fixed_query_reduction_applies_before_convoke_payment",
+        "test_aura_reducer_uses_bestow_spell_characteristics",
+        "test_colorless_reducer_uses_devoid_spell_characteristics",
+        "test_public_cast_cost_vectors_counts_and_replay_share_total_cost_owner",
+        "test_public_cast_tax_uses_caster_turn_and_current_source",
+        "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay"
+      ],
+      "multiplayer_tests": [
+        "test_public_static_modifiers_scope_opponents_and_replay",
+        "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay"
+      ],
+      "privacy_tests": [
+        "test_public_static_modifiers_scope_opponents_and_replay",
+        "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay"
+      ],
+      "replay_tests": [
+        "test_public_static_modifiers_scope_opponents_and_replay",
+        "test_public_cast_cost_vectors_counts_and_replay_share_total_cost_owner",
+        "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "not_applicable",
       "dependency_fail_closed_rationale": "This bounded modifier consumes only current public source, caster, spell, zone, turn, and cast-history facts plus the canonical shared static-component presence query and total-cost pipeline; unsupported predicates do not compile.",
       "implementation_mutation_status": "killed",
@@ -5976,7 +6056,7 @@
     },
     {
       "id": "continuous.characteristics.fixed_public_state",
-      "version": 12,
+      "version": 13,
       "official_rules": [
         "604.1",
         "611.3a",
@@ -5995,7 +6075,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Apply fixed supported keywords and power/toughness modifiers in layers 6 and 7c while one closed authoritative public scalar, object, cycle-safe query, sealed history, distinct graveyard characteristic, hand, starting-life, player-counter, or designation condition is true. Compose one recipient-relative declaration requirement or restriction with fixed characteristics behind that same current public condition. Conditional typed keyword composition retains complete keyword labels, fragments and consumer capabilities behind the shared live public-state condition.",
+        "summary": "Apply fixed supported keywords and power/toughness modifiers in layers 6 and 7c while one closed authoritative public scalar, object, cycle-safe query, sealed history, distinct graveyard characteristic, hand, starting-life, player-counter, or designation condition is true. Compose one recipient-relative declaration requirement or restriction with fixed characteristics behind that same current public condition. Conditional typed keyword composition retains complete keyword labels, fragments and consumer capabilities behind the shared live public-state condition. A closed public-state wrapper gates the existing total-cost modifier at the shared offered and accepted casting boundary, preserving live source and spell scope.",
         "inputs": [
           "active phased-in battlefield source",
           "source controller turn, life, public hand, graveyard, current or sealed turn-history, opponent poison, monarch, and starting-life facts",
@@ -6039,7 +6119,10 @@
         "quorune.compiler.declaration_nodes.conditional_characteristic_declaration_grant",
         "quorune.semantic_runtime.conditional_continuous.ConditionalDeclarationGrantHandler",
         "quorune.compiler.conditional_granted_ability_templates.conditional_typed_keyword_handler",
-        "quorune.semantic_runtime.conditional_continuous.ConditionalTypedKeywordHandler"
+        "quorune.semantic_runtime.conditional_continuous.ConditionalTypedKeywordHandler",
+        "quorune.compiler.cast_cost_modifier_templates.static_fixed_spell_cost_reduction_handler",
+        "quorune.semantic_runtime.cast_costs.ConditionalSpellCostModifierHandler",
+        "quorune.semantic_runtime.cast_costs.active_fixed_spell_cost_reductions"
       ],
       "positive_tests": [
         "test_closed_public_state_grammar_compiles_capability_closed",
@@ -6057,7 +6140,9 @@
         "test_conditional_stats_and_declaration_result_preserve_one_live_condition",
         "test_conditional_typed_keywords_keep_their_fragments_and_condition",
         "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
-        "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay"
+        "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay",
+        "test_conditional_spell_cost_keeps_public_condition_and_existing_modifier",
+        "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay"
       ],
       "negative_tests": [
         "test_unrepresented_conditions_and_bodies_remain_residual",
@@ -6070,7 +6155,9 @@
         "test_conditional_declaration_composition_rejects_open_grammar_and_malformed_descriptors",
         "test_conditional_typed_keyword_schema_dependencies_and_omission_fail_closed",
         "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
-        "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay"
+        "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay",
+        "test_conditional_spell_cost_schema_and_dependencies_fail_closed",
+        "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay"
       ],
       "interaction_tests": [
         "test_live_public_object_state_and_layer_five_queries_recompute",
@@ -6086,14 +6173,16 @@
         "test_original_jetmir_additional_thresholds_stack_and_recompute_after_real_bounce",
         "test_original_channeler_condition_controls_required_attack_and_replays",
         "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
-        "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay"
+        "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay",
+        "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay"
       ],
       "multiplayer_tests": [
         "test_turn_gated_attachment_and_anthem_compose",
         "test_public_condition_queries_follow_authoritative_history_and_control",
         "test_public_fact_conditions_recompute_and_replay",
         "test_original_channeler_condition_controls_required_attack_and_replays",
-        "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays"
+        "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
+        "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay"
       ],
       "privacy_tests": [
         "test_hand_count_condition_projects_and_replays_without_hidden_identity",
@@ -6101,7 +6190,8 @@
         "test_public_fact_conditions_recompute_and_replay",
         "test_original_channeler_condition_controls_required_attack_and_replays",
         "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
-        "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay"
+        "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay",
+        "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay"
       ],
       "replay_tests": [
         "test_hand_count_condition_projects_and_replays_without_hidden_identity",
@@ -6113,7 +6203,8 @@
         "test_replacement_adjusted_history_characteristic_quantity",
         "test_original_channeler_condition_controls_required_attack_and_replays",
         "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
-        "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay"
+        "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay",
+        "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay"
       ],
       "required_evidence": [
         "positive",

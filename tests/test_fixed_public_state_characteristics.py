@@ -2883,6 +2883,56 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
 
 
 class AdditionalConditionalModifierRuntimeTests(unittest.TestCase):
+    def test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay(self):
+        session = self.session(3630801)
+        engine = session.engine
+        source = self.add(engine, 'Centaur Omenreader', ref='conditional-cost-source')
+        self.assert_whole_admission('Centaur Omenreader')
+        tapper = self.add(engine, 'Generic Conditional Keyword Tap Helper', ref='conditional-cost-tapper')
+        spell = self.add(engine, 'Generic Conditional Cost Creature', zone='hand', ref='conditional-cost-creature')
+        bounce = self.add(engine, 'Unsummon', zone='hand', ref='conditional-cost-bounce')
+        foreign = self.add(engine, 'Generic Conditional Cost Creature', seat='B', zone='hand', ref='conditional-cost-other-player')
+        self.ready(session, tapper, {'U':1})
+        actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        self.assertFalse(any(row.get('card') == spell.ref for row in actions))
+        activation = next(row for row in actions if row['id'].startswith('activate:'+tapper.ref+':'))
+        self.checkpoint(session)
+        before = session.state.to_dict()
+        self.assertFalse(session.act('pilot:B', {'action_id':activation['id'], 'cost_cards':[source.ref]}).ok)
+        self.assertEqual(before, session.state.to_dict())
+        accepted = session.act('pilot:A', {'action_id':activation['id'], 'cost_cards':[source.ref]})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        while session.state.priority_player != 'A':
+            result = session.act(session.pending_principals()[0], {'action_id':'pass'})
+            self.assertTrue(result.ok, result.summary)
+        actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        cast = next(row for row in actions if row.get('card') == spell.ref)
+        from quorune.semantic_runtime.cast_costs import active_fixed_spell_cost_reductions
+        self.assertTrue(active_fixed_spell_cost_reductions(engine, 'A', session.state.cards[spell.object_id]))
+        self.assertEqual((), active_fixed_spell_cost_reductions(engine, 'B', session.state.cards[foreign.object_id]))
+        self.assertEqual((), active_fixed_spell_cost_reductions(engine, 'A', session.state.cards[bounce.object_id]))
+        self.replay(session, load=True)
+        accepted = session.act('pilot:A', {'action_id':cast['id'], 'pay':'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        self.assertEqual('battlefield', session.state.cards[spell.object_id].zone)
+        while session.state.priority_player != 'A':
+            result = session.act(session.pending_principals()[0], {'action_id':'pass'})
+            self.assertTrue(result.ok, result.summary)
+        actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        cast = next(row for row in actions if row.get('card') == bounce.ref)
+        accepted = session.act('pilot:A', {'action_id':cast['id'], 'targets':[source.ref], 'pay':'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        self.assertEqual('hand', session.state.cards[source.object_id].zone)
+        from quorune.semantic_runtime.cast_costs import active_fixed_spell_cost_reductions
+        self.assertEqual((), active_fixed_spell_cost_reductions(engine, 'A', session.state.cards[spell.object_id]))
+        for seat in 'BCD':
+            public = session.packet('pilot:'+seat, full=True)['state']['players']['A']
+            self.assertNotIn('hand', public)
+        self.replay(session)
+
     def test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay(self):
         from quorune.ability_fragments import ProtectionSpec
         session = self.session(3630702)

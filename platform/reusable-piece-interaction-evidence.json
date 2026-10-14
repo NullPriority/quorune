@@ -4,6 +4,21 @@
     {
       "evidence_class": "interaction",
       "assurance_kind": "runtime_composition",
+      "test_id": "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
+      "piece_ids": [
+        "capability.casting.cost.modifier.fixed_query",
+        "capability.continuous.characteristics.fixed_public_state"
+      ],
+      "capability_ids": [
+        "casting.cost.modifier.fixed_query",
+        "continuous.characteristics.fixed_public_state"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Centaur Omenreader is strictly capability bound. A real selected-tap cost enables an otherwise unaffordable own creature cast, while other-controller and noncreature spells remain excluded. Native Unsummon removes the source and the collector stops returning its modifier. Wrong-principal rollback, private projections, pending save/load and complete pre-action replay preserve the result."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
       "test_id": "test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays",
       "piece_ids": [
         "capability.continuous.characteristics.fixed_public_state",

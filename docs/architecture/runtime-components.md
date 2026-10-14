@@ -380,6 +380,12 @@ combat and spell-cast keyword triggers use the current recipient's fragments.
 The earlier characteristic-only descriptor continues to reject fragment fields.
 An already created trigger retains its consequence when the live grant ends.
 
+`modification.cast-cost.public-state.v1` wraps the existing public cast-cost
+modifier with one typed live public-state predicate. The cast-cost collector
+uses the shared condition evaluator before returning the ordinary modifier to
+the total-cost owner. Offer and commit use that same collector, preserving
+current ability presence, source control, generic floors and colored payments.
+
 The same quantity boundary supports versioned distinct basic land types,
 graveyard card types, colors, maximum/total mana value and colored mana-symbol
 counts. It reads current copy/type/color data only through layer 5. Exactly two

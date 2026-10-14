@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Gate public spell-cost modifiers with shared live public-state conditions at
+  both offered-action and accepted-command boundaries.
+
 - Preserve typed conditional keyword grants, including fixed ward and
   protection, through the existing public-state and characteristic owners.
 

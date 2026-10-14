@@ -1912,6 +1912,7 @@
     {
       "id": "fixed-casting-surface-contract",
       "patterns": [
+        "tests/fixtures/additional-conditional-modifier-cards.json",
         "quorune/cast_cost_modifiers.py",
         "quorune/cast_lifecycles.py",
         "quorune/characteristic_evaluation_host.py",

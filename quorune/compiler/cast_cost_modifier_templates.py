@@ -29,7 +29,7 @@ from ..semantic_runtime.cast_costs import (
 CastCostModifierTemplate = tuple[
     str,
     Mapping[str, Any],
-    str,
+    str | tuple[str, ...],
 ]
 
 
@@ -806,15 +806,37 @@ def fixed_spell_predicate(subject: str) -> ObjectQuerySpec | None:
 
 def static_fixed_spell_cost_reduction_handler(
     text: str,
+    *, source_name: str = 'source',
 ) -> CastCostModifierTemplate | None:
     """Lower one public fixed-generic modifier through the shared schema."""
 
+    unconditional = _unconditional_spell_cost_reduction_handler(text)
+    if unconditional is not None:
+        return unconditional
+    from .public_state_queries import fixed_public_state_parts
+    parts = fixed_public_state_parts(text, source_name=source_name)
+    if parts is not None:
+        condition, body = parts
+        compiled = _unconditional_spell_cost_reduction_handler(body)
+        if compiled is None:
+            return None
+        descriptor = {**compiled[1], 'handler_id':'modification.cast-cost.public-state.v1',
+            'schema_version':4, 'source_condition':condition.to_dict()}
+        capabilities = {FIXED_SPELL_COST_REDUCTION_CAPABILITY_ID, 'continuous.characteristics.fixed_public_state'}
+        if condition.kind.value == 'controller_is_monarch':
+            capabilities.add('variant.monarch.designate')
+        elif condition.kind.value == 'controller_max_speed':
+            capabilities.add('variant.speed.player')
+        return 'public-conditional-spell-cost-modifier-v1', descriptor, tuple(sorted(capabilities))
+    return None
+
+
+def _unconditional_spell_cost_reduction_handler(text: str) -> CastCostModifierTemplate | None:
     # Import lazily because the public grammar reuses fixed_spell_predicate.
     from .public_cast_cost_modifiers import (
         public_cast_cost_modifier_template,
         public_cast_cost_modifier_v2_template,
     )
-
     modifier = public_cast_cost_modifier_template(text)
     if modifier is not None:
         from ..cast_cost_modifiers import PublicCastCostModifierV2Spec
