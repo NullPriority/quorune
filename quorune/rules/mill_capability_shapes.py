@@ -45,7 +45,7 @@ def fixed_mill_node_capabilities(
     if set(effect) == {"op", "scope", "count"}:
         if (
             effect.get("op") == "mill"
-            and effect.get("scope") == "all_active_players"
+            and effect.get("scope") in {"all_active_players","controller_opponents"}
             and type(effect.get("count")) is int
             and int(effect["count"]) > 0
             and target_schema is None

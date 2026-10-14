@@ -41,6 +41,46 @@ def focused_card_database(directory: str) -> CardDatabase:
 
 
 class FixedMillCompilerTests(unittest.TestCase):
+    def test_opponent_mill_scope_dependency_and_compiler_omission_fail_closed(self):
+        from quorune.compiler.mill_templates import fixed_mill_effect_template
+        from quorune.card_programs import bind_card_program_runtime
+        text='Each opponent mills two cards.'
+        card=replace(self.db.lookup('Fixed Target Mill'),oracle_text=text)
+        program=compile_best_available_card_program(self.db,card,semantic_registry=SemanticRegistry(),
+            capability_registry=self.capabilities,capability_profile='commander_review')
+        self.assertTrue(bind_card_program_runtime(program,capability_registry=self.capabilities,profile='commander_review')['strict_capability_ready'])
+        value=json.loads(REGISTRY_PATH.read_text(encoding='utf-8'))
+        next(row for row in value['capabilities'] if row['id']=='zone.mill.fixed').update(status='blocked',blockers=['opponent mill authority withdrawn'])
+        self.assertNotEqual('exact',compile_oracle_card(card,capability_registry=CapabilityRegistry(value)).status)
+        with patch('quorune.oracle_ir.fixed_mill_effect_template',return_value=None):
+            self.assertNotEqual('exact',compile_oracle_card(card,capability_registry=self.capabilities).status)
+        for altered in ('Each opponent mills two card.','Each opponent mills a card, then draw that many cards.'):
+            self.assertIsNone(fixed_mill_effect_template(altered))
+
+    def test_opponent_mill_closed_handler_excludes_controller_departed_and_empty_roster(self):
+        from quorune.semantic_runtime.generic import MillHandler
+        from quorune.semantic_runtime.context import ReadOnlyHandlerContext,SemanticNodeError
+        handler=MillHandler();effect={'op':'mill','scope':'controller_opponents','count':2}
+        context=ReadOnlyHandlerContext.from_sequences(actor='A',default_reason='opponent scope contrast',
+            seats=('A','B','C','D'),active_seats=('A','B','D'),apnap_order=('B','D','A'))
+        plan=handler.lower(effect,context)
+        self.assertEqual(('B','D'),plan.intents[0].batch_players)
+        empty=ReadOnlyHandlerContext.from_sequences(actor='A',default_reason='empty roster',
+            seats=('A','B'),active_seats=('A',),apnap_order=('A',))
+        self.assertFalse(handler.lower(effect,empty).intents)
+        for altered in ({**effect,'player':'A'},{**effect,'scope':'all_opponents'},{**effect,'count':True}):
+            with self.assertRaises(SemanticNodeError):handler.lower(altered,context)
+
+    def test_each_opponent_mill_has_closed_simultaneous_scope(self):
+        base=self.db.lookup('Fixed Target Mill')
+        text='Each opponent mills two cards.'
+        ir=compile_oracle_card(replace(base,oracle_text=text),capability_registry=self.capabilities,capability_profile='commander_review')
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        node=ir.faces[0].nodes[0]
+        self.assertEqual({'op':'mill','scope':'controller_opponents','count':2},node.effects[0])
+        self.assertIsNone(node.target_schema)
+        self.assertIn('zone.mill.fixed',node.capability_dependencies)
+
     @classmethod
     def setUpClass(cls):
         cls.temporary = tempfile.TemporaryDirectory()

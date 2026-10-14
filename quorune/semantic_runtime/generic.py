@@ -105,9 +105,13 @@ class MillHandler:
         if set(effect) - {"op", "player", "scope", "count", "reason"}:
             raise SemanticNodeError("Mill effects have a closed schema")
         if "scope" in effect and (
-            effect["scope"] != "all_active_players" or "player" in effect
+            effect["scope"] not in {"all_active_players","controller_opponents"} or "player" in effect
         ):
             raise SemanticNodeError("Mill recipient scope is malformed")
+        recipients=tuple(seat for seat in context.query.apnap_order
+            if effect.get('scope')!='controller_opponents' or seat!=context.actor)
+        if effect.get('scope')=='controller_opponents' and not recipients:
+            return IntentPlan(operation=self.operation,handler_id=self.handler_id,intents=(),result_shape='by_player')
         count = _count(effect)
         player = context.query.require_active_seat(
             str(effect.get("player") or context.actor)
@@ -121,7 +125,7 @@ class MillHandler:
                     player=player,
                     count=count,
                     reason=_reason(effect, context),
-                    batch_players=context.query.apnap_order if "scope" in effect else (),
+                    batch_players=recipients if "scope" in effect else (),
                 ),
             ),
         )

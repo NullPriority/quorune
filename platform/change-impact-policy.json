@@ -3729,7 +3729,8 @@
         "test_zone_transition_owner",
         "test_card_program_trust",
         "test_game_record_v3",
-        "test_fixed_affected_player_discards"
+        "test_fixed_affected_player_discards",
+        "test_fixed_public_state_characteristics"
       ]
     },
     {

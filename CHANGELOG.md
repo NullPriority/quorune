@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Mill current opponents through the shared simultaneous zone transaction,
+  excluding the resolving controller and departed players.
+
 - Resolve committed damage amounts in source-specific triggers, including broad
   source damage and combat-only incoming damage, with identity restrictions intact.
 

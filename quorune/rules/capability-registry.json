@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 259,
+  "registry_version": 260,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -3793,7 +3793,7 @@
     },
     {
       "id": "zone.mill.fixed",
-      "version": 3,
+      "version": 4,
       "official_rules": [
         "400.7",
         "701.17",
@@ -3852,39 +3852,49 @@
         "quorune.semantic_runtime.executor._execute_player_intent"
       ],
       "positive_tests": [
+        "test_each_opponent_mill_has_closed_simultaneous_scope",
+        "test_fixed_all_player_mill_uses_one_simultaneous_recipient_scope",
         "test_fixed_mill_compiles_across_spell_trigger_and_activation",
         "test_mill_commits_top_first_and_as_many_as_possible",
-        "test_real_zero_mill_and_scry_consume_price_without_library_mutation",
-        "test_fixed_all_player_mill_uses_one_simultaneous_recipient_scope",
+        "test_opponent_mill_closed_handler_excludes_controller_departed_and_empty_roster",
         "test_original_bell_mills_all_active_players_in_one_zone_batch",
-        "test_original_chill_mills_available_cards_and_preserves_replacement_destinations"
+        "test_original_chill_mills_available_cards_and_preserves_replacement_destinations",
+        "test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays",
+        "test_real_zero_mill_and_scry_consume_price_without_library_mutation"
       ],
       "negative_tests": [
-        "test_dynamic_optional_group_and_linked_mill_remain_residual",
-        "test_stale_plan_and_malformed_intent_fail_before_mutation",
-        "test_all_player_mill_scope_shape_rejects_conflicting_or_variable_recipients",
         "test_all_player_mill_missing_destination_and_trigger_authority_stays_residual",
-        "test_malformed_all_player_mill_and_inactive_batch_fail_atomically"
+        "test_all_player_mill_scope_shape_rejects_conflicting_or_variable_recipients",
+        "test_dynamic_optional_group_and_linked_mill_remain_residual",
+        "test_malformed_all_player_mill_and_inactive_batch_fail_atomically",
+        "test_opponent_mill_closed_handler_excludes_controller_departed_and_empty_roster",
+        "test_opponent_mill_scope_dependency_and_compiler_omission_fail_closed",
+        "test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays",
+        "test_stale_plan_and_malformed_intent_fail_before_mutation"
       ],
       "interaction_tests": [
-        "test_target_mill_revalidates_and_zone_replacement_preserves_actual_result",
         "test_original_bell_mills_all_active_players_in_one_zone_batch",
-        "test_original_chill_mills_available_cards_and_preserves_replacement_destinations"
+        "test_original_chill_mills_available_cards_and_preserves_replacement_destinations",
+        "test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays",
+        "test_target_mill_revalidates_and_zone_replacement_preserves_actual_result"
       ],
       "multiplayer_tests": [
         "test_four_player_target_mill_is_public_privacy_safe_and_replays",
         "test_original_bell_mills_all_active_players_in_one_zone_batch",
-        "test_original_chill_mills_available_cards_and_preserves_replacement_destinations"
+        "test_original_chill_mills_available_cards_and_preserves_replacement_destinations",
+        "test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays"
       ],
       "privacy_tests": [
         "test_four_player_target_mill_is_public_privacy_safe_and_replays",
         "test_original_bell_mills_all_active_players_in_one_zone_batch",
-        "test_original_chill_mills_available_cards_and_preserves_replacement_destinations"
+        "test_original_chill_mills_available_cards_and_preserves_replacement_destinations",
+        "test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays"
       ],
       "replay_tests": [
         "test_four_player_target_mill_is_public_privacy_safe_and_replays",
         "test_original_bell_mills_all_active_players_in_one_zone_batch",
-        "test_original_chill_mills_available_cards_and_preserves_replacement_destinations"
+        "test_original_chill_mills_available_cards_and_preserves_replacement_destinations",
+        "test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays"
       ],
       "required_evidence": [
         "positive",

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "0a5edbeabb5e32e4d685379d1b4823e725839e04e5a3815dc571d4525b50af6f",
-  "declaration_source_fingerprint": "295690e17487b1ae0e2c36289fdb9ce9e55caf71300403aa7c3042b6487458c2",
+  "registry_fingerprint": "a93cbae7339c15be0f8285863b0e438a77b6b54e0168c3b914b2c215047dd27d",
+  "declaration_source_fingerprint": "41d48a0002c1b742126f83e36d6f1d43c37b2f0048a528157634ab6fc4090ea8",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -124828,6 +124828,26 @@
     {
       "capability_id": "zone.mill.fixed",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays",
+      "official_rule_ids": [
+        "400.7",
+        "701.17",
+        "701.17a",
+        "701.17b",
+        "701.17c",
+        "608.2f",
+        "101.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Psychic Corrosion is cast, actual Divination draws twice, departed C is excluded, and B/D each mill as many as available through two simultaneous batches. Controller A is never milled; private hand projection, pending load and full pre-action replay agree."
+    },
+    {
+      "capability_id": "zone.mill.fixed",
+      "evidence_class": "interaction",
       "test_id": "tests.test_mill_rules.AllPlayerMillRuntimeTests.test_original_bell_mills_all_active_players_in_one_zone_batch",
       "official_rule_ids": [
         "400.7",
@@ -124884,6 +124904,26 @@
         "commander_review"
       ],
       "applicability_note": "Compose target-player Mill with resolution target legality and a battlefield destination replacement, preserving each card's actual exile result and void counter."
+    },
+    {
+      "capability_id": "zone.mill.fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays",
+      "official_rule_ids": [
+        "400.7",
+        "701.17",
+        "701.17a",
+        "701.17b",
+        "701.17c",
+        "608.2f",
+        "101.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Psychic Corrosion is cast, actual Divination draws twice, departed C is excluded, and B/D each mill as many as available through two simultaneous batches. Controller A is never milled; private hand projection, pending load and full pre-action replay agree."
     },
     {
       "capability_id": "zone.mill.fixed",
@@ -125007,6 +125047,46 @@
     },
     {
       "capability_id": "zone.mill.fixed",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_mill_rules.FixedMillCompilerTests.test_opponent_mill_scope_dependency_and_compiler_omission_fail_closed",
+      "official_rule_ids": [
+        "400.7",
+        "701.17",
+        "701.17a",
+        "701.17b",
+        "701.17c",
+        "608.2f",
+        "101.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed opponent mill scope closes whole-program admission, excludes controller/departed seats and empty-roster actor fallback, preserves all-player controls, rejects malformed count/fields/scope, withdraws dependency and kills compiler omission."
+    },
+    {
+      "capability_id": "zone.mill.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays",
+      "official_rule_ids": [
+        "400.7",
+        "701.17",
+        "701.17a",
+        "701.17b",
+        "701.17c",
+        "608.2f",
+        "101.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Psychic Corrosion is cast, actual Divination draws twice, departed C is excluded, and B/D each mill as many as available through two simultaneous batches. Controller A is never milled; private hand projection, pending load and full pre-action replay agree."
+    },
+    {
+      "capability_id": "zone.mill.fixed",
       "evidence_class": "negative",
       "test_id": "tests.test_mill_rules.AllPlayerMillRuntimeTests.test_malformed_all_player_mill_and_inactive_batch_fail_atomically",
       "official_rule_ids": [
@@ -125068,6 +125148,46 @@
     {
       "capability_id": "zone.mill.fixed",
       "evidence_class": "negative",
+      "test_id": "tests.test_mill_rules.FixedMillCompilerTests.test_opponent_mill_closed_handler_excludes_controller_departed_and_empty_roster",
+      "official_rule_ids": [
+        "400.7",
+        "701.17",
+        "701.17a",
+        "701.17b",
+        "701.17c",
+        "608.2f",
+        "101.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed opponent mill scope closes whole-program admission, excludes controller/departed seats and empty-roster actor fallback, preserves all-player controls, rejects malformed count/fields/scope, withdraws dependency and kills compiler omission."
+    },
+    {
+      "capability_id": "zone.mill.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_mill_rules.FixedMillCompilerTests.test_opponent_mill_scope_dependency_and_compiler_omission_fail_closed",
+      "official_rule_ids": [
+        "400.7",
+        "701.17",
+        "701.17a",
+        "701.17b",
+        "701.17c",
+        "608.2f",
+        "101.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed opponent mill scope closes whole-program admission, excludes controller/departed seats and empty-roster actor fallback, preserves all-player controls, rejects malformed count/fields/scope, withdraws dependency and kills compiler omission."
+    },
+    {
+      "capability_id": "zone.mill.fixed",
+      "evidence_class": "negative",
       "test_id": "tests.test_mill_rules.FixedMillRuntimeTests.test_stale_plan_and_malformed_intent_fail_before_mutation",
       "official_rule_ids": [
         "400.7",
@@ -125104,6 +125224,26 @@
         "commander_review"
       ],
       "applicability_note": "Zero Mill snapshots no cards, pays the actual announced spell cost, leaves all four libraries unchanged and exactly replays."
+    },
+    {
+      "capability_id": "zone.mill.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays",
+      "official_rule_ids": [
+        "400.7",
+        "701.17",
+        "701.17a",
+        "701.17b",
+        "701.17c",
+        "608.2f",
+        "101.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Psychic Corrosion is cast, actual Divination draws twice, departed C is excluded, and B/D each mill as many as available through two simultaneous batches. Controller A is never milled; private hand projection, pending load and full pre-action replay agree."
     },
     {
       "capability_id": "zone.mill.fixed",
@@ -125148,6 +125288,26 @@
     {
       "capability_id": "zone.mill.fixed",
       "evidence_class": "positive",
+      "test_id": "tests.test_mill_rules.FixedMillCompilerTests.test_each_opponent_mill_has_closed_simultaneous_scope",
+      "official_rule_ids": [
+        "400.7",
+        "701.17",
+        "701.17a",
+        "701.17b",
+        "701.17c",
+        "608.2f",
+        "101.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed opponent mill scope closes whole-program admission, excludes controller/departed seats and empty-roster actor fallback, preserves all-player controls, rejects malformed count/fields/scope, withdraws dependency and kills compiler omission."
+    },
+    {
+      "capability_id": "zone.mill.fixed",
+      "evidence_class": "positive",
       "test_id": "tests.test_mill_rules.FixedMillCompilerTests.test_fixed_all_player_mill_uses_one_simultaneous_recipient_scope",
       "official_rule_ids": [
         "400.7",
@@ -125184,6 +125344,46 @@
         "commander_review"
       ],
       "applicability_note": "Lower controller, target-player, and target-opponent fixed quantities across spell, triggered, and activated contexts to capability-closed programs."
+    },
+    {
+      "capability_id": "zone.mill.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_mill_rules.FixedMillCompilerTests.test_opponent_mill_closed_handler_excludes_controller_departed_and_empty_roster",
+      "official_rule_ids": [
+        "400.7",
+        "701.17",
+        "701.17a",
+        "701.17b",
+        "701.17c",
+        "608.2f",
+        "101.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed opponent mill scope closes whole-program admission, excludes controller/departed seats and empty-roster actor fallback, preserves all-player controls, rejects malformed count/fields/scope, withdraws dependency and kills compiler omission."
+    },
+    {
+      "capability_id": "zone.mill.fixed",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays",
+      "official_rule_ids": [
+        "400.7",
+        "701.17",
+        "701.17a",
+        "701.17b",
+        "701.17c",
+        "608.2f",
+        "101.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Psychic Corrosion is cast, actual Divination draws twice, departed C is excluded, and B/D each mill as many as available through two simultaneous batches. Controller A is never milled; private hand projection, pending load and full pre-action replay agree."
     },
     {
       "capability_id": "zone.mill.fixed",
@@ -125244,6 +125444,26 @@
         "commander_review"
       ],
       "applicability_note": "Conflicting player/scope fields, variable recipients, malformed integer counts, unsupported scopes and target schemas cannot receive Mill trust."
+    },
+    {
+      "capability_id": "zone.mill.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays",
+      "official_rule_ids": [
+        "400.7",
+        "701.17",
+        "701.17a",
+        "701.17b",
+        "701.17c",
+        "608.2f",
+        "101.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Psychic Corrosion is cast, actual Divination draws twice, departed C is excluded, and B/D each mill as many as available through two simultaneous batches. Controller A is never milled; private hand projection, pending load and full pre-action replay agree."
     },
     {
       "capability_id": "zone.mill.fixed",
@@ -128015,5 +128235,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "f2134054fbe448fca90e3d9159f3d3a0b81fa8dfee31f1e3c65f87f5dc86c6b3"
+  "fingerprint": "cde3affa95265393154665525c7d9195e6c11b249d68b65e5f9cfffe221cd265"
 }

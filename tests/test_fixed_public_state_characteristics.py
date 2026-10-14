@@ -2957,6 +2957,55 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
 
 
 class AdditionalConditionalModifierRuntimeTests(unittest.TestCase):
+    def test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays(self):
+        from unittest.mock import patch
+        from quorune.zone_transitions import ZoneTransitionOwner
+        session=self.session(3632001);engine=session.engine
+        observer=self.add(engine,'Psychic Corrosion',zone='hand',ref='opponent-mill-corrosion')
+        draw=self.add(engine,'Divination',zone='hand',ref='opponent-mill-draw')
+        self.assert_whole_admission(observer.printed_name)
+        offered=self.ready(session,observer,{'C':4,'U':2})
+        self.checkpoint(session)
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        while session.state.priority_player!='A':
+            self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        cast=next(row for row in actions if row.get('card')==draw.ref)
+        accepted=session.act('pilot:A',{'action_id':cast['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        while session.state.priority_player!='C':
+            self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+        accepted=session.act('pilot:C',{'action_id':'concede','choices':{'confirm_concede':True}})
+        self.assertTrue(accepted.ok,accepted.summary)
+        before={s:len(session.state.players[s].zones['graveyard']) for s in 'ABD'}
+        available={s:len(session.state.players[s].zones['library']) for s in 'BD'}
+        before_a_library=len(session.state.players['A'].zones['library'])
+        self.replay(session,load=True)
+        original=ZoneTransitionOwner.move_cards_simultaneously;groups=[]
+        def capture(owner,moves,*args,**kwargs):
+            moves=tuple(moves)
+            if moves and all(destination=='graveyard' for _,destination in moves):
+                groups.append(tuple(owner.host.state.cards[object_id].owner for object_id,_ in moves))
+            return original(owner,moves,*args,**kwargs)
+        with patch.object(ZoneTransitionOwner,'move_cards_simultaneously',new=capture):
+            self.resolve(session)
+            if session.state.pending_decision is not None and session.state.pending_decision.kind=='trigger.order':
+                pending=[item for batch in session.state.pending_trigger_batches for item in batch.items]
+                accepted=session.act('pilot:A',{'action_id':'order','triggers':[item.ref for item in pending]})
+                self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        self.assertEqual(before['B']+min(4,available['B']),len(session.state.players['B'].zones['graveyard']))
+        self.assertEqual(before['D']+min(4,available['D']),len(session.state.players['D'].zones['graveyard']))
+        self.assertEqual(before['A']+1,len(session.state.players['A'].zones['graveyard']))
+        self.assertEqual(before_a_library-2,len(session.state.players['A'].zones['library']))
+        self.assertEqual(2,len(groups))
+        for index,group in enumerate(groups):
+            self.assertEqual(min(2,max(0,available['B']-2*index)),group.count('B'))
+            self.assertEqual(min(2,max(0,available['D']-2*index)),group.count('D'))
+            self.assertTrue(set(group)<={'B','D'})
+        for seat in 'BD':self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+        self.replay(session)
+
     def test_damage_amount_subscription_diagnostic_excludes_noncombat_incoming_and_foreign_sources(self):
         """Matcher diagnostic; actual combat supplies the command witness."""
         from quorune.trigger_discovery import semantic_event_matches

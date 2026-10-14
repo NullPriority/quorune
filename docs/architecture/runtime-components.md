@@ -52,6 +52,13 @@ amount after prevention and replacement. It does not read current power, life,
 or the original damage request. Ordinary draw, token and signed life result
 owners still provide their own closed schemas and capability dependencies.
 
+Fixed opponent mill carries the closed `controller_opponents` recipient scope.
+The mill handler filters the current APNAP roster against the resolving
+controller and submits one batch to the existing mill transaction. Empty
+opponent rosters produce no intent; short libraries contribute only available
+cards. The historical `all_active_players` scope retains its recipient contract.
+No pre-mill hidden card identities enter the descriptor or public projection.
+
 ## Lifecycle and participation
 
 1. The compiler or reviewed program emits a versioned component descriptor.
