@@ -104,6 +104,13 @@ LKI. Resolution uses the same public incarnation check as entry references.
 Fixed counters and committed scalar counts share ordinary counter placement;
 the triggering observer never substitutes for the attacker or damaging source.
 
+Source damage subscriptions may bind a complete fixed `put ... counters on it`
+instruction through the existing `$source.zone_object` leaf. This preserves
+source specificity and incarnation identity. Damage and state-based actions
+finish before trigger resolution; counters do not rescue a creature that already
+died, and a re-entered source cannot receive the old trigger's counters. Public
+damage-receiver pronouns without a represented recipient remain excluded.
+
 ## Lifecycle and participation
 
 1. The compiler or reviewed program emits a versioned component descriptor.

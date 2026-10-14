@@ -2957,6 +2957,46 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
 
 
 class AdditionalConditionalModifierRuntimeTests(unittest.TestCase):
+    def test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay(self):
+        cases=((3632801,'Fungusaur',False,False),(3632802,'Siegehorn Ceratops',False,False),
+            (3632803,'Siegehorn Ceratops',True,False),(3632804,'Siegehorn Ceratops',False,True))
+        for seed,name,lethal,reenter in cases:
+            with self.subTest(name=name,lethal=lethal,reenter=reenter):
+                session=self.session(seed);engine=session.engine
+                source=self.add(engine,name,ref='source-damage-counter-recipient')
+                damage=self.add(engine,'Lightning Bolt' if lethal else 'Generic Source Counter One Damage',zone='hand',ref='source-damage-counter-damage')
+                bounce=self.add(engine,'Unsummon',zone='hand',ref='source-damage-counter-bounce')
+                self.assert_whole_admission(source.printed_name)
+                offered=self.ready(session,damage,{'R':1,'U':1,'G':1,'W':1})
+                self.checkpoint(session);identity=source.logical_object_id
+                before=session.state.to_dict()
+                self.assertFalse(session.act('pilot:D',{'action_id':offered['id'],'targets':[source.ref],'pay':'auto'}).ok)
+                self.assertEqual(before,session.state.to_dict())
+                accepted=session.act('pilot:A',{'action_id':offered['id'],'targets':[source.ref],'pay':'auto'})
+                self.assertTrue(accepted.ok,accepted.summary)
+                for _ in range(8):
+                    if any(item.kind=='triggered_ability' for item in session.state.stack):break
+                    self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+                self.assertTrue(any(item.kind=='triggered_ability' for item in session.state.stack))
+                self.replay(session,load=True)
+                if reenter:
+                    while session.state.priority_player!='A':self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+                    actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+                    offered=next(row for row in actions if row.get('card')==bounce.ref)
+                    self.assertTrue(session.act('pilot:A',{'action_id':offered['id'],'targets':[source.ref],'pay':'auto'}).ok)
+                    self.resolve(session)
+                    while session.state.priority_player!='A':self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+                    actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+                    offered=next(row for row in actions if row.get('card')==source.ref)
+                    self.assertTrue(session.act('pilot:A',{'action_id':offered['id'],'pay':'auto'}).ok)
+                self.resolve(session)
+                current=session.state.cards[source.object_id]
+                self.assertEqual('graveyard' if lethal else 'battlefield',current.zone)
+                self.assertEqual(0 if lethal or reenter else 1 if name=='Fungusaur' else 2,current.counters.get('+1/+1',0))
+                if reenter:self.assertNotEqual(identity,current.logical_object_id)
+                for seat in 'BCD':self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+                self.replay(session)
+
     def test_original_gleam_attacker_and_rakish_damage_source_counter_recipients_replay(self):
         from quorune.model import CombatState
         for seed,name in ((3632701,'Gleam of Battle'),(3632702,'Rakish Heir'),(3632703,'Necropolis Regent')):

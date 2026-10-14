@@ -3529,7 +3529,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             "Whenever this creature attacks, you may put a +1/+1 counter on it. If you do, draw a card.",
             "Whenever this creature attacks, put X +1/+1 counters on it.",
             "Whenever this creature attacks, put a charge counter on it for each creature that attacked this way.",
-            "Whenever this creature deals combat damage to an opponent, put a +1/+1 counter on it.",
+            "Whenever a creature deals damage to an opponent, put a +1/+1 counter on it.",
             "Whenever this creature blocks a creature without flying, this creature gets +3/+0 until end of turn.",
         )
         for text in exclusions:

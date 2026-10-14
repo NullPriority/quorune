@@ -10571,6 +10571,21 @@
       ],
       "interaction_order": 2,
       "assertion": "ActualoriginalGleamBattleattackandRakishHeirqualifyingVampirecombatpinrecipientindependentlyfromobserver. NecropolisRegentcountscommittedtwo-pointcombatforeacheventsource, withnonVampirecontrol, privateprojection, pendingload andfullpreactionreplay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay",
+      "piece_ids": [
+        "capability.counter.producer.fixed_effect",
+        "capability.damage.amount.positive"
+      ],
+      "capability_ids": [
+        "counter.producer.fixed_effect",
+        "damage.amount.positive"
+      ],
+      "interaction_order": 2,
+      "assertion": "ActualprintedFungusaur/Ceratops nonlethaldamageplacesone/twocounters throughsourceincarnation leaf; lethalBoltdeathandbounce/recastcannotreuseoldsourcecountertrigger. Wrongprincipalrollback, privacy,pendingload andfullpreactionreplayagree."
     }
   ]
 }

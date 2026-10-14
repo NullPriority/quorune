@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 267,
+  "registry_version": 268,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -5348,24 +5348,99 @@
     },
     {
       "id": "counter.producer.fixed_effect",
-      "version": 1,
-      "official_rules": ["115.1", "608.2b", "608.2c", "122.1", "122.1a", "122.6", "614.16", "616.1", "400.7", "608.2h"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 2,
+      "official_rules": [
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Compile and resolve one mandatory positive fixed-count counter placement on the source permanent or one direct permanent target through the canonical resumable counter-placement transaction.",
-        "inputs": ["one closed fixed-count Oracle instruction", "source or one legal public permanent target", "positive exact integral amount", "canonical counter name", "stable source provenance reference"],
-        "outputs": ["strict typed placement intent", "resolution-time target revalidation where targeted", "replacement-aware affected-object ordering", "authoritative counter mutation", "exact continuation replay"],
-        "exclusions": ["player counters", "entry counters", "counter costs", "counter movement or removal", "variable, optional, distributed, repeated, linked, modal, or conditional placements", "multiple counter kinds in one instruction", "affected permanent sets", "unsupported target predicates"]
+        "inputs": [
+          "one closed fixed-count Oracle instruction",
+          "source or one legal public permanent target",
+          "positive exact integral amount",
+          "canonical counter name",
+          "stable source provenance reference"
+        ],
+        "outputs": [
+          "strict typed placement intent",
+          "resolution-time target revalidation where targeted",
+          "replacement-aware affected-object ordering",
+          "authoritative counter mutation",
+          "exact continuation replay"
+        ],
+        "exclusions": [
+          "player counters",
+          "entry counters",
+          "counter costs",
+          "counter movement or removal",
+          "variable, optional, distributed, repeated, linked, modal, or conditional placements",
+          "multiple counter kinds in one instruction",
+          "affected permanent sets",
+          "unsupported target predicates"
+        ]
       },
-      "dependencies": ["counter.placement.quantity_replacement"],
-      "implementation_components": ["quorune.compiler.counter_placement_templates.FixedCounterPlacementTemplate", "quorune.rules.node_capability_shapes.fixed_counter_placement_node_capabilities", "quorune.semantic_runtime.counter_placement_handlers.FixedCounterPlacementHandler", "quorune.semantic_runtime.intents.PlaceCountersIntent", "quorune.counter_placement.place_counters_on_refs"],
-      "positive_tests": ["test_spell_trigger_and_activated_contexts_share_fixed_counter_lowering", "test_fixed_counter_result_does_not_require_source_to_remain", "test_typed_fixed_counter_handler_places_counters_without_domain_dispatch"],
-      "negative_tests": ["test_unsupported_fixed_counter_variants_remain_material_residuals", "test_typed_fixed_counter_handler_rejects_malformed_effects", "test_stale_fixed_counter_target_fails_before_mutation"],
-      "interaction_tests": ["test_fixed_counter_effect_suspends_for_quantity_replacement"],
-      "multiplayer_tests": ["test_four_player_fixed_counter_replacement_choice_is_seat_scoped"],
-      "privacy_tests": ["test_four_player_fixed_counter_replacement_choice_is_seat_scoped"],
-      "replay_tests": ["test_four_player_fixed_counter_replacement_choice_is_seat_scoped"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "counter.placement.quantity_replacement"
+      ],
+      "implementation_components": [
+        "quorune.compiler.counter_placement_templates.FixedCounterPlacementTemplate",
+        "quorune.rules.node_capability_shapes.fixed_counter_placement_node_capabilities",
+        "quorune.semantic_runtime.counter_placement_handlers.FixedCounterPlacementHandler",
+        "quorune.semantic_runtime.intents.PlaceCountersIntent",
+        "quorune.counter_placement.place_counters_on_refs"
+      ],
+      "positive_tests": [
+        "test_fixed_counter_result_does_not_require_source_to_remain",
+        "test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay",
+        "test_source_damage_counter_pronoun_reuses_incarnation_pinned_leaf",
+        "test_spell_trigger_and_activated_contexts_share_fixed_counter_lowering",
+        "test_typed_fixed_counter_handler_places_counters_without_domain_dispatch"
+      ],
+      "negative_tests": [
+        "test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay",
+        "test_source_damage_counter_pronoun_reuses_incarnation_pinned_leaf",
+        "test_stale_fixed_counter_target_fails_before_mutation",
+        "test_typed_fixed_counter_handler_rejects_malformed_effects",
+        "test_unsupported_fixed_counter_variants_remain_material_residuals"
+      ],
+      "interaction_tests": [
+        "test_fixed_counter_effect_suspends_for_quantity_replacement",
+        "test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay"
+      ],
+      "multiplayer_tests": [
+        "test_four_player_fixed_counter_replacement_choice_is_seat_scoped",
+        "test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay"
+      ],
+      "privacy_tests": [
+        "test_four_player_fixed_counter_replacement_choice_is_seat_scoped",
+        "test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay"
+      ],
+      "replay_tests": [
+        "test_four_player_fixed_counter_replacement_choice_is_seat_scoped",
+        "test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "The compiler dependency mutation blocks exact fixed counter-placement CardPrograms whenever the canonical counter-placement replacement owner is unavailable.",
       "implementation_mutation_status": "killed",

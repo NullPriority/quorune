@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Bind fixed counter pronouns in source damage triggers to the same battlefield
+  incarnation, retaining lethal-damage and re-entry boundaries.
+
 - Pin counter recipients from individual attack and damage occurrences, using
   committed damage amounts where printed.
 

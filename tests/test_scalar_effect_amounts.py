@@ -44,6 +44,17 @@ def scalar_record(text: str, *, type_line: str = "Creature — Goblin") -> CardR
 
 
 class ScalarEffectAmountCompilerTests(unittest.TestCase):
+    def test_source_damage_counter_pronoun_reuses_incarnation_pinned_leaf(self):
+        for text in ('Whenever this creature is dealt damage, put a +1/+1 counter on it.',
+            'Whenever this creature deals combat damage to a player, put a +1/+1 counter on it.',
+            'Whenever this creature deals combat damage to an opponent, put a +1/+1 counter on it.'):
+            ir=self.compile(text)
+            self.assertEqual('exact',ir.status,ir.material_residuals)
+            self.assertEqual('$source.zone_object',ir.faces[0].nodes[0].effects[0]['card'])
+        self.assertNotEqual('exact',self.compile('Whenever a creature is dealt damage, put a +1/+1 counter on it.').status)
+        with mock.patch('quorune.compiler.source_self_effect_templates.normalized_source_result_body',return_value=None):
+            self.assertNotEqual('exact',self.compile('Whenever this creature is dealt damage, put a +1/+1 counter on it.').status)
+
     def test_action_counter_snapshot_rejects_missing_incarnation_and_reentered_recipient(self):
         from quorune.event_counter_reference import event_counter_recipient_context,resolve_event_counter_recipient
         from quorune.rules.capabilities import CapabilityRegistry

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "94a16533bb1a4bfadf5086a007ac39b6238c3dc5ca7f06170616a2226f352ddb",
-  "declaration_source_fingerprint": "7fb68f8394414d1387e88af69eec8afde1d69211fa9ccbabfcc251fb8eda92c5",
+  "registry_fingerprint": "d30c2040c70ed899b0fe9e58869ba55898f57ba6b15bc1565c9bcf95f08f91ce",
+  "declaration_source_fingerprint": "541cb442f20aec2c7f283d40c32c2d67688704a96840cecd1de608c89fde273a",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -52419,6 +52419,29 @@
     },
     {
       "capability_id": "counter.producer.fixed_effect",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay",
+      "official_rule_ids": [
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "ActualoriginalFungusaur/EnrageCeratops nonlethaldamageaddprintedcounter1/2; lethalactualBoltcausesdeathbeforecountertrigger andcannotrescuecreature. Actualbounce/recastoldincarnationtriggerdoesnothing. Principalrollback, privateprojection andpending/fullreplayagree."
+    },
+    {
+      "capability_id": "counter.producer.fixed_effect",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_counter_placement_effects.FixedCounterPlacementRuntimeTests.test_four_player_fixed_counter_replacement_choice_is_seat_scoped",
       "official_rule_ids": [
@@ -52439,6 +52462,29 @@
         "commander_review"
       ],
       "applicability_note": "Resolve a four-player fixed-placement replacement choice through one affected seat while preserving exact APNAP state and command replay."
+    },
+    {
+      "capability_id": "counter.producer.fixed_effect",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay",
+      "official_rule_ids": [
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "ActualoriginalFungusaur/EnrageCeratops nonlethaldamageaddprintedcounter1/2; lethalactualBoltcausesdeathbeforecountertrigger andcannotrescuecreature. Actualbounce/recastoldincarnationtriggerdoesnothing. Principalrollback, privateprojection andpending/fullreplayagree."
     },
     {
       "capability_id": "counter.producer.fixed_effect",
@@ -52485,6 +52531,29 @@
         "commander_review"
       ],
       "applicability_note": "Kill a compiler mutant that removes the closed fixed-placement template and would otherwise preserve a false exact promotion."
+    },
+    {
+      "capability_id": "counter.producer.fixed_effect",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_source_damage_counter_pronoun_reuses_incarnation_pinned_leaf",
+      "official_rule_ids": [
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-damageself orreceivesdamagepredicate bindsfullfixedcounteronit throughsameexisting source.zone_object leaf. Publicdamagedcreatureambiguity excluded; omittednormalizer makessupportedsourceclause residual."
     },
     {
       "capability_id": "counter.producer.fixed_effect",
@@ -52557,6 +52626,52 @@
     },
     {
       "capability_id": "counter.producer.fixed_effect",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay",
+      "official_rule_ids": [
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "ActualoriginalFungusaur/EnrageCeratops nonlethaldamageaddprintedcounter1/2; lethalactualBoltcausesdeathbeforecountertrigger andcannotrescuecreature. Actualbounce/recastoldincarnationtriggerdoesnothing. Principalrollback, privateprojection andpending/fullreplayagree."
+    },
+    {
+      "capability_id": "counter.producer.fixed_effect",
+      "evidence_class": "negative",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_source_damage_counter_pronoun_reuses_incarnation_pinned_leaf",
+      "official_rule_ids": [
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-damageself orreceivesdamagepredicate bindsfullfixedcounteronit throughsameexisting source.zone_object leaf. Publicdamagedcreatureambiguity excluded; omittednormalizer makessupportedsourceclause residual."
+    },
+    {
+      "capability_id": "counter.producer.fixed_effect",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_counter_placement_effects.FixedCounterPlacementCompilerTests.test_spell_trigger_and_activated_contexts_share_fixed_counter_lowering",
       "official_rule_ids": [
@@ -52626,6 +52741,52 @@
     },
     {
       "capability_id": "counter.producer.fixed_effect",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay",
+      "official_rule_ids": [
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "ActualoriginalFungusaur/EnrageCeratops nonlethaldamageaddprintedcounter1/2; lethalactualBoltcausesdeathbeforecountertrigger andcannotrescuecreature. Actualbounce/recastoldincarnationtriggerdoesnothing. Principalrollback, privateprojection andpending/fullreplayagree."
+    },
+    {
+      "capability_id": "counter.producer.fixed_effect",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_source_damage_counter_pronoun_reuses_incarnation_pinned_leaf",
+      "official_rule_ids": [
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-damageself orreceivesdamagepredicate bindsfullfixedcounteronit throughsameexisting source.zone_object leaf. Publicdamagedcreatureambiguity excluded; omittednormalizer makessupportedsourceclause residual."
+    },
+    {
+      "capability_id": "counter.producer.fixed_effect",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_counter_placement_effects.FixedCounterPlacementRuntimeTests.test_four_player_fixed_counter_replacement_choice_is_seat_scoped",
       "official_rule_ids": [
@@ -52646,6 +52807,29 @@
         "commander_review"
       ],
       "applicability_note": "Project the replacement decision only to the affected controller without exposing physical object identity or continuation internals."
+    },
+    {
+      "capability_id": "counter.producer.fixed_effect",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay",
+      "official_rule_ids": [
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "ActualoriginalFungusaur/EnrageCeratops nonlethaldamageaddprintedcounter1/2; lethalactualBoltcausesdeathbeforecountertrigger andcannotrescuecreature. Actualbounce/recastoldincarnationtriggerdoesnothing. Principalrollback, privateprojection andpending/fullreplayagree."
     },
     {
       "capability_id": "counter.producer.fixed_effect",
@@ -52692,6 +52876,29 @@
         "commander_review"
       ],
       "applicability_note": "Replay four priority passes and the affected-seat replacement choice to the identical authoritative state hash."
+    },
+    {
+      "capability_id": "counter.producer.fixed_effect",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay",
+      "official_rule_ids": [
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "ActualoriginalFungusaur/EnrageCeratops nonlethaldamageaddprintedcounter1/2; lethalactualBoltcausesdeathbeforecountertrigger andcannotrescuecreature. Actualbounce/recastoldincarnationtriggerdoesnothing. Principalrollback, privateprojection andpending/fullreplayagree."
     },
     {
       "capability_id": "counter.producer.fixed_event_object",
@@ -129495,5 +129702,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "cfbc30a26ab08ff4d126edcb2e772c7f2575ecc68e6422c8a624fe3eea3f60ab"
+  "fingerprint": "bcec56eee699df2d36c70d55c05fd23492552f16bf9d2183ef559a2bb6623ddf"
 }
