@@ -375,6 +375,12 @@ class FixedLibrarySelectionCompilerTests(unittest.TestCase):
         )
         predicate = dict(subtype_effects[0]["predicate_groups"][0][0])
         predicate["excluded_subtypes"] = ["elf"]
+        represented = dict(subtype_effects[0])
+        represented["predicate_groups"] = [[dict(predicate)]]
+        self.assertEqual((FIXED_LIBRARY_SELECTION_CAPABILITY,),
+            fixed_library_selection_node_capabilities(effects=(represented,),
+                target_schema=target, mechanic_ids=mechanics))
+        predicate["excluded_subtypes"] = ["unrepresented subtype"]
         mutated = dict(subtype_effects[0])
         mutated["predicate_groups"] = [[predicate]]
         self.assertEqual(
