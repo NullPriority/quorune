@@ -2957,6 +2957,69 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
 
 
 class AdditionalConditionalModifierRuntimeTests(unittest.TestCase):
+    def test_damage_amount_subscription_diagnostic_excludes_noncombat_incoming_and_foreign_sources(self):
+        """Matcher diagnostic; actual combat supplies the command witness."""
+        from quorune.trigger_discovery import semantic_event_matches
+        session=self.session(3631904);engine=session.engine
+        wall=self.add(engine,'Wall of Essence',ref='amount-diagnostic-wall')
+        thrull=self.add(engine,'Mourning Thrull',ref='amount-diagnostic-thrull')
+        other=self.add(engine,'Generic Bound Body',seat='B',ref='amount-diagnostic-other')
+        wall_program=next(p for p in engine.semantics.programs_for_oracle(wall.oracle_id) if p.event=='damage.dealt')
+        thrull_program=next(p for p in engine.semantics.programs_for_oracle(thrull.oracle_id) if p.event=='damage.dealt.self')
+        for combat,target,expected in ((True,wall.ref,True),(False,wall.ref,False),(True,other.ref,False)):
+            context={'card':other.ref,'source':other.ref,'target':target,'combat':combat,'amount':2,'target_kind':'permanent'}
+            self.assertEqual(expected,semantic_event_matches(engine,wall_program,wall,'damage.dealt',context))
+        for card,expected in ((thrull.ref,True),(other.ref,False)):
+            context={'card':card,'source':card,'target':wall.ref,'combat':False,'amount':1,'target_kind':'permanent'}
+            self.assertEqual(expected,semantic_event_matches(engine,thrull_program,thrull,'damage.dealt',context))
+
+    def test_original_committed_combat_damage_amount_draw_gain_and_receive_replay(self):
+        from quorune.model import CombatState
+        cases=((3631901,'Fear of Failed Tests',False),(3631902,'Mourning Thrull',False),(3631903,'Wall of Essence',True))
+        for seed,name,blocking in cases:
+            with self.subTest(name=name):
+                session=self.session(seed);engine=session.engine
+                source=self.add(engine,name,seat='B' if blocking else 'A',ref='committed-damage-amount-source')
+                attacker=self.add(engine,'Generic Bound Body',ref='committed-damage-amount-attacker') if blocking else source
+                self.assert_whole_admission(source.printed_name)
+                self.ready(session,self.add(engine,'Generic Boolean Life Response',zone='hand',ref='committed-amount-setup'),{})
+                session.state.pending_decision=None;session.state.priority_player=None;session.state.priority_passes=[]
+                session.state.phase='combat';session.state.step='declare_attackers';session.state.phase_index=5;session.state.combat=CombatState()
+                engine.permissions.invalidate_current();engine.pump()
+                before_hand=len(session.state.players['A'].zones['hand'])
+                life={seat:session.state.players[seat].life for seat in 'ABCD'}
+                self.checkpoint(session)
+                before=session.state.to_dict()
+                self.assertFalse(session.act('pilot:C',{'action_id':'attack','attackers':{attacker.ref:'B'}}).ok)
+                self.assertEqual(before,session.state.to_dict())
+                accepted=session.act('pilot:A',{'action_id':'attack','attackers':{attacker.ref:'B'}})
+                self.assertTrue(accepted.ok,accepted.summary)
+                pending_checked=False
+                for _ in range(70):
+                    if any(item.kind=='triggered_ability' for item in session.state.stack) and not pending_checked:
+                        self.replay(session,load=True);pending_checked=True
+                    if session.state.phase=='postcombat_main' and not session.state.stack:break
+                    decision=session.state.pending_decision
+                    if decision.kind=='combat.blockers':
+                        command={'action_id':'block','blocks':{source.ref:attacker.ref} if blocking else {}}
+                    elif decision.kind=='priority':command={'action_id':'pass'}
+                    else:self.fail('Unexpected combat decision '+decision.kind)
+                    accepted=session.act(session.pending_principals()[0],command)
+                    self.assertTrue(accepted.ok,accepted.summary)
+                else:self.fail('Committed damage combat did not reach main phase')
+                self.assertTrue(pending_checked)
+                if name=='Fear of Failed Tests':
+                    self.assertEqual(before_hand+2,len(session.state.players['A'].zones['hand']))
+                    self.assertEqual(life['B']-2,session.state.players['B'].life)
+                elif name=='Mourning Thrull':
+                    self.assertEqual(life['A']+1,session.state.players['A'].life)
+                    self.assertEqual(life['B']-1,session.state.players['B'].life)
+                else:
+                    self.assertEqual(life['B']+2,session.state.players['B'].life)
+                    self.assertEqual('battlefield',session.state.cards[source.object_id].zone)
+                for observer in 'BCD':self.assertNotIn('hand',session.packet('pilot:'+observer,full=True)['state']['players']['A'])
+                self.replay(session)
+
     def test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay(self):
         from quorune.model import CombatState
         cases=((3631801,'Raging Regisaur',False),(3631802,'Thorncaster Sliver',False),

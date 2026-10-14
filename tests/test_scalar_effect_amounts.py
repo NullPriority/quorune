@@ -44,6 +44,49 @@ def scalar_record(text: str, *, type_line: str = "Creature — Goblin") -> CardR
 
 
 class ScalarEffectAmountCompilerTests(unittest.TestCase):
+    def test_source_damage_amount_dependency_and_scalar_handoff_fail_closed(self):
+        import json
+        from quorune.rules.capabilities import CapabilityRegistry
+        text='Whenever this creature deals combat damage to a player, draw that many cards.'
+        self.assertEqual('exact',self.compile(text).status)
+        for capability in ('quantity_expression.scalar_effect_amount','trigger.event.normalized_damage'):
+            raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+            next(row for row in raw['capabilities'] if row['id']==capability).update(status='blocked',blockers=['event amount dependency withdrawn'])
+            self.assertNotEqual('exact',compile_oracle_card(scalar_record(text),capability_registry=CapabilityRegistry(raw)).status)
+        with mock.patch('quorune.compiler.scalar_effect_amounts._AMOUNT_EVENTS',{'life.gained','damage.dealt','combat.damage.player'}):
+            self.assertNotEqual('exact',self.compile(text).status)
+
+    def test_source_damage_amount_broad_recipient_and_combat_receive_contrasts(self):
+        from quorune.compiler.fixed_counter_trigger_nodes import fixed_counter_trigger_binding
+        cases=(
+            ('Whenever this creature deals damage, you gain that much life.','damage.dealt.self',None),
+            ('Whenever this creature deals combat damage, you gain that much life.','damage.dealt.self',{'field':'combat','op':'eq','value':True}),
+            ('Whenever this creature is dealt combat damage, you gain that much life.','damage.dealt',{'all':[
+                {'field':'target','op':'eq','value':'$source.ref'},{'field':'combat','op':'eq','value':True}]}),
+        )
+        for text,event,condition in cases:
+            ir=self.compile(text)
+            self.assertEqual('exact',ir.status,ir.material_residuals)
+            node=ir.faces[0].nodes[0]
+            self.assertEqual(event,node.event);self.assertEqual(condition,node.event_condition)
+            self.assertEqual('committed_event_amount',node.effects[0]['delta']['origin'])
+        for text in (
+            'Whenever another creature deals damage, you gain that much life.',
+            'Whenever this creature deals damage to the chosen player, you gain that much life.',
+            'Whenever this creature is dealt combat damage, you gain life equal to damage prevented this way.',
+        ):
+            self.assertNotEqual('exact',self.compile(text).status)
+
+    def test_source_damage_event_amount_keeps_subscription_identity_and_amount(self):
+        text='Whenever this creature deals combat damage to a player, draw that many cards.'
+        ir=self.compile(text)
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        node=ir.faces[0].nodes[0]
+        self.assertEqual('damage.dealt.self',node.event)
+        self.assertEqual('committed_event_amount',node.effects[0]['count']['origin'])
+        self.assertEqual({'all':[{'field':'target_kind','op':'eq','value':'player'},
+            {'field':'combat','op':'truthy','value':True}]},node.event_condition)
+
     def test_public_stat_aggregate_codec_dependencies_and_static_exclusions_fail_closed(self):
         import json
         from pathlib import Path

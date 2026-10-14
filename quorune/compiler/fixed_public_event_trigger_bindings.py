@@ -1041,6 +1041,20 @@ def _public_misc_spec(material_line: str) -> FixedPublicEventBindingSpec | None:
     return None
 
 
+def _source_any_damage_spec(material_line, *, card_name):
+    """Fixed source identity and committed amount, independent of recipient kind."""
+    match=re.fullmatch(r'Whenever (?P<source>.+?) (?P<verb>deals|is dealt) (?P<combat>combat )?damage, (?P<body>.+)',material_line,re.I)
+    if match is None or not _source_subject(match['source'],card_name=card_name):return None
+    receiving=match['verb'].casefold()=='is dealt'
+    if receiving and not match['combat']:return None
+    condition=_all_conditions(
+        {'field':'target','op':'eq','value':'$source.ref'} if receiving else None,
+        {'field':'combat','op':'eq','value':True} if match['combat'] else None)
+    return _spec('damage.dealt' if receiving else 'damage.dealt.self',
+        'source_received_combat_damage' if receiving else 'source_any_combat_damage' if match['combat'] else 'source_any_damage',
+        match['body'],'fixed-counter-public-damage-trigger-v1','trigger-event-normalized-damage',condition=condition)
+
+
 def fixed_public_event_binding_spec(
     material_line: str,
     *,
@@ -1054,7 +1068,8 @@ def fixed_public_event_binding_spec(
             'fixed-source-exploit-result-v1','fixed-exploit-result',capabilities=('trigger.keyword.exploit.creature_sacrifice',))
 
     return (
-        _class_level_spec(material_line)
+        _source_any_damage_spec(material_line,card_name=card_name)
+        or _class_level_spec(material_line)
         or _public_spell_action_spec(material_line, card_name=card_name)
         or _attachment_event_spec(material_line)
         or _constellation_spec(material_line, card_name=card_name)

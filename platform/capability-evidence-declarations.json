@@ -52167,6 +52167,26 @@
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Fear of Failed Tests deals combat2 and draws2; Mourning Thrull deals1 and gains1; Wall of Essence blocks a real2power attack and gains2 from committed combat damage. Wrongprincipal rollback, private draws, pending load and full pre-attack replay agree."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "interaction",
       "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountActionTests.test_unrelated_phased_scalar_does_not_reject_actual_destroy_and_replays",
       "official_rule_ids": [
         "107.1b",
@@ -52267,6 +52287,26 @@
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Fear of Failed Tests deals combat2 and draws2; Mourning Thrull deals1 and gains1; Wall of Essence blocks a real2power attack and gains2 from committed combat damage. Wrongprincipal rollback, private draws, pending load and full pre-attack replay agree."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountActionTests.test_trusted_scalar_actions_controller_privacy_and_replay",
       "official_rule_ids": [
         "107.1b",
@@ -52303,6 +52343,26 @@
         "commander_review"
       ],
       "applicability_note": "Actual Marketback Walker sacrifice and Culling Dais activation preserve original source counter look-back after canonical reset, with authenticated rejection, current response changes, blink, and exact save/load replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_source_damage_amount_dependency_and_scalar_handoff_fail_closed",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-specific damage event identity remains damage.dealt.self and requests the existing committed scalar producer; broad damage has no recipient restriction, combat receive retains targetsource/combat predicate, partial child/withdrawn capability/omitted amount handoff fail closed."
     },
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
@@ -52367,6 +52427,46 @@
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
       "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_damage_amount_subscription_diagnostic_excludes_noncombat_incoming_and_foreign_sources",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Owner matcher diagnostic excludes foreign sources, wrong receiving target and noncombat damage for incomingcombat subscription; native original combat remains separate evidence."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Fear of Failed Tests deals combat2 and draws2; Mourning Thrull deals1 and gains1; Wall of Essence blocks a real2power attack and gains2 from committed combat damage. Wrongprincipal rollback, private draws, pending load and full pre-attack replay agree."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "negative",
       "test_id": "tests.test_kicked_spell_conditions.KickedSpellActionTests.test_zero_scalar_counter_quantity_commits_price_and_places_no_counters",
       "official_rule_ids": [
         "107.1b",
@@ -52383,6 +52483,46 @@
         "commander_review"
       ],
       "applicability_note": "Actual registered commands preserve independently specified result quantity, recorded cast choice, departed object identity and canonical continuation outcomes with exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_source_damage_amount_broad_recipient_and_combat_receive_contrasts",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-specific damage event identity remains damage.dealt.self and requests the existing committed scalar producer; broad damage has no recipient restriction, combat receive retains targetsource/combat predicate, partial child/withdrawn capability/omitted amount handoff fail closed."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_source_damage_amount_dependency_and_scalar_handoff_fail_closed",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-specific damage event identity remains damage.dealt.self and requests the existing committed scalar producer; broad damage has no recipient restriction, combat receive retains targetsource/combat predicate, partial child/withdrawn capability/omitted amount handoff fail closed."
     },
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
@@ -52447,6 +52587,26 @@
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Fear of Failed Tests deals combat2 and draws2; Mourning Thrull deals1 and gains1; Wall of Essence blocks a real2power attack and gains2 from committed combat damage. Wrongprincipal rollback, private draws, pending load and full pre-attack replay agree."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "positive",
       "test_id": "tests.test_kicked_spell_conditions.KickedSpellActionTests.test_actual_scalar_counter_quantity_reads_current_power_and_replays",
       "official_rule_ids": [
         "107.1b",
@@ -52463,6 +52623,46 @@
         "commander_review"
       ],
       "applicability_note": "Actual registered commands preserve independently specified result quantity, recorded cast choice, departed object identity and canonical continuation outcomes with exact replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_source_damage_amount_broad_recipient_and_combat_receive_contrasts",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-specific damage event identity remains damage.dealt.self and requests the existing committed scalar producer; broad damage has no recipient restriction, combat receive retains targetsource/combat predicate, partial child/withdrawn capability/omitted amount handoff fail closed."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_source_damage_event_amount_keeps_subscription_identity_and_amount",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-specific damage event identity remains damage.dealt.self and requests the existing committed scalar producer; broad damage has no recipient restriction, combat receive retains targetsource/combat predicate, partial child/withdrawn capability/omitted amount handoff fail closed."
     },
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
@@ -52547,6 +52747,26 @@
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
       "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Fear of Failed Tests deals combat2 and draws2; Mourning Thrull deals1 and gains1; Wall of Essence blocks a real2power attack and gains2 from committed combat damage. Wrongprincipal rollback, private draws, pending load and full pre-attack replay agree."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "privacy",
       "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountActionTests.test_trusted_scalar_actions_controller_privacy_and_replay",
       "official_rule_ids": [
         "107.1b",
@@ -52583,6 +52803,26 @@
         "commander_review"
       ],
       "applicability_note": "Actual Marketback Walker sacrifice and Culling Dais activation preserve original source counter look-back after canonical reset, with authenticated rejection, current response changes, blink, and exact save/load replay."
+    },
+    {
+      "capability_id": "quantity_expression.scalar_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
+      "official_rule_ids": [
+        "107.1b",
+        "107.2",
+        "107.3c",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "613.4c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Fear of Failed Tests deals combat2 and draws2; Mourning Thrull deals1 and gains1; Wall of Essence blocks a real2power attack and gains2 from committed combat damage. Wrongprincipal rollback, private draws, pending load and full pre-attack replay agree."
     },
     {
       "capability_id": "quantity_expression.scalar_effect_amount",
@@ -63424,6 +63664,25 @@
     },
     {
       "capability_id": "trigger.event.normalized_damage",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
+      "official_rule_ids": [
+        "120.4",
+        "603.2",
+        "603.2c",
+        "603.2d",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Fear of Failed Tests deals combat2 and draws2; Mourning Thrull deals1 and gains1; Wall of Essence blocks a real2power attack and gains2 from committed combat damage. Wrongprincipal rollback, private draws, pending load and full pre-attack replay agree."
+    },
+    {
+      "capability_id": "trigger.event.normalized_damage",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_combat_damage_batch_scope_preserves_temporal_apnap_and_replay",
       "official_rule_ids": ["120.4", "603.2", "603.2c", "603.2d", "603.3", "603.6"],
@@ -63432,11 +63691,49 @@
     },
     {
       "capability_id": "trigger.event.normalized_damage",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
+      "official_rule_ids": [
+        "120.4",
+        "603.2",
+        "603.2c",
+        "603.2d",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Fear of Failed Tests deals combat2 and draws2; Mourning Thrull deals1 and gains1; Wall of Essence blocks a real2power attack and gains2 from committed combat damage. Wrongprincipal rollback, private draws, pending load and full pre-attack replay agree."
+    },
+    {
+      "capability_id": "trigger.event.normalized_damage",
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_source_damage_event_dispatch_mutant_is_killed",
       "official_rule_ids": ["120.4", "603.2", "603.2c", "603.2d", "603.3", "603.6"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Suppress the canonical semantic dispatch after committed damage and prove no alternate runtime path creates the represented trigger."
+    },
+    {
+      "capability_id": "trigger.event.normalized_damage",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_source_damage_amount_dependency_and_scalar_handoff_fail_closed",
+      "official_rule_ids": [
+        "120.4",
+        "603.2",
+        "603.2c",
+        "603.2d",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-specific damage event identity remains damage.dealt.self and requests the existing committed scalar producer; broad damage has no recipient restriction, combat receive retains targetsource/combat predicate, partial child/withdrawn capability/omitted amount handoff fail closed."
     },
     {
       "capability_id": "trigger.event.normalized_damage",
@@ -63456,6 +63753,82 @@
     },
     {
       "capability_id": "trigger.event.normalized_damage",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_damage_amount_subscription_diagnostic_excludes_noncombat_incoming_and_foreign_sources",
+      "official_rule_ids": [
+        "120.4",
+        "603.2",
+        "603.2c",
+        "603.2d",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Owner matcher diagnostic excludes foreign sources, wrong receiving target and noncombat damage for incomingcombat subscription; native original combat remains separate evidence."
+    },
+    {
+      "capability_id": "trigger.event.normalized_damage",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
+      "official_rule_ids": [
+        "120.4",
+        "603.2",
+        "603.2c",
+        "603.2d",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Fear of Failed Tests deals combat2 and draws2; Mourning Thrull deals1 and gains1; Wall of Essence blocks a real2power attack and gains2 from committed combat damage. Wrongprincipal rollback, private draws, pending load and full pre-attack replay agree."
+    },
+    {
+      "capability_id": "trigger.event.normalized_damage",
+      "evidence_class": "negative",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_source_damage_amount_broad_recipient_and_combat_receive_contrasts",
+      "official_rule_ids": [
+        "120.4",
+        "603.2",
+        "603.2c",
+        "603.2d",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-specific damage event identity remains damage.dealt.self and requests the existing committed scalar producer; broad damage has no recipient restriction, combat receive retains targetsource/combat predicate, partial child/withdrawn capability/omitted amount handoff fail closed."
+    },
+    {
+      "capability_id": "trigger.event.normalized_damage",
+      "evidence_class": "negative",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_source_damage_amount_dependency_and_scalar_handoff_fail_closed",
+      "official_rule_ids": [
+        "120.4",
+        "603.2",
+        "603.2c",
+        "603.2d",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-specific damage event identity remains damage.dealt.self and requests the existing committed scalar producer; broad damage has no recipient restriction, combat receive retains targetsource/combat predicate, partial child/withdrawn capability/omitted amount handoff fail closed."
+    },
+    {
+      "capability_id": "trigger.event.normalized_damage",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_fixed_source_zone_and_damage_bindings_compile_exactly",
       "official_rule_ids": ["120.4", "603.2", "603.2c", "603.2d", "603.3", "603.6"],
@@ -63472,6 +63845,63 @@
     },
     {
       "capability_id": "trigger.event.normalized_damage",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
+      "official_rule_ids": [
+        "120.4",
+        "603.2",
+        "603.2c",
+        "603.2d",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Fear of Failed Tests deals combat2 and draws2; Mourning Thrull deals1 and gains1; Wall of Essence blocks a real2power attack and gains2 from committed combat damage. Wrongprincipal rollback, private draws, pending load and full pre-attack replay agree."
+    },
+    {
+      "capability_id": "trigger.event.normalized_damage",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_source_damage_amount_broad_recipient_and_combat_receive_contrasts",
+      "official_rule_ids": [
+        "120.4",
+        "603.2",
+        "603.2c",
+        "603.2d",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-specific damage event identity remains damage.dealt.self and requests the existing committed scalar producer; broad damage has no recipient restriction, combat receive retains targetsource/combat predicate, partial child/withdrawn capability/omitted amount handoff fail closed."
+    },
+    {
+      "capability_id": "trigger.event.normalized_damage",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_source_damage_event_amount_keeps_subscription_identity_and_amount",
+      "official_rule_ids": [
+        "120.4",
+        "603.2",
+        "603.2c",
+        "603.2d",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Source-specific damage event identity remains damage.dealt.self and requests the existing committed scalar producer; broad damage has no recipient restriction, combat receive retains targetsource/combat predicate, partial child/withdrawn capability/omitted amount handoff fail closed."
+    },
+    {
+      "capability_id": "trigger.event.normalized_damage",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_source_damage_bindings_use_committed_damage_events",
       "official_rule_ids": ["120.4", "603.2", "603.2c", "603.2d", "603.3", "603.6"],
@@ -63480,11 +63910,49 @@
     },
     {
       "capability_id": "trigger.event.normalized_damage",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
+      "official_rule_ids": [
+        "120.4",
+        "603.2",
+        "603.2c",
+        "603.2d",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Fear of Failed Tests deals combat2 and draws2; Mourning Thrull deals1 and gains1; Wall of Essence blocks a real2power attack and gains2 from committed combat damage. Wrongprincipal rollback, private draws, pending load and full pre-attack replay agree."
+    },
+    {
+      "capability_id": "trigger.event.normalized_damage",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_combat_damage_batch_scope_preserves_temporal_apnap_and_replay",
       "official_rule_ids": ["120.4", "603.2", "603.2c", "603.2d", "603.3", "603.6"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Checkpoint and replay per-player aggregation, trigger ordering, multiplier copies, consequence resolution, and the final authoritative state hash."
+    },
+    {
+      "capability_id": "trigger.event.normalized_damage",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
+      "official_rule_ids": [
+        "120.4",
+        "603.2",
+        "603.2c",
+        "603.2d",
+        "603.3",
+        "603.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Fear of Failed Tests deals combat2 and draws2; Mourning Thrull deals1 and gains1; Wall of Essence blocks a real2power attack and gains2 from committed combat damage. Wrongprincipal rollback, private draws, pending load and full pre-attack replay agree."
     },
     {
       "capability_id": "trigger.event.normalized_life_gain",

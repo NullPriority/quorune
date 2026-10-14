@@ -10434,6 +10434,21 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual original Raging Regisaur attack and current Thorncaster Sliver granted-recipient attack create source-bound fixed damage triggers. Legal targets take1, actual bounce responses remove chosen targets before damage, and private projection, wrong-principal rollback and full pre-attack/pending replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
+      "piece_ids": [
+        "capability.quantity_expression.scalar_effect_amount",
+        "capability.trigger.event.normalized_damage"
+      ],
+      "capability_ids": [
+        "quantity_expression.scalar_effect_amount",
+        "trigger.event.normalized_damage"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual original Fear of Failed Tests unblocked combat draws the two committed damage points, Mourning Thrull gains its one committed damage point, and Wall of Essence blocks an actual two-power attack and gains two. Source identity and combat restriction remain typed; pending load, principal-correct private draw, rollback and full pre-attack replay agree."
     }
   ]
 }

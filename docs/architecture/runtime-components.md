@@ -44,6 +44,14 @@ Fixed source-return entry subscriptions declare `permanent.return.owner_hand`
 alongside their return-choice family so registered bounce intents retain strict
 capability closure.
 
+Committed scalar amounts accept the source-specific `damage.dealt.self`
+subscription identity without normalizing it away. Broad source damage may
+target a player or permanent; incoming combat damage retains both the receiver
+identity and combat predicate. The scalar result reads the committed event
+amount after prevention and replacement. It does not read current power, life,
+or the original damage request. Ordinary draw, token and signed life result
+owners still provide their own closed schemas and capability dependencies.
+
 ## Lifecycle and participation
 
 1. The compiler or reviewed program emits a versioned component descriptor.

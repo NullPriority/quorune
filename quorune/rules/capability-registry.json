@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 258,
+  "registry_version": 259,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -7023,7 +7023,7 @@
     },
     {
       "id": "quantity_expression.scalar_effect_amount",
-      "version": 3,
+      "version": 4,
       "official_rules": [
         "107.1b",
         "107.2",
@@ -7071,39 +7071,50 @@
       ],
       "positive_tests": [
         "test_current_then_immediate_departure_lki_never_reads_new_incarnation",
+        "test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
         "test_referenced_and_sealed_quantities_lower_through_existing_results",
-        "test_source_counter_amounts_preserve_typed_identity_and_span"
+        "test_source_counter_amounts_preserve_typed_identity_and_span",
+        "test_source_damage_amount_broad_recipient_and_combat_receive_contrasts",
+        "test_source_damage_event_amount_keeps_subscription_identity_and_amount"
       ],
       "negative_tests": [
+        "test_damage_amount_subscription_diagnostic_excludes_noncombat_incoming_and_foreign_sources",
         "test_malformed_descriptor_and_unavailable_characteristics_fail_closed",
         "test_open_ambiguous_and_cost_quantities_stay_residual",
+        "test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
         "test_own_phased_reference_remains_explicitly_unavailable",
+        "test_source_damage_amount_broad_recipient_and_combat_receive_contrasts",
+        "test_source_damage_amount_dependency_and_scalar_handoff_fail_closed",
         "test_v2_counter_codec_keeps_v1_shape_and_rejects_ambiguous_origins"
       ],
       "interaction_tests": [
-        "test_declaration_freezes_once_but_independent_reads_remain_live",
-        "test_committed_event_amount_is_not_current_life_or_damage_request",
-        "test_departure_pin_does_not_read_or_cache_unrelated_references",
-        "test_unrelated_phased_scalar_does_not_reject_actual_destroy_and_replays",
         "test_actual_death_draw_uses_predeparture_counters_and_replays",
         "test_actual_live_counter_changes_are_read_at_resolution_then_blink_uses_lki",
-        "test_actual_maga_entry_and_pending_target_read_replaced_current_count"
+        "test_actual_maga_entry_and_pending_target_read_replaced_current_count",
+        "test_committed_event_amount_is_not_current_life_or_damage_request",
+        "test_declaration_freezes_once_but_independent_reads_remain_live",
+        "test_departure_pin_does_not_read_or_cache_unrelated_references",
+        "test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
+        "test_unrelated_phased_scalar_does_not_reject_actual_destroy_and_replays"
       ],
       "multiplayer_tests": [
-        "test_trusted_scalar_actions_controller_privacy_and_replay",
-        "test_actual_death_draw_uses_predeparture_counters_and_replays"
+        "test_actual_death_draw_uses_predeparture_counters_and_replays",
+        "test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
+        "test_trusted_scalar_actions_controller_privacy_and_replay"
       ],
       "privacy_tests": [
-        "test_trusted_scalar_actions_controller_privacy_and_replay",
-        "test_actual_death_draw_uses_predeparture_counters_and_replays"
+        "test_actual_death_draw_uses_predeparture_counters_and_replays",
+        "test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
+        "test_trusted_scalar_actions_controller_privacy_and_replay"
       ],
       "replay_tests": [
+        "test_actual_death_draw_uses_predeparture_counters_and_replays",
+        "test_actual_sacrifice_cost_preserves_original_counter_count",
+        "test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
         "test_trusted_scalar_actions_controller_privacy_and_replay",
         "test_trusted_scalar_source_departure_reentry_and_replay",
-        "test_unrelated_phased_scalar_preserves_actual_single_return_and_replay",
         "test_unrelated_phased_scalar_preserves_actual_group_blink_and_replay",
-        "test_actual_death_draw_uses_predeparture_counters_and_replays",
-        "test_actual_sacrifice_cost_preserves_original_counter_count"
+        "test_unrelated_phased_scalar_preserves_actual_single_return_and_replay"
       ],
       "required_evidence": [
         "positive",
@@ -11576,7 +11587,7 @@
     },
     {
       "id": "trigger.event.normalized_damage",
-      "version": 5,
+      "version": 6,
       "official_rules": [
         "120.4",
         "603.2",
@@ -11623,38 +11634,49 @@
         "quorune.trigger_discovery.dispatch_semantic_event"
       ],
       "positive_tests": [
-        "test_public_action_event_contract_matrix_compiles_exactly",
         "test_fixed_source_zone_and_damage_bindings_compile_exactly",
-        "test_public_zone_damage_and_cast_predicates_compile_exactly",
+        "test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
+        "test_public_action_event_contract_matrix_compiles_exactly",
+        "test_public_damage_trigger_uses_committed_damage_occurrence",
         "test_public_event_binding_closure_compiles_exact_bodies",
+        "test_public_zone_damage_and_cast_predicates_compile_exactly",
+        "test_source_damage_amount_broad_recipient_and_combat_receive_contrasts",
         "test_source_damage_bindings_use_committed_damage_events",
-        "test_public_damage_trigger_uses_committed_damage_occurrence"
+        "test_source_damage_event_amount_keeps_subscription_identity_and_amount"
       ],
       "negative_tests": [
-        "test_public_action_event_suffixes_remain_fail_closed",
-        "test_public_action_event_dependencies_and_parser_mutant_fail_closed",
-        "test_fixed_source_event_near_misses_remain_material",
+        "test_damage_amount_subscription_diagnostic_excludes_noncombat_incoming_and_foreign_sources",
         "test_fixed_source_event_capabilities_fail_closed",
-        "test_public_event_binding_closure_dependencies_and_parser_mutant_fail_closed"
+        "test_fixed_source_event_near_misses_remain_material",
+        "test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
+        "test_public_action_event_dependencies_and_parser_mutant_fail_closed",
+        "test_public_action_event_suffixes_remain_fail_closed",
+        "test_public_event_binding_closure_dependencies_and_parser_mutant_fail_closed",
+        "test_source_damage_amount_broad_recipient_and_combat_receive_contrasts",
+        "test_source_damage_amount_dependency_and_scalar_handoff_fail_closed"
       ],
       "interaction_tests": [
-        "test_normalized_batch_predicates_share_damage_zone_and_token_owners",
+        "test_attachment_damage_and_death_bindings_use_current_and_lki_relations",
         "test_combat_damage_batch_scope_preserves_temporal_apnap_and_replay",
-        "test_source_damage_bindings_use_committed_damage_events",
+        "test_normalized_batch_predicates_share_damage_zone_and_token_owners",
+        "test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
         "test_public_damage_trigger_uses_committed_damage_occurrence",
-        "test_attachment_damage_and_death_bindings_use_current_and_lki_relations"
+        "test_source_damage_bindings_use_committed_damage_events"
       ],
       "multiplayer_tests": [
-        "test_normalized_batch_predicates_share_damage_zone_and_token_owners",
         "test_combat_damage_batch_scope_preserves_temporal_apnap_and_replay",
+        "test_normalized_batch_predicates_share_damage_zone_and_token_owners",
+        "test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
         "test_source_damage_bindings_use_committed_damage_events"
       ],
       "privacy_tests": [
+        "test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
         "test_source_damage_bindings_use_committed_damage_events"
       ],
       "replay_tests": [
-        "test_source_damage_bindings_use_committed_damage_events",
-        "test_combat_damage_batch_scope_preserves_temporal_apnap_and_replay"
+        "test_combat_damage_batch_scope_preserves_temporal_apnap_and_replay",
+        "test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
+        "test_source_damage_bindings_use_committed_damage_events"
       ],
       "required_evidence": [
         "positive",

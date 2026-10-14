@@ -20,7 +20,7 @@ from .fixed_target_effect_sequences import FixedSourceCharacteristicsTemplate
 
 _ZONE_EVENTS = {"permanent.enter", "artifact.enter", "creature.enter", "creature.dies",
                 "permanent.leave", "permanent.graveyard", "artifact.graveyard"}
-_AMOUNT_EVENTS = {"life.gained", "damage.dealt", "combat.damage.player"}
+_AMOUNT_EVENTS = {"life.gained", "damage.dealt", "damage.dealt.self", "combat.damage.player"}
 _HISTORY = {
     "the amount of life you gained this turn": "life_gained",
     "the amount of life you lost this turn": "life_lost",

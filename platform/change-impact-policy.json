@@ -102,7 +102,9 @@
         "test_semantic_counter_replacement_continuations",
         "test_trigger_batches",
         "test_card_program_trust",
-        "test_high_risk_interaction_assurance"
+        "test_high_risk_interaction_assurance",
+        "test_scalar_effect_amounts",
+        "test_fixed_public_state_characteristics"
       ]
     },
     {
@@ -2901,7 +2903,9 @@
         "test_repeatable_object_action_triggers",
         "test_prowess_rules",
         "test_rules_scheduler",
-        "test_storm_rules"
+        "test_storm_rules",
+        "test_scalar_effect_amounts",
+        "test_fixed_public_state_characteristics"
       ]
     },
     {

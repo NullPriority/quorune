@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Resolve committed damage amounts in source-specific triggers, including broad
+  source damage and combat-only incoming damage, with identity restrictions intact.
+
 - Bind complete fixed source-pronoun damage results to self-action triggers and
   retain the registered return-to-hand dependency of source-return triggers.
 
