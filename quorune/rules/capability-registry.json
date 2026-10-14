@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 268,
+  "registry_version": 269,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -5267,24 +5267,100 @@
     },
     {
       "id": "counter.producer.fixed_permanent_set_effect",
-      "version": 1,
-      "official_rules": ["115.1", "122.1", "122.1a", "122.6", "608.2b", "608.2c", "608.2h", "614.16", "616.1"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 2,
+      "official_rules": [
+        "115.1",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Compile and resolve one mandatory positive fixed-count counter placement on one closed public battlefield set through the canonical simultaneous counter-placement transaction.",
-        "inputs": ["one closed fixed-count Oracle instruction", "typed public battlefield query", "actor, opponent, target-player, or unrestricted controller relation", "positive exact integral amount", "one canonical counter name", "stable source provenance reference"],
-        "outputs": ["source-spanned CardProgram node", "immutable affected-set descriptor and APNAP-canonical snapshot", "strict typed counter-set intent", "resolution-time player-target revalidation where targeted", "replacement-aware simultaneous permanent-counter placement", "exact replay"],
-        "exclusions": ["variable, optional, distributed, repeated, linked, modal, conditional, or compound placements", "multiple counter kinds in one instruction", "counter costs, movement, or removal", "sets defined by counters, combat participation, modification, entry history, linked results, arbitrary names, or unsupported predicates", "colorless, face-down, negative, disjunctive, and quantity-derived set predicates", "counter quantity replacement wording remains a separate capability"]
+        "inputs": [
+          "one closed fixed-count Oracle instruction",
+          "typed public battlefield query",
+          "actor, opponent, target-player, or unrestricted controller relation",
+          "positive exact integral amount",
+          "one canonical counter name",
+          "stable source provenance reference"
+        ],
+        "outputs": [
+          "source-spanned CardProgram node",
+          "immutable affected-set descriptor and APNAP-canonical snapshot",
+          "strict typed counter-set intent",
+          "resolution-time player-target revalidation where targeted",
+          "replacement-aware simultaneous permanent-counter placement",
+          "exact replay"
+        ],
+        "exclusions": [
+          "variable, optional, distributed, repeated, linked, modal, conditional, or compound placements",
+          "multiple counter kinds in one instruction",
+          "counter costs, movement, or removal",
+          "sets defined by counters, combat participation, modification, entry history, linked results, arbitrary names, or unsupported predicates",
+          "colorless, face-down, negative, disjunctive, and quantity-derived set predicates",
+          "counter quantity replacement wording remains a separate capability"
+        ]
       },
-      "dependencies": ["counter.placement.quantity_replacement"],
-      "implementation_components": ["quorune.compiler.counter_placement_templates.FixedCounterPlacementSetTemplate", "quorune.affected_permanents.AffectedPermanentSetSpec", "quorune.counter_placement_sets.snapshot_counter_placement_set", "quorune.counter_placement_sets.resolve_counter_placement_set", "quorune.rules.node_capability_shapes.fixed_counter_placement_set_node_capabilities", "quorune.semantic_runtime.counter_placement_handlers.FixedCounterPlacementSetHandler", "quorune.semantic_runtime.intents.PlaceCountersOnSetIntent", "quorune.counter_placement.place_counters"],
-      "positive_tests": ["test_spell_trigger_and_activated_contexts_share_fixed_counter_set_lowering", "test_fixed_counter_set_resolves_canonical_apnap_batch"],
-      "negative_tests": ["test_unsupported_counter_set_variants_remain_material_residuals", "test_typed_counter_set_handler_rejects_malformed_effects", "test_inactive_target_player_counter_set_rolls_back_without_mutation"],
-      "interaction_tests": ["test_fixed_counter_set_suspends_for_quantity_replacement"],
-      "multiplayer_tests": ["test_target_player_counter_set_is_seat_scoped_and_replays_exactly"],
-      "privacy_tests": ["test_target_player_counter_set_is_seat_scoped_and_replays_exactly"],
-      "replay_tests": ["test_target_player_counter_set_is_seat_scoped_and_replays_exactly"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "counter.placement.quantity_replacement"
+      ],
+      "implementation_components": [
+        "quorune.compiler.counter_placement_templates.FixedCounterPlacementSetTemplate",
+        "quorune.affected_permanents.AffectedPermanentSetSpec",
+        "quorune.counter_placement_sets.snapshot_counter_placement_set",
+        "quorune.counter_placement_sets.resolve_counter_placement_set",
+        "quorune.rules.node_capability_shapes.fixed_counter_placement_set_node_capabilities",
+        "quorune.semantic_runtime.counter_placement_handlers.FixedCounterPlacementSetHandler",
+        "quorune.semantic_runtime.intents.PlaceCountersOnSetIntent",
+        "quorune.counter_placement.place_counters"
+      ],
+      "positive_tests": [
+        "test_fixed_combat_state_counter_sets_use_live_affected_query",
+        "test_fixed_counter_set_resolves_canonical_apnap_batch",
+        "test_original_fangren_and_fumes_current_attacking_counter_sets_replay",
+        "test_spell_trigger_and_activated_contexts_share_fixed_counter_set_lowering"
+      ],
+      "negative_tests": [
+        "test_combat_counter_set_query_rejects_unrepresented_state_combinations",
+        "test_inactive_target_player_counter_set_rolls_back_without_mutation",
+        "test_original_fangren_and_fumes_current_attacking_counter_sets_replay",
+        "test_typed_counter_set_handler_rejects_malformed_effects",
+        "test_unsupported_counter_set_variants_remain_material_residuals"
+      ],
+      "interaction_tests": [
+        "test_fixed_counter_set_suspends_for_quantity_replacement",
+        "test_original_fangren_and_fumes_current_attacking_counter_sets_replay"
+      ],
+      "multiplayer_tests": [
+        "test_original_fangren_and_fumes_current_attacking_counter_sets_replay",
+        "test_target_player_counter_set_is_seat_scoped_and_replays_exactly"
+      ],
+      "privacy_tests": [
+        "test_original_fangren_and_fumes_current_attacking_counter_sets_replay",
+        "test_target_player_counter_set_is_seat_scoped_and_replays_exactly"
+      ],
+      "replay_tests": [
+        "test_original_fangren_and_fumes_current_attacking_counter_sets_replay",
+        "test_target_player_counter_set_is_seat_scoped_and_replays_exactly"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "The compiler dependency mutation blocks exact affected-set counter CardPrograms whenever the canonical counter quantity-replacement owner is unavailable.",
       "implementation_mutation_status": "killed",

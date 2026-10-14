@@ -44,6 +44,36 @@ def scalar_record(text: str, *, type_line: str = "Creature — Goblin") -> CardR
 
 
 class ScalarEffectAmountCompilerTests(unittest.TestCase):
+    def test_combat_counter_set_query_rejects_unrepresented_state_combinations(self):
+        import json
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.compiler.counter_placement_templates import fixed_counter_set_spec_is_closed
+        from quorune.affected_permanents import AffectedPermanentSetSpec
+        from quorune.object_predicate import ObjectQuerySpec,PermanentStatePredicateSpec
+        spec=AffectedPermanentSetSpec(ObjectQuerySpec(zones=('battlefield',),types_all=('creature',),state_predicate=PermanentStatePredicateSpec(attacking=True)))
+        self.assertTrue(fixed_counter_set_spec_is_closed(spec))
+        from dataclasses import replace
+        for state in (PermanentStatePredicateSpec(attacking=True,blocking=True),PermanentStatePredicateSpec(attacking=True,enchanted=True),PermanentStatePredicateSpec(attacking=True,entered_this_turn=True),PermanentStatePredicateSpec(attacking=False)):
+            self.assertFalse(fixed_counter_set_spec_is_closed(replace(spec,query=replace(spec.query,state_predicate=state))))
+        for text in ('Put a -1/-1 counter on each creature that attacked this turn.',
+            'Put a -1/-1 counter on each attacking creature and untap it.'):
+            self.assertNotEqual('exact',self.compile(text,type_line='Instant').status)
+        text='Put a -1/-1 counter on each attacking creature.'
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        next(row for row in raw['capabilities'] if row['id']=='counter.producer.fixed_permanent_set_effect').update(status='blocked',blockers=['combatsetcounter authoritywithdrawn'])
+        self.assertNotEqual('exact',compile_oracle_card(scalar_record(text,type_line='Instant'),capability_registry=CapabilityRegistry(raw)).status)
+        with mock.patch('quorune.compiler.counter_resolution_effect_templates.fixed_counter_placement_set_effect_template',return_value=None):
+            self.assertNotEqual('exact',self.compile(text,type_line='Instant').status)
+
+    def test_fixed_combat_state_counter_sets_use_live_affected_query(self):
+        for state in ('attacking','blocking'):
+            text='Put a -1/-1 counter on each '+state+' creature.'
+            ir=self.compile(text,type_line='Instant')
+            self.assertEqual('exact',ir.status,ir.material_residuals)
+            effect=ir.faces[0].nodes[0].effects[0]
+            self.assertEqual('place_counters_on_set',effect['op'])
+            self.assertTrue(effect['set']['query']['state_predicate'][state])
+
     def test_source_damage_counter_pronoun_reuses_incarnation_pinned_leaf(self):
         for text in ('Whenever this creature is dealt damage, put a +1/+1 counter on it.',
             'Whenever this creature deals combat damage to a player, put a +1/+1 counter on it.',

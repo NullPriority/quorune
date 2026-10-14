@@ -33465,6 +33465,28 @@
     },
     {
       "capability_id": "counter.producer.fixed_permanent_set_effect",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_fangren_and_fumes_current_attacking_counter_sets_replay",
+      "official_rule_ids": [
+        "115.1",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalFangrenFirstbornactualattackcounterscurrentattackersincludinguntappedvigilancebody,tappedspectatorexcluded. ActualChokingFumesputs-1/-1onlyoncurrentattackers;opposingcounterscancelviaSBA. Wrongprincipalrollback,privacy,pendingloadandfullreplay agree."
+    },
+    {
+      "capability_id": "counter.producer.fixed_permanent_set_effect",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_counter_placement_sets.FixedCounterPlacementSetRuntimeTests.test_target_player_counter_set_is_seat_scoped_and_replays_exactly",
       "official_rule_ids": ["115.1", "122.1", "122.1a", "122.6", "608.2b", "608.2c", "608.2h", "614.16", "616.1"],
@@ -33473,11 +33495,55 @@
     },
     {
       "capability_id": "counter.producer.fixed_permanent_set_effect",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_fangren_and_fumes_current_attacking_counter_sets_replay",
+      "official_rule_ids": [
+        "115.1",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalFangrenFirstbornactualattackcounterscurrentattackersincludinguntappedvigilancebody,tappedspectatorexcluded. ActualChokingFumesputs-1/-1onlyoncurrentattackers;opposingcounterscancelviaSBA. Wrongprincipalrollback,privacy,pendingloadandfullreplay agree."
+    },
+    {
+      "capability_id": "counter.producer.fixed_permanent_set_effect",
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_counter_placement_sets.FixedCounterPlacementSetCompilerTests.test_fixed_counter_set_compiler_mutant_is_killed",
       "official_rule_ids": ["115.1", "122.1", "122.1a", "122.6", "608.2b", "608.2c", "608.2h", "614.16", "616.1"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Kill a compiler mutant that removes the closed fixed affected-set template and would otherwise preserve a false exact promotion."
+    },
+    {
+      "capability_id": "counter.producer.fixed_permanent_set_effect",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_combat_counter_set_query_rejects_unrepresented_state_combinations",
+      "official_rule_ids": [
+        "115.1",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Attacking/blockingcounteraffectedsetsuseexistinglivepublicquery. Combination/falseflag/historicalattack/unsupportedtailreject;withdrawnsetcapabilityblocks exact andomittedsetloweringkilled. Existingstatequerycontrolsretained."
     },
     {
       "capability_id": "counter.producer.fixed_permanent_set_effect",
@@ -33505,6 +33571,50 @@
     },
     {
       "capability_id": "counter.producer.fixed_permanent_set_effect",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_fangren_and_fumes_current_attacking_counter_sets_replay",
+      "official_rule_ids": [
+        "115.1",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalFangrenFirstbornactualattackcounterscurrentattackersincludinguntappedvigilancebody,tappedspectatorexcluded. ActualChokingFumesputs-1/-1onlyoncurrentattackers;opposingcounterscancelviaSBA. Wrongprincipalrollback,privacy,pendingloadandfullreplay agree."
+    },
+    {
+      "capability_id": "counter.producer.fixed_permanent_set_effect",
+      "evidence_class": "negative",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_combat_counter_set_query_rejects_unrepresented_state_combinations",
+      "official_rule_ids": [
+        "115.1",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Attacking/blockingcounteraffectedsetsuseexistinglivepublicquery. Combination/falseflag/historicalattack/unsupportedtailreject;withdrawnsetcapabilityblocks exact andomittedsetloweringkilled. Existingstatequerycontrolsretained."
+    },
+    {
+      "capability_id": "counter.producer.fixed_permanent_set_effect",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_counter_placement_sets.FixedCounterPlacementSetCompilerTests.test_spell_trigger_and_activated_contexts_share_fixed_counter_set_lowering",
       "official_rule_ids": ["115.1", "122.1", "122.1a", "122.6", "608.2b", "608.2c", "608.2h", "614.16", "616.1"],
@@ -33521,6 +33631,50 @@
     },
     {
       "capability_id": "counter.producer.fixed_permanent_set_effect",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_fangren_and_fumes_current_attacking_counter_sets_replay",
+      "official_rule_ids": [
+        "115.1",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalFangrenFirstbornactualattackcounterscurrentattackersincludinguntappedvigilancebody,tappedspectatorexcluded. ActualChokingFumesputs-1/-1onlyoncurrentattackers;opposingcounterscancelviaSBA. Wrongprincipalrollback,privacy,pendingloadandfullreplay agree."
+    },
+    {
+      "capability_id": "counter.producer.fixed_permanent_set_effect",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_fixed_combat_state_counter_sets_use_live_affected_query",
+      "official_rule_ids": [
+        "115.1",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Attacking/blockingcounteraffectedsetsuseexistinglivepublicquery. Combination/falseflag/historicalattack/unsupportedtailreject;withdrawnsetcapabilityblocks exact andomittedsetloweringkilled. Existingstatequerycontrolsretained."
+    },
+    {
+      "capability_id": "counter.producer.fixed_permanent_set_effect",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_counter_placement_sets.FixedCounterPlacementSetRuntimeTests.test_target_player_counter_set_is_seat_scoped_and_replays_exactly",
       "official_rule_ids": ["115.1", "122.1", "122.1a", "122.6", "608.2b", "608.2c", "608.2h", "614.16", "616.1"],
@@ -33529,11 +33683,55 @@
     },
     {
       "capability_id": "counter.producer.fixed_permanent_set_effect",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_fangren_and_fumes_current_attacking_counter_sets_replay",
+      "official_rule_ids": [
+        "115.1",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalFangrenFirstbornactualattackcounterscurrentattackersincludinguntappedvigilancebody,tappedspectatorexcluded. ActualChokingFumesputs-1/-1onlyoncurrentattackers;opposingcounterscancelviaSBA. Wrongprincipalrollback,privacy,pendingloadandfullreplay agree."
+    },
+    {
+      "capability_id": "counter.producer.fixed_permanent_set_effect",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_counter_placement_sets.FixedCounterPlacementSetRuntimeTests.test_target_player_counter_set_is_seat_scoped_and_replays_exactly",
       "official_rule_ids": ["115.1", "122.1", "122.1a", "122.6", "608.2b", "608.2c", "608.2h", "614.16", "616.1"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the selected player target, priority sequence, affected-set snapshot, replacement journal, and final state hash exactly."
+    },
+    {
+      "capability_id": "counter.producer.fixed_permanent_set_effect",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_fangren_and_fumes_current_attacking_counter_sets_replay",
+      "official_rule_ids": [
+        "115.1",
+        "122.1",
+        "122.1a",
+        "122.6",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalFangrenFirstbornactualattackcounterscurrentattackersincludinguntappedvigilancebody,tappedspectatorexcluded. ActualChokingFumesputs-1/-1onlyoncurrentattackers;opposingcounterscancelviaSBA. Wrongprincipalrollback,privacy,pendingloadandfullreplay agree."
     },
     {
       "capability_id": "counter.producer.fixed_permanent_target_set_effect",

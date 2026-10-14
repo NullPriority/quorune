@@ -111,6 +111,13 @@ finish before trigger resolution; counters do not rescue a creature that already
 died, and a re-entered source cannot receive the old trigger's counters. Public
 damage-receiver pronouns without a represented recipient remain excluded.
 
+Fixed counter affected sets admit one positive attacking or blocking state
+predicate over creatures. Selection uses current combat membership when the
+instruction resolves. Tapped state and earlier attack history do not substitute
+for that membership, and additional unrepresented state qualifiers remain
+excluded. The ordinary counter transaction and state-based counter cancellation
+retain ownership of placement consequences.
+
 ## Lifecycle and participation
 
 1. The compiler or reviewed program emits a versioned component descriptor.

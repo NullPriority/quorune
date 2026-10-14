@@ -2957,6 +2957,39 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
 
 
 class AdditionalConditionalModifierRuntimeTests(unittest.TestCase):
+    def test_original_fangren_and_fumes_current_attacking_counter_sets_replay(self):
+        from quorune.model import CombatState
+        session=self.session(3632901);engine=session.engine
+        source=self.add(engine,'Fangren Firstborn',ref='combat-counter-fangren')
+        body=self.add(engine,'Generic Bound Body',ref='combat-counter-vigilant')
+        spectator=self.add(engine,'Generic Bound Body',ref='combat-counter-spectator');spectator.tapped=True
+        fumes=self.add(engine,'Choking Fumes',zone='hand',ref='combat-counter-fumes')
+        self.assert_whole_admission(source.printed_name);self.assert_whole_admission(fumes.printed_name)
+        self.ready(session,fumes,{'C':2,'W':1})
+        session.state.pending_decision=None;session.state.priority_player=None;session.state.priority_passes=[]
+        session.state.phase='combat';session.state.step='declare_attackers';session.state.phase_index=5;session.state.combat=CombatState()
+        engine.permissions.invalidate_current();engine.pump();self.checkpoint(session)
+        accepted=session.act('pilot:A',{'action_id':'attack','attackers':{source.ref:'B',body.ref:'D'}})
+        self.assertTrue(accepted.ok,accepted.summary);self.replay(session,load=True);self.resolve(session)
+        self.assertEqual(1,session.state.cards[source.object_id].counters.get('+1/+1',0))
+        self.assertEqual(1,session.state.cards[body.object_id].counters.get('+1/+1',0))
+        self.assertEqual(0,session.state.cards[spectator.object_id].counters.get('+1/+1',0))
+        while session.state.priority_player!='A':self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        cast=next(row for row in actions if row.get('card')==fumes.ref)
+        before=session.state.to_dict()
+        self.assertFalse(session.act('pilot:C',{'action_id':cast['id'],'pay':'auto'}).ok);self.assertEqual(before,session.state.to_dict())
+        accepted=session.act('pilot:A',{'action_id':cast['id'],'pay':'auto'});self.assertTrue(accepted.ok,accepted.summary)
+        self.replay(session,load=True);self.resolve(session)
+        # CR704.5q removes matching +1/+1 and -1/-1 counters from attackers.
+        for card in (source,body):
+            current=session.state.cards[card.object_id]
+            self.assertEqual(0,current.counters.get('+1/+1',0));self.assertEqual(0,current.counters.get('-1/-1',0))
+        self.assertEqual(0,session.state.cards[spectator.object_id].counters.get('-1/-1',0))
+        self.assertFalse(session.state.cards[body.object_id].tapped)
+        for seat in 'BCD':self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+        self.replay(session)
+
     def test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay(self):
         cases=((3632801,'Fungusaur',False,False),(3632802,'Siegehorn Ceratops',False,False),
             (3632803,'Siegehorn Ceratops',True,False),(3632804,'Siegehorn Ceratops',False,True))

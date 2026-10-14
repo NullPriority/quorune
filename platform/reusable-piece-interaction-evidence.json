@@ -10586,6 +10586,21 @@
       ],
       "interaction_order": 2,
       "assertion": "ActualprintedFungusaur/Ceratops nonlethaldamageplacesone/twocounters throughsourceincarnation leaf; lethalBoltdeathandbounce/recastcannotreuseoldsourcecountertrigger. Wrongprincipalrollback, privacy,pendingload andfullpreactionreplayagree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_fangren_and_fumes_current_attacking_counter_sets_replay",
+      "piece_ids": [
+        "capability.counter.placement.quantity_replacement",
+        "capability.counter.producer.fixed_permanent_set_effect"
+      ],
+      "capability_ids": [
+        "counter.placement.quantity_replacement",
+        "counter.producer.fixed_permanent_set_effect"
+      ],
+      "interaction_order": 2,
+      "assertion": "ActualFangrenFirstbornattackandChokingFumesspellselectcurrentattackingbodyset, includinguntappedvigilanceandsourceratherthantappedspectator. Existingcountertransaction/SBAcancelsopposingcounterswithrollback,privacyandpending/fullreplay."
     }
   ]
 }

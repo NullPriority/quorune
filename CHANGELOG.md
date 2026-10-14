@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Place fixed counters on current attacking or blocking creature sets through
+  the shared live public-state query.
+
 - Bind fixed counter pronouns in source damage triggers to the same battlefield
   incarnation, retaining lethal-damage and re-entry boundaries.
 

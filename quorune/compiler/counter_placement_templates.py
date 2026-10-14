@@ -1083,6 +1083,13 @@ def fixed_counter_set_spec_is_closed(
         return False
     state = query.state_predicate
     if state is not None:
+        combat_state=state.attacking is True or state.blocking is True
+        if combat_state:
+            if (type_shape!=('creature',) or sum((state.attacking is True,state.blocking is True))!=1
+                    or any((state.entered_this_turn,state.counter_name is not None,state.tapped is not None,
+                        state.enchanted is not None,state.equipped is not None,state.modified is not None,state.monstrous is not None))):return False
+            return not any((query.supertypes_all,query.colors_any,query.keywords_all,query.token is not None,query.tapped is not None))
+        if state.attacking is not None or state.blocking is not None:return False
         if state.tapped is not None or sum(
             (state.entered_this_turn, state.counter_name is not None)
         ) != 1:
@@ -1185,6 +1192,10 @@ def _fixed_counter_set_query(
     if not phrase.startswith("each "):
         return None
     phrase = phrase[5:]
+    combat=re.fullmatch(r'(?P<state>attacking|blocking) (?P<body>creature(?: .+)?)',phrase)
+    combat_state=None
+    if combat is not None:
+        phrase=combat['body'];combat_state=PermanentStatePredicateSpec(**{combat['state']:True})
 
     keyword: str | None = None
     keyword_match = re.fullmatch(
@@ -1201,6 +1212,9 @@ def _fixed_counter_set_query(
     if state_clause is None:
         return None
     phrase, state_predicate = state_clause
+    if combat_state is not None:
+        if state_predicate is not None:return None
+        state_predicate=combat_state
 
     relation = PermanentControllerRelation.ANY
     target_controller: str | None = None
