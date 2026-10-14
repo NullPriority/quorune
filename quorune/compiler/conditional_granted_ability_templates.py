@@ -16,6 +16,39 @@ from .continuous_templates import (
 )
 
 
+def graveyard_static_characteristics_handler(text: str, *, source_name: str):
+    """CR 113.6b: explicit graveyard activity with an independent live condition."""
+    match = re.fullmatch(r'As long as this card is in your graveyard and (?P<tail>.+)', text.strip(), re.I)
+    if match is None:
+        return None
+    compiled = fixed_public_state_characteristics_handler('As long as ' + match['tail'], source_name=source_name)
+    if compiled is None:
+        land = re.fullmatch(r'you control (?:a|an) (?P<land>Plains|Island|Swamp|Mountain|Forest), (?P<body>.+)', match['tail'], re.I)
+        if land is None:
+            return None
+        from .public_state_queries import fixed_characteristic_battlefield_query_subject
+        from ..characteristic_fragments import CharacteristicQuantitySpec, CharacteristicQuantityScope
+        from ..continuous_conditions import FixedPublicStateConditionSpec, FixedPublicStateConditionKind
+        from .continuous_templates import _conditional_target
+        query = fixed_characteristic_battlefield_query_subject(land['land'] + ('s' if land['land'].casefold() != 'plains' else '') + ' you control')
+        body = _conditional_target(land['body'], source_name=source_name)
+        if query is None or body is None:
+            return None
+        condition = FixedPublicStateConditionSpec(FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST, amount=1,
+            quantity=CharacteristicQuantitySpec(scope=CharacteristicQuantityScope.CONTROLLER_ZONE, query=query[1]), schema_version=2)
+        compiled = ('continuous-public-state-grant-v1', {'handler_id':'continuous.characteristics.fixed-public-state.v1',
+            'schema_version':1, 'event':'characteristics.evaluate', 'source_condition':condition.to_dict(),
+            'target':body[0], 'modifier':body[1]}, ('continuous.characteristics.fixed_public_state', *body[2]))
+    if compiled is None or compiled[1]['target']['kind'] != 'fixed_query':
+        return None
+    if compiled[1]['modifier']['power'] or compiled[1]['modifier']['toughness']:
+        return None
+    descriptor = {**compiled[1], 'handler_id': 'continuous.characteristics.graveyard-public-state.v1'}
+    return 'continuous-graveyard-public-state-grant-v1', descriptor, tuple(sorted({
+        *compiled[2], 'continuous.ability.graveyard_static_grant',
+    }))
+
+
 def _conditional_quoted_ability_shell(
     oracle_line: str, *, source_name: str,
 ) -> tuple[str, tuple[str, Mapping[str, Any], tuple[str, ...]], str] | None:

@@ -1368,6 +1368,7 @@ def default_continuous_effect_component_registry(
         ConditionalAsUnblockedAssignmentHandler,
         ConditionalBlockCapacityHandler,
         ConditionalDeclarationGrantHandler,
+        GraveyardStaticCharacteristicsHandler,
     )
 
     registry = ContinuousEffectComponentRegistry(
@@ -1391,6 +1392,7 @@ def default_continuous_effect_component_registry(
             ConditionalAsUnblockedAssignmentHandler(),
             ConditionalBlockCapacityHandler(),
             ConditionalDeclarationGrantHandler(),
+            GraveyardStaticCharacteristicsHandler(),
             AttachedFixedCharacteristicsHandler(),
             FixedCharacteristicSettingsHandler(),
             ConditionalCharacteristicSettingsHandler(),

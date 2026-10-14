@@ -11,6 +11,12 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Compile conditional source type and base-stat settings through existing
+  characteristic layers while preserving current conditions and source identity.
+
+- Compile explicit graveyard-active static keyword grants with owner-relative
+  land conditions, source zone timestamps, and current battlefield recipients.
+
 - Compile mandatory controller sacrifices and fixed creature subtype choices
   through the existing affected-player selection and simultaneous zone owner.
 

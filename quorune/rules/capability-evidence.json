@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "416bda175dc3092a20018ab8399396d7cc4acad48d132484f2c561b24486e9ba",
-  "declaration_source_fingerprint": "7b5e8bf0d54d8f9a309635c46fe6dc5a75849d5da2bbe4494489582fa5bd1385",
+  "registry_fingerprint": "103be0e6e5154a88cafeb916ccfdcac49b07c4b09020e21f5ac0025a919f4bc2",
+  "declaration_source_fingerprint": "0ed4b13d0066b2cc7fed4cb56f4f2a25a593d4750b8079a4b168e0bf3fd61149",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -32275,6 +32275,158 @@
         "commander_review"
       ],
       "applicability_note": "Pin the widened continuous-component registry with a typed characteristic checkpoint and replay the following command exactly."
+    },
+    {
+      "capability_id": "continuous.ability.graveyard_static_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_graveyard_wonder_tracks_owner_land_source_departure_and_replay",
+      "official_rule_ids": [
+        "109.5",
+        "113.6b",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit graveyard-active static grant keeps owner-relative live public conditions and current recipient queries through canonical layer evaluation."
+    },
+    {
+      "capability_id": "continuous.ability.graveyard_static_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_graveyard_wonder_tracks_owner_land_source_departure_and_replay",
+      "official_rule_ids": [
+        "109.5",
+        "113.6b",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit graveyard-active static grant keeps owner-relative live public conditions and current recipient queries through canonical layer evaluation."
+    },
+    {
+      "capability_id": "continuous.ability.graveyard_static_grant",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_graveyard_grant_compiler_omission_mutant_is_killed",
+      "official_rule_ids": [
+        "109.5",
+        "113.6b",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit graveyard-active static grant keeps owner-relative live public conditions and current recipient queries through canonical layer evaluation."
+    },
+    {
+      "capability_id": "continuous.ability.graveyard_static_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_graveyard_grant_rejects_unrepresented_zone_condition_and_malformed_descriptor",
+      "official_rule_ids": [
+        "109.5",
+        "113.6b",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit graveyard-active static grant keeps owner-relative live public conditions and current recipient queries through canonical layer evaluation."
+    },
+    {
+      "capability_id": "continuous.ability.graveyard_static_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_graveyard_static_grant_keeps_explicit_active_zone_and_owner_relative_query",
+      "official_rule_ids": [
+        "109.5",
+        "113.6b",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit graveyard-active static grant keeps owner-relative live public conditions and current recipient queries through canonical layer evaluation."
+    },
+    {
+      "capability_id": "continuous.ability.graveyard_static_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_graveyard_wonder_tracks_owner_land_source_departure_and_replay",
+      "official_rule_ids": [
+        "109.5",
+        "113.6b",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit graveyard-active static grant keeps owner-relative live public conditions and current recipient queries through canonical layer evaluation."
+    },
+    {
+      "capability_id": "continuous.ability.graveyard_static_grant",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_graveyard_wonder_tracks_owner_land_source_departure_and_replay",
+      "official_rule_ids": [
+        "109.5",
+        "113.6b",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit graveyard-active static grant keeps owner-relative live public conditions and current recipient queries through canonical layer evaluation."
+    },
+    {
+      "capability_id": "continuous.ability.graveyard_static_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_graveyard_wonder_tracks_owner_land_source_departure_and_replay",
+      "official_rule_ids": [
+        "109.5",
+        "113.6b",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit graveyard-active static grant keeps owner-relative live public conditions and current recipient queries through canonical layer evaluation."
     },
     {
       "capability_id": "continuous.ability.temporary_quoted_grant",
@@ -122526,5 +122678,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "26e211131aed49c244813ce43b6c92b20b2b5739d4697b260b5ba8f035298c6d"
+  "fingerprint": "8f11abfbaa49ad091b445db0162c1c1f2730e2ac69d7fa8810372dd6fdf23b73"
 }

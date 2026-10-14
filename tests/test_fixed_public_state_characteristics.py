@@ -225,6 +225,46 @@ def source_context(
 
 
 class FixedPublicStateCharacteristicCompilerTests(unittest.TestCase):
+    def test_graveyard_static_grant_keeps_explicit_active_zone_and_owner_relative_query(self):
+        from test_qualified_zone_event_queries import query_record
+        text = 'As long as this card is in your graveyard and you control an Island, creatures you control have flying.'
+        ir = compile_oracle_card(query_record(text), capability_registry=load_default_capability_registry())
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        node = ir.faces[0].nodes[0]
+        self.assertEqual('graveyard', node.active_zone)
+        self.assertEqual(text, node.text)
+        self.assertEqual('source_controller', node.handlers[0]['target']['target_controller'])
+        query = node.handlers[0]['source_condition']['quantity']['query']
+        self.assertEqual(['land'], query['types_all'])
+        self.assertEqual(['island'], query['subtypes_all'])
+        self.assertEqual([], query['supertypes_all'])
+
+    def test_graveyard_grant_rejects_unrepresented_zone_condition_and_malformed_descriptor(self):
+        from test_qualified_zone_event_queries import query_record
+        from quorune.compiler.conditional_granted_ability_templates import graveyard_static_characteristics_handler
+        from quorune.semantic_runtime.conditional_continuous import GraveyardStaticCharacteristicsHandler
+        text = 'As long as this card is in your graveyard and you control an Island, creatures you control have flying.'
+        descriptor = graveyard_static_characteristics_handler(text, source_name='Generic Query Observer')[1]
+        handler = GraveyardStaticCharacteristicsHandler(); handler.validate(descriptor)
+        for field, value in (('schema_version', True), ('handler_id', 'continuous.characteristics.fixed-public-state.v1')):
+            with self.assertRaises(ValueError):handler.validate({**descriptor, field: value})
+        for text in (
+            'As long as this card is in exile and you control an Island, creatures you control have flying.',
+            'As long as this card is in your graveyard and you control an Island, creatures you control have unrepresented.',
+            'As long as this card is in your graveyard and the top card of your library is blue, creatures you control have flying.',
+        ):
+            self.assertIsNone(graveyard_static_characteristics_handler(text, source_name='Generic Query Observer'))
+        raw = json.loads((Path(__file__).parents[1] / 'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        text = 'As long as this card is in your graveyard and you control an Island, creatures you control have flying.'
+        for cap in ('continuous.ability.graveyard_static_grant', 'combat.block.flying'):
+            changed = copy.deepcopy(raw)
+            next(row for row in changed['capabilities'] if row['id'] == cap).update(status='blocked', blockers=['graveyard grant boundary'])
+            self.assertNotEqual('exact', compile_oracle_card(query_record(text), capability_registry=CapabilityRegistry(changed)).status)
+
+    def test_graveyard_grant_compiler_omission_mutant_is_killed(self):
+        with mock.patch('quorune.compiler.conditional_granted_ability_templates.graveyard_static_characteristics_handler', return_value=None):
+            with self.assertRaises(AssertionError):
+                self.test_graveyard_static_grant_keeps_explicit_active_zone_and_owner_relative_query()
     def test_conditional_stats_and_declaration_result_preserve_one_live_condition(self):
         from test_qualified_zone_event_queries import query_record
         from quorune.oracle_ir import compile_oracle_card

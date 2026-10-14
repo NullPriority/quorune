@@ -4,6 +4,36 @@
     {
       "evidence_class": "interaction",
       "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_graveyard_wonder_tracks_owner_land_source_departure_and_replay",
+      "piece_ids": [
+        "capability.continuous.ability.graveyard_static_grant",
+        "capability.permanent.destroy.effect"
+      ],
+      "capability_ids": [
+        "continuous.ability.graveyard_static_grant",
+        "permanent.destroy.effect"
+      ],
+      "interaction_order": 2,
+      "assertion": "An accepted original Murder kills a Wonder controlled by another player but owned by the actor; the graveyard-active grant begins under its owner rather than the previous controller. Current qualifying land removal and an offered replay of that land independently disable and restore the grant without retimestamping the source. Wrong-principal rollback, private hand projection, pending save/load and complete pre-action replay retain the consequences."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_graveyard_wonder_tracks_owner_land_source_departure_and_replay",
+      "piece_ids": [
+        "capability.card.return.own_graveyard_to_owner_hand",
+        "capability.continuous.ability.graveyard_static_grant"
+      ],
+      "capability_ids": [
+        "card.return.own_graveyard_to_owner_hand",
+        "continuous.ability.graveyard_static_grant"
+      ],
+      "interaction_order": 2,
+      "assertion": "An accepted original Raise Dead returns Wonder to hand while its land condition is true, ending the live grant before any further action. Current qualifying land removal and an offered replay of that land independently disable and restore the grant without retimestamping the source. Wrong-principal rollback, private hand projection, pending save/load and complete pre-action replay retain the consequences."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
       "test_id": "test_actual_original_conditional_settings_cast_turn_control_counters_and_replay",
       "piece_ids": [
         "capability.continuous.characteristics.fixed_public_setting",

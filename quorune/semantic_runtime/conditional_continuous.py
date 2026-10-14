@@ -440,6 +440,22 @@ class ConditionalAsUnblockedAssignmentHandler(FixedPublicStateCharacteristicsHan
     capability_dependencies: tuple[str,...] = (AS_UNBLOCKED_CAPABILITY,'continuous.characteristics.fixed_public_state')
 
 
+@dataclass(frozen=True, slots=True)
+class GraveyardStaticCharacteristicsHandler(FixedPublicStateCharacteristicsHandler):
+    handler_id: str = 'continuous.characteristics.graveyard-public-state.v1'
+    family: str = 'continuous.characteristics.graveyard_public_state'
+    rule_references: tuple[str, ...] = ('109.5', '113.6b', '611.3a', '611.3b', '613.1f', '613.7')
+    capability_dependencies: tuple[str, ...] = (
+        'continuous.ability.graveyard_static_grant', 'continuous.characteristics.fixed_public_state',
+    )
+
+    def validate(self, descriptor):
+        node = super(GraveyardStaticCharacteristicsHandler, self).validate(descriptor)
+        if node.target_kind != 'fixed_query' or node.power or node.toughness or node.fragments:
+            raise SemanticNodeError('Graveyard grants require independently closed battlefield recipients')
+        return node
+
+
 __all__ = [
     "FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID",
     "FixedPublicStateCharacteristicsHandler",

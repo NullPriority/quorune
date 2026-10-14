@@ -538,11 +538,28 @@ def _annotated_static_component_keys(source: Any) -> tuple[str, ...]:
     )
 
 
+@dataclass(frozen=True, slots=True)
+class _OwnerRelativeStaticSource:
+    """CR 109.5: a nonbattlefield card's static 'you' refers to its owner."""
+    source: Any
+
+    @property
+    def controller(self):
+        return self.source.owner
+
+    def __getattr__(self, field):
+        return getattr(self.source, field)
+
+
 def _continuous_programs_for_source(
     semantics: "SemanticRegistry",
     source: Any,
     static_component_resolver: Callable[[Any], Sequence[str]] | None,
 ) -> tuple["SemanticProgram", ...]:
+    if source.zone == 'graveyard':
+        return tuple(p for p in semantics.runtime_handler_programs_for_oracle(source.oracle_id,
+            active_zone='graveyard', event='characteristics.evaluate') if any(
+            d.get('handler_id') == 'continuous.characteristics.graveyard-public-state.v1' for d in p.handlers))
     if static_component_resolver is not None:
         return _applicable_static_programs(
             semantics,
@@ -596,6 +613,7 @@ def _component_public_state_snapshot(
         FIXED_PUBLIC_STATE_GRANTED_ABILITY_HANDLER_ID,
         CONDITIONAL_DEFENDER_PERMISSION_HANDLER, CONDITIONAL_AS_UNBLOCKED_HANDLER,
         'continuous.block-capacity.public-state.v1', 'continuous.declaration.public-state.v1',
+        'continuous.characteristics.graveyard-public-state.v1',
     )
     if is_conditional and maximum_layer is not None and maximum_layer < Layer.ABILITY:
         # These components emit only layers 6/7; their query conditions must
@@ -637,16 +655,18 @@ def collect_card_program_continuous_effects(
 
     for seat in state.turn_order:
         player = state.players[seat]
-        for object_id in list(player.zones["battlefield"]):
-            if metrics is not None:
-                metrics.battlefield_objects_inspected += 1
+        for object_id in [*player.zones['battlefield'], *player.zones['graveyard']]:
             source = state.cards[object_id]
+            if metrics is not None and source.zone == 'battlefield':
+                metrics.battlefield_objects_inspected += 1
             if (
-                source.controller != seat
+                (source.owner if source.zone == 'graveyard' else source.controller) != seat
                 or source.phased_out
                 or getattr(source, "face_down", False)
             ):
                 continue
+            if source.zone == 'graveyard':
+                source = _OwnerRelativeStaticSource(source)
             programs = _continuous_programs_for_source(
                 semantics, source, static_component_resolver
             )

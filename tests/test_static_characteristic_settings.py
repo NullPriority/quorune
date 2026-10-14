@@ -183,6 +183,57 @@ class StaticSettingCompilerTests(unittest.TestCase):
 
 
 class StaticSettingRuntimeTests(unittest.TestCase):
+    def test_actual_graveyard_wonder_tracks_owner_land_source_departure_and_replay(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        session = self.session(286101); engine = session.engine
+        source = self.add(engine, 'Wonder', seat='B', ref='borrowed-wonder'); source.owner = 'A'
+        own = self.add(engine, 'Generic Bound Body', ref='graveyard-grant-recipient')
+        foreign = self.add(engine, 'Generic Bound Body', seat='C', ref='foreign-graveyard-grant')
+        land = self.add(engine, 'Island', ref='owner-grant-island')
+        self.add(engine, 'Island', seat='B', ref='opponent-grant-island')
+        private = self.add(engine, 'Generic Bound Growth', seat='D', zone='hand', ref='graveyard-grant-private')
+        kill = self.add(engine, 'Murder', zone='hand', ref='graveyard-grant-death')
+        return_source = self.add(engine, 'Raise Dead', zone='hand', ref='graveyard-grant-return')
+        return_land = self.add(engine, 'Generic Conditional Land Return', zone='hand', ref='graveyard-grant-land-return')
+        for number in range(4):self.add(engine, 'Swamp', ref='graveyard-action-mana-' + str(number))
+        program = compile_best_available_card_program(self.db, self.db.lookup('Wonder'), semantic_registry=engine.semantics,
+            capability_registry=self.registry, capability_profile='commander_review')
+        self.assertTrue(bind_card_program_runtime(program, capability_registry=self.registry,
+            profile='commander_review')['strict_capability_ready'])
+        self.assertNotIn('flying', engine._combat_keywords(own))
+        action = self.ready(session, kill, {'B': 2, 'C': 1}); self.checkpoint(session)
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act('pilot:C', {'action_id': action['id'], 'targets': [source.ref], 'pay': 'auto'}).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self.assertTrue(session.act('pilot:A', {'action_id': action['id'], 'targets': [source.ref], 'pay': 'auto'}).ok)
+        self.resolve(session); session = self.replay(session, load=True); engine = session.engine
+        self.assertEqual('graveyard', session.state.cards[source.object_id].zone)
+        self.assertIn('flying', engine._combat_keywords(session.state.cards[own.object_id]))
+        self.assertNotIn('flying', engine._combat_keywords(session.state.cards[foreign.object_id]))
+        self.assertNotIn(private.ref, json.dumps(session.packet('pilot:A', full=True)))
+        timestamp = session.state.cards[source.object_id].zone_timestamp
+        actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        action = next(row for row in actions if row.get('card') == return_land.ref)
+        self.assertTrue(session.act('pilot:A', {'action_id': action['id'], 'targets': [land.ref], 'pay': 'auto'}).ok)
+        self.resolve(session)
+        self.assertNotIn('flying', engine._combat_keywords(session.state.cards[own.object_id]))
+        self.assertEqual(timestamp, session.state.cards[source.object_id].zone_timestamp)
+        self.replay(session, load=True)
+        actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        current_land = session.state.cards[land.object_id]
+        action = next(row for row in actions if row.get('card') == current_land.ref and row['id'].startswith('play-land:'))
+        accepted = session.act('pilot:A', {'action_id': action['id']})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertIn('flying', engine._combat_keywords(session.state.cards[own.object_id]))
+        self.assertEqual(timestamp, session.state.cards[source.object_id].zone_timestamp)
+        actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        action = next(row for row in actions if row.get('card') == return_source.ref)
+        self.assertTrue(session.act('pilot:A', {'action_id': action['id'], 'targets': [source.ref], 'pay': 'auto'}).ok)
+        self.resolve(session)
+        self.assertEqual('hand', session.state.cards[source.object_id].zone)
+        self.assertNotIn('flying', engine._combat_keywords(session.state.cards[own.object_id]))
+        self.replay(session, load=True)
     def test_original_doc_ock_graveyard_count_gates_setting_at_earlier_layers(self):
         from quorune.continuous_effect_model import Layer
         session = self.session(285110); engine = session.engine

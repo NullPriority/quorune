@@ -1646,6 +1646,7 @@
     {
       "id": "static-characteristic-setting-contract",
       "patterns": [
+        "quorune/compiler/conditional_granted_ability_templates.py",
         "quorune/card_programs/runtime.py",
         "quorune/characteristic_evaluation_host.py",
         "quorune/compiler/fixed_characteristic_settings.py",

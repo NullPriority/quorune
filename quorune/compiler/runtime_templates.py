@@ -536,6 +536,22 @@ def _self_entry_counter_runtime_template(
     )
 
 
+def _graveyard_static_template(text: str, *, source_name: str | None, source_is_class: bool):
+    from .conditional_granted_ability_templates import graveyard_static_characteristics_handler
+    graveyard = None if source_is_class else graveyard_static_characteristics_handler(text, source_name=source_name or 'source')
+    return None if graveyard is None else StaticRuntimeTemplate(
+        compiled=graveyard, kind='static_ability', event='characteristics.evaluate', active_zone='graveyard',
+        dependency_reason='Explicit graveyard grants require source-zone and live query capabilities')
+
+
+def _chosen_static_template(text: str, *, source_is_class: bool):
+    chosen = None if source_is_class else chosen_characteristics_handler(text)
+    return None if chosen is None else StaticRuntimeTemplate(
+        compiled=chosen, kind='static_ability', event='characteristics.evaluate',
+        runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+        dependency_reason='Chosen-value characteristics require the retained public entry designation owner')
+
+
 def static_runtime_template(
     text: str,
     *,
@@ -561,6 +577,9 @@ def static_runtime_template(
         )
 
     if source_permanent:
+        graveyard = _graveyard_static_template(text, source_name=source_name, source_is_class=source_is_class)
+        if graveyard is not None:
+            return graveyard
         designation = None if source_is_class else entry_designation_handler(text, source_name=source_name or "source")
         if designation is not None:
             return StaticRuntimeTemplate(compiled=designation, kind="replacement_effect", event="zone.change", active_zone="all", runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,), dependency_reason="Intrinsic entry designation requires the public replacement-choice owner")
@@ -628,15 +647,9 @@ def static_runtime_template(
         if draw is not None:
             return draw
 
-    chosen = None if source_is_class else chosen_characteristics_handler(text)
+    chosen = _chosen_static_template(text, source_is_class=source_is_class)
     if chosen is not None:
-        return StaticRuntimeTemplate(
-            compiled=chosen,
-            kind="static_ability",
-            event="characteristics.evaluate",
-            runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
-            dependency_reason="Chosen-value characteristics require the retained public entry designation owner",
-        )
+        return chosen
     continuous = _continuous_static_runtime_template(
         text,
         source_name=source_name,

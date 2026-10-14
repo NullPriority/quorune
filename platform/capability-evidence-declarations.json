@@ -18548,6 +18548,158 @@
       "applicability_note": "Pin the widened continuous-component registry with a typed characteristic checkpoint and replay the following command exactly."
     },
     {
+      "capability_id": "continuous.ability.graveyard_static_grant",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_graveyard_wonder_tracks_owner_land_source_departure_and_replay",
+      "official_rule_ids": [
+        "109.5",
+        "113.6b",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit graveyard-active static grant keeps owner-relative live public conditions and current recipient queries through canonical layer evaluation."
+    },
+    {
+      "capability_id": "continuous.ability.graveyard_static_grant",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_graveyard_wonder_tracks_owner_land_source_departure_and_replay",
+      "official_rule_ids": [
+        "109.5",
+        "113.6b",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit graveyard-active static grant keeps owner-relative live public conditions and current recipient queries through canonical layer evaluation."
+    },
+    {
+      "capability_id": "continuous.ability.graveyard_static_grant",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_graveyard_grant_compiler_omission_mutant_is_killed",
+      "official_rule_ids": [
+        "109.5",
+        "113.6b",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit graveyard-active static grant keeps owner-relative live public conditions and current recipient queries through canonical layer evaluation."
+    },
+    {
+      "capability_id": "continuous.ability.graveyard_static_grant",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_graveyard_grant_rejects_unrepresented_zone_condition_and_malformed_descriptor",
+      "official_rule_ids": [
+        "109.5",
+        "113.6b",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit graveyard-active static grant keeps owner-relative live public conditions and current recipient queries through canonical layer evaluation."
+    },
+    {
+      "capability_id": "continuous.ability.graveyard_static_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.FixedPublicStateCharacteristicCompilerTests.test_graveyard_static_grant_keeps_explicit_active_zone_and_owner_relative_query",
+      "official_rule_ids": [
+        "109.5",
+        "113.6b",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit graveyard-active static grant keeps owner-relative live public conditions and current recipient queries through canonical layer evaluation."
+    },
+    {
+      "capability_id": "continuous.ability.graveyard_static_grant",
+      "evidence_class": "positive",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_graveyard_wonder_tracks_owner_land_source_departure_and_replay",
+      "official_rule_ids": [
+        "109.5",
+        "113.6b",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit graveyard-active static grant keeps owner-relative live public conditions and current recipient queries through canonical layer evaluation."
+    },
+    {
+      "capability_id": "continuous.ability.graveyard_static_grant",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_graveyard_wonder_tracks_owner_land_source_departure_and_replay",
+      "official_rule_ids": [
+        "109.5",
+        "113.6b",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit graveyard-active static grant keeps owner-relative live public conditions and current recipient queries through canonical layer evaluation."
+    },
+    {
+      "capability_id": "continuous.ability.graveyard_static_grant",
+      "evidence_class": "replay",
+      "test_id": "tests.test_static_characteristic_settings.StaticSettingRuntimeTests.test_actual_graveyard_wonder_tracks_owner_land_source_departure_and_replay",
+      "official_rule_ids": [
+        "109.5",
+        "113.6b",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Explicit graveyard-active static grant keeps owner-relative live public conditions and current recipient queries through canonical layer evaluation."
+    },
+    {
       "capability_id": "continuous.ability.temporary_quoted_grant",
       "evidence_class": "interaction",
       "test_id": "tests.test_typed_grant_carriers.TemporaryQuotedGrantRuntimeTests.test_coupled_stat_quote_actual_cast_shared_timestamp_death_and_replay",

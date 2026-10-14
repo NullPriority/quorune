@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 243,
+  "registry_version": 244,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -238,6 +238,83 @@
     }
   ],
   "capabilities": [
+    {
+      "id": "continuous.ability.graveyard_static_grant",
+      "version": 1,
+      "official_rules": [
+        "109.5",
+        "113.6b",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Explicit graveyard-active static grant of represented ordinary keywords to a live battlefield query under the source owner and one closed public condition.",
+        "inputs": [
+          "actual graveyard source zone",
+          "current owner-relative public condition",
+          "live battlefield recipients",
+          "source graveyard timestamp"
+        ],
+        "outputs": [
+          "source-bound layer-six grant",
+          "current legal combat or targeting behavior"
+        ],
+        "exclusions": [
+          "other active zones",
+          "hidden information conditions",
+          "quoted or transferred triggered procedures",
+          "dynamic and unsupported sibling bodies"
+        ]
+      },
+      "dependencies": [
+        "continuous.characteristics.fixed_public_state",
+        "continuous.ability.fixed_query_keyword_grant"
+      ],
+      "implementation_components": [
+        "quorune.compiler.conditional_granted_ability_templates.graveyard_static_characteristics_handler",
+        "quorune.semantic_runtime.conditional_continuous.GraveyardStaticCharacteristicsHandler",
+        "quorune.card_programs.runtime.collect_card_program_continuous_effects"
+      ],
+      "positive_tests": [
+        "test_graveyard_static_grant_keeps_explicit_active_zone_and_owner_relative_query"
+      ],
+      "negative_tests": [
+        "test_graveyard_grant_rejects_unrepresented_zone_condition_and_malformed_descriptor"
+      ],
+      "interaction_tests": [
+        "test_actual_graveyard_wonder_tracks_owner_land_source_departure_and_replay"
+      ],
+      "multiplayer_tests": [
+        "test_actual_graveyard_wonder_tracks_owner_land_source_departure_and_replay"
+      ],
+      "privacy_tests": [
+        "test_actual_graveyard_wonder_tracks_owner_land_source_departure_and_replay"
+      ],
+      "replay_tests": [
+        "test_actual_graveyard_wonder_tracks_owner_land_source_departure_and_replay"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Blocked zone-active or keyword/query capabilities reject the source-spanned node before admission.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the graveyard compiler production violates exact source-zone admission in the distinguishing compiler witness.",
+      "blockers": [],
+      "status": "trusted"
+    },
     {
       "id": "zone.discard.fixed_random",
       "version": 1,

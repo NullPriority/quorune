@@ -520,6 +520,15 @@ stats do not erase counters or later modifiers. Battlefield characteristic-
 dependent conditions, dynamic settings and quoted siblings remain residual
 until their dependency and composition contracts are represented.
 
+Explicit “in your graveyard” static keyword grants have a separate active-zone
+production and capability. They use the source card's owner for “you,” evaluate
+the current public condition, and grant to the current battlefield query.
+Graveyard arrival retains its zone timestamp; enabling the condition later does
+not retimestamp the grant. Moving the source out of the graveyard ends it.
+Nonbasic lands with the named basic land subtype satisfy land conditions.
+Hidden conditions, quoted procedures, fixed stat changes and unrepresented
+siblings remain outside this graveyard grant contract.
+
 `compiler/source_counter_anthems.py` extends the existing live static anthem
 owner with fixed signed power/toughness coefficients per named counter on the
 source. The creature recipient query remains independently closed and live;

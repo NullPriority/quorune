@@ -300,6 +300,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "continuous.fixed_query_keyword_grant",
                 "continuous.attached.fixed_characteristics",
                 "continuous.characteristics.fixed_public_state",
+                "continuous.characteristics.graveyard_public_state",
                 "continuous.characteristics.fixed_public_setting",
                 "continuous.control.attached_source",
                 "continuous.ability.fixed_public_state_grant",
