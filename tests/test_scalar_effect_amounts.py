@@ -44,6 +44,17 @@ def scalar_record(text: str, *, type_line: str = "Creature — Goblin") -> CardR
 
 
 class ScalarEffectAmountCompilerTests(unittest.TestCase):
+    def test_event_counter_shape_preserves_mapping_attachment_references(self):
+        from quorune.attachment_references import AttachmentReferenceSpec,AttachmentReferenceKind
+        from quorune.rules.counter_placement_capability_shapes import fixed_counter_placement_node_capabilities
+        from quorune.semantic_runtime.values import resolve_semantic_value
+        reference=AttachmentReferenceSpec(AttachmentReferenceKind.ENCHANTED,'creature').to_dict()
+        effect={'op':'place_counters','card':reference,'counter':'+1/+1','amount':1,'source':'$source'}
+        required=fixed_counter_placement_node_capabilities(effects=(effect,),target_schema=None,mechanic_ids=('cr-122-counters',))
+        self.assertEqual(('counter.producer.fixed_attached_effect','counter.producer.fixed_effect'),required)
+        nested={'ordinary':'value'}
+        self.assertEqual(nested,resolve_semantic_value(SimpleNamespace(),nested,SimpleNamespace()))
+
     def test_tapped_public_quantity_hidden_domain_dependencies_and_omission_fail_closed(self):
         from quorune.query_effect_amount_model import PublicQueryAmountSpec
         from quorune.rules.capabilities import CapabilityRegistry

@@ -10,6 +10,22 @@
   "repository": "NullPriority/quorune",
   "escapes": [
     {
+      "id": "ci-20261014-509-counter-attachment-mapping-shape",
+      "run_id": 38552613617,
+      "head_sha": "812aafa50920eef9a73c551608b3c69132ef6d15",
+      "category": "source_correctness",
+      "deterministic": true,
+      "impact_edge_status": "not_applicable",
+      "summary": "The additive event-counter capability shape used hash-set membership before distinguishing a typed attachment mapping, so the canonical corpus compiler raised TypeError on existing attached counter results.",
+      "failed_surfaces": [
+        "Generated cloud / Compiler corpus"
+      ],
+      "regressions": [
+        "test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_event_counter_shape_preserves_mapping_attachment_references"
+      ],
+      "resolution": "Require a string before event-reference set membership and use mapping-safe tuple comparisons at the child result boundary. The regression preserves registered attached counter dependencies and recursive value decoding; existing counter/quantity impact edges already select the direct consumer."
+    },
+    {
       "id": "ci-20261014-pr508-surveil-integration",
       "run_id": 38486561263,
       "head_sha": "c59f483292fe90242b0c8ac8321a1dcbd13737b9",

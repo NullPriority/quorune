@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "9f78325c685de7091db56d1ead0ae115df45dc9bb4097c232a084313b56e9b46"
+verified: "589faefced4763c9a3a553563a9e65a62d46f4996e4cfc0595bc397efe512ce1"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -15,8 +15,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 - Observation window: 2026-08-25T03:52:06Z through 2026-08-25T20:56:41Z
 - Observed population: tracked recent pull requests (n=4)
-- Escapes: 98
-- Deterministic escapes: 91
+- Escapes: 99
+- Deterministic escapes: 92
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: null
@@ -29,6 +29,7 @@ This report classifies observed deterministic failures that escaped the local qu
 
 | ID | Run | Category | Impact edge | Resolution |
 |---|---:|---|---|---|
+| `ci-20261014-509-counter-attachment-mapping-shape` | [38552613617](https://github.com/NullPriority/quorune/actions/runs/38552613617) | `source_correctness` | `not_applicable` | Require a string before event-reference set membership and use mapping-safe tuple comparisons at the child result boundary. The regression preserves registered attached counter dependencies and recursive value decoding; existing counter/quantity impact edges already select the direct consumer. |
 | `ci-20261014-pr508-surveil-integration` | [38486561263](https://github.com/NullPriority/quorune/actions/runs/38486561263) | `source_correctness` | `not_applicable` | Exact unchanged-source reproduction confirms a stale integration exclusion. Assert simple Surveil/draw observer whole-program strict binding positively, and retain a linked this-way graveyard-count observer as the unsupported boundary. The library completion impact edge already selected both consumer modules. Gameplay source is unchanged; successful content-bound corpus and frontier owners are reused through canonical generation. |
 | `ci-20261013-pr508-static-protection-expectations` | [38478187352](https://github.com/NullPriority/quorune/actions/runs/38478187352) | `source_correctness` | `not_applicable` | Assert the promoted whole-program red quality and preserve a deliberate unresolved chosen-player quality as the negative boundary. The static Protection impact edge already selects this exact integration module. |
 | `ci-20261013-pr508-interaction-consumers` | [38478187352](https://github.com/NullPriority/quorune/actions/runs/38478187352) | `source_correctness` | `not_applicable` | Add actual original Aura/exile, target-loss and Hexproof/controller-sacrifice actions with replay plus constructed strictly admitted Equipment controls. Unrepresented original Equipment and target/conditional siblings remain rejected through canonical whole-card binding. Declare exact supported pairs separately from fail-closed pairs; canonical fixtures serve every CI consumer. Isolate only unrelated exit debt in synthetic ranking inputs; the production assurance gate and all ranking assertions remain intact. |

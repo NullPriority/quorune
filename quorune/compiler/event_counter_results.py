@@ -24,6 +24,6 @@ def entry_event_counter_result(binding,body,*,effect_template,card_name):
     compiled=scalar or effect_template(normalized,card_name=card_name)
     if compiled[0] is None or compiled[2] is not None or len(compiled[1])!=1:return None
     effect=compiled[1][0]
-    if effect.get('op')!='place_counters' or effect.get('card') not in {'$source','$source.zone_object'}:return None
+    if effect.get('op')!='place_counters' or effect.get('card') not in ('$source','$source.zone_object'):return None
     return ('fixed-entry-event-object-counter-v1',({**effect,'card':EVENT_ENTRY_OBJECT if entry else '$event.counter_object'},),None,
         (*compiled[3],EVENT_COUNTER_MECHANIC)),True

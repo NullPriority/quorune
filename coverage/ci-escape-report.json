@@ -4,6 +4,22 @@
       "category": "source_correctness",
       "deterministic": true,
       "failed_surfaces": [
+        "Generated cloud / Compiler corpus"
+      ],
+      "head_sha": "812aafa50920eef9a73c551608b3c69132ef6d15",
+      "id": "ci-20261014-509-counter-attachment-mapping-shape",
+      "impact_edge_status": "not_applicable",
+      "regressions": [
+        "test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_event_counter_shape_preserves_mapping_attachment_references"
+      ],
+      "resolution": "Require a string before event-reference set membership and use mapping-safe tuple comparisons at the child result boundary. The regression preserves registered attached counter dependencies and recursive value decoding; existing counter/quantity impact edges already select the direct consumer.",
+      "run_id": 38552613617,
+      "summary": "The additive event-counter capability shape used hash-set membership before distinguishing a typed attachment mapping, so the canonical corpus compiler raised TypeError on existing attached counter results."
+    },
+    {
+      "category": "source_correctness",
+      "deterministic": true,
+      "failed_surfaces": [
         "PR / Python / functional-08",
         "PR / Windows / functional-08",
         "PR / Windows Certification",
@@ -1816,7 +1832,7 @@
   ],
   "repository": "NullPriority/quorune",
   "schema_version": 2,
-  "source_fingerprint": "9f78325c685de7091db56d1ead0ae115df45dc9bb4097c232a084313b56e9b46",
+  "source_fingerprint": "589faefced4763c9a3a553563a9e65a62d46f4996e4cfc0595bc397efe512ce1",
   "summary": {
     "average_critical_path_seconds": 181.25,
     "average_pushes_per_merged_pr": null,
@@ -1827,12 +1843,12 @@
       "generated_artifact_drift": 10,
       "infrastructure": 1,
       "missing_affected_test": 44,
-      "source_correctness": 28,
+      "source_correctness": 29,
       "windows_compatibility": 1
     },
     "current_missing_impact_edges": [],
-    "deterministic_escape_count": 91,
-    "escape_count": 98,
+    "deterministic_escape_count": 92,
+    "escape_count": 99,
     "eventual_final_head_certification_pass_rate": 1.0,
     "eventual_final_head_certification_sample_size": 4,
     "first_eligible_head_certification_pass_rate": null,
