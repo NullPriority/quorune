@@ -391,7 +391,12 @@ composes through spell, triggered, activated, and modal contexts. It emits
 only closed fixed, up-to, all-matching, or optional-slot cardinality plus typed
 characteristic predicates; the private choice handler and immutable partition
 owner retain selection, revalidation, replacement, ordering, visibility, and
-replay authority. Variable counts, another player's library, numeric or named
+replay authority. Independently quantified card clauses retain one slot per
+printed kind before single-union parsing. Type intersections and exclusions,
+qualified creature subtypes, and known literal subtypes remain distinct;
+arbitrary qualifier phrases cannot become subtype names. Unrepresented layout
+predicates reject the complete clause, including an otherwise represented
+alternative. Variable counts, another player's library, numeric or named
 predicates, conditional or payment grammar, other destinations, and sibling
 effects remain source-spanned residuals. See
 [ADR 0091](../adr/0091-typed-fixed-library-selection.md).

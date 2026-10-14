@@ -45094,9 +45094,76 @@
       "capability_id": "library.select.fixed_controller",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_library_selection.FixedLibrarySelectionRuntimeTests.test_graveyard_destination_replacement_resumes_before_partition_commit",
-      "official_rule_ids": ["400.2", "401.4", "404.3", "608.2c", "701.16"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Suspend a mixed hand and graveyard transition before either card moves, then resume the identity-pinned partition through the selected destination replacement exactly once."
+    },
+    {
+      "capability_id": "library.select.fixed_controller",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_library_selection.LibrarySelectionPredicateNativeTests.test_original_frontier_seeker_selects_mount_creature_and_keeps_private_remainder",
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Relentless Pursuit trusted cast offers and accepts one creature plus one land while rejecting duplicates, two-creature substitution and foreign answers; original Frontier Seeker privately selects a Mount creature rather than an invented subtype. Pending save/load, complete destination/remainder consequences and exact replay preserve principal projection. Trained Arynx is selection data; this witness does not claim its Saddle ability support. Minimal predicate and slot mutations protect semantic distinctions and fail closed for unrepresented layout/qualifiers."
+    },
+    {
+      "capability_id": "library.select.fixed_controller",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_library_selection.LibrarySelectionPredicateNativeTests.test_original_relentless_pursuit_offers_and_commits_both_independent_slots",
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Relentless Pursuit trusted cast offers and accepts one creature plus one land while rejecting duplicates, two-creature substitution and foreign answers; original Frontier Seeker privately selects a Mount creature rather than an invented subtype. Pending save/load, complete destination/remainder consequences and exact replay preserve principal projection. Trained Arynx is selection data; this witness does not claim its Saddle ability support. Minimal predicate and slot mutations protect semantic distinctions and fail closed for unrepresented layout/qualifiers."
     },
     {
       "capability_id": "library.select.fixed_controller",
@@ -45107,7 +45174,14 @@
         "401.4",
         "404.3",
         "608.2c",
-        "701.16"
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
       ],
       "supported_profiles": [
         "traditional",
@@ -45120,9 +45194,76 @@
       "capability_id": "library.select.fixed_controller",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_library_selection.FixedLibrarySelectionRuntimeTests.test_private_look_and_public_reveal_are_projected_to_the_correct_seats",
-      "official_rule_ids": ["400.2", "401.4", "404.3", "608.2c", "701.16"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Resolve both private inspection and printed public reveal in four-player state with seat-correct projection."
+    },
+    {
+      "capability_id": "library.select.fixed_controller",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_library_selection.LibrarySelectionPredicateNativeTests.test_original_frontier_seeker_selects_mount_creature_and_keeps_private_remainder",
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Relentless Pursuit trusted cast offers and accepts one creature plus one land while rejecting duplicates, two-creature substitution and foreign answers; original Frontier Seeker privately selects a Mount creature rather than an invented subtype. Pending save/load, complete destination/remainder consequences and exact replay preserve principal projection. Trained Arynx is selection data; this witness does not claim its Saddle ability support. Minimal predicate and slot mutations protect semantic distinctions and fail closed for unrepresented layout/qualifiers."
+    },
+    {
+      "capability_id": "library.select.fixed_controller",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_library_selection.LibrarySelectionPredicateNativeTests.test_original_relentless_pursuit_offers_and_commits_both_independent_slots",
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Relentless Pursuit trusted cast offers and accepts one creature plus one land while rejecting duplicates, two-creature substitution and foreign answers; original Frontier Seeker privately selects a Mount creature rather than an invented subtype. Pending save/load, complete destination/remainder consequences and exact replay preserve principal projection. Trained Arynx is selection data; this witness does not claim its Saddle ability support. Minimal predicate and slot mutations protect semantic distinctions and fail closed for unrepresented layout/qualifiers."
     },
     {
       "capability_id": "library.select.fixed_controller",
@@ -45133,7 +45274,14 @@
         "401.4",
         "404.3",
         "608.2c",
-        "701.16"
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
       ],
       "supported_profiles": [
         "traditional",
@@ -45146,17 +45294,151 @@
       "capability_id": "library.select.fixed_controller",
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_library_selection.FixedLibrarySelectionCompilerTests.test_library_selection_shape_and_compiler_mutants_are_killed",
-      "official_rule_ids": ["400.2", "401.4", "404.3", "608.2c", "701.16"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Remove the typed compiler production, corrupt its node shape, or block destination replacement and prove exact executable trust is lost."
+    },
+    {
+      "capability_id": "library.select.fixed_controller",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_library_selection.FixedLibrarySelectionCompilerTests.test_slot_priority_and_unrepresented_subtype_descriptor_mutants_are_killed",
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Relentless Pursuit trusted cast offers and accepts one creature plus one land while rejecting duplicates, two-creature substitution and foreign answers; original Frontier Seeker privately selects a Mount creature rather than an invented subtype. Pending save/load, complete destination/remainder consequences and exact replay preserve principal projection. Trained Arynx is selection data; this witness does not claim its Saddle ability support. Minimal predicate and slot mutations protect semantic distinctions and fail closed for unrepresented layout/qualifiers."
+    },
+    {
+      "capability_id": "library.select.fixed_controller",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_library_selection.FixedLibrarySelectionCompilerTests.test_unknown_library_qualifiers_fail_closed_and_real_subtypes_remain_literal",
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Relentless Pursuit trusted cast offers and accepts one creature plus one land while rejecting duplicates, two-creature substitution and foreign answers; original Frontier Seeker privately selects a Mount creature rather than an invented subtype. Pending save/load, complete destination/remainder consequences and exact replay preserve principal projection. Trained Arynx is selection data; this witness does not claim its Saddle ability support. Minimal predicate and slot mutations protect semantic distinctions and fail closed for unrepresented layout/qualifiers."
     },
     {
       "capability_id": "library.select.fixed_controller",
       "evidence_class": "negative",
       "test_id": "tests.test_fixed_library_selection.FixedLibrarySelectionCompilerTests.test_unsupported_library_selection_grammar_remains_residual",
-      "official_rule_ids": ["400.2", "401.4", "404.3", "608.2c", "701.16"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Reject variable, targeted, filtered-numeric, battlefield, and linked-tail variants outside the complete fixed selection grammar."
+    },
+    {
+      "capability_id": "library.select.fixed_controller",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_library_selection.LibrarySelectionPredicateNativeTests.test_original_frontier_seeker_selects_mount_creature_and_keeps_private_remainder",
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Relentless Pursuit trusted cast offers and accepts one creature plus one land while rejecting duplicates, two-creature substitution and foreign answers; original Frontier Seeker privately selects a Mount creature rather than an invented subtype. Pending save/load, complete destination/remainder consequences and exact replay preserve principal projection. Trained Arynx is selection data; this witness does not claim its Saddle ability support. Minimal predicate and slot mutations protect semantic distinctions and fail closed for unrepresented layout/qualifiers."
+    },
+    {
+      "capability_id": "library.select.fixed_controller",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_library_selection.LibrarySelectionPredicateNativeTests.test_original_relentless_pursuit_offers_and_commits_both_independent_slots",
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Relentless Pursuit trusted cast offers and accepts one creature plus one land while rejecting duplicates, two-creature substitution and foreign answers; original Frontier Seeker privately selects a Mount creature rather than an invented subtype. Pending save/load, complete destination/remainder consequences and exact replay preserve principal projection. Trained Arynx is selection data; this witness does not claim its Saddle ability support. Minimal predicate and slot mutations protect semantic distinctions and fail closed for unrepresented layout/qualifiers."
     },
     {
       "capability_id": "library.select.fixed_controller",
@@ -45167,7 +45449,14 @@
         "401.4",
         "404.3",
         "608.2c",
-        "701.16"
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
       ],
       "supported_profiles": [
         "traditional",
@@ -45179,10 +45468,102 @@
     {
       "capability_id": "library.select.fixed_controller",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_library_selection.FixedLibrarySelectionCompilerTests.test_card_qualifiers_and_optional_slots_preserve_independent_meaning",
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Relentless Pursuit trusted cast offers and accepts one creature plus one land while rejecting duplicates, two-creature substitution and foreign answers; original Frontier Seeker privately selects a Mount creature rather than an invented subtype. Pending save/load, complete destination/remainder consequences and exact replay preserve principal projection. Trained Arynx is selection data; this witness does not claim its Saddle ability support. Minimal predicate and slot mutations protect semantic distinctions and fail closed for unrepresented layout/qualifiers."
+    },
+    {
+      "capability_id": "library.select.fixed_controller",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_library_selection.FixedLibrarySelectionCompilerTests.test_compiles_fixed_library_selection_across_spell_activation_trigger_and_modal_contexts",
-      "official_rule_ids": ["400.2", "401.4", "404.3", "608.2c", "701.16"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Lower one shared fixed library selection through spell, activated, triggered, and modal effect owners without reparsing Oracle prose at runtime."
+    },
+    {
+      "capability_id": "library.select.fixed_controller",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_library_selection.LibrarySelectionPredicateNativeTests.test_original_frontier_seeker_selects_mount_creature_and_keeps_private_remainder",
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Relentless Pursuit trusted cast offers and accepts one creature plus one land while rejecting duplicates, two-creature substitution and foreign answers; original Frontier Seeker privately selects a Mount creature rather than an invented subtype. Pending save/load, complete destination/remainder consequences and exact replay preserve principal projection. Trained Arynx is selection data; this witness does not claim its Saddle ability support. Minimal predicate and slot mutations protect semantic distinctions and fail closed for unrepresented layout/qualifiers."
+    },
+    {
+      "capability_id": "library.select.fixed_controller",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_library_selection.LibrarySelectionPredicateNativeTests.test_original_relentless_pursuit_offers_and_commits_both_independent_slots",
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Relentless Pursuit trusted cast offers and accepts one creature plus one land while rejecting duplicates, two-creature substitution and foreign answers; original Frontier Seeker privately selects a Mount creature rather than an invented subtype. Pending save/load, complete destination/remainder consequences and exact replay preserve principal projection. Trained Arynx is selection data; this witness does not claim its Saddle ability support. Minimal predicate and slot mutations protect semantic distinctions and fail closed for unrepresented layout/qualifiers."
     },
     {
       "capability_id": "library.select.fixed_controller",
@@ -45193,7 +45574,14 @@
         "401.4",
         "404.3",
         "608.2c",
-        "701.16"
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
       ],
       "supported_profiles": [
         "traditional",
@@ -45211,7 +45599,14 @@
         "401.4",
         "404.3",
         "608.2c",
-        "701.16"
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
       ],
       "supported_profiles": [
         "traditional",
@@ -45224,9 +45619,76 @@
       "capability_id": "library.select.fixed_controller",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_library_selection.FixedLibrarySelectionRuntimeTests.test_private_look_and_public_reveal_are_projected_to_the_correct_seats",
-      "official_rule_ids": ["400.2", "401.4", "404.3", "608.2c", "701.16"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Hide private looked-at references from every opponent while exposing all references only when the printed instruction reveals the top cards."
+    },
+    {
+      "capability_id": "library.select.fixed_controller",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_library_selection.LibrarySelectionPredicateNativeTests.test_original_frontier_seeker_selects_mount_creature_and_keeps_private_remainder",
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Relentless Pursuit trusted cast offers and accepts one creature plus one land while rejecting duplicates, two-creature substitution and foreign answers; original Frontier Seeker privately selects a Mount creature rather than an invented subtype. Pending save/load, complete destination/remainder consequences and exact replay preserve principal projection. Trained Arynx is selection data; this witness does not claim its Saddle ability support. Minimal predicate and slot mutations protect semantic distinctions and fail closed for unrepresented layout/qualifiers."
+    },
+    {
+      "capability_id": "library.select.fixed_controller",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_library_selection.LibrarySelectionPredicateNativeTests.test_original_relentless_pursuit_offers_and_commits_both_independent_slots",
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Relentless Pursuit trusted cast offers and accepts one creature plus one land while rejecting duplicates, two-creature substitution and foreign answers; original Frontier Seeker privately selects a Mount creature rather than an invented subtype. Pending save/load, complete destination/remainder consequences and exact replay preserve principal projection. Trained Arynx is selection data; this witness does not claim its Saddle ability support. Minimal predicate and slot mutations protect semantic distinctions and fail closed for unrepresented layout/qualifiers."
     },
     {
       "capability_id": "library.select.fixed_controller",
@@ -45237,7 +45699,14 @@
         "401.4",
         "404.3",
         "608.2c",
-        "701.16"
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
       ],
       "supported_profiles": [
         "traditional",
@@ -45250,9 +45719,76 @@
       "capability_id": "library.select.fixed_controller",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_library_selection.FixedLibrarySelectionRuntimeTests.test_selected_cards_and_remainder_commit_in_printed_destinations",
-      "official_rule_ids": ["400.2", "401.4", "404.3", "608.2c", "701.16"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability_note": "Replay the private complete partition, replacement-aware simultaneous movement, destination order, event record, and final authoritative hash exactly."
+    },
+    {
+      "capability_id": "library.select.fixed_controller",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_library_selection.LibrarySelectionPredicateNativeTests.test_original_frontier_seeker_selects_mount_creature_and_keeps_private_remainder",
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Relentless Pursuit trusted cast offers and accepts one creature plus one land while rejecting duplicates, two-creature substitution and foreign answers; original Frontier Seeker privately selects a Mount creature rather than an invented subtype. Pending save/load, complete destination/remainder consequences and exact replay preserve principal projection. Trained Arynx is selection data; this witness does not claim its Saddle ability support. Minimal predicate and slot mutations protect semantic distinctions and fail closed for unrepresented layout/qualifiers."
+    },
+    {
+      "capability_id": "library.select.fixed_controller",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_library_selection.LibrarySelectionPredicateNativeTests.test_original_relentless_pursuit_offers_and_commits_both_independent_slots",
+      "official_rule_ids": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Relentless Pursuit trusted cast offers and accepts one creature plus one land while rejecting duplicates, two-creature substitution and foreign answers; original Frontier Seeker privately selects a Mount creature rather than an invented subtype. Pending save/load, complete destination/remainder consequences and exact replay preserve principal projection. Trained Arynx is selection data; this witness does not claim its Saddle ability support. Minimal predicate and slot mutations protect semantic distinctions and fail closed for unrepresented layout/qualifiers."
     },
     {
       "capability_id": "library.select.fixed_controller",
@@ -45263,7 +45799,14 @@
         "401.4",
         "404.3",
         "608.2c",
-        "701.16"
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
       ],
       "supported_profiles": [
         "traditional",
@@ -45281,7 +45824,14 @@
         "401.4",
         "404.3",
         "608.2c",
-        "701.16"
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
       ],
       "supported_profiles": [
         "traditional",

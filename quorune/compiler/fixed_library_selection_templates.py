@@ -7,6 +7,8 @@ import re
 from typing import Any, Mapping
 
 from ..object_predicate import ObjectQuerySpec
+from ..creature_subtypes import CREATURE_SUBTYPES
+from .direct_target import DIRECT_NONCREATURE_SUBTYPES
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 
 
@@ -36,6 +38,18 @@ _COLORS = {
     "red": "R",
     "green": "G",
 }
+# Literal planeswalker and spell subtype data from pinned CR 205.3j-k.
+_PLANESWALKER_SUBTYPES = frozenset('''
+ajani aminatou angrath arlinn ashiok bahamut basri bolas calix chandra comet dack
+dakkon daretti davriel dellian dihada domri dovin ellywick elminster elspeth estrid
+freyalise garruk gideon grist guff huatli jace jared jaya jeska kaito karn kasmina
+kaya kiora koth liliana lolth lukka minsc mordenkainen nahiri narset niko nissa
+nixilis oko quintorius ral rowan saheeli samut sarkhan serra sivitri sorin szat
+tamiyo tasha teferi teyo tezzeret tibalt tyvar ugin urza venser vivien vraska vronos
+will windgrace wrenn xenagos yanggu yanling zariel
+'''.split())
+LIBRARY_SELECTION_SUBTYPES = (CREATURE_SUBTYPES | DIRECT_NONCREATURE_SUBTYPES
+    | _PLANESWALKER_SUBTYPES | {'adventure', 'arcane', 'lesson', 'omen', 'trap', 'siege'})
 
 _START = re.compile(
     rf"(?P<verb>look at|reveal) the top "
@@ -57,6 +71,7 @@ def _query(**fields: Any) -> dict[str, Any]:
 def _term_predicates(term: str) -> tuple[dict[str, Any], ...] | None:
     normalized = " ".join(term.strip().casefold().split())
     normalized = re.sub(r"^(?:a|an|one) ", "", normalized)
+    normalized = re.sub(r" cards?$", "", normalized).replace('’', "'")
     if not normalized:
         return None
     if normalized == "historic":
@@ -100,7 +115,29 @@ def _term_predicates(term: str) -> tuple[dict[str, Any], ...] | None:
         return None
     if normalized in _CARD_TYPES:
         return (_query(types_any=(normalized,)),)
-    if re.fullmatch(r"[a-z][a-z' -]*", normalized) is not None:
+    if normalized.startswith('non') and normalized[3:] in _CARD_TYPES:
+        return (_query(excluded_types=(normalized[3:],)),)
+    terms = normalized.split()
+    if len(terms) > 1 and len(set(terms)) == len(terms) and all(term in _CARD_TYPES for term in terms):
+        return (_query(types_all=tuple(terms)),)
+    if normalized.endswith(' creature') and normalized[:-9] in CREATURE_SUBTYPES:
+        return (_query(types_any=('creature',), subtypes_any=(normalized[:-9],)),)
+    if normalized.startswith('non-') and normalized.endswith(' permanent'):
+        subtype = normalized[4:-10]
+        if subtype in LIBRARY_SELECTION_SUBTYPES:
+            return (_query(types_any=_PERMANENT_TYPES, excluded_subtypes=(subtype,)),)
+        return None
+    if normalized in {'basic', 'legendary', 'snow'}:
+        return (_query(supertypes_all=(normalized,)),)
+    if normalized == 'basic land':
+        return (_query(types_any=('land',), supertypes_all=('basic',)),)
+    if terms and terms[0] in _COLORS and len(terms) > 1:
+        quality = ' '.join(terms[1:])
+        parsed = _term_predicates(quality)
+        if parsed is not None and all(not predicate['colors_any'] and predicate['colorless'] is None
+                                      for predicate in parsed):
+            return tuple({**predicate, 'colors_any': [_COLORS[terms[0]]]} for predicate in parsed)
+    if normalized in LIBRARY_SELECTION_SUBTYPES:
         return (_query(subtypes_any=(normalized,)),)
     return None
 
@@ -189,6 +226,10 @@ def _selection_shape(
     tuple[tuple[Mapping[str, Any], ...], ...],
     bool,
 ] | None:
+    # Repeated independently quantified cards are slots, before a single union.
+    slots = _optional_slots_shape(text)
+    if slots is not None:
+        return slots
     fixed = re.fullmatch(
         rf"put (?P<count>{FIXED_COUNT_PATTERN}) of "
         r"(?:them|those cards) into your hand(?:\.| and)?",

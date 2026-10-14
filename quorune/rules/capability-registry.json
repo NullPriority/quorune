@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 273,
+  "registry_version": 274,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -4268,24 +4268,121 @@
     },
     {
       "id": "library.select.fixed_controller",
-      "version": 2,
-      "official_rules": ["400.2", "401.4", "404.3", "608.2c", "701.16"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 3,
+      "official_rules": [
+        "400.2",
+        "401.4",
+        "404.3",
+        "608.2c",
+        "701.16",
+        "205.2a",
+        "205.3a",
+        "205.3b",
+        "205.3j",
+        "205.3k",
+        "608.2d",
+        "609.3"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
-        "summary": "Resolve one fixed-count controller library inspection that selects a bounded characteristic-matching set into hand and sends the complete remainder to the graveyard or the library bottom.",
-        "inputs": ["one capability-shaped fixed controller selection effect", "one positive fixed look count", "closed immutable type, subtype, supertype, color, colorless, or historic predicates", "one complete actor-private selection or ordered partition", "current destination replacements", "stable looked-at physical and logical identities"],
-        "outputs": ["one private or public looked-at set according to the printed instruction", "one predicate- and cardinality-validated hand selection", "one complete graveyard or bottom remainder", "one replacement-aware simultaneous public-zone transition", "one chosen or deterministic-random remainder order", "exact replay without hidden-order disclosure"],
-        "exclusions": ["dynamic or variable look counts", "target, opponent, or noncontroller libraries", "battlefield, exile, cast, play, or linked-result destinations", "conditional, payment, opponent-choice, and chosen-characteristic selections", "power, toughness, mana-value, name, and state predicates", "effects before or after the complete selection instruction", "selection or library-order replacement effects beyond represented destination replacements" ]
+        "summary": "Resolve one fixed-count controller library inspection that selects a bounded characteristic-matching set into hand and sends the complete remainder to the graveyard or the library bottom. Independently quantified card slots retain their distinct bounds before union parsing; closed type intersections and exclusions cannot be mistaken for subtype names.",
+        "inputs": [
+          "one capability-shaped fixed controller selection effect",
+          "one positive fixed look count",
+          "closed immutable type, subtype, supertype, color, colorless, or historic predicates",
+          "one complete actor-private selection or ordered partition",
+          "current destination replacements",
+          "stable looked-at physical and logical identities"
+        ],
+        "outputs": [
+          "one private or public looked-at set according to the printed instruction",
+          "one predicate- and cardinality-validated hand selection",
+          "one complete graveyard or bottom remainder",
+          "one replacement-aware simultaneous public-zone transition",
+          "one chosen or deterministic-random remainder order",
+          "exact replay without hidden-order disclosure"
+        ],
+        "exclusions": [
+          "dynamic or variable look counts",
+          "target, opponent, or noncontroller libraries",
+          "battlefield, exile, cast, play, or linked-result destinations",
+          "conditional, payment, opponent-choice, and chosen-characteristic selections",
+          "power, toughness, mana-value, name, and state predicates",
+          "effects before or after the complete selection instruction",
+          "selection or library-order replacement effects beyond represented destination replacements",
+          "unrepresented double-faced/layout predicates and arbitrary qualifier strings masquerading as subtypes"
+        ]
       },
-      "dependencies": ["trigger.event.normalized_zone_change", "trigger.placement.apnap", "zone.change.destination_replacement"],
-      "implementation_components": ["quorune.compiler.fixed_library_selection_templates.fixed_library_selection_effect_template", "quorune.rules.library_selection_capability_shapes.fixed_library_selection_node_capabilities", "quorune.semantic_choices.fixed_library_selection.FixedLibrarySelectionChoiceHandler", "quorune.rules.library_selection.LibrarySelectionArrangement", "quorune.rules.library_selection.commit_library_selection", "quorune.semantic_runtime.intents.LibrarySelectionIntent", "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously"],
-      "positive_tests": ["test_compiles_fixed_library_selection_across_spell_activation_trigger_and_modal_contexts", "test_selected_cards_and_remainder_commit_in_printed_destinations", "test_single_other_remainder_uses_fixed_selection_only_when_cardinality_agrees", "test_original_sleight_and_tower_geist_private_partition_reload_and_replay"],
-      "negative_tests": ["test_unsupported_library_selection_grammar_remains_residual", "test_malformed_stale_and_predicate_invalid_responses_fail_before_mutation", "test_single_other_remainder_uses_fixed_selection_only_when_cardinality_agrees"],
-      "interaction_tests": ["test_graveyard_destination_replacement_resumes_before_partition_commit", "test_original_sleight_on_short_library_commits_only_available_cards"],
-      "multiplayer_tests": ["test_private_look_and_public_reveal_are_projected_to_the_correct_seats", "test_original_sleight_and_tower_geist_private_partition_reload_and_replay"],
-      "privacy_tests": ["test_private_look_and_public_reveal_are_projected_to_the_correct_seats", "test_original_sleight_and_tower_geist_private_partition_reload_and_replay"],
-      "replay_tests": ["test_selected_cards_and_remainder_commit_in_printed_destinations", "test_graveyard_destination_replacement_resumes_before_partition_commit", "test_original_sleight_and_tower_geist_private_partition_reload_and_replay", "test_original_sleight_on_short_library_commits_only_available_cards"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "trigger.event.normalized_zone_change",
+        "trigger.placement.apnap",
+        "zone.change.destination_replacement"
+      ],
+      "implementation_components": [
+        "quorune.compiler.fixed_library_selection_templates.fixed_library_selection_effect_template",
+        "quorune.rules.library_selection_capability_shapes.fixed_library_selection_node_capabilities",
+        "quorune.semantic_choices.fixed_library_selection.FixedLibrarySelectionChoiceHandler",
+        "quorune.rules.library_selection.LibrarySelectionArrangement",
+        "quorune.rules.library_selection.commit_library_selection",
+        "quorune.semantic_runtime.intents.LibrarySelectionIntent",
+        "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously"
+      ],
+      "positive_tests": [
+        "test_card_qualifiers_and_optional_slots_preserve_independent_meaning",
+        "test_compiles_fixed_library_selection_across_spell_activation_trigger_and_modal_contexts",
+        "test_original_frontier_seeker_selects_mount_creature_and_keeps_private_remainder",
+        "test_original_relentless_pursuit_offers_and_commits_both_independent_slots",
+        "test_original_sleight_and_tower_geist_private_partition_reload_and_replay",
+        "test_selected_cards_and_remainder_commit_in_printed_destinations",
+        "test_single_other_remainder_uses_fixed_selection_only_when_cardinality_agrees"
+      ],
+      "negative_tests": [
+        "test_malformed_stale_and_predicate_invalid_responses_fail_before_mutation",
+        "test_original_frontier_seeker_selects_mount_creature_and_keeps_private_remainder",
+        "test_original_relentless_pursuit_offers_and_commits_both_independent_slots",
+        "test_single_other_remainder_uses_fixed_selection_only_when_cardinality_agrees",
+        "test_slot_priority_and_unrepresented_subtype_descriptor_mutants_are_killed",
+        "test_unknown_library_qualifiers_fail_closed_and_real_subtypes_remain_literal",
+        "test_unsupported_library_selection_grammar_remains_residual"
+      ],
+      "interaction_tests": [
+        "test_graveyard_destination_replacement_resumes_before_partition_commit",
+        "test_original_frontier_seeker_selects_mount_creature_and_keeps_private_remainder",
+        "test_original_relentless_pursuit_offers_and_commits_both_independent_slots",
+        "test_original_sleight_on_short_library_commits_only_available_cards"
+      ],
+      "multiplayer_tests": [
+        "test_original_frontier_seeker_selects_mount_creature_and_keeps_private_remainder",
+        "test_original_relentless_pursuit_offers_and_commits_both_independent_slots",
+        "test_original_sleight_and_tower_geist_private_partition_reload_and_replay",
+        "test_private_look_and_public_reveal_are_projected_to_the_correct_seats"
+      ],
+      "privacy_tests": [
+        "test_original_frontier_seeker_selects_mount_creature_and_keeps_private_remainder",
+        "test_original_relentless_pursuit_offers_and_commits_both_independent_slots",
+        "test_original_sleight_and_tower_geist_private_partition_reload_and_replay",
+        "test_private_look_and_public_reveal_are_projected_to_the_correct_seats"
+      ],
+      "replay_tests": [
+        "test_graveyard_destination_replacement_resumes_before_partition_commit",
+        "test_original_frontier_seeker_selects_mount_creature_and_keeps_private_remainder",
+        "test_original_relentless_pursuit_offers_and_commits_both_independent_slots",
+        "test_original_sleight_and_tower_geist_private_partition_reload_and_replay",
+        "test_original_sleight_on_short_library_commits_only_available_cards",
+        "test_selected_cards_and_remainder_commit_in_printed_destinations"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Removing destination-replacement closure prevents the compiler node from becoming trusted, while malformed, stale, predicate-invalid, and incomplete partitions fail before any card moves or hidden order changes.",
       "implementation_mutation_status": "killed",

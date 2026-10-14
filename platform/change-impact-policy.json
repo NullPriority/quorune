@@ -2694,6 +2694,7 @@
     {
       "id": "fixed-library-selection-contract",
       "patterns": [
+        "tests/fixtures/library-selection-predicate-cards.json",
         "quorune/compiler/fixed_library_selection_templates.py",
         "quorune/rules/library_selection.py",
         "quorune/rules/library_selection_capability_shapes.py",
