@@ -17,6 +17,12 @@ def binding_effect_template(binding, body: str, *, card_name: str, effect_templa
         accepted_variants=source_counter_variants,
     )
     if source_counter is not None:return source_counter
+    from .event_counter_results import public_event_target_counter_result
+    target_counter = public_event_target_counter_result(
+        binding, body, effect_template=effect_template, card_name=card_name,
+        accepted_variants=source_counter_variants,
+    )
+    if target_counter is not None:return target_counter
     from .event_counter_results import entry_event_counter_result
     counter=entry_event_counter_result(binding,body,effect_template=effect_template,card_name=card_name)
     if counter is not None:return counter

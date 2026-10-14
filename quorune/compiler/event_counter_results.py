@@ -9,6 +9,25 @@ EVENT_COUNTER_MECHANIC='fixed-entry-event-object-counter'
 EVENT_ENTRY_OBJECT='$event.entry_object'
 PUBLIC_SOURCE_COUNTER_CAPABILITY='counter.producer.fixed_public_source_event'
 PUBLIC_SOURCE_COUNTER_MECHANIC='fixed-public-event-source-counter'
+PUBLIC_TARGET_COUNTER_MECHANIC='fixed-public-event-target-counter'
+
+
+def public_event_target_counter_result(binding, body, *, effect_template, card_name, accepted_variants=()):
+    """Compose the existing fixed direct-target counter leaf without changing its target."""
+    if binding.variant not in accepted_variants or re.fullmatch(
+        r'Put (?:a|an|one|two|three|four|five|six|seven|eight|nine|ten|[1-9][0-9]*) '
+        r'[^.]+? counters? on (?:another )?target [^.]+\.', body, re.I,
+    ) is None:
+        return None
+    compiled = effect_template(body, card_name=card_name)
+    from ..rules.counter_placement_capability_shapes import fixed_counter_placement_node_capabilities
+    capabilities = fixed_counter_placement_node_capabilities(
+        effects=compiled[1], target_schema=compiled[2], mechanic_ids=compiled[3],
+    )
+    if (compiled[0] is None or compiled[2] is None or len(compiled[1]) != 1
+            or compiled[1][0].get('card') != '$target.0' or not capabilities):
+        return None
+    return (compiled[0], compiled[1], compiled[2], (*compiled[3], PUBLIC_TARGET_COUNTER_MECHANIC)), True
 
 
 def public_event_source_counter_result(binding, body, *, effect_template, card_name, accepted_variants=()):

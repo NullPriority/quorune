@@ -2369,6 +2369,14 @@ it skips a source that departed or reentered. Optional, variable, linked,
 multi-effect and ambiguous event-object counter results retain their separate
 admission boundaries.
 
+`counter.producer.fixed_public_target_event` separately composes one mandatory
+positive direct-target counter leaf with those closed public subscriptions.
+The leaf retains its complete printed target schema, authentic controller
+selection and ordinary target-incarnation revalidation. Source disappearance
+does not cancel a legal independent target result; target blink or reentry
+cannot substitute a new object. Optional, variable, multitarget and compound
+results remain outside this producer.
+
 `compiler/qualified_zone_event_bindings.py` adds closed single-object public
 entry, death, graveyard, and leave subjects through that same event-effect
 owner. It normalizes subject-word order into the existing characteristic query

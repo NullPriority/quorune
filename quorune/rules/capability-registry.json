@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 274,
+  "registry_version": 275,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -238,6 +238,98 @@
     }
   ],
   "capabilities": [
+    {
+      "id": "counter.producer.fixed_public_target_event",
+      "version": 1,
+      "official_rules": [
+        "115.1d",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "608.2b",
+        "608.2c",
+        "122.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "One mandatory positive fixed direct-target counter leaf composed with an existing public event subscription; printed target schema and ordinary target-incarnation revalidation are unchanged.",
+        "inputs": [
+          "closedexistingpublicoccurrencepredicate",
+          "completefixedcounterleafoneclosedtargetschema",
+          "authenticcontrollerchoiceandresolutionrevalidation"
+        ],
+        "outputs": [
+          "APNAPtriggerwithfixedcounteroneligiblechosenincarnation"
+        ],
+        "exclusions": [
+          "optionalvariablemultitargetorsideeffectbody",
+          "hiddenorunrepresentedtargetpredicates",
+          "newoccurrencegrammar",
+          "departed/reenteredtargetsubstitution"
+        ]
+      },
+      "dependencies": [
+        "counter.producer.fixed_effect",
+        "counter.producer.fixed_event_trigger",
+        "target.revalidate_resolution"
+      ],
+      "implementation_components": [
+        "quorune.compiler.event_counter_results.public_event_target_counter_result",
+        "quorune.compiler.fixed_counter_trigger_nodes.fixed_counter_event_trigger_node",
+        "quorune.rules.counter_placement_capability_shapes.fixed_counter_placement_node_capabilities",
+        "quorune.trigger_targeting.begin_pending_trigger_target_selection"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Producerwithdrawal/closedtargetschemafailureblocksexactadmission; ordinarytargetrevalidationrejectsstalesubstitution.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Removingpublictargetcounterloweringleaveswholeprintedclauseunresolved.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_original_public_target_counter_dual_entry_death_preserves_source_lki",
+        "test_original_public_target_counter_reentered_target_fizzles_and_replays",
+        "test_original_public_target_counter_selection_observer_departure_and_replay",
+        "test_public_event_fixed_target_counter_preserves_complete_target_schema"
+      ],
+      "negative_tests": [
+        "test_original_public_target_counter_dual_entry_death_preserves_source_lki",
+        "test_original_public_target_counter_reentered_target_fizzles_and_replays",
+        "test_original_public_target_counter_selection_observer_departure_and_replay",
+        "test_public_target_counter_missing_producer_open_body_and_schema_mutant_fail_closed"
+      ],
+      "interaction_tests": [
+        "test_original_public_target_counter_dual_entry_death_preserves_source_lki",
+        "test_original_public_target_counter_reentered_target_fizzles_and_replays",
+        "test_original_public_target_counter_selection_observer_departure_and_replay"
+      ],
+      "multiplayer_tests": [
+        "test_original_public_target_counter_dual_entry_death_preserves_source_lki",
+        "test_original_public_target_counter_reentered_target_fizzles_and_replays",
+        "test_original_public_target_counter_selection_observer_departure_and_replay"
+      ],
+      "privacy_tests": [
+        "test_original_public_target_counter_reentered_target_fizzles_and_replays",
+        "test_original_public_target_counter_selection_observer_departure_and_replay"
+      ],
+      "replay_tests": [
+        "test_original_public_target_counter_dual_entry_death_preserves_source_lki",
+        "test_original_public_target_counter_reentered_target_fizzles_and_replays",
+        "test_original_public_target_counter_selection_observer_departure_and_replay"
+      ]
+    },
     {
       "id": "counter.producer.fixed_public_source_event",
       "version": 1,
@@ -5944,7 +6036,7 @@
     },
     {
       "id": "counter.producer.fixed_event_trigger",
-      "version": 8,
+      "version": 9,
       "official_rules": [
         "115.1",
         "603.2",
@@ -5966,7 +6058,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Compile and resolve one mandatory exact counter-producing effect triggered by a represented beginning-of-step, fixed public permanent-entry or creature-death subject, single-subtype permanent entry, controlled-land-entry, closed spell-cast subject, source-self attack, Heroic, Magecraft, Constellation, Battalion, controller-life-gain, controller-card-draw, controller-second-draw, repeatable public sacrifice, or typed discard event through ordinary APNAP trigger placement and the canonical resumable counter transaction. A separate fine producer admits a mandatory fixed source-counter result over an already closed public subscription with observer incarnation pinning.",
+        "summary": "Compile and resolve one mandatory exact counter-producing effect triggered by a represented beginning-of-step, fixed public permanent-entry or creature-death subject, single-subtype permanent entry, controlled-land-entry, closed spell-cast subject, source-self attack, Heroic, Magecraft, Constellation, Battalion, controller-life-gain, controller-card-draw, controller-second-draw, repeatable public sacrifice, or typed discard event through ordinary APNAP trigger placement and the canonical resumable counter transaction. A separate fine producer admits a mandatory fixed source-counter result over an already closed public subscription with observer incarnation pinning. A separate fine producer also admits one mandatory fixed direct-target counter with its unchanged target schema and revalidation.",
         "inputs": [
           "one source-spanned closed normalized-event trigger",
           "one already represented exact effect body containing a counter-placement operation",
@@ -6018,6 +6110,7 @@
         "test_original_public_departure_source_counter_cast_pending_reentry_and_replay",
         "test_original_public_source_counter_controller_ordering_and_replay",
         "test_public_event_fixed_source_counter_preserves_subscription_and_incarnation",
+        "test_public_event_fixed_target_counter_preserves_complete_target_schema",
         "test_sacrifice_another_and_discard_counter_bodies_share_typed_events",
         "test_single_subtype_entry_counter_triggers_compile_exactly",
         "test_source_named_artifact_entry_player_counter_trigger_compiles_exactly"
@@ -6030,6 +6123,7 @@
         "test_new_event_bindings_fail_closed_with_event_capability",
         "test_public_event_source_counter_dependency_omission_and_open_result_fail_closed",
         "test_public_source_counter_current_ability_diagnostic_stops_later_occurrences",
+        "test_public_target_counter_missing_producer_open_body_and_schema_mutant_fail_closed",
         "test_stale_counter_target_rolls_back_trigger_resolution",
         "test_subtype_entry_counter_trigger_dependencies_fail_closed"
       ],

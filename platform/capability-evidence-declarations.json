@@ -33428,6 +33428,58 @@
     {
       "capability_id": "counter.producer.fixed_event_trigger",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_target_counter_reentered_target_fizzles_and_replays",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Thran Vigil observes accepted Raise Dead and chooses its own creature. Accepted original Cloudshift changes that target incarnation while the trigger is pending, so the old counter result resolves with no counter on the reentered target. Pending reload and full replay preserve the rejection boundary."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_target_counter_selection_observer_departure_and_replay",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Mandatory complete fixed target-counter result preserves existing public batch subscription and printed target schema. Original Thran Vigil/Raise Dead actual commands require authentic own-target choice; observer destruction does not suppress queued target result. Pending reload, rejected choices and replay preserve hidden hand projection; separate dependency/schema/omission tests reject unsupported bodies."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_public_source_counter_current_ability_diagnostic_stops_later_occurrences",
       "official_rule_ids": [
         "115.1",
@@ -33535,6 +33587,58 @@
       ],
       "applicability_note": "Original Starfield Mystic observers contrast own and foreign enchantments destroyed simultaneously by an accepted Tranquility cast. Authentic controller ordering places two active-controller triggers below the nonactive-controller result. Rejected foreign ordering preserves state; pending reload and complete replay preserve one counter per observer and private hand projection."
     },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_target_counter_reentered_target_fizzles_and_replays",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Thran Vigil observes accepted Raise Dead and chooses its own creature. Accepted original Cloudshift changes that target incarnation while the trigger is pending, so the old counter result resolves with no counter on the reentered target. Pending reload and full replay preserve the rejection boundary."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_target_counter_selection_observer_departure_and_replay",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Mandatory complete fixed target-counter result preserves existing public batch subscription and printed target schema. Original Thran Vigil/Raise Dead actual commands require authentic own-target choice; observer destruction does not suppress queued target result. Pending reload, rejected choices and replay preserve hidden hand projection; separate dependency/schema/omission tests reject unsupported bodies."
+    },
     {"capability_id": "counter.producer.fixed_event_trigger", "evidence_class": "mutation", "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneActionTests.test_self_counter_reference_alias_mutant_is_killed_by_actual_blink", "official_rule_ids": ["115.1", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c", "122.1", "122.6", "614.16", "616.1", "400.7", "608.2h"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Actual trusted ordinary and counter-qualified triggers preserve the old source incarnation through an intervening blink, retain subsequent legal counter results on the new incarnation and replay from before each action; aliasing to stable source identity is killed."},
     {
       "capability_id": "counter.producer.fixed_event_trigger",
@@ -33569,6 +33673,32 @@
         "commander_review"
       ],
       "applicability_note": "Fine public source-counter producer extends the parent counter-trigger composition only for its complete mandatory fixed source result. Complete source counter result uses the existing public subscription and pins observer incarnation. Independent source/event/controller contrasts, original native cast/departure, rejected principal, pending reload, source reentry and replay are labeled separately from parser/dependency/omission tests."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_public_target_counter_missing_producer_open_body_and_schema_mutant_fail_closed",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Mandatory complete fixed target-counter result preserves existing public batch subscription and printed target schema. Original Thran Vigil/Raise Dead actual commands require authentic own-target choice; observer destruction does not suppress queued target result. Pending reload, rejected choices and replay preserve hidden hand projection; separate dependency/schema/omission tests reject unsupported bodies."
     },
     {
       "capability_id": "counter.producer.fixed_event_trigger",
@@ -33619,6 +33749,32 @@
         "commander_review"
       ],
       "applicability_note": "Fine public source-counter producer extends the parent counter-trigger composition only for its complete mandatory fixed source result. Complete source counter result uses the existing public subscription and pins observer incarnation. Independent source/event/controller contrasts, original native cast/departure, rejected principal, pending reload, source reentry and replay are labeled separately from parser/dependency/omission tests."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_public_target_counter_missing_producer_open_body_and_schema_mutant_fail_closed",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Mandatory complete fixed target-counter result preserves existing public batch subscription and printed target schema. Original Thran Vigil/Raise Dead actual commands require authentic own-target choice; observer destruction does not suppress queued target result. Pending reload, rejected choices and replay preserve hidden hand projection; separate dependency/schema/omission tests reject unsupported bodies."
     },
     {
       "capability_id": "counter.producer.fixed_event_trigger",
@@ -33679,6 +33835,58 @@
         "commander_review"
       ],
       "applicability_note": "Original Starfield Mystic observers contrast own and foreign enchantments destroyed simultaneously by an accepted Tranquility cast. Authentic controller ordering places two active-controller triggers below the nonactive-controller result. Rejected foreign ordering preserves state; pending reload and complete replay preserve one counter per observer and private hand projection."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_target_counter_reentered_target_fizzles_and_replays",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Thran Vigil observes accepted Raise Dead and chooses its own creature. Accepted original Cloudshift changes that target incarnation while the trigger is pending, so the old counter result resolves with no counter on the reentered target. Pending reload and full replay preserve the rejection boundary."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_target_counter_selection_observer_departure_and_replay",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Mandatory complete fixed target-counter result preserves existing public batch subscription and printed target schema. Original Thran Vigil/Raise Dead actual commands require authentic own-target choice; observer destruction does not suppress queued target result. Pending reload, rejected choices and replay preserve hidden hand projection; separate dependency/schema/omission tests reject unsupported bodies."
     },
     {
       "capability_id": "counter.producer.fixed_event_trigger",
@@ -33759,6 +33967,32 @@
     {
       "capability_id": "counter.producer.fixed_event_trigger",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_public_event_fixed_target_counter_preserves_complete_target_schema",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Mandatory complete fixed target-counter result preserves existing public batch subscription and printed target schema. Original Thran Vigil/Raise Dead actual commands require authentic own-target choice; observer destruction does not suppress queued target result. Pending reload, rejected choices and replay preserve hidden hand projection; separate dependency/schema/omission tests reject unsupported bodies."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_single_subtype_entry_counter_triggers_compile_exactly",
       "official_rule_ids": ["115.1", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c", "122.1", "122.6", "614.16", "616.1", "400.7", "608.2h"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -33823,6 +34057,58 @@
         "commander_review"
       ],
       "applicability_note": "Original Starfield Mystic observers contrast own and foreign enchantments destroyed simultaneously by an accepted Tranquility cast. Authentic controller ordering places two active-controller triggers below the nonactive-controller result. Rejected foreign ordering preserves state; pending reload and complete replay preserve one counter per observer and private hand projection."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_target_counter_reentered_target_fizzles_and_replays",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Thran Vigil observes accepted Raise Dead and chooses its own creature. Accepted original Cloudshift changes that target incarnation while the trigger is pending, so the old counter result resolves with no counter on the reentered target. Pending reload and full replay preserve the rejection boundary."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_target_counter_selection_observer_departure_and_replay",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Mandatory complete fixed target-counter result preserves existing public batch subscription and printed target schema. Original Thran Vigil/Raise Dead actual commands require authentic own-target choice; observer destruction does not suppress queued target result. Pending reload, rejected choices and replay preserve hidden hand projection; separate dependency/schema/omission tests reject unsupported bodies."
     },
     {
       "capability_id": "counter.producer.fixed_event_trigger",
@@ -33900,6 +34186,58 @@
       ],
       "applicability_note": "Original Starfield Mystic observers contrast own and foreign enchantments destroyed simultaneously by an accepted Tranquility cast. Authentic controller ordering places two active-controller triggers below the nonactive-controller result. Rejected foreign ordering preserves state; pending reload and complete replay preserve one counter per observer and private hand projection."
     },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_target_counter_reentered_target_fizzles_and_replays",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Thran Vigil observes accepted Raise Dead and chooses its own creature. Accepted original Cloudshift changes that target incarnation while the trigger is pending, so the old counter result resolves with no counter on the reentered target. Pending reload and full replay preserve the rejection boundary."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_target_counter_selection_observer_departure_and_replay",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Mandatory complete fixed target-counter result preserves existing public batch subscription and printed target schema. Original Thran Vigil/Raise Dead actual commands require authentic own-target choice; observer destruction does not suppress queued target result. Pending reload, rejected choices and replay preserve hidden hand projection; separate dependency/schema/omission tests reject unsupported bodies."
+    },
     {"capability_id": "counter.producer.fixed_event_trigger", "evidence_class": "replay", "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneActionTests.test_pending_counter_result_cannot_modify_blinked_observer_incarnation", "official_rule_ids": ["115.1", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c", "122.1", "122.6", "614.16", "616.1", "400.7", "608.2h"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Actual trusted ordinary and counter-qualified triggers preserve the old source incarnation through an intervening blink, retain subsequent legal counter results on the new incarnation and replay from before each action; aliasing to stable source identity is killed."},
     {
       "capability_id": "counter.producer.fixed_event_trigger",
@@ -33976,6 +34314,58 @@
         "commander_review"
       ],
       "applicability_note": "Original Starfield Mystic observers contrast own and foreign enchantments destroyed simultaneously by an accepted Tranquility cast. Authentic controller ordering places two active-controller triggers below the nonactive-controller result. Rejected foreign ordering preserves state; pending reload and complete replay preserve one counter per observer and private hand projection."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_target_counter_reentered_target_fizzles_and_replays",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Thran Vigil observes accepted Raise Dead and chooses its own creature. Accepted original Cloudshift changes that target incarnation while the trigger is pending, so the old counter result resolves with no counter on the reentered target. Pending reload and full replay preserve the rejection boundary."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_target_counter_selection_observer_departure_and_replay",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Mandatory complete fixed target-counter result preserves existing public batch subscription and printed target schema. Original Thran Vigil/Raise Dead actual commands require authentic own-target choice; observer destruction does not suppress queued target result. Pending reload, rejected choices and replay preserve hidden hand projection; separate dependency/schema/omission tests reject unsupported bodies."
     },
     {
       "capability_id": "counter.producer.fixed_event_trigger",
@@ -35116,6 +35506,426 @@
         "commander_review"
       ],
       "applicability_note": "Original Starfield Mystic observers contrast own and foreign enchantments destroyed simultaneously by an accepted Tranquility cast. Authentic controller ordering places two active-controller triggers below the nonactive-controller result. Rejected foreign ordering preserves state; pending reload and complete replay preserve one counter per observer and private hand projection."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_target_event",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_target_counter_dual_entry_death_preserves_source_lki",
+      "official_rule_ids": [
+        "115.1d",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "608.2b",
+        "608.2c",
+        "122.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Hunting Moa cast selects a foreign creature for its entry counter. Accepted Lightning Bolt kills the observer; its separate death branch uses prior observer existence and controller and still selects an own eligible target. Complete consequences, pending reload and full replay preserve both counts without source substitution."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_target_event",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_target_counter_reentered_target_fizzles_and_replays",
+      "official_rule_ids": [
+        "115.1d",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "608.2b",
+        "608.2c",
+        "122.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Thran Vigil observes accepted Raise Dead and chooses its own creature. Accepted original Cloudshift changes that target incarnation while the trigger is pending, so the old counter result resolves with no counter on the reentered target. Pending reload and full replay preserve the rejection boundary."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_target_event",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_target_counter_selection_observer_departure_and_replay",
+      "official_rule_ids": [
+        "115.1d",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "608.2b",
+        "608.2c",
+        "122.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Mandatory complete fixed target-counter result preserves existing public batch subscription and printed target schema. Original Thran Vigil/Raise Dead actual commands require authentic own-target choice; observer destruction does not suppress queued target result. Pending reload, rejected choices and replay preserve hidden hand projection; separate dependency/schema/omission tests reject unsupported bodies."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_target_event",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_target_counter_dual_entry_death_preserves_source_lki",
+      "official_rule_ids": [
+        "115.1d",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "608.2b",
+        "608.2c",
+        "122.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Hunting Moa cast selects a foreign creature for its entry counter. Accepted Lightning Bolt kills the observer; its separate death branch uses prior observer existence and controller and still selects an own eligible target. Complete consequences, pending reload and full replay preserve both counts without source substitution."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_target_event",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_target_counter_reentered_target_fizzles_and_replays",
+      "official_rule_ids": [
+        "115.1d",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "608.2b",
+        "608.2c",
+        "122.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Thran Vigil observes accepted Raise Dead and chooses its own creature. Accepted original Cloudshift changes that target incarnation while the trigger is pending, so the old counter result resolves with no counter on the reentered target. Pending reload and full replay preserve the rejection boundary."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_target_event",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_target_counter_selection_observer_departure_and_replay",
+      "official_rule_ids": [
+        "115.1d",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "608.2b",
+        "608.2c",
+        "122.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Mandatory complete fixed target-counter result preserves existing public batch subscription and printed target schema. Original Thran Vigil/Raise Dead actual commands require authentic own-target choice; observer destruction does not suppress queued target result. Pending reload, rejected choices and replay preserve hidden hand projection; separate dependency/schema/omission tests reject unsupported bodies."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_target_event",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_public_target_counter_missing_producer_open_body_and_schema_mutant_fail_closed",
+      "official_rule_ids": [
+        "115.1d",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "608.2b",
+        "608.2c",
+        "122.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Mandatory complete fixed target-counter result preserves existing public batch subscription and printed target schema. Original Thran Vigil/Raise Dead actual commands require authentic own-target choice; observer destruction does not suppress queued target result. Pending reload, rejected choices and replay preserve hidden hand projection; separate dependency/schema/omission tests reject unsupported bodies."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_target_event",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_public_target_counter_missing_producer_open_body_and_schema_mutant_fail_closed",
+      "official_rule_ids": [
+        "115.1d",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "608.2b",
+        "608.2c",
+        "122.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Mandatory complete fixed target-counter result preserves existing public batch subscription and printed target schema. Original Thran Vigil/Raise Dead actual commands require authentic own-target choice; observer destruction does not suppress queued target result. Pending reload, rejected choices and replay preserve hidden hand projection; separate dependency/schema/omission tests reject unsupported bodies."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_target_event",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_target_counter_dual_entry_death_preserves_source_lki",
+      "official_rule_ids": [
+        "115.1d",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "608.2b",
+        "608.2c",
+        "122.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Hunting Moa cast selects a foreign creature for its entry counter. Accepted Lightning Bolt kills the observer; its separate death branch uses prior observer existence and controller and still selects an own eligible target. Complete consequences, pending reload and full replay preserve both counts without source substitution."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_target_event",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_target_counter_reentered_target_fizzles_and_replays",
+      "official_rule_ids": [
+        "115.1d",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "608.2b",
+        "608.2c",
+        "122.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Thran Vigil observes accepted Raise Dead and chooses its own creature. Accepted original Cloudshift changes that target incarnation while the trigger is pending, so the old counter result resolves with no counter on the reentered target. Pending reload and full replay preserve the rejection boundary."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_target_event",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_target_counter_selection_observer_departure_and_replay",
+      "official_rule_ids": [
+        "115.1d",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "608.2b",
+        "608.2c",
+        "122.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Mandatory complete fixed target-counter result preserves existing public batch subscription and printed target schema. Original Thran Vigil/Raise Dead actual commands require authentic own-target choice; observer destruction does not suppress queued target result. Pending reload, rejected choices and replay preserve hidden hand projection; separate dependency/schema/omission tests reject unsupported bodies."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_target_event",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_public_event_fixed_target_counter_preserves_complete_target_schema",
+      "official_rule_ids": [
+        "115.1d",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "608.2b",
+        "608.2c",
+        "122.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Mandatory complete fixed target-counter result preserves existing public batch subscription and printed target schema. Original Thran Vigil/Raise Dead actual commands require authentic own-target choice; observer destruction does not suppress queued target result. Pending reload, rejected choices and replay preserve hidden hand projection; separate dependency/schema/omission tests reject unsupported bodies."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_target_event",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_target_counter_dual_entry_death_preserves_source_lki",
+      "official_rule_ids": [
+        "115.1d",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "608.2b",
+        "608.2c",
+        "122.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Hunting Moa cast selects a foreign creature for its entry counter. Accepted Lightning Bolt kills the observer; its separate death branch uses prior observer existence and controller and still selects an own eligible target. Complete consequences, pending reload and full replay preserve both counts without source substitution."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_target_event",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_target_counter_reentered_target_fizzles_and_replays",
+      "official_rule_ids": [
+        "115.1d",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "608.2b",
+        "608.2c",
+        "122.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Thran Vigil observes accepted Raise Dead and chooses its own creature. Accepted original Cloudshift changes that target incarnation while the trigger is pending, so the old counter result resolves with no counter on the reentered target. Pending reload and full replay preserve the rejection boundary."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_target_event",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_target_counter_selection_observer_departure_and_replay",
+      "official_rule_ids": [
+        "115.1d",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "608.2b",
+        "608.2c",
+        "122.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Mandatory complete fixed target-counter result preserves existing public batch subscription and printed target schema. Original Thran Vigil/Raise Dead actual commands require authentic own-target choice; observer destruction does not suppress queued target result. Pending reload, rejected choices and replay preserve hidden hand projection; separate dependency/schema/omission tests reject unsupported bodies."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_target_event",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_target_counter_reentered_target_fizzles_and_replays",
+      "official_rule_ids": [
+        "115.1d",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "608.2b",
+        "608.2c",
+        "122.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Thran Vigil observes accepted Raise Dead and chooses its own creature. Accepted original Cloudshift changes that target incarnation while the trigger is pending, so the old counter result resolves with no counter on the reentered target. Pending reload and full replay preserve the rejection boundary."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_target_event",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_target_counter_selection_observer_departure_and_replay",
+      "official_rule_ids": [
+        "115.1d",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "608.2b",
+        "608.2c",
+        "122.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Mandatory complete fixed target-counter result preserves existing public batch subscription and printed target schema. Original Thran Vigil/Raise Dead actual commands require authentic own-target choice; observer destruction does not suppress queued target result. Pending reload, rejected choices and replay preserve hidden hand projection; separate dependency/schema/omission tests reject unsupported bodies."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_target_event",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_target_counter_dual_entry_death_preserves_source_lki",
+      "official_rule_ids": [
+        "115.1d",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "608.2b",
+        "608.2c",
+        "122.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Actual original Hunting Moa cast selects a foreign creature for its entry counter. Accepted Lightning Bolt kills the observer; its separate death branch uses prior observer existence and controller and still selects an own eligible target. Complete consequences, pending reload and full replay preserve both counts without source substitution."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_target_event",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_target_counter_reentered_target_fizzles_and_replays",
+      "official_rule_ids": [
+        "115.1d",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "608.2b",
+        "608.2c",
+        "122.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Thran Vigil observes accepted Raise Dead and chooses its own creature. Accepted original Cloudshift changes that target incarnation while the trigger is pending, so the old counter result resolves with no counter on the reentered target. Pending reload and full replay preserve the rejection boundary."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_target_event",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_target_counter_selection_observer_departure_and_replay",
+      "official_rule_ids": [
+        "115.1d",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "608.2b",
+        "608.2c",
+        "122.1a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Mandatory complete fixed target-counter result preserves existing public batch subscription and printed target schema. Original Thran Vigil/Raise Dead actual commands require authentic own-target choice; observer destruction does not suppress queued target result. Pending reload, rejected choices and replay preserve hidden hand projection; separate dependency/schema/omission tests reject unsupported bodies."
     },
     {"capability_id":"counter.producer.fixed_self_entry","evidence_class":"interaction","test_id":"tests.test_copied_self_entry_counters.CopiedSelfEntryCounterActionTests.test_actual_copied_group_counter_replacement_choice_is_atomic_and_replays","official_rule_ids":["122.1","122.1a","122.1b","122.6","614.1c","614.12","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Nested entry and counter replacements finish before either token is committed."},
     {"capability_id":"counter.producer.fixed_self_entry","evidence_class":"interaction","test_id":"tests.test_copied_self_entry_counters.CopiedSelfEntryCounterActionTests.test_actual_source_only_ability_removal_is_not_copied","official_rule_ids":["122.1","122.1a","122.1b","122.6","614.1c","614.12","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Actual admitted source-only transformation does not remove the copy's copiable entry component."},

@@ -25,6 +25,7 @@ def counter_placement_covered_mechanics(supplied):
         covered.add(_NAMED_COUNTER_MECHANIC)
     if 'counter.producer.fixed_event_object' in supplied:covered.add('fixed-entry-event-object-counter')
     if 'counter.producer.fixed_public_source_event' in supplied:covered.add('fixed-public-event-source-counter')
+    if 'counter.producer.fixed_public_target_event' in supplied:covered.add('fixed-public-event-target-counter')
     return covered
 
 
@@ -104,6 +105,8 @@ def _base_fixed_counter_placement_node_capabilities(
         assert target_schema is not None
         target_capabilities = direct_target_predicate_capabilities(target_schema)
         return (
+            *(('counter.producer.fixed_public_target_event',)
+              if 'fixed-public-event-target-counter' in mechanics else ()),
             "counter.producer.fixed_effect",
             *characteristic_capabilities,
             *target_capabilities,

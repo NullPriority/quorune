@@ -14,6 +14,9 @@ maintenance: "hand-maintained"
 - Preserve independent library-selection card slots and qualified card types,
   and reject unrepresented qualifiers that previously became subtype names.
 
+- Compose closed public event subscriptions with fixed direct-target counters,
+  preserving target choice and resolution-time incarnation checks.
+
 - Compose closed public event subscriptions with fixed counter results on the
   observing source incarnation, preserving controller and current-ability rules.
 

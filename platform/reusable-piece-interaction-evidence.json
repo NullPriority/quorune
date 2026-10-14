@@ -10824,6 +10824,51 @@
       ],
       "interaction_order": 2,
       "assertion": "Native simultaneous Tranquility queues two active-controller observer triggers below one nonactive-controller trigger through APNAP; rejected foreign ordering is state-preserving and pending reload/replay preserve all three results."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_public_target_counter_selection_observer_departure_and_replay",
+      "piece_ids": [
+        "capability.counter.producer.fixed_effect",
+        "capability.counter.producer.fixed_public_target_event"
+      ],
+      "capability_ids": [
+        "counter.producer.fixed_effect",
+        "counter.producer.fixed_public_target_event"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Thran Vigil and Raise Dead native cast require authentic target choice; observer destruction after placement leaves the independent legal target result intact."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_public_target_counter_reentered_target_fizzles_and_replays",
+      "piece_ids": [
+        "capability.counter.producer.fixed_public_target_event",
+        "capability.target.revalidate_resolution"
+      ],
+      "capability_ids": [
+        "counter.producer.fixed_public_target_event",
+        "target.revalidate_resolution"
+      ],
+      "interaction_order": 2,
+      "assertion": "Native original Cloudshift changes the chosen target incarnation during a pending Thran Vigil counter result. Old target revalidation prevents new-incarnation substitution and pending reload/replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_public_target_counter_selection_observer_departure_and_replay",
+      "piece_ids": [
+        "capability.counter.producer.fixed_public_target_event",
+        "capability.trigger.event.normalized_zone_change"
+      ],
+      "capability_ids": [
+        "counter.producer.fixed_public_target_event",
+        "trigger.event.normalized_zone_change"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Raise Dead moves the own creature from graveyard to hand; the existing one-or-more during-own-turn subscription queues one targeted counter result and preserves private hand projection."
     }
   ]
 }
