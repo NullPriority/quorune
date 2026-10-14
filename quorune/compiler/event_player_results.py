@@ -14,17 +14,24 @@ def _damage_guarantees_player(condition):
         or any(_damage_guarantees_player(child) for child in condition.get('all',())))
 
 
-def fixed_event_player_result(binding,body,*,effect_template,card_name):
-    match=re.fullmatch(r'(?P<subject>that player|they|defending player) (?P<verb>draws?|loses?|gains?) (?P<body>.+)',body,re.I)
-    if match is None:return None
-    player=None
-    if match['subject'].casefold()=='defending player':
+def _event_player(binding,subject):
+    if subject=='you':return '$controller'
+    if subject=='defending player':
         if binding.event.value=='creature.attacks' and binding.variant=='source_attacks':player='$context.defending_player'
+        else:return None
     elif binding.event.value=='card.discarded':player='$context.previous_controller'
     elif binding.event.value in {'spell.cast','card.drawn','player.scried','player.surveilled'}:
         player='$context.player'
     elif binding.event.value in {'damage.dealt','damage.dealt.self'} and _damage_guarantees_player(binding.event_condition):
         player='$context.target'
+    else:return None
+    return player
+
+
+def _fixed_event_player_clause(binding,body,*,effect_template,card_name):
+    match=re.fullmatch(r'(?P<subject>that player|they|defending player|you) (?P<verb>draws?|loses?|gains?) (?P<body>.+)',body,re.I)
+    if match is None:return None
+    player=_event_player(binding,match['subject'].casefold())
     if player is None:return None
     verb=match['verb'].casefold().removesuffix('s')
     normalized=verb.capitalize()+' '+match['body']
@@ -36,5 +43,13 @@ def fixed_event_player_result(binding,body,*,effect_template,card_name):
     field,fields=layouts[effect['op']]
     if (set(effect)!=fields or effect.get('player')!='$controller' or type(effect.get(field)) is not int
             or effect[field]<=0 or effect['op']=='draw' and effect['private'] is not True):return None
-    return ('fixed-event-player-result-v1',({**effect,'player':player},),None,
-        (*compiled[3],EVENT_PLAYER_RESULT_MECHANIC)),False
+    return {**effect,'player':player},compiled[3]
+
+
+def fixed_event_player_result(binding,body,*,effect_template,card_name):
+    from .fixed_controller_effect_sequences import _clauses
+    clauses=_clauses(body) or (body,)
+    lowered=tuple(_fixed_event_player_clause(binding,clause,effect_template=effect_template,card_name=card_name) for clause in clauses)
+    if any(value is None for value in lowered) or not any(value[0]['player']!='$controller' for value in lowered):return None
+    return ('fixed-event-player-result-v1',tuple(value[0] for value in lowered),None,
+        tuple(dict.fromkeys((*[mechanic for value in lowered for mechanic in value[1]],EVENT_PLAYER_RESULT_MECHANIC)))),False

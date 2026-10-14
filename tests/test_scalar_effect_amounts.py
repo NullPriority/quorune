@@ -44,6 +44,44 @@ def scalar_record(text: str, *, type_line: str = "Creature — Goblin") -> CardR
 
 
 class ScalarEffectAmountCompilerTests(unittest.TestCase):
+    def test_event_player_fixed_sequence_rejects_partial_and_unknown_recipient_clauses(self):
+        from dataclasses import replace
+        from quorune.oracle_ir import generated_programs
+        from quorune.rules.event_player_result_shapes import is_closed_fixed_event_player_result_program,fixed_event_player_result_node_capabilities
+        text='Whenever an opponent casts a noncreature spell, that player loses 2 life and you gain 2 life.'
+        self.assertEqual('exact',self.compile(text).status)
+        for body in (
+            'that player loses 2 life and you gain X life.',
+            'that player loses 2 life and another player gains 2 life.',
+            'that player loses 2 life and you gain 2 life. Draw a card.',
+            'that player loses 2 life and you may gain 2 life.',
+        ):
+            self.assertNotEqual('exact',self.compile('Whenever an opponent casts a noncreature spell, '+body).status)
+        program=generated_programs(type('NoRulings',(),{'rulings':lambda self,record:()})(),scalar_record(text),
+            capability_registry=self.registry,capability_profile='commander_review',trust_level='trusted')[0]
+        self.assertTrue(is_closed_fixed_event_player_result_program(program))
+        self.assertFalse(is_closed_fixed_event_player_result_program(replace(program,event='permanent.enter')))
+        effects=tuple({**effect,'player':'$controller'} for effect in program.effects)
+        self.assertFalse(fixed_event_player_result_node_capabilities(effects=effects,target_schema=None,mechanic_ids=program.coverage))
+
+    def test_event_player_fixed_sequence_retains_each_recipient_and_printed_order(self):
+        cases=(
+            ('Whenever an opponent casts a noncreature spell, that player loses 2 life and you gain 2 life.',
+                (('lose_life','$context.player','amount',2),('life','$controller','delta',2))),
+            ('Whenever this creature attacks, defending player loses 1 life and you gain 1 life.',
+                (('lose_life','$context.defending_player','amount',1),('life','$controller','delta',1))),
+            ('Whenever this creature deals combat damage to a player, that player loses 1 life and you draw a card.',
+                (('lose_life','$context.target','amount',1),('draw','$controller','count',1))),
+        )
+        for text,expected in cases:
+            ir=self.compile(text)
+            self.assertEqual('exact',ir.status,ir.material_residuals)
+            node=ir.faces[0].nodes[0];self.assertIsNone(node.target_schema)
+            self.assertEqual(len(expected),len(node.effects))
+            for effect,(operation,player,field,value) in zip(node.effects,expected):
+                self.assertEqual(operation,effect['op']);self.assertEqual(player,effect['player']);self.assertEqual(value,effect[field])
+            self.assertIn('resolution.event_player.fixed_result',node.capability_dependencies)
+
     def test_fixed_affected_player_discard_generated_registration_promotes_closed_owner(self):
         from quorune.semantics import SemanticRegistry
         record=scalar_record('Target player discards two cards.',type_line='Sorcery')

@@ -10496,6 +10496,21 @@
       ],
       "interaction_order": 3,
       "assertion": "Original Forced Fruition observes a real foreign cast and draws seven privately for the caster. Original Lilianas Caress observes actual MindRot discard choices by B and creates two complete life-loss consequences on that discarder using the sealed previous controller. Registration, wrongprincipal rollback, pendingload and full preaction replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
+      "piece_ids": [
+        "capability.life.change.effect",
+        "capability.resolution.event_player.fixed_result"
+      ],
+      "capability_ids": [
+        "life.change.effect",
+        "resolution.event_player.fixed_result"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Kambal real noncreature cast and Agate-Blade actual attack resolve two ordered life leaves on distinct sealed occurrence and trigger controller recipients. Creature cast control is excluded. Principal rollback, private projection and pending/full pre-action replay agree."
     }
   ]
 }

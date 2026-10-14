@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Preserve explicit event-player and controller recipients across two ordered
+  fixed draw or life instructions.
+
 - Bind fixed draw and life results to sealed event players, and register closed
   affected-player discard programs through their existing capability owner.
 

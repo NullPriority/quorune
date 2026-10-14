@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "13148043430b4587a00fd22ea4bc67236bdc9ea81b2439bd12c2cdb51da236a3",
-  "declaration_source_fingerprint": "33bc77a710906d4283fb46072a6f4a4da76f8badb2bf8b324f5210da4ee4e558",
+  "registry_fingerprint": "574894d045a7b7c917b4ecd9fec30387e0846436132d0d9ac24384244003a383",
+  "declaration_source_fingerprint": "c88473f4df9ad9c19e2ff1ff4019b37f54fb9b5e8e2587f68c60d331c251dcd1",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -91494,6 +91494,26 @@
     {
       "capability_id": "resolution.event_player.fixed_result",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
+      "official_rule_ids": [
+        "113.7a",
+        "120.3a",
+        "121.2",
+        "603.2",
+        "603.3d",
+        "608.2c",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Kambal observes a foreign noncreature cast, loses two for the caster then gains two for its own controller; an actual creature cast does not trigger. Original Agate-Blade Assassin actual attack loses one for defender then gains one for controller; rollback, privacy, pending load and full replay agree."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay",
       "official_rule_ids": [
         "113.7a",
@@ -91510,6 +91530,26 @@
         "commander_review"
       ],
       "applicability_note": "Original Forced Fruition observes a foreign caster and drawsseven for thatcasterprivately; originalLilianaCaress observes realMindRotdiscard2 and causestwodistinctlife2losses todiscarder. Complete consequences, wrongprincipalrollback, pendingload andfullreplay agree."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
+      "official_rule_ids": [
+        "113.7a",
+        "120.3a",
+        "121.2",
+        "603.2",
+        "603.3d",
+        "608.2c",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Kambal observes a foreign noncreature cast, loses two for the caster then gains two for its own controller; an actual creature cast does not trigger. Original Agate-Blade Assassin actual attack loses one for defender then gains one for controller; rollback, privacy, pending load and full replay agree."
     },
     {
       "capability_id": "resolution.event_player.fixed_result",
@@ -91554,6 +91594,26 @@
     {
       "capability_id": "resolution.event_player.fixed_result",
       "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
+      "official_rule_ids": [
+        "113.7a",
+        "120.3a",
+        "121.2",
+        "603.2",
+        "603.3d",
+        "608.2c",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Kambal observes a foreign noncreature cast, loses two for the caster then gains two for its own controller; an actual creature cast does not trigger. Original Agate-Blade Assassin actual attack loses one for defender then gains one for controller; rollback, privacy, pending load and full replay agree."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "negative",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay",
       "official_rule_ids": [
         "113.7a",
@@ -91570,6 +91630,26 @@
         "commander_review"
       ],
       "applicability_note": "Original Forced Fruition observes a foreign caster and drawsseven for thatcasterprivately; originalLilianaCaress observes realMindRotdiscard2 and causestwodistinctlife2losses todiscarder. Complete consequences, wrongprincipalrollback, pendingload andfullreplay agree."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "negative",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_event_player_fixed_sequence_rejects_partial_and_unknown_recipient_clauses",
+      "official_rule_ids": [
+        "113.7a",
+        "120.3a",
+        "121.2",
+        "603.2",
+        "603.3d",
+        "608.2c",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two complete fixed leaves retain each explicitly printed recipient and order. Partial, unknown recipient, third clause, optional or variable result rejects; promotion verifies all event references and requires at least one event player."
     },
     {
       "capability_id": "resolution.event_player.fixed_result",
@@ -91594,6 +91674,26 @@
     {
       "capability_id": "resolution.event_player.fixed_result",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
+      "official_rule_ids": [
+        "113.7a",
+        "120.3a",
+        "121.2",
+        "603.2",
+        "603.3d",
+        "608.2c",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Kambal observes a foreign noncreature cast, loses two for the caster then gains two for its own controller; an actual creature cast does not trigger. Original Agate-Blade Assassin actual attack loses one for defender then gains one for controller; rollback, privacy, pending load and full replay agree."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay",
       "official_rule_ids": [
         "113.7a",
@@ -91610,6 +91710,26 @@
         "commander_review"
       ],
       "applicability_note": "Original Forced Fruition observes a foreign caster and drawsseven for thatcasterprivately; originalLilianaCaress observes realMindRotdiscard2 and causestwodistinctlife2losses todiscarder. Complete consequences, wrongprincipalrollback, pendingload andfullreplay agree."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_event_player_fixed_sequence_retains_each_recipient_and_printed_order",
+      "official_rule_ids": [
+        "113.7a",
+        "120.3a",
+        "121.2",
+        "603.2",
+        "603.3d",
+        "608.2c",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Two complete fixed leaves retain each explicitly printed recipient and order. Partial, unknown recipient, third clause, optional or variable result rejects; promotion verifies all event references and requires at least one event player."
     },
     {
       "capability_id": "resolution.event_player.fixed_result",
@@ -91634,6 +91754,26 @@
     {
       "capability_id": "resolution.event_player.fixed_result",
       "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
+      "official_rule_ids": [
+        "113.7a",
+        "120.3a",
+        "121.2",
+        "603.2",
+        "603.3d",
+        "608.2c",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Kambal observes a foreign noncreature cast, loses two for the caster then gains two for its own controller; an actual creature cast does not trigger. Original Agate-Blade Assassin actual attack loses one for defender then gains one for controller; rollback, privacy, pending load and full replay agree."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "privacy",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay",
       "official_rule_ids": [
         "113.7a",
@@ -91650,6 +91790,26 @@
         "commander_review"
       ],
       "applicability_note": "Original Forced Fruition observes a foreign caster and drawsseven for thatcasterprivately; originalLilianaCaress observes realMindRotdiscard2 and causestwodistinctlife2losses todiscarder. Complete consequences, wrongprincipalrollback, pendingload andfullreplay agree."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_event_player_two_result_kambal_and_assassin_native_actions_replay",
+      "official_rule_ids": [
+        "113.7a",
+        "120.3a",
+        "121.2",
+        "603.2",
+        "603.3d",
+        "608.2c",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Kambal observes a foreign noncreature cast, loses two for the caster then gains two for its own controller; an actual creature cast does not trigger. Original Agate-Blade Assassin actual attack loses one for defender then gains one for controller; rollback, privacy, pending load and full replay agree."
     },
     {
       "capability_id": "resolution.event_player.fixed_result",
@@ -128644,5 +128804,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "dc8ca8d8c36326a569da7a92448efd1d660189d58ac746848711417c53597b63"
+  "fingerprint": "1bc344061369b331ef4b31aff62126a4589cf7958442669b56dd8da92678f966"
 }

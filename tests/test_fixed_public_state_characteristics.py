@@ -2957,6 +2957,53 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
 
 
 class AdditionalConditionalModifierRuntimeTests(unittest.TestCase):
+    def test_original_event_player_two_result_kambal_and_assassin_native_actions_replay(self):
+        session=self.session(3632301);engine=session.engine
+        observer=self.add(engine,'Kambal, Consul of Allocation',seat='B',ref='sequence-event-kambal')
+        spell=self.add(engine,'Generic Boolean Life Response',zone='hand',ref='sequence-event-noncreature')
+        creature=self.add(engine,'Generic Bound Body',zone='hand',ref='sequence-event-creature')
+        self.assert_whole_admission(observer.printed_name)
+        offered=self.ready(session,spell,{'W':1})
+        life={seat:session.state.players[seat].life for seat in 'ABCD'}
+        self.checkpoint(session)
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'targets':['A'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        trigger=next(item for item in session.state.stack if item.kind=='triggered_ability')
+        self.assertEqual('B',trigger.controller)
+        self.replay(session,load=True);self.resolve(session)
+        self.assertEqual(life['A'],session.state.players['A'].life)
+        self.assertEqual(life['B']+2,session.state.players['B'].life)
+        for seat in 'CD':self.assertEqual(life[seat],session.state.players[seat].life)
+        while session.state.priority_player!='A':
+            self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        cast=next(row for row in actions if row.get('card')==creature.ref)
+        accepted=session.act('pilot:A',{'action_id':cast['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.assertFalse(any(item.kind=='triggered_ability' for item in session.state.stack))
+        self.resolve(session)
+        self.assertEqual(life['B']+2,session.state.players['B'].life)
+        for seat in 'BCD':self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+        self.replay(session)
+        from quorune.model import CombatState
+        session=self.session(3632302);engine=session.engine
+        source=self.add(engine,'Agate-Blade Assassin',ref='sequence-event-assassin')
+        self.assert_whole_admission(source.printed_name)
+        engine.permissions.invalidate_current();session.state.pending_decision=None;session.state.started=True
+        session.state.active_player='A';session.state.phase='combat';session.state.step='declare_attackers'
+        session.state.phase_index=5;session.state.priority_player=None;session.state.priority_passes=[];session.state.combat=CombatState()
+        engine.pump();self.checkpoint(session)
+        life={seat:session.state.players[seat].life for seat in 'ABCD'}
+        before=session.state.to_dict()
+        self.assertFalse(session.act('pilot:C',{'action_id':'attack','attackers':{source.ref:'B'}}).ok)
+        self.assertEqual(before,session.state.to_dict())
+        accepted=session.act('pilot:A',{'action_id':'attack','attackers':{source.ref:'B'}})
+        self.assertTrue(accepted.ok,accepted.summary);self.replay(session,load=True);self.resolve(session)
+        self.assertEqual(life['A']+1,session.state.players['A'].life)
+        self.assertEqual(life['B']-1,session.state.players['B'].life)
+        for seat in 'CD':self.assertEqual(life[seat],session.state.players[seat].life)
+        self.replay(session)
+
     def test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay(self):
         session=self.session(3632201);engine=session.engine
         observer=self.add(engine,'Forced Fruition',seat='B',ref='event-result-fruition')

@@ -72,8 +72,10 @@ boundary with a separate `resolution.event_player.fixed_result` dependency.
 Spell casts, draws and public scry/surveil events supply their player field;
 discard occurrences supply `previous_controller`. Damage must guarantee a
 player recipient and source attacks supply their defending player. Program
-promotion checks the event against its context reference. Optional, variable
-and linked multi-clause results remain outside this family. Fixed affected-player
+promotion checks the event against each context reference. One or two complete
+fixed leaves preserve printed order and require an explicit subject per clause;
+`you` retains the resolving trigger controller. Optional, variable and linked
+results remain outside this family. Fixed affected-player
 discard registration separately verifies its closed choice shape and declared
 dependencies before promoting a generated program.
 
