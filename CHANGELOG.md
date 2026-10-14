@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Resolve opponent-count quantities from the current public roster, including
+  changes caused by a player's departure before the instruction resolves.
+
 - Compile complete-value token counts and mandatory controller-scoped doubling
   through the shared token transaction, retaining current source ability
   presence and rejecting malformed schema versions.

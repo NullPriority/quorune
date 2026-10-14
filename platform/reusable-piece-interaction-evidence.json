@@ -4,6 +4,21 @@
     {
       "evidence_class": "interaction",
       "assurance_kind": "runtime_composition",
+      "test_id": "test_original_tyranid_opponent_quantity_resolves_after_actual_concession_and_replays",
+      "piece_ids": [
+        "capability.quantity_expression.public_player_count",
+        "capability.token.creation.fixed_definition"
+      ],
+      "capability_ids": [
+        "quantity_expression.public_player_count",
+        "token.creation.fixed_definition"
+      ],
+      "interaction_order": 2,
+      "assertion": "Strict original Tyranid Invasion is cast with three opponents. A real confirmed concession before resolution leaves two and the instruction creates two complete 3/3 trample tokens. Malformed and wrong-principal commands preserve state, nonactor private projections remain hidden, and pending save/load plus complete pre-action replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
       "test_id": "test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
       "piece_ids": [
         "capability.quantity_expression.public_query_effect_amount",

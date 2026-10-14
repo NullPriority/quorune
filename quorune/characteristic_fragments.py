@@ -34,6 +34,7 @@ class CharacteristicQuantityScope(str, Enum):
     ATTACHED_TO_SOURCE = "attached_to_source"
     ATTACHED_TO_RECIPIENT = "attached_to_recipient"
     SOURCE_COUNTER = "source_counter"
+    CONTROLLER_OPPONENT_COUNT = "controller_opponent_count"
 
 
 class CharacteristicQuantityReduction(str, Enum):
@@ -72,6 +73,12 @@ class CharacteristicQuantitySpec:
             return
         if self.terms or self.reduction is CharacteristicQuantityReduction.SUM_QUANTITIES:
             raise CharacteristicFragmentError("Only an explicit quantity-sum version carries terms")
+        if self.scope is CharacteristicQuantityScope.CONTROLLER_OPPONENT_COUNT:
+            if (self.schema_version!=2 or self.query is not None or self.counter_name is not None
+                    or self.exclude_source or self.exclude_attached_object
+                    or self.reduction is not CharacteristicQuantityReduction.OBJECT_COUNT):
+                raise CharacteristicFragmentError('Opponent counts require a versioned public-roster quantity')
+            return
         if self.scope is CharacteristicQuantityScope.SOURCE_COUNTER:
             self._validate_source_counter()
             return
@@ -708,6 +715,7 @@ def characteristic_quantity_capabilities(value: Any) -> tuple[str, ...]:
     if isinstance(value, Mapping):
         devotion = value.get('reduction') == 'devotion' or (value.get('kind') == 'devotion' and 'color' in value)
         own = ('state_query.devotion.current',) if devotion else ()
+        if value.get('scope')=='controller_opponent_count':own=(*own,'quantity_expression.public_player_count')
         return tuple(sorted({*own, *(cap for child in value.values() for cap in characteristic_quantity_capabilities(child))}))
     if isinstance(value, (list, tuple)):
         return tuple(sorted({cap for child in value for cap in characteristic_quantity_capabilities(child)}))

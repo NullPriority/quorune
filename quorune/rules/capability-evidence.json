@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "e9cf60c1332245fb1b40fe6f764cee3796a2e71f1d9d6fcf0bc746be7b915d09",
-  "declaration_source_fingerprint": "b96fb9f6d7f743a4fd0580ca20364d4c4fbfcae4e093ffb55ced4b2da773e91a",
+  "registry_fingerprint": "ef886ac59e3615a2b2dec962e9e9bfd0dedaafa7490c8d59bb800d97a93c2f30",
+  "declaration_source_fingerprint": "5572a68ef3a4ea818dd4beb7b7ff23ce1e659609d7daf771c5fdcde06aabd2cd",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -83130,6 +83130,215 @@
       "applicability_note": "Library counts use the existing declared quantity result slot and fixed Scry/Surveil owners; inline Scry definition followed by fixed draw preserves one quantity binding and printed action order. Unsupported quantities remain residual."
     },
     {
+      "capability_id": "quantity_expression.public_player_count",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_tyranid_opponent_quantity_resolves_after_actual_concession_and_replays",
+      "official_rule_ids": [
+        "102.2",
+        "102.3",
+        "104.3a",
+        "608.2h",
+        "800.4",
+        "800.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Strict original Tyranid Invasion is cast while three opponents remain; actual confirmed concession leaves two before resolution, yielding two complete tokens. Private projection, unauthorized and malformed-command rollback, pending save/load and pre-action replay agree."
+    },
+    {
+      "capability_id": "quantity_expression.public_player_count",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_tyranid_opponent_quantity_resolves_after_actual_concession_and_replays",
+      "official_rule_ids": [
+        "102.2",
+        "102.3",
+        "104.3a",
+        "608.2h",
+        "800.4",
+        "800.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Strict original Tyranid Invasion is cast while three opponents remain; actual confirmed concession leaves two before resolution, yielding two complete tokens. Private projection, unauthorized and malformed-command rollback, pending save/load and pre-action replay agree."
+    },
+    {
+      "capability_id": "quantity_expression.public_player_count",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_typed_dynamic_characteristics.PublicCollectionReductionTests.test_opponent_quantity_domain_and_roster_subsets_fail_closed",
+      "official_rule_ids": [
+        "102.2",
+        "102.3",
+        "104.3a",
+        "608.2h",
+        "800.4",
+        "800.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed public roster counts exclude the controller and departed seats without object/hidden reads; subset exploration, malformed/domain inputs, withdrawn dependencies and fixed-three mutation distinguish the intended result."
+    },
+    {
+      "capability_id": "quantity_expression.public_player_count",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_tyranid_opponent_quantity_resolves_after_actual_concession_and_replays",
+      "official_rule_ids": [
+        "102.2",
+        "102.3",
+        "104.3a",
+        "608.2h",
+        "800.4",
+        "800.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Strict original Tyranid Invasion is cast while three opponents remain; actual confirmed concession leaves two before resolution, yielding two complete tokens. Private projection, unauthorized and malformed-command rollback, pending save/load and pre-action replay agree."
+    },
+    {
+      "capability_id": "quantity_expression.public_player_count",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountCompilerTests.test_opponent_token_quantity_has_explicit_player_count_dependency",
+      "official_rule_ids": [
+        "102.2",
+        "102.3",
+        "104.3a",
+        "608.2h",
+        "800.4",
+        "800.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed public roster counts exclude the controller and departed seats without object/hidden reads; subset exploration, malformed/domain inputs, withdrawn dependencies and fixed-three mutation distinguish the intended result."
+    },
+    {
+      "capability_id": "quantity_expression.public_player_count",
+      "evidence_class": "negative",
+      "test_id": "tests.test_typed_dynamic_characteristics.PublicCollectionReductionTests.test_opponent_quantity_domain_and_roster_subsets_fail_closed",
+      "official_rule_ids": [
+        "102.2",
+        "102.3",
+        "104.3a",
+        "608.2h",
+        "800.4",
+        "800.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed public roster counts exclude the controller and departed seats without object/hidden reads; subset exploration, malformed/domain inputs, withdrawn dependencies and fixed-three mutation distinguish the intended result."
+    },
+    {
+      "capability_id": "quantity_expression.public_player_count",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_tyranid_opponent_quantity_resolves_after_actual_concession_and_replays",
+      "official_rule_ids": [
+        "102.2",
+        "102.3",
+        "104.3a",
+        "608.2h",
+        "800.4",
+        "800.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Strict original Tyranid Invasion is cast while three opponents remain; actual confirmed concession leaves two before resolution, yielding two complete tokens. Private projection, unauthorized and malformed-command rollback, pending save/load and pre-action replay agree."
+    },
+    {
+      "capability_id": "quantity_expression.public_player_count",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_query_effect_amounts.PublicQueryEffectAmountCompilerTests.test_opponent_token_quantity_has_explicit_player_count_dependency",
+      "official_rule_ids": [
+        "102.2",
+        "102.3",
+        "104.3a",
+        "608.2h",
+        "800.4",
+        "800.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed public roster counts exclude the controller and departed seats without object/hidden reads; subset exploration, malformed/domain inputs, withdrawn dependencies and fixed-three mutation distinguish the intended result."
+    },
+    {
+      "capability_id": "quantity_expression.public_player_count",
+      "evidence_class": "positive",
+      "test_id": "tests.test_typed_dynamic_characteristics.PublicCollectionReductionTests.test_opponent_quantity_reads_current_public_roster_without_object_or_hidden_reads",
+      "official_rule_ids": [
+        "102.2",
+        "102.3",
+        "104.3a",
+        "608.2h",
+        "800.4",
+        "800.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Typed public roster counts exclude the controller and departed seats without object/hidden reads; subset exploration, malformed/domain inputs, withdrawn dependencies and fixed-three mutation distinguish the intended result."
+    },
+    {
+      "capability_id": "quantity_expression.public_player_count",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_tyranid_opponent_quantity_resolves_after_actual_concession_and_replays",
+      "official_rule_ids": [
+        "102.2",
+        "102.3",
+        "104.3a",
+        "608.2h",
+        "800.4",
+        "800.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Strict original Tyranid Invasion is cast while three opponents remain; actual confirmed concession leaves two before resolution, yielding two complete tokens. Private projection, unauthorized and malformed-command rollback, pending save/load and pre-action replay agree."
+    },
+    {
+      "capability_id": "quantity_expression.public_player_count",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_tyranid_opponent_quantity_resolves_after_actual_concession_and_replays",
+      "official_rule_ids": [
+        "102.2",
+        "102.3",
+        "104.3a",
+        "608.2h",
+        "800.4",
+        "800.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Strict original Tyranid Invasion is cast while three opponents remain; actual confirmed concession leaves two before resolution, yielding two complete tokens. Private projection, unauthorized and malformed-command rollback, pending save/load and pre-action replay agree."
+    },
+    {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "interaction",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
@@ -125627,5 +125836,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "950b7d4fcaa664fa7600ee151f8a570eaaa809354db98872c77efccfdae2e771"
+  "fingerprint": "54ac75a2187744250ab544979892d2c00b5f02f35bf212477ef0499cfbc1b3c5"
 }

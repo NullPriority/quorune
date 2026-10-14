@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 253,
+  "registry_version": 254,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -238,6 +238,83 @@
     }
   ],
   "capabilities": [
+    {
+      "id": "quantity_expression.public_player_count",
+      "version": 1,
+      "official_rules": [
+        "102.2",
+        "102.3",
+        "104.3a",
+        "608.2h",
+        "800.4",
+        "800.4a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Current public opponent count for represented free-for-all quantity consumers, excluding the controller and departed players.",
+        "inputs": [
+          "current player roster and in-game flags",
+          "known resolving controller",
+          "versioned public quantity"
+        ],
+        "outputs": [
+          "resolution-time opponent count",
+          "fixed arithmetic over the same count"
+        ],
+        "exclusions": [
+          "unrepresented team formats",
+          "unknown opponent predicates",
+          "hidden queries",
+          "unsupported result consumers or siblings"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.dynamic_characteristics.current_opponent_count",
+        "quorune.dynamic_characteristics.query_characteristic_count",
+        "quorune.characteristic_fragments.characteristic_quantity_capabilities"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Withdrawn public-roster authority prevents whole-program exact admission of counted results.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "A fixed-three mutation fails the empty and departed-roster contrasts.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_opponent_quantity_reads_current_public_roster_without_object_or_hidden_reads",
+        "test_opponent_token_quantity_has_explicit_player_count_dependency",
+        "test_original_tyranid_opponent_quantity_resolves_after_actual_concession_and_replays"
+      ],
+      "negative_tests": [
+        "test_opponent_quantity_domain_and_roster_subsets_fail_closed",
+        "test_opponent_token_quantity_has_explicit_player_count_dependency",
+        "test_original_tyranid_opponent_quantity_resolves_after_actual_concession_and_replays"
+      ],
+      "interaction_tests": [
+        "test_original_tyranid_opponent_quantity_resolves_after_actual_concession_and_replays"
+      ],
+      "multiplayer_tests": [
+        "test_original_tyranid_opponent_quantity_resolves_after_actual_concession_and_replays"
+      ],
+      "privacy_tests": [
+        "test_original_tyranid_opponent_quantity_resolves_after_actual_concession_and_replays"
+      ],
+      "replay_tests": [
+        "test_original_tyranid_opponent_quantity_resolves_after_actual_concession_and_replays"
+      ]
+    },
     {
       "id": "state_query.devotion.current",
       "version": 1,

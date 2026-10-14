@@ -2883,6 +2883,38 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
 
 
 class AdditionalConditionalModifierRuntimeTests(unittest.TestCase):
+    def test_original_tyranid_opponent_quantity_resolves_after_actual_concession_and_replays(self):
+        session=self.session(3631401);engine=session.engine
+        spell=self.add(engine,'Tyranid Invasion',zone='hand',ref='public-opponent-tokens')
+        self.assert_whole_admission(spell.printed_name)
+        action=self.ready(session,spell,{'C':3,'G':1})
+        self.checkpoint(session)
+        before=session.state.to_dict()
+        self.assertFalse(session.act('pilot:D',{'action_id':action['id'],'pay':'auto'}).ok)
+        self.assertEqual(before,session.state.to_dict())
+        accepted=session.act('pilot:A',{'action_id':action['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        while session.state.priority_player!='C':
+            result=session.act(session.pending_principals()[0],{'action_id':'pass'})
+            self.assertTrue(result.ok,result.summary)
+        self.replay(session,load=True)
+        before=session.state.to_dict()
+        self.assertFalse(session.act('pilot:C',{'action_id':'concede'}).ok)
+        self.assertEqual(before,session.state.to_dict())
+        conceded=session.act('pilot:C',{'action_id':'concede','choices':{'confirm_concede':True}})
+        self.assertTrue(conceded.ok,conceded.summary)
+        self.assertFalse(session.state.players['C'].in_game)
+        self.resolve(session)
+        tokens=[card for card in session.state.cards.values() if card.controller=='A' and card.zone=='battlefield' and card.object_kind=='token']
+        self.assertEqual(2,len(tokens))
+        for token in tokens:
+            self.assertEqual(3,engine._numeric_stat(token.object_id,'power'))
+            self.assertEqual(3,engine._numeric_stat(token.object_id,'toughness'))
+            self.assertIn('Trample',engine._effective_card_data(token)['keywords'])
+        for seat in 'BD':
+            self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+        self.replay(session)
+
     def test_token_doubler_owner_diagnostic_respects_controller_and_current_ability_removal(self):
         """Engine-owner contrast; the Master witness supplies native command evidence."""
         from quorune.continuous_effects import ContinuousEffect,ContinuousEffectOrigin,ContinuousEffectDuration,ContinuousObjectIdentity,ContinuousOperation

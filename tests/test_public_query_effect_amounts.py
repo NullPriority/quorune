@@ -170,6 +170,26 @@ class PublicQuantityBoundaryTests(unittest.TestCase):
 
 
 class PublicQueryEffectAmountCompilerTests(unittest.TestCase):
+    def test_opponent_token_quantity_has_explicit_player_count_dependency(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.capabilities import CapabilityRegistry
+        import copy
+        text='Create a number of 3/3 green Warrior creature tokens with trample equal to the number of opponents you have.'
+        record=query_amount_record(text,suffix=363140001)
+        program=self.compile(record)
+        self.assertEqual((),program.residuals)
+        ability=next(a for a in program.abilities if a.effects)
+        self.assertIn('quantity_expression.public_player_count',ability.capability_dependencies)
+        trusted=compile_card_program(_NoRulingsDatabase(),record,capability_registry=self.capabilities,
+            capability_profile='commander_review',trust_level='trusted')
+        self.assertTrue(bind_card_program_runtime(trusted,capability_registry=self.capabilities,
+            profile='commander_review')['strict_capability_ready'])
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        changed=copy.deepcopy(raw)
+        next(row for row in changed['capabilities'] if row['id']=='quantity_expression.public_player_count').update(status='blocked',blockers=['public roster producer withdrawn'])
+        self.assertNotEqual('exact',compile_oracle_card(record,capability_registry=CapabilityRegistry(changed)).status)
+
     def test_fixed_token_doubler_is_compiled_with_current_source_ability_coverage(self):
         from quorune.card_programs import bind_card_program_runtime
         text='If an effect would create one or more tokens under your control, it creates twice that many of those tokens instead.'

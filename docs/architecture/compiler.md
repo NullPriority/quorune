@@ -702,6 +702,12 @@ Mandatory controller-scoped token doubling lowers to the already registered
 quantity replacement descriptor with current ability coverage. Unknown values,
 definitions, linked results and wider doubling scopes remain residual.
 
+Public quantities also recognize “opponents you have” through an explicit
+versioned roster scope. It has no object predicate, hidden-zone fields or
+counter relation. Static and effect consumers declare the public player-count
+producer separately; team formats and unrepresented opponent predicates retain
+their existing support boundaries.
+
 Fixed static declaration composition reuses the declaration requirement and
 restriction parsers rather than adding a combat validator. A source-local line
 may contain either one exact fragment or one of the closed two-fragment

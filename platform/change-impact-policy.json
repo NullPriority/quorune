@@ -1479,6 +1479,8 @@
     {
       "id": "public-query-effect-amount-contract",
       "patterns": [
+        "quorune/characteristic_fragments.py",
+        "quorune/dynamic_characteristics.py",
         "quorune/compiler/static_runtime_nodes.py",
         "quorune/compiler/token_templates.py",
         "quorune/token_creation.py",

@@ -249,6 +249,8 @@ def query_characteristic_quantity(
     definition_extensions: bool = False,
 ) -> CharacteristicQuantitySpec | None:
     text = " ".join(value.strip().rstrip(".").split())
+    if text.casefold() in {'opponent you have','opponents you have'}:
+        return CharacteristicQuantitySpec(scope=CharacteristicQuantityScope.CONTROLLER_OPPONENT_COUNT,schema_version=2)
     reduced = collection_quantity(
         text, compile_count=lambda objects: query_characteristic_quantity(
             objects, source_name=source_name, definition_extensions=definition_extensions,

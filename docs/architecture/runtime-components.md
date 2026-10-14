@@ -403,6 +403,13 @@ definition payloads retain their existing codecs. Hidden characteristic reads,
 power/toughness aggregates and open or nested
 arithmetic remain unsupported rather than using an incorrect boundary.
 
+`controller_opponent_count` is a versioned public-roster quantity for the
+represented free-for-all profiles. It counts other players still in the game
+without reading objects or hidden zones. Resolution amounts use the locked
+controller and current roster at the instruction boundary; a departed player
+does not remain in a count captured when the spell was announced. The same
+quantity supports fixed arithmetic and independently exact result owners.
+
 Devotion has a distinct versioned quantity reduction through `devotion.py`.
 Under CR 700.5a it reads current mana costs after copy, control and text effects,
 before later characteristic changes. One hybrid symbol contributes once to a

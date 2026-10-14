@@ -88,6 +88,37 @@ def _permanent(text: str, *, suffix: int, name: str) -> CardRecord:
 
 
 class PublicCollectionReductionTests(unittest.TestCase):
+    def test_opponent_quantity_domain_and_roster_subsets_fail_closed(self):
+        from quorune.object_predicate import ObjectQuerySpec
+        quantity=query_characteristic_quantity('opponents you have',source_name='Generic Source')
+        payload=quantity.to_dict()
+        for field,value in (('schema_version',1),('query',ObjectQuerySpec(zones=('hand',)).to_dict()),('exclude_source',True),('counter_name','charge')):
+            with self.assertRaises(CharacteristicFragmentError):CharacteristicQuantitySpec.from_dict({**payload,field:value})
+        for bits in range(8):
+            players={'A':SimpleNamespace(in_game=True),**{seat:SimpleNamespace(in_game=bool(bits&(1<<index))) for index,seat in enumerate('BCD')}}
+            host=SimpleNamespace(state=SimpleNamespace(players=players))
+            self.assertEqual(bits.bit_count(),query_characteristic_count(host,SimpleNamespace(controller='A'),quantity))
+        with self.assertRaises(ValueError):query_characteristic_count(host,SimpleNamespace(controller='unknown'),quantity)
+        players['B'].in_game=None
+        with self.assertRaises(ValueError):query_characteristic_count(host,SimpleNamespace(controller='A'),quantity)
+        with mock.patch('quorune.dynamic_characteristics.current_opponent_count',return_value=3):
+            players['B'].in_game=False
+            with self.assertRaises(AssertionError):self.assertEqual(0,query_characteristic_count(host,SimpleNamespace(controller='A'),quantity))
+
+    def test_opponent_quantity_reads_current_public_roster_without_object_or_hidden_reads(self):
+        quantity=query_characteristic_quantity('opponents you have',source_name='Generic Source')
+        self.assertIsNotNone(quantity)
+        self.assertEqual('controller_opponent_count',quantity.scope.value)
+        players={seat:SimpleNamespace(in_game=True) for seat in 'ABCD'}
+        host=SimpleNamespace(state=SimpleNamespace(players=players))
+        source=SimpleNamespace(controller='A',ref='SOURCE')
+        self.assertEqual(3,query_characteristic_count(host,source,quantity))
+        players['C'].in_game=False
+        self.assertEqual(2,query_characteristic_count(host,source,quantity))
+        adjusted=query_characteristic_value('two plus the number of opponents you have',source_name='Generic Source')
+        self.assertEqual(4,query_characteristic_count(host,source,adjusted))
+        self.assertEqual(quantity,CharacteristicQuantitySpec.from_dict(quantity.to_dict()))
+
     def test_devotion_dependency_is_required_by_characteristic_effect_and_mana_consumers(self):
         import copy,json
         from quorune.rules.capabilities import CapabilityRegistry

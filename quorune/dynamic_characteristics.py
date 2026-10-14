@@ -49,6 +49,8 @@ def query_characteristic_count(
         return sum(query_characteristic_count(host, source, term,
                    _enforce_static_component_applicability=_enforce_static_component_applicability)
                    for term in quantity.terms) * quantity.multiplier + quantity.offset
+    if quantity.scope is CharacteristicQuantityScope.CONTROLLER_OPPONENT_COUNT:
+        return current_opponent_count(host.state,source.controller) * quantity.multiplier + quantity.offset
     if quantity.reduction is CharacteristicQuantityReduction.DEVOTION:
         from .devotion import current_devotion
         return current_devotion(host,source.controller,quantity.mana_colors,
@@ -140,6 +142,13 @@ def query_characteristic_count(
         if object_matches_query(row, quantity.query):
             matched.append((row, effective, candidate.object_kind if quantity.schema_version == 2 else ""))
     return reduce_public_quantity(matched, quantity.reduction, mana_colors=quantity.mana_colors) * quantity.multiplier + quantity.offset
+
+
+def current_opponent_count(state,controller: str) -> int:
+    """Count active opponents in the represented free-for-all roster."""
+    if controller not in state.players or any(type(player.in_game) is not bool for player in state.players.values()):
+        raise ValueError('A public opponent quantity requires a known controller and current roster')
+    return sum(player.in_game for seat,player in state.players.items() if seat!=controller)
 
 
 def _has_card_type(
