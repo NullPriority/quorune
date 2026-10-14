@@ -67,6 +67,16 @@ references create no target announcement. Fixed and committed scalar amounts
 retain their own producer schemas. A context reference without this mechanic,
 an ambiguous event or an unsupported result tail prevents exact admission.
 
+Fixed event-addressed draw and life results use the same public occurrence
+boundary with a separate `resolution.event_player.fixed_result` dependency.
+Spell casts, draws and public scry/surveil events supply their player field;
+discard occurrences supply `previous_controller`. Damage must guarantee a
+player recipient and source attacks supply their defending player. Program
+promotion checks the event against its context reference. Optional, variable
+and linked multi-clause results remain outside this family. Fixed affected-player
+discard registration separately verifies its closed choice shape and declared
+dependencies before promoting a generated program.
+
 ## Lifecycle and participation
 
 1. The compiler or reviewed program emits a versioned component descriptor.

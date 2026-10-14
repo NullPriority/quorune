@@ -152,4 +152,10 @@ def is_closed_fixed_bound_discard_program(program):
     return program.event == "step.begin" and guarantees(program.event_condition, "step", "upkeep")
 
 
+def is_closed_fixed_affected_player_discard_program(program):
+    required=fixed_affected_player_discard_node_capabilities(effects=program.effects,
+        target_schema=program.target_schema,mechanic_ids=program.coverage)
+    return bool(required) and set(required).issubset(program.capability_dependencies)
+
+
 __all__ = ["fixed_affected_player_discard_node_capabilities", "fixed_controller_discard_node_capabilities", "fixed_context_player_discard_node_capabilities", "is_closed_fixed_bound_discard_program"]

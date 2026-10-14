@@ -98,7 +98,7 @@ from .token_creation_capability_shapes import (
     fixed_token_creation_covered_mechanics,
     fixed_token_creation_node_capabilities,
 )
-from .mill_capability_shapes import fixed_mill_node_capabilities,mill_covered_mechanics
+from .event_player_result_shapes import fixed_mill_node_capabilities,fixed_event_player_result_node_capabilities,fixed_event_player_result_covered_mechanics
 from .tap_state_event_capability_shapes import tap_state_event_player_node_capabilities
 from .scheduled_player_shapes import scheduled_player_node_capabilities
 from .impulse_access_capability_shapes import (
@@ -1091,7 +1091,7 @@ def _targeted_effect_capabilities(
         fixed_context_player_discard_node_capabilities,
         fixed_affected_player_sacrifice_node_capabilities,
         fixed_entry_return_node_capabilities,
-        fixed_mill_node_capabilities, tap_state_event_player_node_capabilities, scheduled_player_node_capabilities,
+        fixed_mill_node_capabilities, tap_state_event_player_node_capabilities, scheduled_player_node_capabilities,fixed_event_player_result_node_capabilities,
         fixed_impulse_access_node_capabilities,
         fixed_monarch_node_capabilities,
         source_transform_node_capabilities,
@@ -1375,7 +1375,7 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
         mechanic
         for capability, mechanic in mapping.items()
         if capability in supplied
-    } | fixed_library_search_covered_mechanics(supplied) | _control_covered_mechanics(supplied) | mill_covered_mechanics(supplied)
+    } | fixed_library_search_covered_mechanics(supplied) | _control_covered_mechanics(supplied) | fixed_event_player_result_covered_mechanics(supplied)
 
 
 def _control_covered_mechanics(supplied: set[str]) -> set[str]:

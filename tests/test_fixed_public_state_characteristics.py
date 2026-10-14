@@ -2957,6 +2957,51 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
 
 
 class AdditionalConditionalModifierRuntimeTests(unittest.TestCase):
+    def test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay(self):
+        session=self.session(3632201);engine=session.engine
+        observer=self.add(engine,'Forced Fruition',seat='B',ref='event-result-fruition')
+        spell=self.add(engine,'Generic Boolean Life Response',zone='hand',ref='event-result-fruition-cast')
+        # Refill a larger known initial library so this witness exercises seven draws.
+        for index in range(8):self.add(engine,'Generic Bound Plains',zone='library',ref='event-result-extra-library-'+str(index))
+        self.assert_whole_admission(observer.printed_name)
+        offered=self.ready(session,spell,{})
+        hand=len(session.state.players['A'].zones['hand'])
+        self.checkpoint(session)
+        before=session.state.to_dict()
+        self.assertFalse(session.act('pilot:C',{'action_id':offered['id'],'targets':['A'],'pay':'auto'}).ok)
+        self.assertEqual(before,session.state.to_dict())
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'targets':['A'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.replay(session,load=True);self.resolve(session)
+        self.assertEqual(hand+6,len(session.state.players['A'].zones['hand']))
+        for seat in 'BCD':self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+        self.replay(session)
+        session=self.session(3632202);engine=session.engine
+        observer=self.add(engine,"Liliana's Caress",ref='event-result-caress')
+        discard=self.add(engine,'Mind Rot',zone='hand',ref='event-result-caress-discard')
+        self.assert_whole_admission(observer.printed_name)
+        offered=self.ready(session,discard,{'C':2,'B':1})
+        life=session.state.players['B'].life
+        self.checkpoint(session)
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'targets':['B'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);decision=self.resolve(session)
+        self.assertIsNotNone(decision)
+        cards=[session.state.cards[oid].ref for oid in session.state.players['B'].zones['hand'][:2]]
+        accepted=session.act('pilot:B',{'action_id':'choose','cards':cards})
+        self.assertTrue(accepted.ok,accepted.summary);self.replay(session,load=True)
+        for _ in range(12):
+            if session.state.pending_decision is not None and session.state.pending_decision.kind=='trigger.order':
+                pending=[item for batch in session.state.pending_trigger_batches for item in batch.items]
+                accepted=session.act('pilot:A',{'action_id':'order','triggers':[item.ref for item in pending]})
+                self.assertTrue(accepted.ok,accepted.summary)
+            decision=self.resolve(session)
+            if not session.state.stack and not session.state.pending_trigger_batches:break
+        self.assertEqual(life-4,session.state.players['B'].life,
+            {'decision':session.state.pending_decision.kind if session.state.pending_decision else None,
+             'stack':[(item.kind,item.semantic_key) for item in session.state.stack],
+             'discarded':[(ref,next(c.zone for c in session.state.cards.values() if c.ref==ref)) for ref in cards]})
+        for seat in 'BCD':self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+        self.replay(session)
+
     def test_original_event_bound_mill_uses_damaged_player_defender_and_caster_with_replay(self):
         from quorune.model import CombatState
         for index,name in enumerate(('Shriekgeist','Crosstown Courier','Nemesis of Reason')):

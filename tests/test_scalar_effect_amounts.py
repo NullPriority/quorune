@@ -44,6 +44,62 @@ def scalar_record(text: str, *, type_line: str = "Creature — Goblin") -> CardR
 
 
 class ScalarEffectAmountCompilerTests(unittest.TestCase):
+    def test_fixed_affected_player_discard_generated_registration_promotes_closed_owner(self):
+        from quorune.semantics import SemanticRegistry
+        record=scalar_record('Target player discards two cards.',type_line='Sorcery')
+        registry=SemanticRegistry()
+        register_generated_programs(type('NoRulings',(),{'rulings':lambda self,record:()})(),registry,(record,),
+            trust_level='provisional',capability_registry=self.registry,capability_profile='commander_review',
+            promote_exact_effect_programs=True)
+        programs=registry.programs_for_oracle(record.oracle_id)
+        self.assertTrue(programs);self.assertTrue(all(p.trust_level=='trusted' for p in programs))
+        from dataclasses import replace
+        from quorune.rules.affected_player_discard_capability_shapes import is_closed_fixed_affected_player_discard_program
+        self.assertTrue(is_closed_fixed_affected_player_discard_program(programs[0]))
+        changed={**programs[0].effects[0],'players':['$context.player']}
+        self.assertFalse(is_closed_fixed_affected_player_discard_program(replace(programs[0],effects=(changed,))))
+        self.assertFalse(is_closed_fixed_affected_player_discard_program(replace(programs[0],capability_dependencies=(),capability_closure=None)))
+
+    def test_fixed_event_player_result_partial_domain_dependency_and_omission_fail_closed(self):
+        import json
+        from quorune.rules.capabilities import CapabilityRegistry
+        text='Whenever an opponent casts a spell, that player draws seven cards.'
+        self.assertEqual('exact',self.compile(text).status)
+        for cap in ('resolution.event_player.fixed_result','zone.draw.library_to_hand'):
+            raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+            next(row for row in raw['capabilities'] if row['id']==cap).update(status='blocked',blockers=['event player result withdrawn'])
+            self.assertNotEqual('exact',compile_oracle_card(scalar_record(text),capability_registry=CapabilityRegistry(raw)).status)
+        for altered in (
+            'Whenever this creature deals damage, that player loses 1 life.',
+            'Whenever a creature attacks, defending player loses 1 life.',
+            text+' Exile that card.',
+        ):
+            self.assertNotEqual('exact',self.compile(altered).status)
+        with mock.patch('quorune.compiler.event_player_results.fixed_event_player_result',return_value=None):
+            self.assertNotEqual('exact',self.compile(text).status)
+        from dataclasses import replace
+        from quorune.oracle_ir import generated_programs
+        from quorune.rules.event_player_result_shapes import is_closed_fixed_event_player_result_program
+        program=generated_programs(type('NoRulings',(),{'rulings':lambda self,record:()})(),scalar_record(text),
+            capability_registry=self.registry,capability_profile='commander_review',trust_level='trusted')[0]
+        self.assertTrue(is_closed_fixed_event_player_result_program(program))
+        self.assertFalse(is_closed_fixed_event_player_result_program(replace(program,event='permanent.enter')))
+
+    def test_fixed_event_player_draw_and_life_results_are_untargeted_and_bound(self):
+        cases=(
+            ('Whenever an opponent casts a spell, that player draws seven cards.','draw','$context.player','count',7),
+            ('Whenever an opponent discards a card, that player loses 2 life.','lose_life','$context.previous_controller','amount',2),
+            ('Whenever this creature deals combat damage to a player, that player loses 1 life.','lose_life','$context.target','amount',1),
+        )
+        for text,operation,player,field,amount in cases:
+            ir=self.compile(text)
+            self.assertEqual('exact',ir.status,ir.material_residuals)
+            node=ir.faces[0].nodes[0]
+            self.assertIsNone(node.target_schema)
+            self.assertEqual(operation,node.effects[0]['op']);self.assertEqual(player,node.effects[0]['player'])
+            self.assertEqual(amount,node.effects[0][field])
+            self.assertIn('resolution.event_player.fixed_result',node.capability_dependencies)
+
     def test_source_damage_amount_dependency_and_scalar_handoff_fail_closed(self):
         import json
         from quorune.rules.capabilities import CapabilityRegistry

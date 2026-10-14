@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Bind fixed draw and life results to sealed event players, and register closed
+  affected-player discard programs through their existing capability owner.
+
 - Address untargeted mill instructions to typed damage recipients, defending
   players and spell casters through the existing mill result owner.
 

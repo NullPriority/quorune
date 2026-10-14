@@ -10059,6 +10059,26 @@
     },
     {
       "capability_id": "choice.affected_player.fixed_discard",
+      "evidence_class": "negative",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_fixed_affected_player_discard_generated_registration_promotes_closed_owner",
+      "official_rule_ids": [
+        "101.4",
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.9a",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Provisional generated registration promotes only the existing closed fixed affected-player discard shape and declared dependency set. Forged context recipients and withdrawn direct dependencies reject; actual original MindRot supplies the Caress discard action."
+    },
+    {
+      "capability_id": "choice.affected_player.fixed_discard",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_affected_player_discards.FixedAffectedPlayerDiscardCompilerTests.test_fixed_affected_player_discards_compile_across_contexts_and_modes",
       "official_rule_ids": ["101.4", "115.1", "608.2b", "608.2c", "701.9", "701.9a", "701.9c"],
@@ -10088,6 +10108,26 @@
       "official_rule_ids": ["101.4", "115.1", "608.2b", "608.2c", "701.9", "701.9a", "701.9c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Resolve the emitted controller-only descriptor through one private choice and canonical simultaneous discard commit."
+    },
+    {
+      "capability_id": "choice.affected_player.fixed_discard",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_fixed_affected_player_discard_generated_registration_promotes_closed_owner",
+      "official_rule_ids": [
+        "101.4",
+        "115.1",
+        "608.2b",
+        "608.2c",
+        "701.9",
+        "701.9a",
+        "701.9c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Provisional generated registration promotes only the existing closed fixed affected-player discard shape and declared dependency set. Forged context recipients and withdrawn direct dependencies reject; actual original MindRot supplies the Caress discard action."
     },
     {
       "capability_id": "choice.affected_player.fixed_discard",
@@ -54556,6 +54596,186 @@
       "official_rule_ids": ["115.1", "115.3", "608.2b", "608.2c", "608.2h", "611.2a", "611.2c", "614.16", "616.1", "122.1", "122.6"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Fail a stale logical target continuation before the replacement-aware counter and later persistent keyword result can partially mutate state."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay",
+      "official_rule_ids": [
+        "113.7a",
+        "120.3a",
+        "121.2",
+        "603.2",
+        "603.3d",
+        "608.2c",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Forced Fruition observes a foreign caster and drawsseven for thatcasterprivately; originalLilianaCaress observes realMindRotdiscard2 and causestwodistinctlife2losses todiscarder. Complete consequences, wrongprincipalrollback, pendingload andfullreplay agree."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay",
+      "official_rule_ids": [
+        "113.7a",
+        "120.3a",
+        "121.2",
+        "603.2",
+        "603.3d",
+        "608.2c",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Forced Fruition observes a foreign caster and drawsseven for thatcasterprivately; originalLilianaCaress observes realMindRotdiscard2 and causestwodistinctlife2losses todiscarder. Complete consequences, wrongprincipalrollback, pendingload andfullreplay agree."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_fixed_event_player_result_partial_domain_dependency_and_omission_fail_closed",
+      "official_rule_ids": [
+        "113.7a",
+        "120.3a",
+        "121.2",
+        "603.2",
+        "603.3d",
+        "608.2c",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing fixeddraw/lifeleaf binds only independentlyguaranteed eventplayerfields, closeswholeprogramwithfinecap/resultowner, rejects partial/newobject/globalattack/unrestricteddamage domains and killsomittedlowering."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay",
+      "official_rule_ids": [
+        "113.7a",
+        "120.3a",
+        "121.2",
+        "603.2",
+        "603.3d",
+        "608.2c",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Forced Fruition observes a foreign caster and drawsseven for thatcasterprivately; originalLilianaCaress observes realMindRotdiscard2 and causestwodistinctlife2losses todiscarder. Complete consequences, wrongprincipalrollback, pendingload andfullreplay agree."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "negative",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_fixed_event_player_result_partial_domain_dependency_and_omission_fail_closed",
+      "official_rule_ids": [
+        "113.7a",
+        "120.3a",
+        "121.2",
+        "603.2",
+        "603.3d",
+        "608.2c",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing fixeddraw/lifeleaf binds only independentlyguaranteed eventplayerfields, closeswholeprogramwithfinecap/resultowner, rejects partial/newobject/globalattack/unrestricteddamage domains and killsomittedlowering."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay",
+      "official_rule_ids": [
+        "113.7a",
+        "120.3a",
+        "121.2",
+        "603.2",
+        "603.3d",
+        "608.2c",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Forced Fruition observes a foreign caster and drawsseven for thatcasterprivately; originalLilianaCaress observes realMindRotdiscard2 and causestwodistinctlife2losses todiscarder. Complete consequences, wrongprincipalrollback, pendingload andfullreplay agree."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_fixed_event_player_draw_and_life_results_are_untargeted_and_bound",
+      "official_rule_ids": [
+        "113.7a",
+        "120.3a",
+        "121.2",
+        "603.2",
+        "603.3d",
+        "608.2c",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Existing fixeddraw/lifeleaf binds only independentlyguaranteed eventplayerfields, closeswholeprogramwithfinecap/resultowner, rejects partial/newobject/globalattack/unrestricteddamage domains and killsomittedlowering."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay",
+      "official_rule_ids": [
+        "113.7a",
+        "120.3a",
+        "121.2",
+        "603.2",
+        "603.3d",
+        "608.2c",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Forced Fruition observes a foreign caster and drawsseven for thatcasterprivately; originalLilianaCaress observes realMindRotdiscard2 and causestwodistinctlife2losses todiscarder. Complete consequences, wrongprincipalrollback, pendingload andfullreplay agree."
+    },
+    {
+      "capability_id": "resolution.event_player.fixed_result",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay",
+      "official_rule_ids": [
+        "113.7a",
+        "120.3a",
+        "121.2",
+        "603.2",
+        "603.3d",
+        "608.2c",
+        "701.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Forced Fruition observes a foreign caster and drawsseven for thatcasterprivately; originalLilianaCaress observes realMindRotdiscard2 and causestwodistinctlife2losses todiscarder. Complete consequences, wrongprincipalrollback, pendingload andfullreplay agree."
     },
     {
       "capability_id": "stack.counter.controller_payment",

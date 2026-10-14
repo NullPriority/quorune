@@ -10479,6 +10479,23 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual original Shriekgeist/Crosstown Courier combat mills the damaged player, Nemesis of Reason attack mills its defending player, and Memory Erosion observes a real foreign cast and mills that caster. Untargeted instructions retain their sealed recipient while pending load and full pre-action replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay",
+      "piece_ids": [
+        "capability.choice.affected_player.fixed_discard",
+        "capability.resolution.event_player.fixed_result",
+        "capability.zone.draw.library_to_hand"
+      ],
+      "capability_ids": [
+        "choice.affected_player.fixed_discard",
+        "resolution.event_player.fixed_result",
+        "zone.draw.library_to_hand"
+      ],
+      "interaction_order": 3,
+      "assertion": "Original Forced Fruition observes a real foreign cast and draws seven privately for the caster. Original Lilianas Caress observes actual MindRot discard choices by B and creates two complete life-loss consequences on that discarder using the sealed previous controller. Registration, wrongprincipal rollback, pendingload and full preaction replay agree."
     }
   ]
 }

@@ -2603,6 +2603,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/event_player_results.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/exert_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -8672,6 +8687,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/event_player_result_shapes.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/event_subscriptions.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -13311,5 +13340,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "87c0f502eff0fcf1fa55c14aecac6eff097a7e1530d69eaffcd5cb65e94cf48a"
+  "fingerprint": "1192ec94ac3018255313b6a2c5cb39083f42f4a547654f4b931fa456c65a3bce"
 }
