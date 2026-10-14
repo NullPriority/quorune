@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 271,
+  "registry_version": 272,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -4987,24 +4987,104 @@
     },
     {
       "id": "zone.entry.tapped_state",
-      "version": 1,
-      "official_rules": ["119.4", "614.1c", "614.1d", "614.12", "614.12a", "616.1", "616.1e", "616.1f"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 2,
+      "official_rules": [
+        "119.4",
+        "614.1c",
+        "614.1d",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "616.1e",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Resolve source-pinned unconditional, opponent-count, controlled-basic-type, optional-life, and controller-wide land entry tap-state replacements from one exact-face immutable zone-change snapshot before any life or zone mutation.",
-        "inputs": ["exact selected CardProgram face", "prospective battlefield characteristics", "destination controller", "current opponent count", "current controlled basic land types", "explicit optional life-payment choice", "complete applicable replacement snapshot"],
-        "outputs": ["resolved battlefield tapped state", "nonreplaceable typed life-payment plan", "seat-scoped applied-effect journal", "versioned land-entry continuation", "canonical zone-transition commit"],
-        "exclusions": ["dynamic or nonintegral life payments", "combined simultaneous entry payments", "optional tap-state choices outside the represented shock-land form", "entry conditions outside opponent count and controlled basic land types", "effects that inspect hidden information", "historical records lacking source-pinned CardPrograms except the narrow Game Record v3 adapter"]
+        "inputs": [
+          "exact selected CardProgram face",
+          "prospective battlefield characteristics",
+          "destination controller",
+          "current opponent count",
+          "current controlled basic land types",
+          "explicit optional life-payment choice",
+          "complete applicable replacement snapshot"
+        ],
+        "outputs": [
+          "resolved battlefield tapped state",
+          "nonreplaceable typed life-payment plan",
+          "seat-scoped applied-effect journal",
+          "versioned land-entry continuation",
+          "canonical zone-transition commit"
+        ],
+        "exclusions": [
+          "dynamic or nonintegral life payments",
+          "combined simultaneous entry payments",
+          "optional tap-state choices outside the represented shock-land form",
+          "entry conditions outside opponent count and controlled basic land types",
+          "effects that inspect hidden information",
+          "historical records lacking source-pinned CardPrograms except the narrow Game Record v3 adapter"
+        ]
       },
       "dependencies": [],
-      "implementation_components": ["quorune.compiler.entry_state_templates.static_entry_state_handler", "quorune.semantic_runtime.entry_state.EntryStateReplacementHandler", "quorune.semantic_runtime.zone_replacements.capture_zone_change_replacement_snapshot", "quorune.life_state.prepare_life_payment", "quorune.zone_transitions.ZoneTransitionOwner", "quorune.land_entry_coordination.execute_land_entry_priority_action"],
-      "positive_tests": ["test_closed_entry_state_family_lowers_to_capability_closed_programs", "test_land_entry_families_use_typed_snapshot_and_canonical_owners", "test_selected_mdfc_face_isolates_entry_program"],
-      "negative_tests": ["test_entry_state_near_misses_remain_residual", "test_entry_preparation_rejects_stale_face_and_rolls_back", "test_only_historical_v3_registry_can_use_entry_adapter"],
-      "interaction_tests": ["test_ambient_untapped_competes_with_intrinsic_tapped_entry", "test_shock_land_payment_is_prepared_before_zone_mutation", "test_agadeem_residual_spell_stays_fail_closed_while_land_entry_executes", "test_fell_faces_compose_target_revalidation_with_tapped_entry", "test_glasswing_faces_compose_aura_attachment_with_tapped_entry", "test_lotus_field_composes_tapped_entry_with_controller_relative_hexproof", "test_ruins_of_oran_rief_composes_tapped_entry_with_characteristic_target"],
-      "multiplayer_tests": ["test_bond_land_uses_current_four_player_opponent_count", "test_competing_land_entry_choice_is_private_and_replayable"],
-      "privacy_tests": ["test_competing_land_entry_choice_is_private_and_replayable"],
-      "replay_tests": ["test_competing_land_entry_choice_is_private_and_replayable"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "implementation_components": [
+        "quorune.compiler.entry_state_templates.static_entry_state_handler",
+        "quorune.land_entry_coordination.execute_land_entry_priority_action",
+        "quorune.life_state.prepare_life_payment",
+        "quorune.semantic_runtime.entry_state.EntryStateReplacementHandler",
+        "quorune.semantic_runtime.self_entry_counters.SelfTappedCounterEntryHandler",
+        "quorune.semantic_runtime.zone_replacements.capture_zone_change_replacement_snapshot",
+        "quorune.zone_transitions.ZoneTransitionOwner"
+      ],
+      "positive_tests": [
+        "test_closed_entry_state_family_lowers_to_capability_closed_programs",
+        "test_compound_tapped_entry_counters_form_one_complete_replacement",
+        "test_land_entry_families_use_typed_snapshot_and_canonical_owners",
+        "test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
+        "test_selected_mdfc_face_isolates_entry_program"
+      ],
+      "negative_tests": [
+        "test_compound_tapped_counter_entry_schema_dependency_and_omission_fail_closed",
+        "test_entry_preparation_rejects_stale_face_and_rolls_back",
+        "test_entry_state_near_misses_remain_residual",
+        "test_only_historical_v3_registry_can_use_entry_adapter",
+        "test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay"
+      ],
+      "interaction_tests": [
+        "test_agadeem_residual_spell_stays_fail_closed_while_land_entry_executes",
+        "test_ambient_untapped_competes_with_intrinsic_tapped_entry",
+        "test_fell_faces_compose_target_revalidation_with_tapped_entry",
+        "test_glasswing_faces_compose_aura_attachment_with_tapped_entry",
+        "test_lotus_field_composes_tapped_entry_with_controller_relative_hexproof",
+        "test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
+        "test_ruins_of_oran_rief_composes_tapped_entry_with_characteristic_target",
+        "test_shock_land_payment_is_prepared_before_zone_mutation"
+      ],
+      "multiplayer_tests": [
+        "test_bond_land_uses_current_four_player_opponent_count",
+        "test_competing_land_entry_choice_is_private_and_replayable",
+        "test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay"
+      ],
+      "privacy_tests": [
+        "test_competing_land_entry_choice_is_private_and_replayable",
+        "test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay"
+      ],
+      "replay_tests": [
+        "test_competing_land_entry_choice_is_private_and_replayable",
+        "test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "not_applicable",
       "dependency_fail_closed_rationale": "This bounded family depends only on the shared zone replacement, zone transition, face binding, and nonreplaceable life-payment owners.",
       "implementation_mutation_status": "killed",
@@ -5829,24 +5909,107 @@
     },
     {
       "id": "counter.producer.fixed_self_entry",
-      "version": 1,
-      "official_rules": ["122.1", "122.1a", "122.1b", "122.6", "614.1c", "614.12", "614.16", "616.1"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 2,
+      "official_rules": [
+        "122.1",
+        "122.1a",
+        "122.1b",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Compile and resolve mandatory self-relative Oracle sentences that make the source enter with one fixed positive count of one canonical counter kind through the canonical zone-change and counter-placement replacement tree.",
-        "inputs": ["one whole source-spanned fixed self-entry sentence", "the same physical source proposing battlefield entry", "one count from one through ten", "one canonical counter name", "prospective battlefield controller", "complete represented zone and counter replacement set"],
-        "outputs": ["one mandatory all-zone affected-object entry replacement", "one nested replacement-aware fixed counter placement", "affected-controller ordering", "canonical replacement journal", "seat-scoped suspension", "exact replay"],
-        "exclusions": ["variable, zero, negative, nonintegral, or greater-than-ten counts", "optional, conditional, additional, repeated, distributed, or linked entry counters", "multiple counter kinds in one sentence", "counter placement on another object", "enters-with-counters keyword reminder text owned by a distinct keyword compiler", "granted, copied, or removed abilities outside the shared typed ability-presence boundary", "unrepresented zone, counter, or keyword-counter characteristic families"]
+        "inputs": [
+          "one whole source-spanned fixed self-entry sentence",
+          "the same physical source proposing battlefield entry",
+          "one count from one through ten",
+          "one canonical counter name",
+          "prospective battlefield controller",
+          "complete represented zone and counter replacement set"
+        ],
+        "outputs": [
+          "one mandatory all-zone affected-object entry replacement",
+          "one nested replacement-aware fixed counter placement",
+          "affected-controller ordering",
+          "canonical replacement journal",
+          "seat-scoped suspension",
+          "exact replay"
+        ],
+        "exclusions": [
+          "variable, zero, negative, nonintegral, or greater-than-ten counts",
+          "optional, conditional, additional, repeated, distributed, or linked entry counters",
+          "multiple counter kinds in one sentence",
+          "counter placement on another object",
+          "enters-with-counters keyword reminder text owned by a distinct keyword compiler",
+          "granted, copied, or removed abilities outside the shared typed ability-presence boundary",
+          "unrepresented zone, counter, or keyword-counter characteristic families"
+        ]
       },
-      "dependencies": ["counter.placement.quantity_replacement"],
-      "implementation_components": ["quorune.compiler.fixed_self_entry_counter_templates.FixedSelfEntryCounterTemplate", "quorune.compiler.runtime_templates.static_runtime_template", "quorune.compiler.static_runtime_nodes.static_runtime_node", "quorune.semantic_runtime.self_entry_counters.SelfEntryCounterHandler", "quorune.semantic_runtime.zone_replacements.capture_zone_change_replacement_snapshot", "quorune.semantic_runtime.zone_replacements.commit_counter_events_from_resolution"],
-      "positive_tests": ["test_fixed_self_entry_counter_grammar_is_closed", "test_fixed_self_entry_component_uses_the_shared_presence_marker", "test_actual_trusted_copy_gets_its_own_entry_counters_and_replays"],
-      "negative_tests": ["test_unsupported_fixed_self_entry_forms_and_dependency_fail_closed", "test_fixed_self_entry_compiler_mutation_is_killed", "test_fixed_self_entry_runtime_mutation_is_killed", "test_stale_fixed_self_entry_aborts_without_card_mutation"],
-      "interaction_tests": ["test_fixed_self_entry_keyword_counter_uses_shared_characteristics", "test_fixed_self_entry_uses_quantity_replacement", "test_actual_source_only_ability_removal_is_not_copied", "test_actual_copied_group_counter_replacement_choice_is_atomic_and_replays"],
-      "multiplayer_tests": ["test_four_player_fixed_self_entry_is_private_and_replays_exactly"],
-      "privacy_tests": ["test_four_player_fixed_self_entry_is_private_and_replays_exactly", "test_actual_copied_group_counter_replacement_choice_is_atomic_and_replays"],
-      "replay_tests": ["test_four_player_fixed_self_entry_is_private_and_replays_exactly", "test_actual_trusted_copy_gets_its_own_entry_counters_and_replays", "test_actual_copied_group_counter_replacement_choice_is_atomic_and_replays"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "counter.placement.quantity_replacement"
+      ],
+      "implementation_components": [
+        "quorune.compiler.fixed_self_entry_counter_templates.FixedSelfEntryCounterTemplate",
+        "quorune.compiler.runtime_templates.static_runtime_template",
+        "quorune.compiler.static_runtime_nodes.static_runtime_node",
+        "quorune.semantic_runtime.self_entry_counters.SelfEntryCounterHandler",
+        "quorune.semantic_runtime.self_entry_counters.SelfTappedCounterEntryHandler",
+        "quorune.semantic_runtime.zone_replacements.capture_zone_change_replacement_snapshot",
+        "quorune.semantic_runtime.zone_replacements.commit_counter_events_from_resolution"
+      ],
+      "positive_tests": [
+        "test_actual_trusted_copy_gets_its_own_entry_counters_and_replays",
+        "test_compound_tapped_entry_counters_form_one_complete_replacement",
+        "test_fixed_self_entry_component_uses_the_shared_presence_marker",
+        "test_fixed_self_entry_counter_grammar_is_closed",
+        "test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay"
+      ],
+      "negative_tests": [
+        "test_compound_tapped_counter_entry_schema_dependency_and_omission_fail_closed",
+        "test_fixed_self_entry_compiler_mutation_is_killed",
+        "test_fixed_self_entry_runtime_mutation_is_killed",
+        "test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
+        "test_stale_fixed_self_entry_aborts_without_card_mutation",
+        "test_unsupported_fixed_self_entry_forms_and_dependency_fail_closed"
+      ],
+      "interaction_tests": [
+        "test_actual_copied_group_counter_replacement_choice_is_atomic_and_replays",
+        "test_actual_source_only_ability_removal_is_not_copied",
+        "test_fixed_self_entry_keyword_counter_uses_shared_characteristics",
+        "test_fixed_self_entry_uses_quantity_replacement",
+        "test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay"
+      ],
+      "multiplayer_tests": [
+        "test_four_player_fixed_self_entry_is_private_and_replays_exactly",
+        "test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay"
+      ],
+      "privacy_tests": [
+        "test_actual_copied_group_counter_replacement_choice_is_atomic_and_replays",
+        "test_four_player_fixed_self_entry_is_private_and_replays_exactly",
+        "test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay"
+      ],
+      "replay_tests": [
+        "test_actual_copied_group_counter_replacement_choice_is_atomic_and_replays",
+        "test_actual_trusted_copy_gets_its_own_entry_counters_and_replays",
+        "test_four_player_fixed_self_entry_is_private_and_replays_exactly",
+        "test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "The source-spanned entry replacement remains material whenever the canonical counter quantity-replacement owner or any separately required keyword-counter characteristic capability is unavailable.",
       "implementation_mutation_status": "killed",

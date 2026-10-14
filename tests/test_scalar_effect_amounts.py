@@ -44,6 +44,34 @@ def scalar_record(text: str, *, type_line: str = "Creature — Goblin") -> CardR
 
 
 class ScalarEffectAmountCompilerTests(unittest.TestCase):
+    def test_compound_tapped_counter_entry_schema_dependency_and_omission_fail_closed(self):
+        import json
+        from quorune.semantic_runtime.self_entry_counters import SelfTappedCounterEntryHandler
+        from quorune.rules.capabilities import CapabilityRegistry
+        text='This land enters tapped with two charge counters on it.'
+        descriptor=self.compile(text,type_line='Land').faces[0].nodes[0].handlers[0]
+        handler=SelfTappedCounterEntryHandler();handler.validate(descriptor)
+        subject=SimpleNamespace(destination_controller='A',object_ref='entering')
+        effect=handler.subject_replacement_effect(descriptor,subject=subject,component_id='printed-ability')
+        self.assertEqual(2,len(effect.operations))
+        for altered in ({**descriptor,'schema_version':True},{**descriptor,'schema_version':1},{**descriptor,'amount':True}):
+            with self.assertRaises(ValueError):handler.validate(altered)
+        for body in (text+' Draw a card.',text.replace('two','X')):
+            self.assertNotEqual('exact',self.compile(body,type_line='Land').status)
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        next(row for row in raw['capabilities'] if row['id']=='zone.entry.tapped_state').update(status='blocked',blockers=['compoundentrytapauthoritywithdrawn'])
+        self.assertNotEqual('exact',compile_oracle_card(scalar_record(text,type_line='Land'),capability_registry=CapabilityRegistry(raw)).status)
+
+    def test_compound_tapped_entry_counters_form_one_complete_replacement(self):
+        text='This land enters tapped with two charge counters on it.'
+        ir=self.compile(text,type_line='Land')
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        self.assertEqual(1,len(ir.faces[0].nodes))
+        descriptor=ir.faces[0].nodes[0].handlers[0]
+        self.assertEqual('replacement.zone.self-tapped-counter-entry.v2',descriptor['handler_id'])
+        self.assertEqual(2,descriptor['amount'])
+        self.assertIn('zone.entry.tapped_state',ir.faces[0].nodes[0].capability_dependencies)
+
     def test_selected_tap_mana_dependency_and_malformed_choice_fail_closed(self):
         import json
         from quorune.rules.capabilities import CapabilityRegistry

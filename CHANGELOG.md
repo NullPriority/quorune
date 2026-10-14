@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Apply tapped entry and fixed counters together as one printed replacement
+  ability, retaining canonical zone and counter replacement ordering.
+
 - Produce fixed mana through typed selected tap costs, preserving fixed counts,
   source exclusion and the distinction between source and selected-creature tapping.
 

@@ -2957,6 +2957,43 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
 
 
 class AdditionalConditionalModifierRuntimeTests(unittest.TestCase):
+    def test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay(self):
+        session=self.session(3633201);engine=session.engine
+        land=self.add(engine,'Vivid Creek',zone='hand',ref='compound-vivid-land')
+        spell=self.add(engine,'Essence Harvest',zone='hand',ref='compound-vivid-spell')
+        self.assert_whole_admission(land.printed_name)
+        setup=self.add(engine,'Generic Boolean Life Response',zone='hand',ref='compound-vivid-setup')
+        self.ready(session,setup,{'C':2})
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        offered=next(row for row in actions if row['id'].startswith('play-land:') and row.get('card')==land.ref)
+        self.checkpoint(session);before=session.state.to_dict()
+        self.assertFalse(session.act('pilot:C',{'action_id':offered['id']}).ok);self.assertEqual(before,session.state.to_dict())
+        accepted=session.act('pilot:A',{'action_id':offered['id']});self.assertTrue(accepted.ok,accepted.summary)
+        current=session.state.cards[land.object_id]
+        self.assertTrue(current.tapped);self.assertEqual(2,current.counters.get('charge',0))
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        self.assertFalse(any(row['id'].startswith('activate:'+land.ref+':') for row in actions))
+        self.replay(session,load=True)
+        for _ in range(200):
+            if session.state.active_player=='A' and not session.state.cards[land.object_id].tapped:break
+            decision=session.state.pending_decision
+            if decision.kind=='priority':command={'action_id':'pass'}
+            elif decision.kind=='combat.attackers':command={'action_id':'attack','attackers':{}}
+            elif decision.kind=='cleanup.discard':
+                cards=[session.state.cards[oid].ref for oid in session.state.players[decision.actors[0]].zones['hand'][:decision.payload_by_actor[decision.actors[0]]['count']]]
+                command={'action_id':'discard','cards':cards}
+            else:self.fail('UnexpectednativeVividturn '+decision.kind)
+            accepted=session.act(session.pending_principals()[0],command);self.assertTrue(accepted.ok,accepted.summary)
+        else:self.fail('Vividlandnativeuntapdidnotoccur')
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        ability=next(ability for ability in engine._activated_abilities(session.state.cards[land.object_id]) if ability.source_counter_removal_cost is not None)
+        offered=next(row for row in actions if row['id']=='activate:'+land.ref+':'+ability.ability_id)
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'mana_output':{'B':1}})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.assertTrue(session.state.cards[land.object_id].tapped);self.assertEqual(1,session.state.cards[land.object_id].counters.get('charge',0))
+        self.assertEqual(1,session.state.players['A'].mana_pool['B'])
+        self.replay(session,load=True);self.replay(session)
+
     def test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay(self):
         session=self.session(3633101);engine=session.engine
         source=self.add(engine,'Heritage Druid',zone='hand',ref='tap-mana-heritage')

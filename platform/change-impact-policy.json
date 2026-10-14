@@ -1619,7 +1619,9 @@
         "test_state_based_actions",
         "test_sunburst_rules",
         "test_unleash_rules",
-        "test_zone_replacement_compiler"
+        "test_zone_replacement_compiler",
+        "test_scalar_effect_amounts",
+        "test_fixed_public_state_characteristics"
       ],
       "test_suites": [
         "casting-costs-mana",
@@ -2763,7 +2765,9 @@
         "test_rules_scheduler",
         "test_turn_history_rules",
         "test_typed_ability_fragments",
-        "test_zone_trigger_events"
+        "test_zone_trigger_events",
+        "test_scalar_effect_amounts",
+        "test_fixed_public_state_characteristics"
       ]
     },
     {

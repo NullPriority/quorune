@@ -129,6 +129,14 @@ limits the source tap symbol but does not prevent paying a selected-creature tap
 Legacy versions retain their output and result-rider schemas. Multiple selected
 costs, discard or exile costs, and selected-cost result riders remain excluded.
 
+The compound self-entry handler combines a fixed tapped state and fixed counter
+creation in one replacement effect for complete “enters tapped with” wording.
+It inherits the ordinary self-entry counter validation and submits both
+operations to the existing zone replacement transaction. The printed ability
+therefore keeps one ordering identity. Legacy fixed self-entry counters retain
+their original untapped-state contract, and variable or linked entry tails
+remain outside this compound family.
+
 ## Lifecycle and participation
 
 1. The compiler or reviewed program emits a versioned component descriptor.

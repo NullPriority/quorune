@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass,replace
 from typing import Any, Mapping, Sequence
 
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
@@ -13,6 +13,7 @@ from ..entry_counter_model import (
 from ..entry_counters import dynamic_entry_counter_amount
 from ..replacement_effects import (
     CreateAffectedObjectCounter,
+    SetField,
     ReplacementClass,
     ReplacementEffect,
 )
@@ -85,7 +86,7 @@ class SelfEntryCounterHandler:
         )
         if descriptor["handler_id"] != self.handler_id:
             raise SemanticNodeError("Self-entry counter handler identity changed")
-        if descriptor["schema_version"] != self.schema_version:
+        if type(descriptor['schema_version']) is not int or descriptor["schema_version"] != self.schema_version:
             raise SemanticNodeError("Unsupported self-entry counter schema version")
         if descriptor["event"] != self.event:
             raise SemanticNodeError("Self-entry counter must handle zone changes")
@@ -144,6 +145,17 @@ class SelfEntryCounterHandler:
                 f"{node.counter_name} counter(s)"
             ),
         )
+
+
+@dataclass(frozen=True,slots=True)
+class SelfTappedCounterEntryHandler(SelfEntryCounterHandler):
+    handler_id: str='replacement.zone.self-tapped-counter-entry.v2'
+    schema_version: int=2
+    capability_dependencies: tuple[str,...]=('counter.placement.quantity_replacement','zone.entry.tapped_state')
+
+    def subject_replacement_effect(self,descriptor,*,subject,component_id):
+        effect=super(SelfTappedCounterEntryHandler,self).subject_replacement_effect(descriptor,subject=subject,component_id=component_id)
+        return replace(effect,operations=(SetField('tapped',True),*effect.operations))
 
 
 @dataclass(frozen=True, slots=True)

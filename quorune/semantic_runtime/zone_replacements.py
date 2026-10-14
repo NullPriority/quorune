@@ -55,6 +55,7 @@ from .self_entry_counters import (
     DynamicSelfEntryCounterHandler,
     program_static_component_is_applicable,
     SelfEntryCounterHandler,
+    SelfTappedCounterEntryHandler,
     subject_dynamic_self_entry_amounts,
 )
 from .conditional_entry_counters import ConditionalSelfEntryCounterHandler
@@ -444,6 +445,7 @@ def default_zone_change_replacement_registry(
             MadnessDiscardReplacementHandler(),
             DynamicSelfEntryCounterHandler(),
             SelfEntryCounterHandler(),
+            SelfTappedCounterEntryHandler(),
             SunburstEntryCounterHandler(),
             ZoneDestinationReplacementHandler(),
         )

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "edb3cca2dbaa979f2e0becf42b11e9ee7080ec1863d9a4aec6eb47677f8ebfb8",
-  "declaration_source_fingerprint": "0b756d57a703d43177003b8764be4761a2d236c3e3dd2858c120ed39eab0aec3",
+  "registry_fingerprint": "a89f3d07a16df023a95f7207fe68b322fdfb6eaf9b599e858850814c59483955",
+  "declaration_source_fingerprint": "7c167bf80d987565923cd9b4082d55b08a910c0d9eed4f59b751d507407e8a12",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -56480,6 +56480,27 @@
     },
     {
       "capability_id": "counter.producer.fixed_self_entry",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.1b",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalVividCreekactuallandplay enters tappedwith2chargecounters beforemanaoffers. Nativepassesnextturnuntap thenacceptedselectedcoloractivationremoves1andaddsB. Wrongprincipalrollback,privateprojection,pendingload/fullreplayagree."
+    },
+    {
+      "capability_id": "counter.producer.fixed_self_entry",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_copied_self_entry_counters.CopiedSelfEntryCounterActionTests.test_actual_copied_group_counter_replacement_choice_is_atomic_and_replays",
       "official_rule_ids": [
@@ -56519,6 +56540,27 @@
         "commander_review"
       ],
       "applicability_note": "Resolve one fixed self-entry counter in four-player state and route competing replacement ordering only to the destination controller."
+    },
+    {
+      "capability_id": "counter.producer.fixed_self_entry",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.1b",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalVividCreekactuallandplay enters tappedwith2chargecounters beforemanaoffers. Nativepassesnextturnuntap thenacceptedselectedcoloractivationremoves1andaddsB. Wrongprincipalrollback,privateprojection,pendingload/fullreplayagree."
     },
     {
       "capability_id": "counter.producer.fixed_self_entry",
@@ -56585,6 +56627,48 @@
     },
     {
       "capability_id": "counter.producer.fixed_self_entry",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.1b",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalVividCreekactuallandplay enters tappedwith2chargecounters beforemanaoffers. Nativepassesnextturnuntap thenacceptedselectedcoloractivationremoves1andaddsB. Wrongprincipalrollback,privateprojection,pendingload/fullreplayagree."
+    },
+    {
+      "capability_id": "counter.producer.fixed_self_entry",
+      "evidence_class": "negative",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_compound_tapped_counter_entry_schema_dependency_and_omission_fail_closed",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.1b",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Onefullprintedcompoundentryability lowersone replacement combiningSetFieldtapped andtypedCreateAffectedObjectCounter. Boolschema/amount,wrongversion,variablecounter/partialtail andwithdrawntapauthority reject;V1fixedcountercontractretained."
+    },
+    {
+      "capability_id": "counter.producer.fixed_self_entry",
       "evidence_class": "positive",
       "test_id": "tests.test_copied_self_entry_counters.CopiedSelfEntryCounterActionTests.test_actual_trusted_copy_gets_its_own_entry_counters_and_replays",
       "official_rule_ids": [
@@ -56648,6 +56732,48 @@
     },
     {
       "capability_id": "counter.producer.fixed_self_entry",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.1b",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalVividCreekactuallandplay enters tappedwith2chargecounters beforemanaoffers. Nativepassesnextturnuntap thenacceptedselectedcoloractivationremoves1andaddsB. Wrongprincipalrollback,privateprojection,pendingload/fullreplayagree."
+    },
+    {
+      "capability_id": "counter.producer.fixed_self_entry",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_compound_tapped_entry_counters_form_one_complete_replacement",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.1b",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Onefullprintedcompoundentryability lowersone replacement combiningSetFieldtapped andtypedCreateAffectedObjectCounter. Boolschema/amount,wrongversion,variablecounter/partialtail andwithdrawntapauthority reject;V1fixedcountercontractretained."
+    },
+    {
+      "capability_id": "counter.producer.fixed_self_entry",
       "evidence_class": "privacy",
       "test_id": "tests.test_copied_self_entry_counters.CopiedSelfEntryCounterActionTests.test_actual_copied_group_counter_replacement_choice_is_atomic_and_replays",
       "official_rule_ids": [
@@ -56687,6 +56813,27 @@
         "commander_review"
       ],
       "applicability_note": "Project pending entry replacement options only to the destination controller without exposing authoritative physical object identity to other seats."
+    },
+    {
+      "capability_id": "counter.producer.fixed_self_entry",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.1b",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalVividCreekactuallandplay enters tappedwith2chargecounters beforemanaoffers. Nativepassesnextturnuntap thenacceptedselectedcoloractivationremoves1andaddsB. Wrongprincipalrollback,privateprojection,pendingload/fullreplayagree."
     },
     {
       "capability_id": "counter.producer.fixed_self_entry",
@@ -56750,6 +56897,27 @@
         "commander_review"
       ],
       "applicability_note": "Replay the destination-controller replacement order, fixed self-entry event, and final counter result to the same authoritative state hash."
+    },
+    {
+      "capability_id": "counter.producer.fixed_self_entry",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
+      "official_rule_ids": [
+        "122.1",
+        "122.1a",
+        "122.1b",
+        "122.6",
+        "614.1c",
+        "614.12",
+        "614.16",
+        "616.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalVividCreekactuallandplay enters tappedwith2chargecounters beforemanaoffers. Nativepassesnextturnuntap thenacceptedselectedcoloractivationremoves1andaddsB. Wrongprincipalrollback,privateprojection,pendingload/fullreplayagree."
     },
     {
       "capability_id": "counter.producer.fixed_self_entry",
@@ -125254,6 +125422,27 @@
     {
       "capability_id": "zone.entry.tapped_state",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
+      "official_rule_ids": [
+        "119.4",
+        "614.1c",
+        "614.1d",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "616.1e",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalVividCreekactuallandplay enters tappedwith2chargecounters beforemanaoffers. Nativepassesnextturnuntap thenacceptedselectedcoloractivationremoves1andaddsB. Wrongprincipalrollback,privateprojection,pendingload/fullreplayagree."
+    },
+    {
+      "capability_id": "zone.entry.tapped_state",
+      "evidence_class": "interaction",
       "test_id": "tests.test_typed_land_entry_participation.TypedLandEntryRuntimeTests.test_agadeem_residual_spell_stays_fail_closed_while_land_entry_executes",
       "official_rule_ids": [
         "119.4",
@@ -125380,6 +125569,27 @@
     {
       "capability_id": "zone.entry.tapped_state",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
+      "official_rule_ids": [
+        "119.4",
+        "614.1c",
+        "614.1d",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "616.1e",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalVividCreekactuallandplay enters tappedwith2chargecounters beforemanaoffers. Nativepassesnextturnuntap thenacceptedselectedcoloractivationremoves1andaddsB. Wrongprincipalrollback,privateprojection,pendingload/fullreplayagree."
+    },
+    {
+      "capability_id": "zone.entry.tapped_state",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_typed_land_entry_participation.TypedLandEntryRuntimeTests.test_bond_land_uses_current_four_player_opponent_count",
       "official_rule_ids": [
         "119.4",
@@ -125418,6 +125628,48 @@
         "commander_review"
       ],
       "applicability_note": "Remove the typed entry-state compiler lowering and prove exact trust fails closed instead of consulting Oracle text at runtime."
+    },
+    {
+      "capability_id": "zone.entry.tapped_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
+      "official_rule_ids": [
+        "119.4",
+        "614.1c",
+        "614.1d",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "616.1e",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalVividCreekactuallandplay enters tappedwith2chargecounters beforemanaoffers. Nativepassesnextturnuntap thenacceptedselectedcoloractivationremoves1andaddsB. Wrongprincipalrollback,privateprojection,pendingload/fullreplayagree."
+    },
+    {
+      "capability_id": "zone.entry.tapped_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_compound_tapped_counter_entry_schema_dependency_and_omission_fail_closed",
+      "official_rule_ids": [
+        "119.4",
+        "614.1c",
+        "614.1d",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "616.1e",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Onefullprintedcompoundentryability lowersone replacement combiningSetFieldtapped andtypedCreateAffectedObjectCounter. Boolschema/amount,wrongversion,variablecounter/partialtail andwithdrawntapauthority reject;V1fixedcountercontractretained."
     },
     {
       "capability_id": "zone.entry.tapped_state",
@@ -125485,6 +125737,48 @@
     {
       "capability_id": "zone.entry.tapped_state",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
+      "official_rule_ids": [
+        "119.4",
+        "614.1c",
+        "614.1d",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "616.1e",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalVividCreekactuallandplay enters tappedwith2chargecounters beforemanaoffers. Nativepassesnextturnuntap thenacceptedselectedcoloractivationremoves1andaddsB. Wrongprincipalrollback,privateprojection,pendingload/fullreplayagree."
+    },
+    {
+      "capability_id": "zone.entry.tapped_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_compound_tapped_entry_counters_form_one_complete_replacement",
+      "official_rule_ids": [
+        "119.4",
+        "614.1c",
+        "614.1d",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "616.1e",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Onefullprintedcompoundentryability lowersone replacement combiningSetFieldtapped andtypedCreateAffectedObjectCounter. Boolschema/amount,wrongversion,variablecounter/partialtail andwithdrawntapauthority reject;V1fixedcountercontractretained."
+    },
+    {
+      "capability_id": "zone.entry.tapped_state",
+      "evidence_class": "positive",
       "test_id": "tests.test_typed_land_entry_participation.TypedLandEntryRuntimeTests.test_land_entry_families_use_typed_snapshot_and_canonical_owners",
       "official_rule_ids": [
         "119.4",
@@ -125527,6 +125821,27 @@
     {
       "capability_id": "zone.entry.tapped_state",
       "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
+      "official_rule_ids": [
+        "119.4",
+        "614.1c",
+        "614.1d",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "616.1e",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalVividCreekactuallandplay enters tappedwith2chargecounters beforemanaoffers. Nativepassesnextturnuntap thenacceptedselectedcoloractivationremoves1andaddsB. Wrongprincipalrollback,privateprojection,pendingload/fullreplayagree."
+    },
+    {
+      "capability_id": "zone.entry.tapped_state",
+      "evidence_class": "privacy",
       "test_id": "tests.test_typed_land_entry_participation.TypedLandEntryRuntimeTests.test_competing_land_entry_choice_is_private_and_replayable",
       "official_rule_ids": [
         "119.4",
@@ -125544,6 +125859,27 @@
         "commander_review"
       ],
       "applicability_note": "Issue a competing land-entry replacement decision only to the affected land's controller after rolling back the land play."
+    },
+    {
+      "capability_id": "zone.entry.tapped_state",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay",
+      "official_rule_ids": [
+        "119.4",
+        "614.1c",
+        "614.1d",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "616.1e",
+        "616.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalVividCreekactuallandplay enters tappedwith2chargecounters beforemanaoffers. Nativepassesnextturnuntap thenacceptedselectedcoloractivationremoves1andaddsB. Wrongprincipalrollback,privateprojection,pendingload/fullreplayagree."
     },
     {
       "capability_id": "zone.entry.tapped_state",
@@ -130602,5 +130938,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "54a41715241e1a2276b570741910a1705a524033d07b3717abf0a1db17d6b90e"
+  "fingerprint": "1abaf5010330b6d4da730ea6a7a460ed623e58a99fa5646f98e39d94e5c28776"
 }

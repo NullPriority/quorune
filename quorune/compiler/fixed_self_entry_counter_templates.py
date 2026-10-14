@@ -92,6 +92,13 @@ def fixed_self_entry_counter_handler(
 ) -> tuple[str, Mapping[str, Any], tuple[str, ...]] | None:
     """Lower one source-relative mandatory fixed entry-counter sentence."""
 
+    compound=re.fullmatch(r'(?P<subject>.+?) enters tapped with (?P<body>.+)',text.strip(),re.I)
+    if compound is not None:
+        compiled=fixed_self_entry_counter_handler(compound['subject']+' enters with '+compound['body'],source_name=source_name)
+        if compiled is None:return None
+        return ('fixed-self-tapped-counter-entry-v2',{**compiled[1],
+            'handler_id':'replacement.zone.self-tapped-counter-entry.v2','schema_version':2},
+            (*compiled[2],'zone.entry.tapped_state'))
     match = _ENTRY.fullmatch(" ".join(text.strip().split()))
     if match is None:
         return None
