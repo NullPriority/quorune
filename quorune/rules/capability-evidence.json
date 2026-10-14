@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "b6411be5e587848b36dab8d273ab6f71c9ff7e8696cb90154be9cc638f77f454",
-  "declaration_source_fingerprint": "0f678585db9ca3d53ca236ba13c4aba2d1b289b93e587203a853039899e05960",
+  "registry_fingerprint": "e941642bf64ab6c44736e921fa99312563defe04431b1e4670dfa6d231f2a253",
+  "declaration_source_fingerprint": "df23745c51e69cb5392987e3e871d480ec4c10350dc08988368d5001f2e63085",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -106492,6 +106492,38 @@
     },
     {
       "capability_id": "trigger.condition.fixed_public_state",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_history_condition_closure.SourceNumericConditionTrustedActionTests.test_original_angelic_sell_sword_checks_attack_power_again_after_response",
+      "official_rule_ids": [
+        "109.5",
+        "603.4",
+        "608.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Angelic Sell-Sword strictly admits, casts and creates its complete1/1Mercenary token. Its actual attack at power6 draws once; original Snakeform response lowers currentpower before resolution and removes the intervening trigger. Private draws, pending save/load and pre-action replay retain normal trust. This whole-original witness is separate from unfinished Role creation."
+    },
+    {
+      "capability_id": "trigger.condition.fixed_public_state",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_public_history_condition_closure.SourceNumericConditionTrustedActionTests.test_trusted_source_numeric_condition_rechecks_after_real_growth_and_blink",
+      "official_rule_ids": [
+        "109.5",
+        "603.4",
+        "608.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed source power/toughness predicates use full current effective characteristics at discovery and resolution, preserving unavailable numeric facts. Generic compiler-authored trusted carrier casts and attacks; actual Giant Growth or Cloudshift responses invalidate old triggers without a source counter. Bounds, unrelated private hands, unauthorized rollback, pending save/load/full replay and static-layer feedback exclusion are asserted. This prerequisite witness is distinct from original Role token closure."
+    },
+    {
+      "capability_id": "trigger.condition.fixed_public_state",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_public_state_intervening_condition_rechecks_locked_controller_and_replays",
       "official_rule_ids": [
@@ -106540,6 +106572,38 @@
     },
     {
       "capability_id": "trigger.condition.fixed_public_state",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_history_condition_closure.SourceNumericConditionTrustedActionTests.test_original_angelic_sell_sword_checks_attack_power_again_after_response",
+      "official_rule_ids": [
+        "109.5",
+        "603.4",
+        "608.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Angelic Sell-Sword strictly admits, casts and creates its complete1/1Mercenary token. Its actual attack at power6 draws once; original Snakeform response lowers currentpower before resolution and removes the intervening trigger. Private draws, pending save/load and pre-action replay retain normal trust. This whole-original witness is separate from unfinished Role creation."
+    },
+    {
+      "capability_id": "trigger.condition.fixed_public_state",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_public_history_condition_closure.SourceNumericConditionTrustedActionTests.test_trusted_source_numeric_condition_rechecks_after_real_growth_and_blink",
+      "official_rule_ids": [
+        "109.5",
+        "603.4",
+        "608.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed source power/toughness predicates use full current effective characteristics at discovery and resolution, preserving unavailable numeric facts. Generic compiler-authored trusted carrier casts and attacks; actual Giant Growth or Cloudshift responses invalidate old triggers without a source counter. Bounds, unrelated private hands, unauthorized rollback, pending save/load/full replay and static-layer feedback exclusion are asserted. This prerequisite witness is distinct from original Role token closure."
+    },
+    {
+      "capability_id": "trigger.condition.fixed_public_state",
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_public_state_intervening_if_dependency_and_parser_fail_closed",
       "official_rule_ids": [
@@ -106553,6 +106617,22 @@
         "commander_review"
       ],
       "applicability_note": "Remove the shared condition parser and require the representative source lines to return to material trigger residuals."
+    },
+    {
+      "capability_id": "trigger.condition.fixed_public_state",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_public_history_condition_closure.PublicHistoryConditionCompilerTests.test_source_numeric_intervening_condition_preserves_characteristic_and_bound",
+      "official_rule_ids": [
+        "109.5",
+        "603.4",
+        "608.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed source power/toughness predicates use full current effective characteristics at discovery and resolution, preserving unavailable numeric facts. Generic compiler-authored trusted carrier casts and attacks; actual Giant Growth or Cloudshift responses invalidate old triggers without a source counter. Bounds, unrelated private hands, unauthorized rollback, pending save/load/full replay and static-layer feedback exclusion are asserted. This prerequisite witness is distinct from original Role token closure."
     },
     {
       "capability_id": "trigger.condition.fixed_public_state",
@@ -106621,6 +106701,22 @@
     {
       "capability_id": "trigger.condition.fixed_public_state",
       "evidence_class": "negative",
+      "test_id": "tests.test_public_history_condition_closure.PublicHistoryConditionCompilerTests.test_source_numeric_intervening_condition_preserves_characteristic_and_bound",
+      "official_rule_ids": [
+        "109.5",
+        "603.4",
+        "608.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed source power/toughness predicates use full current effective characteristics at discovery and resolution, preserving unavailable numeric facts. Generic compiler-authored trusted carrier casts and attacks; actual Giant Growth or Cloudshift responses invalidate old triggers without a source counter. Bounds, unrelated private hands, unauthorized rollback, pending save/load/full replay and static-layer feedback exclusion are asserted. This prerequisite witness is distinct from original Role token closure."
+    },
+    {
+      "capability_id": "trigger.condition.fixed_public_state",
+      "evidence_class": "negative",
       "test_id": "tests.test_public_history_condition_closure.PublicHistoryConditionCompilerTests.test_unrepresented_history_conditions_remain_residual",
       "official_rule_ids": [
         "109.5",
@@ -106633,6 +106729,22 @@
         "commander_review"
       ],
       "applicability_note": "Descend, kicked, dynamic, negative and mixed-condition grammars remain residual."
+    },
+    {
+      "capability_id": "trigger.condition.fixed_public_state",
+      "evidence_class": "negative",
+      "test_id": "tests.test_public_history_condition_closure.PublicHistoryConditionRuntimeContractTests.test_source_numeric_query_distinguishes_missing_stat_and_threshold",
+      "official_rule_ids": [
+        "109.5",
+        "603.4",
+        "608.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed source power/toughness predicates use full current effective characteristics at discovery and resolution, preserving unavailable numeric facts. Generic compiler-authored trusted carrier casts and attacks; actual Giant Growth or Cloudshift responses invalidate old triggers without a source counter. Bounds, unrelated private hands, unauthorized rollback, pending save/load/full replay and static-layer feedback exclusion are asserted. This prerequisite witness is distinct from original Role token closure."
     },
     {
       "capability_id": "trigger.condition.fixed_public_state",
@@ -106700,6 +106812,54 @@
     },
     {
       "capability_id": "trigger.condition.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_history_condition_closure.PublicHistoryConditionCompilerTests.test_source_numeric_intervening_condition_preserves_characteristic_and_bound",
+      "official_rule_ids": [
+        "109.5",
+        "603.4",
+        "608.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed source power/toughness predicates use full current effective characteristics at discovery and resolution, preserving unavailable numeric facts. Generic compiler-authored trusted carrier casts and attacks; actual Giant Growth or Cloudshift responses invalidate old triggers without a source counter. Bounds, unrelated private hands, unauthorized rollback, pending save/load/full replay and static-layer feedback exclusion are asserted. This prerequisite witness is distinct from original Role token closure."
+    },
+    {
+      "capability_id": "trigger.condition.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_history_condition_closure.SourceNumericConditionTrustedActionTests.test_original_angelic_sell_sword_checks_attack_power_again_after_response",
+      "official_rule_ids": [
+        "109.5",
+        "603.4",
+        "608.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Angelic Sell-Sword strictly admits, casts and creates its complete1/1Mercenary token. Its actual attack at power6 draws once; original Snakeform response lowers currentpower before resolution and removes the intervening trigger. Private draws, pending save/load and pre-action replay retain normal trust. This whole-original witness is separate from unfinished Role creation."
+    },
+    {
+      "capability_id": "trigger.condition.fixed_public_state",
+      "evidence_class": "positive",
+      "test_id": "tests.test_public_history_condition_closure.SourceNumericConditionTrustedActionTests.test_trusted_source_numeric_condition_rechecks_after_real_growth_and_blink",
+      "official_rule_ids": [
+        "109.5",
+        "603.4",
+        "608.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed source power/toughness predicates use full current effective characteristics at discovery and resolution, preserving unavailable numeric facts. Generic compiler-authored trusted carrier casts and attacks; actual Giant Growth or Cloudshift responses invalidate old triggers without a source counter. Bounds, unrelated private hands, unauthorized rollback, pending save/load/full replay and static-layer feedback exclusion are asserted. This prerequisite witness is distinct from original Role token closure."
+    },
+    {
+      "capability_id": "trigger.condition.fixed_public_state",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_public_state_intervening_condition_rechecks_locked_controller_and_replays",
       "official_rule_ids": [
@@ -106748,6 +106908,38 @@
     },
     {
       "capability_id": "trigger.condition.fixed_public_state",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_public_history_condition_closure.SourceNumericConditionTrustedActionTests.test_original_angelic_sell_sword_checks_attack_power_again_after_response",
+      "official_rule_ids": [
+        "109.5",
+        "603.4",
+        "608.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Angelic Sell-Sword strictly admits, casts and creates its complete1/1Mercenary token. Its actual attack at power6 draws once; original Snakeform response lowers currentpower before resolution and removes the intervening trigger. Private draws, pending save/load and pre-action replay retain normal trust. This whole-original witness is separate from unfinished Role creation."
+    },
+    {
+      "capability_id": "trigger.condition.fixed_public_state",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_public_history_condition_closure.SourceNumericConditionTrustedActionTests.test_trusted_source_numeric_condition_rechecks_after_real_growth_and_blink",
+      "official_rule_ids": [
+        "109.5",
+        "603.4",
+        "608.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed source power/toughness predicates use full current effective characteristics at discovery and resolution, preserving unavailable numeric facts. Generic compiler-authored trusted carrier casts and attacks; actual Giant Growth or Cloudshift responses invalidate old triggers without a source counter. Bounds, unrelated private hands, unauthorized rollback, pending save/load/full replay and static-layer feedback exclusion are asserted. This prerequisite witness is distinct from original Role token closure."
+    },
+    {
+      "capability_id": "trigger.condition.fixed_public_state",
       "evidence_class": "replay",
       "test_id": "tests.test_fixed_counter_zone_triggers.FixedCounterZoneTriggerRuntimeTests.test_public_state_intervening_condition_rechecks_locked_controller_and_replays",
       "official_rule_ids": [
@@ -106793,6 +106985,54 @@
         "commander_review"
       ],
       "applicability_note": "Exact pre-action replay and save/load preserve both sealed departed incarnations and the resulting one entry-trigger draw."
+    },
+    {
+      "capability_id": "trigger.condition.fixed_public_state",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_history_condition_closure.SourceNumericConditionTrustedActionTests.test_original_angelic_sell_sword_checks_attack_power_again_after_response",
+      "official_rule_ids": [
+        "109.5",
+        "603.4",
+        "608.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Angelic Sell-Sword strictly admits, casts and creates its complete1/1Mercenary token. Its actual attack at power6 draws once; original Snakeform response lowers currentpower before resolution and removes the intervening trigger. Private draws, pending save/load and pre-action replay retain normal trust. This whole-original witness is separate from unfinished Role creation."
+    },
+    {
+      "capability_id": "trigger.condition.fixed_public_state",
+      "evidence_class": "replay",
+      "test_id": "tests.test_public_history_condition_closure.SourceNumericConditionTrustedActionTests.test_trusted_source_numeric_condition_rechecks_after_real_growth_and_blink",
+      "official_rule_ids": [
+        "109.5",
+        "603.4",
+        "608.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed source power/toughness predicates use full current effective characteristics at discovery and resolution, preserving unavailable numeric facts. Generic compiler-authored trusted carrier casts and attacks; actual Giant Growth or Cloudshift responses invalidate old triggers without a source counter. Bounds, unrelated private hands, unauthorized rollback, pending save/load/full replay and static-layer feedback exclusion are asserted. This prerequisite witness is distinct from original Role token closure."
+    },
+    {
+      "capability_id": "trigger.condition.fixed_public_state",
+      "evidence_class": "rollback",
+      "test_id": "tests.test_public_history_condition_closure.SourceNumericConditionTrustedActionTests.test_trusted_source_numeric_condition_rechecks_after_real_growth_and_blink",
+      "official_rule_ids": [
+        "109.5",
+        "603.4",
+        "608.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fixed source power/toughness predicates use full current effective characteristics at discovery and resolution, preserving unavailable numeric facts. Generic compiler-authored trusted carrier casts and attacks; actual Giant Growth or Cloudshift responses invalidate old triggers without a source counter. Bounds, unrelated private hands, unauthorized rollback, pending save/load/full replay and static-layer feedback exclusion are asserted. This prerequisite witness is distinct from original Role token closure."
     },
     {
       "capability_id": "trigger.delayed.fixed_next_turn_draw",
@@ -136486,5 +136726,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "88c999c2f1765a630809b4490f31e1cdfe2ba09ef10c78be952b19ce7f4a17f9"
+  "fingerprint": "683be7d6054d27d6eafa82cf03805b75d5fe9a55277b0abda4bde2d5c6a3bfed"
 }

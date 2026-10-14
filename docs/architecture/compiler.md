@@ -864,6 +864,12 @@ attachment, counter, tapped/combat, chosen, named-card, distinct-value,
 total-power, source-relative, historical, compound, and unsupported timing
 forms remain source-spanned residuals.
 
+Source power and toughness intervening conditions use one fixed numeric
+battlefield creature predicate. Discovery and resolution both read complete
+effective characteristics; unknown statistics remain unavailable. Static
+conditions using these numeric source facts remain residual until a separate
+layer timing contract is represented.
+
 The same compiler owner separately lowers fixed static characteristic bodies
 gated by one closed public-state condition. A versioned descriptor combines a
 source-controller turn, fixed public hand or graveyard query, life total,

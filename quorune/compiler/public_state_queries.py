@@ -1477,7 +1477,7 @@ def _fixed_public_state_condition(
         return legacy
     public_fact = fixed_public_fact_condition(
         normalized,
-        source_name=source_name,
+        source_name=source_name, source_pattern=_condition_source_subject_pattern(source_name),
     )
     if public_fact is not None:
         return public_fact

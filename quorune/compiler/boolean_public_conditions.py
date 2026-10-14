@@ -21,7 +21,8 @@ def compose_public_conditions(text: str, *, compile_atomic, source_pattern: str)
 def public_condition_parts_result(condition,body):
     if condition is None:return None
     leaves=condition.leaf_conditions()
-    if any(leaf.kind is FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS for leaf in leaves):return None
+    if any(leaf.kind is FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS
+        or leaf.predicate is not None and leaf.predicate.numeric_characteristic is not None for leaf in leaves):return None
     objects=[leaf for leaf in leaves if leaf.kind in {FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY,
         FixedPublicStateConditionKind.SOURCE_MATCHES_QUERY,FixedPublicStateConditionKind.SOURCE_COUNTER_AT_LEAST}]
     if re.match(r'^it\b',body,re.I) and any(leaf.kind is FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY for leaf in objects) and len(objects)>1:return None

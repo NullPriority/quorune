@@ -92,7 +92,9 @@ class CharacteristicEvaluationHostMixin:
         *,
         require_available: bool = False,
     ) -> bool:
-        if condition.kind is FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS:
+        if (condition.kind is FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS
+                or condition.kind is FixedPublicStateConditionKind.SOURCE_MATCHES_QUERY
+                and condition.predicate is not None and condition.predicate.numeric_characteristic is not None):
             from .object_query import object_query_result
             def current_numeric_object(card):
                 effective = self._effective_card_data(card)

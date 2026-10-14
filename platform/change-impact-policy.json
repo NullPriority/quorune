@@ -2275,6 +2275,7 @@
         "quorune/rules/resolution_condition_shapes.py"
       ],
       "test_modules": [
+        "test_public_history_condition_closure",
         "test_resolution_public_conditions",
         "test_public_activation_conditions",
         "test_fixed_public_state_characteristics",

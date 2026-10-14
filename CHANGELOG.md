@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Evaluate fixed source power and toughness intervening conditions against full
+  current characteristics at discovery and resolution.
+
 - Preserve independent library-selection card slots and qualified card types,
   and reject unrepresented qualifiers that previously became subtype names.
 

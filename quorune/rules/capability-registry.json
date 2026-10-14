@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 283,
+  "registry_version": 284,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -13542,7 +13542,7 @@
     },
     {
       "id": "trigger.condition.fixed_public_state",
-      "version": 4,
+      "version": 5,
       "official_rules": [
         "109.5",
         "603.4",
@@ -13590,7 +13590,10 @@
         "quorune.trigger_discovery.semantic_event_condition_matches",
         "quorune.trigger_discovery.semantic_intervening_condition_matches",
         "quorune.compiler.boolean_public_conditions.compose_public_conditions",
-        "quorune.card_programs.runtime._FixedPublicStateSnapshotResolver.snapshot"
+        "quorune.card_programs.runtime._FixedPublicStateSnapshotResolver.snapshot",
+        "quorune.compiler.public_state_fact_queries.fixed_source_numeric_condition",
+        "quorune.card_programs.runtime._FixedPublicStateSnapshotResolver._query_matches",
+        "quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin._fixed_public_state_condition_holds"
       ],
       "positive_tests": [
         "test_public_state_intervening_if_contract_matrix",
@@ -13598,7 +13601,10 @@
         "test_shared_history_conditions_compile_with_exact_thresholds",
         "test_history_facts_use_sealed_actor_and_target_not_current_objects",
         "test_boolean_public_conditions_keep_independent_leaf_snapshots_and_operators",
-        "test_boolean_intervening_condition_rechecks_after_actual_attack_response_and_replays"
+        "test_boolean_intervening_condition_rechecks_after_actual_attack_response_and_replays",
+        "test_source_numeric_intervening_condition_preserves_characteristic_and_bound",
+        "test_trusted_source_numeric_condition_rechecks_after_real_growth_and_blink",
+        "test_original_angelic_sell_sword_checks_attack_power_again_after_response"
       ],
       "negative_tests": [
         "test_public_state_intervening_if_contract_matrix",
@@ -13608,7 +13614,9 @@
         "test_no_qualifying_entry_history_draws_nothing",
         "test_boolean_condition_truth_query_snapshots_and_malformed_inputs_are_distinct",
         "test_boolean_composition_preserves_attachment_numeric_trigger_and_status_boundaries",
-        "test_boolean_intervening_condition_rechecks_after_actual_attack_response_and_replays"
+        "test_boolean_intervening_condition_rechecks_after_actual_attack_response_and_replays",
+        "test_source_numeric_intervening_condition_preserves_characteristic_and_bound",
+        "test_source_numeric_query_distinguishes_missing_stat_and_threshold"
       ],
       "interaction_tests": [
         "test_public_state_intervening_condition_rechecks_locked_controller_and_replays",
@@ -13616,20 +13624,28 @@
         "test_public_entry_threshold_replays_actions_and_full_draw",
         "test_public_death_threshold_counts_causing_event_before_trigger",
         "test_public_attack_subtype_threshold_executes_compiled_consequence",
-        "test_boolean_intervening_condition_rechecks_after_actual_attack_response_and_replays"
+        "test_boolean_intervening_condition_rechecks_after_actual_attack_response_and_replays",
+        "test_trusted_source_numeric_condition_rechecks_after_real_growth_and_blink",
+        "test_original_angelic_sell_sword_checks_attack_power_again_after_response"
       ],
       "multiplayer_tests": [
         "test_public_state_intervening_condition_rechecks_locked_controller_and_replays",
-        "test_boolean_intervening_condition_rechecks_after_actual_attack_response_and_replays"
+        "test_boolean_intervening_condition_rechecks_after_actual_attack_response_and_replays",
+        "test_trusted_source_numeric_condition_rechecks_after_real_growth_and_blink",
+        "test_original_angelic_sell_sword_checks_attack_power_again_after_response"
       ],
       "privacy_tests": [
         "test_public_state_intervening_condition_rechecks_locked_controller_and_replays",
-        "test_boolean_intervening_condition_rechecks_after_actual_attack_response_and_replays"
+        "test_boolean_intervening_condition_rechecks_after_actual_attack_response_and_replays",
+        "test_trusted_source_numeric_condition_rechecks_after_real_growth_and_blink",
+        "test_original_angelic_sell_sword_checks_attack_power_again_after_response"
       ],
       "replay_tests": [
         "test_public_state_intervening_condition_rechecks_locked_controller_and_replays",
         "test_public_entry_threshold_replays_actions_and_full_draw",
-        "test_boolean_intervening_condition_rechecks_after_actual_attack_response_and_replays"
+        "test_boolean_intervening_condition_rechecks_after_actual_attack_response_and_replays",
+        "test_trusted_source_numeric_condition_rechecks_after_real_growth_and_blink",
+        "test_original_angelic_sell_sword_checks_attack_power_again_after_response"
       ],
       "required_evidence": [
         "positive",

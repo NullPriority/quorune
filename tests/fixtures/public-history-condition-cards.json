@@ -17,6 +17,223 @@
     {"oracle_id":"00000000-0000-4000-8000-000000001012","name":"Generic History Victim","mana_cost":"{G}","cmc":1,"type_line":"Creature — Test","oracle_text":"Haste","power":"1","toughness":"4","colors":["G"],"color_identity":["G"],"keywords":["Haste"],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
     {"oracle_id":"00000000-0000-4000-8000-000000001013","name":"Generic History Entry Observer","mana_cost":"{G}","cmc":1,"type_line":"Creature — Test","oracle_text":"Whenever another creature you control enters, if a permanent you controlled left the battlefield this turn, draw a card.","power":"1","toughness":"4","colors":["G"],"color_identity":["G"],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
     {"oracle_id":"00000000-0000-4000-8000-000000001014","name":"Generic History Group Return","mana_cost":"{G}","cmc":1,"type_line":"Instant","oracle_text":"Return all creatures to their owners' hands.","colors":["G"],"color_identity":["G"],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
-    {"oracle_id":"00000000-0000-4000-8000-000000001015","name":"Generic History Unrepresented Entry Replacement","mana_cost":"{G}","cmc":1,"type_line":"Creature — Vampire","oracle_text":"When this creature enters, if an opponent lost life this turn, put a +1/+1 counter on each other Vampire you control.\nAs long as an opponent lost life this turn, each other Vampire you control enters with an additional +1/+1 counter on it.","power":"2","toughness":"3","colors":["G"],"color_identity":["G"],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}}
+    {"oracle_id":"00000000-0000-4000-8000-000000001015","name":"Generic History Unrepresented Entry Replacement","mana_cost":"{G}","cmc":1,"type_line":"Creature — Vampire","oracle_text":"When this creature enters, if an opponent lost life this turn, put a +1/+1 counter on each other Vampire you control.\nAs long as an opponent lost life this turn, each other Vampire you control enters with an additional +1/+1 counter on it.","power":"2","toughness":"3","colors":["G"],"color_identity":["G"],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
+    {
+      "oracle_id": "5748ebf1-24e3-499d-ab7c-c2cebd462a24",
+      "name": "Giant Growth",
+      "mana_cost": "{G}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Target creature gets +3/+3 until end of turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "name": "Cloudshift",
+      "mana_cost": "{W}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Exile target creature you control, then return that card to the battlefield under your control.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-11-21",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000311040",
+      "name": "Generic Source Numeric Attacker",
+      "mana_cost": "{G}",
+      "cmc": 1,
+      "type_line": "Creature — Human",
+      "oracle_text": "Haste\nWhenever this creature attacks, if its toughness is 3 or less, put a +1/+1 counter on it.",
+      "power": "2",
+      "toughness": "3",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Haste"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "60c77b18-c111-4e16-ad19-2ef32582cd9e",
+      "name": "Angelic Sell-Sword",
+      "mana_cost": "{4}{W}",
+      "cmc": 5.0,
+      "type_line": "Creature — Angel Mercenary",
+      "oracle_text": "Flying, vigilance\nWhenever this creature or another nontoken creature you control enters, create a 1/1 red Mercenary creature token with \"{T}: Target creature you control gets +1/+0 until end of turn. Activate only as a sorcery.\"\nWhenever this creature attacks, if its power is 6 or greater, draw a card.",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Flying",
+        "Vigilance"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "76ae07ce-ca0c-4308-b8bd-d999eea0a65f",
+      "name": "Snakeform",
+      "mana_cost": "{2}{G/U}",
+      "cmc": 3.0,
+      "type_line": "Instant",
+      "oracle_text": "Until end of turn, target creature loses all abilities and becomes a green Snake with base power and toughness 1/1.\nDraw a card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "U"
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-02-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
   ]
 }
