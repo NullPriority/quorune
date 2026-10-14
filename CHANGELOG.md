@@ -11,6 +11,99 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Count current tapped and untapped battlefield objects through the shared
+  quantity query across characteristics and effect results.
+
+- Apply tapped entry and fixed counters together as one printed replacement
+  ability, retaining canonical zone and counter replacement ordering.
+
+- Produce fixed mana through typed selected tap costs, preserving fixed counts,
+  source exclusion and the distinction between source and selected-creature tapping.
+
+- Produce fixed mana through one typed selected sacrifice cost, sharing
+  activation legality, atomic payment and chosen output with ordinary mana abilities.
+
+- Place fixed counters on current attacking or blocking creature sets through
+  the shared live public-state query.
+
+- Bind fixed counter pronouns in source damage triggers to the same battlefield
+  incarnation, retaining lethal-damage and re-entry boundaries.
+
+- Pin counter recipients from individual attack and damage occurrences, using
+  committed damage amounts where printed.
+
+- Put fixed counters on the sealed entering object incarnation, preserving
+  counter recipients through pending trigger departure and re-entry.
+
+- Preserve entering and departing object controllers and individual attack
+  defenders when binding fixed event-player consequences.
+
+- Prevent a fixed amount from each matching colored-source damage event using
+  the shared typed source snapshot predicate.
+
+- Preserve explicit event-player and controller recipients across two ordered
+  fixed draw or life instructions.
+
+- Bind fixed draw and life results to sealed event players, and register closed
+  affected-player discard programs through their existing capability owner.
+
+- Address untargeted mill instructions to typed damage recipients, defending
+  players and spell casters through the existing mill result owner.
+
+- Mill current opponents through the shared simultaneous zone transaction,
+  excluding the resolving controller and departed players.
+
+- Resolve committed damage amounts in source-specific triggers, including broad
+  source damage and combat-only incoming damage, with identity restrictions intact.
+
+- Bind complete fixed source-pronoun damage results to self-action triggers and
+  retain the registered return-to-hand dependency of source-return triggers.
+
+- Compile ordinary source-entry and source-death clauses inside typed ability
+  grants, and retain recipient identity for source-permanent regeneration.
+
+- Share current battlefield power/toughness aggregates across effects, casting
+  costs and mana production, preserving declared values through later instructions.
+
+- Compose closed public-state conditions with shared Boolean snapshots,
+  retaining leaf query identities, status dependencies and trigger rechecks.
+
+- Resolve opponent-count quantities from the current public roster, including
+  changes caused by a player's departure before the instruction resolves.
+
+- Compile complete-value token counts and mandatory controller-scoped doubling
+  through the shared token transaction, retaining current source ability
+  presence and rejecting malformed schema versions.
+
+- Evaluate devotion through one copy/control/text snapshot and typed live
+  increases, preserving hybrid union counts across characteristics, effects,
+  mana production and casting costs.
+
+- Compile singular each-object stat and keyword grants with the shared live
+  battlefield query, preserving subtype unions and source exclusions.
+
+- Compile explicit self-graveyard casting permissions with owner-relative
+  public-state conditions shared by casting offers and accepted commands.
+
+- Count recipient attachments for dynamic Aura and Equipment stat modifiers,
+  retaining reciprocal identity, foreign control and reattachment semantics.
+
+- Gate public spell-cost modifiers with shared live public-state conditions at
+  both offered-action and accepted-command boundaries.
+
+- Preserve typed conditional keyword grants, including fixed ward and
+  protection, through the existing public-state and characteristic owners.
+
+- Compile qualified player-damage batch triggers with subtype and public
+  characteristic predicates, one trigger per observer and damaged player.
+  Captured trigger sources use deterministic ordering across checkpoint replay.
+
+- Compile conditional source type and base-stat settings through existing
+  characteristic layers while preserving current conditions and source identity.
+
+- Compile explicit graveyard-active static keyword grants with owner-relative
+  land conditions, source zone timestamps, and current battlefield recipients.
+
 - Compile mandatory controller sacrifices and fixed creature subtype choices
   through the existing affected-player selection and simultaneous zone owner.
 

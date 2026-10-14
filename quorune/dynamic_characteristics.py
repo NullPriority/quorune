@@ -10,6 +10,7 @@ from .characteristic_fragments import (
     PowerToughnessCalculation,
     CharacteristicQuantityScope,
     CharacteristicQuantitySpec,
+    CharacteristicQuantityReduction,
 )
 from .continuous_effects import Layer
 from .object_query import object_matches_query, object_query_result
@@ -48,6 +49,13 @@ def query_characteristic_count(
         return sum(query_characteristic_count(host, source, term,
                    _enforce_static_component_applicability=_enforce_static_component_applicability)
                    for term in quantity.terms) * quantity.multiplier + quantity.offset
+    if quantity.scope is CharacteristicQuantityScope.CONTROLLER_OPPONENT_COUNT:
+        return current_opponent_count(host.state,source.controller) * quantity.multiplier + quantity.offset
+    if quantity.reduction is CharacteristicQuantityReduction.DEVOTION:
+        from .devotion import current_devotion
+        return current_devotion(host,source.controller,quantity.mana_colors,
+            include_modifiers=_enforce_static_component_applicability,
+            _enforce_static_component_applicability=_enforce_static_component_applicability) * quantity.multiplier + quantity.offset
     if quantity.scope is CharacteristicQuantityScope.SOURCE_COUNTER:
         assert quantity.counter_name is not None
         raw = source.counters.get(quantity.counter_name, 0)
@@ -62,6 +70,15 @@ def query_characteristic_count(
     controller = source.controller
     if quantity.scope is CharacteristicQuantityScope.ATTACHED_TO_SOURCE:
         object_ids = tuple(source.attachments)
+    elif quantity.scope is CharacteristicQuantityScope.ATTACHED_TO_RECIPIENT:
+        from .attachments import attached_object_identity
+        identity = attached_object_identity(host.state.cards, source)
+        if identity is None:
+            return 0
+        recipient = host.state.cards[identity.object_id]
+        object_ids = tuple(object_id for object_id in dict.fromkeys(recipient.attachments)
+            if object_id in host.state.cards
+            and host.state.cards[object_id].attached_to == recipient.object_id)
     elif quantity.scope is CharacteristicQuantityScope.CONTROLLER_ZONE:
         object_ids = tuple(host.state.players[controller].zones[zone])
     elif quantity.scope is CharacteristicQuantityScope.OPPONENT_ZONES:
@@ -103,7 +120,7 @@ def query_characteristic_count(
             continue
         effective = host._effective_card_data(
             candidate,
-            maximum_layer=Layer.COLOR,
+            maximum_layer=Layer.TEXT if quantity.reduction is CharacteristicQuantityReduction.DEVOTION else Layer.COLOR,
             _enforce_static_component_applicability=(
                 _enforce_static_component_applicability
             ),
@@ -125,6 +142,13 @@ def query_characteristic_count(
         if object_matches_query(row, quantity.query):
             matched.append((row, effective, candidate.object_kind if quantity.schema_version == 2 else ""))
     return reduce_public_quantity(matched, quantity.reduction, mana_colors=quantity.mana_colors) * quantity.multiplier + quantity.offset
+
+
+def current_opponent_count(state,controller: str) -> int:
+    """Count active opponents in the represented free-for-all roster."""
+    if controller not in state.players or any(type(player.in_game) is not bool for player in state.players.values()):
+        raise ValueError('A public opponent quantity requires a known controller and current roster')
+    return sum(player.in_game for seat,player in state.players.items() if seat!=controller)
 
 
 def _has_card_type(

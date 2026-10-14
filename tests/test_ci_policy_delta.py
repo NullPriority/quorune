@@ -28,9 +28,9 @@ class CiPolicyDeltaTests(unittest.TestCase):
             rule for rule in additive["path_rules"]
             if rule["id"] == "changed-python-test"
         )
-        additive_rule.setdefault("test_modules", []).append(
-            "test_ci_policy_delta"
-        )
+        additive_rule["test_modules"] = sorted({
+            *additive_rule.get("test_modules", ()), "test_ci_policy_delta",
+        })
         self.assertTrue(compare_change_impact_policy(base, additive).additive)
 
         removed = deepcopy(additive)

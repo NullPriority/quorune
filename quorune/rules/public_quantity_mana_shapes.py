@@ -6,6 +6,7 @@ from typing import Mapping
 from ..public_quantity_mana_model import PUBLIC_QUANTITY_MANA_CAPABILITY
 from ..query_effect_amount_model import PublicQueryAmountSpec, PUBLIC_QUERY_AMOUNT_KIND
 from ..scalar_effect_amount_model import ScalarEffectAmountSpec, SCALAR_AMOUNT_KIND, ScalarAmountOrigin
+from ..characteristic_fragments import characteristic_quantity_capabilities
 
 
 def public_quantity_mana_node_capabilities(*, effects, target_schema, mechanic_ids, **kwargs):
@@ -30,7 +31,7 @@ def public_quantity_mana_node_capabilities(*, effects, target_schema, mechanic_i
         elif value.get('kind') == SCALAR_AMOUNT_KIND:
             spec = ScalarEffectAmountSpec.from_dict(value)
             marker = 'scalar-effect-amount'
-            if spec.origin not in {ScalarAmountOrigin.SOURCE, ScalarAmountOrigin.HISTORY} or spec.coefficient != 1 or spec.binding_id is not None:
+            if spec.origin not in {ScalarAmountOrigin.SOURCE, ScalarAmountOrigin.HISTORY,ScalarAmountOrigin.PUBLIC_AGGREGATE} or spec.coefficient != 1 or spec.binding_id is not None:
                 return ()
         else:
             return ()
@@ -43,7 +44,7 @@ def public_quantity_mana_node_capabilities(*, effects, target_schema, mechanic_i
         return ()
     producer = 'quantity_expression.public_query_effect_amount' if marker == 'public-query-effect-amount' else 'quantity_expression.scalar_effect_amount'
     trigger = ('trigger.placement.apnap',) if 'cr-603-handling-triggered-abilities' in markers else ()
-    return (PUBLIC_QUANTITY_MANA_CAPABILITY, producer, *trigger)
+    return (PUBLIC_QUANTITY_MANA_CAPABILITY, producer,*characteristic_quantity_capabilities(value), *trigger)
 
 
 def is_closed_public_quantity_mana_program(program):

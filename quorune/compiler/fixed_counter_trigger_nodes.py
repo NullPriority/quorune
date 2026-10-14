@@ -41,6 +41,7 @@ from .public_state_queries import fixed_public_state_condition
 from .qualified_zone_event_bindings import QUALIFIED_ZONE_VARIANT, qualified_public_zone_event_binding_spec, public_binding_from_spec
 from .aggregated_zone_event_bindings import AGGREGATED_ZONE_VARIANT, aggregated_public_zone_event_binding_spec
 from .counter_placement_event_bindings import COUNTER_EVENT_VARIANTS
+from .fixed_public_action_event_bindings import QUALIFIED_DAMAGE_BATCH_VARIANT
 from .tap_state_event_bindings import (
     TAP_STATE_EVENT_VARIANT, TAP_STATE_EVENT_VARIANTS,
     public_trigger_binding_spec, tap_state_bound_result,
@@ -132,6 +133,7 @@ _ABILITY_WORD_PUBLIC_EVENT_VARIANTS = frozenset(
 )
 PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
     {
+        QUALIFIED_DAMAGE_BATCH_VARIANT,
         TAP_STATE_EVENT_VARIANT,
         "source_" + TAP_STATE_EVENT_VARIANT,
         "controller_attack_batch",
@@ -233,9 +235,11 @@ _ALL_PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
         *MULTI_EVENT_BINDING_CLOSURE_VARIANTS,
     }
 )
-_NONCOUNTER_PUBLIC_EVENT_VARIANTS = _ALL_PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS - TAP_STATE_EVENT_VARIANTS - COUNTER_EVENT_VARIANTS
+_NONCOUNTER_PUBLIC_EVENT_VARIANTS = (_ALL_PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS
+    - TAP_STATE_EVENT_VARIANTS - COUNTER_EVENT_VARIANTS - {QUALIFIED_DAMAGE_BATCH_VARIANT})
 _ONE_OR_MORE_PUBLIC_EVENT_VARIANTS = frozenset(
     {
+        QUALIFIED_DAMAGE_BATCH_VARIANT,
         AGGREGATED_ZONE_VARIANT,
         "controller_attack_batch",
         "controller_attack_batch_at_least_2",
@@ -691,7 +695,10 @@ class FixedCounterTriggerBinding:
 
     @property
     def explicit_capabilities(self) -> tuple[str, ...]:
-        return (*self.public_capabilities, *(("trigger.event.spell_cast_creature_target",)
+        from ..characteristic_fragments import characteristic_quantity_capabilities
+        condition_capabilities=characteristic_quantity_capabilities(
+            self.public_state_condition.to_dict() if self.public_state_condition is not None else {})
+        return (*self.public_capabilities,*condition_capabilities, *(("trigger.event.spell_cast_creature_target",)
             if self.spell_subject is not None and self.spell_subject.targets_creature else ()))
 
     @property
@@ -1096,11 +1103,11 @@ def fixed_counter_trigger_binding(
         )
         if condition is None:
             return None
-        if condition.kind in {
+        if any(leaf.kind in {
             FixedPublicStateConditionKind.SOURCE_ENTERED_THIS_TURN,
             FixedPublicStateConditionKind.SOURCE_COUNTER_AT_LEAST,
             FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY,
-        }:
+        } for leaf in condition.leaf_conditions()):
             return None
         base = fixed_counter_trigger_binding(
             f"{intervening.group('prefix')}, {intervening.group('body')}",
@@ -1229,6 +1236,13 @@ def _event_runtime_coverage(
 _binding_effect_template = binding_effect_template
 
 
+def _counter_binding_accepts_result(binding,body_mechanics):
+    return ('fixed-entry-event-object-counter' in body_mechanics
+        or binding.variant not in _NONCOUNTER_PUBLIC_EVENT_VARIANTS
+        or binding.event in {FixedCounterTriggerEvent.PERMANENT_SACRIFICED,FixedCounterTriggerEvent.CARD_DISCARDED}
+        and binding.variant in PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS)
+
+
 def fixed_counter_event_trigger_node(
     *,
     node_id: str,
@@ -1255,11 +1269,6 @@ def fixed_counter_event_trigger_node(
     )
     if binding is None:
         return None
-    if binding.variant in _NONCOUNTER_PUBLIC_EVENT_VARIANTS and not (
-        binding.event in {FixedCounterTriggerEvent.PERMANENT_SACRIFICED, FixedCounterTriggerEvent.CARD_DISCARDED}
-        and binding.variant in PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS
-    ):
-        return None
     optional_match = re.fullmatch(
         r"you may (?P<body>(?!pay\b).+)",
         binding.body,
@@ -1283,7 +1292,7 @@ def fixed_counter_event_trigger_node(
     nested_counter_operations = _COUNTER_PLACEMENT_OPERATIONS.intersection(
         _nested_operations(effects)
     )
-    if template is None or not nested_counter_operations:
+    if template is None or not nested_counter_operations or not _counter_binding_accepts_result(binding,body_mechanics):
         return None
     if optional_match is not None:
         if (

@@ -170,6 +170,89 @@ class PublicQuantityBoundaryTests(unittest.TestCase):
 
 
 class PublicQueryEffectAmountCompilerTests(unittest.TestCase):
+    def test_opponent_token_quantity_has_explicit_player_count_dependency(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.capabilities import CapabilityRegistry
+        import copy
+        text='Create a number of 3/3 green Warrior creature tokens with trample equal to the number of opponents you have.'
+        record=query_amount_record(text,suffix=363140001)
+        program=self.compile(record)
+        self.assertEqual((),program.residuals)
+        ability=next(a for a in program.abilities if a.effects)
+        self.assertIn('quantity_expression.public_player_count',ability.capability_dependencies)
+        trusted=compile_card_program(_NoRulingsDatabase(),record,capability_registry=self.capabilities,
+            capability_profile='commander_review',trust_level='trusted')
+        self.assertTrue(bind_card_program_runtime(trusted,capability_registry=self.capabilities,
+            profile='commander_review')['strict_capability_ready'])
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        changed=copy.deepcopy(raw)
+        next(row for row in changed['capabilities'] if row['id']=='quantity_expression.public_player_count').update(status='blocked',blockers=['public roster producer withdrawn'])
+        self.assertNotEqual('exact',compile_oracle_card(record,capability_registry=CapabilityRegistry(changed)).status)
+
+    def test_fixed_token_doubler_is_compiled_with_current_source_ability_coverage(self):
+        from quorune.card_programs import bind_card_program_runtime
+        text='If an effect would create one or more tokens under your control, it creates twice that many of those tokens instead.'
+        record=query_amount_record(text,suffix=363130009,type_line='Enchantment')
+        program=self.compile(record)
+        self.assertEqual((),program.residuals)
+        ability=next(a for a in program.abilities if a.handlers)
+        self.assertEqual('replacement.token.quantity.v1',ability.handlers[0]['handler_id'])
+        self.assertIn('current_ability_fragment_required',ability.coverage)
+        trusted=compile_card_program(_NoRulingsDatabase(),record,capability_registry=self.capabilities,
+            capability_profile='commander_review',trust_level='trusted')
+        self.assertTrue(bind_card_program_runtime(trusted,capability_registry=self.capabilities,
+            profile='commander_review')['strict_capability_ready'])
+        from quorune.compiler.token_templates import static_token_quantity_replacement_handler
+        from quorune.semantic_runtime.token_replacements import TokenQuantityReplacementHandler
+        with self.assertRaises(SemanticNodeError):
+            TokenQuantityReplacementHandler().validate({**ability.handlers[0],'schema_version':True})
+        for altered in (text.replace('twice','three times'),text.replace('under your control','under any player\'s control'),text+' Draw a card.'):
+            self.assertIsNone(static_token_quantity_replacement_handler(altered))
+        with mock.patch('quorune.compiler.token_templates.static_token_quantity_replacement_handler',return_value=None):
+            self.assertTrue(self.compile(record).residuals)
+
+    def test_number_of_tokens_complete_value_rejects_unknown_quantity_definition_and_missing_producer(self):
+        import copy
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.capabilities import CapabilityRegistry
+        text='Create a number of 1/1 blue Bird creature tokens with flying equal to your devotion to blue.'
+        for altered in (
+            text.replace('your devotion to blue','the chosen number'),
+            text.replace('with flying','with an unrepresented ability'),
+            text.replace('1/1 blue Bird creature','copies of target creature'),
+            text+' Then create copies of those tokens.',
+        ):
+            self.assertTrue(self.compile(query_amount_record(altered,suffix=363130008)).residuals,altered)
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        for cap in ('state_query.devotion.current',PUBLIC_QUERY_AMOUNT_CAPABILITY,'token.creation.fixed_definition'):
+            changed=copy.deepcopy(raw)
+            next(row for row in changed['capabilities'] if row['id']==cap).update(status='blocked',blockers=['counted token dependency withdrawal'])
+            self.assertNotEqual('exact',compile_oracle_card(query_amount_record(text,suffix=363130008),capability_registry=CapabilityRegistry(changed)).status)
+        with mock.patch('quorune.compiler.public_query_effect_amounts._TOKEN_COMPLETE_VALUE', __import__('re').compile(r'(?!)')):
+            self.assertTrue(self.compile(query_amount_record(text,suffix=363130008)).residuals)
+
+    def test_number_of_tokens_complete_value_keeps_definition_and_quantity_authority(self):
+        from quorune.card_programs import bind_card_program_runtime
+        for index,text in enumerate((
+            'Create a number of 1/1 blue Bird creature tokens with flying equal to your devotion to blue.',
+            'Create a number of 2/2 green Wolf creature tokens equal to the number of creatures you control.',
+        )):
+            with self.subTest(text=text):
+                record=query_amount_record(text,suffix=363130001+index)
+                program=self.compile(record)
+                self.assertEqual((),program.residuals)
+                ability=next(a for a in program.abilities if a.effects)
+                token=next(e for e in ability.effects if e['op']=='create_token')
+                self.assertEqual('public_query_effect_amount',token['quantity']['kind'])
+                if index==0:
+                    self.assertEqual('devotion',token['quantity']['quantity']['reduction'])
+                    self.assertIn('state_query.devotion.current',ability.capability_dependencies)
+                trusted=compile_card_program(_NoRulingsDatabase(),record,capability_registry=self.capabilities,
+                    capability_profile='commander_review',trust_level='trusted')
+                self.assertTrue(bind_card_program_runtime(trusted,capability_registry=self.capabilities,
+                    profile='commander_review')['strict_capability_ready'])
+
     @classmethod
     def setUpClass(cls):
         cls.db, cls.mishra, cls.zimone = load_assets()
@@ -393,7 +476,7 @@ class PublicQueryEffectAmountCompilerTests(unittest.TestCase):
             "You gain life equal to your life total.",
             "You gain 1 life for each creature an opponent controls.",
             "You gain 1 life for each card in an opponent's hand.",
-            "You gain 1 life for each tapped creature you control.",
+            "You gain 1 life for each creature that became tapped this turn.",
             "You gain 1 life for each attacking creature you control.",
             "You gain 1 life for each creature with flying you control.",
             "You gain 1 life for each other creature you control.",
@@ -410,7 +493,7 @@ class PublicQueryEffectAmountCompilerTests(unittest.TestCase):
             "Target creature gets +X/+X until end of turn, where X is the "
             "number of creatures an opponent controls.",
             "Target creature gets +1/+1 until end of turn for each tapped "
-            "creature you control.",
+            "creature card in your hand.",
             "Target creature gets +1/+1 until end of turn for each other "
             "creature you control.",
             "Target creature gets +X/+X until your next turn, where X is the "

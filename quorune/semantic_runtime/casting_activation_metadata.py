@@ -9,6 +9,7 @@ from typing import Any, Mapping, Protocol, Sequence
 from ..card_program_faces import program_matches_face
 from ..characteristic_evaluation import type_parts
 from ..creature_subtypes import canonical_creature_subtype
+from ..continuous_conditions import FixedPublicStateConditionSpec, FixedPublicStateConditionError, OwnerRelativeConditionSource
 from ..rules.capabilities import load_default_capability_registry
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
@@ -26,6 +27,7 @@ LOYALTY_COST_MODIFIER_HANDLER_ID = "modification.activation.loyalty-cost.v1"
 class SelfZoneCastPermission:
     source_zone: str
     controlled_subtypes_any: tuple[str, ...]
+    source_condition: FixedPublicStateConditionSpec | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -107,6 +109,28 @@ class SelfZoneCastPermissionHandler:
     ) -> tuple[SelfZoneCastPermission, ...]:
         del context
         return (self.validate(descriptor),)
+
+
+@dataclass(frozen=True, slots=True)
+class PublicStateSelfZoneCastPermissionHandler(SelfZoneCastPermissionHandler):
+    handler_id: str = 'permission.cast.self-zone-public-state.v1'
+    schema_version: int = 2
+    capability_dependencies: tuple[str, ...] = (
+        'casting.zone.self_graveyard.controlled_subtype','continuous.characteristics.fixed_public_state',
+    )
+
+    def validate(self, descriptor):
+        exact_fields(descriptor, {'handler_id','schema_version','event','source_zone','source_condition'},
+            field='Public-state self-zone cast permission')
+        if (descriptor['handler_id']!=self.handler_id or type(descriptor['schema_version']) is not int
+                or descriptor['schema_version']!=self.schema_version or descriptor['event']!=self.event
+                or descriptor['source_zone']!='graveyard'):
+            raise SemanticNodeError('Public-state self-zone permission identity changed')
+        try:
+            condition=FixedPublicStateConditionSpec.from_dict(descriptor['source_condition'])
+        except (FixedPublicStateConditionError,TypeError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
+        return SelfZoneCastPermission('graveyard',(),condition)
 
 
 @dataclass(frozen=True, slots=True)
@@ -198,7 +222,7 @@ class LoyaltyCostModifierRegistry(
 
 @lru_cache(maxsize=1)
 def default_self_zone_cast_permission_registry() -> SelfZoneCastPermissionRegistry:
-    registry = SelfZoneCastPermissionRegistry((SelfZoneCastPermissionHandler(),))
+    registry = SelfZoneCastPermissionRegistry((SelfZoneCastPermissionHandler(),PublicStateSelfZoneCastPermissionHandler()))
     registry.require_registered_capabilities(load_default_capability_registry())
     return registry.freeze()
 
@@ -224,6 +248,9 @@ class CastingActivationMetadataHost(Protocol):
     def card_record(self, card: Any) -> Any: ...
 
     def semantic_program_is_current_trusted(self, program: Any) -> bool: ...
+
+    def _fixed_public_state_condition_holds(self, source: Any, condition: FixedPublicStateConditionSpec,
+        *, require_available: bool = False) -> bool: ...
 
 
 def compiled_self_zone_cast_permission(
@@ -255,6 +282,11 @@ def compiled_self_zone_cast_permission(
                 permissions.extend(registry.lower(descriptor, None))
     for permission in permissions:
         if permission.source_zone != card.zone:
+            continue
+        if permission.source_condition is not None:
+            if host._fixed_public_state_condition_holds(OwnerRelativeConditionSource(card),
+                    permission.source_condition, require_available=True):
+                return True
             continue
         if any(
             candidate.zone == "battlefield"

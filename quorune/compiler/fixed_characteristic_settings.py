@@ -11,7 +11,8 @@ from .continuous_templates import (
     _attached_ability_capabilities,
 )
 from .creature_subtypes import canonical_creature_subtype_surface
-from .public_state_queries import fixed_characteristic_battlefield_query_subject
+from .public_state_queries import fixed_characteristic_battlefield_query_subject, fixed_public_state_parts
+from ..rules.source_references import SourceReferenceSpec
 
 
 SETTING_HANDLER = "continuous.characteristics.fixed-public-setting.v1"
@@ -27,6 +28,12 @@ def _definition(modifier, text, *, addition):
         normalized.append(subtype.title() if subtype is not None else word)
     if not _attached_definition(modifier, " ".join(normalized), addition=addition):
         return False
+    # CR 205.1b: becoming an artifact creature retains other card types.
+    if {'artifact', 'creature'} <= {word.casefold() for word in words}:
+        modifier['type_operations'] = [
+            {**op, 'op': 'add_types'} if op['field'] == 'card_types' and op['op'] == 'set_types' else op
+            for op in modifier['type_operations']
+        ]
     operations=[]
     for operation in modifier['type_operations']:
         if operation['op']=='set_types' and operation['field']=='subtypes':
@@ -80,16 +87,33 @@ def _setting_part(modifier, part):
     return False
 
 
-def fixed_characteristic_setting_handler(text: str):
+def fixed_characteristic_setting_handler(text: str, *, source_name: str | None = None):
+    source_condition = None
+    if source_name is not None:
+        parsed = fixed_public_state_parts(text, source_name=source_name)
+        if parsed is not None:
+            source_condition, text = parsed
+            from ..semantic_runtime.fixed_characteristic_settings import validate_setting_condition
+            try:
+                validate_setting_condition(source_condition.to_dict())
+            except (TypeError, ValueError):
+                return None
+            text = re.sub(r'^it\b', 'This permanent', text, flags=re.I)
     if re.search(r'"|\b(?:chosen|named|equal|each equal|every|all colors|land types|creature types|until|as long|if|during|goaded)\b', text, re.I):
         return None
-    text = text.strip().removesuffix(".")
+    text = re.sub(r'\s+\([^()]*\)\.?$', '', text.strip()).removesuffix(".")
     match = re.fullmatch(r"(?P<subject>.+?) (?P<body>is .+|are .+|has base .+|have base .+|loses all .+|lose all .+|gets .+|get .+)", text, re.I)
     if match is None:
         return None
     subject, body = match["subject"], match["body"]
     attached = re.fullmatch(r"(?:Enchanted|Equipped) (artifact|battle|creature|enchantment|land|permanent|planeswalker)", subject, re.I)
-    if attached:
+    source = source_name is not None and re.fullmatch(
+        rf'(?:This (?:creature|artifact|permanent)|{SourceReferenceSpec(source_name).regex_pattern})', subject, re.I
+    )
+    if source:
+        target = {'kind': 'source', 'controller': None,
+                  'predicate': ObjectQuerySpec(zones=('battlefield',)).to_dict(), 'exclude_source': False}
+    elif attached:
         kind = attached[1].casefold()
         predicate = ObjectQuerySpec(zones=("battlefield",), types_all=() if kind == "permanent" else (kind,))
         target = {"kind": "attached", "controller": None, "predicate": predicate.to_dict(), "exclude_source": False}
@@ -99,6 +123,13 @@ def fixed_characteristic_setting_handler(text: str):
             return None
         relation, predicate, exclude = parsed
         target = {"kind": "fixed_query", "controller": relation, "predicate": predicate.to_dict(), "exclude_source": exclude}
+    # A fixed P/T creature definition is a type change plus layer-7b setting.
+    creature_definition = re.fullmatch(r'is (?:a |an )?(-?\d+)/(-?\d+) (.+?)(?: with (.+))?', body, re.I)
+    if creature_definition is not None:
+        body = (f'is {creature_definition[3]} with base power and toughness '
+                f'{creature_definition[1]}/{creature_definition[2]}')
+        if creature_definition[4]:
+            body += ' and has ' + creature_definition[4]
     modifier = _attached_modifier()
     parts = re.split(r",\s*(?:and )?| and (?=(?:are|is|have|has|lose|loses|get|gets)\b)", body, flags=re.I)
     removes=[part for part in parts if re.fullmatch(r'(?:and )?(?:lose|loses) all(?: other)? abilities',part.strip(),re.I)]
@@ -108,10 +139,17 @@ def fixed_characteristic_setting_handler(text: str):
         return None
     if not any((modifier["type_operations"], modifier["color_operations"], modifier["base_power"] is not None, modifier["remove_all_abilities"])):
         return None
-    descriptor={"handler_id":SETTING_HANDLER,"schema_version":1,"event":"characteristics.evaluate","target":target,"modifier":modifier}
-    from ..semantic_runtime.fixed_characteristic_settings import FixedCharacteristicSettingsHandler
+    version = 2 if source or source_condition else 1
+    descriptor={"handler_id":'continuous.characteristics.fixed-public-setting.v2' if version == 2 else SETTING_HANDLER,
+        "schema_version":version,
+        "event":"characteristics.evaluate","target":target,"modifier":modifier}
+    if descriptor['schema_version'] == 2:
+        descriptor['source_condition'] = source_condition.to_dict() if source_condition is not None else None
+    from ..semantic_runtime.fixed_characteristic_settings import FixedCharacteristicSettingsHandler, ConditionalCharacteristicSettingsHandler
     try:
-        FixedCharacteristicSettingsHandler().validate(descriptor)
+        (ConditionalCharacteristicSettingsHandler() if version == 2 else FixedCharacteristicSettingsHandler()).validate(descriptor)
     except (TypeError,ValueError):
         return None
-    return ("static-fixed-characteristic-setting-v1", descriptor, tuple(sorted({SETTING_CAPABILITY, *_attached_ability_capabilities(modifier["add_abilities"])})))
+    return ("static-fixed-characteristic-setting-v2" if descriptor['schema_version'] == 2 else "static-fixed-characteristic-setting-v1",
+        descriptor, tuple(sorted({SETTING_CAPABILITY, *_attached_ability_capabilities(modifier["add_abilities"]),
+        *(('continuous.characteristics.fixed_public_state',) if version == 2 else ())})))

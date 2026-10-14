@@ -95,6 +95,7 @@ def fixed_activated_mana_node(
             capability_profile, residuals, source_name=source_name,
         )
     capabilities = list(FIXED_MANA_HANDLER_CAPABILITIES)
+    if spec.choices:capabilities.extend(('activation.selected_zone_change.fixed','activation.selected_tap.fixed'))
     if spec.result is not None:
         from ..fixed_mana_results import FIXED_MANA_RESULT_CAPABILITY
         capabilities.append(FIXED_MANA_RESULT_CAPABILITY)

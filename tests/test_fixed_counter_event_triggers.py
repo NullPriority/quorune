@@ -1345,6 +1345,14 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                 )
 
     def test_fixed_source_event_near_misses_remain_material(self):
+        supported = self.compile(
+            "Whenever this creature deals damage, draw a card.",
+            type_line="Creature — Fixture",
+        )
+        self.assertEqual("exact", supported.status)
+        self.assertFalse(supported.material_residuals)
+        node = supported.faces[0].nodes[0]
+        self.assertEqual("damage.dealt.self", node.event)
         cases = (
             "When this Vehicle enters, if a chosen player controls an "
             "artifact, draw a card.",
@@ -1352,7 +1360,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             "When this creature is put into a graveyard from the battlefield, "
             "draw a card.",
             "Whenever this creature deals damage to a creature, draw a card.",
-            "Whenever this creature deals damage, draw a card.",
+            "Whenever this creature deals damage, draw a card for each counter on it.",
             "Whenever equipped creature deals combat damage to an opponent, draw "
             "a card.",
             "Whenever one or more creatures deal combat damage to a player, "
@@ -3529,7 +3537,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             "Whenever this creature attacks, you may put a +1/+1 counter on it. If you do, draw a card.",
             "Whenever this creature attacks, put X +1/+1 counters on it.",
             "Whenever this creature attacks, put a charge counter on it for each creature that attacked this way.",
-            "Whenever this creature deals combat damage to an opponent, put a +1/+1 counter on it.",
+            "Whenever a creature deals damage to an opponent, put a +1/+1 counter on it.",
             "Whenever this creature blocks a creature without flying, this creature gets +3/+0 until end of turn.",
         )
         for text in exclusions:

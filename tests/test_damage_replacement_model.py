@@ -202,6 +202,7 @@ class DamageReplacementModelTests(DamageReplacementPipelineBase):
             [
                 "prevention.damage.all.v1",
                 "prevention.damage.fixed.v1",
+                "prevention.damage.fixed.v2",
                 "replacement.damage.quantity.v1",
                 "replacement.damage.quantity.v2",
                 "replacement.damage.redirect-to-source.v1",

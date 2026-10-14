@@ -8,6 +8,7 @@ from ..fixed_mana_abilities import (
     FIXED_MANA_HANDLER_CAPABILITIES,
     FIXED_MANA_HANDLER_ID,
     FIXED_MANA_RESULT_HANDLER_ID,
+    FIXED_MANA_SELECTED_COST_HANDLER_ID,
     FixedActivatedManaAbilitySpec,
     FixedManaAbilityError,
 )
@@ -56,6 +57,7 @@ class FixedActivatedManaAbilityHandler:
             spec=FixedActivatedManaAbilitySpec.from_dict(ability)
             if (spec.result is not None) != (descriptor['schema_version']==2):
                 raise FixedManaAbilityError('Fixed mana result requires schema version two')
+            if bool(spec.choices)!=(descriptor['schema_version']==3):raise FixedManaAbilityError('Selected mana costs require version three')
             return spec
         except ValueError as exc:
             raise SemanticNodeError(str(exc)) from exc
@@ -83,11 +85,20 @@ class FixedManaResultAbilityHandler(FixedActivatedManaAbilityHandler):
     rule_references: tuple[str,...] = ('605.1a','605.3b','608.2c','120.3a','502.3')
 
 
+@dataclass(frozen=True,slots=True)
+class FixedManaSelectedCostAbilityHandler(FixedActivatedManaAbilityHandler):
+    handler_id: str=FIXED_MANA_SELECTED_COST_HANDLER_ID
+    schema_version: int=3
+    capability_dependencies: tuple[str,...]=(*FIXED_MANA_HANDLER_CAPABILITIES,'activation.selected_zone_change.fixed','activation.selected_tap.fixed')
+    rule_references: tuple[str,...]=('302.6','602.2b','605.1a','605.3b','701.21a')
+
+
 @lru_cache(maxsize=1)
 def default_fixed_mana_ability_registry() -> FixedManaAbilityRegistry:
     registry = FixedManaAbilityRegistry((
         FixedActivatedManaAbilityHandler(),
         FixedManaResultAbilityHandler(),
+        FixedManaSelectedCostAbilityHandler(),
         PublicQuantityActivatedManaHandler(),
     ))
     registry.require_registered_capabilities(load_default_capability_registry())

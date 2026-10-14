@@ -205,11 +205,9 @@ class FixedActivationTapCostCompilerTests(unittest.TestCase):
                 "Tap an untapped artifact you control: Add {U}.",
             )
         ).faces[0].nodes[0]
-        self.assertFalse(mana.exact)
-        self.assertEqual(
-            ["Tap an untapped artifact you control"],
-            mana.cost["uncompiled_costs"],
-        )
+        self.assertTrue(mana.exact)
+        self.assertEqual([],mana.cost['uncompiled_costs'])
+        self.assertIn(TAP_COST_CAPABILITY,mana.capability_dependencies)
 
     def test_selected_tap_cost_dependencies_fail_closed(self):
         record = self.db.lookup("Azami, Lady of Scrolls")

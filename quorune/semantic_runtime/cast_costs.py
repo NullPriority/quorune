@@ -12,6 +12,7 @@ from ..cast_cost_modifiers import (
     PublicCastCostModifierSpec,
     PublicCastCostModifierV2Spec,
 )
+from ..continuous_conditions import FixedPublicStateConditionSpec, FixedPublicStateConditionError
 from ..card_program_faces import program_matches_face
 from ..casting_payment_keywords import (
     AffinitySpec,
@@ -60,6 +61,7 @@ SELF_SPELL_COST_REDUCTION_CAPABILITY_ID = (
 SELF_SPELL_COST_REDUCTION_HANDLER_ID = (
     "modification.cast-cost.self-public.v1"
 )
+CONDITIONAL_SPELL_COST_HANDLER_ID = 'modification.cast-cost.public-state.v1'
 
 
 FixedSpellCostReductionSpec = (
@@ -446,6 +448,31 @@ class FixedSpellCostReductionHandler:
 
 
 @dataclass(frozen=True, slots=True)
+class ConditionalSpellCostModifierHandler(FixedSpellCostReductionHandler):
+    """Gate the existing typed modifier with one shared public-state condition."""
+    handler_id: str = CONDITIONAL_SPELL_COST_HANDLER_ID
+    schema_version: int = 4
+    capability_dependencies: tuple[str, ...] = (
+        FIXED_SPELL_COST_REDUCTION_CAPABILITY_ID, 'continuous.characteristics.fixed_public_state',
+    )
+
+    def validate(self, descriptor):
+        exact_fields(descriptor, {'handler_id','schema_version','event','modifier','source_condition'},
+            field='conditional public spell-cost modifier')
+        if (descriptor['handler_id'] != self.handler_id or type(descriptor['schema_version']) is not int
+                or descriptor['schema_version'] != self.schema_version or descriptor['event'] != self.event):
+            raise SemanticNodeError('Conditional spell-cost modifier identity changed')
+        try:
+            FixedPublicStateConditionSpec.from_dict(descriptor['source_condition'])
+        except (FixedPublicStateConditionError, TypeError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
+        return FixedSpellCostReductionHandler().validate({
+            'handler_id':FIXED_SPELL_COST_REDUCTION_HANDLER_ID, 'schema_version':3,
+            'event':self.event, 'modifier':descriptor['modifier'],
+        })
+
+
+@dataclass(frozen=True, slots=True)
 class SelfSpellCostReductionHandler:
     handler_id: str = SELF_SPELL_COST_REDUCTION_HANDLER_ID
     schema_version: int = 1
@@ -514,6 +541,7 @@ def default_cast_cost_component_registry() -> CastCostComponentRegistry:
             DelveCostHandler(),
             EvokeCostHandler(),
             FixedSpellCostReductionHandler(),
+            ConditionalSpellCostModifierHandler(),
             ImproviseCostHandler(),
             SelfSpellCostReductionHandler(),
             TypedAffinityCostHandler(),
@@ -608,6 +636,10 @@ class FixedSpellCostReductionHost(Protocol):
     def _effective_static_component_key_map(
         self,
     ) -> Mapping[str, Sequence[str]]: ...
+
+    def _fixed_public_state_condition_holds(
+        self, source: Any, condition: FixedPublicStateConditionSpec, *, require_available: bool = False,
+    ) -> bool: ...
 
 
 def _modifier_controller_applies(
@@ -740,9 +772,13 @@ def active_fixed_spell_cost_reductions(
             for descriptor in program.handlers:
                 if (
                     descriptor.get("handler_id")
-                    != FIXED_SPELL_COST_REDUCTION_HANDLER_ID
+                    not in {FIXED_SPELL_COST_REDUCTION_HANDLER_ID, CONDITIONAL_SPELL_COST_HANDLER_ID}
                 ):
                     continue
+                if descriptor['handler_id'] == CONDITIONAL_SPELL_COST_HANDLER_ID:
+                    condition = FixedPublicStateConditionSpec.from_dict(descriptor['source_condition'])
+                    if not host._fixed_public_state_condition_holds(source, condition, require_available=True):
+                        continue
                 spec = registry.lower(descriptor, None)[0]
                 assert isinstance(spec, FixedSpellCostReductionSpec)
                 if (

@@ -140,8 +140,7 @@ def fixed_activated_tap_cost(ability: ActivatedAbility) -> ActivatedAbility:
     """Lower one independently closed fixed tap cost on a stack activation."""
 
     if (
-        ability.mana_ability
-        or ability.zones != ("battlefield",)
+        ability.zones != ("battlefield",)
         or ability.complex_symbols
         or ability.untap_source
         or ability.discard_source

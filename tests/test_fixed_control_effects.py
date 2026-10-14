@@ -441,8 +441,10 @@ class FixedControlGameplayTests(unittest.TestCase):
         boundaries = (
             (self.db.lookup("The Akroan War"), ("residual.card_form.ordinary-saga-chapter-event-binding",)),
             (self.db.lookup("The Beast, Deathless Prince"), (
-                "residual.replacement.replacement-applicability",
-                "residual.replacement.self-replacement-and-prevention-ordering",
+                "capability.zone.entry.tapped_state",
+                "capability.counter.producer.fixed_self_entry",
+                "residual.event_binding.normalized-event-binding",
+                "residual.event_binding.intervening-if-and-reflexive-trigger-grammar",
             )),
         )
         for record, residuals in boundaries:

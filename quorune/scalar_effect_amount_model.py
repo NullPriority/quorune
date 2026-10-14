@@ -8,6 +8,7 @@ from typing import Any, Mapping
 
 from .query_effect_amount_model import PublicQueryAmountError
 from .counter_names import normalized_counter_name
+from .public_characteristic_aggregate_model import PublicCharacteristicAggregateSpec
 
 SCALAR_AMOUNT_KIND = "scalar_effect_amount"
 SCALAR_AMOUNT_CAPABILITY = "quantity_expression.scalar_effect_amount"
@@ -16,6 +17,7 @@ SCALAR_REFERENCE_CONTEXT = "scalar_reference_snapshots"
 
 
 class ScalarAmountOrigin(StrEnum):
+    PUBLIC_AGGREGATE = 'public_characteristic_aggregate'
     SOURCE = "source_characteristic"
     TARGET = "target_characteristic"
     EVENT_OBJECT = "event_object_characteristic"
@@ -40,10 +42,18 @@ class ScalarEffectAmountSpec:
     binding_id: str | None = None
     schema_version: int = 1
     counter_name: str | None = None
+    aggregate: PublicCharacteristicAggregateSpec | None = None
 
     def __post_init__(self):
-        if type(self.schema_version) is not int or self.schema_version not in {1,2}:
+        if type(self.schema_version) is not int or self.schema_version not in {1,2,3}:
             raise PublicQueryAmountError("Unsupported scalar effect amount version")
+        if (self.schema_version==3)!=(self.origin is ScalarAmountOrigin.PUBLIC_AGGREGATE):
+            raise PublicQueryAmountError('Aggregate scalar origin requires its explicit version')
+        if self.schema_version==3:
+            if not isinstance(self.aggregate,PublicCharacteristicAggregateSpec):
+                raise PublicQueryAmountError('Aggregate scalar requires its typed public query')
+        elif self.aggregate is not None:
+            raise PublicQueryAmountError('Legacy scalar amounts cannot carry an aggregate')
         counter_origin = self.schema_version == 2
         if counter_origin:
             if self.origin is not ScalarAmountOrigin.SOURCE or self.characteristic is not None or self.history_fact is not None:
@@ -74,7 +84,8 @@ class ScalarEffectAmountSpec:
     @property
     def producer_identity(self) -> dict[str, Any]:
         return {"origin": self.origin.value, "characteristic": self.characteristic,
-                "history_fact": self.history_fact, **({"counter_name":self.counter_name} if self.schema_version==2 else {})}
+                "history_fact": self.history_fact, **({"counter_name":self.counter_name} if self.schema_version==2 else {}),
+                **({'aggregate':self.aggregate.to_dict()} if self.schema_version==3 else {})}
 
     def to_dict(self) -> dict[str, Any]:
         return {"kind": SCALAR_AMOUNT_KIND, "schema_version": self.schema_version,
@@ -86,14 +97,20 @@ class ScalarEffectAmountSpec:
         fields = {"kind", "schema_version", "origin", "characteristic", "history_fact", "coefficient", "binding_id"}
         if isinstance(value,Mapping) and value.get('schema_version')==2:
             fields.add('counter_name')
+        if isinstance(value,Mapping) and value.get('schema_version')==3:
+            fields.add('aggregate')
         if not isinstance(value, Mapping) or set(value) != fields or value.get("kind") != SCALAR_AMOUNT_KIND:
             raise PublicQueryAmountError("Scalar amount fields are incomplete or unknown")
         try:
             origin = ScalarAmountOrigin(value["origin"])
         except (TypeError, ValueError) as exc:
             raise PublicQueryAmountError("Scalar amount origin is unsupported") from exc
-        return cls(origin=origin, characteristic=value["characteristic"], history_fact=value["history_fact"],
-                   coefficient=value["coefficient"], binding_id=value["binding_id"], schema_version=value["schema_version"],counter_name=value.get('counter_name'))
+        try:
+            aggregate=PublicCharacteristicAggregateSpec.from_dict(value['aggregate']) if value['schema_version']==3 else None
+            return cls(origin=origin, characteristic=value["characteristic"], history_fact=value["history_fact"],
+                       coefficient=value["coefficient"], binding_id=value["binding_id"], schema_version=value["schema_version"],counter_name=value.get('counter_name'),aggregate=aggregate)
+        except (TypeError,ValueError) as exc:
+            raise PublicQueryAmountError(str(exc)) from exc
 
 
 def scalar_amount_specs(value: Any) -> tuple[ScalarEffectAmountSpec, ...]:

@@ -510,6 +510,33 @@ subtype. Explicit creature sets retain their creature type constraint.
 Static keyword and fixed modifier consumers use that same predicate; a
 modifier does not define power or toughness for a noncreature permanent.
 
+`compiler/fixed_characteristic_settings.py` also lowers constant settings for
+the source object behind a closed public scalar or graveyard-count condition.
+The version-two setting descriptor retains the condition and source logical
+incarnation; existing version-one public and attached descriptors retain their
+decoder and handler identity. Type, color, ability, base-stat and fixed modifier
+operations reuse the ordinary layer owner. Conditions remain live, and base
+stats do not erase counters or later modifiers. Battlefield characteristic-
+dependent conditions, dynamic settings and quoted siblings remain residual
+until their dependency and composition contracts are represented.
+
+Explicit “in your graveyard” static keyword grants have a separate active-zone
+production and capability. They use the source card's owner for “you,” evaluate
+the current public condition, and grant to the current battlefield query.
+Graveyard arrival retains its zone timestamp; enabling the condition later does
+not retimestamp the grant. Moving the source out of the graveyard ends it.
+Nonbasic lands with the named basic land subtype satisfy land conditions.
+Hidden conditions, quoted procedures, fixed stat changes and unrepresented
+siblings remain outside this graveyard grant contract.
+
+Qualified “one or more” player-damage triggers compile native source type,
+subtype, color and supertype predicates alongside controller, source-zone and
+combat restrictions. Bare subtype subjects retain their permanent domain.
+One simultaneous damage batch coalesces once per observer and damaged player;
+closed draw and source-counter bodies retain their existing result owners.
+Unsupported numeric, token, face-down and counter predicates remain residual
+until the normalized source snapshot represents those distinctions.
+
 `compiler/source_counter_anthems.py` extends the existing live static anthem
 owner with fixed signed power/toughness coefficients per named counter on the
 source. The creature recipient query remains independently closed and live;
@@ -630,6 +657,64 @@ the same condition. A distinct schema-v2 runtime handler emits the typed
 fragment through the shared layer-6 owner; the earlier characteristic-only
 schema remains strict. An unsupported condition, quoted child, nested static
 grant, multiple quotation, or material sibling prevents complete-card closure.
+
+The same compiler also combines a closed public-state predicate with an
+independently compiled keyword grant. Fixed generic ward, protection, and
+represented combat or spell-cast trigger keywords retain their complete typed
+fragments and consumer capabilities. The versioned conditional keyword
+descriptor shares the existing layer-6/7c lowering. Unknown keyword parameters,
+toxic query grants, hidden conditions, and unsupported siblings remain residual.
+
+Closed public-state predicates may also gate an independently compiled spell-
+cost modifier. The conditional cost descriptor retains the existing spell
+predicate, controller scope, total-cost adjustment and current-ability coverage.
+Named sources remain data in the compiled condition. Hidden, nested or unknown
+conditions and unsupported cost bodies remain residual.
+
+Explicit conditional self-graveyard casting permission also reuses the public-
+state grammar. The compiler retains a typed condition, graveyard activity and
+ordinary cast semantics; Max Speed and monarch predicates retain their own
+capability requirements. Additional costs, alternative zones, hidden conditions,
+permission riders and unsupported siblings remain outside this production.
+
+Attached characteristic grammar represents fixed modifiers per Equipment,
+Aura, or Aura/Equipment attached to the recipient. The compiler emits the
+versioned recipient-relative public quantity; the ordinary attached owner
+keeps any paired keyword fragments and applies the resolved count in layer 7c.
+Unrepresented relative qualities and hidden attachment quantities stay residual.
+
+Fixed live-set stat and keyword composition accepts singular “each ... gets
+... and has ...” wording alongside the plural form. Both use the same public
+query, subtype union, source exclusion and layer owners. Unknown subjects,
+variable results and unsupported siblings retain their existing residuals.
+
+The public quantity compiler recognizes single-color and two-distinct-color
+devotion through a dedicated versioned reduction. It retains the CR 700.5a
+timing boundary instead of treating devotion as an ordinary color or object
+count. Fixed static increases lower to typed current components; existing
+quantity consumers declare the devotion producer dependency at admission.
+Unknown colors, unsupported increases and unrepresented siblings remain residual.
+
+Counted token wording can use a complete public value after “equal to,” while
+the ordinary fixed-token parser still owns the entire definition and abilities.
+The quantity resolves once before the shared token replacement transaction.
+Mandatory controller-scoped token doubling lowers to the already registered
+quantity replacement descriptor with current ability coverage. Unknown values,
+definitions, linked results and wider doubling scopes remain residual.
+
+Public quantities also recognize “opponents you have” through an explicit
+versioned roster scope. It has no object predicate, hidden-zone fields or
+counter relation. Static and effect consumers declare the public player-count
+producer separately; team formats and unrepresented opponent predicates retain
+their existing support boundaries.
+
+Boolean public conditions retain complete atomic parsing before splitting
+an `and` or `or` composition. Each leaf must independently compile, and the
+versioned condition keeps its operator and producer dependencies. Ambiguous
+attachment pronouns, mixed operators and numeric characteristic predicates
+without a cycle-safe timing owner remain residual. Existing unsupported
+intervening-if source-counter and attached conditions remain excluded inside
+a composition as well.
 
 Fixed static declaration composition reuses the declaration requirement and
 restriction parsers rather than adding a combat validator. A source-local line

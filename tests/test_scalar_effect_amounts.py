@@ -44,6 +44,505 @@ def scalar_record(text: str, *, type_line: str = "Creature — Goblin") -> CardR
 
 
 class ScalarEffectAmountCompilerTests(unittest.TestCase):
+    def test_event_counter_shape_preserves_mapping_attachment_references(self):
+        from quorune.attachment_references import AttachmentReferenceSpec,AttachmentReferenceKind
+        from quorune.rules.counter_placement_capability_shapes import fixed_counter_placement_node_capabilities
+        from quorune.semantic_runtime.values import resolve_semantic_value
+        reference=AttachmentReferenceSpec(AttachmentReferenceKind.ENCHANTED,'creature').to_dict()
+        effect={'op':'place_counters','card':reference,'counter':'+1/+1','amount':1,'source':'$source'}
+        required=fixed_counter_placement_node_capabilities(effects=(effect,),target_schema=None,mechanic_ids=('cr-122-counters',))
+        self.assertEqual(('counter.producer.fixed_attached_effect','counter.producer.fixed_effect'),required)
+        nested={'ordinary':'value'}
+        self.assertEqual(nested,resolve_semantic_value(SimpleNamespace(),nested,SimpleNamespace()))
+
+    def test_tapped_public_quantity_hidden_domain_dependencies_and_omission_fail_closed(self):
+        from quorune.query_effect_amount_model import PublicQueryAmountSpec
+        from quorune.rules.capabilities import CapabilityRegistry
+        import json
+        text='Draw a card for each tapped creature you control.'
+        ir=self.compile(text,type_line='Sorcery');value=ir.faces[0].nodes[0].effects[0]['count']
+        parsed=PublicQueryAmountSpec.from_dict(value);self.assertEqual(parsed,PublicQueryAmountSpec.from_dict(parsed.to_dict()))
+        for zone in ('hand','graveyard'):
+            altered=deepcopy(value);altered['quantity']['query']['zones']=[zone]
+            with self.assertRaises(ValueError):PublicQueryAmountSpec.from_dict(altered)
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        next(row for row in raw['capabilities'] if row['id']=='quantity_expression.public_query_effect_amount').update(status='blocked',blockers=['currenttapquantitywithdrawn'])
+        self.assertNotEqual('exact',compile_oracle_card(scalar_record(text,type_line='Sorcery'),capability_registry=CapabilityRegistry(raw)).status)
+        with mock.patch('quorune.compiler.query_characteristic_templates._query_quantity_descriptor',return_value=None):
+            self.assertNotEqual('exact',self.compile(text,type_line='Sorcery').status)
+
+    def test_tapped_public_quantity_keeps_fixed_current_state_and_full_result(self):
+        for text in ('Draw a card for each tapped creature you control.',
+            'Draw X cards, where X is the number of untapped lands you control.'):
+            ir=self.compile(text,type_line='Sorcery')
+            self.assertEqual('exact',ir.status,ir.material_residuals)
+            amount=ir.faces[0].nodes[0].effects[0]['count']
+            self.assertIsInstance(amount['quantity']['query']['tapped'],bool)
+        self.assertNotEqual('exact',self.compile('Draw a card for each tapped card in your hand.',type_line='Sorcery').status)
+
+    def test_compound_tapped_counter_entry_schema_dependency_and_omission_fail_closed(self):
+        import json
+        from quorune.semantic_runtime.self_entry_counters import SelfTappedCounterEntryHandler
+        from quorune.rules.capabilities import CapabilityRegistry
+        text='This land enters tapped with two charge counters on it.'
+        descriptor=self.compile(text,type_line='Land').faces[0].nodes[0].handlers[0]
+        handler=SelfTappedCounterEntryHandler();handler.validate(descriptor)
+        subject=SimpleNamespace(destination_controller='A',object_ref='entering')
+        effect=handler.subject_replacement_effect(descriptor,subject=subject,component_id='printed-ability')
+        self.assertEqual(2,len(effect.operations))
+        for altered in ({**descriptor,'schema_version':True},{**descriptor,'schema_version':1},{**descriptor,'amount':True}):
+            with self.assertRaises(ValueError):handler.validate(altered)
+        for body in (text+' Draw a card.',text.replace('two','X')):
+            self.assertNotEqual('exact',self.compile(body,type_line='Land').status)
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        next(row for row in raw['capabilities'] if row['id']=='zone.entry.tapped_state').update(status='blocked',blockers=['compoundentrytapauthoritywithdrawn'])
+        self.assertNotEqual('exact',compile_oracle_card(scalar_record(text,type_line='Land'),capability_registry=CapabilityRegistry(raw)).status)
+
+    def test_compound_tapped_entry_counters_form_one_complete_replacement(self):
+        text='This land enters tapped with two charge counters on it.'
+        ir=self.compile(text,type_line='Land')
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        self.assertEqual(1,len(ir.faces[0].nodes))
+        descriptor=ir.faces[0].nodes[0].handlers[0]
+        self.assertEqual('replacement.zone.self-tapped-counter-entry.v2',descriptor['handler_id'])
+        self.assertEqual(2,descriptor['amount'])
+        self.assertIn('zone.entry.tapped_state',ir.faces[0].nodes[0].capability_dependencies)
+
+    def test_selected_tap_mana_dependency_and_malformed_choice_fail_closed(self):
+        import json
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.semantic_runtime.mana_abilities import FixedManaSelectedCostAbilityHandler
+        text='Tap three untapped Elves you control: Add {G}{G}{G}.'
+        ir=self.compile(text);descriptor=ir.faces[0].nodes[0].handlers[0]
+        handler=FixedManaSelectedCostAbilityHandler();spec=handler.validate(descriptor)
+        self.assertEqual(3,spec.choices[0].count)
+        for cap in ('activation.selected_tap.fixed','mana.activated.fixed_output'):
+            raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+            next(row for row in raw['capabilities'] if row['id']==cap).update(status='blocked',blockers=['tapmanacostauthoritywithdrawn'])
+            self.assertNotEqual('exact',compile_oracle_card(scalar_record(text),capability_registry=CapabilityRegistry(raw)).status)
+        with mock.patch('quorune.compiler.activated_mana_nodes.fixed_activated_tap_cost',side_effect=lambda ability:ability):
+            self.assertNotEqual('exact',self.compile(text).status)
+        for body in ('Tap X untapped creatures you control: Add {G}.','Tap an untapped creature: Add {G}.',
+            'Tap an untapped creature you control: Add {G}. This creature deals 1 damage to you.'):
+            self.assertNotEqual('exact',self.compile(body).status)
+
+    def test_fixed_mana_selected_tap_retains_query_count_and_source_exclusion(self):
+        for text,count,another in (('Tap three untapped Elves you control: Add {G}{G}{G}.',3,False),
+            ('{T}, Tap an untapped creature you control: Add one mana of any color.',1,True)):
+            ir=self.compile(text)
+            self.assertEqual('exact',ir.status,ir.material_residuals)
+            node=ir.faces[0].nodes[0];choice=node.handlers[0]['ability']['choices'][0]
+            self.assertEqual(3,node.handlers[0]['schema_version'])
+            self.assertEqual(count,choice['count']);self.assertEqual(another,choice['another'])
+            self.assertIn('activation.selected_tap.fixed',node.capability_dependencies)
+
+    def test_selected_mana_sacrifice_codec_capabilities_and_result_boundaries_fail_closed(self):
+        import json
+        from quorune.fixed_mana_abilities import FixedActivatedManaAbilitySpec
+        from quorune.semantic_runtime.mana_abilities import FixedManaSelectedCostAbilityHandler
+        from quorune.rules.capabilities import CapabilityRegistry
+        text='Sacrifice a creature: Add one mana of any color.'
+        ir=self.compile(text,type_line='Artifact');descriptor=ir.faces[0].nodes[0].handlers[0]
+        handler=FixedManaSelectedCostAbilityHandler();spec=handler.validate(descriptor)
+        self.assertEqual(spec,FixedActivatedManaAbilitySpec.from_dict(spec.to_dict()))
+        self.assertEqual(spec.choices,spec.to_activated_ability().choices)
+        for altered in ({**descriptor,'schema_version':True},{**descriptor,'schema_version':1},
+            {**descriptor,'ability':{**descriptor['ability'],'choices':{}}},
+            {**descriptor,'ability':{**descriptor['ability'],'choices':[{'kind':'random'}]}}):
+            with self.assertRaises(ValueError):handler.validate(altered)
+        for body in ('Sacrifice two creatures: Add one mana of any color.',
+            'Discard a card at random: Add one mana of any color.',
+            'Sacrifice a creature: Add {G}. This artifact deals 1 damage to you.'):
+            self.assertNotEqual('exact',self.compile(body,type_line='Artifact').status)
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        next(row for row in raw['capabilities'] if row['id']=='activation.selected_zone_change.fixed').update(status='blocked',blockers=['selectedmanacostwithdrawn'])
+        self.assertNotEqual('exact',compile_oracle_card(scalar_record(text,type_line='Artifact'),capability_registry=CapabilityRegistry(raw)).status)
+        with mock.patch('quorune.compiler.activated_mana_nodes.fixed_activated_zone_change_cost',side_effect=lambda ability:ability):
+            self.assertNotEqual('exact',self.compile(text,type_line='Artifact').status)
+
+    def test_fixed_mana_sacrifice_choice_retains_typed_cost_and_modes(self):
+        text='Sacrifice a creature: Add one mana of any color.'
+        ir=self.compile(text,type_line='Artifact')
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        node=ir.faces[0].nodes[0];descriptor=node.handlers[0]
+        self.assertEqual(3,descriptor['schema_version'])
+        self.assertEqual('sacrifice_one',descriptor['ability']['choices'][0]['kind'])
+        self.assertEqual(5,len(descriptor['ability']['modes']))
+        self.assertIn('activation.selected_zone_change.fixed',node.capability_dependencies)
+        ir=self.compile('Sacrifice a creature: Add {C}{C}.',type_line='Artifact')
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        self.assertEqual(1,len(ir.faces[0].nodes[0].handlers[0]['ability']['modes']))
+
+    def test_combat_counter_set_query_rejects_unrepresented_state_combinations(self):
+        import json
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.compiler.counter_placement_templates import fixed_counter_set_spec_is_closed
+        from quorune.affected_permanents import AffectedPermanentSetSpec
+        from quorune.object_predicate import ObjectQuerySpec,PermanentStatePredicateSpec
+        spec=AffectedPermanentSetSpec(ObjectQuerySpec(zones=('battlefield',),types_all=('creature',),state_predicate=PermanentStatePredicateSpec(attacking=True)))
+        self.assertTrue(fixed_counter_set_spec_is_closed(spec))
+        from dataclasses import replace
+        for state in (PermanentStatePredicateSpec(attacking=True,blocking=True),PermanentStatePredicateSpec(attacking=True,enchanted=True),PermanentStatePredicateSpec(attacking=True,entered_this_turn=True),PermanentStatePredicateSpec(attacking=False)):
+            self.assertFalse(fixed_counter_set_spec_is_closed(replace(spec,query=replace(spec.query,state_predicate=state))))
+        for text in ('Put a -1/-1 counter on each creature that attacked this turn.',
+            'Put a -1/-1 counter on each attacking creature and untap it.'):
+            self.assertNotEqual('exact',self.compile(text,type_line='Instant').status)
+        text='Put a -1/-1 counter on each attacking creature.'
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        next(row for row in raw['capabilities'] if row['id']=='counter.producer.fixed_permanent_set_effect').update(status='blocked',blockers=['combatsetcounter authoritywithdrawn'])
+        self.assertNotEqual('exact',compile_oracle_card(scalar_record(text,type_line='Instant'),capability_registry=CapabilityRegistry(raw)).status)
+        with mock.patch('quorune.compiler.counter_resolution_effect_templates.fixed_counter_placement_set_effect_template',return_value=None):
+            self.assertNotEqual('exact',self.compile(text,type_line='Instant').status)
+
+    def test_fixed_combat_state_counter_sets_use_live_affected_query(self):
+        for state in ('attacking','blocking'):
+            text='Put a -1/-1 counter on each '+state+' creature.'
+            ir=self.compile(text,type_line='Instant')
+            self.assertEqual('exact',ir.status,ir.material_residuals)
+            effect=ir.faces[0].nodes[0].effects[0]
+            self.assertEqual('place_counters_on_set',effect['op'])
+            self.assertTrue(effect['set']['query']['state_predicate'][state])
+
+    def test_source_damage_counter_pronoun_reuses_incarnation_pinned_leaf(self):
+        for text in ('Whenever this creature is dealt damage, put a +1/+1 counter on it.',
+            'Whenever this creature deals combat damage to a player, put a +1/+1 counter on it.',
+            'Whenever this creature deals combat damage to an opponent, put a +1/+1 counter on it.'):
+            ir=self.compile(text)
+            self.assertEqual('exact',ir.status,ir.material_residuals)
+            self.assertEqual('$source.zone_object',ir.faces[0].nodes[0].effects[0]['card'])
+        self.assertNotEqual('exact',self.compile('Whenever a creature is dealt damage, put a +1/+1 counter on it.').status)
+        with mock.patch('quorune.compiler.source_self_effect_templates.normalized_source_result_body',return_value=None):
+            self.assertNotEqual('exact',self.compile('Whenever this creature is dealt damage, put a +1/+1 counter on it.').status)
+
+    def test_action_counter_snapshot_rejects_missing_incarnation_and_reentered_recipient(self):
+        from quorune.event_counter_reference import event_counter_recipient_context,resolve_event_counter_recipient
+        from quorune.rules.capabilities import CapabilityRegistry
+        import json
+        program=SimpleNamespace(effects=({'op':'place_counters','card':'$event.counter_object'},))
+        with self.assertRaises(ValueError):event_counter_recipient_context(program,'damage.dealt',{'card':'body'})
+        snapshot=event_counter_recipient_context(program,'damage.dealt',{'card':'body','source_logical_object_id':'old'})
+        body=SimpleNamespace(ref='body',zone='battlefield',phased_out=False,logical_object_id='new')
+        host=SimpleNamespace(state=SimpleNamespace(cards={'body':body}));item=SimpleNamespace(context=snapshot)
+        self.assertIsNone(resolve_event_counter_recipient(host,item));body.logical_object_id='old'
+        self.assertEqual('body',resolve_event_counter_recipient(host,item))
+        text='Whenever a creature you control attacks, put a +1/+1 counter on it.'
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        next(row for row in raw['capabilities'] if row['id']=='counter.producer.fixed_event_object').update(status='blocked',blockers=['actioncounter authority withdrawn'])
+        self.assertNotEqual('exact',compile_oracle_card(scalar_record(text),capability_registry=CapabilityRegistry(raw)).status)
+        with mock.patch('quorune.compiler.event_counter_results.entry_event_counter_result',return_value=None):
+            self.assertNotEqual('exact',self.compile(text).status)
+
+    def test_public_attack_and_damage_counter_recipient_is_the_occurring_object(self):
+        cases=(
+            ('Whenever a creature you control attacks, put a +1/+1 counter on it.','$event.counter_object'),
+            ('Whenever a Vampire you control deals combat damage to a player, put a +1/+1 counter on it.','$event.counter_object'),
+        )
+        for text,reference in cases:
+            ir=self.compile(text)
+            self.assertEqual('exact',ir.status,ir.material_residuals)
+            self.assertEqual(reference,ir.faces[0].nodes[0].effects[0]['card'])
+            self.assertIsNone(ir.faces[0].nodes[0].target_schema)
+        ir=self.compile('Whenever a creature you control deals combat damage to a player, put that many +1/+1 counters on it.')
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        self.assertEqual('committed_event_amount',ir.faces[0].nodes[0].effects[0]['amount']['origin'])
+
+    def test_entry_event_counter_reference_domain_dependency_and_omission_fail_closed(self):
+        import json
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.semantic_runtime.values import resolve_semantic_value
+        text='Whenever another creature you control enters, put a +1/+1 counter on that creature.'
+        self.assertEqual('exact',self.compile(text).status)
+        for cap in ('counter.producer.fixed_event_object','counter.producer.fixed_effect'):
+            raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+            next(row for row in raw['capabilities'] if row['id']==cap).update(status='blocked',blockers=['eventcounter authority withdrawn'])
+            self.assertNotEqual('exact',compile_oracle_card(scalar_record(text),capability_registry=CapabilityRegistry(raw)).status)
+        for altered in ('Whenever another creature dies, put a +1/+1 counter on that creature.',
+            'Whenever one or more creatures enter, put a +1/+1 counter on it.',
+            text+' Create a token.'):
+            self.assertNotEqual('exact',self.compile(altered).status)
+        with mock.patch('quorune.compiler.event_counter_results.entry_event_counter_result',return_value=None):
+            self.assertNotEqual('exact',self.compile(text).status)
+        card=SimpleNamespace(ref='entry',zone='battlefield',phased_out=False,logical_object_id='new')
+        host=SimpleNamespace(state=SimpleNamespace(cards={'entry':card}))
+        item=SimpleNamespace(context={'card':'entry','card_object_identity':'old'})
+        self.assertIsNone(resolve_semantic_value(host,'$event.entry_object',item))
+        item.context['card_object_identity']='new';self.assertEqual('entry',resolve_semantic_value(host,'$event.entry_object',item))
+        item.context={}
+        with self.assertRaises(ValueError):resolve_semantic_value(host,'$event.entry_object',item)
+
+    def test_entry_event_counter_result_uses_entering_incarnation_without_a_target(self):
+        for text in ('Whenever another creature you control enters, put a +1/+1 counter on that creature.',
+            'Whenever another artifact you control enters, put two charge counters on it.'):
+            ir=self.compile(text)
+            self.assertEqual('exact',ir.status,ir.material_residuals)
+            node=ir.faces[0].nodes[0]
+            self.assertEqual('$event.entry_object',node.effects[0]['card'])
+            self.assertIsNone(node.target_schema)
+            self.assertIn('counter.producer.fixed_event_object',node.capability_dependencies)
+
+    def test_event_controller_and_individual_attack_recipient_results_preserve_fields(self):
+        from dataclasses import replace
+        from quorune.oracle_ir import generated_programs
+        from quorune.rules.event_player_result_shapes import is_closed_fixed_event_player_result_program
+        cases=(
+            ('Whenever a land an opponent controls enters, that player loses 2 life and you gain 2 life.','$context.controller'),
+            ('Whenever a creature you control attacks, defending player loses 1 life and you gain 1 life.','$context.defending_player'),
+            ('Whenever a creature dies, that creature\'s controller gains 1 life.','$context.previous_controller'),
+        )
+        for text,player in cases:
+            ir=self.compile(text)
+            self.assertEqual('exact',ir.status,ir.material_residuals)
+            self.assertEqual(player,ir.faces[0].nodes[0].effects[0]['player'])
+            self.assertIsNone(ir.faces[0].nodes[0].target_schema)
+            program=generated_programs(type('NoRulings',(),{'rulings':lambda self,record:()})(),scalar_record(text),
+                capability_registry=self.registry,capability_profile='commander_review',trust_level='trusted')[0]
+            self.assertTrue(is_closed_fixed_event_player_result_program(program))
+            self.assertFalse(is_closed_fixed_event_player_result_program(replace(program,event='spell.countered')))
+        for text in ('Whenever one or more creatures you control attack, defending player loses 1 life.',
+            'Whenever a creature enters, that creature\'s controller gains X life.'):
+            self.assertNotEqual('exact',self.compile(text).status)
+
+    def test_colored_fixed_prevention_schema_dependencies_and_omission_fail_closed(self):
+        import json
+        from quorune.semantic_runtime.damage_replacements import FixedDamagePreventionV2Handler
+        from quorune.rules.capabilities import CapabilityRegistry
+        text='If a red source would deal damage to you, prevent 2 of that damage.'
+        ir=self.compile(text,type_line='Enchantment');descriptor=ir.faces[0].nodes[0].handlers[0]
+        handler=FixedDamagePreventionV2Handler();node=handler.validate(descriptor)
+        self.assertEqual(('R',),node.condition.source_colors_all)
+        for altered in ({**descriptor,'schema_version':True},{**descriptor,'schema_version':1},
+            {**descriptor,'modification':{'amount':True}},
+            {**descriptor,'condition':{**descriptor['condition'],'source_colors_all':['purple']}}):
+            with self.assertRaises(ValueError):handler.validate(altered)
+        for altered in ('If a source of the chosen color would deal damage to you, prevent 2 of that damage.',
+            text+' Draw a card.',text.replace('prevent 2','prevent X')):
+            self.assertNotEqual('exact',self.compile(altered,type_line='Enchantment').status)
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        next(row for row in raw['capabilities'] if row['id']=='damage.prevention.static_fixed').update(status='blocked',blockers=['colored prevention authority withdrawn'])
+        self.assertNotEqual('exact',compile_oracle_card(scalar_record(text,type_line='Enchantment'),capability_registry=CapabilityRegistry(raw)).status)
+        with mock.patch('quorune.compiler.damage_templates._colored_fixed_prevention_handler',return_value=None):
+            self.assertNotEqual('exact',self.compile(text,type_line='Enchantment').status)
+
+    def test_fixed_prevention_colored_source_reuses_versioned_public_damage_predicate(self):
+        for color,symbol in (('white','W'),('blue','U'),('black','B'),('red','R'),('green','G')):
+            text='If a '+color+' source would deal damage to you, prevent 2 of that damage.'
+            ir=self.compile(text,type_line='Enchantment')
+            self.assertEqual('exact',ir.status,ir.material_residuals)
+            descriptor=ir.faces[0].nodes[0].handlers[0]
+            self.assertEqual('prevention.damage.fixed.v2',descriptor['handler_id'])
+            self.assertEqual([symbol],descriptor['condition']['source_colors_all'])
+            self.assertEqual(2,descriptor['modification']['amount'])
+
+    def test_event_player_fixed_sequence_rejects_partial_and_unknown_recipient_clauses(self):
+        from dataclasses import replace
+        from quorune.oracle_ir import generated_programs
+        from quorune.rules.event_player_result_shapes import is_closed_fixed_event_player_result_program,fixed_event_player_result_node_capabilities
+        text='Whenever an opponent casts a noncreature spell, that player loses 2 life and you gain 2 life.'
+        self.assertEqual('exact',self.compile(text).status)
+        for body in (
+            'that player loses 2 life and you gain X life.',
+            'that player loses 2 life and another player gains 2 life.',
+            'that player loses 2 life and you gain 2 life. Draw a card.',
+            'that player loses 2 life and you may gain 2 life.',
+        ):
+            self.assertNotEqual('exact',self.compile('Whenever an opponent casts a noncreature spell, '+body).status)
+        program=generated_programs(type('NoRulings',(),{'rulings':lambda self,record:()})(),scalar_record(text),
+            capability_registry=self.registry,capability_profile='commander_review',trust_level='trusted')[0]
+        self.assertTrue(is_closed_fixed_event_player_result_program(program))
+        self.assertFalse(is_closed_fixed_event_player_result_program(replace(program,event='permanent.enter')))
+        effects=tuple({**effect,'player':'$controller'} for effect in program.effects)
+        self.assertFalse(fixed_event_player_result_node_capabilities(effects=effects,target_schema=None,mechanic_ids=program.coverage))
+
+    def test_event_player_fixed_sequence_retains_each_recipient_and_printed_order(self):
+        cases=(
+            ('Whenever an opponent casts a noncreature spell, that player loses 2 life and you gain 2 life.',
+                (('lose_life','$context.player','amount',2),('life','$controller','delta',2))),
+            ('Whenever this creature attacks, defending player loses 1 life and you gain 1 life.',
+                (('lose_life','$context.defending_player','amount',1),('life','$controller','delta',1))),
+            ('Whenever this creature deals combat damage to a player, that player loses 1 life and you draw a card.',
+                (('lose_life','$context.target','amount',1),('draw','$controller','count',1))),
+        )
+        for text,expected in cases:
+            ir=self.compile(text)
+            self.assertEqual('exact',ir.status,ir.material_residuals)
+            node=ir.faces[0].nodes[0];self.assertIsNone(node.target_schema)
+            self.assertEqual(len(expected),len(node.effects))
+            for effect,(operation,player,field,value) in zip(node.effects,expected):
+                self.assertEqual(operation,effect['op']);self.assertEqual(player,effect['player']);self.assertEqual(value,effect[field])
+            self.assertIn('resolution.event_player.fixed_result',node.capability_dependencies)
+
+    def test_fixed_affected_player_discard_generated_registration_promotes_closed_owner(self):
+        from quorune.semantics import SemanticRegistry
+        record=scalar_record('Target player discards two cards.',type_line='Sorcery')
+        registry=SemanticRegistry()
+        register_generated_programs(type('NoRulings',(),{'rulings':lambda self,record:()})(),registry,(record,),
+            trust_level='provisional',capability_registry=self.registry,capability_profile='commander_review',
+            promote_exact_effect_programs=True)
+        programs=registry.programs_for_oracle(record.oracle_id)
+        self.assertTrue(programs);self.assertTrue(all(p.trust_level=='trusted' for p in programs))
+        from dataclasses import replace
+        from quorune.rules.affected_player_discard_capability_shapes import is_closed_fixed_affected_player_discard_program
+        self.assertTrue(is_closed_fixed_affected_player_discard_program(programs[0]))
+        changed={**programs[0].effects[0],'players':['$context.player']}
+        self.assertFalse(is_closed_fixed_affected_player_discard_program(replace(programs[0],effects=(changed,))))
+        self.assertFalse(is_closed_fixed_affected_player_discard_program(replace(programs[0],capability_dependencies=(),capability_closure=None)))
+
+    def test_fixed_event_player_result_partial_domain_dependency_and_omission_fail_closed(self):
+        import json
+        from quorune.rules.capabilities import CapabilityRegistry
+        text='Whenever an opponent casts a spell, that player draws seven cards.'
+        self.assertEqual('exact',self.compile(text).status)
+        for cap in ('resolution.event_player.fixed_result','zone.draw.library_to_hand'):
+            raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+            next(row for row in raw['capabilities'] if row['id']==cap).update(status='blocked',blockers=['event player result withdrawn'])
+            self.assertNotEqual('exact',compile_oracle_card(scalar_record(text),capability_registry=CapabilityRegistry(raw)).status)
+        for altered in (
+            'Whenever this creature deals damage, that player loses 1 life.',
+            'Whenever one or more creatures attack, defending player loses 1 life.',
+            text+' Exile that card.',
+        ):
+            self.assertNotEqual('exact',self.compile(altered).status)
+        with mock.patch('quorune.compiler.event_player_results.fixed_event_player_result',return_value=None):
+            self.assertNotEqual('exact',self.compile(text).status)
+        from dataclasses import replace
+        from quorune.oracle_ir import generated_programs
+        from quorune.rules.event_player_result_shapes import is_closed_fixed_event_player_result_program
+        program=generated_programs(type('NoRulings',(),{'rulings':lambda self,record:()})(),scalar_record(text),
+            capability_registry=self.registry,capability_profile='commander_review',trust_level='trusted')[0]
+        self.assertTrue(is_closed_fixed_event_player_result_program(program))
+        self.assertFalse(is_closed_fixed_event_player_result_program(replace(program,event='permanent.enter')))
+
+    def test_fixed_event_player_draw_and_life_results_are_untargeted_and_bound(self):
+        cases=(
+            ('Whenever an opponent casts a spell, that player draws seven cards.','draw','$context.player','count',7),
+            ('Whenever an opponent discards a card, that player loses 2 life.','lose_life','$context.previous_controller','amount',2),
+            ('Whenever this creature deals combat damage to a player, that player loses 1 life.','lose_life','$context.target','amount',1),
+        )
+        for text,operation,player,field,amount in cases:
+            ir=self.compile(text)
+            self.assertEqual('exact',ir.status,ir.material_residuals)
+            node=ir.faces[0].nodes[0]
+            self.assertIsNone(node.target_schema)
+            self.assertEqual(operation,node.effects[0]['op']);self.assertEqual(player,node.effects[0]['player'])
+            self.assertEqual(amount,node.effects[0][field])
+            self.assertIn('resolution.event_player.fixed_result',node.capability_dependencies)
+
+    def test_source_damage_amount_dependency_and_scalar_handoff_fail_closed(self):
+        import json
+        from quorune.rules.capabilities import CapabilityRegistry
+        text='Whenever this creature deals combat damage to a player, draw that many cards.'
+        self.assertEqual('exact',self.compile(text).status)
+        for capability in ('quantity_expression.scalar_effect_amount','trigger.event.normalized_damage'):
+            raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+            next(row for row in raw['capabilities'] if row['id']==capability).update(status='blocked',blockers=['event amount dependency withdrawn'])
+            self.assertNotEqual('exact',compile_oracle_card(scalar_record(text),capability_registry=CapabilityRegistry(raw)).status)
+        with mock.patch('quorune.compiler.scalar_effect_amounts._AMOUNT_EVENTS',{'life.gained','damage.dealt','combat.damage.player'}):
+            self.assertNotEqual('exact',self.compile(text).status)
+
+    def test_source_damage_amount_broad_recipient_and_combat_receive_contrasts(self):
+        from quorune.compiler.fixed_counter_trigger_nodes import fixed_counter_trigger_binding
+        cases=(
+            ('Whenever this creature deals damage, you gain that much life.','damage.dealt.self',None),
+            ('Whenever this creature deals combat damage, you gain that much life.','damage.dealt.self',{'field':'combat','op':'eq','value':True}),
+            ('Whenever this creature is dealt combat damage, you gain that much life.','damage.dealt',{'all':[
+                {'field':'target','op':'eq','value':'$source.ref'},{'field':'combat','op':'eq','value':True}]}),
+        )
+        for text,event,condition in cases:
+            ir=self.compile(text)
+            self.assertEqual('exact',ir.status,ir.material_residuals)
+            node=ir.faces[0].nodes[0]
+            self.assertEqual(event,node.event);self.assertEqual(condition,node.event_condition)
+            self.assertEqual('committed_event_amount',node.effects[0]['delta']['origin'])
+        for text in (
+            'Whenever another creature deals damage, you gain that much life.',
+            'Whenever this creature deals damage to the chosen player, you gain that much life.',
+            'Whenever this creature is dealt combat damage, you gain life equal to damage prevented this way.',
+        ):
+            self.assertNotEqual('exact',self.compile(text).status)
+
+    def test_source_damage_event_amount_keeps_subscription_identity_and_amount(self):
+        text='Whenever this creature deals combat damage to a player, draw that many cards.'
+        ir=self.compile(text)
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        node=ir.faces[0].nodes[0]
+        self.assertEqual('damage.dealt.self',node.event)
+        self.assertEqual('committed_event_amount',node.effects[0]['count']['origin'])
+        self.assertEqual({'all':[{'field':'target_kind','op':'eq','value':'player'},
+            {'field':'combat','op':'truthy','value':True}]},node.event_condition)
+
+    def test_public_stat_aggregate_codec_dependencies_and_static_exclusions_fail_closed(self):
+        import json
+        from pathlib import Path
+        from quorune.public_characteristic_aggregates import PublicCharacteristicAggregateSpec,current_public_characteristic_aggregate
+        from quorune.object_predicate import ObjectQuerySpec
+        from quorune.scalar_effect_amount_model import ScalarEffectAmountSpec
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.compiler.public_characteristic_aggregates import public_characteristic_aggregate
+        spec=public_characteristic_aggregate('the greatest power among creatures you control')
+        payload=spec.to_dict()
+        self.assertEqual(spec,ScalarEffectAmountSpec.from_dict(payload))
+        for field,value in (('schema_version',True),('origin','source_characteristic'),('aggregate',{}),('characteristic','power')):
+            with self.assertRaises(ValueError):ScalarEffectAmountSpec.from_dict({**payload,field:value})
+        for text in ('the greatest power among cards in your hand','the total toughness of creatures in your graveyard','the greatest power among other creatures you control',
+            'the total power of equipped creatures you control','the greatest toughness among modified creatures you control'):
+            self.assertIsNone(public_characteristic_aggregate(text))
+        text='Draw X cards, where X is the greatest power among creatures you control.'
+        ir=self.compile(text,type_line='Sorcery')
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        self.assertIn('quantity_expression.public_characteristic_aggregate',ir.faces[0].nodes[0].capability_dependencies)
+        from quorune.card_programs import compile_card_program,bind_card_program_runtime
+        database=type('NoRulings',(),{'rulings':lambda self,record:()})()
+        program=compile_card_program(database,scalar_record(text,type_line='Sorcery'),capability_registry=self.registry,capability_profile='commander_review',trust_level='trusted')
+        self.assertTrue(bind_card_program_runtime(program,capability_registry=self.registry,profile='commander_review')['strict_capability_ready'])
+        raw=json.loads((Path(__file__).parents[1]/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        changed=deepcopy(raw)
+        next(row for row in changed['capabilities'] if row['id']=='quantity_expression.public_characteristic_aggregate').update(status='blocked',blockers=['aggregate producer withdrawn'])
+        self.assertNotEqual('exact',compile_oracle_card(scalar_record(text,type_line='Sorcery'),capability_registry=CapabilityRegistry(changed)).status)
+        with mock.patch('quorune.compiler.public_characteristic_aggregates.public_characteristic_aggregate',return_value=None):
+            self.assertNotEqual('exact',self.compile(text,type_line='Sorcery').status)
+
+    def test_public_stat_aggregate_total_maximum_empty_negative_and_unavailable_contrasts(self):
+        from dataclasses import replace
+        from types import SimpleNamespace
+        from quorune.public_characteristic_aggregates import PublicCharacteristicAggregateSpec,current_public_characteristic_aggregate
+        from quorune.object_predicate import ObjectQuerySpec
+        from quorune.characteristic_evaluation import type_parts
+        from quorune.scalar_effect_amount_model import ScalarAmountOrigin,ScalarEffectAmountSpec
+        from quorune.scalar_effect_amounts import resolve_scalar_effect_amount
+        from quorune.model import CardInstance
+        cards={};values={}
+        for index,(controller,power,kind,phased) in enumerate((('A','5','Creature — Wolf',False),('A','-3','Creature — Wolf',False),('B','20','Creature — Wolf',False),('A','30','Creature — Wolf',True),('A',None,'Artifact',False))):
+            card=CardInstance(str(index),'R'+str(index),'fixture','Generic Aggregate Body',controller,controller,'battlefield')
+            card.phased_out=phased;cards[card.object_id]=card
+            values[card.object_id]={'type_line':kind,'power':power,'toughness':'2','mana_value':0,'colors':[],'keywords':[]}
+        host=SimpleNamespace(state=SimpleNamespace(cards=cards,players={'A':object(),'B':object()}),
+            _effective_card_data=lambda card:values[card.object_id],_type_parts=type_parts)
+        total=PublicCharacteristicAggregateSpec('power','sum','source_controller',ObjectQuerySpec(zones=('battlefield',),types_all=('creature',)))
+        maximum=replace(total,reduction='maximum')
+        self.assertEqual(2,current_public_characteristic_aggregate(host,'A',total))
+        self.assertEqual(5,current_public_characteristic_aggregate(host,'A',maximum))
+        self.assertEqual(20,current_public_characteristic_aggregate(host,'B',maximum))
+        self.assertEqual(0,current_public_characteristic_aggregate(host,'A',replace(total,query=ObjectQuerySpec(zones=('battlefield',),types_all=('creature',),subtypes_all=('elf',)))))
+        spec=ScalarEffectAmountSpec(ScalarAmountOrigin.PUBLIC_AGGREGATE,schema_version=3,aggregate=total)
+        self.assertEqual(spec,ScalarEffectAmountSpec.from_dict(spec.to_dict()))
+        values['0']['power']='-5'
+        item=SimpleNamespace(context={},controller='A')
+        self.assertEqual(0,resolve_scalar_effect_amount(host,spec.to_dict(),item))
+        values['0']['power']=None
+        with self.assertRaises(ValueError):current_public_characteristic_aggregate(host,'A',total)
+
+    def test_public_stat_aggregate_compiles_as_resolution_producer_with_its_query(self):
+        text='Draw X cards, where X is the greatest power among creatures you control.'
+        ir=self.compile(text,type_line='Sorcery')
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        effects=ir.faces[0].nodes[0].effects
+        amount=next(value for value in effects if value['op']=='draw')['count']
+        self.assertEqual(3,amount['schema_version'])
+        self.assertEqual('public_characteristic_aggregate',amount['origin'])
+        self.assertEqual('maximum',amount['aggregate']['reduction'])
+        self.assertEqual('source_controller',amount['aggregate']['controller_relation'])
+        self.assertEqual(['creature'],amount['aggregate']['query']['types_all'])
+
     @classmethod
     def setUpClass(cls):
         cls.registry = load_default_capability_registry()
@@ -72,7 +571,7 @@ class ScalarEffectAmountCompilerTests(unittest.TestCase):
 
     def test_open_ambiguous_and_cost_quantities_stay_residual(self):
         for text in (
-            "Draw X cards, where X is the greatest power among creatures you control.",
+            "Draw X cards, where X is the greatest power among cards in your hand.",
             "Destroy target creature with mana value X, where X is this creature's power.",
             "Target creature gets +X/+X until end of turn, where X is the chosen creature's power.",
             "Draw that many cards.",

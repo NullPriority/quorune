@@ -145,6 +145,9 @@ def fixed_regeneration_effect_template(
     self_template = self_regeneration_effect_template(normalized)
     if self_template is not None and source_is_permanent is True:
         return self_template
+    if source_is_permanent is True and re.fullmatch(r'regenerate this permanent\.',normalized,re.I):
+        return FixedRegenerationEffectTemplate(
+            template_id='regenerate-this-permanent-v1',_card_reference=SOURCE_ZONE_OBJECT)
 
     target_match = re.fullmatch(
         r"regenerate (?P<subject>target .+)\.",

@@ -456,6 +456,16 @@ def fixed_token_creation_effect_template(
     ) or _fixed_token_batch_creation_effect_template(text)
 
 
+def static_token_quantity_replacement_handler(text: str):
+    """Compile the existing mandatory controller-scoped double-token owner."""
+    if re.fullmatch(r'If an effect would create one or more tokens under your control, it creates twice that many of those tokens instead\.?',text.strip(),re.I) is None:
+        return None
+    return 'fixed-token-quantity-replacement-v1', {
+        'handler_id':'replacement.token.quantity.v1','schema_version':1,'event':'token.create',
+        'condition':{'event_controller':'source_controller'},'multiplier':2,
+    }, ('token.creation.quantity_replacement',)
+
+
 def static_additional_token_replacement_handler(
     text: str,
 ) -> tuple[str, Mapping[str, Any], str] | None:

@@ -351,11 +351,12 @@ _WITNESSES = {
         "{1}{U}{U}",
         ("Enchant",),
     ),
-    "sleep-cursed-faerie": _Witness(
-        "Sleep-Cursed Faerie",
+    "untap-variable-entry-boundary": _Witness(
+        "Generic Untap Variable Entry Boundary",
         "Creature — Faerie Wizard",
         "Flying, ward {2}\n"
-        "This creature enters tapped with three stun counters on it. (If it "
+        "This creature enters tapped with a stun counter on it for each "
+        "card in your hand. (If it "
         "would become untapped, remove a stun counter from it instead.)\n"
         "{1}{U}: Untap this creature.",
         "{U}",
@@ -1667,7 +1668,7 @@ _bind(
 )
 _bind("tangle-kelp", TAP_STATE_HIGH_RISK_BOUNDARY_PAIRS[1])
 _bind("pemmins-aura", TAP_STATE_HIGH_RISK_BOUNDARY_PAIRS[2])
-_bind("sleep-cursed-faerie", *TAP_STATE_HIGH_RISK_BOUNDARY_PAIRS[5:])
+_bind("untap-variable-entry-boundary", *TAP_STATE_HIGH_RISK_BOUNDARY_PAIRS[5:])
 _bind("chandra-pyromaster", *IMPULSE_ACCESS_AND_CHOICE_PAIRS[:2])
 _bind("stella-lee-wild-card", IMPULSE_ACCESS_AND_CHOICE_PAIRS[2])
 _bind(

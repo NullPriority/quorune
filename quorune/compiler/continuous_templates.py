@@ -32,6 +32,7 @@ from .public_state_queries import (
     fixed_public_state_parts,
 )
 from .query_characteristic_templates import query_characteristic_quantity
+from .collection_quantity_templates import recipient_attachment_quantity
 from .ward_cost_templates import fixed_ward_spec
 from ..rules.source_references import SourceReferenceSpec
 from ..continuous_conditions import (
@@ -219,13 +220,13 @@ _GLOBAL_PLURAL_KEYWORD_GRANT = re.compile(
 )
 _TRAILING_REMINDER = re.compile(r"\s+\([^()]*\)\.?$")
 _FIXED_QUERY_CHARACTERISTIC_GRANT = re.compile(
-    r"^(?P<subject>.+?) get "
-    r"(?P<power>[+-]\d+)/(?P<toughness>[+-]\d+) and have "
+    r"^(?P<subject>.+?) gets? "
+    r"(?P<power>[+-]\d+)/(?P<toughness>[+-]\d+) and ha(?:ve|s) "
     r"(?P<abilities>.+?)\.?$",
     re.IGNORECASE,
 )
 _FIXED_QUERY_POWER_TOUGHNESS = re.compile(
-    r"^(?P<subject>.+?) get (?P<power>[+-]\d+)/(?P<toughness>[+-]\d+)\.?$",
+    r"^(?P<subject>.+?) gets? (?P<power>[+-]\d+)/(?P<toughness>[+-]\d+)\.?$",
     re.IGNORECASE,
 )
 def fixed_power_toughness_anthem_handler(
@@ -783,14 +784,15 @@ def _attached_dynamic_modifier(
     if match is None:
         return None
     quantity_text = match.group("quantity")
+    quantity = recipient_attachment_quantity(quantity_text)
     if re.search(
         r"(?:attached to (?:it|this creature)|\bits controller's\b|"
         r"\bof its\b|\bon it\b)",
         quantity_text,
         re.IGNORECASE,
-    ):
+    ) and quantity is None:
         return None
-    quantity = query_characteristic_quantity(
+    quantity = quantity or query_characteristic_quantity(
         quantity_text,
         source_name=source_name,
         definition_extensions=True,
@@ -980,7 +982,7 @@ def attached_fixed_characteristics_handler(
 ) -> tuple[str, Mapping[str, Any], tuple[str, ...]] | None:
     """Lower one closed attached-object characteristic sentence.
 
-    Conditions, target-relative attachment counts, names, declaration rules,
+    Conditions, open target-relative quantities, names, declaration rules,
     quoted rules text, and unrepresented mechanics remain residual.
     """
 
@@ -1416,14 +1418,12 @@ def fixed_public_state_characteristics_handler(
         return None
     source_condition, body = parsed
     if re.match(r"^it\b", body, re.IGNORECASE):
-        if (
-            source_condition.kind
-            is FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY
-        ):
-            assert source_condition.predicate is not None
+        attached=next((leaf for leaf in source_condition.leaf_conditions() if leaf.kind is FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY),None)
+        if attached is not None:
+            assert attached.predicate is not None
             attached_subject = (
                 "Enchanted land"
-                if "land" in source_condition.predicate.types_all
+                if "land" in attached.predicate.types_all
                 else "Enchanted creature"
             )
             body = re.sub(

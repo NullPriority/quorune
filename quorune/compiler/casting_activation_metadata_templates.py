@@ -14,7 +14,7 @@ from ..semantic_runtime.casting_activation_metadata import (
 )
 
 
-CastingActivationMetadataTemplate = tuple[str, Mapping[str, Any], str]
+CastingActivationMetadataTemplate = tuple[str, Mapping[str, Any], str | tuple[str, ...]]
 
 
 _SELF_GRAVEYARD_CONTROLLED_SUBTYPE = re.compile(
@@ -36,15 +36,28 @@ _CONTROLLER_LOYALTY_INCREASE = re.compile(
 
 def static_self_zone_cast_permission_handler(
     text: str,
+    *, source_name: str = 'source',
 ) -> CastingActivationMetadataTemplate | None:
-    """Lower one self-graveyard permission with a pinned subtype condition."""
+    """Lower explicit self-graveyard permission behind a closed public condition."""
 
     match = _SELF_GRAVEYARD_CONTROLLED_SUBTYPE.fullmatch(text.strip())
-    if match is None:
-        return None
-    subtype = canonical_creature_subtype(match.group("subtype"))
+    subtype = canonical_creature_subtype(match.group("subtype")) if match is not None else None
     if subtype is None:
-        return None
+        from .public_state_queries import fixed_public_state_condition
+        from .player_status_conditions import max_speed_condition_parts
+        speed = max_speed_condition_parts(text.strip())
+        if speed is not None:
+            condition,body=speed
+            if body.casefold()!='you may cast this card from your graveyard.':
+                return None
+            return _public_self_zone_permission(condition)
+        conditional = re.fullmatch(r'You may cast this card from your graveyard (?:as long as|if) (?P<condition>.+?)\.?', text.strip(), re.I)
+        if conditional is None:
+            return None
+        condition = fixed_public_state_condition(conditional['condition'], source_name=source_name)
+        if condition is None:
+            return None
+        return _public_self_zone_permission(condition)
     return (
         "self-graveyard-cast-controlled-subtype-v1",
         {
@@ -56,6 +69,17 @@ def static_self_zone_cast_permission_handler(
         },
         "casting.zone.self_graveyard.controlled_subtype",
     )
+
+
+def _public_self_zone_permission(condition):
+    capabilities={'casting.zone.self_graveyard.controlled_subtype','continuous.characteristics.fixed_public_state'}
+    if condition.kind.value=='controller_max_speed':capabilities.add('variant.speed.player')
+    elif condition.kind.value=='controller_is_monarch':capabilities.add('variant.monarch.designate')
+    return 'self-graveyard-cast-public-state-v1', {
+        'handler_id':'permission.cast.self-zone-public-state.v1','schema_version':2,
+        'event':SELF_ZONE_CAST_PERMISSION_EVENT,'source_zone':'graveyard',
+        'source_condition':condition.to_dict(),
+    }, tuple(sorted(capabilities))
 
 
 def static_loyalty_cost_modifier_handler(

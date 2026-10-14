@@ -16,6 +16,7 @@ from ..object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
 from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
 from ..target_numeric import TargetNumericCharacteristic, TargetNumericCharacteristicSpec, TargetNumericComparison
 from ..rules.source_references import SourceReferenceSpec
+from .boolean_public_conditions import compose_public_conditions,public_condition_parts_result
 from .creature_subtypes import (
     canonical_creature_subtype,
     canonical_creature_subtype_surface,
@@ -1462,6 +1463,8 @@ def _fixed_public_state_condition(
     source_name: str,
 ) -> FixedPublicStateConditionSpec | None:
     normalized = text.strip().rstrip(".")
+    if normalized.casefold() in {"it's your turn","it’s your turn"}:
+        normalized='your turn'
     numeric = re.fullmatch(r'you control a creature with (?P<stat>power|toughness) (?P<amount>[0-9]+) or (?P<bound>greater|less)', normalized, re.I)
     if numeric is not None:
         return FixedPublicStateConditionSpec(FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS,
@@ -1497,7 +1500,10 @@ def fixed_public_state_condition(
 ) -> FixedPublicStateConditionSpec | None:
     """Parse one closed condition without coupling it to a result body."""
 
-    return _fixed_public_state_condition(text, source_name=source_name)
+    atomic=_fixed_public_state_condition(text,source_name=source_name)
+    return atomic if atomic is not None else compose_public_conditions(text,
+        compile_atomic=lambda term:_fixed_public_state_condition(term,source_name=source_name),
+        source_pattern=_condition_source_subject_pattern(source_name))
 
 
 def _explicit_condition_subject(condition: str, body: str) -> str:
@@ -1539,40 +1545,40 @@ def fixed_public_state_parts(
         re.IGNORECASE,
     )
     if during is not None:
-        condition = _fixed_public_state_condition(
+        condition = fixed_public_state_condition(
             _explicit_condition_subject(
                 during.group("condition"),
                 during.group("body"),
             ),
             source_name=source_name,
         )
-        return (condition, during.group("body")) if condition and condition.kind is not FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS else None
+        return public_condition_parts_result(condition,during.group('body'))
     prefix = re.fullmatch(
         r"As long as (?P<condition>.+?), (?P<body>.+)",
         text,
         re.IGNORECASE,
     )
     if prefix is not None:
-        condition = _fixed_public_state_condition(
+        condition = fixed_public_state_condition(
             _explicit_condition_subject(
                 prefix.group("condition"),
                 prefix.group("body"),
             ),
             source_name=source_name,
         )
-        return (condition, prefix.group("body")) if condition and condition.kind is not FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS else None
+        return public_condition_parts_result(condition,prefix.group('body'))
     marker = text.casefold().rfind(" as long as ")
     if marker <= 0:
         return None
     body = text[:marker]
-    condition = _fixed_public_state_condition(
+    condition = fixed_public_state_condition(
         _explicit_condition_subject(
             text[marker + len(" as long as ") :],
             body,
         ),
         source_name=source_name,
     )
-    return (condition, body) if condition and condition.kind is not FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS else None
+    return public_condition_parts_result(condition,body)
 
 
 __all__ = [

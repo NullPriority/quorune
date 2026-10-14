@@ -63,6 +63,53 @@ def _record(
 
 
 class CastingActivationMetadataCompilerTests(unittest.TestCase):
+    def test_self_graveyard_public_permission_schema_and_unknown_scope_fail_closed(self):
+        from quorune.semantic_runtime.casting_activation_metadata import PublicStateSelfZoneCastPermissionHandler
+        text='You may cast this card from your graveyard if you gained life this turn.'
+        descriptor=static_self_zone_cast_permission_handler(text)[1]
+        handler=PublicStateSelfZoneCastPermissionHandler()
+        handler.validate(descriptor)
+        for field,value in (('schema_version',True),('source_zone','exile'),('unknown',True)):
+            with self.assertRaises(SemanticNodeError):handler.validate({**descriptor,field:value})
+        for altered in (
+            text.replace('this card','creature cards'),
+            text.replace('you gained life this turn','the top card of your library is blue'),
+            text+' Draw a card.',
+        ):
+            self.assertIsNone(static_self_zone_cast_permission_handler(altered))
+        original=static_self_zone_cast_permission_handler('You may cast this card from your graveyard as long as you control a Zombie.')
+        self.assertEqual(1,original[1]['schema_version'])
+        self.assertEqual(['zombie'],original[1]['controlled_subtypes_any'])
+        with mock.patch('quorune.compiler.public_state_queries.fixed_public_state_condition',return_value=None):
+            self.assertIsNone(static_self_zone_cast_permission_handler(text))
+        import copy,json
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.oracle_ir import compile_oracle_card
+        raw=json.loads((Path(__file__).parents[1]/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        for cap in ('casting.zone.self_graveyard.controlled_subtype','continuous.characteristics.fixed_public_state'):
+            changed=copy.deepcopy(raw)
+            next(row for row in changed['capabilities'] if row['id']==cap).update(status='blocked',blockers=['self-zone permission dependency withdrawal'])
+            self.assertNotEqual('exact',compile_oracle_card(_record(text,suffix=363100008),capability_registry=CapabilityRegistry(changed)).status)
+
+    def test_self_graveyard_permission_preserves_general_public_condition(self):
+        from quorune.card_programs import bind_card_program_runtime
+        for index, text in enumerate((
+            'You may cast this card from your graveyard as long as you control a black or green permanent.',
+            'You may cast this card from your graveyard if you gained life this turn.',
+            'Max speed — You may cast this card from your graveyard.',
+        )):
+            with self.subTest(text=text):
+                program = self.compile(_record(text,suffix=363100001+index),trust_level='provisional')
+                self.assertEqual((),program.residuals)
+                descriptor = next(d for ability in program.abilities for d in ability.handlers
+                    if d['event'] == SELF_ZONE_CAST_PERMISSION_EVENT)
+                self.assertEqual('permission.cast.self-zone-public-state.v1', descriptor['handler_id'])
+                self.assertIn('source_condition',descriptor)
+                self.assertEqual('graveyard', next(a.active_zone for a in program.abilities if descriptor in a.handlers))
+                default_self_zone_cast_permission_registry().validate(descriptor)
+                program = self.compile(_record(text,suffix=363100001+index),trust_level='trusted')
+                self.assertTrue(bind_card_program_runtime(program,capability_registry=self.capabilities,
+                    profile='commander_review')['strict_capability_ready'])
     def setUp(self):
         self.capabilities = load_default_capability_registry()
 
@@ -161,7 +208,7 @@ class CastingActivationMetadataCompilerTests(unittest.TestCase):
     ):
         unsupported = (
             "You may cast this card from your graveyard as long as you control "
-            "a black or green permanent.",
+            "a black or green permanent with an unrepresented ability.",
             "You may cast creature cards from your graveyard as long as you "
             "control a Zombie.",
             "Loyalty abilities of planeswalkers your opponents control cost "

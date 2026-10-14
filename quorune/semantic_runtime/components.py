@@ -20,6 +20,7 @@ from .casting_activation_metadata import (
 from .combat_metadata import default_goad_prohibition_registry
 from .cast_costs import default_cast_cost_component_registry
 from .context import SemanticNodeError
+from ..devotion import default_devotion_modifier_registry
 from .counter_replacements import (
     default_counter_placement_replacement_registry,
 )
@@ -87,6 +88,7 @@ def _runtime_component_registries() -> tuple[Any, ...]:
         default_self_zone_cast_permission_registry(),
         default_cast_cost_component_registry(),
         default_continuous_effect_component_registry(),
+        default_devotion_modifier_registry(),
         default_counter_placement_replacement_registry(),
         default_damage_replacement_registry(),
         default_damage_result_replacement_registry(),

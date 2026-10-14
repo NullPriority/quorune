@@ -32,7 +32,9 @@ class CharacteristicQuantityScope(str, Enum):
     OPPONENT_ZONES = "opponent_zones"
     ALL_ZONES = "all_zones"
     ATTACHED_TO_SOURCE = "attached_to_source"
+    ATTACHED_TO_RECIPIENT = "attached_to_recipient"
     SOURCE_COUNTER = "source_counter"
+    CONTROLLER_OPPONENT_COUNT = "controller_opponent_count"
 
 
 class CharacteristicQuantityReduction(str, Enum):
@@ -44,6 +46,7 @@ class CharacteristicQuantityReduction(str, Enum):
     TOTAL_MANA_VALUE = "total_mana_value"
     SUM_QUANTITIES = "sum_quantities"
     COLORED_MANA_SYMBOLS = "colored_mana_symbols"
+    DEVOTION = "devotion"
 
 
 @dataclass(frozen=True, slots=True)
@@ -70,6 +73,12 @@ class CharacteristicQuantitySpec:
             return
         if self.terms or self.reduction is CharacteristicQuantityReduction.SUM_QUANTITIES:
             raise CharacteristicFragmentError("Only an explicit quantity-sum version carries terms")
+        if self.scope is CharacteristicQuantityScope.CONTROLLER_OPPONENT_COUNT:
+            if (self.schema_version!=2 or self.query is not None or self.counter_name is not None
+                    or self.exclude_source or self.exclude_attached_object
+                    or self.reduction is not CharacteristicQuantityReduction.OBJECT_COUNT):
+                raise CharacteristicFragmentError('Opponent counts require a versioned public-roster quantity')
+            return
         if self.scope is CharacteristicQuantityScope.SOURCE_COUNTER:
             self._validate_source_counter()
             return
@@ -86,8 +95,10 @@ class CharacteristicQuantitySpec:
             raise CharacteristicFragmentError("Characteristic reduction requires its explicit versioned vocabulary")
         if type(self.multiplier) is not int or self.multiplier < 1 or type(self.offset) is not int or self.offset < 0:
             raise CharacteristicFragmentError("Characteristic reduction arithmetic requires positive multiplier and nonnegative fixed offset")
-        if self.reduction is CharacteristicQuantityReduction.COLORED_MANA_SYMBOLS:
-            if len(self.mana_colors) != 1 or self.mana_colors[0] not in {"W", "U", "B", "R", "G"}:
+        if self.reduction in {CharacteristicQuantityReduction.COLORED_MANA_SYMBOLS, CharacteristicQuantityReduction.DEVOTION}:
+            if (len(self.mana_colors) not in ({1,2} if self.reduction is CharacteristicQuantityReduction.DEVOTION else {1})
+                    or any(color not in {'W','U','B','R','G'} for color in self.mana_colors)
+                    or tuple(sorted(set(self.mana_colors))) != tuple(self.mana_colors)):
                 raise CharacteristicFragmentError("Colored symbol reductions require one canonical mana color")
             object.__setattr__(self, "mana_colors", tuple(self.mana_colors))
         elif self.mana_colors:
@@ -149,6 +160,17 @@ class CharacteristicQuantitySpec:
                 "Object quantities require one typed object query"
             )
         query = self.query
+        if self.reduction is CharacteristicQuantityReduction.DEVOTION and (
+            self.scope is not CharacteristicQuantityScope.CONTROLLER_ZONE
+            or query != ObjectQuerySpec(zones=('battlefield',))
+            or self.exclude_source or self.exclude_attached_object
+        ):
+            raise CharacteristicFragmentError('Devotion requires the complete controlled permanent domain')
+        if self.scope is CharacteristicQuantityScope.ATTACHED_TO_RECIPIENT and (
+            self.schema_version != 2 or self.exclude_source or self.exclude_attached_object
+            or self.reduction is not CharacteristicQuantityReduction.OBJECT_COUNT
+        ):
+            raise CharacteristicFragmentError('Recipient attachment counts require their versioned fixed query')
         if self.schema_version == 2 and (
             query.zones == ("hand",) or query.state_predicate is not None
             or query.tapped is not None or query.minimum_color_count is not None
@@ -219,6 +241,7 @@ class CharacteristicQuantitySpec:
                 "graveyard",
             },
             CharacteristicQuantityScope.ATTACHED_TO_SOURCE: {"battlefield"},
+            CharacteristicQuantityScope.ATTACHED_TO_RECIPIENT: {"battlefield"},
         }
         if query.zones[0] not in allowed_zones[self.scope]:
             raise CharacteristicFragmentError(
@@ -683,6 +706,23 @@ class DynamicPowerToughnessSpec:
             toughness=value["toughness"],
             minimum_count=value["minimum_count"],
         )
+
+
+def characteristic_quantity_capabilities(value: Any) -> tuple[str, ...]:
+    """Derive producer authority from nested typed quantity descriptors."""
+    if isinstance(value, CharacteristicQuantitySpec):
+        value = value.to_dict()
+    if isinstance(value, Mapping):
+        devotion = value.get('reduction') == 'devotion' or (value.get('kind') == 'devotion' and 'color' in value)
+        own = ('state_query.devotion.current',) if devotion else ()
+        if value.get('scope')=='controller_opponent_count':own=(*own,'quantity_expression.public_player_count')
+        if value.get('kind')=='controller_is_monarch':own=(*own,'variant.monarch.designate')
+        if value.get('kind')=='controller_max_speed':own=(*own,'variant.speed.player')
+        if value.get('origin')=='public_characteristic_aggregate' or (value.get('kind')=='public_characteristic_aggregate' and 'aggregate' in value):own=(*own,'quantity_expression.public_characteristic_aggregate')
+        return tuple(sorted({*own, *(cap for child in value.values() for cap in characteristic_quantity_capabilities(child))}))
+    if isinstance(value, (list, tuple)):
+        return tuple(sorted({cap for child in value for cap in characteristic_quantity_capabilities(child)}))
+    return ()
 
 
 __all__ = [

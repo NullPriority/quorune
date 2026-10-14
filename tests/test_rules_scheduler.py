@@ -3301,6 +3301,7 @@ class RulesSchedulerTests(unittest.TestCase):
             "Sacrifice an artifact creature: Draw a card.",
             "Sacrifice a Forest or Plains: Draw a card.",
             "Exile a card from your graveyard: Draw a card.",
+            "Sacrifice another creature: Add {B}.",
         ):
             with self.subTest(source=source):
                 self.assertTrue(
@@ -3321,7 +3322,7 @@ class RulesSchedulerTests(unittest.TestCase):
             "Sacrifice a modified creature: Draw a card.",
             "Sacrifice this creature, Sacrifice another creature: Draw a card.",
             "{W/U}, Sacrifice another creature: Draw a card.",
-            "Sacrifice another creature: Add {B}.",
+            "Sacrifice a creature with defender: Add {B}.",
         ):
             with self.subTest(source=source):
                 self.assertFalse(
@@ -3392,13 +3393,14 @@ class RulesSchedulerTests(unittest.TestCase):
             "This spell costs {3} less to cast if a creature died this turn.",
             "Domain — This spell costs {1} less to cast for each basic land type among lands you control.",
             "This spell costs {G} less to cast for each green creature you control.",
+            "This spell costs {X} less to cast, where X is the total power of creatures you control.",
         ):
             with self.subTest(source=source):
                 self.assertTrue(_matches_probe(probe_id, source))
         for source in (
             "This spell costs {2} less to cast if it targets a tapped creature.",
             "This spell costs {1} less to cast for each card you've drawn this turn.",
-            "This spell costs {X} less to cast, where X is the total power of creatures you control.",
+            "This spell costs {X} less to cast, where X is the total power of creature cards in your graveyard.",
             "This spell costs {1} less to cast for each card with an Adventure in your graveyard.",
             "The first spell you cast each turn costs {1} less to cast.",
         ):

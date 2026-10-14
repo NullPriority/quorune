@@ -36,6 +36,7 @@ from .context import SemanticNodeError
 from .continuous_components import (
     ContinuousEffectSourceContext,
     _fixed_query_effect_predicate,
+    FixedQueryKeywordGrantHandler, FixedQueryProtectionGrantHandler,
 )
 
 
@@ -161,18 +162,20 @@ def _validate_target(
 
 
 def _validate_modifier(
-    value: Any, *, allow_granted_ability: bool = False, allow_defender_permission: bool = False, allow_as_unblocked: bool = False, allow_block_capacity: bool = False, allow_declaration: bool = False,
+    value: Any, *, allow_granted_ability: bool = False, allow_defender_permission: bool = False, allow_as_unblocked: bool = False, allow_block_capacity: bool = False, allow_declaration: bool = False, allow_typed_keywords: bool = False,
 ) -> tuple[tuple[str, ...], int, int, tuple[Mapping[str, Any], ...]]:
     if not isinstance(value, Mapping):
         raise SemanticNodeError("runtime handler modifier must be an object")
     fields = {"add_abilities", "power", "toughness"}
-    if allow_granted_ability or allow_defender_permission or allow_as_unblocked or allow_block_capacity or allow_declaration:
+    if allow_granted_ability or allow_defender_permission or allow_as_unblocked or allow_block_capacity or allow_declaration or allow_typed_keywords:
         fields.add("add_ability_fragments")
     exact_fields(
         value,
         fields,
         field="runtime handler modifier",
     )
+    if allow_typed_keywords:
+        return _validate_typed_keyword_modifier(value)
     abilities = nonempty_strings(
         value["add_abilities"],
         field="modifier.add_abilities",
@@ -212,6 +215,25 @@ def _validate_modifier(
             "fixed public-state characteristics require a modifier"
         )
     return abilities, power, toughness, tuple(fragments)
+
+
+def _validate_typed_keyword_modifier(value):
+    """Use the same canonical label/fragment validator as ordinary query grants."""
+    handler = (FixedQueryProtectionGrantHandler() if value['add_abilities'] == ['Protection']
+        else FixedQueryKeywordGrantHandler())
+    node = handler.validate({
+        'handler_id':handler.handler_id, 'schema_version':handler.schema_version,
+        'event':handler.event,
+        'condition':{'target_controller':'any',
+            'predicate':ObjectQuerySpec(zones=('battlefield',)).to_dict(), 'exclude_source':False},
+        'modifier':{'add_abilities':value['add_abilities'],
+            'add_ability_fragments':value['add_ability_fragments']},
+    })
+    if not node.fragments:
+        raise SemanticNodeError('Conditional typed keywords require complete keyword fragments')
+    if type(value['power']) is not int or type(value['toughness']) is not int:
+        raise SemanticNodeError('Conditional keyword modifiers must be integers')
+    return node.abilities, value['power'], value['toughness'], tuple(dict(raw) for raw in value['add_ability_fragments'])
 
 
 @dataclass(frozen=True, slots=True)
@@ -266,7 +288,7 @@ class FixedPublicStateCharacteristicsHandler:
             source_condition = FixedPublicStateConditionSpec.from_dict(
                 descriptor["source_condition"]
             )
-            if source_condition.kind.value == 'controller_creature_numeric_exists':
+            if any(leaf.kind.value == 'controller_creature_numeric_exists' for leaf in source_condition.leaf_conditions()):
                 raise FixedPublicStateConditionError('Static numeric conditions require a separate layer timing owner')
         except (FixedPublicStateConditionError, TypeError) as exc:
             raise SemanticNodeError(str(exc)) from exc
@@ -284,6 +306,7 @@ class FixedPublicStateCharacteristicsHandler:
             allow_as_unblocked=self.schema_version == 4,
             allow_block_capacity=self.schema_version == 5,
             allow_declaration=self.schema_version == 6,
+            allow_typed_keywords=self.schema_version == 7,
         )
         return FixedPublicStateCharacteristicsNode(
             source_condition=source_condition,
@@ -401,6 +424,16 @@ class FixedPublicStateGrantedAbilityHandler(FixedPublicStateCharacteristicsHandl
 
 
 @dataclass(frozen=True, slots=True)
+class ConditionalTypedKeywordHandler(FixedPublicStateCharacteristicsHandler):
+    """Keep typed keyword meaning behind the existing live state predicate."""
+    handler_id: str = 'continuous.characteristics.public-state-keywords.v1'
+    schema_version: int = 7
+    capability_dependencies: tuple[str, ...] = (
+        'continuous.characteristics.fixed_public_state', 'continuous.ability.fixed_query_keyword_grant',
+    )
+
+
+@dataclass(frozen=True, slots=True)
 class ConditionalDeclarationGrantHandler(FixedPublicStateCharacteristicsHandler):
     """Grant one recipient-relative declaration rule and fixed modifiers."""
 
@@ -438,6 +471,22 @@ class ConditionalAsUnblockedAssignmentHandler(FixedPublicStateCharacteristicsHan
     family: str = 'continuous.as_unblocked_assignment.public_state'
     rule_references: tuple[str,...] = ('609.4','510.1c','613.1f')
     capability_dependencies: tuple[str,...] = (AS_UNBLOCKED_CAPABILITY,'continuous.characteristics.fixed_public_state')
+
+
+@dataclass(frozen=True, slots=True)
+class GraveyardStaticCharacteristicsHandler(FixedPublicStateCharacteristicsHandler):
+    handler_id: str = 'continuous.characteristics.graveyard-public-state.v1'
+    family: str = 'continuous.characteristics.graveyard_public_state'
+    rule_references: tuple[str, ...] = ('109.5', '113.6b', '611.3a', '611.3b', '613.1f', '613.7')
+    capability_dependencies: tuple[str, ...] = (
+        'continuous.ability.graveyard_static_grant', 'continuous.characteristics.fixed_public_state',
+    )
+
+    def validate(self, descriptor):
+        node = super(GraveyardStaticCharacteristicsHandler, self).validate(descriptor)
+        if node.target_kind != 'fixed_query' or node.power or node.toughness or node.fragments:
+            raise SemanticNodeError('Graveyard grants require independently closed battlefield recipients')
+        return node
 
 
 __all__ = [

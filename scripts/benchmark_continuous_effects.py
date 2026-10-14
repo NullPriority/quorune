@@ -62,6 +62,7 @@ def _fixture(players: int, permanents: int, descriptors: int):
                 ref=f"P-{seat}-{index}",
                 oracle_id=oracle_id,
                 controller=seat,
+                owner=seat,zone='battlefield',
                 phased_out=False,
                 zone_timestamp=index,
             )
@@ -72,7 +73,7 @@ def _fixture(players: int, permanents: int, descriptors: int):
                 ),
             )
         player_rows[seat] = SimpleNamespace(
-            zones={"battlefield": battlefield}
+            zones={"battlefield": battlefield,"graveyard":[]}
         )
 
     class Semantics:

@@ -126,11 +126,10 @@ class GraveyardCopyRuntimeTests(unittest.TestCase):
         tokens=[c for c in s.state.cards.values() if c.is_token and c.zone=='battlefield'];self.assertEqual(1,len(tokens));self.assertEqual('',e._effective_card_data(tokens[0])['mana_cost'])
 
     def test_canonical_token_replacement_pending_reload_retains_paid_source_snapshot(self):
-        from common import register_token_quantity_multiplier
         from quorune.session import CommanderSession
         s=self.session(318006);e=s.engine
         for name in ('Anointed Procession','Doubling Season'):
-            source=self.add(e,name);register_token_quantity_multiplier(self.db,e,source,self.registry)
+            self.add(e,name)
         source=self.add(e,'Sacred Cat',zone='graveyard');action=self.ready(s,source,{'W':1});self.checkpoint(s)
         accepted=s.act('pilot:A',{'action_id':action['id'],'pay':'auto'});self.assertTrue(accepted.ok,accepted.summary)
         self.assertEqual('replacement.order',self.resolve(s).kind);self.assertEqual('exile',s.state.cards[source.object_id].zone)

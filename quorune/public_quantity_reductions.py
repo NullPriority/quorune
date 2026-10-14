@@ -18,7 +18,7 @@ def reduce_public_quantity(
 ) -> int:
     if reduction is CharacteristicQuantityReduction.OBJECT_COUNT:
         return len(rows)
-    if reduction is CharacteristicQuantityReduction.COLORED_MANA_SYMBOLS:
+    if reduction in {CharacteristicQuantityReduction.COLORED_MANA_SYMBOLS,CharacteristicQuantityReduction.DEVOTION}:
         count = 0
         for _row, data, _kind in rows:
             if "mana_cost" not in data or (data["mana_cost"] is not None and type(data["mana_cost"]) is not str):

@@ -99,6 +99,15 @@ def definition_fragment(
 
 
 class QueryPowerToughnessDefinitionCompilerTests(unittest.TestCase):
+    def test_tapped_creature_definition_is_closed_with_current_public_query(self):
+        text="Definition Source's power is equal to the number of tapped creatures you control."
+        compiled=query_power_toughness_definition_handler(text,source_name='Definition Source')
+        self.assertIsNotNone(compiled)
+        self.assertTrue(compiled[1]['fragment']['value']['quantity']['query']['tapped'])
+        program=self.compile(permanent(text,suffix=363330021),trust_level='trusted')
+        self.assertTrue(bind_card_program_runtime(program,capability_registry=self.capabilities,
+            profile='commander_review')['strict_capability_ready'])
+
     def setUp(self):
         self.capabilities = load_default_capability_registry()
 
@@ -172,7 +181,7 @@ class QueryPowerToughnessDefinitionCompilerTests(unittest.TestCase):
         rejected = (
             "Definition Source's power and toughness are each equal to the number of Forests you control plus the number of Elves you control plus the number of artifacts you control.",
             "Definition Source's power is equal to the number of card types among cards in the chosen player's graveyard.",
-            "Definition Source's power is equal to the number of tapped creatures you control.",
+            "Definition Source's power is equal to the number of tapped creature cards in your graveyard.",
             "Definition Source's power is equal to the number of cards in the chosen player's hand.",
             "Definition Source's power is equal to the number of creatures you control minus 1.",
             "Definition Source's power and toughness are each equal to the number of colors among cards in your hand.",
@@ -244,9 +253,18 @@ class QueryPowerToughnessDefinitionCompilerTests(unittest.TestCase):
             fragments_from_descriptors((descriptor,))
 
     def test_query_definition_ability_removal_sibling_withholds_runtime_admission(self):
+        supported = self.compile(permanent(
+            "Definition Source's power and toughness are each equal to the number of creatures you control.\n"
+            "Definition Source loses all abilities.", suffix=129_002_002,
+        ))
+        self.assertFalse(supported.residuals)
+        self.assertTrue(bind_card_program_runtime(
+            supported, capability_registry=self.capabilities,
+            profile="commander_review",
+        )["strict_capability_ready"])
         record = permanent(
             "Definition Source's power and toughness are each equal to the number of creatures you control.\n"
-            "Definition Source loses all abilities.",
+            "As long as a chosen player controls a creature, Definition Source loses all abilities.",
             suffix=129_002_000,
         )
         program = self.compile(record, trust_level="provisional")

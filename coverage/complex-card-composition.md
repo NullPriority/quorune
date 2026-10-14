@@ -2,7 +2,7 @@
 title: "Complex card composition benchmark"
 status: "generated"
 authoritative_source: "coverage/complex-card-composition.json"
-verified: "70afaf19b91ecc17e587f9249457d794e28f033b566b9350217acfe0a924099c"
+verified: "af1925548900969830a22caa2ce734944221de4b12b8cc73b93b146579f8b184"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -15,30 +15,31 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 |---|---:|---:|---:|---:|---:|---:|---|
 | Valki, God of Lies // Tibalt, Cosmic Impostor | 273 | 36 | 6 | 6 | 17 | 22 | `blocked` |
 | Urabrask // The Great Work | 263 | 39 | 8 | 7 | 14 | 4 | `blocked` |
+| Sheoldred // The True Scriptures | 255 | 37 | 8 | 7 | 13 | 4 | `blocked` |
 | Dion, Bahamut's Dominant // Bahamut, Warden of Light | 230 | 26 | 8 | 7 | 11 | 10 | `blocked` |
 | Elesh Norn // The Argent Etchings | 225 | 29 | 8 | 7 | 12 | 2 | `blocked` |
 | Terra, Magical Adept // Esper Terra | 224 | 22 | 8 | 6 | 12 | 14 | `blocked` |
+| Hidetsugu Consumes All // Vessel of the All-Consuming | 223 | 30 | 7 | 7 | 8 | 10 | `blocked` |
 | Jin-Gitaxias // The Great Synthesis | 223 | 28 | 7 | 7 | 11 | 6 | `blocked` |
 | Jugan Defends the Temple // Remnant of the Rising Star | 223 | 29 | 8 | 7 | 8 | 9 | `blocked` |
+| Starscream, Power Hungry // Starscream, Seeker Leader | 223 | 29 | 7 | 8 | 4 | 19 | `blocked` |
 | Joshua, Phoenix's Dominant // Phoenix, Warden of Fire | 222 | 24 | 8 | 6 | 12 | 10 | `blocked` |
+| The Legend of Kyoshi // Avatar Kyoshi | 222 | 28 | 8 | 6 | 6 | 14 | `blocked` |
 | Clive, Ifrit's Dominant // Ifrit, Warden of Inferno | 217 | 18 | 7 | 5 | 12 | 21 | `blocked` |
 | The Shattered States Era // Nameless Conqueror | 217 | 33 | 8 | 5 | 6 | 6 | `blocked` |
 | The Kami War // O-Kagachi Made Manifest | 216 | 28 | 8 | 7 | 9 | 6 | `blocked` |
 | Vorinclex // The Grand Evolution | 216 | 26 | 8 | 7 | 10 | 4 | `blocked` |
 | Esper Origins // Summon: Esper Maduin | 213 | 24 | 7 | 5 | 6 | 20 | `blocked` |
-| Sheoldred // The True Scriptures | 213 | 23 | 8 | 7 | 13 | 4 | `blocked` |
 | Teachings of the Kirin // Kirin-Touched Orochi | 211 | 28 | 7 | 7 | 9 | 6 | `blocked` |
 | Rowan Kenrith | 209 | 28 | 5 | 6 | 5 | 21 | `blocked` |
 | Inventive Iteration // Living Breakthrough | 208 | 26 | 8 | 6 | 8 | 8 | `blocked` |
 | Jill, Shiva's Dominant // Shiva, Warden of Ice | 208 | 25 | 7 | 5 | 10 | 8 | `blocked` |
-| Starscream, Power Hungry // Starscream, Seeker Leader | 208 | 28 | 6 | 8 | 4 | 19 | `blocked` |
 | The Legend of Kuruk // Avatar Kuruk | 208 | 30 | 6 | 6 | 10 | 5 | `blocked` |
 | Emet-Selch, Unsundered // Hades, Sorcerer of Eld | 207 | 30 | 6 | 6 | 6 | 13 | `blocked` |
 | Invasion of Kaldheim // Pyre of the World Tree | 205 | 25 | 7 | 4 | 5 | 22 | `blocked` |
 | Ugin, Eye of the Storms | 205 | 41 | 5 | 5 | 11 | 3 | `blocked` |
 | Invasion of New Phyrexia // Teferi Akosa of Zhalfir | 204 | 19 | 6 | 5 | 14 | 18 | `blocked` |
 | The Fall of Lord Konda // Fragment of Konda | 203 | 27 | 8 | 6 | 6 | 6 | `blocked` |
-| Hidetsugu Consumes All // Vessel of the All-Consuming | 202 | 23 | 7 | 7 | 8 | 10 | `blocked` |
 | Fable of the Mirror-Breaker // Reflection of Kiki-Jiki | 201 | 23 | 8 | 5 | 6 | 13 | `blocked` |
 | The Restoration of Eiganjo // Architect of Restoration | 200 | 27 | 7 | 6 | 6 | 7 | `blocked` |
 | Will Kenrith | 200 | 23 | 5 | 6 | 6 | 23 | `blocked` |
@@ -48,7 +49,6 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Garruk Relentless // Garruk, the Veil-Cursed | 195 | 25 | 6 | 6 | 15 | 6 | `blocked` |
 | Invasion of Innistrad // Deluge of the Dead | 194 | 23 | 6 | 5 | 9 | 16 | `blocked` |
 | Hunter's Talent | 193 | 30 | 7 | 8 | 2 | 8 | `blocked` |
-| The Legend of Kyoshi // Avatar Kyoshi | 193 | 18 | 7 | 6 | 9 | 14 | `blocked` |
 | Devoted Grafkeeper // Departed Soulkeeper | 192 | 31 | 7 | 6 | 4 | 7 | `blocked` |
 | Kytheon, Hero of Akros // Gideon, Battle-Forged | 192 | 21 | 5 | 5 | 11 | 18 | `blocked` |
 | Sorin of House Markov // Sorin, Ravenous Neonate | 191 | 24 | 4 | 7 | 9 | 19 | `blocked` |

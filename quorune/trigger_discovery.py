@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .event_counter_reference import event_counter_recipient_context
 from .entry_copy import copiable_oracle_id
 
 import copy
@@ -972,6 +973,7 @@ def _semantic_trigger_context(
     stack_context = {
         "event": event,
         **copy.deepcopy(dict(context)),
+        **event_counter_recipient_context(program,event,context),
         **_trigger_attachment_context(host, source, program),
         "source_zone": active_zone,
         "intervening_condition": (
@@ -1208,8 +1210,8 @@ def _shared_blitz_trigger_item(
 
 
 def _ordered_event_sources(host,sources):
-    if sources is not None:return list(sources)
-    return sorted(host._semantic_event_sources(),key=lambda source:(source.zone_timestamp,source.object_id,source.logical_object_id))
+    candidates = sources if sources is not None else host._semantic_event_sources()
+    return sorted(candidates, key=lambda source: (source.zone_timestamp, source.object_id, source.logical_object_id))
 
 
 def _granted_prowess_trigger_items(host, source, event, context, *, active_zone, characteristics, programs):

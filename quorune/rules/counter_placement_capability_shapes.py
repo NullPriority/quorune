@@ -19,10 +19,11 @@ def counter_placement_covered_mechanics(supplied):
     placements={"counter.producer.fixed_effect", "counter.producer.fixed_permanent_group_effect",
         "counter.producer.fixed_multikind_effect", "counter.producer.fixed_attached_effect",
         "counter.producer.fixed_permanent_set_effect", "counter.producer.fixed_permanent_target_set_effect",
-        _NAMED_COUNTER_CAPABILITY}
+        _NAMED_COUNTER_CAPABILITY,'counter.producer.fixed_event_object'}
     covered={"cr-122-counters"} if placements.intersection(supplied) else set()
     if _NAMED_COUNTER_CAPABILITY in supplied:
         covered.add(_NAMED_COUNTER_MECHANIC)
+    if 'counter.producer.fixed_event_object' in supplied:covered.add('fixed-entry-event-object-counter')
     return covered
 
 
@@ -78,6 +79,8 @@ def _base_fixed_counter_placement_node_capabilities(
         if counter_mechanic is not None
         else ()
     )
+    if target_schema is None and type(effect.get('card')) is str and effect['card'] in {'$event.entry_object','$event.counter_object'} and 'fixed-entry-event-object-counter' in mechanics:
+        return ('counter.producer.fixed_event_object','counter.producer.fixed_effect',*characteristic_capabilities)
     if target_schema is None and effect.get("card") in ("$source", SOURCE_ZONE_OBJECT):
         return ("counter.producer.fixed_effect", *characteristic_capabilities)
     if target_schema is None and isinstance(effect.get("card"), Mapping):

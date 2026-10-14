@@ -11,6 +11,7 @@ from .counter_names import CounterStateError, normalized_counter_name
 from .drawing import drawn_this_turn
 from .object_predicate import ObjectQueryError, ObjectQuerySpec
 from .object_query import object_matches_query, object_query_result
+from .public_characteristic_aggregate_model import PublicCharacteristicAggregateSpec
 
 
 class SelfCastReductionError(ValueError):
@@ -28,6 +29,7 @@ class CastReductionQueryScope(str, Enum):
 
 
 class CastReductionMetricKind(str, Enum):
+    PUBLIC_AGGREGATE = 'public_characteristic_aggregate'
     FIXED_PUBLIC_THRESHOLD = "fixed_public_threshold"
     OBJECT_COUNT = "object_count"
     TOTAL_MANA_VALUE = "total_mana_value"
@@ -159,10 +161,24 @@ class CastReductionMetric:
     turn_fact: CastReductionTurnFact | None = None
     counter_name: str | None = None
     schema_version: int = 1
+    aggregate: PublicCharacteristicAggregateSpec | None = None
+
+    def _validate_aggregate(self) -> bool:
+        if self.kind is not CastReductionMetricKind.PUBLIC_AGGREGATE:
+            if self.aggregate is not None:raise SelfCastReductionError('Legacy cost metrics cannot carry an aggregate')
+            if type(self.schema_version) is not int or self.schema_version not in {1, 2}:
+                raise SelfCastReductionError("Unsupported cast-reduction metric version")
+            return False
+        if (type(self.schema_version) is not int or self.schema_version!=3
+                or not isinstance(self.aggregate,PublicCharacteristicAggregateSpec)
+                or self.queries or self.minimum is not None or self.maximum is not None
+                or self.require_all is not False or self.color is not None or self.turn_fact is not None
+                or self.counter_name is not None):
+            raise SelfCastReductionError('Aggregate cost metrics require their versioned public query')
+        return True
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version not in {1, 2}:
-            raise SelfCastReductionError("Unsupported cast-reduction metric version")
+        if self._validate_aggregate():return
         if not isinstance(self.kind, CastReductionMetricKind):
             raise SelfCastReductionError("Unsupported cast-reduction metric kind")
         if not isinstance(self.queries, tuple) or not all(
@@ -385,6 +401,7 @@ class CastReductionMetric:
         }
         if self.schema_version >= 2:
             result["counter_name"] = self.counter_name
+        if self.schema_version==3:result['aggregate']=self.aggregate.to_dict()
         return result
 
     @classmethod
@@ -400,8 +417,11 @@ class CastReductionMetric:
             "turn_fact",
         }
         extended = {*expected, "counter_name"}
-        if not isinstance(value, Mapping) or set(value) not in (expected, extended):
+        aggregate_fields={*extended,'aggregate'}
+        if not isinstance(value, Mapping) or set(value) not in (expected, extended,aggregate_fields):
             raise SelfCastReductionError("Cast-reduction metrics have a closed schema")
+        if (value.get('schema_version')==3)!=('aggregate' in value):
+            raise SelfCastReductionError('Aggregate metric fields must match their version')
         if not isinstance(value["queries"], list):
             raise SelfCastReductionError("Cast-reduction queries must be an array")
         try:
@@ -422,6 +442,7 @@ class CastReductionMetric:
                     else None
                 ),
                 counter_name=value.get("counter_name"),
+                aggregate=PublicCharacteristicAggregateSpec.from_dict(value['aggregate']) if value['schema_version']==3 else None,
             )
         except (TypeError, ValueError) as exc:
             raise SelfCastReductionError(
@@ -499,7 +520,8 @@ class SelfSpellCostReductionSpec:
 class SelfCastReductionHost(Protocol):
     state: Any
 
-    def _effective_card_data(self, card: Any) -> Mapping[str, Any]: ...
+    def _effective_card_data(self, card: Any, *, maximum_layer: Any | None = None,
+        _enforce_static_component_applicability: bool = True) -> Mapping[str, Any]: ...
 
     def _type_parts(self, type_line: str) -> tuple[set[str], set[str], set[str]]: ...
 
@@ -657,16 +679,8 @@ def _turn_value(
 
 
 def _devotion(host: SelfCastReductionHost, seat: str, color: str) -> int:
-    amount = 0
-    for object_id in host.state.players[seat].zones["battlefield"]:
-        card = host.state.cards.get(object_id)
-        if card is None or card.controller != seat or card.phased_out:
-            continue
-        mana_cost = str(host._effective_card_data(card).get("mana_cost") or "")
-        for symbol in re.findall(r"\{([^}]+)\}", mana_cost.upper()):
-            if color in symbol.split("/"):
-                amount += 1
-    return amount
+    from .devotion import current_devotion
+    return current_devotion(host,seat,(color,))
 
 
 def _domain(host: SelfCastReductionHost, seat: str) -> int:
@@ -719,6 +733,9 @@ def cast_reduction_multiplier(
 ) -> int:
     """Return the deterministic nonnegative multiplier for one reduction term."""
 
+    if metric.kind is CastReductionMetricKind.PUBLIC_AGGREGATE:
+        from .public_characteristic_aggregates import current_public_characteristic_aggregate
+        return max(0,current_public_characteristic_aggregate(host,seat,metric.aggregate))
     if metric.kind is CastReductionMetricKind.OBJECT_COUNT:
         return _query_count(host, seat, metric)
     if metric.kind is CastReductionMetricKind.TOTAL_MANA_VALUE:

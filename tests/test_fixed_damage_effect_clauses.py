@@ -294,6 +294,49 @@ class FixedDamageEffectTemplateTests(unittest.TestCase):
 
 
 class FixedDamageEffectCompilerTests(unittest.TestCase):
+    def test_source_action_pronoun_damage_dependency_and_omission_fail_closed(self):
+        from quorune.rules.capabilities import CapabilityRegistry
+        text='Whenever this creature attacks, it deals 1 damage to any target.'
+        record=replace(self.base,name='Fixture',oracle_text=text,type_line='Creature — Dinosaur',keywords=())
+        self.assertEqual('exact',self.compile(text,type_line='Creature — Dinosaur').status)
+        raw=json.loads((Path(__file__).parents[1]/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        next(row for row in raw['capabilities'] if row['id']=='damage.amount.positive').update(status='blocked',blockers=['bound damage leaf withdrawn'])
+        self.assertNotEqual('exact',compile_oracle_card(record,capability_registry=CapabilityRegistry(raw)).status)
+        with patch('quorune.compiler.damage_templates.source_pronoun_damage_effect_template',return_value=None):
+            self.assertNotEqual('exact',self.compile(text,type_line='Creature — Dinosaur').status)
+
+    def test_source_entry_return_declares_registered_bounce_dependency(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.semantics import SemanticRegistry
+        record=self.db.lookup('Trial of Zeal')
+        program=compile_best_available_card_program(self.db,record,semantic_registry=SemanticRegistry(),
+            capability_registry=self.capabilities,capability_profile='commander_review')
+        binding=bind_card_program_runtime(program,capability_registry=self.capabilities,profile='commander_review')
+        self.assertTrue(binding['strict_capability_ready'],binding['blockers'])
+        from quorune.rules.entry_return_capability_shapes import fixed_entry_return_node_capabilities
+        from quorune.compiler.fixed_entry_return_requirements import FIXED_ENTRY_RETURN_MECHANIC
+        caps=fixed_entry_return_node_capabilities(effects=({'op':'bounce','card':'$source.zone_object'},),
+            target_schema=None,mechanic_ids=(FIXED_ENTRY_RETURN_MECHANIC,'return-to-owner-hand'))
+        self.assertEqual(('choice.controller.fixed_return_owner_hand','permanent.return.owner_hand'),caps)
+        self.assertFalse(fixed_entry_return_node_capabilities(effects=({'op':'bounce','card':'$target.0'},),
+            target_schema=None,mechanic_ids=(FIXED_ENTRY_RETURN_MECHANIC,)))
+
+    def test_source_action_pronoun_damage_reuses_closed_target_leaf(self):
+        for event in ('attacks','blocks','becomes blocked','deals combat damage to a player'):
+            text='Whenever this creature '+event+', it deals 1 damage to any target.'
+            ir=self.compile(text,type_line='Creature — Dinosaur')
+            self.assertEqual('exact',ir.status,ir.material_residuals)
+            node=ir.faces[0].nodes[0]
+            self.assertEqual({'op':'damage','source':'$source','target':'$target.0','amount':1},node.effects[0])
+            self.assertIsNotNone(node.target_schema)
+        for text in (
+            'Whenever a creature attacks, it deals 1 damage to any target.',
+            'Whenever this creature attacks, create a token. It deals 1 damage to any target.',
+            'Whenever this creature attacks, it deals X damage to any target.',
+        ):
+            self.assertNotEqual('exact',self.compile(text,type_line='Creature — Dinosaur').status)
+
     @classmethod
     def setUpClass(cls):
         cls.db = CardDatabase(DB_PATH)

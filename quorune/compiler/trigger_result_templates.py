@@ -11,7 +11,19 @@ from .fixed_entry_return_requirements import fixed_entry_return_effect_template
 
 
 def binding_effect_template(binding, body: str, *, card_name: str, effect_template, _allow_payment: bool = True):
+    from .event_counter_results import entry_event_counter_result
+    counter=entry_event_counter_result(binding,body,effect_template=effect_template,card_name=card_name)
+    if counter is not None:return counter
+    from .event_player_results import fixed_event_player_result
+    player_result=fixed_event_player_result(binding,body,effect_template=effect_template,card_name=card_name)
+    if player_result is not None:return player_result
+    from .mill_templates import event_recipient_mill_result
+    mill=event_recipient_mill_result(binding,body,compile_fixed=lambda text:effect_template(text,card_name=card_name),source_name=card_name)
+    if mill is not None:return mill
     if binding.event.value.endswith('.self') or binding.variant in {'source_attacks', 'this_creature_blocks', 'this_creature_becomes_blocked'}:
+        from .damage_templates import source_pronoun_damage_effect_template
+        damage=source_pronoun_damage_effect_template(body)
+        if damage is not None:return damage.compiled(),False
         from .connive_templates import fixed_connive_effect_template
         connive = fixed_connive_effect_template(body, source_name=card_name, source_is_permanent=True,
                                                 allow_source_pronoun=True)
@@ -37,7 +49,7 @@ def binding_effect_template(binding, body: str, *, card_name: str, effect_templa
         return random_discard
     specialized = fixed_source_combat_growth_effect_template(body, event=binding.event.value, variant=binding.variant)
     if specialized[0] is not None:return specialized,True
-    if binding.variant in {'source_attacks','this_creature_blocks','this_creature_becomes_blocked','source_public_tap_state_transition'}:
+    if binding.event.value.endswith('.self') or binding.variant in {'source_attacks','this_creature_blocks','this_creature_becomes_blocked','source_public_tap_state_transition','source_dealt_damage'}:
         from .source_self_effect_templates import normalized_source_result_body, pin_source_result_incarnation
         normalized=normalized_source_result_body(body)
         if normalized is not None and not body.casefold().startswith(('it gets','him gets','her gets')):

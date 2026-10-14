@@ -1,7 +1,7 @@
 from __future__ import annotations
 from ..entry_copy import copiable_oracle_id
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Any, TYPE_CHECKING, Callable, Mapping, Protocol, Sequence
 
 from ..attachments import attached_object_identity
@@ -322,6 +322,9 @@ class _FixedPublicStateSnapshotResolver:
         source: Any,
         condition: FixedPublicStateConditionSpec,
     ) -> FixedPublicStateConditionSnapshot:
+        if condition.terms:
+            snapshots=tuple(self.snapshot(source,leaf) for leaf in condition.terms)
+            return replace(snapshots[0],term_snapshots=snapshots)
         controller = self.state.players[source.controller]
         kind = condition.kind
         turn_sequence = max(0, int(getattr(self.state, "turn_sequence", 0)))
@@ -543,6 +546,10 @@ def _continuous_programs_for_source(
     source: Any,
     static_component_resolver: Callable[[Any], Sequence[str]] | None,
 ) -> tuple["SemanticProgram", ...]:
+    if source.zone == 'graveyard':
+        return tuple(p for p in semantics.runtime_handler_programs_for_oracle(source.oracle_id,
+            active_zone='graveyard', event='characteristics.evaluate') if any(
+            d.get('handler_id') == 'continuous.characteristics.graveyard-public-state.v1' for d in p.handlers))
     if static_component_resolver is not None:
         return _applicable_static_programs(
             semantics,
@@ -581,6 +588,32 @@ def _continuous_programs_for_source(
     return tuple(programs[key] for key in sorted(programs))
 
 
+def _component_public_state_snapshot(
+    source, descriptor, *, maximum_layer, public_state_resolver, setting_state_resolver,
+):
+    """Keep early-layer settings separate from characteristic query conditions."""
+    handler_id = descriptor.get('handler_id')
+    is_setting = handler_id == 'continuous.characteristics.fixed-public-setting.v2'
+    if is_setting:
+        raw_condition = descriptor.get('source_condition')
+        return (False, None if raw_condition is None else setting_state_resolver.snapshot(
+            source, FixedPublicStateConditionSpec.from_dict(raw_condition)))
+    is_conditional = handler_id in (
+        FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID,
+        FIXED_PUBLIC_STATE_GRANTED_ABILITY_HANDLER_ID,
+        CONDITIONAL_DEFENDER_PERMISSION_HANDLER, CONDITIONAL_AS_UNBLOCKED_HANDLER,
+        'continuous.block-capacity.public-state.v1', 'continuous.declaration.public-state.v1',
+        'continuous.characteristics.graveyard-public-state.v1',
+        'continuous.characteristics.public-state-keywords.v1',
+    )
+    if is_conditional and maximum_layer is not None and maximum_layer < Layer.ABILITY:
+        # These components emit only layers 6/7; their query conditions must
+        # not recurse through the layer-5 characteristic boundary.
+        return True, None
+    return False, (public_state_resolver.snapshot(source,
+        FixedPublicStateConditionSpec.from_dict(descriptor['source_condition'])) if is_conditional else None)
+
+
 def collect_card_program_continuous_effects(
     state: ContinuousRuntimeState,
     semantics: "SemanticRegistry",
@@ -591,6 +624,7 @@ def collect_card_program_continuous_effects(
     public_object_resolver: Callable[[Any], ObjectQueryResult] | None = None,
     quantity_resolver: Callable[[Any, CharacteristicQuantitySpec], int]
     | None = None,
+    setting_quantity_resolver: Callable[[Any, CharacteristicQuantitySpec], int] | None = None,
     static_component_resolver: Callable[[Any], Sequence[str]] | None = None,
 ) -> tuple[ContinuousEffect, ...]:
     registry = default_continuous_effect_component_registry()
@@ -605,19 +639,26 @@ def collect_card_program_continuous_effects(
         public_object_resolver=public_object_resolver,
         quantity_resolver=quantity_resolver,
     )
+    setting_state_resolver = _FixedPublicStateSnapshotResolver(
+        state=state, public_object_resolver=None,
+        quantity_resolver=setting_quantity_resolver or quantity_resolver,
+    )
 
     for seat in state.turn_order:
         player = state.players[seat]
-        for object_id in list(player.zones["battlefield"]):
-            if metrics is not None:
-                metrics.battlefield_objects_inspected += 1
+        for object_id in [*player.zones['battlefield'], *player.zones['graveyard']]:
             source = state.cards[object_id]
+            if metrics is not None and source.zone == 'battlefield':
+                metrics.battlefield_objects_inspected += 1
             if (
-                source.controller != seat
+                (source.owner if source.zone == 'graveyard' else source.controller) != seat
                 or source.phased_out
                 or getattr(source, "face_down", False)
             ):
                 continue
+            if source.zone == 'graveyard':
+                from ..continuous_conditions import OwnerRelativeConditionSource
+                source = OwnerRelativeConditionSource(source)
             programs = _continuous_programs_for_source(
                 semantics, source, static_component_resolver
             )
@@ -635,33 +676,11 @@ def collect_card_program_continuous_effects(
                         descriptor.get("handler_id") or ""
                     ) not in registered_handler_ids:
                         continue
-                    public_state = None
-                    is_fixed_public_state = descriptor.get("handler_id") in (
-                        FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID,
-                        FIXED_PUBLIC_STATE_GRANTED_ABILITY_HANDLER_ID,
-                        CONDITIONAL_DEFENDER_PERMISSION_HANDLER,
-                        CONDITIONAL_AS_UNBLOCKED_HANDLER,
-                        'continuous.block-capacity.public-state.v1',
-                        'continuous.declaration.public-state.v1',
-                    )
-                    if (
-                        is_fixed_public_state
-                        and maximum_layer is not None
-                        and maximum_layer < Layer.ABILITY
-                    ):
-                        # This component can only emit layer-6 and layer-7c
-                        # effects. Skipping its condition snapshot at the
-                        # layer-5 query boundary prevents count predicates from
-                        # recursively collecting the effect they gate.
+                    skip, public_state = _component_public_state_snapshot(source, descriptor,
+                        maximum_layer=maximum_layer, public_state_resolver=public_state_resolver,
+                        setting_state_resolver=setting_state_resolver)
+                    if skip:
                         continue
-                    if is_fixed_public_state:
-                        condition = FixedPublicStateConditionSpec.from_dict(
-                            descriptor["source_condition"]
-                        )
-                        public_state = public_state_resolver.snapshot(
-                            source,
-                            condition,
-                        )
                     resolved_quantity = None
                     modifier = descriptor.get("modifier")
                     raw_quantity = (

@@ -41,7 +41,7 @@ def _query_is_layer_five_closed(query: ObjectQuerySpec) -> bool:
         or query.excluded_controllers
         or query.keywords_all
         or query.keywords_none
-        or query.tapped is not None
+        or query.tapped is not None and query.zones!=('battlefield',)
         or query.include_phased_out
         or query.known_to_actor is not None
         or query.exclude_ref is not None
@@ -54,6 +54,8 @@ def _query_is_layer_five_closed(query: ObjectQuerySpec) -> bool:
 
 
 def _quantity_is_public_amount_closed(quantity: CharacteristicQuantitySpec) -> bool:
+    if quantity.scope is CharacteristicQuantityScope.CONTROLLER_OPPONENT_COUNT:
+        return True  # The versioned producer codec excludes object/hidden fields.
     if quantity.schema_version == 3:
         return all(_quantity_is_public_amount_closed(term) for term in quantity.terms)
     return (quantity.scope in _ALLOWED_SCOPES and quantity.query is not None

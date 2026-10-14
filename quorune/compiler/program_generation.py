@@ -2,7 +2,7 @@ from __future__ import annotations
 from .fixed_instruction_program_closure import is_closed_fixed_instruction_program
 from ..rules.control_capability_shapes import fixed_control_node_capabilities
 from ..rules.scheduled_player_shapes import is_closed_scheduled_player_program
-from ..rules.affected_player_discard_capability_shapes import is_closed_fixed_bound_discard_program
+from ..rules.affected_player_discard_capability_shapes import is_closed_fixed_bound_discard_program,is_closed_fixed_affected_player_discard_program
 from ..rules.public_zone_move_capability_shapes import fixed_owner_zone_move_node_capabilities
 from ..rules.target_characteristic_sets import is_closed_target_characteristic_set_program
 
@@ -96,7 +96,7 @@ from ..rules.fixed_homogeneous_target_set_capability_shapes import (
 from ..rules.token_creation_capability_shapes import (
     fixed_token_creation_node_capabilities,
 )
-from ..rules.mill_capability_shapes import fixed_mill_node_capabilities
+from ..rules.event_player_result_shapes import fixed_mill_node_capabilities,is_closed_fixed_event_player_result_program
 from ..rules.impulse_access_capability_shapes import (
     is_closed_fixed_impulse_access_program,
 )
@@ -744,7 +744,7 @@ def _is_closed_fixed_counter_placement_program(
             mechanic_ids=(
                 value
                 for value in program.coverage
-                if value in {"cr-122-counters", "cr-115-targets", "named-counter-doubling"}
+                if value in {"cr-122-counters", "cr-115-targets", "named-counter-doubling", "fixed-entry-event-object-counter"}
             ),
         )
     )
@@ -1274,7 +1274,7 @@ def _closed_effect_recognizers():
         is_closed_transmute_program,
         _is_closed_fixed_owner_zone_move_program,
         is_closed_fixed_instruction_program,
-        is_closed_fixed_bound_discard_program,
+        is_closed_fixed_bound_discard_program,is_closed_fixed_affected_player_discard_program,
         is_closed_reanimation_effect_program,
         is_closed_public_quantity_mana_program, is_closed_whole_hand_discard_program, _is_closed_fixed_control_program, is_closed_scheduled_player_program, is_closed_target_characteristic_set_program,
         is_closed_fixed_modal_program,
@@ -1285,7 +1285,7 @@ def _closed_effect_recognizers():
         _is_closed_fixed_creature_power_damage_program,
         _is_closed_fixed_damage_program, _is_closed_fixed_next_turn_draw_program,is_closed_source_transform_program,is_closed_enlist_reflexive_program,is_closed_fixed_resolution_mana_program,
         _is_closed_fixed_draw_program,
-        _is_closed_fixed_mill_program,
+        _is_closed_fixed_mill_program,is_closed_fixed_event_player_result_program,
         is_closed_fixed_impulse_access_program,
         _is_closed_fixed_library_search_program,
         _is_closed_fixed_type_to_hand_search_program,

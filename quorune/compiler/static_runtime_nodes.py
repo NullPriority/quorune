@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import AbstractSet, Any, Mapping
 
 from ..rules.capabilities import CapabilityRegistry
+from ..characteristic_fragments import characteristic_quantity_capabilities
 from .dependency_gate import explicit_capabilities_gate
 from .ir_model import append_residual, OracleNode, OracleResidual, SourceSpan
 from .runtime_templates import static_runtime_template
@@ -41,7 +42,8 @@ def runtime_handler_node(
         else (raw_handlers,)
     )
     gate = explicit_capabilities_gate(
-        (capabilities,) if isinstance(capabilities, str) else capabilities,
+        (*((capabilities,) if isinstance(capabilities, str) else capabilities),
+            *characteristic_quantity_capabilities(handlers)),
         capability_registry=capability_registry,
         capability_profile=capability_profile,
     )
@@ -98,6 +100,23 @@ def static_runtime_node(
 ) -> OracleNode | None:
     """Lower one closed static descriptor and its capability evidence."""
 
+    from .devotion_templates import fixed_devotion_increase_handler
+    from .token_templates import static_token_quantity_replacement_handler
+    from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+    devotion = (fixed_devotion_increase_handler(material_line)
+        if not source_is_class and card_types.intersection(permanent_card_types) else None)
+    if devotion is not None:
+        return runtime_handler_node(node_id=node_id,line=line,span=span,compiled=devotion,
+            kind='static_ability',event='devotion.evaluate',runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+            dependency_reason='Devotion requires its current public-query capability',
+            capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
+    token = (static_token_quantity_replacement_handler(material_line)
+        if not source_is_class and card_types.intersection(permanent_card_types) else None)
+    if token is not None:
+        return runtime_handler_node(node_id=node_id,line=line,span=span,compiled=token,
+            kind='replacement_effect',event='token.create',runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+            dependency_reason='Token quantity replacement requires its canonical replacement owner',
+            capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
     template = static_runtime_template(
         material_line,
         source_name=source_name,

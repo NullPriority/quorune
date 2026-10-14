@@ -225,6 +225,192 @@ def source_context(
 
 
 class FixedPublicStateCharacteristicCompilerTests(unittest.TestCase):
+    def test_boolean_composition_preserves_attachment_numeric_trigger_and_status_boundaries(self):
+        from quorune.compiler.public_state_queries import fixed_public_state_parts
+        from quorune.compiler.fixed_counter_trigger_nodes import fixed_counter_trigger_binding
+        from test_qualified_zone_event_queries import query_record
+        registry=load_default_capability_registry()
+        text='As long as you have no cards in hand and enchanted creature is a Human, it gets +1/+1.'
+        ir=compile_oracle_card(query_record(text),capability_registry=registry)
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        self.assertEqual('attached',ir.faces[0].nodes[0].handlers[0]['target']['kind'])
+        ambiguous='As long as this Equipment is untapped and enchanted creature is a Human, it gets +1/+1.'
+        self.assertIsNone(fixed_public_state_parts(ambiguous,source_name='Generic Query Observer'))
+        trigger='When this creature enters, if this creature has a charge counter on it and you have no cards in hand, draw a card.'
+        self.assertIsNone(fixed_counter_trigger_binding(trigger,card_name='Generic Query Observer'))
+        text="As long as you're the monarch and you have no cards in hand, this creature has flying."
+        ir=compile_oracle_card(query_record(text),capability_registry=registry)
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        self.assertIn('variant.monarch.designate',ir.faces[0].nodes[0].capability_dependencies)
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        changed=copy.deepcopy(raw)
+        next(row for row in changed['capabilities'] if row['id']=='variant.monarch.designate').update(status='blocked',blockers=['compound monarch producer withdrawn'])
+        self.assertNotEqual('exact',compile_oracle_card(query_record(text),capability_registry=CapabilityRegistry(changed)).status)
+        with mock.patch('quorune.compiler.public_state_queries.compose_public_conditions',return_value=None):
+            self.assertNotEqual('exact',compile_oracle_card(query_record(text),capability_registry=registry).status)
+
+    def test_boolean_condition_truth_query_snapshots_and_malformed_inputs_are_distinct(self):
+        from quorune.compiler.public_state_queries import fixed_public_state_condition
+        from quorune.card_programs.runtime import _FixedPublicStateSnapshotResolver
+        from types import SimpleNamespace
+        both=fixed_public_state_condition('you have 30 or more life and you have no cards in hand',source_name='Generic Source')
+        either=fixed_public_state_condition('you have 30 or more life or you have no cards in hand',source_name='Generic Source')
+        for life,hand in ((20,1),(20,0),(40,1),(40,0)):
+            base=source_context(controller_life=life,hand_count=hand).public_state
+            snapshot=replace(base,term_snapshots=(base,base))
+            self.assertEqual(life>=30 and hand==0,both.matches(snapshot))
+            self.assertEqual(life>=30 or hand==0,either.matches(snapshot))
+        with self.assertRaises(FixedPublicStateConditionError):both.matches(base)
+        with self.assertRaises(FixedPublicStateConditionError):replace(base,term_snapshots=(base,replace(base,source_controller='B')))
+        payload=both.to_dict()
+        for field,value in (('schema_version',True),('terms',[]),('terms',[payload,payload]),('unknown',True)):
+            with self.assertRaises(FixedPublicStateConditionError):FixedPublicStateConditionSpec.from_dict({**payload,field:value})
+        for text in ('you have 30 or more life and the top card of your library is blue',
+                     'you have no cards in hand and your turn or you have 30 or more life'):
+            self.assertIsNone(fixed_public_state_condition(text,source_name='Generic Source'))
+        queries=fixed_public_state_condition('you control three or more creatures and you control four or more artifacts',source_name='Generic Source')
+        self.assertIsNotNone(queries)
+        state=SimpleNamespace(players={'A':SimpleNamespace(zones={'hand':[],'graveyard':[]},life=40)},turn_order=['A'],active_player='A',cards={})
+        source=SimpleNamespace(controller='A',ref='SOURCE',object_id='source',counters={})
+        resolver=_FixedPublicStateSnapshotResolver(state,public_object_resolver=None,quantity_resolver=lambda source,q:3 if q.query.types_all==('creature',) else 1)
+        snapshot=resolver.snapshot(source,queries)
+        self.assertEqual((3,1),tuple(child.condition_quantity for child in snapshot.term_snapshots))
+        self.assertFalse(queries.matches(snapshot))
+        from quorune.semantic_runtime.fixed_characteristic_settings import validate_setting_condition
+        with self.assertRaises(SemanticNodeError):validate_setting_condition(queries.to_dict())
+        from test_qualified_zone_event_queries import query_record
+        text='As long as you have 30 or more life and you control a creature with power 4 or greater, this creature gets +1/+1.'
+        self.assertNotEqual('exact',compile_oracle_card(query_record(text),capability_registry=load_default_capability_registry()).status)
+
+    def test_boolean_public_conditions_keep_independent_leaf_snapshots_and_operators(self):
+        from test_qualified_zone_event_queries import query_record
+        cases=(
+            ('As long as you have 30 or more life and an opponent has 10 or less life, this creature gets +6/+6 and has flying.','all'),
+            ('As long as you have 30 or more life or you have no cards in hand, this creature gets +1/+1.','any'),
+        )
+        for text,kind in cases:
+            with self.subTest(text=text):
+                ir=compile_oracle_card(query_record(text),capability_registry=load_default_capability_registry())
+                self.assertEqual('exact',ir.status,ir.material_residuals)
+                node=ir.faces[0].nodes[0];self.assertEqual(text,node.text)
+                condition=FixedPublicStateConditionSpec.from_dict(node.handlers[0]['source_condition'])
+                self.assertEqual(kind,condition.kind.value)
+                self.assertEqual(6,condition.schema_version)
+                self.assertEqual(2,len(condition.terms))
+                self.assertEqual(condition,FixedPublicStateConditionSpec.from_dict(condition.to_dict()))
+
+    def test_conditional_typed_keyword_schema_dependencies_and_omission_fail_closed(self):
+        from test_qualified_zone_event_queries import query_record
+        from quorune.compiler.conditional_granted_ability_templates import conditional_typed_keyword_handler
+        from quorune.semantic_runtime.conditional_continuous import ConditionalTypedKeywordHandler
+
+        text = 'During your turn, this creature has ward {2}.'
+        compiled = conditional_typed_keyword_handler(text, source_name='Generic Query Observer')
+        self.assertIsNotNone(compiled)
+        descriptor = compiled[1]
+        handler = ConditionalTypedKeywordHandler()
+        handler.validate(descriptor)
+        for altered in (
+            text.replace('{2}', '{X}'), text.replace('{2}', '\u2014Pay 2 life'),
+            text.replace('During your turn', 'As long as the top card of your library is blue'),
+            text.replace('ward {2}', 'unrepresented'), text + ' Draw a card.',
+        ):
+            self.assertIsNone(conditional_typed_keyword_handler(altered, source_name='Generic Query Observer'))
+        for field, value in (('schema_version', True), ('unknown', True)):
+            with self.assertRaises(SemanticNodeError):
+                handler.validate({**descriptor, field:value})
+        for field, value in (('add_abilities', ['Ward {3}']), ('add_ability_fragments', []), ('power', True)):
+            altered = copy.deepcopy(descriptor)
+            altered['modifier'][field] = value
+            with self.assertRaises(SemanticNodeError):
+                handler.validate(altered)
+        legacy = {**descriptor, 'handler_id':FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID, 'schema_version':1}
+        with self.assertRaises(SemanticNodeError):
+            default_continuous_effect_component_registry().validate(legacy)
+        raw = json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        for capability in ('continuous.characteristics.fixed_public_state', 'trigger.keyword.ward.fixed_generic'):
+            altered = copy.deepcopy(raw)
+            next(row for row in altered['capabilities'] if row['id']==capability).update(status='blocked', blockers=['conditional keyword dependency withdrawal'])
+            self.assertNotEqual('exact', compile_oracle_card(query_record(text), capability_registry=CapabilityRegistry(altered)).status)
+        with mock.patch('quorune.compiler.conditional_granted_ability_templates.conditional_typed_keyword_handler', return_value=None):
+            self.assertNotEqual('exact', compile_oracle_card(query_record(text), capability_registry=load_default_capability_registry()).status)
+
+    def test_conditional_typed_keywords_keep_their_fragments_and_condition(self):
+        from test_qualified_zone_event_queries import query_record
+        from quorune.ability_fragments import ability_fragment_from_dict
+        from quorune.trigger_participation import WardSpec
+        from quorune.ability_fragments import ProtectionSpec, CombatKeywordTriggerSpec, SpellCastKeywordTriggerSpec
+
+        registry = load_default_capability_registry()
+        cases = (
+            ('This creature has prowess as long as you control a black creature.', SpellCastKeywordTriggerSpec, 'query_count_at_least'),
+            ('During your turn, this creature has ward {2}.', WardSpec, 'controller_turn'),
+            ('As long as this creature is untapped, other legendary creatures you control have ward {1}.', WardSpec, 'source_matches_query'),
+            ('As long as this creature is untapped, it has protection from artifacts and from each color.', ProtectionSpec, 'source_matches_query'),
+            ('As long as equipped creature is a Human, it has bushido 2.', CombatKeywordTriggerSpec, 'attached_matches_query'),
+        )
+        for text, fragment_type, condition_kind in cases:
+            with self.subTest(text=text):
+                ir = compile_oracle_card(query_record(text), capability_registry=registry,
+                    capability_profile='commander_review')
+                self.assertEqual('exact', ir.status, ir.material_residuals)
+                node = next(n for n in ir.faces[0].nodes if n.kind == 'static_ability')
+                self.assertEqual(text, node.text)
+                self.assertEqual((0, len(text)), (node.span.start, node.span.end))
+                descriptor = node.handlers[0]
+                self.assertEqual('continuous.characteristics.public-state-keywords.v1', descriptor['handler_id'])
+                self.assertEqual(7, descriptor['schema_version'])
+                self.assertEqual(condition_kind, descriptor['source_condition']['kind'])
+                fragments = descriptor['modifier']['add_ability_fragments']
+                self.assertTrue(fragments)
+                self.assertTrue(all(isinstance(ability_fragment_from_dict(f), fragment_type) for f in fragments))
+                default_continuous_effect_component_registry().validate(descriptor)
+                self.assertTrue(bind_card_program_runtime(compile_card_program(
+                    type('NoRulings', (), {'rulings':lambda self, record: ()})(), query_record(text),
+                    capability_registry=registry, capability_profile='commander_review',
+                    trust_level='trusted'), capability_registry=registry,
+                    profile='commander_review')['strict_capability_ready'])
+
+    def test_graveyard_static_grant_keeps_explicit_active_zone_and_owner_relative_query(self):
+        from test_qualified_zone_event_queries import query_record
+        text = 'As long as this card is in your graveyard and you control an Island, creatures you control have flying.'
+        ir = compile_oracle_card(query_record(text), capability_registry=load_default_capability_registry())
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        node = ir.faces[0].nodes[0]
+        self.assertEqual('graveyard', node.active_zone)
+        self.assertEqual(text, node.text)
+        self.assertEqual('source_controller', node.handlers[0]['target']['target_controller'])
+        query = node.handlers[0]['source_condition']['quantity']['query']
+        self.assertEqual(['land'], query['types_all'])
+        self.assertEqual(['island'], query['subtypes_all'])
+        self.assertEqual([], query['supertypes_all'])
+
+    def test_graveyard_grant_rejects_unrepresented_zone_condition_and_malformed_descriptor(self):
+        from test_qualified_zone_event_queries import query_record
+        from quorune.compiler.conditional_granted_ability_templates import graveyard_static_characteristics_handler
+        from quorune.semantic_runtime.conditional_continuous import GraveyardStaticCharacteristicsHandler
+        text = 'As long as this card is in your graveyard and you control an Island, creatures you control have flying.'
+        descriptor = graveyard_static_characteristics_handler(text, source_name='Generic Query Observer')[1]
+        handler = GraveyardStaticCharacteristicsHandler(); handler.validate(descriptor)
+        for field, value in (('schema_version', True), ('handler_id', 'continuous.characteristics.fixed-public-state.v1')):
+            with self.assertRaises(ValueError):handler.validate({**descriptor, field: value})
+        for text in (
+            'As long as this card is in exile and you control an Island, creatures you control have flying.',
+            'As long as this card is in your graveyard and you control an Island, creatures you control have unrepresented.',
+            'As long as this card is in your graveyard and the top card of your library is blue, creatures you control have flying.',
+        ):
+            self.assertIsNone(graveyard_static_characteristics_handler(text, source_name='Generic Query Observer'))
+        raw = json.loads((Path(__file__).parents[1] / 'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        text = 'As long as this card is in your graveyard and you control an Island, creatures you control have flying.'
+        for cap in ('continuous.ability.graveyard_static_grant', 'combat.block.flying'):
+            changed = copy.deepcopy(raw)
+            next(row for row in changed['capabilities'] if row['id'] == cap).update(status='blocked', blockers=['graveyard grant boundary'])
+            self.assertNotEqual('exact', compile_oracle_card(query_record(text), capability_registry=CapabilityRegistry(changed)).status)
+
+    def test_graveyard_grant_compiler_omission_mutant_is_killed(self):
+        with mock.patch('quorune.compiler.conditional_granted_ability_templates.graveyard_static_characteristics_handler', return_value=None):
+            with self.assertRaises(AssertionError):
+                self.test_graveyard_static_grant_keeps_explicit_active_zone_and_owner_relative_query()
     def test_conditional_stats_and_declaration_result_preserve_one_live_condition(self):
         from test_qualified_zone_event_queries import query_record
         from quorune.oracle_ir import compile_oracle_card
@@ -1089,12 +1275,12 @@ class FixedPublicStateCharacteristicCompilerTests(unittest.TestCase):
         base = self.db.lookup("Fresh-Faced Recruit")
         unsupported = (
             "This creature gets +X/+X during your turn.",
-            "During your turn, this creature has ward {2}.",
+            "During your turn, this creature has ward {X}.",
             "As long as this creature is untapped, other legendary creatures "
-            "you control have ward {1}.",
+            "you control have ward {X}.",
             "During your turn, this creature has \"{T}: Draw a card.\" "
             "and has \"{T}: You gain 1 life.\"",
-            "As long as this creature is equipped, it has ward {2}.",
+            "As long as this creature is equipped, it has ward {X}.",
             "Creatures you control have flying as long as you control an "
             "artifact with flying.",
             "Artifacts you control have shroud as long as you control three "
@@ -2771,6 +2957,1503 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
 
 
 class AdditionalConditionalModifierRuntimeTests(unittest.TestCase):
+    def test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay(self):
+        session=self.session(3633301);engine=session.engine
+        source=self.add(engine,'Copperhoof Vorrac',ref='tapped-quantity-vorrac')
+        foreign=self.add(engine,'Generic Boolean Green Source',seat='B',ref='tapped-quantity-foreign-land')
+        own=self.add(engine,'Generic Boolean Green Source',ref='tapped-quantity-own-land')
+        self.assert_whole_admission(source.printed_name)
+        setup=self.add(engine,'Generic Boolean Life Response',zone='hand',ref='tapped-quantity-setup')
+        self.ready(session,setup,{})
+        self.checkpoint(session)
+        initial=engine._numeric_stat(source.object_id,'power')
+        while session.state.priority_player!='B':self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+        actions=session.packet('pilot:B',full=True)['decision']['ctx']['legal']['actions']
+        activate=next(row for row in actions if row['id'].startswith('activate:'+foreign.ref+':'))
+        accepted=session.act('pilot:B',{'action_id':activate['id']});self.assertTrue(accepted.ok,accepted.summary)
+        self.assertEqual(initial-1,engine._numeric_stat(source.object_id,'power'))
+        while session.state.priority_player!='A':self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        activate=next(row for row in actions if row['id'].startswith('activate:'+own.ref+':'))
+        self.assertTrue(session.act('pilot:A',{'action_id':activate['id']}).ok)
+        self.assertEqual(initial-1,engine._numeric_stat(source.object_id,'power'))
+        self.replay(session,load=True);self.replay(session)
+        session=self.session(3633302);engine=session.engine
+        mana=self.add(engine,'Heritage Druid',ref='tapped-quantity-own-creature')
+        elves=[self.add(engine,'Generic Selected Tap Elf',ref='tapped-quantity-elf-'+str(i)) for i in range(2)]
+        self.add(engine,'Generic Bound Body',ref='tapped-quantity-untapped-control')
+        draw=self.add(engine,'Generic Tapped Quantity Draw',zone='hand',ref='tapped-quantity-draw')
+        self.assert_whole_admission(draw.printed_name)
+        offered=self.ready(session,mana,{})
+        self.checkpoint(session)
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'cost_cards':[mana.ref,*[elf.ref for elf in elves]]})
+        self.assertTrue(accepted.ok,accepted.summary)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        offered=next(row for row in actions if row.get('card')==draw.ref)
+        hand=len(session.state.players['A'].zones['hand'])
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'pay':'auto'});self.assertTrue(accepted.ok,accepted.summary)
+        self.replay(session,load=True);self.resolve(session)
+        self.assertEqual(hand+2,len(session.state.players['A'].zones['hand']))
+        for seat in 'BCD':self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+        self.replay(session)
+
+    def test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay(self):
+        session=self.session(3633201);engine=session.engine
+        land=self.add(engine,'Vivid Creek',zone='hand',ref='compound-vivid-land')
+        spell=self.add(engine,'Essence Harvest',zone='hand',ref='compound-vivid-spell')
+        self.assert_whole_admission(land.printed_name)
+        setup=self.add(engine,'Generic Boolean Life Response',zone='hand',ref='compound-vivid-setup')
+        self.ready(session,setup,{'C':2})
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        offered=next(row for row in actions if row['id'].startswith('play-land:') and row.get('card')==land.ref)
+        self.checkpoint(session);before=session.state.to_dict()
+        self.assertFalse(session.act('pilot:C',{'action_id':offered['id']}).ok);self.assertEqual(before,session.state.to_dict())
+        accepted=session.act('pilot:A',{'action_id':offered['id']});self.assertTrue(accepted.ok,accepted.summary)
+        current=session.state.cards[land.object_id]
+        self.assertTrue(current.tapped);self.assertEqual(2,current.counters.get('charge',0))
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        self.assertFalse(any(row['id'].startswith('activate:'+land.ref+':') for row in actions))
+        self.replay(session,load=True)
+        for _ in range(200):
+            if session.state.active_player=='A' and not session.state.cards[land.object_id].tapped:break
+            decision=session.state.pending_decision
+            if decision.kind=='priority':command={'action_id':'pass'}
+            elif decision.kind=='combat.attackers':command={'action_id':'attack','attackers':{}}
+            elif decision.kind=='cleanup.discard':
+                cards=[session.state.cards[oid].ref for oid in session.state.players[decision.actors[0]].zones['hand'][:decision.payload_by_actor[decision.actors[0]]['count']]]
+                command={'action_id':'discard','cards':cards}
+            else:self.fail('UnexpectednativeVividturn '+decision.kind)
+            accepted=session.act(session.pending_principals()[0],command);self.assertTrue(accepted.ok,accepted.summary)
+        else:self.fail('Vividlandnativeuntapdidnotoccur')
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        ability=next(ability for ability in engine._activated_abilities(session.state.cards[land.object_id]) if ability.source_counter_removal_cost is not None)
+        offered=next(row for row in actions if row['id']=='activate:'+land.ref+':'+ability.ability_id)
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'mana_output':{'B':1}})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.assertTrue(session.state.cards[land.object_id].tapped);self.assertEqual(1,session.state.cards[land.object_id].counters.get('charge',0))
+        self.assertEqual(1,session.state.players['A'].mana_pool['B'])
+        self.replay(session,load=True);self.replay(session)
+
+    def test_original_heritage_and_dryad_selected_tap_mana_atomic_costs_and_replay(self):
+        session=self.session(3633101);engine=session.engine
+        source=self.add(engine,'Heritage Druid',zone='hand',ref='tap-mana-heritage')
+        bodies=[self.add(engine,'Generic Selected Tap Elf',ref='tap-mana-elf-'+str(i)) for i in range(2)]
+        foreign=self.add(engine,'Generic Selected Tap Elf',seat='B',ref='tap-mana-foreign-elf')
+        green_spell=self.add(engine,'Generic Conditional Green Qualifier',zone='hand',ref='tap-mana-pay-green')
+        self.assert_whole_admission(source.printed_name)
+        offered=self.ready(session,source,{'G':1})
+        self.checkpoint(session)
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'pay':'auto'});self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        while session.state.priority_player!='A':self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        offered=next(row for row in actions if row['id'].startswith('activate:'+source.ref+':'))
+        before=session.state.to_dict()
+        for refs in ([source.ref,bodies[0].ref,bodies[0].ref],[source.ref,bodies[0].ref,foreign.ref],[source.ref,bodies[0].ref]):
+            self.assertFalse(session.act('pilot:A',{'action_id':offered['id'],'cost_cards':refs}).ok);self.assertEqual(before,session.state.to_dict())
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'cost_cards':[source.ref,*[body.ref for body in bodies]]})
+        self.assertTrue(accepted.ok,accepted.summary);self.assertFalse(session.state.stack)
+        self.assertEqual(3,session.state.players['A'].mana_pool['G'])
+        self.assertTrue(all(session.state.cards[c.object_id].tapped for c in (source,*bodies)))
+        self.assertFalse(session.state.cards[foreign.object_id].tapped)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        cast=next(row for row in actions if row.get('card')==green_spell.ref)
+        accepted=session.act('pilot:A',{'action_id':cast['id'],'pay':'auto'});self.assertTrue(accepted.ok,accepted.summary)
+        self.replay(session,load=True);self.resolve(session);self.replay(session)
+        session=self.session(3633102);engine=session.engine
+        source=self.add(engine,'Loam Dryad',ref='tap-mana-dryad')
+        body=self.add(engine,'Generic Selected Tap Elf',ref='tap-mana-fresh-selected')
+        fresh_source=self.add(engine,'Loam Dryad',ref='tap-mana-fresh-source')
+        self.assert_whole_admission(source.printed_name)
+        offered=self.ready(session,source,{})
+        fresh_source.acquired_control_turn_count=session.state.players['A'].turns_begun
+        engine.permissions.invalidate_current();session.state.pending_decision=None;engine._grant_priority('A');engine.pump()
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        self.assertFalse(any(row['id'].startswith('activate:'+fresh_source.ref+':') for row in actions))
+        offered=next(row for row in actions if row['id'].startswith('activate:'+source.ref+':'))
+        self.checkpoint(session);before=session.state.to_dict()
+        self.assertFalse(session.act('pilot:A',{'action_id':offered['id'],'cost_cards':[source.ref],'mana_output':{'G':1}}).ok)
+        self.assertEqual(before,session.state.to_dict())
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'cost_cards':[body.ref],'mana_output':{'G':1}})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.assertTrue(session.state.cards[source.object_id].tapped);self.assertTrue(session.state.cards[body.object_id].tapped)
+        self.assertEqual(1,session.state.players['A'].mana_pool['G']);self.assertFalse(session.state.stack)
+        self.replay(session,load=True)
+        for seat in 'BCD':self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+
+    def test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays(self):
+        session=self.session(3633001);engine=session.engine
+        source=self.add(engine,'Phyrexian Altar',zone='hand',ref='selected-mana-altar')
+        fodder=self.add(engine,'Generic Bound Body',ref='selected-mana-own-body')
+        foreign=self.add(engine,'Generic Bound Body',seat='B',ref='selected-mana-foreign-body')
+        spell=self.add(engine,'Essence Harvest',zone='hand',ref='selected-mana-life-spell')
+        self.assert_whole_admission(source.printed_name)
+        offered=self.ready(session,source,{'C':5})
+        self.checkpoint(session)
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        while session.state.priority_player!='A':self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        offered=next(row for row in actions if row['id'].startswith('activate:'+source.ref+':'))
+        before=session.state.to_dict()
+        for principal,cost in (('pilot:C',fodder.ref),('pilot:A',foreign.ref),('pilot:A',source.ref)):
+            denied=session.act(principal,{'action_id':offered['id'],'cost_cards':[cost],'mana_output':{'B':1}})
+            self.assertFalse(denied.ok);self.assertEqual(before,session.state.to_dict())
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'cost_cards':[fodder.ref],'mana_output':{'B':1}})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.assertEqual('graveyard',session.state.cards[fodder.object_id].zone)
+        self.assertEqual('battlefield',session.state.cards[foreign.object_id].zone)
+        self.assertEqual(1,session.state.players['A'].mana_pool['B']);self.assertFalse(session.state.stack)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        cast=next(row for row in actions if row.get('card')==spell.ref)
+        accepted=session.act('pilot:A',{'action_id':cast['id'],'targets':['B'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.replay(session,load=True);self.resolve(session)
+        self.assertEqual(0,session.state.players['A'].mana_pool.get('B',0))
+        self.assertEqual('graveyard',session.state.cards[spell.object_id].zone)
+        for seat in 'BCD':self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+        self.replay(session)
+
+    def test_original_fangren_and_fumes_current_attacking_counter_sets_replay(self):
+        from quorune.model import CombatState
+        session=self.session(3632901);engine=session.engine
+        source=self.add(engine,'Fangren Firstborn',ref='combat-counter-fangren')
+        body=self.add(engine,'Generic Bound Body',ref='combat-counter-vigilant')
+        spectator=self.add(engine,'Generic Bound Body',ref='combat-counter-spectator');spectator.tapped=True
+        fumes=self.add(engine,'Choking Fumes',zone='hand',ref='combat-counter-fumes')
+        self.assert_whole_admission(source.printed_name);self.assert_whole_admission(fumes.printed_name)
+        self.ready(session,fumes,{'C':2,'W':1})
+        session.state.pending_decision=None;session.state.priority_player=None;session.state.priority_passes=[]
+        session.state.phase='combat';session.state.step='declare_attackers';session.state.phase_index=5;session.state.combat=CombatState()
+        engine.permissions.invalidate_current();engine.pump();self.checkpoint(session)
+        accepted=session.act('pilot:A',{'action_id':'attack','attackers':{source.ref:'B',body.ref:'D'}})
+        self.assertTrue(accepted.ok,accepted.summary);self.replay(session,load=True);self.resolve(session)
+        self.assertEqual(1,session.state.cards[source.object_id].counters.get('+1/+1',0))
+        self.assertEqual(1,session.state.cards[body.object_id].counters.get('+1/+1',0))
+        self.assertEqual(0,session.state.cards[spectator.object_id].counters.get('+1/+1',0))
+        while session.state.priority_player!='A':self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        cast=next(row for row in actions if row.get('card')==fumes.ref)
+        before=session.state.to_dict()
+        self.assertFalse(session.act('pilot:C',{'action_id':cast['id'],'pay':'auto'}).ok);self.assertEqual(before,session.state.to_dict())
+        accepted=session.act('pilot:A',{'action_id':cast['id'],'pay':'auto'});self.assertTrue(accepted.ok,accepted.summary)
+        self.replay(session,load=True);self.resolve(session)
+        # CR704.5q removes matching +1/+1 and -1/-1 counters from attackers.
+        for card in (source,body):
+            current=session.state.cards[card.object_id]
+            self.assertEqual(0,current.counters.get('+1/+1',0));self.assertEqual(0,current.counters.get('-1/-1',0))
+        self.assertEqual(0,session.state.cards[spectator.object_id].counters.get('-1/-1',0))
+        self.assertFalse(session.state.cards[body.object_id].tapped)
+        for seat in 'BCD':self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+        self.replay(session)
+
+    def test_original_source_damage_counter_survival_lethal_and_reentered_incarnation_replay(self):
+        cases=((3632801,'Fungusaur',False,False),(3632802,'Siegehorn Ceratops',False,False),
+            (3632803,'Siegehorn Ceratops',True,False),(3632804,'Siegehorn Ceratops',False,True))
+        for seed,name,lethal,reenter in cases:
+            with self.subTest(name=name,lethal=lethal,reenter=reenter):
+                session=self.session(seed);engine=session.engine
+                source=self.add(engine,name,ref='source-damage-counter-recipient')
+                damage=self.add(engine,'Lightning Bolt' if lethal else 'Generic Source Counter One Damage',zone='hand',ref='source-damage-counter-damage')
+                bounce=self.add(engine,'Unsummon',zone='hand',ref='source-damage-counter-bounce')
+                self.assert_whole_admission(source.printed_name)
+                offered=self.ready(session,damage,{'R':1,'U':1,'G':1,'W':1})
+                self.checkpoint(session);identity=source.logical_object_id
+                before=session.state.to_dict()
+                self.assertFalse(session.act('pilot:D',{'action_id':offered['id'],'targets':[source.ref],'pay':'auto'}).ok)
+                self.assertEqual(before,session.state.to_dict())
+                accepted=session.act('pilot:A',{'action_id':offered['id'],'targets':[source.ref],'pay':'auto'})
+                self.assertTrue(accepted.ok,accepted.summary)
+                for _ in range(8):
+                    if any(item.kind=='triggered_ability' for item in session.state.stack):break
+                    self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+                self.assertTrue(any(item.kind=='triggered_ability' for item in session.state.stack))
+                self.replay(session,load=True)
+                if reenter:
+                    while session.state.priority_player!='A':self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+                    actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+                    offered=next(row for row in actions if row.get('card')==bounce.ref)
+                    self.assertTrue(session.act('pilot:A',{'action_id':offered['id'],'targets':[source.ref],'pay':'auto'}).ok)
+                    self.resolve(session)
+                    while session.state.priority_player!='A':self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+                    actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+                    offered=next(row for row in actions if row.get('card')==source.ref)
+                    self.assertTrue(session.act('pilot:A',{'action_id':offered['id'],'pay':'auto'}).ok)
+                self.resolve(session)
+                current=session.state.cards[source.object_id]
+                self.assertEqual('graveyard' if lethal else 'battlefield',current.zone)
+                self.assertEqual(0 if lethal or reenter else 1 if name=='Fungusaur' else 2,current.counters.get('+1/+1',0))
+                if reenter:self.assertNotEqual(identity,current.logical_object_id)
+                for seat in 'BCD':self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+                self.replay(session)
+
+    def test_original_gleam_attacker_and_rakish_damage_source_counter_recipients_replay(self):
+        from quorune.model import CombatState
+        for seed,name in ((3632701,'Gleam of Battle'),(3632702,'Rakish Heir'),(3632703,'Necropolis Regent')):
+            with self.subTest(name=name):
+                session=self.session(seed);engine=session.engine
+                observer=self.add(engine,name,ref='action-counter-observer')
+                attacker=self.add(engine,'Generic Event Counter Vampire',ref='action-counter-attacker')
+                control=self.add(engine,'Generic Bound Body',ref='action-counter-control')
+                self.assert_whole_admission(observer.printed_name)
+                engine.permissions.invalidate_current();session.state.pending_decision=None;session.state.started=True
+                session.state.active_player='A';session.state.phase='combat';session.state.step='declare_attackers'
+                session.state.phase_index=5;session.state.priority_player=None;session.state.priority_passes=[];session.state.combat=CombatState()
+                engine.pump();self.checkpoint(session)
+                before=session.state.to_dict()
+                self.assertFalse(session.act('pilot:C',{'action_id':'attack','attackers':{attacker.ref:'B',control.ref:'D'}}).ok)
+                self.assertEqual(before,session.state.to_dict())
+                accepted=session.act('pilot:A',{'action_id':'attack','attackers':{attacker.ref:'B',control.ref:'D'}})
+                self.assertTrue(accepted.ok,accepted.summary)
+                checked=False
+                for _ in range(70):
+                    if session.state.phase=='postcombat_main' and not session.state.stack:break
+                    decision=session.state.pending_decision
+                    if decision.kind=='trigger.order':
+                        pending=[item for batch in session.state.pending_trigger_batches for item in batch.items]
+                        self.replay(session,load=True);checked=True
+                        command={'action_id':'order','triggers':[item.ref for item in pending]}
+                    elif decision.kind=='priority':
+                        if any(item.kind=='triggered_ability' for item in session.state.stack) and not checked:
+                            self.replay(session,load=True);checked=True
+                        command={'action_id':'pass'}
+                    elif decision.kind=='combat.blockers':command={'action_id':'block','blocks':{}}
+                    else:self.fail('Unexpected eventcounter decision '+decision.kind)
+                    accepted=session.act(session.pending_principals()[0],command);self.assertTrue(accepted.ok,accepted.summary)
+                else:self.fail('Actioneventcountercombatdidnotfinish')
+                self.assertTrue(checked)
+                self.assertEqual(2 if name=='Necropolis Regent' else 1,session.state.cards[attacker.object_id].counters.get('+1/+1',0))
+                self.assertEqual(2 if name=='Necropolis Regent' else 1 if name=='Gleam of Battle' else 0,session.state.cards[control.object_id].counters.get('+1/+1',0))
+                self.assertEqual(0,session.state.cards[observer.object_id].counters.get('+1/+1',0))
+                for seat in 'BCD':self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+                self.replay(session)
+
+    def test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay(self):
+        for seed,reenter in ((3632601,False),(3632602,True)):
+            with self.subTest(reenter=reenter):
+                session=self.session(seed);engine=session.engine
+                observer=self.add(engine,'Good-Fortune Unicorn',ref='entrycounter-unicorn')
+                body=self.add(engine,'Generic Ordinary Grant Flash Sliver',zone='hand',ref='entrycounter-recipient')
+                bounce=self.add(engine,'Unsummon',zone='hand',ref='entrycounter-bounce')
+                self.assert_whole_admission(observer.printed_name)
+                offered=self.ready(session,body,{'U':1})
+                self.checkpoint(session)
+                before=session.state.to_dict()
+                self.assertFalse(session.act('pilot:B',{'action_id':offered['id'],'pay':'auto'}).ok);self.assertEqual(before,session.state.to_dict())
+                accepted=session.act('pilot:A',{'action_id':offered['id'],'pay':'auto'});self.assertTrue(accepted.ok,accepted.summary)
+                for _ in range(8):
+                    if any(item.kind=='triggered_ability' for item in session.state.stack):break
+                    self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+                self.assertTrue(any(item.kind=='triggered_ability' for item in session.state.stack))
+                identity=session.state.cards[body.object_id].logical_object_id
+                self.replay(session,load=True)
+                if reenter:
+                    while session.state.priority_player!='A':
+                        self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+                    actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+                    cast=next(row for row in actions if row.get('card')==bounce.ref)
+                    accepted=session.act('pilot:A',{'action_id':cast['id'],'targets':[body.ref],'pay':'auto'})
+                    self.assertTrue(accepted.ok,accepted.summary)
+                    for _ in range(8):
+                        if session.state.cards[body.object_id].zone=='hand':break
+                        self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+                    while session.state.priority_player!='A':
+                        self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+                    actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+                    cast=next(row for row in actions if row.get('card')==body.ref)
+                    accepted=session.act('pilot:A',{'action_id':cast['id'],'pay':'auto'});self.assertTrue(accepted.ok,accepted.summary)
+                self.resolve(session)
+                current=session.state.cards[body.object_id]
+                self.assertEqual(1,current.counters.get('+1/+1',0));self.assertEqual(0,session.state.cards[observer.object_id].counters.get('+1/+1',0))
+                if reenter:self.assertNotEqual(identity,current.logical_object_id)
+                for seat in 'BCD':self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+                self.replay(session)
+
+    def test_original_polluted_bonds_land_controller_and_campaign_split_defenders_replay(self):
+        session=self.session(3632501);engine=session.engine
+        observer=self.add(engine,'Polluted Bonds',seat='B',ref='event-controller-bonds')
+        self.assert_whole_admission(observer.printed_name)
+        setup=self.add(engine,'Generic Boolean Life Response',zone='hand',ref='event-controller-setup')
+        self.ready(session,setup,{})
+        land=next(session.state.cards[oid] for oid in session.state.players['A'].zones['hand'] if 'Land' in engine.card_record(session.state.cards[oid]).type_line)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        offered=next(row for row in actions if row['id'].startswith('play-land:') and row.get('card')==land.ref)
+        life={seat:session.state.players[seat].life for seat in 'ABCD'}
+        self.checkpoint(session);before=session.state.to_dict()
+        self.assertFalse(session.act('pilot:C',{'action_id':offered['id']}).ok);self.assertEqual(before,session.state.to_dict())
+        accepted=session.act('pilot:A',{'action_id':offered['id']});self.assertTrue(accepted.ok,accepted.summary)
+        self.replay(session,load=True);self.resolve(session)
+        self.assertEqual(life['A']-2,session.state.players['A'].life);self.assertEqual(life['B']+2,session.state.players['B'].life)
+        for seat in 'CD':self.assertEqual(life[seat],session.state.players[seat].life)
+        self.replay(session)
+        from quorune.model import CombatState
+        session=self.session(3632502);engine=session.engine
+        self.add(engine,'Campaign of Vengeance',ref='event-controller-campaign')
+        attackers=[self.add(engine,'Generic Bound Body',ref='event-controller-attacker-'+str(i)) for i in range(2)]
+        self.assert_whole_admission('Campaign of Vengeance')
+        engine.permissions.invalidate_current();session.state.pending_decision=None;session.state.started=True
+        session.state.active_player='A';session.state.phase='combat';session.state.step='declare_attackers'
+        session.state.phase_index=5;session.state.priority_player=None;session.state.priority_passes=[];session.state.combat=CombatState()
+        engine.pump();self.checkpoint(session)
+        life={seat:session.state.players[seat].life for seat in 'ABCD'}
+        accepted=session.act('pilot:A',{'action_id':'attack','attackers':{attackers[0].ref:'B',attackers[1].ref:'C'}})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.assertEqual('trigger.order',session.state.pending_decision.kind)
+        pending=[item for batch in session.state.pending_trigger_batches for item in batch.items]
+        self.assertEqual(2,len(pending))
+        self.replay(session,load=True)
+        accepted=session.act('pilot:A',{'action_id':'order','triggers':[item.ref for item in reversed(pending)]})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        self.assertEqual(life['A']+2,session.state.players['A'].life)
+        self.assertEqual(life['B']-1,session.state.players['B'].life);self.assertEqual(life['C']-1,session.state.players['C'].life)
+        self.assertEqual(life['D'],session.state.players['D'].life)
+        self.replay(session)
+
+    def test_original_colored_sphere_prevention_actual_damage_contrasts_and_departure_replay(self):
+        session=self.session(3632401);engine=session.engine
+        sphere=self.add(engine,'Sphere of Law',zone='hand',ref='colored-prevention-sphere')
+        red=[self.add(engine,'Lightning Bolt',zone='hand',ref='colored-prevention-red-'+str(i)) for i in range(3)]
+        blue=self.add(engine,'Generic Colored Prevention Blue Damage',zone='hand',ref='colored-prevention-blue')
+        remove=self.add(engine,'Disenchant',zone='hand',ref='colored-prevention-remove')
+        self.assert_whole_admission(sphere.printed_name)
+        offered=self.ready(session,sphere,{'C':6,'W':2,'R':6})
+        self.checkpoint(session)
+        before=session.state.to_dict()
+        self.assertFalse(session.act('pilot:D',{'action_id':offered['id'],'pay':'auto'}).ok)
+        self.assertEqual(before,session.state.to_dict())
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        life={seat:session.state.players[seat].life for seat in 'ABCD'}
+        def cast(card,target):
+            while session.state.priority_player!='A':
+                self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+            actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+            self.assertTrue(any(row.get('card')==card.ref for row in actions),
+                {'card':card.printed_name,'pool':dict(session.state.players['A'].mana_pool),'zone':session.state.cards[card.object_id].zone})
+            offered=next(row for row in actions if row.get('card')==card.ref)
+            accepted=session.act('pilot:A',{'action_id':offered['id'],'targets':[target],'pay':'auto'})
+            self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        cast(red[0],'A');self.assertEqual(life['A']-1,session.state.players['A'].life)
+        cast(blue,'A');self.assertEqual(life['A']-4,session.state.players['A'].life)
+        cast(red[1],'B');self.assertEqual(life['B']-3,session.state.players['B'].life)
+        cast(remove,sphere.ref);self.assertEqual('graveyard',session.state.cards[sphere.object_id].zone)
+        self.replay(session,load=True)
+        cast(red[2],'A');self.assertEqual(life['A']-7,session.state.players['A'].life)
+        for seat in 'BCD':self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+        self.replay(session)
+
+    def test_original_event_player_two_result_kambal_and_assassin_native_actions_replay(self):
+        session=self.session(3632301);engine=session.engine
+        observer=self.add(engine,'Kambal, Consul of Allocation',seat='B',ref='sequence-event-kambal')
+        spell=self.add(engine,'Generic Boolean Life Response',zone='hand',ref='sequence-event-noncreature')
+        creature=self.add(engine,'Generic Bound Body',zone='hand',ref='sequence-event-creature')
+        self.assert_whole_admission(observer.printed_name)
+        offered=self.ready(session,spell,{'W':1})
+        life={seat:session.state.players[seat].life for seat in 'ABCD'}
+        self.checkpoint(session)
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'targets':['A'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        trigger=next(item for item in session.state.stack if item.kind=='triggered_ability')
+        self.assertEqual('B',trigger.controller)
+        self.replay(session,load=True);self.resolve(session)
+        self.assertEqual(life['A'],session.state.players['A'].life)
+        self.assertEqual(life['B']+2,session.state.players['B'].life)
+        for seat in 'CD':self.assertEqual(life[seat],session.state.players[seat].life)
+        while session.state.priority_player!='A':
+            self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        cast=next(row for row in actions if row.get('card')==creature.ref)
+        accepted=session.act('pilot:A',{'action_id':cast['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.assertFalse(any(item.kind=='triggered_ability' for item in session.state.stack))
+        self.resolve(session)
+        self.assertEqual(life['B']+2,session.state.players['B'].life)
+        for seat in 'BCD':self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+        self.replay(session)
+        from quorune.model import CombatState
+        session=self.session(3632302);engine=session.engine
+        source=self.add(engine,'Agate-Blade Assassin',ref='sequence-event-assassin')
+        self.assert_whole_admission(source.printed_name)
+        engine.permissions.invalidate_current();session.state.pending_decision=None;session.state.started=True
+        session.state.active_player='A';session.state.phase='combat';session.state.step='declare_attackers'
+        session.state.phase_index=5;session.state.priority_player=None;session.state.priority_passes=[];session.state.combat=CombatState()
+        engine.pump();self.checkpoint(session)
+        life={seat:session.state.players[seat].life for seat in 'ABCD'}
+        before=session.state.to_dict()
+        self.assertFalse(session.act('pilot:C',{'action_id':'attack','attackers':{source.ref:'B'}}).ok)
+        self.assertEqual(before,session.state.to_dict())
+        accepted=session.act('pilot:A',{'action_id':'attack','attackers':{source.ref:'B'}})
+        self.assertTrue(accepted.ok,accepted.summary);self.replay(session,load=True);self.resolve(session)
+        self.assertEqual(life['A']+1,session.state.players['A'].life)
+        self.assertEqual(life['B']-1,session.state.players['B'].life)
+        for seat in 'CD':self.assertEqual(life[seat],session.state.players[seat].life)
+        self.replay(session)
+
+    def test_original_forced_fruition_caster_draw_and_caress_discarder_life_loss_replay(self):
+        session=self.session(3632201);engine=session.engine
+        observer=self.add(engine,'Forced Fruition',seat='B',ref='event-result-fruition')
+        spell=self.add(engine,'Generic Boolean Life Response',zone='hand',ref='event-result-fruition-cast')
+        # Refill a larger known initial library so this witness exercises seven draws.
+        for index in range(8):self.add(engine,'Generic Bound Plains',zone='library',ref='event-result-extra-library-'+str(index))
+        self.assert_whole_admission(observer.printed_name)
+        offered=self.ready(session,spell,{})
+        hand=len(session.state.players['A'].zones['hand'])
+        self.checkpoint(session)
+        before=session.state.to_dict()
+        self.assertFalse(session.act('pilot:C',{'action_id':offered['id'],'targets':['A'],'pay':'auto'}).ok)
+        self.assertEqual(before,session.state.to_dict())
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'targets':['A'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.replay(session,load=True);self.resolve(session)
+        self.assertEqual(hand+6,len(session.state.players['A'].zones['hand']))
+        for seat in 'BCD':self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+        self.replay(session)
+        session=self.session(3632202);engine=session.engine
+        observer=self.add(engine,"Liliana's Caress",ref='event-result-caress')
+        discard=self.add(engine,'Mind Rot',zone='hand',ref='event-result-caress-discard')
+        self.assert_whole_admission(observer.printed_name)
+        offered=self.ready(session,discard,{'C':2,'B':1})
+        life=session.state.players['B'].life
+        self.checkpoint(session)
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'targets':['B'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);decision=self.resolve(session)
+        self.assertIsNotNone(decision)
+        cards=[session.state.cards[oid].ref for oid in session.state.players['B'].zones['hand'][:2]]
+        accepted=session.act('pilot:B',{'action_id':'choose','cards':cards})
+        self.assertTrue(accepted.ok,accepted.summary);self.replay(session,load=True)
+        for _ in range(12):
+            if session.state.pending_decision is not None and session.state.pending_decision.kind=='trigger.order':
+                pending=[item for batch in session.state.pending_trigger_batches for item in batch.items]
+                accepted=session.act('pilot:A',{'action_id':'order','triggers':[item.ref for item in pending]})
+                self.assertTrue(accepted.ok,accepted.summary)
+            decision=self.resolve(session)
+            if not session.state.stack and not session.state.pending_trigger_batches:break
+        self.assertEqual(life-4,session.state.players['B'].life,
+            {'decision':session.state.pending_decision.kind if session.state.pending_decision else None,
+             'stack':[(item.kind,item.semantic_key) for item in session.state.stack],
+             'discarded':[(ref,next(c.zone for c in session.state.cards.values() if c.ref==ref)) for ref in cards]})
+        for seat in 'BCD':self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+        self.replay(session)
+
+    def test_original_event_bound_mill_uses_damaged_player_defender_and_caster_with_replay(self):
+        from quorune.model import CombatState
+        for index,name in enumerate(('Shriekgeist','Crosstown Courier','Nemesis of Reason')):
+            with self.subTest(name=name):
+                session=self.session(3632101+index);engine=session.engine
+                source=self.add(engine,name,ref='event-bound-mill-source')
+                self.assert_whole_admission(source.printed_name)
+                engine.permissions.invalidate_current();session.state.pending_decision=None;session.state.started=True
+                session.state.active_player='A';session.state.priority_player=None;session.state.priority_passes=[]
+                session.state.phase='combat';session.state.step='declare_attackers';session.state.phase_index=5;session.state.combat=CombatState()
+                engine.pump();self.checkpoint(session)
+                before={s:len(session.state.players[s].zones['graveyard']) for s in 'ABCD'}
+                available=len(session.state.players['B'].zones['library'])
+                expected=10 if name=='Nemesis of Reason' else 2
+                denied=session.act('pilot:D',{'action_id':'attack','attackers':{source.ref:'B'}})
+                self.assertFalse(denied.ok)
+                accepted=session.act('pilot:A',{'action_id':'attack','attackers':{source.ref:'B'}})
+                self.assertTrue(accepted.ok,accepted.summary)
+                self.replay(session,load=True)
+                for _ in range(60):
+                    if session.state.phase=='postcombat_main' and not session.state.stack:break
+                    decision=session.state.pending_decision
+                    if decision.kind=='priority':command={'action_id':'pass'}
+                    elif decision.kind=='combat.blockers':command={'action_id':'block','blocks':{}}
+                    else:self.fail('Unexpected boundmill decision '+decision.kind)
+                    accepted=session.act(session.pending_principals()[0],command);self.assertTrue(accepted.ok,accepted.summary)
+                else:self.fail('Boundmillcombatdidnotfinish')
+                self.assertEqual(before['B']+min(expected,available),len(session.state.players['B'].zones['graveyard']))
+                for seat in 'ACD':self.assertEqual(before[seat],len(session.state.players[seat].zones['graveyard']))
+                self.replay(session)
+        session=self.session(3632104);engine=session.engine
+        observer=self.add(engine,'Memory Erosion',seat='B',ref='event-mill-caster-observer')
+        spell=self.add(engine,'Generic Boolean Life Response',zone='hand',ref='event-mill-cast-spell')
+        self.assert_whole_admission(observer.printed_name)
+        offered=self.ready(session,spell,{})
+        before={s:len(session.state.players[s].zones['graveyard']) for s in 'ABCD'}
+        self.checkpoint(session)
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'targets':['A'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.replay(session,load=True);self.resolve(session)
+        self.assertEqual(before['A']+3,len(session.state.players['A'].zones['graveyard']))
+        for seat in 'BCD':self.assertEqual(before[seat],len(session.state.players[seat].zones['graveyard']))
+        self.replay(session)
+
+    def test_original_psychic_corrosion_draw_mills_current_opponents_as_atomic_batches_and_replays(self):
+        from unittest.mock import patch
+        from quorune.zone_transitions import ZoneTransitionOwner
+        session=self.session(3632001);engine=session.engine
+        observer=self.add(engine,'Psychic Corrosion',zone='hand',ref='opponent-mill-corrosion')
+        draw=self.add(engine,'Divination',zone='hand',ref='opponent-mill-draw')
+        self.assert_whole_admission(observer.printed_name)
+        offered=self.ready(session,observer,{'C':4,'U':2})
+        self.checkpoint(session)
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        while session.state.priority_player!='A':
+            self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        cast=next(row for row in actions if row.get('card')==draw.ref)
+        accepted=session.act('pilot:A',{'action_id':cast['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        while session.state.priority_player!='C':
+            self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+        accepted=session.act('pilot:C',{'action_id':'concede','choices':{'confirm_concede':True}})
+        self.assertTrue(accepted.ok,accepted.summary)
+        before={s:len(session.state.players[s].zones['graveyard']) for s in 'ABD'}
+        available={s:len(session.state.players[s].zones['library']) for s in 'BD'}
+        before_a_library=len(session.state.players['A'].zones['library'])
+        self.replay(session,load=True)
+        original=ZoneTransitionOwner.move_cards_simultaneously;groups=[]
+        def capture(owner,moves,*args,**kwargs):
+            moves=tuple(moves)
+            if moves and all(destination=='graveyard' for _,destination in moves):
+                groups.append(tuple(owner.host.state.cards[object_id].owner for object_id,_ in moves))
+            return original(owner,moves,*args,**kwargs)
+        with patch.object(ZoneTransitionOwner,'move_cards_simultaneously',new=capture):
+            self.resolve(session)
+            if session.state.pending_decision is not None and session.state.pending_decision.kind=='trigger.order':
+                pending=[item for batch in session.state.pending_trigger_batches for item in batch.items]
+                accepted=session.act('pilot:A',{'action_id':'order','triggers':[item.ref for item in pending]})
+                self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        self.assertEqual(before['B']+min(4,available['B']),len(session.state.players['B'].zones['graveyard']))
+        self.assertEqual(before['D']+min(4,available['D']),len(session.state.players['D'].zones['graveyard']))
+        self.assertEqual(before['A']+1,len(session.state.players['A'].zones['graveyard']))
+        self.assertEqual(before_a_library-2,len(session.state.players['A'].zones['library']))
+        self.assertEqual(2,len(groups))
+        for index,group in enumerate(groups):
+            self.assertEqual(min(2,max(0,available['B']-2*index)),group.count('B'))
+            self.assertEqual(min(2,max(0,available['D']-2*index)),group.count('D'))
+            self.assertTrue(set(group)<={'B','D'})
+        for seat in 'BD':self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+        self.replay(session)
+
+    def test_damage_amount_subscription_diagnostic_excludes_noncombat_incoming_and_foreign_sources(self):
+        """Matcher diagnostic; actual combat supplies the command witness."""
+        from quorune.trigger_discovery import semantic_event_matches
+        session=self.session(3631904);engine=session.engine
+        wall=self.add(engine,'Wall of Essence',ref='amount-diagnostic-wall')
+        thrull=self.add(engine,'Mourning Thrull',ref='amount-diagnostic-thrull')
+        other=self.add(engine,'Generic Bound Body',seat='B',ref='amount-diagnostic-other')
+        wall_program=next(p for p in engine.semantics.programs_for_oracle(wall.oracle_id) if p.event=='damage.dealt')
+        thrull_program=next(p for p in engine.semantics.programs_for_oracle(thrull.oracle_id) if p.event=='damage.dealt.self')
+        for combat,target,expected in ((True,wall.ref,True),(False,wall.ref,False),(True,other.ref,False)):
+            context={'card':other.ref,'source':other.ref,'target':target,'combat':combat,'amount':2,'target_kind':'permanent'}
+            self.assertEqual(expected,semantic_event_matches(engine,wall_program,wall,'damage.dealt',context))
+        for card,expected in ((thrull.ref,True),(other.ref,False)):
+            context={'card':card,'source':card,'target':wall.ref,'combat':False,'amount':1,'target_kind':'permanent'}
+            self.assertEqual(expected,semantic_event_matches(engine,thrull_program,thrull,'damage.dealt',context))
+
+    def test_original_committed_combat_damage_amount_draw_gain_and_receive_replay(self):
+        from quorune.model import CombatState
+        cases=((3631901,'Fear of Failed Tests',False),(3631902,'Mourning Thrull',False),(3631903,'Wall of Essence',True))
+        for seed,name,blocking in cases:
+            with self.subTest(name=name):
+                session=self.session(seed);engine=session.engine
+                source=self.add(engine,name,seat='B' if blocking else 'A',ref='committed-damage-amount-source')
+                attacker=self.add(engine,'Generic Bound Body',ref='committed-damage-amount-attacker') if blocking else source
+                self.assert_whole_admission(source.printed_name)
+                self.ready(session,self.add(engine,'Generic Boolean Life Response',zone='hand',ref='committed-amount-setup'),{})
+                session.state.pending_decision=None;session.state.priority_player=None;session.state.priority_passes=[]
+                session.state.phase='combat';session.state.step='declare_attackers';session.state.phase_index=5;session.state.combat=CombatState()
+                engine.permissions.invalidate_current();engine.pump()
+                before_hand=len(session.state.players['A'].zones['hand'])
+                life={seat:session.state.players[seat].life for seat in 'ABCD'}
+                self.checkpoint(session)
+                before=session.state.to_dict()
+                self.assertFalse(session.act('pilot:C',{'action_id':'attack','attackers':{attacker.ref:'B'}}).ok)
+                self.assertEqual(before,session.state.to_dict())
+                accepted=session.act('pilot:A',{'action_id':'attack','attackers':{attacker.ref:'B'}})
+                self.assertTrue(accepted.ok,accepted.summary)
+                pending_checked=False
+                for _ in range(70):
+                    if any(item.kind=='triggered_ability' for item in session.state.stack) and not pending_checked:
+                        self.replay(session,load=True);pending_checked=True
+                    if session.state.phase=='postcombat_main' and not session.state.stack:break
+                    decision=session.state.pending_decision
+                    if decision.kind=='combat.blockers':
+                        command={'action_id':'block','blocks':{source.ref:attacker.ref} if blocking else {}}
+                    elif decision.kind=='priority':command={'action_id':'pass'}
+                    else:self.fail('Unexpected combat decision '+decision.kind)
+                    accepted=session.act(session.pending_principals()[0],command)
+                    self.assertTrue(accepted.ok,accepted.summary)
+                else:self.fail('Committed damage combat did not reach main phase')
+                self.assertTrue(pending_checked)
+                if name=='Fear of Failed Tests':
+                    self.assertEqual(before_hand+2,len(session.state.players['A'].zones['hand']))
+                    self.assertEqual(life['B']-2,session.state.players['B'].life)
+                elif name=='Mourning Thrull':
+                    self.assertEqual(life['A']+1,session.state.players['A'].life)
+                    self.assertEqual(life['B']-1,session.state.players['B'].life)
+                else:
+                    self.assertEqual(life['B']+2,session.state.players['B'].life)
+                    self.assertEqual('battlefield',session.state.cards[source.object_id].zone)
+                for observer in 'BCD':self.assertNotIn('hand',session.packet('pilot:'+observer,full=True)['state']['players']['A'])
+                self.replay(session)
+
+    def test_original_source_attack_damage_and_granted_sliver_attack_target_revalidation_replay(self):
+        from quorune.model import CombatState
+        cases=((3631801,'Raging Regisaur',False),(3631802,'Thorncaster Sliver',False),
+            (3631803,'Raging Regisaur',True),(3631804,'Thorncaster Sliver',True))
+        for seed,name,revalidate in cases:
+            with self.subTest(name=name,revalidate=revalidate):
+                session=self.session(seed);engine=session.engine
+                source=self.add(engine,name,ref='source-action-damage-observer')
+                attacker=source if name=='Raging Regisaur' else self.add(engine,'Generic Ordinary Grant Sliver',ref='source-action-granted-attacker')
+                victim=self.add(engine,'Generic Bound Body',seat='B',ref='source-action-damage-victim')
+                bounce=self.add(engine,'Unsummon',zone='hand',ref='source-action-target-bounce')
+                self.assert_whole_admission(source.printed_name)
+                self.ready(session,bounce,{'U':1})
+                session.state.pending_decision=None;session.state.priority_player=None
+                session.state.priority_passes=[];session.state.phase='combat'
+                session.state.step='declare_attackers';session.state.phase_index=5;session.state.combat=CombatState()
+                engine.permissions.invalidate_current();engine.pump();self.checkpoint(session)
+                before=session.state.to_dict()
+                self.assertFalse(session.act('pilot:C',{'action_id':'attack','attackers':{attacker.ref:'B'}}).ok)
+                self.assertEqual(before,session.state.to_dict())
+                accepted=session.act('pilot:A',{'action_id':'attack','attackers':{attacker.ref:'B'}})
+                self.assertTrue(accepted.ok,accepted.summary)
+                decision=session.state.pending_decision
+                self.assertEqual('semantic.target',decision.kind)
+                accepted=session.act('pilot:A',{'action_id':'choose','targets':[victim.ref]})
+                self.assertTrue(accepted.ok,accepted.summary)
+                self.assertEqual(attacker.object_id,session.state.stack[-1].source_object_id)
+                self.replay(session,load=True)
+                if revalidate:
+                    actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+                    cast=next(row for row in actions if row.get('card')==bounce.ref)
+                    accepted=session.act('pilot:A',{'action_id':cast['id'],'targets':[victim.ref],'pay':'auto'})
+                    self.assertTrue(accepted.ok,accepted.summary)
+                self.resolve(session)
+                self.assertEqual('hand' if revalidate else 'battlefield',session.state.cards[victim.object_id].zone)
+                self.assertEqual(0 if revalidate else 1,session.state.cards[victim.object_id].marked_damage)
+                self.assertFalse(session.state.stack)
+                for observer in 'BCD':self.assertNotIn('hand',session.packet('pilot:'+observer,full=True)['state']['players']['A'])
+                self.replay(session)
+
+    def test_original_dormant_sliver_entry_and_foreign_recipient_draws_replay(self):
+        session=self.session(3631701);engine=session.engine
+        source=self.add(engine,'Dormant Sliver',zone='hand',ref='ordinary-dormant-source')
+        recipient=self.add(engine,'Generic Ordinary Grant Flash Sliver',seat='B',zone='hand',ref='ordinary-dormant-recipient')
+        session.state.players['B'].mana_pool['C']=1
+        self.assert_whole_admission(source.printed_name)
+        offered=self.ready(session,source,{'G':1,'U':1,'C':2})
+        before_a=len(session.state.players['A'].zones['hand'])
+        self.checkpoint(session)
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.replay(session,load=True);self.resolve(session)
+        self.assertEqual(before_a,len(session.state.players['A'].zones['hand']))
+        while session.state.priority_player!='B':
+            self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+        actions=session.packet('pilot:B',full=True)['decision']['ctx']['legal']['actions']
+        cast=next(row for row in actions if row.get('card')==recipient.ref)
+        before_b=len(session.state.players['B'].zones['hand'])
+        accepted=session.act('pilot:B',{'action_id':cast['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        self.assertEqual(before_b,len(session.state.players['B'].zones['hand']))
+        self.assertIn('Defender',engine._effective_card_data(session.state.cards[recipient.object_id])['keywords'])
+        for observer in 'ACD':self.assertNotIn('hand',session.packet('pilot:'+observer,full=True)['state']['players']['B'])
+        self.replay(session)
+
+    def test_original_clot_granted_regeneration_protects_recipient_after_actual_destroy_and_replays(self):
+        session=self.session(3631702);engine=session.engine
+        source=self.add(engine,'Clot Sliver',zone='hand',ref='ordinary-clot-source')
+        recipient=self.add(engine,'Generic Ordinary Grant Sliver',seat='B',ref='ordinary-clot-recipient')
+        non_sliver=self.add(engine,'Generic Bound Body',seat='B',ref='ordinary-clot-nonrecipient')
+        destroy=self.add(engine,'Murder',zone='hand',ref='ordinary-clot-destroy')
+        session.state.players['B'].mana_pool['C']=2
+        self.assert_whole_admission(source.printed_name)
+        offered=self.ready(session,source,{'C':3,'B':3})
+        self.checkpoint(session)
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        self.assertFalse(any('Regenerate' in ability.effect_text for ability in engine._activated_abilities(non_sliver)))
+        while session.state.priority_player!='B':
+            self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+        actions=session.packet('pilot:B',full=True)['decision']['ctx']['legal']['actions']
+        ability=next(row for row in actions if row['id'].startswith('activate:'+recipient.ref+':'))
+        before=session.state.to_dict()
+        self.assertFalse(session.act('pilot:C',{'action_id':ability['id'],'pay':'auto'}).ok)
+        self.assertEqual(before,session.state.to_dict())
+        accepted=session.act('pilot:B',{'action_id':ability['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.replay(session,load=True);self.resolve(session)
+        self.assertEqual(1,session.state.cards[recipient.object_id].regeneration_shields)
+        self.assertEqual(0,session.state.cards[source.object_id].regeneration_shields)
+        while session.state.priority_player!='A':
+            self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        self.assertTrue(any(row.get('card')==destroy.ref for row in actions),
+            {'pool':dict(session.state.players['A'].mana_pool),'zone':session.state.cards[destroy.object_id].zone,
+             'phase':session.state.phase,'step':session.state.step,'active':session.state.active_player,
+             'actions':[(row['id'],row.get('card')) for row in actions]})
+        cast=next(row for row in actions if row.get('card')==destroy.ref)
+        accepted=session.act('pilot:A',{'action_id':cast['id'],'targets':[recipient.ref],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        current=session.state.cards[recipient.object_id]
+        self.assertEqual('battlefield',current.zone);self.assertTrue(current.tapped)
+        self.assertEqual(0,current.regeneration_shields)
+        self.replay(session)
+
+    def test_original_infernal_scarring_granted_death_draw_uses_recipient_controller_and_replays(self):
+        session=self.session(3631703);engine=session.engine
+        aura=self.add(engine,'Infernal Scarring',zone='hand',ref='ordinary-infernal-aura')
+        recipient=self.add(engine,'Generic Bound Body',seat='B',ref='ordinary-infernal-recipient')
+        destroy=self.add(engine,'Murder',zone='hand',ref='ordinary-infernal-destroy')
+        self.assert_whole_admission(aura.printed_name)
+        offered=self.ready(session,aura,{'C':2,'B':3})
+        self.checkpoint(session)
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'targets':[recipient.ref],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        self.assertEqual(4,engine._numeric_stat(recipient.object_id,'power'))
+        before_b=len(session.state.players['B'].zones['hand'])
+        while session.state.priority_player!='A':
+            self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        cast=next(row for row in actions if row.get('card')==destroy.ref)
+        accepted=session.act('pilot:A',{'action_id':cast['id'],'targets':[recipient.ref],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.replay(session,load=True);self.resolve(session)
+        self.assertEqual('graveyard',session.state.cards[recipient.object_id].zone)
+        self.assertEqual(before_b+1,len(session.state.players['B'].zones['hand']))
+        for observer in 'ACD':self.assertNotIn('hand',session.packet('pilot:'+observer,full=True)['state']['players']['B'])
+        self.replay(session)
+
+    def test_original_ghalta_cost_uses_current_aggregate_after_actual_bounce_and_replays(self):
+        session=self.session(3631602);engine=session.engine
+        spell=self.add(engine,'Ghalta, Primal Hunger',zone='hand',ref='aggregate-ghalta')
+        body=self.add(engine,'Generic Aggregate Life Body',ref='aggregate-cost-body')
+        self.add(engine,'Generic Aggregate Foreign Body',seat='B',ref='aggregate-cost-foreign')
+        bounce=self.add(engine,'Unsummon',zone='hand',ref='aggregate-cost-bounce')
+        mana=self.add(engine,'Generic Aggregate Mana Source',ref='aggregate-cost-mana')
+        self.assert_whole_admission(spell.printed_name)
+        self.assert_whole_admission(mana.printed_name)
+        self.ready(session,bounce,{'U':1,'G':2})
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        stale=next(row for row in actions if row.get('card')==spell.ref)
+        self.checkpoint(session)
+        action=next(row for row in actions if row.get('card')==bounce.ref)
+        accepted=session.act('pilot:A',{'action_id':action['id'],'targets':[body.ref],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        while session.state.priority_player!='A':
+            self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        self.assertFalse(any(row.get('card')==spell.ref for row in actions))
+        before=session.state.to_dict()
+        self.assertFalse(session.act('pilot:A',{'action_id':stale['id'],'pay':'auto'}).ok)
+        self.assertEqual(before,session.state.to_dict())
+        cast=next(row for row in actions if row.get('card')==body.ref)
+        accepted=session.act('pilot:A',{'action_id':cast['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        while session.state.priority_player!='A':
+            self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        cast=next(row for row in actions if row.get('card')==spell.ref)
+        accepted=session.act('pilot:A',{'action_id':cast['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.replay(session,load=True);self.resolve(session)
+        self.assertEqual('battlefield',session.state.cards[spell.object_id].zone)
+        self.assertEqual(12,engine._numeric_stat(spell.object_id,'power'))
+        self.assertEqual(0,session.state.players['A'].mana_pool.get('G',0))
+        for seat in 'BCD':self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+        self.replay(session)
+
+    def test_constructed_aggregate_mana_pays_real_spell_with_current_stats_and_replays(self):
+        """Complete constructed carrier; no claim about Selvala's other ability."""
+        session=self.session(3631603);engine=session.engine
+        mana=self.add(engine,'Generic Aggregate Mana Source',ref='aggregate-mana-source')
+        body=self.add(engine,'Generic Aggregate Life Body',ref='aggregate-mana-body')
+        self.add(engine,'Generic Aggregate Foreign Body',seat='C',ref='aggregate-mana-foreign')
+        spell=self.add(engine,'Essence Harvest',zone='hand',ref='aggregate-mana-essence')
+        self.assert_whole_admission(mana.printed_name)
+        offered=self.ready(session,mana,{})
+        self.assertEqual(10,offered['choice_schema']['mana_output']['total'])
+        self.checkpoint(session)
+        before=session.state.to_dict()
+        self.assertFalse(session.act('pilot:B',{'action_id':offered['id'],'mana_output':{'B':1,'G':9}}).ok)
+        self.assertEqual(before,session.state.to_dict())
+        self.assertFalse(session.act('pilot:A',{'action_id':offered['id'],'mana_output':{'G':20}}).ok)
+        self.assertEqual(before,session.state.to_dict())
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'mana_output':{'B':1,'G':9}})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.assertTrue(session.state.cards[mana.object_id].tapped)
+        self.assertEqual(9,session.state.players['A'].mana_pool['G'])
+        self.assertEqual(1,session.state.players['A'].mana_pool['B'])
+        self.assertFalse(session.state.stack)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        cast=next(row for row in actions if row.get('card')==spell.ref)
+        accepted=session.act('pilot:A',{'action_id':cast['id'],'targets':['B'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.replay(session,load=True);self.resolve(session)
+        self.assertEqual(30,session.state.players['B'].life)
+        self.assertEqual(50,session.state.players['A'].life)
+        self.assertEqual(10,engine._numeric_stat(body.object_id,'power'))
+        for seat in 'BCD':self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+        self.replay(session)
+
+    def test_original_essence_harvest_aggregate_resolves_once_across_life_changes_and_replays(self):
+        session=self.session(3631601);engine=session.engine
+        source=self.add(engine,'Essence Harvest',zone='hand',ref='aggregate-essence-harvest')
+        creature=self.add(engine,'Generic Aggregate Life Body',ref='aggregate-life-sensitive-body')
+        self.add(engine,'Generic Aggregate Foreign Body',seat='B',ref='aggregate-foreign-body')
+        session.state.players['A'].life=35
+        self.assert_whole_admission(source.printed_name)
+        offered=self.ready(session,source,{'C':2,'B':1})
+        self.assertEqual(10,engine._numeric_stat(creature.object_id,'power'))
+        self.checkpoint(session)
+        before=session.state.to_dict()
+        self.assertFalse(session.act('pilot:C',{'action_id':offered['id'],'targets':['A'],'pay':'auto'}).ok)
+        self.assertEqual(before,session.state.to_dict())
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'targets':['A'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.replay(session,load=True);self.resolve(session)
+        self.assertEqual(35,session.state.players['A'].life)
+        self.assertEqual(10,engine._numeric_stat(creature.object_id,'power'))
+        self.assertEqual('graveyard',session.state.cards[source.object_id].zone)
+        for seat in 'BCD':
+            self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+        self.replay(session)
+
+    def test_boolean_intervening_condition_rechecks_after_actual_attack_response_and_replays(self):
+        from quorune.model import CombatState
+        session=self.session(3631502);engine=session.engine
+        source=self.add(engine,'Generic Boolean Attack Observer',ref='boolean-attack-source')
+        response=self.add(engine,'Generic Boolean Life Response',zone='hand',ref='boolean-attack-response')
+        session.state.players['B'].life=10
+        self.assert_whole_admission(source.printed_name)
+        engine.permissions.invalidate_current();session.state.pending_decision=None
+        session.state.started=True;session.state.active_player='A';session.state.phase='combat'
+        session.state.step='declare_attackers';session.state.phase_index=5;session.state.combat=CombatState()
+        engine.pump();self.checkpoint(session)
+        accepted=session.act('pilot:A',{'action_id':'attack','attackers':{source.ref:'B'}})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.assertTrue(any(item.kind=='triggered_ability' for item in session.state.stack))
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        cast=next(row for row in actions if row.get('card')==response.ref)
+        before=len(session.state.players['A'].zones['hand'])
+        accepted=session.act('pilot:A',{'action_id':cast['id'],'targets':['B'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.replay(session,load=True);self.resolve(session)
+        self.assertEqual(12,session.state.players['B'].life)
+        self.assertEqual(before-1,len(session.state.players['A'].zones['hand']))
+        for seat in 'BCD':
+            self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+        self.replay(session)
+
+    def test_original_blood_baron_boolean_life_condition_ends_after_actual_life_gain_and_replays(self):
+        session=self.session(3631501);engine=session.engine
+        source=self.add(engine,'Blood Baron of Vizkopa',zone='hand',ref='boolean-blood-baron')
+        life_spell=self.add(engine,'Stream of Life',zone='hand',ref='boolean-life-gain-spell')
+        green=self.add(engine,'Generic Boolean Green Source',ref='boolean-life-gain-land')
+        session.state.players['B'].life=10
+        self.assert_whole_admission(source.printed_name)
+        self.assert_whole_admission(life_spell.printed_name)
+        offered=self.ready(session,source,{'C':5,'W':1,'B':1})
+        self.checkpoint(session)
+        before=session.state.to_dict()
+        self.assertFalse(session.act('pilot:D',{'action_id':offered['id'],'pay':'auto'}).ok)
+        self.assertEqual(before,session.state.to_dict())
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        self.assertEqual(10,engine._numeric_stat(source.object_id,'power'))
+        self.assertIn('Flying',engine._effective_card_data(session.state.cards[source.object_id])['keywords'])
+        while session.state.priority_player!='A':
+            result=session.act(session.pending_principals()[0],{'action_id':'pass'})
+            self.assertTrue(result.ok,result.summary)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        mana=next(row for row in actions if row['id'].startswith('activate:'+green.ref+':'))
+        self.assertTrue(session.act('pilot:A',{'action_id':mana['id']}).ok)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        cast=next(row for row in actions if row.get('card')==life_spell.ref)
+        accepted=session.act('pilot:A',{'action_id':cast['id'],'targets':['B'],'x':2,'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.replay(session,load=True);self.resolve(session)
+        self.assertEqual(12,session.state.players['B'].life)
+        self.assertEqual(4,engine._numeric_stat(source.object_id,'power'))
+        keywords=engine._effective_card_data(session.state.cards[source.object_id])['keywords']
+        self.assertNotIn('Flying',keywords)
+        self.assertIn('Lifelink',keywords)
+        for seat in 'BCD':
+            self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+        self.replay(session)
+
+    def test_original_tyranid_opponent_quantity_resolves_after_actual_concession_and_replays(self):
+        session=self.session(3631401);engine=session.engine
+        spell=self.add(engine,'Tyranid Invasion',zone='hand',ref='public-opponent-tokens')
+        self.assert_whole_admission(spell.printed_name)
+        action=self.ready(session,spell,{'C':3,'G':1})
+        self.checkpoint(session)
+        before=session.state.to_dict()
+        self.assertFalse(session.act('pilot:D',{'action_id':action['id'],'pay':'auto'}).ok)
+        self.assertEqual(before,session.state.to_dict())
+        accepted=session.act('pilot:A',{'action_id':action['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        while session.state.priority_player!='C':
+            result=session.act(session.pending_principals()[0],{'action_id':'pass'})
+            self.assertTrue(result.ok,result.summary)
+        self.replay(session,load=True)
+        before=session.state.to_dict()
+        self.assertFalse(session.act('pilot:C',{'action_id':'concede'}).ok)
+        self.assertEqual(before,session.state.to_dict())
+        conceded=session.act('pilot:C',{'action_id':'concede','choices':{'confirm_concede':True}})
+        self.assertTrue(conceded.ok,conceded.summary)
+        self.assertFalse(session.state.players['C'].in_game)
+        self.resolve(session)
+        tokens=[card for card in session.state.cards.values() if card.controller=='A' and card.zone=='battlefield' and card.object_kind=='token']
+        self.assertEqual(2,len(tokens))
+        for token in tokens:
+            self.assertEqual(3,engine._numeric_stat(token.object_id,'power'))
+            self.assertEqual(3,engine._numeric_stat(token.object_id,'toughness'))
+            self.assertIn('Trample',engine._effective_card_data(token)['keywords'])
+        for seat in 'BD':
+            self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+        self.replay(session)
+
+    def test_token_doubler_owner_diagnostic_respects_controller_and_current_ability_removal(self):
+        """Engine-owner contrast; the Master witness supplies native command evidence."""
+        from quorune.continuous_effects import ContinuousEffect,ContinuousEffectOrigin,ContinuousEffectDuration,ContinuousObjectIdentity,ContinuousOperation
+        from quorune.continuous_effect_state import commit_continuous_effect
+        session=self.session(3631302);engine=session.engine
+        source=self.add(engine,'Generic Counted Token Doubler',ref='token-doubler-removal-source')
+        self.assert_whole_admission(source.printed_name)
+        definition={'type_line':'Token Creature — Wolf','power':'1','toughness':'1','colors':[],'keywords':[]}
+        self.assertEqual(1,len(engine.create_token('B',name='Foreign Owner Diagnostic',characteristics=definition)))
+        self.assertEqual(2,len(engine.create_token('A',name='Own Owner Diagnostic',characteristics=definition)))
+        commit_continuous_effect(engine.state,ContinuousEffect(effect_id='fixture:remove-token-doubler',source_id='fixture:ability-removal',
+            layer=Layer.ABILITY,sublayer='6',timestamp=engine._next_zone_timestamp(),
+            operations=(ContinuousOperation('remove_all_abilities'),),origin=ContinuousEffectOrigin.RESOLUTION,
+            duration=ContinuousEffectDuration.UNTIL_END_OF_TURN,applies=ObjectQuerySpec(zones=('battlefield',)),
+            locked_objects=(ContinuousObjectIdentity(source.object_id,source.logical_object_id),)))
+        self.assertEqual(1,len(engine.create_token('A',name='Removed Owner Diagnostic',characteristics=definition)))
+
+    def test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays(self):
+        session=self.session(3631301);engine=session.engine
+        master=self.add(engine,'Master of Waves',zone='hand',ref='counted-master-waves')
+        self.add(engine,'Generic Devotion Amplifier',ref='counted-token-devotion-modifier')
+        self.add(engine,'Generic Devotion Hybrid',ref='counted-token-devotion-hybrid')
+        doubler=self.add(engine,'Parallel Lives',zone='hand',ref='counted-token-doubler')
+        island=self.add(engine,'Generic Conditional Keyword Island',ref='counted-token-island')
+        colorless=self.add(engine,'Generic Counted Token Three Mana',ref='counted-token-colorless')
+        bounce=self.add(engine,'Generic Devotion Creature Bounce',zone='hand',ref='counted-master-bounce')
+        self.assert_whole_admission(master.printed_name)
+        self.assert_whole_admission('Parallel Lives')
+        offered=self.ready(session,doubler,{'C':3,'G':1})
+        self.checkpoint(session)
+        before=session.state.to_dict()
+        self.assertFalse(session.act('pilot:C',{'action_id':offered['id'],'pay':'auto'}).ok)
+        self.assertEqual(before,session.state.to_dict())
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.resolve(session)
+        while session.state.priority_player!='A':
+            result=session.act(session.pending_principals()[0],{'action_id':'pass'})
+            self.assertTrue(result.ok,result.summary)
+        for land in (island,colorless):
+            actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+            mana=next(row for row in actions if row['id'].startswith('activate:'+land.ref+':'))
+            self.assertTrue(session.act('pilot:A',{'action_id':mana['id']}).ok)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        cast=next(row for row in actions if row.get('card')==master.ref)
+        accepted=session.act('pilot:A',{'action_id':cast['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.replay(session,load=True)
+        self.resolve(session)
+        tokens=[card for card in session.state.cards.values() if card.zone=='battlefield' and card.controller=='A' and card.object_kind=='token']
+        self.assertEqual(6,len(tokens))
+        for token in tokens:
+            self.assertEqual(2,engine._numeric_stat(token.object_id,'power'))
+            self.assertEqual(1,engine._numeric_stat(token.object_id,'toughness'))
+        while session.state.priority_player!='A':
+            result=session.act(session.pending_principals()[0],{'action_id':'pass'})
+            self.assertTrue(result.ok,result.summary)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        cast=next(row for row in actions if row.get('card')==bounce.ref)
+        accepted=session.act('pilot:A',{'action_id':cast['id'],'targets':[master.ref],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        self.assertEqual('hand',session.state.cards[master.object_id].zone)
+        self.assertFalse(any(token.object_id in session.state.players['A'].zones['battlefield'] for token in tokens))
+        for seat in 'BCD':
+            self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+        self.replay(session)
+
+    def test_original_karametra_acolyte_mana_uses_devotion_and_current_modifier_with_replay(self):
+        session=self.session(3631205);engine=session.engine
+        source=self.add(engine,"Karametra's Acolyte",ref='devotion-mana-acolyte')
+        self.add(engine,'Generic Devotion Amplifier',ref='devotion-mana-amplifier')
+        self.add(engine,'Generic Devotion Green Hybrid',ref='devotion-mana-hybrid')
+        self.add(engine,'Generic Devotion Green Hybrid',seat='B',ref='devotion-mana-foreign')
+        self.assert_whole_admission(source.printed_name)
+        offered=self.ready(session,source,{})
+        self.checkpoint(session)
+        before=session.state.to_dict()
+        self.assertFalse(session.act('pilot:C',{'action_id':offered['id']}).ok)
+        self.assertEqual(before,session.state.to_dict())
+        accepted=session.act('pilot:A',{'action_id':offered['id']})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.assertEqual(3,session.state.players['A'].mana_pool['G'])
+        self.assertTrue(session.state.cards[source.object_id].tapped)
+        self.replay(session,load=True)
+
+    def test_devotion_cost_modifier_changes_offer_and_accepted_cast_then_private_draw_replays(self):
+        session=self.session(3631204);engine=session.engine
+        source=self.add(engine,'Generic Devotion Cost Spell',zone='hand',ref='devotion-cost-spell')
+        amplifier=self.add(engine,'Generic Devotion Amplifier',ref='devotion-cost-amplifier')
+        self.add(engine,'Generic Devotion Hybrid',ref='devotion-cost-hybrid')
+        bounce=self.add(engine,'Generic Devotion Creature Bounce',zone='hand',ref='devotion-cost-modifier-bounce')
+        self.assert_whole_admission(source.printed_name)
+        offered=self.ready(session,source,{'C':3,'U':1})
+        self.checkpoint(session)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        cast=next(row for row in actions if row.get('card')==bounce.ref)
+        self.assertTrue(session.act('pilot:A',{'action_id':cast['id'],'targets':[amplifier.ref],'pay':'auto'}).ok)
+        self.resolve(session)
+        while session.state.priority_player!='A':
+            result=session.act(session.pending_principals()[0],{'action_id':'pass'})
+            self.assertTrue(result.ok,result.summary)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        self.assertFalse(any(row.get('card')==source.ref for row in actions))
+        before=session.state.to_dict()
+        self.assertFalse(session.act('pilot:A',{'action_id':offered['id'],'pay':'auto'}).ok)
+        self.assertEqual(before,session.state.to_dict())
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        recast=next(row for row in actions if row.get('card')==amplifier.ref)
+        self.assertTrue(session.act('pilot:A',{'action_id':recast['id'],'pay':'auto'}).ok)
+        self.resolve(session)
+        while session.state.priority_player!='A':
+            result=session.act(session.pending_principals()[0],{'action_id':'pass'})
+            self.assertTrue(result.ok,result.summary)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        cast=next(row for row in actions if row.get('card')==source.ref)
+        before=len(session.state.players['A'].zones['hand'])
+        accepted=session.act('pilot:A',{'action_id':cast['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        self.assertEqual('graveyard',session.state.cards[source.object_id].zone)
+        self.assertEqual(before,len(session.state.players['A'].zones['hand']))
+        for seat in 'BCD':
+            self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+        self.replay(session,load=True)
+
+    def test_original_daxos_devotion_cast_uses_live_modifier_ability_and_departure_with_replay(self):
+        from quorune.devotion import current_devotion
+        for remove_ability in (False,True):
+            with self.subTest(remove_ability=remove_ability):
+                session=self.session(3631201+int(remove_ability));engine=session.engine
+                daxos=self.add(engine,'Daxos, Blessed by the Sun',zone='hand',ref='devotion-daxos')
+                amplifier=self.add(engine,'Generic Devotion Amplifier',ref='devotion-amplifier')
+                hybrid=self.add(engine,'Generic Devotion Hybrid',ref='devotion-hybrid')
+                self.add(engine,'Generic Devotion Hybrid',seat='B',ref='devotion-foreign-hybrid')
+                removal=self.add(engine,'Snakeform' if remove_ability else 'Generic Devotion Creature Bounce',zone='hand',ref='devotion-modifier-ending')
+                island=self.add(engine,'Generic Conditional Keyword Island',ref='devotion-removal-island')
+                bounce=self.add(engine,'Generic Devotion Artifact Bounce',zone='hand',ref='devotion-hybrid-bounce')
+                self.assert_whole_admission(daxos.printed_name)
+                offered=self.ready(session,daxos,{'W':4})
+                self.checkpoint(session)
+                before=session.state.to_dict()
+                self.assertFalse(session.act('pilot:D',{'action_id':offered['id'],'pay':'auto'}).ok)
+                self.assertEqual(before,session.state.to_dict())
+                accepted=session.act('pilot:A',{'action_id':offered['id'],'pay':'auto'})
+                self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+                self.assertEqual(4,current_devotion(engine,'A',('W',)))
+                self.assertEqual(4,engine._numeric_stat(daxos.object_id,'toughness'))
+                self.assertEqual(2,engine._numeric_stat(daxos.object_id,'power'))
+                for spell,target,expected in ((removal,amplifier,3),(bounce,hybrid,2)):
+                    while session.state.priority_player!='A':
+                        result=session.act(session.pending_principals()[0],{'action_id':'pass'})
+                        self.assertTrue(result.ok,result.summary)
+                    actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+                    if remove_ability and spell is removal:
+                        mana=next(row for row in actions if row['id'].startswith('activate:'+island.ref+':'))
+                        self.assertTrue(session.act('pilot:A',{'action_id':mana['id']}).ok)
+                        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+                    cast=next(row for row in actions if row.get('card')==spell.ref)
+                    accepted=session.act('pilot:A',{'action_id':cast['id'],'targets':[target.ref],'pay':'auto'})
+                    self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+                    self.assertEqual(expected,current_devotion(engine,'A',('W',)))
+                    self.assertEqual(expected,engine._numeric_stat(daxos.object_id,'toughness'))
+                for seat in 'BCD':
+                    self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+                self.replay(session,load=remove_ability)
+
+    def test_original_nylea_disciple_devotion_life_gain_resolves_after_actual_cast_and_replays(self):
+        session=self.session(3631203);engine=session.engine
+        source=self.add(engine,"Nylea's Disciple",zone='hand',ref='devotion-disciple')
+        self.add(engine,'Generic Devotion Amplifier',ref='devotion-life-amplifier')
+        self.add(engine,'Generic Devotion Green Hybrid',ref='devotion-green-hybrid')
+        self.add(engine,'Generic Devotion Green Hybrid',seat='C',ref='devotion-foreign-green')
+        self.assert_whole_admission(source.printed_name)
+        offered=self.ready(session,source,{'G':2,'C':2})
+        life=session.state.players['A'].life
+        self.checkpoint(session)
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        self.assertEqual(life+4,session.state.players['A'].life)
+        self.assertEqual('battlefield',session.state.cards[source.object_id].zone)
+        self.replay(session,load=True)
+
+    def test_original_howlpack_singular_union_cast_grant_and_source_bounce_replays(self):
+        session=self.session(3631101)
+        engine=session.engine
+        source=self.add(engine,'Howlpack Resurgence',zone='hand',ref='singular-howlpack-source')
+        wolf=self.add(engine,'Generic Singular Wolf',ref='singular-wolf')
+        werewolf=self.add(engine,'Generic Singular Werewolf',ref='singular-werewolf')
+        dual=self.add(engine,'Generic Singular Wolf Werewolf',ref='singular-dual')
+        outsider=self.add(engine,'Generic Bound Body',ref='singular-human')
+        foreign=self.add(engine,'Generic Singular Wolf',seat='B',ref='singular-foreign-wolf')
+        bounce=self.add(engine,'Generic Singular Enchantment Bounce',zone='hand',ref='singular-source-bounce')
+        island=self.add(engine,'Generic Conditional Keyword Island',ref='singular-bounce-island')
+        self.assert_whole_admission('Howlpack Resurgence')
+        offered=self.ready(session,source,{'G':1,'C':2})
+        self.checkpoint(session)
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.resolve(session)
+        for recipient in (wolf,werewolf,dual):
+            self.assertEqual(3,engine._numeric_stat(recipient.object_id,'power'))
+            self.assertIn('trample',{word.casefold() for word in engine._effective_card_data(recipient)['keywords']})
+        for recipient in (outsider,foreign):
+            self.assertEqual(2,engine._numeric_stat(recipient.object_id,'power'))
+            self.assertNotIn('trample',{word.casefold() for word in engine._effective_card_data(recipient)['keywords']})
+        while session.state.priority_player!='A':
+            result=session.act(session.pending_principals()[0],{'action_id':'pass'})
+            self.assertTrue(result.ok,result.summary)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        mana=next(row for row in actions if row['id'].startswith('activate:'+island.ref+':'))
+        self.assertTrue(session.act('pilot:A',{'action_id':mana['id']}).ok)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        cast=next(row for row in actions if row.get('card')==bounce.ref)
+        before=session.state.to_dict()
+        self.assertFalse(session.act('pilot:D',{'action_id':cast['id'],'targets':[source.ref],'pay':'auto'}).ok)
+        self.assertEqual(before,session.state.to_dict())
+        accepted=session.act('pilot:A',{'action_id':cast['id'],'targets':[source.ref],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.replay(session,load=True)
+        self.resolve(session)
+        self.assertEqual('hand',session.state.cards[source.object_id].zone)
+        for recipient in (wolf,werewolf,dual):
+            current=session.state.cards[recipient.object_id]
+            self.assertEqual(2,engine._numeric_stat(current.object_id,'power'))
+            self.assertNotIn('trample',{word.casefold() for word in engine._effective_card_data(current)['keywords']})
+        for seat in 'BCD':
+            self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+        self.replay(session)
+
+    def test_original_oathsworn_graveyard_cast_uses_current_controller_life_history_and_replay(self):
+        session=self.session(3631002)
+        engine=session.engine
+        vampire=self.add(engine,'Oathsworn Vampire',zone='graveyard',ref='conditional-zone-vampire')
+        self.assert_whole_admission('Oathsworn Vampire')
+        tapper=self.add(engine,'Generic Conditional Keyword Tap Helper',ref='conditional-zone-lifegain')
+        body=self.add(engine,'Generic Bound Body',ref='conditional-zone-lifegain-body')
+        self.ready(session,tapper,{'B':1,'C':1})
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        self.assertFalse(any(row.get('card')==vampire.ref for row in actions))
+        activation=next(row for row in actions if row['id'].startswith('activate:'+tapper.ref+':'))
+        self.checkpoint(session)
+        accepted=session.act('pilot:A',{'action_id':activation['id'],'cost_cards':[body.ref]})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.resolve(session)
+        while session.state.priority_player!='A':
+            result=session.act(session.pending_principals()[0],{'action_id':'pass'})
+            self.assertTrue(result.ok,result.summary)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        cast=next(row for row in actions if row.get('card')==vampire.ref)
+        self.replay(session,load=True)
+        accepted=session.act('pilot:A',{'action_id':cast['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.resolve(session)
+        self.assertEqual('battlefield',session.state.cards[vampire.object_id].zone)
+        self.assertTrue(session.state.cards[vampire.object_id].tapped)
+        self.replay(session)
+
+    def test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay(self):
+        session=self.session(3631001)
+        engine=session.engine
+        prowler=self.add(engine,'Marang River Prowler',zone='graveyard',ref='conditional-zone-prowler')
+        prowler.controller='B'
+        self.assert_whole_admission('Marang River Prowler')
+        qualifier=self.add(engine,'Generic Conditional Green Qualifier',ref='conditional-zone-qualifier')
+        foreign=self.add(engine,'Generic Conditional Green Qualifier',seat='C',ref='conditional-zone-foreign')
+        bounce=self.add(engine,'Generic Recipient Count Artifact Bounce',zone='hand',ref='conditional-zone-bounce')
+        island=self.add(engine,'Generic Conditional Keyword Island',ref='conditional-zone-island')
+        self.ready(session,bounce,{'U':2,'C':2})
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        offered=next(row for row in actions if row.get('card')==prowler.ref)
+        from quorune.semantic_runtime.casting_activation_metadata import compiled_self_zone_cast_permission
+        self.assertTrue(compiled_self_zone_cast_permission(engine,'A',prowler))
+        self.assertFalse(compiled_self_zone_cast_permission(engine,'B',prowler))
+        self.checkpoint(session)
+        before=session.state.to_dict()
+        self.assertFalse(session.act('pilot:D',{'action_id':offered['id'],'pay':'auto'}).ok)
+        self.assertEqual(before,session.state.to_dict())
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        cast=next(row for row in actions if row.get('card')==bounce.ref)
+        accepted=session.act('pilot:A',{'action_id':cast['id'],'targets':[qualifier.ref],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.resolve(session)
+        self.assertFalse(compiled_self_zone_cast_permission(engine,'A',session.state.cards[prowler.object_id]))
+        while session.state.priority_player!='A':
+            result=session.act(session.pending_principals()[0],{'action_id':'pass'})
+            self.assertTrue(result.ok,result.summary)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        self.assertFalse(any(row.get('card')==prowler.ref for row in actions))
+        qualifier_cast=next(row for row in actions if row.get('card')==qualifier.ref)
+        self.assertTrue(session.act('pilot:A',{'action_id':qualifier_cast['id'],'pay':'auto'}).ok)
+        self.resolve(session)
+        while session.state.priority_player!='A':
+            result=session.act(session.pending_principals()[0],{'action_id':'pass'})
+            self.assertTrue(result.ok,result.summary)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        mana=next(row for row in actions if row['id'].startswith('activate:'+island.ref+':'))
+        self.assertTrue(session.act('pilot:A',{'action_id':mana['id']}).ok)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        cast=next(row for row in actions if row.get('card')==prowler.ref)
+        self.replay(session,load=True)
+        accepted=session.act('pilot:A',{'action_id':cast['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.resolve(session)
+        self.assertEqual('battlefield',session.state.cards[prowler.object_id].zone)
+        self.assertEqual('A',session.state.cards[prowler.object_id].controller)
+        for seat in 'BCD':
+            self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+        self.replay(session)
+
+    def test_original_recipient_count_equipment_cast_equip_reattach_and_bounce_replays(self):
+        from quorune.attachments import attach_objects
+        session = self.session(3630901)
+        engine = session.engine
+        gauntlets = self.add(engine, 'Golem-Skin Gauntlets', zone='hand', ref='recipient-gauntlets')
+        suit = self.add(engine, 'Thran Power Suit', zone='hand', ref='recipient-suit')
+        target = self.add(engine, 'Generic Bound Body', ref='recipient-body')
+        other = self.add(engine, 'Generic Bound Body', ref='recipient-other-body')
+        foreign = self.add(engine, 'Generic Recipient Count Equipment', seat='C', ref='recipient-foreign-equipment')
+        attach_objects(engine.state.cards, foreign, target, source_timestamp=engine._next_zone_timestamp())
+        bounce = self.add(engine, 'Generic Recipient Count Artifact Bounce', zone='hand', ref='recipient-attachment-bounce')
+        island = self.add(engine, 'Generic Conditional Keyword Island', ref='recipient-bounce-island')
+        self.assert_whole_admission('Golem-Skin Gauntlets')
+        self.assert_whole_admission('Thran Power Suit')
+        static = next(p for p in engine.semantics.programs_for_oracle(gauntlets.oracle_id) if p.handlers and p.handlers[0]['handler_id']=='continuous.attached.fixed-characteristics.v1')
+        self.assertTrue(engine.semantic_program_is_current_trusted(static))
+        self.ready(session,session.state.cards[island.object_id],{'C':9})
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        offered=next(row for row in actions if row.get('card')==gauntlets.ref)
+        self.checkpoint(session)
+        accepted = session.act('pilot:A',{'action_id':offered['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.resolve(session)
+        for equipment, recipient in ((gauntlets,target),(suit,target),(gauntlets,other)):
+            while session.state.priority_player != 'A':
+                result=session.act(session.pending_principals()[0],{'action_id':'pass'})
+                self.assertTrue(result.ok,result.summary)
+            actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+            if equipment is suit:
+                cast=next(row for row in actions if row.get('card')==suit.ref)
+                self.assertTrue(session.act('pilot:A',{'action_id':cast['id'],'pay':'auto'}).ok)
+                self.resolve(session)
+                while session.state.priority_player != 'A':
+                    result=session.act(session.pending_principals()[0],{'action_id':'pass'})
+                    self.assertTrue(result.ok,result.summary)
+                actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+            equip=next(row for row in actions if row['id'].startswith('activate:'+equipment.ref+':'))
+            before=session.state.to_dict()
+            self.assertFalse(session.act('pilot:D',{'action_id':equip['id'],'targets':[recipient.ref],'pay':'auto'}).ok)
+            self.assertEqual(before,session.state.to_dict())
+            accepted=session.act('pilot:A',{'action_id':equip['id'],'targets':[recipient.ref],'pay':'auto'})
+            self.assertTrue(accepted.ok,accepted.summary)
+            self.resolve(session)
+            if equipment is gauntlets and recipient is target:
+                self.assertEqual(4,engine._numeric_stat(target.object_id,'power'))
+                self.assertEqual(6,engine._numeric_stat(target.object_id,'toughness'))
+            elif equipment is suit:
+                self.assertEqual(8,engine._numeric_stat(target.object_id,'power'))
+                self.assertEqual(9,engine._numeric_stat(target.object_id,'toughness'))
+                self.replay(session,load=True)
+            else:
+                self.assertEqual(4,engine._numeric_stat(target.object_id,'power'))
+                self.assertEqual(3,engine._numeric_stat(other.object_id,'power'))
+        while session.state.priority_player != 'A':
+            result=session.act(session.pending_principals()[0],{'action_id':'pass'})
+            self.assertTrue(result.ok,result.summary)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        mana=next(row for row in actions if row['id'].startswith('activate:'+island.ref+':'))
+        self.assertTrue(session.act('pilot:A',{'action_id':mana['id']}).ok)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        cast=next(row for row in actions if row.get('card')==bounce.ref)
+        accepted=session.act('pilot:A',{'action_id':cast['id'],'targets':[foreign.ref],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.resolve(session)
+        self.assertEqual('hand',session.state.cards[foreign.object_id].zone)
+        self.assertEqual(3,engine._numeric_stat(target.object_id,'power'))
+        for seat in 'BCD':
+            self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+        self.replay(session)
+
+    def test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay(self):
+        session = self.session(3630801)
+        engine = session.engine
+        source = self.add(engine, 'Centaur Omenreader', ref='conditional-cost-source')
+        self.assert_whole_admission('Centaur Omenreader')
+        tapper = self.add(engine, 'Generic Conditional Keyword Tap Helper', ref='conditional-cost-tapper')
+        spell = self.add(engine, 'Generic Conditional Cost Creature', zone='hand', ref='conditional-cost-creature')
+        bounce = self.add(engine, 'Unsummon', zone='hand', ref='conditional-cost-bounce')
+        foreign = self.add(engine, 'Generic Conditional Cost Creature', seat='B', zone='hand', ref='conditional-cost-other-player')
+        self.ready(session, tapper, {'U':1})
+        actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        self.assertFalse(any(row.get('card') == spell.ref for row in actions))
+        activation = next(row for row in actions if row['id'].startswith('activate:'+tapper.ref+':'))
+        self.checkpoint(session)
+        before = session.state.to_dict()
+        self.assertFalse(session.act('pilot:B', {'action_id':activation['id'], 'cost_cards':[source.ref]}).ok)
+        self.assertEqual(before, session.state.to_dict())
+        accepted = session.act('pilot:A', {'action_id':activation['id'], 'cost_cards':[source.ref]})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        while session.state.priority_player != 'A':
+            result = session.act(session.pending_principals()[0], {'action_id':'pass'})
+            self.assertTrue(result.ok, result.summary)
+        actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        cast = next(row for row in actions if row.get('card') == spell.ref)
+        from quorune.semantic_runtime.cast_costs import active_fixed_spell_cost_reductions
+        self.assertTrue(active_fixed_spell_cost_reductions(engine, 'A', session.state.cards[spell.object_id]))
+        self.assertEqual((), active_fixed_spell_cost_reductions(engine, 'B', session.state.cards[foreign.object_id]))
+        self.assertEqual((), active_fixed_spell_cost_reductions(engine, 'A', session.state.cards[bounce.object_id]))
+        self.replay(session, load=True)
+        accepted = session.act('pilot:A', {'action_id':cast['id'], 'pay':'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        self.assertEqual('battlefield', session.state.cards[spell.object_id].zone)
+        while session.state.priority_player != 'A':
+            result = session.act(session.pending_principals()[0], {'action_id':'pass'})
+            self.assertTrue(result.ok, result.summary)
+        actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        cast = next(row for row in actions if row.get('card') == bounce.ref)
+        accepted = session.act('pilot:A', {'action_id':cast['id'], 'targets':[source.ref], 'pay':'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        self.assertEqual('hand', session.state.cards[source.object_id].zone)
+        from quorune.semantic_runtime.cast_costs import active_fixed_spell_cost_reductions
+        self.assertEqual((), active_fixed_spell_cost_reductions(engine, 'A', session.state.cards[spell.object_id]))
+        for seat in 'BCD':
+            public = session.packet('pilot:'+seat, full=True)['state']['players']['A']
+            self.assertNotIn('hand', public)
+        self.replay(session)
+
+    def test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay(self):
+        from quorune.ability_fragments import ProtectionSpec
+        session = self.session(3630702)
+        engine = session.engine
+        angel = self.add(engine, 'Pristine Angel', zone='hand', ref='conditional-pristine')
+        tapper = self.add(engine, 'Generic Conditional Keyword Tap Helper', ref='conditional-protection-tapper')
+        self.add(engine, 'Generic Bound Body', ref='conditional-protection-other')
+        island = self.add(engine, 'Generic Conditional Keyword Island', ref='conditional-protection-island')
+        bounce = self.add(engine, 'Unsummon', zone='hand', ref='conditional-protection-bounce')
+        offered = self.ready(session, angel, {'W':2, 'C':4})
+        self.checkpoint(session)
+        accepted = session.act('pilot:A', {'action_id':offered['id'], 'pay':'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        self.assertTrue(any(isinstance(f, ProtectionSpec) for f in engine._effective_ability_fragments(angel)))
+        while session.state.priority_player != 'A':
+            result = session.act(session.pending_principals()[0], {'action_id':'pass'})
+            self.assertTrue(result.ok, result.summary)
+        actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        mana_action = next(row for row in actions if row['id'].startswith('activate:'+island.ref+':'))
+        accepted = session.act('pilot:A', {'action_id':mana_action['id']})
+        self.assertTrue(accepted.ok, accepted.summary)
+        actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        protected_cast = next((row for row in actions if row.get('card') == bounce.ref), None)
+        self.assertIsNotNone(protected_cast)
+        before = session.state.to_dict()
+        rejected = session.act('pilot:A', {'action_id':protected_cast['id'], 'targets':[angel.ref], 'pay':'auto'})
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before, session.state.to_dict())
+        angel = session.state.cards[angel.object_id]
+        activation = next(row for row in actions if row['id'].startswith('activate:'+tapper.ref+':'))
+        accepted = session.act('pilot:A', {'action_id':activation['id'], 'cost_cards':[angel.ref]})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertTrue(angel.tapped)
+        self.assertFalse(any(isinstance(f, ProtectionSpec) for f in engine._effective_ability_fragments(angel)))
+        self.resolve(session)
+        while session.state.priority_player != 'A':
+            result = session.act(session.pending_principals()[0], {'action_id':'pass'})
+            self.assertTrue(result.ok, result.summary)
+        actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        cast = next(row for row in actions if row.get('card') == bounce.ref)
+        accepted = session.act('pilot:A', {'action_id':cast['id'], 'targets':[angel.ref], 'pay':'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        choice = self.resolve(session)
+        self.assertEqual('semantic.choice', choice.kind)
+        self.replay(session, load=True)
+        selected = session.act('pilot:A', {'action_id':'choose', 'choice':'apply', 'reason':'Untap the original Angel.'})
+        self.assertTrue(selected.ok, selected.summary)
+        self.resolve(session)
+        self.assertFalse(angel.tapped)
+        self.assertEqual('battlefield', session.state.cards[angel.object_id].zone)
+        self.assertTrue(any(isinstance(f, ProtectionSpec) for f in engine._effective_ability_fragments(angel)))
+        for seat in 'BCD':
+            public = session.packet('pilot:'+seat, full=True)['state']['players']['A']
+            self.assertNotIn('hand', public)
+        self.replay(session)
+
+    def test_original_k9_conditional_ward_survives_creation_then_ends_after_real_tap_and_replays(self):
+        from quorune.trigger_participation import WardSpec
+        session = self.session(3630701)
+        engine = session.engine
+        source = self.add(engine, 'K-9, Mark I', ref='conditional-k9')
+        self.assert_whole_admission('K-9, Mark I')
+        target = session.state.cards[session.state.players['A'].zones['command'][0]]
+        engine.move_card(target.object_id, 'battlefield', controller='A', log=False)
+        outsider = self.add(engine, 'Generic Bound Body', seat='C', ref='conditional-ward-outsider')
+        first = self.add(engine, 'Unsummon', seat='B', zone='hand', ref='conditional-ward-first')
+        second = self.add(engine, 'Unsummon', seat='B', zone='hand', ref='conditional-ward-second')
+        engine.state.players['B'].mana_pool['U'] = 2
+        offered = self.ready(session, source, {'U':1, 'C':1})
+        self.checkpoint(session)
+        before = session.state.to_dict()
+        self.assertFalse(session.act('pilot:C', {'action_id':offered['id'], 'pay':'auto'}).ok)
+        self.assertEqual(before, session.state.to_dict())
+        self.assertTrue(any(isinstance(f, WardSpec) for f in engine._effective_ability_fragments(target)))
+        self.assertFalse(any(isinstance(f, WardSpec) for f in engine._effective_ability_fragments(source)))
+        self.assertFalse(any(isinstance(f, WardSpec) for f in engine._effective_ability_fragments(outsider)))
+        while session.state.priority_player != 'B':
+            result = session.act(session.pending_principals()[0], {'action_id':'pass'})
+            self.assertTrue(result.ok, result.summary)
+        actions = session.packet('pilot:B', full=True)['decision']['ctx']['legal']['actions']
+        cast = next(row for row in actions if row.get('card') == first.ref)
+        accepted = session.act('pilot:B', {'action_id':cast['id'], 'targets':[target.ref], 'pay':'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        ward = self.resolve(session)
+        self.assertEqual('semantic.choice', ward.kind)
+        self.replay(session, load=True)
+        before = session.state.to_dict()
+        self.assertFalse(session.act('pilot:C', {'action_id':'choose', 'pay':False, 'plan':'DECLINE_WARD'}).ok)
+        self.assertEqual(before, session.state.to_dict())
+        declined = session.act('pilot:B', {'action_id':'choose', 'pay':False, 'plan':'DECLINE_WARD', 'reason':'Preserve mana.'})
+        self.assertTrue(declined.ok, declined.summary)
+        self.resolve(session)
+        self.assertEqual('battlefield', session.state.cards[target.object_id].zone)
+        while session.state.priority_player != 'A':
+            result = session.act(session.pending_principals()[0], {'action_id':'pass'})
+            self.assertTrue(result.ok, result.summary)
+        actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        activation = next(row for row in actions if row['id'].startswith('activate:'+source.ref+':'))
+        accepted = session.act('pilot:A', {'action_id':activation['id'], 'targets':[target.ref], 'pay':'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertTrue(source.tapped)
+        self.assertFalse(any(isinstance(f, WardSpec) for f in engine._effective_ability_fragments(target)))
+        self.resolve(session)
+        while session.state.priority_player != 'B':
+            result = session.act(session.pending_principals()[0], {'action_id':'pass'})
+            self.assertTrue(result.ok, result.summary)
+        actions = session.packet('pilot:B', full=True)['decision']['ctx']['legal']['actions']
+        cast = next(row for row in actions if row.get('card') == second.ref)
+        accepted = session.act('pilot:B', {'action_id':cast['id'], 'targets':[target.ref], 'pay':'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        replacement = self.resolve(session)
+        self.assertEqual('replacement.order', replacement.kind)
+        declined_replacement = next(row['id'] for row in replacement.payload_by_actor['A']['options'] if row['decline'])
+        accepted = session.act('pilot:A', {'action_id':'choose', 'replacement':declined_replacement})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.resolve(session)
+        self.assertEqual('hand', session.state.cards[target.object_id].zone)
+        for seat in 'ACD':
+            public = session.packet('pilot:'+seat, full=True)['state']['players']['B']
+            self.assertNotIn('hand', public)
+        self.replay(session)
+
     @classmethod
     def setUpClass(cls):
         from quorune.deck import DeckDefinition, DeckEntry

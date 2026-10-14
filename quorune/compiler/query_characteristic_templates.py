@@ -194,6 +194,9 @@ def _query_quantity_descriptor(
         )
     singular = singulars.get(normalized, normalized)
     words = singular.split()
+    if words and words[0] in {'tapped','untapped'}:
+        if zone!='battlefield':return None
+        fields['tapped']=words.pop(0)=='tapped'
     if words and words[0] in {"basic", "legendary", "snow"}:
         supertype = words.pop(0)
         fields["supertypes_all"] = (supertype,)
@@ -249,6 +252,8 @@ def query_characteristic_quantity(
     definition_extensions: bool = False,
 ) -> CharacteristicQuantitySpec | None:
     text = " ".join(value.strip().rstrip(".").split())
+    if text.casefold() in {'opponent you have','opponents you have'}:
+        return CharacteristicQuantitySpec(scope=CharacteristicQuantityScope.CONTROLLER_OPPONENT_COUNT,schema_version=2)
     reduced = collection_quantity(
         text, compile_count=lambda objects: query_characteristic_quantity(
             objects, source_name=source_name, definition_extensions=definition_extensions,
@@ -366,6 +371,8 @@ def query_characteristic_value(value: str, *, source_name: str) -> Characteristi
 
 
 def _unadjusted_characteristic_value(text: str, *, source_name: str) -> CharacteristicQuantitySpec | None:
+    if text.casefold().startswith('your devotion to '):
+        return query_characteristic_quantity(text,source_name=source_name,definition_extensions=True)
     added = additive_quantity(text, compile_value=lambda base: _unadjusted_characteristic_value(base, source_name=source_name))
     if added is not None:
         return added

@@ -894,6 +894,25 @@ def _additive_damage_handler(
     )
 
 
+def _colored_fixed_prevention_handler(text):
+    match=_FIXED_DAMAGE_PREVENTION.fullmatch(text)
+    if match is None:return None
+    color=re.fullmatch(r'a (?P<color>white|blue|black|red|green) source(?: (?P<control>you control|an opponent controls))?',match['source'],re.I)
+    target=_target_condition(match['target'])
+    if color is None or target is None:return None
+    symbols={'white':'W','blue':'U','black':'B','red':'R','green':'G'}
+    control=(color['control'] or '').casefold()
+    relation='source_controller' if control=='you control' else 'opponent' if control else 'any'
+    kind=match['damage_kind'];combat=None if not kind else kind.casefold()=='combat'
+    return ('damage-prevention-fixed-colored-static-v2',{
+        'handler_id':'prevention.damage.fixed.v2','schema_version':2,'event':'damage',
+        'condition':{'source_controller_relation':relation,'target_controller_relation':target[0],
+            'target_kinds':target[1],'source_types_all':[],'source_types_any':[],
+            'source_colors_all':[symbols[color['color'].casefold()]],'target_types_all':target[2],
+            'combat':combat,'exclude_source_ref':False},
+        'modification':{'amount':int(match['amount'])}},'damage.prevention.static_fixed')
+
+
 def static_damage_handler(
     text: str,
     *,
@@ -982,12 +1001,12 @@ def static_damage_handler(
         capability = "damage.prevention.static_fixed"
         template_id = "damage-prevention-fixed-static-v1"
         if match is None:
-            return None
+            return _colored_fixed_prevention_handler(normalized)
         modification = {"amount": int(match.group("amount"))}
     source = _source_condition(match.group("source"))
     target = _target_condition(match.group("target"))
     if source is None or target is None:
-        return None
+        return _colored_fixed_prevention_handler(normalized)
     source_relation, source_types = source
     target_relation, target_kinds, target_types = target
     damage_kind = match.group("damage_kind")

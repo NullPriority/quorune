@@ -15,6 +15,134 @@ replacement effects, prevention effects, draw policies, or continuous effects
 from live source descriptors. Components participate in a subsystem-owned
 transaction; they do not commit state.
 
+Public power/toughness aggregates use the immutable
+`PublicCharacteristicAggregateSpec` and the read-only owner in
+`quorune/public_characteristic_aggregates.py`. Version-3 scalar amounts and
+self-cost metrics carry the complete battlefield query, controller relation,
+stat and sum/maximum operation. Effects and mana use current complete layer-7
+characteristics; casting offers and accepted commands use the same producer.
+Negative members enter a total before an ordinary result is clamped to zero.
+A declared scalar is cached once for its resolving ability, including later
+instructions that change the candidate stats. Known empty sets yield zero;
+unavailable creature stats raise an error. Hidden zones, source exclusions,
+attachment-state predicates and static characteristic cycles stay outside this
+family. The aggregate capability remains an explicit dependency of each consumer.
+
+Quoted ability grants compile their complete child through the same fixed and
+ordinary-source trigger paths as standalone abilities. The ordinary fallback
+runs only when the first compiler returned no node and no residual. Entry and
+death subscriptions retain source identity, and recipient control determines
+their consequences. A quoted source-permanent regeneration instruction uses
+the existing incarnation-pinned shield owner; the grant origin never substitutes
+for its recipient. Unsupported child clauses still prevent whole-program trust.
+
+An independently source-specific action/damage subscription may lower a whole
+`it deals N damage` instruction through the existing fixed damage leaf. Public
+event antecedents and newly created object references remain excluded. Trigger
+targets still use the shared announcement and resolution revalidation owner.
+Fixed source-return entry subscriptions declare `permanent.return.owner_hand`
+alongside their return-choice family so registered bounce intents retain strict
+capability closure.
+
+Committed scalar amounts accept the source-specific `damage.dealt.self`
+subscription identity without normalizing it away. Broad source damage may
+target a player or permanent; incoming combat damage retains both the receiver
+identity and combat predicate. The scalar result reads the committed event
+amount after prevention and replacement. It does not read current power, life,
+or the original damage request. Ordinary draw, token and signed life result
+owners still provide their own closed schemas and capability dependencies.
+
+Fixed opponent mill carries the closed `controller_opponents` recipient scope.
+The mill handler filters the current APNAP roster against the resolving
+controller and submits one batch to the existing mill transaction. Empty
+opponent rosters produce no intent; short libraries contribute only available
+cards. The historical `all_active_players` scope retains its recipient contract.
+No pre-mill hidden card identities enter the descriptor or public projection.
+
+Event-addressed mill requests `zone.mill.event_recipient` through the dedicated
+`fixed-event-recipient-mill` mechanic. A damage binding must guarantee a player
+recipient before using `$context.target`; source attacks use the sealed
+`$context.defending_player`, and spell casts use `$context.player`. These
+references create no target announcement. Fixed and committed scalar amounts
+retain their own producer schemas. A context reference without this mechanic,
+an ambiguous event or an unsupported result tail prevents exact admission.
+
+Fixed event-addressed draw and life results use the same public occurrence
+boundary with a separate `resolution.event_player.fixed_result` dependency.
+Spell casts, draws and public scry/surveil events supply their player field;
+discard occurrences supply `previous_controller`. Damage must guarantee a
+player recipient and individual source or public attacks supply their defending
+player. Entry events supply the entering `controller`; death events supply
+`previous_controller`. Aggregate attack events do not supply a unique defender. Program
+promotion checks the event against each context reference. One or two complete
+fixed leaves preserve printed order and require an explicit subject per clause;
+`you` retains the resolving trigger controller. Optional, variable and linked
+results remain outside this family. Fixed affected-player
+discard registration separately verifies its closed choice shape and declared
+dependencies before promoting a generated program.
+
+Fixed static prevention version 2 uses the existing extended damage source
+predicate for printed color restrictions. Source colors come from the frozen
+damage proposal; matching damage events each receive the printed prevention
+amount independently. Current control, source ability presence and departure
+still determine participation. Version-1 descriptors retain their original
+schema. This family does not consume a persistent prevention pool or interpret
+chosen-color and variable prevention text.
+
+Fixed entry-event counter results carry `$event.entry_object` and request
+`counter.producer.fixed_event_object` alongside ordinary counter placement.
+The reference resolves only the public battlefield object with the entry
+occurrence's sealed identity. Departure, phasing and re-entry make the old
+reference unavailable, so the existing resolution boundary skips that leaf.
+The observer remains the placement source and never replaces the recipient.
+Aggregate, multiple-event, death and partial-result antecedents stay excluded.
+
+Individual attack and qualifying damage-source counter results use
+`$event.counter_object`. Discovery seals the attack participant or frozen damage
+source identity in a separate event-counter snapshot before collecting observer
+LKI. Resolution uses the same public incarnation check as entry references.
+Fixed counters and committed scalar counts share ordinary counter placement;
+the triggering observer never substitutes for the attacker or damaging source.
+
+Source damage subscriptions may bind a complete fixed `put ... counters on it`
+instruction through the existing `$source.zone_object` leaf. This preserves
+source specificity and incarnation identity. Damage and state-based actions
+finish before trigger resolution; counters do not rescue a creature that already
+died, and a re-entered source cannot receive the old trigger's counters. Public
+damage-receiver pronouns without a represented recipient remain excluded.
+
+Fixed counter affected sets admit one positive attacking or blocking state
+predicate over creatures. Selection uses current combat membership when the
+instruction resolves. Tapped state and earlier attack history do not substitute
+for that membership, and additional unrepresented state qualifiers remain
+excluded. The ordinary counter transaction and state-based counter cancellation
+retain ownership of placement consequences.
+
+Fixed activated mana version 3 carries one canonical selected sacrifice or tap cost
+alongside its closed fixed output modes. The compiler requests the selected
+zone-change capability and the mana owner separately. Offers and accepted
+commands use the existing typed activation transaction to validate and pay the
+controlled object cost before adding the chosen mana once, without a stack item.
+Selected tap costs retain fixed counts and current typed queries. A combined
+source `{T}` cost excludes the source from the selected group; summoning sickness
+limits the source tap symbol but does not prevent paying a selected-creature tap.
+Legacy versions retain their output and result-rider schemas. Multiple selected
+costs, discard or exile costs, and selected-cost result riders remain excluded.
+
+The compound self-entry handler combines a fixed tapped state and fixed counter
+creation in one replacement effect for complete “enters tapped with” wording.
+It inherits the ordinary self-entry counter validation and submits both
+operations to the existing zone replacement transaction. The printed ability
+therefore keeps one ordering identity. Legacy fixed self-entry counters retain
+their original untapped-state contract, and variable or linked entry tails
+remain outside this compound family.
+
+Current object-count quantities admit a fixed tapped or untapped qualifier on
+public battlefield queries. The quantity owner reads the exact current flag
+with the existing layer-5 type/color view, while consumers retain their own
+closed schemas. Hand and graveyard state queries, historical tap events and
+collection reductions with additional unrepresented state remain excluded.
+
 ## Lifecycle and participation
 
 1. The compiler or reviewed program emits a versioned component descriptor.
@@ -372,15 +500,67 @@ state predicate. Declaration restrictions consume the same snapshot for their
 closed public conditions; they do not add a combat-local query registry. No
 runtime Oracle parser or parallel applicability registry is involved.
 
+`continuous.characteristics.public-state-keywords.v1` retains complete typed
+keyword fragments behind the same public-state predicate and target relation.
+Its keyword labels and fragments use the ordinary query-grant validator;
+fixed generic ward and protection keep their established consumers. Conditional
+combat and spell-cast keyword triggers use the current recipient's fragments.
+The earlier characteristic-only descriptor continues to reject fragment fields.
+An already created trigger retains its consequence when the live grant ends.
+
+`modification.cast-cost.public-state.v1` wraps the existing public cast-cost
+modifier with one typed live public-state predicate. The cast-cost collector
+uses the shared condition evaluator before returning the ordinary modifier to
+the total-cost owner. Offer and commit use that same collector, preserving
+current ability presence, source control, generic floors and colored payments.
+
+`permission.cast.self-zone-public-state.v1` evaluates an explicit self-graveyard
+permission against the same typed public-state facts. Outside the battlefield,
+the condition's controller-relative facts use the card's owner through a shared
+immutable source view. The ordinary casting proposal still owns timing, cost,
+target and current-zone checks. The earlier controlled-subtype permission
+descriptor retains its existing schema and behavior.
+
 The same quantity boundary supports versioned distinct basic land types,
 graveyard card types, colors, maximum/total mana value and colored mana-symbol
 counts. It reads current copy/type/color data only through layer 5. Exactly two
 leaf quantities may be added without conflating them with a union; fixed
 positive multipliers and nonnegative offsets remain explicit. Paired all-zone
 power/toughness definitions retain independent field offsets. Legacy count and
-definition payloads retain their existing codecs. Devotion and its modifiers,
-hidden characteristic reads, power/toughness aggregates and open or nested
+definition payloads retain their existing codecs. Hidden characteristic reads,
+power/toughness aggregates and open or nested
 arithmetic remain unsupported rather than using an incorrect boundary.
+
+`controller_opponent_count` is a versioned public-roster quantity for the
+represented free-for-all profiles. It counts other players still in the game
+without reading objects or hidden zones. Resolution amounts use the locked
+controller and current roster at the instruction boundary; a departed player
+does not remain in a count captured when the spell was announced. The same
+quantity supports fixed arithmetic and independently exact result owners.
+
+Public-state condition schema 6 composes two through four flat typed leaves
+with `all` or `any`. The snapshot owner captures each leaf separately from the
+same source and public state, preserving distinct query quantities and status
+facts. Static consumers retain their layer-timing exclusions for every leaf.
+Intervening-if triggers evaluate the whole condition at occurrence and again
+at resolution. Legacy condition codecs remain unchanged; missing snapshots,
+unknown leaves and unsupported nested or mixed conditions fail closed.
+
+Devotion has a distinct versioned quantity reduction through `devotion.py`.
+Under CR 700.5a it reads current mana costs after copy, control and text effects,
+before later characteristic changes. One hybrid symbol contributes once to a
+two-color union. Typed fixed static increases use the existing current ability
+component map and cease after ability removal, phasing or source departure.
+Characteristic definitions, resolution amounts, mana production and self cast-
+cost reductions share this owner. Every newly compiled consumer declares the
+devotion capability separately from its result capability.
+
+Compiled token quantity replacements participate only while their source's
+current static component is present. The shared token discovery path reads
+that component map before materializing a replacement. Legacy descriptors
+retain their existing compatibility boundary; a current typed descriptor
+requires an integer schema version. Counted token results enter the ordinary
+replacement, simultaneous entry and state-based stabilization transaction.
 
 `continuous.attached.fixed-characteristics.v1` keeps one reciprocal live
 attachment relation while lowering its closed operations into layers 4, 5, 6,
@@ -404,7 +584,16 @@ same effect, and the shared static-component query determines whether the
 source still contributes any component. Exact attached restraints may carry a
 typed declaration fragment and an all-ability or nonmana activation
 prohibition; source-controller relations remain anchored to the granting
-source. Names, text changes, target-relative state, multiple quotes, source
+source.
+
+Relative attachment counts use a versioned `attached_to_recipient` quantity.
+The resolver follows the source's reciprocal attachment relation and counts
+the recipient's current Equipment or Aura/Equipment union, including the
+granting object when it matches. Each physical attachment counts once;
+controller changes do not change membership. Reattachment, phasing and source
+departure reuse the existing relation and layer-5 quantity boundaries.
+
+Names, text changes, open target-relative state, multiple quotes, source
 discard or exile, energy, loyalty, variable, dynamic, alternative-zone or
 usage-limited activation costs, external attachment-source references, and
 untrusted granted rules remain outside this owner.

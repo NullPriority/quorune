@@ -75,8 +75,7 @@ def fixed_activated_zone_change_cost(
     """Lower one independently closed selected-object cost on an activation."""
 
     if (
-        ability.mana_ability
-        or len(ability.choices) > 1
+        len(ability.choices) > 1
         or ability.discard_source
         or ability.sacrifice_source
         or ability.exile_source
@@ -104,6 +103,7 @@ def fixed_activated_zone_change_cost(
     if descriptor is None:
         return ability
     operation = str(descriptor["operation"])
+    if ability.mana_ability and operation!=SACRIFICE_ONE_COST:return ability
     another = descriptor.get("another") is True
     contract = FIXED_ZONE_CHANGE_COST_CONTRACTS.get(operation)
     predicate = descriptor.get("predicate")

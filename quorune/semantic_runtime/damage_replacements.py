@@ -530,6 +530,22 @@ class FixedDamagePreventionHandler:
         return (self.replacement_effect(descriptor, context),)
 
 
+@dataclass(frozen=True,slots=True)
+class FixedDamagePreventionV2Handler(FixedDamagePreventionHandler):
+    """Fixed per-event prevention over the existing extended source predicate."""
+    handler_id: str='prevention.damage.fixed.v2'
+    schema_version: int=2
+
+    def validate(self,descriptor:Mapping[str,Any])->FixedDamagePreventionNode:
+        _validate_envelope(descriptor,handler_id=self.handler_id,schema_version=self.schema_version)
+        modification=descriptor['modification']
+        if not isinstance(modification,Mapping):raise SemanticNodeError('Fixed prevention modification must be an object')
+        exact_fields(modification,{'amount'},field='fixed prevention modification')
+        amount=modification['amount']
+        if type(amount) is not int or amount<1:raise SemanticNodeError('Fixed prevention amount must be a positive integer')
+        return FixedDamagePreventionNode(condition=_condition_v2(descriptor['condition']),amount=amount)
+
+
 @dataclass(frozen=True, slots=True)
 class AllDamagePreventionHandler:
     """Lower current static all-damage prevention through the shared scope."""
@@ -840,6 +856,7 @@ def default_damage_replacement_registry() -> DamageReplacementRegistry:
             DamageQuantityReplacementHandler(),
             DamageQuantityReplacementV2Handler(),
             FixedDamagePreventionHandler(),
+            FixedDamagePreventionV2Handler(),
             AllDamagePreventionHandler(),
             StaticDamageRedirectionHandler(),
         )

@@ -7,6 +7,7 @@ from typing import Any, Iterable, Mapping, Sequence
 from ..aura import is_enchant_keyword_line, parse_enchant_line
 from ..enchant_spec import TypedEnchantSpec
 from ..ability_fragments import parse_protection_line
+from ..characteristic_fragments import characteristic_quantity_capabilities
 from ..rules.attachment_actions import fixed_equip_ability_spec
 from .ward_cost_templates import fixed_ward_spec
 from ..death_return import PERSIST_KEYWORD, UNDYING_KEYWORD
@@ -52,6 +53,7 @@ def dependency_gate(
                     cost_schema=cost_schema,
                 ),
                 *(str(value) for value in explicit_capabilities),
+                *characteristic_quantity_capabilities(effects),
             }
         )
     )

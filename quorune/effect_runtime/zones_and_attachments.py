@@ -727,7 +727,7 @@ def _apply_mill(
         from ..milling import mill_player_batch
         if (
             set(effect) - {"op", "scope", "count", "reason", "_runtime_source"}
-            or effect.get("scope") != "all_active_players"
+            or effect.get("scope") not in {"all_active_players","controller_opponents"}
             or type(effect.get("count")) is not int
             or effect["count"] < 0
         ):
@@ -735,6 +735,7 @@ def _apply_mill(
         results = mill_player_batch(host, tuple(
             MillRequest(actor=actor, player=seat, count=effect["count"], reason=reason)
             for seat in host.apnap_order()
+            if effect['scope']!='controller_opponents' or seat!=actor
         ))
         return [ref for result in results for ref in result.refs]
     count = max(0, int(effect.get("count", 1)))
