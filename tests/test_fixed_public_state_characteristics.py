@@ -2957,6 +2957,47 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
 
 
 class AdditionalConditionalModifierRuntimeTests(unittest.TestCase):
+    def test_original_gleam_attacker_and_rakish_damage_source_counter_recipients_replay(self):
+        from quorune.model import CombatState
+        for seed,name in ((3632701,'Gleam of Battle'),(3632702,'Rakish Heir'),(3632703,'Necropolis Regent')):
+            with self.subTest(name=name):
+                session=self.session(seed);engine=session.engine
+                observer=self.add(engine,name,ref='action-counter-observer')
+                attacker=self.add(engine,'Generic Event Counter Vampire',ref='action-counter-attacker')
+                control=self.add(engine,'Generic Bound Body',ref='action-counter-control')
+                self.assert_whole_admission(observer.printed_name)
+                engine.permissions.invalidate_current();session.state.pending_decision=None;session.state.started=True
+                session.state.active_player='A';session.state.phase='combat';session.state.step='declare_attackers'
+                session.state.phase_index=5;session.state.priority_player=None;session.state.priority_passes=[];session.state.combat=CombatState()
+                engine.pump();self.checkpoint(session)
+                before=session.state.to_dict()
+                self.assertFalse(session.act('pilot:C',{'action_id':'attack','attackers':{attacker.ref:'B',control.ref:'D'}}).ok)
+                self.assertEqual(before,session.state.to_dict())
+                accepted=session.act('pilot:A',{'action_id':'attack','attackers':{attacker.ref:'B',control.ref:'D'}})
+                self.assertTrue(accepted.ok,accepted.summary)
+                checked=False
+                for _ in range(70):
+                    if session.state.phase=='postcombat_main' and not session.state.stack:break
+                    decision=session.state.pending_decision
+                    if decision.kind=='trigger.order':
+                        pending=[item for batch in session.state.pending_trigger_batches for item in batch.items]
+                        self.replay(session,load=True);checked=True
+                        command={'action_id':'order','triggers':[item.ref for item in pending]}
+                    elif decision.kind=='priority':
+                        if any(item.kind=='triggered_ability' for item in session.state.stack) and not checked:
+                            self.replay(session,load=True);checked=True
+                        command={'action_id':'pass'}
+                    elif decision.kind=='combat.blockers':command={'action_id':'block','blocks':{}}
+                    else:self.fail('Unexpected eventcounter decision '+decision.kind)
+                    accepted=session.act(session.pending_principals()[0],command);self.assertTrue(accepted.ok,accepted.summary)
+                else:self.fail('Actioneventcountercombatdidnotfinish')
+                self.assertTrue(checked)
+                self.assertEqual(2 if name=='Necropolis Regent' else 1,session.state.cards[attacker.object_id].counters.get('+1/+1',0))
+                self.assertEqual(2 if name=='Necropolis Regent' else 1 if name=='Gleam of Battle' else 0,session.state.cards[control.object_id].counters.get('+1/+1',0))
+                self.assertEqual(0,session.state.cards[observer.object_id].counters.get('+1/+1',0))
+                for seat in 'BCD':self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+                self.replay(session)
+
     def test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay(self):
         for seed,reenter in ((3632601,False),(3632602,True)):
             with self.subTest(reenter=reenter):

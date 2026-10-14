@@ -10556,6 +10556,21 @@
       ],
       "interaction_order": 2,
       "assertion": "Original GoodFortuneUnicorn observes actualtrustedcreaturecasts and counters the entering object rather than observer. Actualbounce/recast while firsttriggerpending creates newincarnation; onlynewtriggeraddsonecounter whileoldtriggerskips it. Unauthorizedrollback, principalprivacy andpending/fullreplay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_gleam_attacker_and_rakish_damage_source_counter_recipients_replay",
+      "piece_ids": [
+        "capability.counter.producer.fixed_event_object",
+        "capability.quantity_expression.scalar_effect_amount"
+      ],
+      "capability_ids": [
+        "counter.producer.fixed_event_object",
+        "quantity_expression.scalar_effect_amount"
+      ],
+      "interaction_order": 2,
+      "assertion": "ActualoriginalGleamBattleattackandRakishHeirqualifyingVampirecombatpinrecipientindependentlyfromobserver. NecropolisRegentcountscommittedtwo-pointcombatforeacheventsource, withnonVampirecontrol, privateprojection, pendingload andfullpreactionreplay."
     }
   ]
 }

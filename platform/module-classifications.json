@@ -6245,6 +6245,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/event_counter_reference.py",
+      "layer": "rules",
+      "owning_subsystem": "continuous_effects",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/evoke.py",
       "layer": "rules",
       "owning_subsystem": "legacy_rules",
@@ -13355,5 +13369,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "a24ce91985ba040d0b74a4e62ef15e421a9977e521dd486af3732df359794fa4"
+  "fingerprint": "77ff82f863683f753f7fc961c39def820b9d09b7635cfb7d17ebe327f48a58d2"
 }

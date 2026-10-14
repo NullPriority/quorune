@@ -870,7 +870,8 @@
         "quorune/compiler/public_characteristic_aggregates.py",
         "quorune/compiler/event_player_results.py",
         "quorune/rules/event_player_result_shapes.py",
-        "quorune/compiler/event_counter_results.py"
+        "quorune/compiler/event_counter_results.py",
+        "quorune/event_counter_reference.py"
       ],
       "test_modules": [
         "test_scalar_effect_amounts",

@@ -142,12 +142,10 @@ def resolve_semantic_value(
         ):
             return None
         return source.ref
-    if value=='$event.entry_object':
-        reference=item.context.get('card');identity=item.context.get('card_object_identity')
-        if type(reference) is not str or type(identity) is not str or not identity:
-            raise SemanticNodeError('Entry event object identity is unavailable')
-        card=next((card for card in host.state.cards.values() if card.ref==reference),None)
-        return card.ref if card is not None and card.zone=='battlefield' and not card.phased_out and card.logical_object_id==identity else None
+    if value in {'$event.entry_object','$event.counter_object'}:
+        from ..event_counter_reference import resolve_entry_event_counter_recipient,resolve_event_counter_recipient
+        try:return (resolve_entry_event_counter_recipient if value=='$event.entry_object' else resolve_event_counter_recipient)(host,item)
+        except ValueError as exc:raise SemanticNodeError(str(exc)) from exc
     if value == "$source.transform_count":
         count = getattr(item, "context", {}).get("source_transform_count")
         if type(count) is not int or count < 0:

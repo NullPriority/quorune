@@ -44,6 +44,38 @@ def scalar_record(text: str, *, type_line: str = "Creature — Goblin") -> CardR
 
 
 class ScalarEffectAmountCompilerTests(unittest.TestCase):
+    def test_action_counter_snapshot_rejects_missing_incarnation_and_reentered_recipient(self):
+        from quorune.event_counter_reference import event_counter_recipient_context,resolve_event_counter_recipient
+        from quorune.rules.capabilities import CapabilityRegistry
+        import json
+        program=SimpleNamespace(effects=({'op':'place_counters','card':'$event.counter_object'},))
+        with self.assertRaises(ValueError):event_counter_recipient_context(program,'damage.dealt',{'card':'body'})
+        snapshot=event_counter_recipient_context(program,'damage.dealt',{'card':'body','source_logical_object_id':'old'})
+        body=SimpleNamespace(ref='body',zone='battlefield',phased_out=False,logical_object_id='new')
+        host=SimpleNamespace(state=SimpleNamespace(cards={'body':body}));item=SimpleNamespace(context=snapshot)
+        self.assertIsNone(resolve_event_counter_recipient(host,item));body.logical_object_id='old'
+        self.assertEqual('body',resolve_event_counter_recipient(host,item))
+        text='Whenever a creature you control attacks, put a +1/+1 counter on it.'
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        next(row for row in raw['capabilities'] if row['id']=='counter.producer.fixed_event_object').update(status='blocked',blockers=['actioncounter authority withdrawn'])
+        self.assertNotEqual('exact',compile_oracle_card(scalar_record(text),capability_registry=CapabilityRegistry(raw)).status)
+        with mock.patch('quorune.compiler.event_counter_results.entry_event_counter_result',return_value=None):
+            self.assertNotEqual('exact',self.compile(text).status)
+
+    def test_public_attack_and_damage_counter_recipient_is_the_occurring_object(self):
+        cases=(
+            ('Whenever a creature you control attacks, put a +1/+1 counter on it.','$event.counter_object'),
+            ('Whenever a Vampire you control deals combat damage to a player, put a +1/+1 counter on it.','$event.counter_object'),
+        )
+        for text,reference in cases:
+            ir=self.compile(text)
+            self.assertEqual('exact',ir.status,ir.material_residuals)
+            self.assertEqual(reference,ir.faces[0].nodes[0].effects[0]['card'])
+            self.assertIsNone(ir.faces[0].nodes[0].target_schema)
+        ir=self.compile('Whenever a creature you control deals combat damage to a player, put that many +1/+1 counters on it.')
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        self.assertEqual('committed_event_amount',ir.faces[0].nodes[0].effects[0]['amount']['origin'])
+
     def test_entry_event_counter_reference_domain_dependency_and_omission_fail_closed(self):
         import json
         from quorune.rules.capabilities import CapabilityRegistry

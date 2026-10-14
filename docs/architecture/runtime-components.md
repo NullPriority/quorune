@@ -97,6 +97,13 @@ reference unavailable, so the existing resolution boundary skips that leaf.
 The observer remains the placement source and never replaces the recipient.
 Aggregate, multiple-event, death and partial-result antecedents stay excluded.
 
+Individual attack and qualifying damage-source counter results use
+`$event.counter_object`. Discovery seals the attack participant or frozen damage
+source identity in a separate event-counter snapshot before collecting observer
+LKI. Resolution uses the same public incarnation check as entry references.
+Fixed counters and committed scalar counts share ordinary counter placement;
+the triggering observer never substitutes for the attacker or damaging source.
+
 ## Lifecycle and participation
 
 1. The compiler or reviewed program emits a versioned component descriptor.

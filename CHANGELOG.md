@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Pin counter recipients from individual attack and damage occurrences, using
+  committed damage amounts where printed.
+
 - Put fixed counters on the sealed entering object incarnation, preserving
   counter recipients through pending trigger departure and re-entry.
 

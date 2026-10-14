@@ -79,7 +79,7 @@ def _base_fixed_counter_placement_node_capabilities(
         if counter_mechanic is not None
         else ()
     )
-    if target_schema is None and effect.get('card')=='$event.entry_object' and 'fixed-entry-event-object-counter' in mechanics:
+    if target_schema is None and effect.get('card') in {'$event.entry_object','$event.counter_object'} and 'fixed-entry-event-object-counter' in mechanics:
         return ('counter.producer.fixed_event_object','counter.producer.fixed_effect',*characteristic_capabilities)
     if target_schema is None and effect.get("card") in ("$source", SOURCE_ZONE_OBJECT):
         return ("counter.producer.fixed_effect", *characteristic_capabilities)

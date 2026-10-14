@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "b885bb934c49ab9328ef158dbecf68fc07c5cf5a7073f013ea921f9747602702",
-  "declaration_source_fingerprint": "47554bc7a51f0e02c751e455036461075645793ab8793c0a36d933f03c6c3f0d",
+  "registry_fingerprint": "94a16533bb1a4bfadf5086a007ac39b6238c3dc5ca7f06170616a2226f352ddb",
+  "declaration_source_fingerprint": "7fb68f8394414d1387e88af69eec8afde1d69211fa9ccbabfcc251fb8eda92c5",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -52696,6 +52696,25 @@
     {
       "capability_id": "counter.producer.fixed_event_object",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_gleam_attacker_and_rakish_damage_source_counter_recipients_replay",
+      "official_rule_ids": [
+        "113.7a",
+        "400.7",
+        "603.6a",
+        "608.2c",
+        "608.2h",
+        "122.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalGleamBattleactualattackputsoneoneachownattacker; RakishHeiractualVampirecombatputsoneonqualifyingdamagingsource andnonVampirecontrolgetsnone; NecropolisRegentactualtwocombatpoints putstwocounterseach. Observergetsnone. Wrongprincipalrollback, privateprojection andpending/fullreplay agree."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_object",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay",
       "official_rule_ids": [
         "113.7a",
@@ -52711,6 +52730,25 @@
         "commander_review"
       ],
       "applicability_note": "OriginalGoodFortuneUnicorn sees actualtrustedflashcreaturecast andputsonecounteronentrant ratherthanobserver. Actualbounce/recastwhilefirsttriggerpendingcreatesanewincarnationwithonefromnewtrigger,firsttriggercannotaddanother; unauthorizedrollback, privacy, pendingload andfullreplay agree."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_object",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_gleam_attacker_and_rakish_damage_source_counter_recipients_replay",
+      "official_rule_ids": [
+        "113.7a",
+        "400.7",
+        "603.6a",
+        "608.2c",
+        "608.2h",
+        "122.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalGleamBattleactualattackputsoneoneachownattacker; RakishHeiractualVampirecombatputsoneonqualifyingdamagingsource andnonVampirecontrolgetsnone; NecropolisRegentactualtwocombatpoints putstwocounterseach. Observergetsnone. Wrongprincipalrollback, privateprojection andpending/fullreplay agree."
     },
     {
       "capability_id": "counter.producer.fixed_event_object",
@@ -52734,6 +52772,25 @@
     {
       "capability_id": "counter.producer.fixed_event_object",
       "evidence_class": "mutation",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_action_counter_snapshot_rejects_missing_incarnation_and_reentered_recipient",
+      "official_rule_ids": [
+        "113.7a",
+        "400.7",
+        "603.6a",
+        "608.2c",
+        "608.2h",
+        "122.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Sealedattackparticipant/frozendamagesourceidentity retainedseparatelyfromobserverLKI; missingidentity/refdomain, reenteredincarnation, withdrawncapability andomittedloweringreject. Committedscalarcounteramount remainsdependent onexisting producer."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_object",
+      "evidence_class": "mutation",
       "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_entry_event_counter_reference_domain_dependency_and_omission_fail_closed",
       "official_rule_ids": [
         "113.7a",
@@ -52749,6 +52806,25 @@
         "commander_review"
       ],
       "applicability_note": "Closedentryeventfixedcounterleaf usessealedincarnation; missingidentity/unsupporteddeath/multievent/partialtail andwithdrawndependenciesreject, old/newincarnationsdistinguished andcompileromissionkilled."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_object",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_gleam_attacker_and_rakish_damage_source_counter_recipients_replay",
+      "official_rule_ids": [
+        "113.7a",
+        "400.7",
+        "603.6a",
+        "608.2c",
+        "608.2h",
+        "122.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalGleamBattleactualattackputsoneoneachownattacker; RakishHeiractualVampirecombatputsoneonqualifyingdamagingsource andnonVampirecontrolgetsnone; NecropolisRegentactualtwocombatpoints putstwocounterseach. Observergetsnone. Wrongprincipalrollback, privateprojection andpending/fullreplay agree."
     },
     {
       "capability_id": "counter.producer.fixed_event_object",
@@ -52772,6 +52848,25 @@
     {
       "capability_id": "counter.producer.fixed_event_object",
       "evidence_class": "negative",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_action_counter_snapshot_rejects_missing_incarnation_and_reentered_recipient",
+      "official_rule_ids": [
+        "113.7a",
+        "400.7",
+        "603.6a",
+        "608.2c",
+        "608.2h",
+        "122.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Sealedattackparticipant/frozendamagesourceidentity retainedseparatelyfromobserverLKI; missingidentity/refdomain, reenteredincarnation, withdrawncapability andomittedloweringreject. Committedscalarcounteramount remainsdependent onexisting producer."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_object",
+      "evidence_class": "negative",
       "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_entry_event_counter_reference_domain_dependency_and_omission_fail_closed",
       "official_rule_ids": [
         "113.7a",
@@ -52787,6 +52882,25 @@
         "commander_review"
       ],
       "applicability_note": "Closedentryeventfixedcounterleaf usessealedincarnation; missingidentity/unsupporteddeath/multievent/partialtail andwithdrawndependenciesreject, old/newincarnationsdistinguished andcompileromissionkilled."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_object",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_gleam_attacker_and_rakish_damage_source_counter_recipients_replay",
+      "official_rule_ids": [
+        "113.7a",
+        "400.7",
+        "603.6a",
+        "608.2c",
+        "608.2h",
+        "122.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalGleamBattleactualattackputsoneoneachownattacker; RakishHeiractualVampirecombatputsoneonqualifyingdamagingsource andnonVampirecontrolgetsnone; NecropolisRegentactualtwocombatpoints putstwocounterseach. Observergetsnone. Wrongprincipalrollback, privateprojection andpending/fullreplay agree."
     },
     {
       "capability_id": "counter.producer.fixed_event_object",
@@ -52828,6 +52942,44 @@
     },
     {
       "capability_id": "counter.producer.fixed_event_object",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_public_attack_and_damage_counter_recipient_is_the_occurring_object",
+      "official_rule_ids": [
+        "113.7a",
+        "400.7",
+        "603.6a",
+        "608.2c",
+        "608.2h",
+        "122.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Sealedattackparticipant/frozendamagesourceidentity retainedseparatelyfromobserverLKI; missingidentity/refdomain, reenteredincarnation, withdrawncapability andomittedloweringreject. Committedscalarcounteramount remainsdependent onexisting producer."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_object",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_gleam_attacker_and_rakish_damage_source_counter_recipients_replay",
+      "official_rule_ids": [
+        "113.7a",
+        "400.7",
+        "603.6a",
+        "608.2c",
+        "608.2h",
+        "122.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalGleamBattleactualattackputsoneoneachownattacker; RakishHeiractualVampirecombatputsoneonqualifyingdamagingsource andnonVampirecontrolgetsnone; NecropolisRegentactualtwocombatpoints putstwocounterseach. Observergetsnone. Wrongprincipalrollback, privateprojection andpending/fullreplay agree."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_object",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay",
       "official_rule_ids": [
@@ -52844,6 +52996,25 @@
         "commander_review"
       ],
       "applicability_note": "OriginalGoodFortuneUnicorn sees actualtrustedflashcreaturecast andputsonecounteronentrant ratherthanobserver. Actualbounce/recastwhilefirsttriggerpendingcreatesanewincarnationwithonefromnewtrigger,firsttriggercannotaddanother; unauthorizedrollback, privacy, pendingload andfullreplay agree."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_object",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_gleam_attacker_and_rakish_damage_source_counter_recipients_replay",
+      "official_rule_ids": [
+        "113.7a",
+        "400.7",
+        "603.6a",
+        "608.2c",
+        "608.2h",
+        "122.1"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalGleamBattleactualattackputsoneoneachownattacker; RakishHeiractualVampirecombatputsoneonqualifyingdamagingsource andnonVampirecontrolgetsnone; NecropolisRegentactualtwocombatpoints putstwocounterseach. Observergetsnone. Wrongprincipalrollback, privateprojection andpending/fullreplay agree."
     },
     {
       "capability_id": "counter.producer.fixed_event_object",
@@ -129324,5 +129495,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "4f24d56d981811c87e4ba88c6aa98e9c0f60250d30c83aa6dc91c2e5b2ab0c58"
+  "fingerprint": "cfbc30a26ab08ff4d126edcb2e772c7f2575ecc68e6422c8a624fe3eea3f60ab"
 }

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 266,
+  "registry_version": 267,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -240,7 +240,7 @@
   "capabilities": [
     {
       "id": "counter.producer.fixed_event_object",
-      "version": 1,
+      "version": 2,
       "official_rules": [
         "113.7a",
         "400.7",
@@ -255,11 +255,11 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Complete fixed counter leaf for one sealed entering permanent incarnation without selecting a target.",
+        "summary": "Complete fixed or committed-scalar counter leaf for one sealed entering, individual attacking or qualifying damaging permanent incarnation.",
         "inputs": [
-          "oneobjectentrybinding",
-          "sealedcardrefandcard_object_identity",
-          "closedexistingfixedcounterleaf"
+          "oneobjectentry/individualattack/qualifieddamagesourcebinding",
+          "sealedpublicoccurrencerefandincarnation",
+          "closedexistingcounterleafandoptionalcommittedamount"
         ],
         "outputs": [
           "existingcounterintentoneventobjectifsamepublicincarnationremains"
@@ -276,8 +276,10 @@
       ],
       "implementation_components": [
         "quorune.compiler.event_counter_results.entry_event_counter_result",
-        "quorune.semantic_runtime.values.resolve_semantic_value",
-        "quorune.rules.counter_placement_capability_shapes.fixed_counter_placement_node_capabilities"
+        "quorune.event_counter_reference.event_counter_recipient_context",
+        "quorune.event_counter_reference.resolve_event_counter_recipient",
+        "quorune.rules.counter_placement_capability_shapes.fixed_counter_placement_node_capabilities",
+        "quorune.semantic_runtime.values.resolve_semantic_value"
       ],
       "required_evidence": [
         "positive",
@@ -295,22 +297,30 @@
       "status": "trusted",
       "positive_tests": [
         "test_entry_event_counter_result_uses_entering_incarnation_without_a_target",
-        "test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay"
+        "test_original_gleam_attacker_and_rakish_damage_source_counter_recipients_replay",
+        "test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay",
+        "test_public_attack_and_damage_counter_recipient_is_the_occurring_object"
       ],
       "negative_tests": [
+        "test_action_counter_snapshot_rejects_missing_incarnation_and_reentered_recipient",
         "test_entry_event_counter_reference_domain_dependency_and_omission_fail_closed",
+        "test_original_gleam_attacker_and_rakish_damage_source_counter_recipients_replay",
         "test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay"
       ],
       "interaction_tests": [
+        "test_original_gleam_attacker_and_rakish_damage_source_counter_recipients_replay",
         "test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay"
       ],
       "multiplayer_tests": [
+        "test_original_gleam_attacker_and_rakish_damage_source_counter_recipients_replay",
         "test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay"
       ],
       "privacy_tests": [
+        "test_original_gleam_attacker_and_rakish_damage_source_counter_recipients_replay",
         "test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay"
       ],
       "replay_tests": [
+        "test_original_gleam_attacker_and_rakish_damage_source_counter_recipients_replay",
         "test_original_unicorn_counter_entry_recipient_and_pending_bounce_reentry_replay"
       ]
     },

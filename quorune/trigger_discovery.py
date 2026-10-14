@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .event_counter_reference import event_counter_recipient_context
 from .entry_copy import copiable_oracle_id
 
 import copy
@@ -972,6 +973,7 @@ def _semantic_trigger_context(
     stack_context = {
         "event": event,
         **copy.deepcopy(dict(context)),
+        **event_counter_recipient_context(program,event,context),
         **_trigger_attachment_context(host, source, program),
         "source_zone": active_zone,
         "intervening_condition": (
