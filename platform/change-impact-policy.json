@@ -275,7 +275,10 @@
         "test_card_program_trust",
         "test_untap_step_rules",
         "test_typed_untap_step_participation",
-        "test_typed_activated_ability_catalog"
+        "test_typed_activated_ability_catalog",
+        "test_scalar_effect_amounts",
+        "test_fixed_public_state_characteristics",
+        "test_fixed_activated_zone_change_costs"
       ],
       "browser_focuses": [
         "mana-action"
@@ -552,6 +555,11 @@
         "capability-evidence",
         "card-unlock-frontier",
         "reusable-pieces"
+      ],
+      "test_modules": [
+        "test_scalar_effect_amounts",
+        "test_fixed_public_state_characteristics",
+        "test_fixed_activated_zone_change_costs"
       ]
     },
     {
@@ -614,6 +622,11 @@
         "capability-evidence",
         "card-unlock-frontier",
         "reusable-pieces"
+      ],
+      "test_modules": [
+        "test_scalar_effect_amounts",
+        "test_fixed_public_state_characteristics",
+        "test_fixed_activated_zone_change_costs"
       ]
     },
     {
@@ -1757,7 +1770,10 @@
         "test_high_risk_interaction_assurance",
         "test_mana_abilities",
         "test_public_activation_conditions",
-        "test_rules_scheduler"
+        "test_rules_scheduler",
+        "test_scalar_effect_amounts",
+        "test_fixed_public_state_characteristics",
+        "test_fixed_activated_zone_change_costs"
       ],
       "test_suites": [
         "casting-costs-mana",
@@ -1869,7 +1885,10 @@
       "test_modules": [
         "test_fixed_mana_abilities",
         "test_fixed_source_characteristic_effects",
-        "test_fixed_token_production"
+        "test_fixed_token_production",
+        "test_scalar_effect_amounts",
+        "test_fixed_public_state_characteristics",
+        "test_fixed_activated_zone_change_costs"
       ]
     },
     {
@@ -3236,6 +3255,11 @@
       ],
       "browser_focuses": [
         "mana-action"
+      ],
+      "test_modules": [
+        "test_scalar_effect_amounts",
+        "test_fixed_public_state_characteristics",
+        "test_fixed_activated_zone_change_costs"
       ]
     },
     {

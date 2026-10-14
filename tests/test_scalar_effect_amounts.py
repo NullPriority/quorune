@@ -44,6 +44,43 @@ def scalar_record(text: str, *, type_line: str = "Creature — Goblin") -> CardR
 
 
 class ScalarEffectAmountCompilerTests(unittest.TestCase):
+    def test_selected_mana_sacrifice_codec_capabilities_and_result_boundaries_fail_closed(self):
+        import json
+        from quorune.fixed_mana_abilities import FixedActivatedManaAbilitySpec
+        from quorune.semantic_runtime.mana_abilities import FixedManaSelectedCostAbilityHandler
+        from quorune.rules.capabilities import CapabilityRegistry
+        text='Sacrifice a creature: Add one mana of any color.'
+        ir=self.compile(text,type_line='Artifact');descriptor=ir.faces[0].nodes[0].handlers[0]
+        handler=FixedManaSelectedCostAbilityHandler();spec=handler.validate(descriptor)
+        self.assertEqual(spec,FixedActivatedManaAbilitySpec.from_dict(spec.to_dict()))
+        self.assertEqual(spec.choices,spec.to_activated_ability().choices)
+        for altered in ({**descriptor,'schema_version':True},{**descriptor,'schema_version':1},
+            {**descriptor,'ability':{**descriptor['ability'],'choices':{}}},
+            {**descriptor,'ability':{**descriptor['ability'],'choices':[{'kind':'random'}]}}):
+            with self.assertRaises(ValueError):handler.validate(altered)
+        for body in ('Sacrifice two creatures: Add one mana of any color.',
+            'Discard a card at random: Add one mana of any color.',
+            'Sacrifice a creature: Add {G}. This artifact deals 1 damage to you.'):
+            self.assertNotEqual('exact',self.compile(body,type_line='Artifact').status)
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        next(row for row in raw['capabilities'] if row['id']=='activation.selected_zone_change.fixed').update(status='blocked',blockers=['selectedmanacostwithdrawn'])
+        self.assertNotEqual('exact',compile_oracle_card(scalar_record(text,type_line='Artifact'),capability_registry=CapabilityRegistry(raw)).status)
+        with mock.patch('quorune.compiler.activated_mana_nodes.fixed_activated_zone_change_cost',side_effect=lambda ability:ability):
+            self.assertNotEqual('exact',self.compile(text,type_line='Artifact').status)
+
+    def test_fixed_mana_sacrifice_choice_retains_typed_cost_and_modes(self):
+        text='Sacrifice a creature: Add one mana of any color.'
+        ir=self.compile(text,type_line='Artifact')
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        node=ir.faces[0].nodes[0];descriptor=node.handlers[0]
+        self.assertEqual(3,descriptor['schema_version'])
+        self.assertEqual('sacrifice_one',descriptor['ability']['choices'][0]['kind'])
+        self.assertEqual(5,len(descriptor['ability']['modes']))
+        self.assertIn('activation.selected_zone_change.fixed',node.capability_dependencies)
+        ir=self.compile('Sacrifice a creature: Add {C}{C}.',type_line='Artifact')
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        self.assertEqual(1,len(ir.faces[0].nodes[0].handlers[0]['ability']['modes']))
+
     def test_combat_counter_set_query_rejects_unrepresented_state_combinations(self):
         import json
         from quorune.rules.capabilities import CapabilityRegistry

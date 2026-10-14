@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Produce fixed mana through one typed selected sacrifice cost, sharing
+  activation legality, atomic payment and chosen output with ordinary mana abilities.
+
 - Place fixed counters on current attacking or blocking creature sets through
   the shared live public-state query.
 

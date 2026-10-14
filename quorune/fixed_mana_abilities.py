@@ -33,6 +33,7 @@ MANA_KEYS = ("W", "U", "B", "R", "G", "C")
 MANA_COST_KEYS = ("GENERIC", *MANA_KEYS)
 FIXED_MANA_HANDLER_ID = "ability.activated.mana.fixed-output.v1"
 FIXED_MANA_RESULT_HANDLER_ID = 'ability.activated.mana.fixed-result.v2'
+FIXED_MANA_SELECTED_COST_HANDLER_ID='ability.activated.mana.selected-cost.v3'
 _ABILITY_ID = re.compile(r"^ab[1-9][0-9]*$")
 _SYMBOL_GROUP = re.compile(r"(?:\{[WUBRGC]\})+")
 _ANY_COLOR = re.compile(
@@ -160,8 +161,19 @@ class FixedActivatedManaAbilitySpec:
     activation_conditions: tuple[ActivationCondition, ...] = ()
     source_counter_removal_cost: SourceCounterRemovalCost | None = None
     result: FixedManaResultSpec | None = None
+    choices: tuple[Any,...] = ()
+
+    def _validate_choices(self):
+        if not isinstance(self.choices,tuple):raise FixedManaAbilityError('Fixed mana choices must be immutable')
+        if not self.choices:return
+        from .abilities import CostChoice
+        if (not isinstance(self.choices,tuple) or len(self.choices)!=1 or not isinstance(self.choices[0],CostChoice)
+                or self.choices[0].kind!='sacrifice_one' or self.choices[0].count!=1
+                or self.choices[0].fixed_zone_change_cost() is None or self.result is not None):
+            raise FixedManaAbilityError('Selected fixed mana requires one closed sacrifice cost and no result rider')
 
     def __post_init__(self) -> None:
+        self._validate_choices()
         if self.result is not None and not isinstance(self.result,FixedManaResultSpec):
             raise FixedManaAbilityError('Fixed mana result must be typed or absent')
         if self.result is not None and self.sacrifice_source:
@@ -267,6 +279,7 @@ class FixedActivatedManaAbilitySpec:
         }
         if self.result is not None:
             value['result']=self.result.to_dict()
+        if self.choices:value['choices']=[choice.to_dict() for choice in self.choices]
         if self.activation_limit is not None:
             value["activation_limit"] = self.activation_limit.value
         if self.activation_conditions:
@@ -285,6 +298,7 @@ class FixedActivatedManaAbilitySpec:
     def from_dict(
         cls, value: Mapping[str, Any]
     ) -> "FixedActivatedManaAbilitySpec":
+        from .abilities import CostChoice
         expected = {
             "ability_id",
             "line_index",
@@ -307,11 +321,14 @@ class FixedActivatedManaAbilitySpec:
             expected.add("source_counter_removal_cost")
         if 'result' in value:
             expected.add('result')
+        if 'choices' in value:expected.add('choices')
         _exact_fields(value, expected, field="fixed mana ability")
         mana_cost = value["mana_cost"]
         modes = value["modes"]
         activation_conditions = value.get("activation_conditions", [])
         raw_source_counter_cost = value.get("source_counter_removal_cost")
+        raw_choices=value.get('choices',[])
+        if not isinstance(raw_choices,list) or 'choices' in value and not raw_choices:raise FixedManaAbilityError('Fixed mana choices must be a nonempty array when declared')
         if not isinstance(mana_cost, Mapping):
             raise FixedManaAbilityError("Fixed mana activation cost must be an object")
         if not isinstance(modes, list) or any(
@@ -365,6 +382,7 @@ class FixedActivatedManaAbilitySpec:
                 )
             ),
             result=FixedManaResultSpec.from_dict(value['result']) if 'result' in value else None,
+            choices=tuple(CostChoice.from_dict(choice) for choice in raw_choices),
         )
 
     def to_activated_ability(self) -> Any:
@@ -388,6 +406,7 @@ class FixedActivatedManaAbilitySpec:
             activation_conditions=self.activation_conditions,
             source_counter_removal_cost=self.source_counter_removal_cost,
             fixed_mana_result=self.result,
+            choices=self.choices,
         )
 
 
@@ -556,14 +575,15 @@ def compile_fixed_activated_mana_ability(
         or ability.exile_source
         or ability.energy_payment
         or ability.loyalty_delta is not None
-        or ability.choices
+        or (ability.choices and (len(ability.choices)!=1 or ability.choices[0].kind!='sacrifice_one'
+            or ability.choices[0].count!=1 or ability.choices[0].fixed_zone_change_cost() is None))
         or ability.uncompiled_costs
         or ability.sorcery_speed
         or ability.generic_reduction_per_legendary_creature
         or (ability.builtin_semantic_key is not None and not (
             result is not None and result.kind=='damage_controller'
             and ability.builtin_semantic_key==f'builtin:mana-result-damage-controller:{result.amount}'))
-        or (result is not None and ability.sacrifice_source)
+        or (result is not None and (ability.sacrifice_source or ability.choices))
         or ability.target_schema is not None
         or ability.crew_threshold is not None
         or not _supported_activation_constraints(ability)
@@ -587,6 +607,7 @@ def compile_fixed_activated_mana_ability(
         activation_conditions=tuple(ability.activation_conditions),
         source_counter_removal_cost=ability.source_counter_removal_cost,
         result=result,
+        choices=tuple(ability.choices),
     )
 
 
@@ -594,8 +615,8 @@ def fixed_mana_handler_descriptor(
     spec: FixedActivatedManaAbilitySpec,
 ) -> dict[str, Any]:
     return {
-        "handler_id": FIXED_MANA_RESULT_HANDLER_ID if spec.result is not None else FIXED_MANA_HANDLER_ID,
-        "schema_version": 2 if spec.result is not None else 1,
+        "handler_id": FIXED_MANA_SELECTED_COST_HANDLER_ID if spec.choices else FIXED_MANA_RESULT_HANDLER_ID if spec.result is not None else FIXED_MANA_HANDLER_ID,
+        "schema_version": 3 if spec.choices else 2 if spec.result is not None else 1,
         "event": "activate",
         "ability": spec.to_dict(),
     }

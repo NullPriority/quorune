@@ -545,7 +545,7 @@ class FixedManaCompilerTests(unittest.TestCase):
             "Exile a card from your graveyard: Add {B}.",
             "{Q}: Add {U}.",
             "Remove a counter from this artifact: Add {C}.",
-            "Sacrifice a creature: Add {C}{C}.",
+            "Sacrifice two creatures: Add {C}{C}.",
         ):
             with self.subTest(text=text):
                 ir = compile_oracle_card(

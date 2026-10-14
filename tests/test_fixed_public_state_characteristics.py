@@ -2957,6 +2957,38 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
 
 
 class AdditionalConditionalModifierRuntimeTests(unittest.TestCase):
+    def test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays(self):
+        session=self.session(3633001);engine=session.engine
+        source=self.add(engine,'Phyrexian Altar',zone='hand',ref='selected-mana-altar')
+        fodder=self.add(engine,'Generic Bound Body',ref='selected-mana-own-body')
+        foreign=self.add(engine,'Generic Bound Body',seat='B',ref='selected-mana-foreign-body')
+        spell=self.add(engine,'Essence Harvest',zone='hand',ref='selected-mana-life-spell')
+        self.assert_whole_admission(source.printed_name)
+        offered=self.ready(session,source,{'C':5})
+        self.checkpoint(session)
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
+        while session.state.priority_player!='A':self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        offered=next(row for row in actions if row['id'].startswith('activate:'+source.ref+':'))
+        before=session.state.to_dict()
+        for principal,cost in (('pilot:C',fodder.ref),('pilot:A',foreign.ref),('pilot:A',source.ref)):
+            denied=session.act(principal,{'action_id':offered['id'],'cost_cards':[cost],'mana_output':{'B':1}})
+            self.assertFalse(denied.ok);self.assertEqual(before,session.state.to_dict())
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'cost_cards':[fodder.ref],'mana_output':{'B':1}})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.assertEqual('graveyard',session.state.cards[fodder.object_id].zone)
+        self.assertEqual('battlefield',session.state.cards[foreign.object_id].zone)
+        self.assertEqual(1,session.state.players['A'].mana_pool['B']);self.assertFalse(session.state.stack)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        cast=next(row for row in actions if row.get('card')==spell.ref)
+        accepted=session.act('pilot:A',{'action_id':cast['id'],'targets':['B'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary);self.replay(session,load=True);self.resolve(session)
+        self.assertEqual(0,session.state.players['A'].mana_pool.get('B',0))
+        self.assertEqual('graveyard',session.state.cards[spell.object_id].zone)
+        for seat in 'BCD':self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+        self.replay(session)
+
     def test_original_fangren_and_fumes_current_attacking_counter_sets_replay(self):
         from quorune.model import CombatState
         session=self.session(3632901);engine=session.engine

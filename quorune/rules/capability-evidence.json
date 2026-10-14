@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "47b667e5a8ed6afcac51f601ffb6bb643626ec8a4c1dce65ef3ee1ba63ee4ad1",
-  "declaration_source_fingerprint": "923a929f3651464beeb25d6e3e78d350a12bcaa66e8f6ff7fce60a24dfe538ca",
+  "registry_fingerprint": "312b9e050f5fec9169311ccf6bae5dfaffb9130ce777a2608d2e527235b1d6b5",
+  "declaration_source_fingerprint": "735168ae36345dbdf96ddf09a5e83ba86e257496eadf6dacdf4c710ed0f65abe",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -4119,6 +4119,28 @@
     },
     {
       "capability_id": "activation.selected_zone_change.fixed",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalPhyrexianAltar iscast. Actualactivationselectsowncreatureas sacrificeand addsselectedblackmana immediatelywithoutstack. Foreignprincipal/foreignbody/wrongtype reject atomically; producedmanapaysactualEssenceHarvest, privateprojection andpending/fullreplay agree."
+    },
+    {
+      "capability_id": "activation.selected_zone_change.fixed",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_counted_activation_costs.CountedActivationActionTests.test_counted_sacrifice_replacements_suspend_whole_cost_load_and_resume_once",
       "official_rule_ids": [
@@ -4207,6 +4229,28 @@
     },
     {
       "capability_id": "activation.selected_zone_change.fixed",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalPhyrexianAltar iscast. Actualactivationselectsowncreatureas sacrificeand addsselectedblackmana immediatelywithoutstack. Foreignprincipal/foreignbody/wrongtype reject atomically; producedmanapaysactualEssenceHarvest, privateprojection andpending/fullreplay agree."
+    },
+    {
+      "capability_id": "activation.selected_zone_change.fixed",
       "evidence_class": "mutation",
       "test_id": "tests.test_counted_activation_costs.CountedActivationActionTests.test_counted_cost_sequential_movement_mutant_is_killed",
       "official_rule_ids": [
@@ -4270,6 +4314,28 @@
         "commander_review"
       ],
       "applicability_note": "Remove the shared selected-cost specialization and require the source-spanned exact compiler witness to kill the survivor."
+    },
+    {
+      "capability_id": "activation.selected_zone_change.fixed",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_selected_mana_sacrifice_codec_capabilities_and_result_boundaries_fail_closed",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Version3fixedmana descriptorretainsonecanonical selectedsacrifice choice andclosedoutputmodes. V1/V2ridersretained; wrongversion/bool/count/array/fields/unknowncost reject, missingselectedcostauthority blockswholeadmissionandcostcompileromissionkilled."
     },
     {
       "capability_id": "activation.selected_zone_change.fixed",
@@ -4424,6 +4490,50 @@
         "commander_review"
       ],
       "applicability_note": "Reject an opponent-controlled or otherwise ineligible cost object atomically through the same typed query advertised by the offer."
+    },
+    {
+      "capability_id": "activation.selected_zone_change.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalPhyrexianAltar iscast. Actualactivationselectsowncreatureas sacrificeand addsselectedblackmana immediatelywithoutstack. Foreignprincipal/foreignbody/wrongtype reject atomically; producedmanapaysactualEssenceHarvest, privateprojection andpending/fullreplay agree."
+    },
+    {
+      "capability_id": "activation.selected_zone_change.fixed",
+      "evidence_class": "negative",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_selected_mana_sacrifice_codec_capabilities_and_result_boundaries_fail_closed",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Version3fixedmana descriptorretainsonecanonical selectedsacrifice choice andclosedoutputmodes. V1/V2ridersretained; wrongversion/bool/count/array/fields/unknowncost reject, missingselectedcostauthority blockswholeadmissionandcostcompileromissionkilled."
     },
     {
       "capability_id": "activation.selected_zone_change.fixed",
@@ -4625,6 +4735,50 @@
     },
     {
       "capability_id": "activation.selected_zone_change.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalPhyrexianAltar iscast. Actualactivationselectsowncreatureas sacrificeand addsselectedblackmana immediatelywithoutstack. Foreignprincipal/foreignbody/wrongtype reject atomically; producedmanapaysactualEssenceHarvest, privateprojection andpending/fullreplay agree."
+    },
+    {
+      "capability_id": "activation.selected_zone_change.fixed",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_fixed_mana_sacrifice_choice_retains_typed_cost_and_modes",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Version3fixedmana descriptorretainsonecanonical selectedsacrifice choice andclosedoutputmodes. V1/V2ridersretained; wrongversion/bool/count/array/fields/unknowncost reject, missingselectedcostauthority blockswholeadmissionandcostcompileromissionkilled."
+    },
+    {
+      "capability_id": "activation.selected_zone_change.fixed",
       "evidence_class": "privacy",
       "test_id": "tests.test_counted_activation_costs.CountedActivationActionTests.test_counted_discard_activation_is_private_complete_and_replays",
       "official_rule_ids": [
@@ -4666,6 +4820,28 @@
         "commander_review"
       ],
       "applicability_note": "Project the selected-object replacement continuation only to the activator while keeping it absent from all other pilots."
+    },
+    {
+      "capability_id": "activation.selected_zone_change.fixed",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalPhyrexianAltar iscast. Actualactivationselectsowncreatureas sacrificeand addsselectedblackmana immediatelywithoutstack. Foreignprincipal/foreignbody/wrongtype reject atomically; producedmanapaysactualEssenceHarvest, privateprojection andpending/fullreplay agree."
     },
     {
       "capability_id": "activation.selected_zone_change.fixed",
@@ -4798,6 +4974,28 @@
         "commander_review"
       ],
       "applicability_note": "Replay the replacement-resolved selected cost and resumed activation to the exact authoritative state hash."
+    },
+    {
+      "capability_id": "activation.selected_zone_change.fixed",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
+      "official_rule_ids": [
+        "400.2",
+        "400.7",
+        "602.2",
+        "602.2b",
+        "614.1",
+        "616.1",
+        "701.9a",
+        "701.13a",
+        "701.21a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalPhyrexianAltar iscast. Actualactivationselectsowncreatureas sacrificeand addsselectedblackmana immediatelywithoutstack. Foreignprincipal/foreignbody/wrongtype reject atomically; producedmanapaysactualEssenceHarvest, privateprojection andpending/fullreplay agree."
     },
     {
       "capability_id": "activation.selected_zone_change.fixed",
@@ -76792,6 +76990,25 @@
     },
     {
       "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalPhyrexianAltar iscast. Actualactivationselectsowncreatureas sacrificeand addsselectedblackmana immediatelywithoutstack. Foreignprincipal/foreignbody/wrongtype reject atomically; producedmanapaysactualEssenceHarvest, privateprojection andpending/fullreplay agree."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_mana_abilities.FixedManaRuntimeTests.test_compiled_fixed_output_is_controller_scoped_in_four_player_game",
       "official_rule_ids": [
@@ -76811,6 +77028,25 @@
     },
     {
       "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalPhyrexianAltar iscast. Actualactivationselectsowncreatureas sacrificeand addsselectedblackmana immediatelywithoutstack. Foreignprincipal/foreignbody/wrongtype reject atomically; producedmanapaysactualEssenceHarvest, privateprojection andpending/fullreplay agree."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
       "evidence_class": "mutation",
       "test_id": "tests.test_fixed_mana_abilities.FixedManaCompilerTests.test_fixed_output_mana_mode_mutants_are_killed",
       "official_rule_ids": [
@@ -76827,6 +77063,25 @@
         "commander_review"
       ],
       "applicability_note": "Kill omission, widening, or color swapping in a compiled alternative output mode."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_selected_mana_sacrifice_codec_capabilities_and_result_boundaries_fail_closed",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Version3fixedmana descriptorretainsonecanonical selectedsacrifice choice andclosedoutputmodes. V1/V2ridersretained; wrongversion/bool/count/array/fields/unknowncost reject, missingselectedcostauthority blockswholeadmissionandcostcompileromissionkilled."
     },
     {
       "capability_id": "mana.activated.fixed_output",
@@ -76944,6 +77199,44 @@
     },
     {
       "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalPhyrexianAltar iscast. Actualactivationselectsowncreatureas sacrificeand addsselectedblackmana immediatelywithoutstack. Foreignprincipal/foreignbody/wrongtype reject atomically; producedmanapaysactualEssenceHarvest, privateprojection andpending/fullreplay agree."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "negative",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_selected_mana_sacrifice_codec_capabilities_and_result_boundaries_fail_closed",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Version3fixedmana descriptorretainsonecanonical selectedsacrifice choice andclosedoutputmodes. V1/V2ridersretained; wrongversion/bool/count/array/fields/unknowncost reject, missingselectedcostauthority blockswholeadmissionandcostcompileromissionkilled."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
       "evidence_class": "positive",
       "test_id": "tests.test_fixed_mana_abilities.FixedManaCompilerTests.test_fixed_output_compiler_lowers_source_spanned_cardprogram",
       "official_rule_ids": [
@@ -77039,6 +77332,44 @@
     },
     {
       "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalPhyrexianAltar iscast. Actualactivationselectsowncreatureas sacrificeand addsselectedblackmana immediatelywithoutstack. Foreignprincipal/foreignbody/wrongtype reject atomically; producedmanapaysactualEssenceHarvest, privateprojection andpending/fullreplay agree."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "positive",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_fixed_mana_sacrifice_choice_retains_typed_cost_and_modes",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Version3fixedmana descriptorretainsonecanonical selectedsacrifice choice andclosedoutputmodes. V1/V2ridersretained; wrongversion/bool/count/array/fields/unknowncost reject, missingselectedcostauthority blockswholeadmissionandcostcompileromissionkilled."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
       "evidence_class": "privacy",
       "test_id": "tests.test_fixed_mana_abilities.FixedManaRuntimeTests.test_compiled_fixed_output_projection_exposes_no_hidden_cards",
       "official_rule_ids": [
@@ -77055,6 +77386,25 @@
         "commander_review"
       ],
       "applicability_note": "Project the public mana source and legal action without exposing an opposing hand object."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalPhyrexianAltar iscast. Actualactivationselectsowncreatureas sacrificeand addsselectedblackmana immediatelywithoutstack. Foreignprincipal/foreignbody/wrongtype reject atomically; producedmanapaysactualEssenceHarvest, privateprojection andpending/fullreplay agree."
     },
     {
       "capability_id": "mana.activated.fixed_output",
@@ -77093,6 +77443,25 @@
         "commander_review"
       ],
       "applicability_note": "Replay the exact activation command and typed fixed mana result from the initial checkpoint."
+    },
+    {
+      "capability_id": "mana.activated.fixed_output",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
+      "official_rule_ids": [
+        "106.1",
+        "106.4",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalPhyrexianAltar iscast. Actualactivationselectsowncreatureas sacrificeand addsselectedblackmana immediatelywithoutstack. Foreignprincipal/foreignbody/wrongtype reject atomically; producedmanapaysactualEssenceHarvest, privateprojection andpending/fullreplay agree."
     },
     {
       "capability_id": "mana.activated.fixed_result",
@@ -129900,5 +130269,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "7dcfc56c964682fe2a5ed7c01d267d60bf50a3aa30b72956e24ec685b7fc21e2"
+  "fingerprint": "c56d2dfdf572726e6ab056b4869bee8cc6ce6f2f019e01484e8c5a07221b4c11"
 }

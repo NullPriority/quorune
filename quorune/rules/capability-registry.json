@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 269,
+  "registry_version": 270,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -1872,7 +1872,7 @@
     },
     {
       "id": "activation.selected_zone_change.fixed",
-      "version": 3,
+      "version": 4,
       "official_rules": [
         "400.2",
         "400.7",
@@ -1942,45 +1942,53 @@
         "quorune.rules.activation.commit._pay_selected_object_costs"
       ],
       "positive_tests": [
-        "test_fixed_selected_zone_change_costs_compile_source_spanned",
-        "test_fixed_selected_sacrifice_predicates_compile_closed_queries",
-        "test_fixed_selected_graveyard_exile_cost_resolves",
-        "test_nontoken_cost_excludes_matching_token",
-        "test_unqualified_graveyard_exile_uses_owner",
         "test_fixed_counted_costs_preserve_query_count_and_siblings",
+        "test_fixed_mana_sacrifice_choice_retains_typed_cost_and_modes",
+        "test_fixed_selected_graveyard_exile_cost_resolves",
+        "test_fixed_selected_sacrifice_predicates_compile_closed_queries",
+        "test_fixed_selected_zone_change_costs_compile_source_spanned",
+        "test_nontoken_cost_excludes_matching_token",
+        "test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
+        "test_real_goblin_warrens_sacrifices_one_simultaneous_controlled_set",
         "test_real_lavamancer_full_graveyard_payment_and_action_rollback_replay",
-        "test_real_goblin_warrens_sacrifices_one_simultaneous_controlled_set"
+        "test_unqualified_graveyard_exile_uses_owner"
       ],
       "negative_tests": [
-        "test_zone_change_cost_grammar_rejects_unbounded_variants",
         "test_activation_zone_change_costs_exclude_mana_abilities",
-        "test_source_zone_cost_rejects_inconsistent_descriptor",
-        "test_selected_zone_cost_offer_and_command_share_candidates",
+        "test_counted_cost_compiler_and_dependency_mutants_fail_closed",
         "test_counted_cost_rejects_open_qualities_partial_groups_and_unknown_counts",
         "test_counted_replacement_sequence_rejects_unselected_objects_and_open_fields",
-        "test_counted_cost_compiler_and_dependency_mutants_fail_closed"
+        "test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
+        "test_selected_mana_sacrifice_codec_capabilities_and_result_boundaries_fail_closed",
+        "test_selected_zone_cost_offer_and_command_share_candidates",
+        "test_source_zone_cost_rejects_inconsistent_descriptor",
+        "test_zone_change_cost_grammar_rejects_unbounded_variants"
       ],
       "interaction_tests": [
+        "test_counted_sacrifice_replacements_suspend_whole_cost_load_and_resume_once",
+        "test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
         "test_selected_zone_cost_offer_and_command_share_candidates",
-        "test_selected_zone_cost_uses_current_effective_characteristics",
         "test_selected_zone_cost_replacement_is_private_and_replays",
-        "test_counted_sacrifice_replacements_suspend_whole_cost_load_and_resume_once"
+        "test_selected_zone_cost_uses_current_effective_characteristics"
       ],
       "multiplayer_tests": [
-        "test_selected_zone_cost_replacement_is_private_and_replays",
+        "test_counted_sacrifice_replacements_suspend_whole_cost_load_and_resume_once",
+        "test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
         "test_real_lavamancer_full_graveyard_payment_and_action_rollback_replay",
-        "test_counted_sacrifice_replacements_suspend_whole_cost_load_and_resume_once"
+        "test_selected_zone_cost_replacement_is_private_and_replays"
       ],
       "privacy_tests": [
-        "test_selected_zone_cost_replacement_is_private_and_replays",
-        "test_counted_discard_activation_is_private_complete_and_replays"
+        "test_counted_discard_activation_is_private_complete_and_replays",
+        "test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
+        "test_selected_zone_cost_replacement_is_private_and_replays"
       ],
       "replay_tests": [
-        "test_selected_zone_cost_replacement_is_private_and_replays",
-        "test_real_lavamancer_full_graveyard_payment_and_action_rollback_replay",
-        "test_real_goblin_warrens_sacrifices_one_simultaneous_controlled_set",
         "test_counted_discard_activation_is_private_complete_and_replays",
-        "test_counted_sacrifice_replacements_suspend_whole_cost_load_and_resume_once"
+        "test_counted_sacrifice_replacements_suspend_whole_cost_load_and_resume_once",
+        "test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
+        "test_real_goblin_warrens_sacrifices_one_simultaneous_controlled_set",
+        "test_real_lavamancer_full_graveyard_payment_and_action_rollback_replay",
+        "test_selected_zone_cost_replacement_is_private_and_replays"
       ],
       "required_evidence": [
         "positive",
@@ -10064,24 +10072,97 @@
     },
     {
       "id": "mana.activated.fixed_output",
-      "version": 1,
-      "official_rules": ["106.1", "106.4", "605.1a", "605.2", "605.3a", "605.3b"],
-      "supported_profiles": ["traditional", "commander_duel", "commander_review"],
+      "version": 2,
+      "official_rules": [
+        "106.1",
+        "106.4",
+        "605.1a",
+        "605.2",
+        "605.3a",
+        "605.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
       "applicability": {
         "summary": "Compile and immediately resolve a target-free nonloyalty activated mana ability whose complete fixed output modes and mandatory activation costs are represented by a typed CardProgram descriptor.",
-        "inputs": ["trusted source-spanned fixed-output mana descriptor", "current source-cost availability", "selected fixed output mode"],
-        "outputs": ["one advertised and accepted mode set", "immediate stackless mana-pool result", "replayable activation command"],
-        "exclusions": ["triggered mana abilities", "dynamic or conditional output", "restricted mana", "mana-production replacement and trigger effects", "arbitrary rule or resolving-effect payment windows", "targeted or loyalty abilities", "parenthesized reminder text and intrinsic basic-land-type abilities", "costs or effects that move cards to or from a library"]
+        "inputs": [
+          "trusted source-spanned fixed-output mana descriptor",
+          "current source-cost availability",
+          "selected fixed output mode"
+        ],
+        "outputs": [
+          "one advertised and accepted mode set",
+          "immediate stackless mana-pool result",
+          "replayable activation command"
+        ],
+        "exclusions": [
+          "triggered mana abilities",
+          "dynamic or conditional output",
+          "restricted mana",
+          "mana-production replacement and trigger effects",
+          "arbitrary rule or resolving-effect payment windows",
+          "targeted or loyalty abilities",
+          "parenthesized reminder text and intrinsic basic-land-type abilities",
+          "costs or effects that move cards to or from a library"
+        ]
       },
-      "dependencies": ["activation.tap_untap_cost.haste"],
-      "implementation_components": ["quorune.fixed_mana_abilities.compile_fixed_activated_mana_ability", "quorune.semantic_runtime.mana_abilities.FixedActivatedManaAbilityHandler", "quorune.compiled_activated_abilities.compiled_activated_abilities", "quorune.mana_activation.complete_mana_activation"],
-      "positive_tests": ["test_fixed_output_compiler_lowers_source_spanned_cardprogram", "test_compiled_alternative_output_is_advertised_accepted_and_replayed", "test_compiled_fixed_output_can_pay_during_casting", "test_compiled_fixed_output_offer_and_activation_share_modes", "test_fixed_mandatory_costs_commit_through_canonical_owners"],
-      "negative_tests": ["test_fixed_output_compiler_leaves_dynamic_and_restricted_variants_residual", "test_fixed_output_compiler_rejects_library_movement_costs_and_effects", "test_parenthesized_basic_land_reminder_is_not_an_executable_program", "test_changed_executable_oracle_fails_closed_instead_of_reparsing_mana", "test_invalid_compiled_mana_mode_rolls_back", "test_invalid_mode_rolls_back_fixed_mandatory_costs"],
-      "interaction_tests": ["test_compiled_fixed_output_creature_respects_haste_cost_dependency"],
-      "multiplayer_tests": ["test_compiled_fixed_output_is_controller_scoped_in_four_player_game"],
-      "privacy_tests": ["test_compiled_fixed_output_projection_exposes_no_hidden_cards"],
-      "replay_tests": ["test_compiled_alternative_output_is_advertised_accepted_and_replayed", "test_compiled_fixed_output_activation_replays_exactly"],
-      "required_evidence": ["positive", "negative", "interaction", "multiplayer", "privacy", "replay"],
+      "dependencies": [
+        "activation.tap_untap_cost.haste"
+      ],
+      "implementation_components": [
+        "quorune.compiled_activated_abilities.compiled_activated_abilities",
+        "quorune.fixed_mana_abilities.compile_fixed_activated_mana_ability",
+        "quorune.mana_activation.complete_mana_activation",
+        "quorune.semantic_runtime.mana_abilities.FixedActivatedManaAbilityHandler",
+        "quorune.semantic_runtime.mana_abilities.FixedManaSelectedCostAbilityHandler"
+      ],
+      "positive_tests": [
+        "test_compiled_alternative_output_is_advertised_accepted_and_replayed",
+        "test_compiled_fixed_output_can_pay_during_casting",
+        "test_compiled_fixed_output_offer_and_activation_share_modes",
+        "test_fixed_mana_sacrifice_choice_retains_typed_cost_and_modes",
+        "test_fixed_mandatory_costs_commit_through_canonical_owners",
+        "test_fixed_output_compiler_lowers_source_spanned_cardprogram",
+        "test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays"
+      ],
+      "negative_tests": [
+        "test_changed_executable_oracle_fails_closed_instead_of_reparsing_mana",
+        "test_fixed_output_compiler_leaves_dynamic_and_restricted_variants_residual",
+        "test_fixed_output_compiler_rejects_library_movement_costs_and_effects",
+        "test_invalid_compiled_mana_mode_rolls_back",
+        "test_invalid_mode_rolls_back_fixed_mandatory_costs",
+        "test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
+        "test_parenthesized_basic_land_reminder_is_not_an_executable_program",
+        "test_selected_mana_sacrifice_codec_capabilities_and_result_boundaries_fail_closed"
+      ],
+      "interaction_tests": [
+        "test_compiled_fixed_output_creature_respects_haste_cost_dependency",
+        "test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays"
+      ],
+      "multiplayer_tests": [
+        "test_compiled_fixed_output_is_controller_scoped_in_four_player_game",
+        "test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays"
+      ],
+      "privacy_tests": [
+        "test_compiled_fixed_output_projection_exposes_no_hidden_cards",
+        "test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays"
+      ],
+      "replay_tests": [
+        "test_compiled_alternative_output_is_advertised_accepted_and_replayed",
+        "test_compiled_fixed_output_activation_replays_exactly",
+        "test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "The compiler and runtime descriptor require the trusted tap-or-untap source-cost eligibility capability; closure without it is rejected before the CardProgram can become trusted.",
       "implementation_mutation_status": "killed",

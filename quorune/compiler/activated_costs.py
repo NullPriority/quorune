@@ -50,7 +50,7 @@ def activated_ability_cost_capabilities(
         or ability.exile_source
     ):
         additional.append("activation.source_zone_change.fixed")
-    if not ability.mana_ability and any(
+    if any(
         choice.fixed_zone_change_cost() is not None
         for choice in ability.choices
     ):

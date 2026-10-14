@@ -10601,6 +10601,21 @@
       ],
       "interaction_order": 2,
       "assertion": "ActualFangrenFirstbornattackandChokingFumesspellselectcurrentattackingbodyset, includinguntappedvigilanceandsourceratherthantappedspectator. Existingcountertransaction/SBAcancelsopposingcounterswithrollback,privacyandpending/fullreplay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_phyrexian_altar_selected_sacrifice_mana_pays_real_spell_and_replays",
+      "piece_ids": [
+        "capability.activation.selected_zone_change.fixed",
+        "capability.mana.activated.fixed_output"
+      ],
+      "capability_ids": [
+        "activation.selected_zone_change.fixed",
+        "mana.activated.fixed_output"
+      ],
+      "interaction_order": 2,
+      "assertion": "OriginalPhyrexianAltar actualcast andtypedselectedsacrificeactivation commitsowncreaturesacrificeonce thenchosenblackmanawithoutstack. Foreignprincipal/foreignbody/wrongtype reject; generatedmanapaysactualspell withprivacy,pendingloadandfullreplay."
     }
   ]
 }

@@ -118,6 +118,14 @@ for that membership, and additional unrepresented state qualifiers remain
 excluded. The ordinary counter transaction and state-based counter cancellation
 retain ownership of placement consequences.
 
+Fixed activated mana version 3 carries one canonical selected sacrifice cost
+alongside its closed fixed output modes. The compiler requests the selected
+zone-change capability and the mana owner separately. Offers and accepted
+commands use the existing typed activation transaction to validate and pay the
+controlled object cost before adding the chosen mana once, without a stack item.
+Legacy versions retain their output and result-rider schemas. Multiple selected
+costs, discard or exile costs, and selected-cost result riders remain excluded.
+
 ## Lifecycle and participation
 
 1. The compiler or reviewed program emits a versioned component descriptor.
