@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 272,
+  "registry_version": 273,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -7758,7 +7758,7 @@
     },
     {
       "id": "quantity_expression.public_query_effect_amount",
-      "version": 8,
+      "version": 9,
       "official_rules": [
         "109.2",
         "109.2a",
@@ -7823,53 +7823,61 @@
       "positive_tests": [
         "test_compiler_lowers_public_query_amounts_across_contexts",
         "test_compiler_lowers_query_scaled_characteristics_across_contexts",
+        "test_current_trusted_zero_source_quantity_pays_and_replays_without_effect",
         "test_existing_public_quantity_spell_shapes_are_promotable",
         "test_existing_query_draw_is_current_trusted_and_casts_with_exact_replay",
         "test_existing_query_source_self_activation_is_trusted_and_replays",
-        "test_current_trusted_zero_source_quantity_pays_and_replays_without_effect",
-        "test_public_count_scry_and_surveil_share_fixed_partition_and_quantity_closure",
-        "test_original_ugins_insight_uses_greatest_mana_value_then_draws_and_replays",
         "test_number_of_tokens_complete_value_keeps_definition_and_quantity_authority",
-        "test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays"
+        "test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
+        "test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
+        "test_original_ugins_insight_uses_greatest_mana_value_then_draws_and_replays",
+        "test_public_count_scry_and_surveil_share_fixed_partition_and_quantity_closure",
+        "test_tapped_public_quantity_keeps_fixed_current_state_and_full_result"
       ],
       "negative_tests": [
-        "test_public_query_amount_grammar_and_schema_fail_closed",
-        "test_public_quantity_registration_rejects_malformed_and_missing_dependencies",
-        "test_source_scalar_adaptation_consumes_all_fixed_components",
-        "test_zero_public_count_creates_no_choice_or_scry_surveil_event",
         "test_library_amount_result_capabilities_cannot_be_omitted",
-        "test_number_of_tokens_complete_value_rejects_unknown_quantity_definition_and_missing_producer"
+        "test_number_of_tokens_complete_value_rejects_unknown_quantity_definition_and_missing_producer",
+        "test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
+        "test_public_quantity_registration_rejects_malformed_and_missing_dependencies",
+        "test_public_query_amount_grammar_and_schema_fail_closed",
+        "test_source_scalar_adaptation_consumes_all_fixed_components",
+        "test_tapped_public_quantity_hidden_domain_dependencies_and_omission_fail_closed",
+        "test_zero_public_count_creates_no_choice_or_scry_surveil_event"
       ],
       "interaction_tests": [
-        "test_query_amounts_use_current_layer_five_state_and_locked_controller",
+        "test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
+        "test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
+        "test_original_ugins_insight_uses_greatest_mana_value_then_draws_and_replays",
+        "test_public_query_amount_compiler_and_resolver_mutants_are_killed",
+        "test_public_query_amount_resolver_mutant_is_killed",
         "test_query_amounts_delegate_to_draw_and_token_owners",
         "test_query_amounts_life_use_existing_replacement_owner",
         "test_query_amounts_trigger_uses_normalized_event_and_apnap_owner",
-        "test_zero_query_amount_and_stale_target_use_existing_target_owner",
+        "test_query_amounts_use_current_layer_five_state_and_locked_controller",
         "test_query_scaled_characteristics_use_resolution_state_and_cleanup",
-        "test_trusted_query_scaled_activation_uses_real_action_path_and_replays",
-        "test_public_query_amount_compiler_and_resolver_mutants_are_killed",
-        "test_public_query_amount_resolver_mutant_is_killed",
         "test_real_variable_scry_and_surveil_private_partition_pending_reload_and_replay",
-        "test_original_ugins_insight_uses_greatest_mana_value_then_draws_and_replays",
-        "test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays"
+        "test_trusted_query_scaled_activation_uses_real_action_path_and_replays",
+        "test_zero_query_amount_and_stale_target_use_existing_target_owner"
       ],
       "multiplayer_tests": [
+        "test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
+        "test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
         "test_query_amount_four_player_projection_save_load_and_replay",
-        "test_trusted_query_scaled_activation_uses_real_action_path_and_replays",
-        "test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays"
+        "test_trusted_query_scaled_activation_uses_real_action_path_and_replays"
       ],
       "privacy_tests": [
+        "test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
+        "test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
         "test_query_amount_four_player_projection_save_load_and_replay",
-        "test_trusted_query_scaled_activation_uses_real_action_path_and_replays",
-        "test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays"
+        "test_trusted_query_scaled_activation_uses_real_action_path_and_replays"
       ],
       "replay_tests": [
-        "test_query_amount_four_player_projection_save_load_and_replay",
-        "test_trusted_query_scaled_activation_uses_real_action_path_and_replays",
         "test_original_cerebral_download_surveys_current_artifact_count_then_draws_and_replays",
+        "test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
+        "test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
         "test_original_ugins_insight_uses_greatest_mana_value_then_draws_and_replays",
-        "test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays"
+        "test_query_amount_four_player_projection_save_load_and_replay",
+        "test_trusted_query_scaled_activation_uses_real_action_path_and_replays"
       ],
       "required_evidence": [
         "positive",

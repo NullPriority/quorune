@@ -194,6 +194,9 @@ def _query_quantity_descriptor(
         )
     singular = singulars.get(normalized, normalized)
     words = singular.split()
+    if words and words[0] in {'tapped','untapped'}:
+        if zone!='battlefield':return None
+        fields['tapped']=words.pop(0)=='tapped'
     if words and words[0] in {"basic", "legendary", "snow"}:
         supertype = words.pop(0)
         fields["supertypes_all"] = (supertype,)

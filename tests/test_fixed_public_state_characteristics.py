@@ -2957,6 +2957,46 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
 
 
 class AdditionalConditionalModifierRuntimeTests(unittest.TestCase):
+    def test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay(self):
+        session=self.session(3633301);engine=session.engine
+        source=self.add(engine,'Copperhoof Vorrac',ref='tapped-quantity-vorrac')
+        foreign=self.add(engine,'Generic Boolean Green Source',seat='B',ref='tapped-quantity-foreign-land')
+        own=self.add(engine,'Generic Boolean Green Source',ref='tapped-quantity-own-land')
+        self.assert_whole_admission(source.printed_name)
+        setup=self.add(engine,'Generic Boolean Life Response',zone='hand',ref='tapped-quantity-setup')
+        self.ready(session,setup,{})
+        self.checkpoint(session)
+        initial=engine._numeric_stat(source.object_id,'power')
+        while session.state.priority_player!='B':self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+        actions=session.packet('pilot:B',full=True)['decision']['ctx']['legal']['actions']
+        activate=next(row for row in actions if row['id'].startswith('activate:'+foreign.ref+':'))
+        accepted=session.act('pilot:B',{'action_id':activate['id']});self.assertTrue(accepted.ok,accepted.summary)
+        self.assertEqual(initial-1,engine._numeric_stat(source.object_id,'power'))
+        while session.state.priority_player!='A':self.assertTrue(session.act(session.pending_principals()[0],{'action_id':'pass'}).ok)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        activate=next(row for row in actions if row['id'].startswith('activate:'+own.ref+':'))
+        self.assertTrue(session.act('pilot:A',{'action_id':activate['id']}).ok)
+        self.assertEqual(initial-1,engine._numeric_stat(source.object_id,'power'))
+        self.replay(session,load=True);self.replay(session)
+        session=self.session(3633302);engine=session.engine
+        mana=self.add(engine,'Heritage Druid',ref='tapped-quantity-own-creature')
+        elves=[self.add(engine,'Generic Selected Tap Elf',ref='tapped-quantity-elf-'+str(i)) for i in range(2)]
+        self.add(engine,'Generic Bound Body',ref='tapped-quantity-untapped-control')
+        draw=self.add(engine,'Generic Tapped Quantity Draw',zone='hand',ref='tapped-quantity-draw')
+        self.assert_whole_admission(draw.printed_name)
+        offered=self.ready(session,mana,{})
+        self.checkpoint(session)
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'cost_cards':[mana.ref,*[elf.ref for elf in elves]]})
+        self.assertTrue(accepted.ok,accepted.summary)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        offered=next(row for row in actions if row.get('card')==draw.ref)
+        hand=len(session.state.players['A'].zones['hand'])
+        accepted=session.act('pilot:A',{'action_id':offered['id'],'pay':'auto'});self.assertTrue(accepted.ok,accepted.summary)
+        self.replay(session,load=True);self.resolve(session)
+        self.assertEqual(hand+2,len(session.state.players['A'].zones['hand']))
+        for seat in 'BCD':self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+        self.replay(session)
+
     def test_original_vivid_land_compound_entry_counter_price_and_actual_untap_replay(self):
         session=self.session(3633201);engine=session.engine
         land=self.add(engine,'Vivid Creek',zone='hand',ref='compound-vivid-land')

@@ -44,6 +44,31 @@ def scalar_record(text: str, *, type_line: str = "Creature — Goblin") -> CardR
 
 
 class ScalarEffectAmountCompilerTests(unittest.TestCase):
+    def test_tapped_public_quantity_hidden_domain_dependencies_and_omission_fail_closed(self):
+        from quorune.query_effect_amount_model import PublicQueryAmountSpec
+        from quorune.rules.capabilities import CapabilityRegistry
+        import json
+        text='Draw a card for each tapped creature you control.'
+        ir=self.compile(text,type_line='Sorcery');value=ir.faces[0].nodes[0].effects[0]['count']
+        parsed=PublicQueryAmountSpec.from_dict(value);self.assertEqual(parsed,PublicQueryAmountSpec.from_dict(parsed.to_dict()))
+        for zone in ('hand','graveyard'):
+            altered=deepcopy(value);altered['quantity']['query']['zones']=[zone]
+            with self.assertRaises(ValueError):PublicQueryAmountSpec.from_dict(altered)
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        next(row for row in raw['capabilities'] if row['id']=='quantity_expression.public_query_effect_amount').update(status='blocked',blockers=['currenttapquantitywithdrawn'])
+        self.assertNotEqual('exact',compile_oracle_card(scalar_record(text,type_line='Sorcery'),capability_registry=CapabilityRegistry(raw)).status)
+        with mock.patch('quorune.compiler.query_characteristic_templates._query_quantity_descriptor',return_value=None):
+            self.assertNotEqual('exact',self.compile(text,type_line='Sorcery').status)
+
+    def test_tapped_public_quantity_keeps_fixed_current_state_and_full_result(self):
+        for text in ('Draw a card for each tapped creature you control.',
+            'Draw X cards, where X is the number of untapped lands you control.'):
+            ir=self.compile(text,type_line='Sorcery')
+            self.assertEqual('exact',ir.status,ir.material_residuals)
+            amount=ir.faces[0].nodes[0].effects[0]['count']
+            self.assertIsInstance(amount['quantity']['query']['tapped'],bool)
+        self.assertNotEqual('exact',self.compile('Draw a card for each tapped card in your hand.',type_line='Sorcery').status)
+
     def test_compound_tapped_counter_entry_schema_dependency_and_omission_fail_closed(self):
         import json
         from quorune.semantic_runtime.self_entry_counters import SelfTappedCounterEntryHandler

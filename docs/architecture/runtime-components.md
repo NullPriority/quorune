@@ -137,6 +137,12 @@ therefore keeps one ordering identity. Legacy fixed self-entry counters retain
 their original untapped-state contract, and variable or linked entry tails
 remain outside this compound family.
 
+Current object-count quantities admit a fixed tapped or untapped qualifier on
+public battlefield queries. The quantity owner reads the exact current flag
+with the existing layer-5 type/color view, while consumers retain their own
+closed schemas. Hand and graveyard state queries, historical tap events and
+collection reductions with additional unrepresented state remain excluded.
+
 ## Lifecycle and participation
 
 1. The compiler or reviewed program emits a versioned component descriptor.

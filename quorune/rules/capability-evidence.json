@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "a89f3d07a16df023a95f7207fe68b322fdfb6eaf9b599e858850814c59483955",
-  "declaration_source_fingerprint": "7c167bf80d987565923cd9b4082d55b08a910c0d9eed4f59b751d507407e8a12",
+  "registry_fingerprint": "9a4dcd7dbd0b31c9eca7bc5fcf83feea9521f75654c85ad2026df29a9debe36f",
+  "declaration_source_fingerprint": "2ae9871b2feda439dfd50b94100e4d5a35e2642748b6a1e705fa1bdbb716b2aa",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -86754,6 +86754,31 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalCopperhoofVorraccurrentstatsloseonebonusafteractualforeignlandmanaT,but ownlandTdoesnotcontribute. Acompleteconstructed drawspellafteractualHeritage3creaturetapdraws3andexcludeuntappedcreature. Principalprivatehand,pendingloadandfullpreactionreplayagree."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
       "official_rule_ids": [
         "109.2",
@@ -87204,6 +87229,31 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalCopperhoofVorraccurrentstatsloseonebonusafteractualforeignlandmanaT,but ownlandTdoesnotcontribute. Acompleteconstructed drawspellafteractualHeritage3creaturetapdraws3andexcludeuntappedcreature. Principalprivatehand,pendingloadandfullpreactionreplayagree."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
       "official_rule_ids": [
         "109.2",
@@ -87454,6 +87504,31 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "mutation",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_tapped_public_quantity_hidden_domain_dependencies_and_omission_fail_closed",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "TypedBFtapped/untappedquantity usescurrentpublicflag andcyclesafefixedquery. Hiddenhand/GYtapdomain, malformedcodec, withdrawnpublicqueryauthorityandcompileromissionreject; promotedintegrationboundarynowpositive andhistoricalstatecounterexampleretained."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "mutation",
       "test_id": "tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityRuntimeTests.test_implied_creature_type_omission_mutant_is_killed_by_original_soulless_one",
       "official_rule_ids": [
         "109.2",
@@ -87500,6 +87575,31 @@
         "commander_review"
       ],
       "applicability_note": "Kill replacement of the distinct public reduction with raw object count while preserving the shared layer-safe quantity owner."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalCopperhoofVorraccurrentstatsloseonebonusafteractualforeignlandmanaT,but ownlandTdoesnotcontribute. Acompleteconstructed drawspellafteractualHeritage3creaturetapdraws3andexcludeuntappedcreature. Principalprivatehand,pendingloadandfullpreactionreplayagree."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
@@ -87779,6 +87879,31 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "negative",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_tapped_public_quantity_hidden_domain_dependencies_and_omission_fail_closed",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "TypedBFtapped/untappedquantity usescurrentpublicflag andcyclesafefixedquery. Hiddenhand/GYtapdomain, malformedcodec, withdrawnpublicqueryauthorityandcompileromissionreject; promotedintegrationboundarynowpositive andhistoricalstatecounterexampleretained."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "negative",
       "test_id": "tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityCompilerTests.test_bare_subtype_quantities_do_not_add_a_creature_card_type",
       "official_rule_ids": [
         "109.2",
@@ -87875,6 +88000,31 @@
         "commander_review"
       ],
       "applicability_note": "Removing either public quantity or the actual library result capability prevents closed program admission for Scry and Surveil."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalCopperhoofVorraccurrentstatsloseonebonusafteractualforeignlandmanaT,but ownlandTdoesnotcontribute. Acompleteconstructed drawspellafteractualHeritage3creaturetapdraws3andexcludeuntappedcreature. Principalprivatehand,pendingloadandfullpreactionreplayagree."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
@@ -88104,6 +88254,31 @@
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
       "evidence_class": "positive",
+      "test_id": "tests.test_scalar_effect_amounts.ScalarEffectAmountCompilerTests.test_tapped_public_quantity_keeps_fixed_current_state_and_full_result",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "TypedBFtapped/untappedquantity usescurrentpublicflag andcyclesafefixedquery. Hiddenhand/GYtapdomain, malformedcodec, withdrawnpublicqueryauthorityandcompileromissionreject; promotedintegrationboundarynowpositive andhistoricalstatecounterexampleretained."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "positive",
       "test_id": "tests.test_typed_dynamic_characteristics.KindredSubtypeQuantityCompilerTests.test_bare_subtype_quantities_do_not_add_a_creature_card_type",
       "official_rule_ids": [
         "109.2",
@@ -88175,6 +88350,31 @@
         "commander_review"
       ],
       "applicability_note": "Public resolution count feeds canonical private Scry/Surveil partitions; zero has no event, positive empty completes, and observer predicates retain controller/global scope. Original-card action and pre-action replay witnesses are distinct from compiler/model diagnostics."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalCopperhoofVorraccurrentstatsloseonebonusafteractualforeignlandmanaT,but ownlandTdoesnotcontribute. Acompleteconstructed drawspellafteractualHeritage3creaturetapdraws3andexcludeuntappedcreature. Principalprivatehand,pendingloadandfullpreactionreplayagree."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
@@ -88325,6 +88525,31 @@
         "commander_review"
       ],
       "applicability_note": "Canonical query-scaled placement, printed instruction order, sealed replacement request, current target authority and private identity-free quantities."
+    },
+    {
+      "capability_id": "quantity_expression.public_query_effect_amount",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
+      "official_rule_ids": [
+        "109.2",
+        "109.2a",
+        "205.3m",
+        "608.2h",
+        "611.2c",
+        "613.1d",
+        "613.1e",
+        "613.4c",
+        "701.22a",
+        "701.22b",
+        "701.25a",
+        "701.25c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "OriginalCopperhoofVorraccurrentstatsloseonebonusafteractualforeignlandmanaT,but ownlandTdoesnotcontribute. Acompleteconstructed drawspellafteractualHeritage3creaturetapdraws3andexcludeuntappedcreature. Principalprivatehand,pendingloadandfullpreactionreplayagree."
     },
     {
       "capability_id": "quantity_expression.public_query_effect_amount",
@@ -130938,5 +131163,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "1abaf5010330b6d4da730ea6a7a460ed623e58a99fa5646f98e39d94e5c28776"
+  "fingerprint": "95a8c1a416bc8d52e69ce61c81a44981ec8131c37b4af59af1585dbb208bf4e9"
 }

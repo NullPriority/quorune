@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Count current tapped and untapped battlefield objects through the shared
+  quantity query across characteristics and effect results.
+
 - Apply tapped entry and fixed counters together as one printed replacement
   ability, retaining canonical zone and counter replacement ordering.
 

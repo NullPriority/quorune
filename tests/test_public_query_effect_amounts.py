@@ -476,7 +476,7 @@ class PublicQueryEffectAmountCompilerTests(unittest.TestCase):
             "You gain life equal to your life total.",
             "You gain 1 life for each creature an opponent controls.",
             "You gain 1 life for each card in an opponent's hand.",
-            "You gain 1 life for each tapped creature you control.",
+            "You gain 1 life for each creature that became tapped this turn.",
             "You gain 1 life for each attacking creature you control.",
             "You gain 1 life for each creature with flying you control.",
             "You gain 1 life for each other creature you control.",
@@ -493,7 +493,7 @@ class PublicQueryEffectAmountCompilerTests(unittest.TestCase):
             "Target creature gets +X/+X until end of turn, where X is the "
             "number of creatures an opponent controls.",
             "Target creature gets +1/+1 until end of turn for each tapped "
-            "creature you control.",
+            "creature card in your hand.",
             "Target creature gets +1/+1 until end of turn for each other "
             "creature you control.",
             "Target creature gets +X/+X until your next turn, where X is the "
