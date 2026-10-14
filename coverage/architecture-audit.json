@@ -33603,7 +33603,7 @@
             "visibility": "public"
           }
         ],
-        "primary_test_count": 50,
+        "primary_test_count": 51,
         "primary_tests": [
           "test_action_proposals",
           "test_activated_abilities",
@@ -33630,6 +33630,7 @@
           "test_fixed_counter_placement_effects",
           "test_fixed_keyword_event_effects",
           "test_fixed_mana_abilities",
+          "test_fixed_public_state_characteristics",
           "test_fixed_source_counter_activation_costs",
           "test_fixed_source_effect_sequences",
           "test_fixed_spell_cost_reductions",
@@ -38877,7 +38878,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "cfb2191cddf6ade18de3eb255447e233bce2019e0e2b00215f2a3e4a1544679b",
+      "fingerprint": "dc145dcd4f8219415cce171ff33043244a6615097320b82c9cb07d20fa9ea128",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -39735,8 +39736,8 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 6139,
-      "discovered_total": 9448,
+      "conventional_ast_cases": 6142,
+      "discovered_total": 9451,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 273,

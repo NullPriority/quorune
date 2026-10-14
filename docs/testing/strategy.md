@@ -60,6 +60,16 @@ edited capability or evidence inputs use fresh invocations rather than that
 fixture snapshot. Production trust checks retain their existing validation
 scope.
 
+The bound-effect fixture can opt into `register_fixture_cards_on_add` when
+profiling shows that bulk registration dominates setup. Session creation still
+registers every deck record. Each extra card is then registered through the
+same generated compiler before the fixture adds it, once per semantic registry.
+The test instance tracks only completed registrations, keyed by full card and
+ruling content, capability/evidence fingerprints and current program content.
+A new session or loaded registry is a separate scope. Existing reviewed programs
+do not replace that registration. All action, privacy, save/load and replay
+assertions remain.
+
 Tests that reuse another test module's methods import that module and reference
 its class through the module. Importing a helper `TestCase` class into a module
 global makes unittest collect it again. Shard validation rejects that duplicate
