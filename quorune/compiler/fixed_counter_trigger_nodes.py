@@ -1233,11 +1233,13 @@ def _event_runtime_coverage(
     return tuple(dict.fromkeys(values))
 
 
-_binding_effect_template = binding_effect_template
+def _binding_effect_template(binding, body, *, card_name, effect_template):
+    return binding_effect_template(binding, body, card_name=card_name,
+        effect_template=effect_template, source_counter_variants=_NONCOUNTER_PUBLIC_EVENT_VARIANTS)
 
 
 def _counter_binding_accepts_result(binding,body_mechanics):
-    return ('fixed-entry-event-object-counter' in body_mechanics
+    return (bool({'fixed-entry-event-object-counter', 'fixed-public-event-source-counter'}.intersection(body_mechanics))
         or binding.variant not in _NONCOUNTER_PUBLIC_EVENT_VARIANTS
         or binding.event in {FixedCounterTriggerEvent.PERMANENT_SACRIFICED,FixedCounterTriggerEvent.CARD_DISCARDED}
         and binding.variant in PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS)
@@ -1289,6 +1291,8 @@ def fixed_counter_event_trigger_node(
     else:
         compiled, requires_current_ability = _binding_effect_template(binding,body,card_name=card_name,effect_template=effect_template)
     template, effects, target_schema, body_mechanics = compiled
+    if optional_match is not None and 'fixed-public-event-source-counter' in body_mechanics:
+        return None
     nested_counter_operations = _COUNTER_PLACEMENT_OPERATIONS.intersection(
         _nested_operations(effects)
     )
@@ -1328,6 +1332,8 @@ def fixed_counter_event_trigger_node(
         capability_registry=capability_registry,
         capability_profile=capability_profile,
         explicit_capabilities=(
+            *(('counter.producer.fixed_public_source_event',)
+              if 'fixed-public-event-source-counter' in body_mechanics else ()),
             *binding.explicit_capabilities,
             *(
                 (FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY, *(('condition.creature.fixed_numeric_exists',) if binding.public_state_condition.kind is FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS else ()))

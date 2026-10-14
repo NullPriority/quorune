@@ -10779,6 +10779,51 @@
       ],
       "interaction_order": 2,
       "assertion": "Original The Legend of Kyoshi // Avatar Kyoshi retains its observed supported public-quantity mana leaf beside unsupported transformed Saga replacement and ordering. Canonical whole CardProgram binding rejects strict and compatible admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_public_departure_source_counter_cast_pending_reentry_and_replay",
+      "piece_ids": [
+        "capability.counter.producer.fixed_effect",
+        "capability.counter.producer.fixed_public_source_event"
+      ],
+      "capability_ids": [
+        "counter.producer.fixed_effect",
+        "counter.producer.fixed_public_source_event"
+      ],
+      "interaction_order": 2,
+      "assertion": "Native original observer cast and own/foreign Unsummon contrasts pin counter result to observer incarnation; actual source bounce/recast while pending skips old result and later own departure places one."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_public_source_counter_controller_ordering_and_replay",
+      "piece_ids": [
+        "capability.counter.producer.fixed_public_source_event",
+        "capability.trigger.event.normalized_zone_change"
+      ],
+      "capability_ids": [
+        "counter.producer.fixed_public_source_event",
+        "trigger.event.normalized_zone_change"
+      ],
+      "interaction_order": 2,
+      "assertion": "Native original Starfield Mystic observers consume simultaneous Tranquility graveyard events by previous controller; each receives only its own enchantment event counter."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_original_public_source_counter_controller_ordering_and_replay",
+      "piece_ids": [
+        "capability.counter.producer.fixed_public_source_event",
+        "capability.trigger.placement.apnap"
+      ],
+      "capability_ids": [
+        "counter.producer.fixed_public_source_event",
+        "trigger.placement.apnap"
+      ],
+      "interaction_order": 2,
+      "assertion": "Native simultaneous Tranquility queues two active-controller observer triggers below one nonactive-controller trigger through APNAP; rejected foreign ordering is state-preserving and pending reload/replay preserve all three results."
     }
   ]
 }

@@ -33375,6 +33375,84 @@
     },
     {
       "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_departure_source_counter_cast_pending_reentry_and_replay",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fine public source-counter producer extends the parent counter-trigger composition only for its complete mandatory fixed source result. Complete source counter result uses the existing public subscription and pins observer incarnation. Independent source/event/controller contrasts, original native cast/departure, rejected principal, pending reload, source reentry and replay are labeled separately from parser/dependency/omission tests."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_source_counter_controller_ordering_and_replay",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Starfield Mystic observers contrast own and foreign enchantments destroyed simultaneously by an accepted Tranquility cast. Authentic controller ordering places two active-controller triggers below the nonactive-controller result. Rejected foreign ordering preserves state; pending reload and complete replay preserve one counter per observer and private hand projection."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_public_source_counter_current_ability_diagnostic_stops_later_occurrences",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fine public source-counter producer extends the parent counter-trigger composition only for its complete mandatory fixed source result. Labeled current-ability diagnostic inserts a typed ability-removal effect after a native destruction queued its result. That result still places one counter; a second native destruction after removal queues none. This constructed temporal control does not replace original-card command and replay witnesses."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
       "evidence_class": "multiplayer",
       "test_id": "tests.test_fixed_counter_player_cast_triggers.FixedCounterPlayerCastTriggerRuntimeTests.test_draw_and_second_draw_counter_triggers_share_one_batch",
       "official_rule_ids": ["115.1", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c", "122.1", "122.6", "614.16", "616.1", "400.7", "608.2h"],
@@ -33405,6 +33483,58 @@
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "In four-player free-for-all, compare the departed creature's last-known controller with the source controller and trigger only for an opponent."
     },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_departure_source_counter_cast_pending_reentry_and_replay",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fine public source-counter producer extends the parent counter-trigger composition only for its complete mandatory fixed source result. Complete source counter result uses the existing public subscription and pins observer incarnation. Independent source/event/controller contrasts, original native cast/departure, rejected principal, pending reload, source reentry and replay are labeled separately from parser/dependency/omission tests."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_source_counter_controller_ordering_and_replay",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Starfield Mystic observers contrast own and foreign enchantments destroyed simultaneously by an accepted Tranquility cast. Authentic controller ordering places two active-controller triggers below the nonactive-controller result. Rejected foreign ordering preserves state; pending reload and complete replay preserve one counter per observer and private hand projection."
+    },
     {"capability_id": "counter.producer.fixed_event_trigger", "evidence_class": "mutation", "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneActionTests.test_self_counter_reference_alias_mutant_is_killed_by_actual_blink", "official_rule_ids": ["115.1", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c", "122.1", "122.6", "614.16", "616.1", "400.7", "608.2h"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Actual trusted ordinary and counter-qualified triggers preserve the old source incarnation through an intervening blink, retain subsequent legal counter results on the new incarnation and replay from before each action; aliasing to stable source identity is killed."},
     {
       "capability_id": "counter.producer.fixed_event_trigger",
@@ -33413,6 +33543,32 @@
       "official_rule_ids": ["115.1", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c", "122.1", "122.6", "614.16", "616.1", "400.7", "608.2h"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Remove the shared source-spanned event-trigger lowering and prove representative controlled-land and fixed public zone-change triggers lose exact trust."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_public_event_source_counter_dependency_omission_and_open_result_fail_closed",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fine public source-counter producer extends the parent counter-trigger composition only for its complete mandatory fixed source result. Complete source counter result uses the existing public subscription and pins observer incarnation. Independent source/event/controller contrasts, original native cast/departure, rejected principal, pending reload, source reentry and replay are labeled separately from parser/dependency/omission tests."
     },
     {
       "capability_id": "counter.producer.fixed_event_trigger",
@@ -33441,10 +33597,114 @@
     {
       "capability_id": "counter.producer.fixed_event_trigger",
       "evidence_class": "negative",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_public_event_source_counter_dependency_omission_and_open_result_fail_closed",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fine public source-counter producer extends the parent counter-trigger composition only for its complete mandatory fixed source result. Complete source counter result uses the existing public subscription and pins observer incarnation. Independent source/event/controller contrasts, original native cast/departure, rejected principal, pending reload, source reentry and replay are labeled separately from parser/dependency/omission tests."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "negative",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_subtype_entry_counter_trigger_dependencies_fail_closed",
       "official_rule_ids": ["115.1", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c", "122.1", "122.6", "614.16", "616.1", "400.7", "608.2h"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Keep the single-subtype entry span material when normalized zone events, APNAP placement, quantity replacement, or the subtype grammar is unavailable."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_departure_source_counter_cast_pending_reentry_and_replay",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fine public source-counter producer extends the parent counter-trigger composition only for its complete mandatory fixed source result. Complete source counter result uses the existing public subscription and pins observer incarnation. Independent source/event/controller contrasts, original native cast/departure, rejected principal, pending reload, source reentry and replay are labeled separately from parser/dependency/omission tests."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_source_counter_controller_ordering_and_replay",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Starfield Mystic observers contrast own and foreign enchantments destroyed simultaneously by an accepted Tranquility cast. Authentic controller ordering places two active-controller triggers below the nonactive-controller result. Rejected foreign ordering preserves state; pending reload and complete replay preserve one counter per observer and private hand projection."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_public_source_counter_current_ability_diagnostic_stops_later_occurrences",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fine public source-counter producer extends the parent counter-trigger composition only for its complete mandatory fixed source result. Labeled current-ability diagnostic inserts a typed ability-removal effect after a native destruction queued its result. That result still places one counter; a second native destruction after removal queues none. This constructed temporal control does not replace original-card command and replay witnesses."
     },
     {
       "capability_id": "counter.producer.fixed_event_trigger",
@@ -33473,6 +33733,32 @@
     {
       "capability_id": "counter.producer.fixed_event_trigger",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_public_event_fixed_source_counter_preserves_subscription_and_incarnation",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fine public source-counter producer extends the parent counter-trigger composition only for its complete mandatory fixed source result. Complete source counter result uses the existing public subscription and pins observer incarnation. Independent source/event/controller contrasts, original native cast/departure, rejected principal, pending reload, source reentry and replay are labeled separately from parser/dependency/omission tests."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_single_subtype_entry_counter_triggers_compile_exactly",
       "official_rule_ids": ["115.1", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c", "122.1", "122.6", "614.16", "616.1", "400.7", "608.2h"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
@@ -33485,6 +33771,58 @@
       "official_rule_ids": ["115.1", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c", "122.1", "122.6", "614.16", "616.1", "400.7", "608.2h"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Normalize a card's exact printed source name in a source-or-another artifact trigger and emit one capability-closed source-spanned CardProgram."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_departure_source_counter_cast_pending_reentry_and_replay",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fine public source-counter producer extends the parent counter-trigger composition only for its complete mandatory fixed source result. Complete source counter result uses the existing public subscription and pins observer incarnation. Independent source/event/controller contrasts, original native cast/departure, rejected principal, pending reload, source reentry and replay are labeled separately from parser/dependency/omission tests."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_source_counter_controller_ordering_and_replay",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Starfield Mystic observers contrast own and foreign enchantments destroyed simultaneously by an accepted Tranquility cast. Authentic controller ordering places two active-controller triggers below the nonactive-controller result. Rejected foreign ordering preserves state; pending reload and complete replay preserve one counter per observer and private hand projection."
     },
     {
       "capability_id": "counter.producer.fixed_event_trigger",
@@ -33510,6 +33848,58 @@
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Project the pending replacement order only to the affected third-seat controller without exposing physical object or continuation identity."
     },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_departure_source_counter_cast_pending_reentry_and_replay",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fine public source-counter producer extends the parent counter-trigger composition only for its complete mandatory fixed source result. Complete source counter result uses the existing public subscription and pins observer incarnation. Independent source/event/controller contrasts, original native cast/departure, rejected principal, pending reload, source reentry and replay are labeled separately from parser/dependency/omission tests."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_source_counter_controller_ordering_and_replay",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Starfield Mystic observers contrast own and foreign enchantments destroyed simultaneously by an accepted Tranquility cast. Authentic controller ordering places two active-controller triggers below the nonactive-controller result. Rejected foreign ordering preserves state; pending reload and complete replay preserve one counter per observer and private hand projection."
+    },
     {"capability_id": "counter.producer.fixed_event_trigger", "evidence_class": "replay", "test_id": "tests.test_counter_qualified_zone_events.CounterQualifiedZoneActionTests.test_pending_counter_result_cannot_modify_blinked_observer_incarnation", "official_rule_ids": ["115.1", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c", "122.1", "122.6", "614.16", "616.1", "400.7", "608.2h"], "supported_profiles": ["traditional", "commander_duel", "commander_review"], "applicability_note": "Actual trusted ordinary and counter-qualified triggers preserve the old source incarnation through an intervening blink, retain subsequent legal counter results on the new incarnation and replay from before each action; aliasing to stable source identity is killed."},
     {
       "capability_id": "counter.producer.fixed_event_trigger",
@@ -33534,6 +33924,58 @@
       "official_rule_ids": ["115.1", "603.2", "603.3", "603.3b", "603.6", "608.2b", "608.2c", "122.1", "122.6", "614.16", "616.1", "400.7", "608.2h"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the suspended counter-trigger replacement continuation to the identical authoritative counter state hash."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_departure_source_counter_cast_pending_reentry_and_replay",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Fine public source-counter producer extends the parent counter-trigger composition only for its complete mandatory fixed source result. Complete source counter result uses the existing public subscription and pins observer incarnation. Independent source/event/controller contrasts, original native cast/departure, rejected principal, pending reload, source reentry and replay are labeled separately from parser/dependency/omission tests."
+    },
+    {
+      "capability_id": "counter.producer.fixed_event_trigger",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_source_counter_controller_ordering_and_replay",
+      "official_rule_ids": [
+        "115.1",
+        "603.2",
+        "603.3",
+        "603.3b",
+        "603.6",
+        "608.2b",
+        "608.2c",
+        "122.1",
+        "122.6",
+        "614.16",
+        "616.1",
+        "400.7",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Starfield Mystic observers contrast own and foreign enchantments destroyed simultaneously by an accepted Tranquility cast. Authentic controller ordering places two active-controller triggers below the nonactive-controller result. Rejected foreign ordering preserves state; pending reload and complete replay preserve one counter per observer and private hand projection."
     },
     {
       "capability_id": "counter.producer.fixed_event_trigger",
@@ -34300,6 +34742,380 @@
       "official_rule_ids": ["101.4", "107.14", "107.17", "115.1", "122.1", "608.2b", "608.2c"],
       "supported_profiles": ["traditional", "commander_duel", "commander_review"],
       "applicability_note": "Replay the selected player target, four priority passes, and typed rad-counter result to the identical authoritative state hash."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_source_event",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_departure_source_counter_cast_pending_reentry_and_replay",
+      "official_rule_ids": [
+        "113.7a",
+        "122.1a",
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.10a",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source counter result uses the existing public subscription and pins observer incarnation. Independent source/event/controller contrasts, original native cast/departure, rejected principal, pending reload, source reentry and replay are labeled separately from parser/dependency/omission tests."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_source_event",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_source_counter_controller_ordering_and_replay",
+      "official_rule_ids": [
+        "113.7a",
+        "122.1a",
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.10a",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Starfield Mystic observers contrast own and foreign enchantments destroyed simultaneously by an accepted Tranquility cast. Authentic controller ordering places two active-controller triggers below the nonactive-controller result. Rejected foreign ordering preserves state; pending reload and complete replay preserve one counter per observer and private hand projection."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_source_event",
+      "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_public_source_counter_current_ability_diagnostic_stops_later_occurrences",
+      "official_rule_ids": [
+        "113.7a",
+        "122.1a",
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.10a",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Labeled current-ability diagnostic inserts a typed ability-removal effect after a native destruction queued its result. That result still places one counter; a second native destruction after removal queues none. This constructed temporal control does not replace original-card command and replay witnesses."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_source_event",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_departure_source_counter_cast_pending_reentry_and_replay",
+      "official_rule_ids": [
+        "113.7a",
+        "122.1a",
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.10a",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source counter result uses the existing public subscription and pins observer incarnation. Independent source/event/controller contrasts, original native cast/departure, rejected principal, pending reload, source reentry and replay are labeled separately from parser/dependency/omission tests."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_source_event",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_source_counter_controller_ordering_and_replay",
+      "official_rule_ids": [
+        "113.7a",
+        "122.1a",
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.10a",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Starfield Mystic observers contrast own and foreign enchantments destroyed simultaneously by an accepted Tranquility cast. Authentic controller ordering places two active-controller triggers below the nonactive-controller result. Rejected foreign ordering preserves state; pending reload and complete replay preserve one counter per observer and private hand projection."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_source_event",
+      "evidence_class": "mutation",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_public_event_source_counter_dependency_omission_and_open_result_fail_closed",
+      "official_rule_ids": [
+        "113.7a",
+        "122.1a",
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.10a",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source counter result uses the existing public subscription and pins observer incarnation. Independent source/event/controller contrasts, original native cast/departure, rejected principal, pending reload, source reentry and replay are labeled separately from parser/dependency/omission tests."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_source_event",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_public_event_source_counter_dependency_omission_and_open_result_fail_closed",
+      "official_rule_ids": [
+        "113.7a",
+        "122.1a",
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.10a",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source counter result uses the existing public subscription and pins observer incarnation. Independent source/event/controller contrasts, original native cast/departure, rejected principal, pending reload, source reentry and replay are labeled separately from parser/dependency/omission tests."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_source_event",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_departure_source_counter_cast_pending_reentry_and_replay",
+      "official_rule_ids": [
+        "113.7a",
+        "122.1a",
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.10a",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source counter result uses the existing public subscription and pins observer incarnation. Independent source/event/controller contrasts, original native cast/departure, rejected principal, pending reload, source reentry and replay are labeled separately from parser/dependency/omission tests."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_source_event",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_source_counter_controller_ordering_and_replay",
+      "official_rule_ids": [
+        "113.7a",
+        "122.1a",
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.10a",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Starfield Mystic observers contrast own and foreign enchantments destroyed simultaneously by an accepted Tranquility cast. Authentic controller ordering places two active-controller triggers below the nonactive-controller result. Rejected foreign ordering preserves state; pending reload and complete replay preserve one counter per observer and private hand projection."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_source_event",
+      "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_public_source_counter_current_ability_diagnostic_stops_later_occurrences",
+      "official_rule_ids": [
+        "113.7a",
+        "122.1a",
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.10a",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Labeled current-ability diagnostic inserts a typed ability-removal effect after a native destruction queued its result. That result still places one counter; a second native destruction after removal queues none. This constructed temporal control does not replace original-card command and replay witnesses."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_source_event",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_counter_event_triggers.FixedCounterEventTriggerCompilerTests.test_public_event_fixed_source_counter_preserves_subscription_and_incarnation",
+      "official_rule_ids": [
+        "113.7a",
+        "122.1a",
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.10a",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source counter result uses the existing public subscription and pins observer incarnation. Independent source/event/controller contrasts, original native cast/departure, rejected principal, pending reload, source reentry and replay are labeled separately from parser/dependency/omission tests."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_source_event",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_departure_source_counter_cast_pending_reentry_and_replay",
+      "official_rule_ids": [
+        "113.7a",
+        "122.1a",
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.10a",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source counter result uses the existing public subscription and pins observer incarnation. Independent source/event/controller contrasts, original native cast/departure, rejected principal, pending reload, source reentry and replay are labeled separately from parser/dependency/omission tests."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_source_event",
+      "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_source_counter_controller_ordering_and_replay",
+      "official_rule_ids": [
+        "113.7a",
+        "122.1a",
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.10a",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Starfield Mystic observers contrast own and foreign enchantments destroyed simultaneously by an accepted Tranquility cast. Authentic controller ordering places two active-controller triggers below the nonactive-controller result. Rejected foreign ordering preserves state; pending reload and complete replay preserve one counter per observer and private hand projection."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_source_event",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_departure_source_counter_cast_pending_reentry_and_replay",
+      "official_rule_ids": [
+        "113.7a",
+        "122.1a",
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.10a",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source counter result uses the existing public subscription and pins observer incarnation. Independent source/event/controller contrasts, original native cast/departure, rejected principal, pending reload, source reentry and replay are labeled separately from parser/dependency/omission tests."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_source_event",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_source_counter_controller_ordering_and_replay",
+      "official_rule_ids": [
+        "113.7a",
+        "122.1a",
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.10a",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Starfield Mystic observers contrast own and foreign enchantments destroyed simultaneously by an accepted Tranquility cast. Authentic controller ordering places two active-controller triggers below the nonactive-controller result. Rejected foreign ordering preserves state; pending reload and complete replay preserve one counter per observer and private hand projection."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_source_event",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_departure_source_counter_cast_pending_reentry_and_replay",
+      "official_rule_ids": [
+        "113.7a",
+        "122.1a",
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.10a",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Complete source counter result uses the existing public subscription and pins observer incarnation. Independent source/event/controller contrasts, original native cast/departure, rejected principal, pending reload, source reentry and replay are labeled separately from parser/dependency/omission tests."
+    },
+    {
+      "capability_id": "counter.producer.fixed_public_source_event",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_public_source_counter_controller_ordering_and_replay",
+      "official_rule_ids": [
+        "113.7a",
+        "122.1a",
+        "400.7",
+        "603.1",
+        "603.2",
+        "603.3",
+        "603.10a",
+        "608.2c",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Original Starfield Mystic observers contrast own and foreign enchantments destroyed simultaneously by an accepted Tranquility cast. Authentic controller ordering places two active-controller triggers below the nonactive-controller result. Rejected foreign ordering preserves state; pending reload and complete replay preserve one counter per observer and private hand projection."
     },
     {"capability_id":"counter.producer.fixed_self_entry","evidence_class":"interaction","test_id":"tests.test_copied_self_entry_counters.CopiedSelfEntryCounterActionTests.test_actual_copied_group_counter_replacement_choice_is_atomic_and_replays","official_rule_ids":["122.1","122.1a","122.1b","122.6","614.1c","614.12","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Nested entry and counter replacements finish before either token is committed."},
     {"capability_id":"counter.producer.fixed_self_entry","evidence_class":"interaction","test_id":"tests.test_copied_self_entry_counters.CopiedSelfEntryCounterActionTests.test_actual_source_only_ability_removal_is_not_copied","official_rule_ids":["122.1","122.1a","122.1b","122.6","614.1c","614.12","614.16","616.1"],"supported_profiles":["traditional","commander_duel","commander_review"],"applicability_note":"Actual admitted source-only transformation does not remove the copy's copiable entry component."},

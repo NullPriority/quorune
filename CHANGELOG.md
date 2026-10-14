@@ -14,6 +14,9 @@ maintenance: "hand-maintained"
 - Preserve independent library-selection card slots and qualified card types,
   and reject unrepresented qualifiers that previously became subtype names.
 
+- Compose closed public event subscriptions with fixed counter results on the
+  observing source incarnation, preserving controller and current-ability rules.
+
 - Register added public-characteristic fixture cards per session instead of
   compiling unused fixture records, preserving existing action and replay checks.
 

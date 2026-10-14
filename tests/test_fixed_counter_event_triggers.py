@@ -140,6 +140,75 @@ def focused_database(directory: str) -> CardDatabase:
 
 
 class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
+    def test_public_event_source_counter_dependency_omission_and_open_result_fail_closed(self):
+        from test_bound_effect_programs import record
+        from quorune.rules.capabilities import CapabilityRegistry
+        text = 'Whenever another creature you control leaves the battlefield, put a +1/+1 counter on this creature.'
+        card = record(text, 'Creature — Human Scout')
+        raw = json.loads(REGISTRY_PATH.read_text(encoding='utf-8'))
+        capability = next(r for r in raw['capabilities'] if r['id'] == 'counter.producer.fixed_public_source_event')
+        capability.update(status='blocked', blockers=['withdrawn public source-counter producer'])
+        withdrawn = CapabilityRegistry(raw)
+        withdrawn.mark_evidence_verified('0' * 64)
+        self.assertNotEqual('exact', compile_oracle_card(card, capability_registry=withdrawn,
+                                                        capability_profile='commander_review').status)
+        with patch('quorune.compiler.event_counter_results.public_event_source_counter_result', return_value=None):
+            self.assertNotEqual('exact', compile_oracle_card(card, capability_registry=self.capabilities,
+                                                            capability_profile='commander_review').status)
+        for body in ('put a +1/+1 counter on that creature.',
+                     'put X +1/+1 counters on this creature.',
+                     'put a +1/+1 counter on this creature, then draw a card.',
+                     'you may put a +1/+1 counter on this creature.'):
+            with self.subTest(body=body):
+                boundary = record('Whenever another creature you control leaves the battlefield, '+body,
+                                  'Creature — Human Scout')
+                ir = compile_oracle_card(boundary, capability_registry=self.capabilities,
+                                         capability_profile='commander_review')
+                self.assertNotEqual('exact', ir.status)
+                self.assertTrue(ir.material_residuals)
+        from quorune.compiler.event_counter_results import public_event_source_counter_result
+        binding = fixed_counter_trigger_binding(text, card_name=card.name)
+        valid = {'op': 'place_counters', 'card': '$source.zone_object', 'source': '$source',
+                 'counter': '+1/+1', 'amount': 1}
+        for changes in ({'amount': True}, {'card': {}}, {'counter': []}, {'source': '$target.0'}, {'extra': 1}):
+            with self.subTest(malformed=changes):
+                self.assertIsNone(public_event_source_counter_result(
+                    binding, binding.body, card_name=card.name, accepted_variants=(binding.variant,),
+                    effect_template=lambda *_args, **_kwargs: ('test', ({**valid, **changes},), None, ('cr-122-counters',)),
+                ))
+
+    def test_public_event_fixed_source_counter_preserves_subscription_and_incarnation(self):
+        from test_bound_effect_programs import record
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.semantics import SemanticRegistry
+
+        cases = (
+            'Whenever another creature you control leaves the battlefield, put a +1/+1 counter on this creature.',
+            'Whenever you cycle another card, put a +1/+1 counter on this creature.',
+            'Whenever an enchantment you control is put into a graveyard from the battlefield, put an oil counter on this creature.',
+            'Whenever one or more cards leave your graveyard, put a +1/+1 counter on this creature.',
+        )
+        for text in cases:
+            with self.subTest(text=text):
+                card = record(text, 'Creature — Human Scout')
+                binding = fixed_counter_trigger_binding(text, card_name=card.name)
+                ir = compile_oracle_card(card, capability_registry=self.capabilities,
+                                         capability_profile='commander_review')
+                self.assertEqual('exact', ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                self.assertEqual(binding.event.value, node.event)
+                self.assertEqual(binding.event_condition, node.event_condition)
+                self.assertEqual('$source.zone_object', node.effects[0]['card'])
+                self.assertIn('counter.producer.fixed_public_source_event', node.capability_dependencies)
+                program = compile_best_available_card_program(
+                    self.db, card, semantic_registry=SemanticRegistry(),
+                    capability_registry=self.capabilities, capability_profile='commander_review',
+                )
+                self.assertTrue(bind_card_program_runtime(
+                    program, capability_registry=self.capabilities, profile='commander_review',
+                )['strict_capability_ready'])
+
     def test_main_phase_schedules_bind_phase_step_and_controller_independently(self):
         from test_bound_effect_programs import record
         for schedule,phase in [('your first main phase','precombat_main'),('your precombat main phase','precombat_main'),

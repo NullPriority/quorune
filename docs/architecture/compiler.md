@@ -2359,6 +2359,16 @@ nonland discard requires both type exclusions. The existing current ability,
 APNAP, source-incarnation and counter transaction owners execute the result;
 no aggregate or per-turn limiter is inferred.
 
+An already closed public subscription also composes with one mandatory fixed
+positive source-counter instruction through
+`counter.producer.fixed_public_source_event`. The result names the observer,
+independently from the event object, and pins its battlefield incarnation.
+Printed event/controller predicates, one-or-more aggregation and current-ability
+discovery remain unchanged. A queued result survives later ability removal;
+it skips a source that departed or reentered. Optional, variable, linked,
+multi-effect and ambiguous event-object counter results retain their separate
+admission boundaries.
+
 `compiler/qualified_zone_event_bindings.py` adds closed single-object public
 entry, death, graveyard, and leave subjects through that same event-effect
 owner. It normalizes subject-word order into the existing characteristic query

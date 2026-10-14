@@ -24,6 +24,7 @@ def counter_placement_covered_mechanics(supplied):
     if _NAMED_COUNTER_CAPABILITY in supplied:
         covered.add(_NAMED_COUNTER_MECHANIC)
     if 'counter.producer.fixed_event_object' in supplied:covered.add('fixed-entry-event-object-counter')
+    if 'counter.producer.fixed_public_source_event' in supplied:covered.add('fixed-public-event-source-counter')
     return covered
 
 
@@ -82,7 +83,9 @@ def _base_fixed_counter_placement_node_capabilities(
     if target_schema is None and type(effect.get('card')) is str and effect['card'] in {'$event.entry_object','$event.counter_object'} and 'fixed-entry-event-object-counter' in mechanics:
         return ('counter.producer.fixed_event_object','counter.producer.fixed_effect',*characteristic_capabilities)
     if target_schema is None and effect.get("card") in ("$source", SOURCE_ZONE_OBJECT):
-        return ("counter.producer.fixed_effect", *characteristic_capabilities)
+        public_source = (('counter.producer.fixed_public_source_event',)
+                         if 'fixed-public-event-source-counter' in mechanics else ())
+        return (*public_source, "counter.producer.fixed_effect", *characteristic_capabilities)
     if target_schema is None and isinstance(effect.get("card"), Mapping):
         try:
             AttachmentReferenceSpec.from_dict(effect["card"])
