@@ -4,6 +4,21 @@
     {
       "evidence_class": "interaction",
       "assurance_kind": "runtime_composition",
+      "test_id": "test_original_recipient_count_equipment_cast_equip_reattach_and_bounce_replays",
+      "piece_ids": [
+        "capability.attachment.equip.fixed_mana",
+        "capability.continuous.attached.fixed_characteristics"
+      ],
+      "capability_ids": [
+        "attachment.equip.fixed_mana",
+        "continuous.attached.fixed_characteristics"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Gauntlets and Power Suit are cast and equipped using native commands. They count the recipient's own and foreign Equipment, recompute on real reattachment and artifact bounce, and retain privacy, wrong-principal rollback, pending save/load and complete pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
       "test_id": "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
       "piece_ids": [
         "capability.casting.cost.modifier.fixed_query",

@@ -544,6 +544,45 @@ class AttachedContinuousModelTests(unittest.TestCase):
 
 
 class AttachedContinuousCompilerTests(unittest.TestCase):
+    def test_recipient_attachment_quantity_rejects_legacy_scope_and_open_queries(self):
+        from quorune.characteristic_fragments import CharacteristicQuantitySpec, CharacteristicFragmentError
+        quantity = descriptor('Equipped creature gets +1/+0 for each Equipment attached to it.')['modifier']['quantity']
+        for field, value in (('schema_version', 1), ('exclude_source', True), ('scope', 'unrepresented')):
+            with self.assertRaises(CharacteristicFragmentError):
+                CharacteristicQuantitySpec.from_dict({**quantity, field:value})
+        for text in (
+            'Equipped creature gets +1/+0 for each Equipment attached to it with flying.',
+            'Equipped creature gets +1/+1 for each color of cards in its controller\'s hand.',
+            'Equipped creature gets +X/+X for each Equipment attached to it.',
+        ):
+            self.assertIsNone(attached_fixed_characteristics_handler(text))
+        with mock.patch('quorune.compiler.continuous_templates.recipient_attachment_quantity', return_value=None):
+            self.assertIsNone(attached_fixed_characteristics_handler('Equipped creature gets +1/+0 for each Equipment attached to it.'))
+
+    def test_recipient_attachment_quantity_keeps_relative_object_and_live_query(self):
+        from quorune.card_programs import compile_card_program, bind_card_program_runtime
+        capabilities = load_default_capability_registry()
+        for text, types_any, types_all in (
+            ('Equipped creature gets +1/+0 for each Equipment attached to it.', [], ['artifact']),
+            ('Equipped creature gets +1/+1 for each Aura and Equipment attached to it and has ward {2}.', ['artifact','enchantment'], []),
+        ):
+            with self.subTest(text=text):
+                record = attached_grant_record(text, type_line='Artifact — Equipment')
+                ir = compile_oracle_card(record, capability_registry=capabilities, capability_profile='commander_review')
+                self.assertEqual('exact', ir.status, ir.material_residuals)
+                node = next(node for node in ir.faces[0].nodes if node.kind == 'static_ability')
+                self.assertEqual(text, node.text)
+                quantity = node.handlers[0]['modifier']['quantity']
+                self.assertEqual('attached_to_recipient', quantity['scope'])
+                self.assertEqual(2, quantity['schema_version'])
+                self.assertEqual(types_any, quantity['query']['types_any'])
+                self.assertEqual(types_all, quantity['query']['types_all'])
+                AttachedFixedCharacteristicsHandler().validate(node.handlers[0])
+                program = compile_card_program(RulinglessCardDatabase(), record, capability_registry=capabilities,
+                    capability_profile='commander_review', trust_level='trusted')
+                self.assertTrue(bind_card_program_runtime(program, capability_registry=capabilities,
+                    profile='commander_review')['strict_capability_ready'])
+
     @classmethod
     def setUpClass(cls):
         cls.db, _, _ = load_assets()
@@ -948,6 +987,41 @@ class AttachedContinuousCompilerTests(unittest.TestCase):
 
 
 class AttachedStaticEngineTests(unittest.TestCase):
+    def test_recipient_quantity_counts_reciprocal_union_once_and_follows_control_phasing_reattachment(self):
+        from types import SimpleNamespace
+        from quorune.dynamic_characteristics import query_characteristic_count
+        quantity = descriptor('Equipped creature gets +1/+1 for each Aura and Equipment attached to it.')['modifier']['quantity']
+        from quorune.characteristic_fragments import CharacteristicQuantitySpec
+        quantity = CharacteristicQuantitySpec.from_dict(quantity)
+        source = card('attachment-source')
+        recipient = card('attachment-recipient', controller='B')
+        equipment = card('attachment-equipment', controller='C')
+        dual = card('attachment-dual', controller='D')
+        elsewhere = card('attachment-elsewhere')
+        cards = {value.object_id:value for value in (source,recipient,equipment,dual,elsewhere)}
+        for value in (source,equipment,dual):
+            attach_objects(cards, value, recipient, source_timestamp=2)
+        types = {source.object_id:'Artifact — Equipment', equipment.object_id:'Artifact — Equipment',
+            dual.object_id:'Artifact Enchantment — Aura Equipment', elsewhere.object_id:'Artifact — Equipment'}
+        host = SimpleNamespace(state=SimpleNamespace(cards=cards,players={}),
+            _effective_card_data=lambda value, **kwargs:{'type_line':types[value.object_id], 'colors':[]},
+            _type_parts=lambda line:({'artifact','enchantment'} if line.startswith('Artifact Enchantment') else {'artifact'},
+                {'aura','equipment'} if 'Aura' in line else {'equipment'}, set()))
+        self.assertEqual(3, query_characteristic_count(host,source,quantity))
+        recipient.attachments.append(dual.object_id)
+        self.assertEqual(3, query_characteristic_count(host,source,quantity))
+        source.controller='C'
+        self.assertEqual(3, query_characteristic_count(host,source,quantity))
+        dual.phased_out=True
+        self.assertEqual(2, query_characteristic_count(host,source,quantity))
+        dual.phased_out=False
+        recipient.attachments.append(elsewhere.object_id)
+        self.assertEqual(3, query_characteristic_count(host,source,quantity))
+        attach_objects(cards,source,elsewhere,source_timestamp=3)
+        self.assertEqual(1, query_characteristic_count(host,source,quantity))
+        detach_object(cards,source)
+        self.assertEqual(0, query_characteristic_count(host,source,quantity))
+
     @classmethod
     def setUpClass(cls):
         cls.db, cls.mishra, cls.zimone = load_assets()

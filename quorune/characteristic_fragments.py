@@ -32,6 +32,7 @@ class CharacteristicQuantityScope(str, Enum):
     OPPONENT_ZONES = "opponent_zones"
     ALL_ZONES = "all_zones"
     ATTACHED_TO_SOURCE = "attached_to_source"
+    ATTACHED_TO_RECIPIENT = "attached_to_recipient"
     SOURCE_COUNTER = "source_counter"
 
 
@@ -149,6 +150,11 @@ class CharacteristicQuantitySpec:
                 "Object quantities require one typed object query"
             )
         query = self.query
+        if self.scope is CharacteristicQuantityScope.ATTACHED_TO_RECIPIENT and (
+            self.schema_version != 2 or self.exclude_source or self.exclude_attached_object
+            or self.reduction is not CharacteristicQuantityReduction.OBJECT_COUNT
+        ):
+            raise CharacteristicFragmentError('Recipient attachment counts require their versioned fixed query')
         if self.schema_version == 2 and (
             query.zones == ("hand",) or query.state_predicate is not None
             or query.tapped is not None or query.minimum_color_count is not None
@@ -219,6 +225,7 @@ class CharacteristicQuantitySpec:
                 "graveyard",
             },
             CharacteristicQuantityScope.ATTACHED_TO_SOURCE: {"battlefield"},
+            CharacteristicQuantityScope.ATTACHED_TO_RECIPIENT: {"battlefield"},
         }
         if query.zones[0] not in allowed_zones[self.scope]:
             raise CharacteristicFragmentError(

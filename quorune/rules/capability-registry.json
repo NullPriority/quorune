@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 248,
+  "registry_version": 249,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -6804,7 +6804,7 @@
     },
     {
       "id": "continuous.attached.fixed_characteristics",
-      "version": 10,
+      "version": 11,
       "official_rules": [
         "301.5",
         "303.4",
@@ -6823,7 +6823,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Apply closed type, subtype, color, supported ability (including five fixed basic landwalk variants and Horsemanship), fixed or typed public-query power/toughness, base power/toughness, one separately exact typed quoted ability, or one exact declaration requirement or restriction to the logical object currently attached to a phased-in battlefield source. Grant already-represented fixed combat or spell-cast keyword trigger fragments with exact label, instance and consumer dependencies.",
+        "summary": "Apply closed type, subtype, color, supported ability (including five fixed basic landwalk variants and Horsemanship), fixed or typed public-query power/toughness, base power/toughness, one separately exact typed quoted ability, or one exact declaration requirement or restriction to the logical object currently attached to a phased-in battlefield source. Grant already-represented fixed combat or spell-cast keyword trigger fragments with exact label, instance and consumer dependencies. Versioned recipient-relative attachment quantities count current reciprocal Aura/Equipment membership at the shared layer-5 query boundary, independent of controller and with union members counted once.",
         "inputs": [
           "active attached source object",
           "reciprocal physical attachment relation",
@@ -6882,7 +6882,8 @@
         "quorune.declaration_requirement_runtime.typed_blocker_requirements",
         "quorune.rules.activation.query.activated_abilities",
         "quorune.trigger_discovery._event_programs_for_source",
-        "quorune.keyword_abilities.triggered_keyword_grant"
+        "quorune.keyword_abilities.triggered_keyword_grant",
+        "quorune.compiler.collection_quantity_templates.recipient_attachment_quantity"
       ],
       "positive_tests": [
         "test_fixed_modifier_and_keyword_apply_only_to_exact_logical_object",
@@ -6896,7 +6897,9 @@
         "test_fixed_basic_landwalk_and_horsemanship_grants_declare_exact_consumers",
         "test_decorative_static_labels_preserve_descriptor_and_original_source_span",
         "test_werewolf_plural_union_is_typed_and_deduplicates_recipient_query",
-        "test_live_keyword_trigger_grants_carry_exact_fragment_and_consumer_dependencies"
+        "test_live_keyword_trigger_grants_carry_exact_fragment_and_consumer_dependencies",
+        "test_recipient_attachment_quantity_keeps_relative_object_and_live_query",
+        "test_original_recipient_count_equipment_cast_equip_reattach_and_bounce_replays"
       ],
       "negative_tests": [
         "test_relation_model_and_descriptor_fail_closed",
@@ -6909,7 +6912,10 @@
         "test_missing_granted_landwalk_consumer_mapping_mutant_is_killed",
         "test_semantic_markers_and_unrepresented_labeled_body_stay_residual",
         "test_static_label_dispatch_omission_mutant_is_killed",
-        "test_triggered_keyword_grant_labels_and_fragments_are_exact_and_fail_closed"
+        "test_triggered_keyword_grant_labels_and_fragments_are_exact_and_fail_closed",
+        "test_recipient_attachment_quantity_rejects_legacy_scope_and_open_queries",
+        "test_recipient_quantity_counts_reciprocal_union_once_and_follows_control_phasing_reattachment",
+        "test_original_recipient_count_equipment_cast_equip_reattach_and_bounce_replays"
       ],
       "interaction_tests": [
         "test_live_generic_equipment_effect_moves_detaches_and_tracks_control",
@@ -6927,15 +6933,19 @@
         "test_attached_characteristics_and_requirement_end_with_attachment",
         "test_actual_islandwalk_aura_cast_tracks_recipient_and_ends_on_source_departure",
         "test_original_archangels_grant_independent_exalted_instances_and_replay",
-        "test_original_bria_granted_prowess_locks_recipient_after_source_bounce_and_replays"
+        "test_original_bria_granted_prowess_locks_recipient_after_source_bounce_and_replays",
+        "test_recipient_quantity_counts_reciprocal_union_once_and_follows_control_phasing_reattachment",
+        "test_original_recipient_count_equipment_cast_equip_reattach_and_bounce_replays"
       ],
       "multiplayer_tests": [
         "test_multiple_sources_apply_independently_in_four_player_game",
-        "test_original_bria_granted_prowess_locks_recipient_after_source_bounce_and_replays"
+        "test_original_bria_granted_prowess_locks_recipient_after_source_bounce_and_replays",
+        "test_original_recipient_count_equipment_cast_equip_reattach_and_bounce_replays"
       ],
       "privacy_tests": [
         "test_projection_hides_relation_identity_and_replay_is_exact",
-        "test_original_bria_granted_prowess_locks_recipient_after_source_bounce_and_replays"
+        "test_original_bria_granted_prowess_locks_recipient_after_source_bounce_and_replays",
+        "test_original_recipient_count_equipment_cast_equip_reattach_and_bounce_replays"
       ],
       "replay_tests": [
         "test_projection_hides_relation_identity_and_replay_is_exact",
@@ -6943,7 +6953,8 @@
         "test_granted_triggers_preserve_multiplicity_and_replay",
         "test_actual_islandwalk_aura_cast_tracks_recipient_and_ends_on_source_departure",
         "test_original_archangels_grant_independent_exalted_instances_and_replay",
-        "test_granted_prowess_response_bounce_invalidates_old_recipient_and_replays"
+        "test_granted_prowess_response_bounce_invalidates_old_recipient_and_replays",
+        "test_original_recipient_count_equipment_cast_equip_reattach_and_bounce_replays"
       ],
       "required_evidence": [
         "positive",

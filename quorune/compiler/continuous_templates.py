@@ -32,6 +32,7 @@ from .public_state_queries import (
     fixed_public_state_parts,
 )
 from .query_characteristic_templates import query_characteristic_quantity
+from .collection_quantity_templates import recipient_attachment_quantity
 from .ward_cost_templates import fixed_ward_spec
 from ..rules.source_references import SourceReferenceSpec
 from ..continuous_conditions import (
@@ -783,14 +784,15 @@ def _attached_dynamic_modifier(
     if match is None:
         return None
     quantity_text = match.group("quantity")
+    quantity = recipient_attachment_quantity(quantity_text)
     if re.search(
         r"(?:attached to (?:it|this creature)|\bits controller's\b|"
         r"\bof its\b|\bon it\b)",
         quantity_text,
         re.IGNORECASE,
-    ):
+    ) and quantity is None:
         return None
-    quantity = query_characteristic_quantity(
+    quantity = quantity or query_characteristic_quantity(
         quantity_text,
         source_name=source_name,
         definition_extensions=True,
@@ -980,7 +982,7 @@ def attached_fixed_characteristics_handler(
 ) -> tuple[str, Mapping[str, Any], tuple[str, ...]] | None:
     """Lower one closed attached-object characteristic sentence.
 
-    Conditions, target-relative attachment counts, names, declaration rules,
+    Conditions, open target-relative quantities, names, declaration rules,
     quoted rules text, and unrepresented mechanics remain residual.
     """
 

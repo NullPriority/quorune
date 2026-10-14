@@ -418,7 +418,16 @@ same effect, and the shared static-component query determines whether the
 source still contributes any component. Exact attached restraints may carry a
 typed declaration fragment and an all-ability or nonmana activation
 prohibition; source-controller relations remain anchored to the granting
-source. Names, text changes, target-relative state, multiple quotes, source
+source.
+
+Relative attachment counts use a versioned `attached_to_recipient` quantity.
+The resolver follows the source's reciprocal attachment relation and counts
+the recipient's current Equipment or Aura/Equipment union, including the
+granting object when it matches. Each physical attachment counts once;
+controller changes do not change membership. Reattachment, phasing and source
+departure reuse the existing relation and layer-5 quantity boundaries.
+
+Names, text changes, open target-relative state, multiple quotes, source
 discard or exile, energy, loyalty, variable, dynamic, alternative-zone or
 usage-limited activation costs, external attachment-source references, and
 untrusted granted rules remain outside this owner.

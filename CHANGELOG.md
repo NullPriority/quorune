@@ -11,6 +11,9 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Count recipient attachments for dynamic Aura and Equipment stat modifiers,
+  retaining reciprocal identity, foreign control and reattachment semantics.
+
 - Gate public spell-cost modifiers with shared live public-state conditions at
   both offered-action and accepted-command boundaries.
 

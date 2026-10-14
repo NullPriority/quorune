@@ -2883,6 +2883,76 @@ class FixedPublicStateCharacteristicRuntimeTests(unittest.TestCase):
 
 
 class AdditionalConditionalModifierRuntimeTests(unittest.TestCase):
+    def test_original_recipient_count_equipment_cast_equip_reattach_and_bounce_replays(self):
+        from quorune.attachments import attach_objects
+        session = self.session(3630901)
+        engine = session.engine
+        gauntlets = self.add(engine, 'Golem-Skin Gauntlets', zone='hand', ref='recipient-gauntlets')
+        suit = self.add(engine, 'Thran Power Suit', zone='hand', ref='recipient-suit')
+        target = self.add(engine, 'Generic Bound Body', ref='recipient-body')
+        other = self.add(engine, 'Generic Bound Body', ref='recipient-other-body')
+        foreign = self.add(engine, 'Generic Recipient Count Equipment', seat='C', ref='recipient-foreign-equipment')
+        attach_objects(engine.state.cards, foreign, target, source_timestamp=engine._next_zone_timestamp())
+        bounce = self.add(engine, 'Generic Recipient Count Artifact Bounce', zone='hand', ref='recipient-attachment-bounce')
+        island = self.add(engine, 'Generic Conditional Keyword Island', ref='recipient-bounce-island')
+        self.assert_whole_admission('Golem-Skin Gauntlets')
+        self.assert_whole_admission('Thran Power Suit')
+        static = next(p for p in engine.semantics.programs_for_oracle(gauntlets.oracle_id) if p.handlers and p.handlers[0]['handler_id']=='continuous.attached.fixed-characteristics.v1')
+        self.assertTrue(engine.semantic_program_is_current_trusted(static))
+        self.ready(session,session.state.cards[island.object_id],{'C':9})
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        offered=next(row for row in actions if row.get('card')==gauntlets.ref)
+        self.checkpoint(session)
+        accepted = session.act('pilot:A',{'action_id':offered['id'],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.resolve(session)
+        for equipment, recipient in ((gauntlets,target),(suit,target),(gauntlets,other)):
+            while session.state.priority_player != 'A':
+                result=session.act(session.pending_principals()[0],{'action_id':'pass'})
+                self.assertTrue(result.ok,result.summary)
+            actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+            if equipment is suit:
+                cast=next(row for row in actions if row.get('card')==suit.ref)
+                self.assertTrue(session.act('pilot:A',{'action_id':cast['id'],'pay':'auto'}).ok)
+                self.resolve(session)
+                while session.state.priority_player != 'A':
+                    result=session.act(session.pending_principals()[0],{'action_id':'pass'})
+                    self.assertTrue(result.ok,result.summary)
+                actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+            equip=next(row for row in actions if row['id'].startswith('activate:'+equipment.ref+':'))
+            before=session.state.to_dict()
+            self.assertFalse(session.act('pilot:D',{'action_id':equip['id'],'targets':[recipient.ref],'pay':'auto'}).ok)
+            self.assertEqual(before,session.state.to_dict())
+            accepted=session.act('pilot:A',{'action_id':equip['id'],'targets':[recipient.ref],'pay':'auto'})
+            self.assertTrue(accepted.ok,accepted.summary)
+            self.resolve(session)
+            if equipment is gauntlets and recipient is target:
+                self.assertEqual(4,engine._numeric_stat(target.object_id,'power'))
+                self.assertEqual(6,engine._numeric_stat(target.object_id,'toughness'))
+            elif equipment is suit:
+                self.assertEqual(8,engine._numeric_stat(target.object_id,'power'))
+                self.assertEqual(9,engine._numeric_stat(target.object_id,'toughness'))
+                self.replay(session,load=True)
+            else:
+                self.assertEqual(4,engine._numeric_stat(target.object_id,'power'))
+                self.assertEqual(3,engine._numeric_stat(other.object_id,'power'))
+        while session.state.priority_player != 'A':
+            result=session.act(session.pending_principals()[0],{'action_id':'pass'})
+            self.assertTrue(result.ok,result.summary)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        mana=next(row for row in actions if row['id'].startswith('activate:'+island.ref+':'))
+        self.assertTrue(session.act('pilot:A',{'action_id':mana['id']}).ok)
+        actions=session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        cast=next(row for row in actions if row.get('card')==bounce.ref)
+        accepted=session.act('pilot:A',{'action_id':cast['id'],'targets':[foreign.ref],'pay':'auto'})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.resolve(session)
+        self.assertEqual('hand',session.state.cards[foreign.object_id].zone)
+        self.assertEqual(3,engine._numeric_stat(target.object_id,'power'))
+        for seat in 'BCD':
+            self.assertNotIn('hand',session.packet('pilot:'+seat,full=True)['state']['players']['A'])
+        self.replay(session)
+
     def test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay(self):
         session = self.session(3630801)
         engine = session.engine

@@ -62,6 +62,15 @@ def query_characteristic_count(
     controller = source.controller
     if quantity.scope is CharacteristicQuantityScope.ATTACHED_TO_SOURCE:
         object_ids = tuple(source.attachments)
+    elif quantity.scope is CharacteristicQuantityScope.ATTACHED_TO_RECIPIENT:
+        from .attachments import attached_object_identity
+        identity = attached_object_identity(host.state.cards, source)
+        if identity is None:
+            return 0
+        recipient = host.state.cards[identity.object_id]
+        object_ids = tuple(object_id for object_id in dict.fromkeys(recipient.attachments)
+            if object_id in host.state.cards
+            and host.state.cards[object_id].attached_to == recipient.object_id)
     elif quantity.scope is CharacteristicQuantityScope.CONTROLLER_ZONE:
         object_ids = tuple(host.state.players[controller].zones[zone])
     elif quantity.scope is CharacteristicQuantityScope.OPPONENT_ZONES:

@@ -7,6 +7,7 @@ import re
 
 from ..characteristic_fragments import CharacteristicQuantityReduction, CharacteristicQuantityScope, CharacteristicQuantitySpec
 from .fixed_numbers import fixed_number
+from ..object_predicate import ObjectQuerySpec
 
 
 def collection_quantity(value: str, *, compile_count) -> CharacteristicQuantitySpec | None:
@@ -106,3 +107,19 @@ def public_card_quantity(quantity, source_text: str):
     if quantity is not None and quantity.query is not None and quantity.query.zones == ("graveyard",) and re.search(r"\bcards?\b", source_text, re.IGNORECASE):
         return replace(quantity, schema_version=2, query=replace(quantity.query, token=False))
     return quantity
+
+
+def recipient_attachment_quantity(text: str):
+    """Count one closed current attachment set belonging to an attached recipient."""
+    match = re.fullmatch(r'(?P<objects>Equipment|Auras?|Aura and Equipment|Auras and Equipment) attached to it', text, re.I)
+    if match is None:
+        return None
+    objects = match['objects'].casefold()
+    if objects == 'equipment':
+        predicate = ObjectQuerySpec(zones=('battlefield',), types_all=('artifact',), subtypes_all=('equipment',))
+    elif objects in {'aura','auras'}:
+        predicate = ObjectQuerySpec(zones=('battlefield',), types_all=('enchantment',), subtypes_all=('aura',))
+    else:
+        predicate = ObjectQuerySpec(zones=('battlefield',), types_any=('artifact','enchantment'), subtypes_any=('aura','equipment'))
+    return CharacteristicQuantitySpec(scope=CharacteristicQuantityScope.ATTACHED_TO_RECIPIENT,
+        query=predicate, schema_version=2)

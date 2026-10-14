@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "registry_fingerprint": "5f3eaf323a834e7a9a68be99546ac0d3e88454c6bd57a745241c02f5200d2a40",
-  "declaration_source_fingerprint": "1b6baf8fd6adc211b6bb8029c81efde854b36c538699d2e0fd33e902f57b77a4",
+  "registry_fingerprint": "f869c9bf27a54f798af5d056106c80d0dcbaf1ac9dd92a082e03576557baa5c8",
+  "declaration_source_fingerprint": "c40fd1d2ab140767e36f39a5f3d79a102b65af9c6e588fbaea8152a55c692c42",
   "declarations": [
     {
       "capability_id": "ability.umbra_armor.fragment",
@@ -33728,6 +33728,29 @@
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "interaction",
+      "test_id": "tests.test_attached_static_characteristics.AttachedStaticEngineTests.test_recipient_quantity_counts_reciprocal_union_once_and_follows_control_phasing_reattachment",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Versioned recipient-relative attachment quantities count current reciprocal Aura/Equipment membership at the shared layer-5 query boundary, independent of controller and with union members counted once."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "interaction",
       "test_id": "tests.test_attached_static_characteristics.AttachedStaticEngineTests.test_shared_static_component_query_owns_removal_and_typed_grant",
       "official_rule_ids": [
         "301.5",
@@ -33820,6 +33843,29 @@
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "interaction",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_recipient_count_equipment_cast_equip_reattach_and_bounce_replays",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Versioned recipient-relative attachment quantities count current reciprocal Aura/Equipment membership at the shared layer-5 query boundary, independent of controller and with union members counted once."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "interaction",
       "test_id": "tests.test_fixed_query_keyword_grants.TriggeredKeywordGrantRuntimeTests.test_original_archangels_grant_independent_exalted_instances_and_replay",
       "official_rule_ids": [
         "301.5",
@@ -33885,6 +33931,29 @@
         "commander_review"
       ],
       "applicability_note": "Stack attached sources controlled by different seats in a four-player state."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "multiplayer",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_recipient_count_equipment_cast_equip_reattach_and_bounce_replays",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Versioned recipient-relative attachment quantities count current reciprocal Aura/Equipment membership at the shared layer-5 query boundary, independent of controller and with union members counted once."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -34027,6 +34096,29 @@
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "negative",
+      "test_id": "tests.test_attached_static_characteristics.AttachedContinuousCompilerTests.test_recipient_attachment_quantity_rejects_legacy_scope_and_open_queries",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Versioned recipient-relative attachment quantities count current reciprocal Aura/Equipment membership at the shared layer-5 query boundary, independent of controller and with union members counted once."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "negative",
       "test_id": "tests.test_attached_static_characteristics.AttachedContinuousModelTests.test_relation_model_and_descriptor_fail_closed",
       "official_rule_ids": [
         "301.5",
@@ -34046,6 +34138,29 @@
         "commander_review"
       ],
       "applicability_note": "Reject malformed relation identities and descriptors before evaluation."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "negative",
+      "test_id": "tests.test_attached_static_characteristics.AttachedStaticEngineTests.test_recipient_quantity_counts_reciprocal_union_once_and_follows_control_phasing_reattachment",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Versioned recipient-relative attachment quantities count current reciprocal Aura/Equipment membership at the shared layer-5 query boundary, independent of controller and with union members counted once."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -34119,6 +34234,29 @@
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "negative",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_recipient_count_equipment_cast_equip_reattach_and_bounce_replays",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Versioned recipient-relative attachment quantities count current reciprocal Aura/Equipment membership at the shared layer-5 query boundary, independent of controller and with union members counted once."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "negative",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_triggered_keyword_grant_labels_and_fragments_are_exact_and_fail_closed",
       "official_rule_ids": [
         "301.5",
@@ -34184,6 +34322,29 @@
         "commander_review"
       ],
       "applicability_note": "Compile only the closed attached dynamic, compound, base-setting, type, color, and supported-keyword grammar into the existing typed owner."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "positive",
+      "test_id": "tests.test_attached_static_characteristics.AttachedContinuousCompilerTests.test_recipient_attachment_quantity_keeps_relative_object_and_live_query",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Versioned recipient-relative attachment quantities count current reciprocal Aura/Equipment membership at the shared layer-5 query boundary, independent of controller and with union members counted once."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -34303,6 +34464,29 @@
     {
       "capability_id": "continuous.attached.fixed_characteristics",
       "evidence_class": "positive",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_recipient_count_equipment_cast_equip_reattach_and_bounce_replays",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Versioned recipient-relative attachment quantities count current reciprocal Aura/Equipment membership at the shared layer-5 query boundary, independent of controller and with union members counted once."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "positive",
       "test_id": "tests.test_fixed_query_keyword_grants.FixedQueryKeywordGrantCompilerTests.test_live_keyword_trigger_grants_carry_exact_fragment_and_consumer_dependencies",
       "official_rule_ids": [
         "301.5",
@@ -34345,6 +34529,29 @@
         "commander_review"
       ],
       "applicability_note": "Project public characteristics without physical or logical relation IDs."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "privacy",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_recipient_count_equipment_cast_equip_reattach_and_bounce_replays",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Versioned recipient-relative attachment quantities count current reciprocal Aura/Equipment membership at the shared layer-5 query boundary, independent of controller and with union members counted once."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -34437,6 +34644,29 @@
         "commander_review"
       ],
       "applicability_note": "Replay a timestamped attach command and its characteristic result exactly."
+    },
+    {
+      "capability_id": "continuous.attached.fixed_characteristics",
+      "evidence_class": "replay",
+      "test_id": "tests.test_fixed_public_state_characteristics.AdditionalConditionalModifierRuntimeTests.test_original_recipient_count_equipment_cast_equip_reattach_and_bounce_replays",
+      "official_rule_ids": [
+        "301.5",
+        "303.4",
+        "604.1",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.1g",
+        "613.6",
+        "701.3c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability_note": "Versioned recipient-relative attachment quantities count current reciprocal Aura/Equipment membership at the shared layer-5 query boundary, independent of controller and with union members counted once."
     },
     {
       "capability_id": "continuous.attached.fixed_characteristics",
@@ -123698,5 +123928,5 @@
       "applicability_note": "Original Barkform Harvester and Volrath's Stronghold advertise and accept only owned graveyard targets, reject a foreign card without payment or mutation, pay their complete prices, move to the exact library bottom/top, preserve principal-correct count-only library projection and save/load/replay from before activation."
     }
   ],
-  "fingerprint": "30047bfa77fc0a5408025d8d51da5682b9582ffc43db3a41391940a3422f26ca"
+  "fingerprint": "2b67d054c38f9aaa52342693aa0f9854ceb5a909e80d5a77dc65dcd07ae4d829"
 }

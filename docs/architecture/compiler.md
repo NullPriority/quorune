@@ -671,6 +671,12 @@ predicate, controller scope, total-cost adjustment and current-ability coverage.
 Named sources remain data in the compiled condition. Hidden, nested or unknown
 conditions and unsupported cost bodies remain residual.
 
+Attached characteristic grammar represents fixed modifiers per Equipment,
+Aura, or Aura/Equipment attached to the recipient. The compiler emits the
+versioned recipient-relative public quantity; the ordinary attached owner
+keeps any paired keyword fragments and applies the resolved count in layer 7c.
+Unrepresented relative qualities and hidden attachment quantities stay residual.
+
 Fixed static declaration composition reuses the declaration requirement and
 restriction parsers rather than adding a combat validator. A source-local line
 may contain either one exact fragment or one of the closed two-fragment
